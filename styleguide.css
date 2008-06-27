@@ -1,0 +1,181 @@
+body {
+  background-color: #ffffff;
+  color: black;
+  margin-right: 1in;
+  margin-left: 1in;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #3366ff;
+  font-family: sans-serif;
+}
+
+h1 {
+  text-align: center;
+  font-size: 18pt;
+}
+
+h2 {
+  margin-left: -0.5in;
+  margin-top: 0.5in;
+}
+
+h3 {
+  margin-left: -0.25in;
+}
+
+h4 {
+  margin-left: -0.125in;
+}
+
+hr {
+  margin-left: -1in;
+}
+
+.h2toc {
+  font-size: 12pt;
+  color: #3366ff;
+  font-weight: bold;
+  margin-left: 0.5in;
+  line-height: 200%;
+}
+
+.h3toc {
+  font-size: 11pt;
+  color: #3366ff;
+  font-weight: normal;
+  margin-left: 1in;
+}
+
+/* Use the <code> tag for bits of code and <var> for variables and objects. */
+code,samp,var {
+  color: #005000;
+  font-size: 110%;
+}
+
+PRE {
+  margin-left: 2%;
+  font-size: 10pt;
+  display: block;
+  color: #005000;
+  background-color: #fbfefb;
+  border-color: #fafffa;
+  border-left-width: 1px;
+  border-right-width: 0px;
+  border-top-width: 0px;
+  border-bottom-width: 0px;
+  border-style: solid;
+  border-top: 1px solid #fffaff;
+  border-left: 1px solid #fffaff;
+  border-right: 1px dotted #eff0ef;
+  border-bottom: 1px dotted #eff0ef;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+PRE {
+  -moz-border-radius: 12px;
+}
+
+PRE.badcode {
+  color: #CC0000;
+  background-color: #fffcfc;
+  border-right: 1px solid #f0efef;
+  border-bottom: 1px solid #f0efef;
+  border-top: 1px dotted #faffff;
+  border-left: 1px dotted #faffff;
+}
+
+TABLE {
+  border-collapse: collapse;
+  border-color: #dddddd;
+  border-style: dotted;
+}
+
+TD {
+  border-color: #bbbbbb;
+  border-style: solid;
+  border-width: thin
+}
+
+TH {
+  border-collapse: collapse;
+  border-color: #dddddd;
+  border-style: none;
+  border-width: thin;
+  color: #444444;
+  font-family: sans-serif;
+}
+
+address {
+  text-align: right;
+}
+
+.stylepoint_section {
+  color: #5588ff;
+  font-family: sans-serif;
+  font-size: 90%;
+  font-weight: bold;
+  margin-left: -2%;
+}
+
+.stylepoint_subsection {
+  color: #667799;
+  font-family: sans-serif;
+  font-size: 90%;
+  font-weight: bold;
+  margin-left: -1%;
+}
+
+.showhide_button {
+  border-color: #dddddd;
+  border-style: outset;
+  border-width: medium;
+  cursor: pointer;
+  font-family: sans-serif;
+}
+
+
+.link_button {
+  background-color: #ffffd0;
+  border-color: #fcfca0;
+  border-style: solid;
+  border-width: 1px;
+  font-family: sans-serif;
+  font-size: 75%;
+  font-variant: small-caps;
+  margin-left: -2%;
+  padding-left: 1px;
+  padding-right: 1px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.toc {
+  background-color: #fcfcff;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.toc_title {
+  font-family: sans-serif;
+  font-size: 110%;
+  font-weight: 700;
+}
+
+.toc_category {
+  margin-left: 5%;
+  font-family: sans-serif;
+}
+
+.toc_stylepoint {
+  margin-left: 5%;
+  font-family: sans-serif;
+  font-size: 90%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
