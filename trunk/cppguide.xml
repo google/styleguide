@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
-<GUIDE title="C++ Style Guide">
+<GUIDE title="Google C++ Style Guide">
 
 
 
@@ -2458,10 +2458,18 @@ Tashana Landray
       
       In order to maintain a high level of readability for all contributors
       who might read and maintain code, we only allow an approved subset of
-      Boost features.  Currently, only
-      <code>boost/compressed_pair.hpp</code> is permitted.  We are actively
-      considering adding other Boost features to the list, so this rule
-      may be relaxed in the future.
+      Boost features.  Currently, the following libraries are permitted:
+      <ul>
+        <li> <a href="http://www.boost.org/libs/utility/compressed_pair.htm">
+             Compressed Pair</a> from <code>boost/compressed_pair.hpp</code>
+             </li>
+        <li> <a href="http://www.boost.org/libs/ptr_container/">
+             Pointer Container</a> from <code>boost/ptr_container</code> except
+             <code>ptr_array.hpp</code> and serialization
+             </li>
+      </ul>
+      We are actively considering adding other Boost features to the list, so
+      this rule may be relaxed in the future.
     </DECISION>
   </BODY>
   </STYLEPOINT>
