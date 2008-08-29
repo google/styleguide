@@ -1,0 +1,1200 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
+<GUIDE title="Google Objective-C Style Guide">
+
+
+
+<div align="right">
+	<address>
+		Mike Pinkerton<br/>
+		Greg Miller <br/>
+		Dave MacLachlan
+	</address>
+</div>
+	
+<OVERVIEW>
+
+<CATEGORY title="Important Note">
+  <STYLEPOINT title="Displaying Hidden Details in this Guide">
+     <SUMMARY>
+       This style guide contains many details that are initially
+       hidden from view.  They are marked by the triangle icon, which you
+       see here on your left.  Click it now.
+       You should see "Hooray" appear below.
+     </SUMMARY>
+     <BODY>
+       <p>
+        Hooray!  Now you know you can expand points to get more
+        details.  Alternatively, there's an "expand all" at the
+        top of this document.
+       </p>
+     </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
+<CATEGORY title="Background">
+
+  <p>Objective-C is a very dynamic, object-oriented extension of C.  It's
+  designed to be easy to use and read, while enabling sophisticated
+  object-oriented design. It is the primary development language for new
+  applications on Mac OS X and the iPhone.</p>
+
+  <p>Cocoa is one of the main application frameworks on Mac OS X. It is a
+  collection of Objective-C classes that provide for rapid development of
+  full-featured Mac OS X applications.</p>
+
+  <p>Apple has already written a very good, and widely accepted, coding guide
+  for Objective-C. Google has also written a similar guide for C++. This
+  Objective-C guide aims to be a very natural combination of Apple's and
+  Google's general recommendations. So, before reading this guide, please make
+  sure you've read:
+  <ul>
+  <li><a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/index.html">Apple's Cocoa
+  Coding Guidelines</a></li>
+  <li>
+  	
+  	<div>
+  		<a href="http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml">
+  			Google's Open Source C++ Style Guide</a>
+  	</div>
+  </li>
+  </ul>
+  </p>
+
+  
+
+  <p>
+    <em>Note that all things that are banned in Google's C++ guide are also
+    banned in Objective-C++, unless explicitly noted in this document.</em>
+  </p>
+
+  <p>
+    The purpose of this document is to describe the Objective-C (and
+    Objective-C++) coding guidelines and practices that should be used for all
+    Mac OS X code. Many of these guidelines have evolved and been proven over
+    time on other projects and teams.
+    
+    Open-source projects developed by Google
+    conform to the requirements in this guide.
+  </p>
+
+  <p>
+    Google has already released open-source code that conforms to these
+    guidelines as part of the <a href="http://code.google.com/p/google-toolbox-for-mac/">Google Toolbox for
+    Mac project</a> (abbreviated GTM throughout this document). Code meant to
+    be shared across different projects is a good candidate to be included in
+    this repository.
+  </p>
+  
+  
+
+  <p>
+    Note that this guide is not an Objective-C tutorial. We assume that the
+    reader is familiar with the language. If you are new to Objective-C or
+    need a refresher, please read <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/index.html">
+    The Objective-C Programming Language</a>.
+  </p>
+</CATEGORY>
+</OVERVIEW>
+
+<CATEGORY title="Example">
+	
+  <p>
+    They say an example is worth a thousand words so let's start off with an
+    example that should give you a feel for the style, spacing, naming, etc.
+  </p>
+
+  <p>
+		An example header file, demonstrating the correct commenting and spacing
+    for an <code>@interface</code> declaration
+  </p>
+
+<pre>
+  //  GTMFoo.h
+  //  FooProject
+  //
+  //  Created by Greg Miller on 6/13/08.
+  //  Copyright 2008 Google, Inc. All rights reserved.
+  //
+
+  #import &lt;Foundation/Foundation.h&gt;
+
+  // A sample class demonstrating good Objective-C style. All interfaces,
+  // categories, and protocols (read: all top-level declarations in a header)
+  // MUST be commented. Comments must also be adjacent to the object they're
+  // documenting.
+  //
+  // (no blank line between this comment and the interface)
+  @interface GTMFoo : NSObject {
+   @private
+    NSString *foo_;
+    NSString *bar_;
+  }
+
+  // Returns an autoreleased instance of GMFoo. See -initWithString: for details
+  // about the argument.
+  + (id)fooWithString:(NSString *)string;
+
+  // Designated initializer. |string| will be copied and assigned to |foo_|.
+  - (id)initWithString:(NSString *)string;
+
+  // Gets and sets the string for |foo_|.
+  - (NSString *)foo;
+  - (void)setFoo:(NSString *)newFoo;
+
+  // Does some work on |blah| and returns YES if the work was completed
+  // successfuly, and NO otherwise.
+  - (BOOL)doWorkWithString:(NSString *)blah;
+
+  @end
+</pre>
+
+  <p>
+		An example source file, demonstating the correct commenting and spacing
+    for the <code>@implementation</code> of an interface. It also includes the
+    reference implementations for important methods like getters and setters,
+    <code>init</code>, and <code>dealloc</code>.
+  </p>
+
+<pre>
+  //
+  //  GTMFoo.m
+  //  FooProject
+  //
+  //  Created by Greg Miller on 6/13/08.
+  //  Copyright 2008 Google, Inc. All rights reserved.
+  //
+
+  #import "GTMFoo.h"
+
+
+  @implementation GTMFoo
+
+  + (id)fooWithString:(NSString *)string {
+    return [[[self alloc] initWithString:string] autorelease];
+  }
+
+  // Must always override super's designated initializer.
+  - (id)init {
+    return [self initWithString:nil];
+  }
+
+  - (id)initWithString:(NSString *)string {
+    if ((self = [super init])) {
+      foo_ = [string copy];
+      bar_ = [[NSString alloc] initWithFormat:@"hi %d", 3];
+    }
+    return self;   
+  }
+
+  - (void)dealloc {
+    [foo_ release];
+    [bar_ release];
+    [super dealloc];
+  }
+
+  - (NSString *)foo {
+    return foo_;
+  }
+
+  - (void)setFoo:(NSString *)newFoo {
+    [foo_ autorelease];
+    foo_ = [newFoo copy];   
+  }
+
+  - (BOOL)doWorkWithString:(NSString *)blah {
+    // ...
+    return NO;
+  }
+
+  @end
+</pre>
+
+</CATEGORY>
+
+<CATEGORY title="Spacing And Formatting">
+
+  <STYLEPOINT title="Spaces vs. Tabs">
+    <SUMMARY>
+      Use only spaces, and indent 2 spaces at a time.
+    </SUMMARY>
+    <BODY>
+      <p>
+        We use spaces for indentation. Do not use tabs in your code.
+        You should set your editor to emit spaces when you hit the tab
+        key.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Line Length">
+    <SUMMARY>
+      Each line of text in your code should be at most 80 characters long.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Even though Objective-C tends to be a more verbose language than C++,
+        to aid in the interoperability with that guide, we have decided
+        to keep the limit at 80 columns as well. It's easier to live with
+        than you might expect.
+      </p>
+      
+      <p>
+        We recognize that this rule is controversial, but so much existing
+        code already adheres to it, and we feel that consistency is
+        important.
+      </p>
+      <p>
+        You can make violations easier to spot in Xcode by going to <i>Xcode
+        &gt; Preferences &gt; Text Editing &gt; Show page guide</i>.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Method Declarations and Definitions">
+    <SUMMARY>
+      One space should be used between the <code>-</code> or <code>+</code>
+      and the return type, and no spacing in the parameter list except between
+      parameters.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Methods should look like this:
+      </p>
+      <CODE_SNIPPET>
+        - (void)doSomethingWithString:(NSString *)theString {
+          ...
+        }
+      </CODE_SNIPPET>
+      <p>
+        The spacing before the asterisk is optional. When adding new code,
+        be consistent with the surrounding file's style.
+      </p>
+      <p>
+        If you have too many parameters to fit on one line, giving each its
+        own line is preferred. If multiple lines are used, align each using 
+        the <code>:</code> before the parameter.
+      </p>
+      <CODE_SNIPPET>
+        - (void)doSomethingWith:(GTMFoo *)theFoo
+                           rect:(NSRect)theRect
+                       interval:(float)theInterval {
+          ...
+        }
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+  
+  <STYLEPOINT title="@public and @private">
+    <SUMMARY>
+      The <code>@public</code> and <code>@private</code> access modifiers
+      should be indented by 1 space.
+    </SUMMARY>
+    <BODY>
+      <p>
+        This is similar to <code>public</code>, <code>private</code>, and
+        <code>protected</code> in C++.
+      </p>
+      <CODE_SNIPPET>
+        @interface MyClass : NSObject {
+         @public
+          ...
+         @private
+          ...
+        }
+        @end
+      </CODE_SNIPPET>      
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Exceptions">
+    <SUMMARY>
+      Format exceptions with each <code>@</code> label on its own line and a
+      space between the <code>@</code> label and the opening brace '{', as
+      well as between the <code>@catch</code> and the caught object
+      declaration.
+    </SUMMARY>
+    <BODY>
+      <p>
+        If you must use Obj-C exceptions (please see <a href="#Exceptions">Exceptions</a> for reasons why you <b>should
+        not</b> be using exceptions) format them as follows:
+      </p>
+      <CODE_SNIPPET>
+        @try {
+          foo();
+        }
+        @catch (NSException *ex) {
+          bar(ex);
+        }
+        @finally {
+          baz();
+        }
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+  
+</CATEGORY>
+
+<CATEGORY title="Naming">
+  
+  <p>
+    Naming rules are very import in maintainable code. Objective-C method
+    names tend to be very long, but this has the benefit that a block of code
+    can almost read like prose, thus rendering many comments unnecessary. </p>
+    <p> When writing pure Objective-C code, we mostly follow standard <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html">
+    Objective-C naming rules</a>. These naming guidelines may differ
+    significantly from those outlined in the C++ style guide. For example,
+    Google's C++ style guide recommends the use of underscores between words
+    in variable names, whereas this guide recommends the use of intercaps,
+    which is standard in the Objective-C community.
+  </p>
+  <p>
+    When writing Objective-C++, however, things are not so cut and dry. Many
+    projects need to implement cross-platform C++ APIs with some Objective-C
+    or Cocoa, or bridge between a C++ back-end and a native Cocoa front-end.
+    This leads to situations where the two guides are directly at odds.
+  </p>
+  <p>
+    Our solution is that the style follows that of the method/function being
+    implemented. If you're in an <code>@implementation</code> block, use the
+    Objective-C naming rules. If you're implementing a method for a C++
+    <code>class</code>, use the C++ naming rules. This avoids the situation
+    where instance variable and local variable naming rules are mixed within a
+    single function, which would be a serious detriment to readability.
+  </p>
+
+  <STYLEPOINT title="File Names">
+    <SUMMARY>
+      File names should reflect the name of the class implementation that
+      they contain -- including case. Follow the convention that your
+      
+      project
+      uses.
+    </SUMMARY>
+    <BODY>
+      <p>
+        File extensions should be as follows:
+      </p>
+      <table>
+        <tr>
+          <td><code>.h</code></td>
+          <td>C/C++/Objective-C header file</td>
+        </tr>
+        <tr>
+          <td><code>.m</code></td>
+          <td>Objective-C implementation file</td>
+        </tr>
+        <tr>
+          <td><code>.mm</code></td>
+          <td>Objective-C++ implementation file</td>
+        </tr>
+        <tr>
+          <td><code>.cc</code></td>
+          <td>Pure C++ implementation file</td>
+        </tr>
+        <tr>
+          <td><code>.c</code></td>
+          <td>C implementation file</td>
+        </tr>
+      </table>
+      <p>
+        File names for categories should include the name of the class being
+        extended, e.g. <code>GTMNSString+Utils.h</code> or
+        <code>GTMNSTextView+Autocomplete.h</code>
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Objective-C++">
+    <SUMMARY>
+      Within a source file, Objective-C++ follows the style of the
+      function/method you're implementing.
+    </SUMMARY>
+    <BODY>
+      <p>
+        In order to minimize clashes between the differing naming styles when
+        mixing Cocoa/Objective-C and C++, follow the style of the method being
+        implemented. If you're in an <code>@implementation</code> block, use
+        the Objective-C naming rules. If you're implementing a method for a
+        C++ <code>class</code>, use the C++ naming rules.
+      </p>
+      <CODE_SNIPPET>
+        // file: cross_platform_header.h
+        
+        class CrossPlatformAPI {
+         public:
+          ...
+          int DoSomethingPlatformSpecific();  // impl on each platform
+         private:
+          int an_instance_var_;
+        };
+        
+        // file: mac_implementation.mm
+        #import "cross_platform_header.h"
+        
+        // A typical Objective-C class, using Objective-C naming.
+        @interface MyDelegate : NSObject {
+         @private
+          int instanceVar_;
+          CrossPlatformAPI* backEndObject_;
+        }
+        - (void)respondToSomething:(id)something;
+        @end
+        @implementation MyDelegate
+        - (void)respondToSomething:(id)something {
+          // bridge from Cocoa through our C++ backend
+          instanceVar_ = backEndObject-&gt;DoSomethingPlatformSpecific();
+          NSString* tempString = [NSString stringWithInt:instanceVar_];
+          NSLog(@"%@", tempString);
+        }
+        @end
+        
+        // The platform-specific implementation of the C++ class, using
+        // C++ naming.
+        int CrossPlatformAPI::DoSomethingPlatformSpecific() {
+          NSString* temp_string = [NSString stringWithInt:an_instance_var_];
+          NSLog(@"%@", temp_string);
+          return [temp_string intValue];
+        }
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+  
+  <STYLEPOINT title="Class Names">
+    <SUMMARY>
+      Class names (along with category and protocol names) should start as
+      uppercase and use mixed case to delimit words.
+    </SUMMARY>
+    <BODY>
+      <p>
+        In <em>application-level</em> code, prefixes on class names should
+        generally be avoided. Having every single class with same prefix
+        impairs readability for no benefit. When designing code to be shared
+        across multiple applications, prefixes are acceptable and recommended
+        (e.g. <code>GTMSendMessage</code>).
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Category Names">
+    <SUMMARY>
+      Category names should start with a 2 or 3 character prefix
+      identifying the category as part of a project or open for general
+      use. The category name should incorporate the name of the class it's
+      extending.      
+    </SUMMARY>
+    <BODY>
+      <p>
+        For example, if we want to create a category on <code>NSString</code>
+        for parsing, we would put the category in a file named
+        <code>GTMNSString+Parsing.h</code>, and the category itself would be
+        named <code>GTMStringParsingAdditions</code> (yes, we know the file
+        name and the category name do not match, but this file could have many
+        separate categories related to parsing). Methods in that category
+        should share the prefix (<code>gtm_myCategoryMethodOnAString:</code>)
+        in order to prevent collisions in Objective-C which only has a single
+        namespace. If the code isn't meant to be shared and/or doesn't run in
+        a different address-space, the method naming isn't quite as
+        important.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  
+  <STYLEPOINT title="Objective-C Method Names">
+    <SUMMARY>
+      Method names should start as lowercase and then use mixed case.
+      Each named parameter should also start as lowercase.
+    </SUMMARY>
+    <BODY>
+      <p>
+        The method name should read like a sentence if possible, meaning you
+        should choose parameter names that flow with the method name. (e.g.
+        <code>convertPoint:fromRect:</code> or
+        <code>replaceCharactersInRange:withString:</code>). See <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingMethods.html#//apple_ref/doc/uid/20001282-BCIGIJJF">Apple's
+        Guide to Naming Methods</a> for more details.
+      </p>
+      <p>
+        Accessor methods should be named the same as the variable they're
+        "getting", but they should <em>not</em> be prefixed with the word
+        "get". For example:
+        <BAD_CODE_SNIPPET>
+          - (id)getDelegate;  // AVOID
+        </BAD_CODE_SNIPPET>
+        <CODE_SNIPPET>
+          - (id)delegate;    // GOOD
+        </CODE_SNIPPET>
+      </p>
+      <p>
+        This is for Objective-C methods only. C++ method names and functions
+        continue to follow the rules set in the C++ style guide.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Variable Names">
+    <SUMMARY>
+      Variables names start with a lowercase and use mixed case to delimit
+      words. Class member variables have trailing underscores. For example:
+      <var>myLocalVariable</var>, <var>myInstanceVariable_</var>. Members
+      used for KVO/KVC bindings may begin with a leading underscore
+      <i>iff</i> use of Objective-C 2.0's <code>@property</code> isn't
+      allowed.
+    </SUMMARY>
+    <BODY>
+      <SUBSECTION title="Common Variable Names">
+        <p>
+          Do <em>not</em> use Hungarian notation for syntactic attributes,
+          such as the static type of a variable (int or pointer). Give as
+          descriptive a name as possible, within reason. Don't worry about
+          saving horizontal space as it is far more important to make your
+          code immediately understandable by a new reader. For example:
+        </p>
+        <BAD_CODE_SNIPPET>
+          int w;     
+          int nerr;          
+          int nCompConns; 
+          tix = [[NSMutableArray alloc] init];
+          obj = [someObject object];
+          p = [network port];
+        </BAD_CODE_SNIPPET>
+        <CODE_SNIPPET>
+          int numErrors;                
+          int numCompletedConnections; 
+          tickets = [[NSMutableArray alloc] init];
+          userInfo = [someObject object];
+          port = [network port];
+        </CODE_SNIPPET>
+      </SUBSECTION>
+      
+      <SUBSECTION title="Instance Variables">
+        <p>
+          Instance variables are mixed case and should be suffixed with a
+          trailing underscore, e.g. <var>usernameTextField_</var>. However,
+          we permit an exception when binding to a member variable using
+          KVO/KVC and Objective-C 2.0 cannot be used (due to OS release 
+          constraints). In this case, it is acceptable to prefix the variable
+          with an underscore, per Apple's accepted practices for key/value 
+          naming. If Objective-C 2.0 can be used, <code>@property</code> and
+          <code>@synthesize</code> provide a solution that conforms to the
+          naming guidelines.
+        </p>
+      </SUBSECTION>
+      
+      <SUBSECTION title="Constants">
+        <p>
+          Constant names (#defines, enums, const local variables, etc.) should
+          start with a lowercase <var>k</var> and then use mixed case to
+          delimit words, i.e. <var>kInvalidHandle</var>,
+          <var>kWritePerm</var>.
+        </p>
+      </SUBSECTION>
+    </BODY>
+  </STYLEPOINT>
+
+</CATEGORY>
+
+<CATEGORY title="Comments">
+
+  <p>
+    Though a pain to write, they are absolutely vital to keeping our code
+    readable. The following rules describe what you should comment and where.
+    But remember: while comments are very important, the best code is
+    self-documenting. Giving sensible names to types and variables is much
+    better than using obscure names and then trying to explain them through
+    comments.
+  </p>
+  <p>
+    When writing your comments, write for your audience: the next
+    
+    contributor
+    who will need to understand your code.  Be generous &#8212; the next
+    one may be you!
+  </p>
+  <p>
+    Remember that all of the rules and conventions listed in the C++ Style
+    Guide are in effect here, with a few additional points, below.
+  </p>
+
+  <STYLEPOINT title="File Comments">
+    <SUMMARY>
+      Start each file with a copyright notice, followed by a
+      description of the contents of the file.
+    </SUMMARY>
+    <BODY>
+      <SUBSECTION title="Legal Notice and Author Line">
+        
+        
+        <p>
+          Every file should contain the following items, in order:
+          <ul>
+            <li>a copyright statement (for example,
+                <code>Copyright 2008 Google Inc.</code>)</li>
+            <li>a license boilerplate.  Choose the appropriate boilerplate
+                for the license used by the project (for example,
+                Apache 2.0, BSD, LGPL, GPL)</li>
+          </ul>
+        </p>
+        <p>
+          If you make significant changes to a file that someone else
+          originally wrote, add yourself to the author line. This can
+          be very helpful when another
+          
+          contributor
+          has questions about the file and needs to know whom to contact
+          about it.
+        </p>
+      </SUBSECTION>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Declaration Comments">
+    <SUMMARY>
+      Every interface, category, and protocol declaration should have an
+      accompanying comment describing its purpose and how it fits into the
+      larger picture.
+    </SUMMARY>
+    <BODY>
+      <CODE_SNIPPET>
+        // A delegate for NSApplication to handle notifications about app
+        // launch and shutdown. Owned by the main app controller.
+        @interface MyAppDelegate : NSObject {
+          ...
+        }
+        @end
+      </CODE_SNIPPET>
+      <p>
+        If you have already described an interface in detail in the
+        comments at the top of your file feel free to simply state
+        "See comment at top of file for a complete description", but
+        be sure to have some sort of comment.
+      </p>
+      <p>
+        Additionally, each method in the public interface should have a
+        comment explaining its function, arguments, return value, and any
+        side effects.
+      </p>
+      <p>
+        Document the synchronization assumptions the class makes, if
+        any. If an instance of the class can be accessed by multiple
+        threads, take extra care to document the rules and invariants
+        surrounding multithreaded use.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Implementation Comments">
+    <SUMMARY>
+      Use vertical bars to quote variable names and symbols in comments rather
+      than quotes or naming the symbol inline.
+    </SUMMARY>
+    <BODY>
+      <p>
+        This helps eliminate ambiguity, especially when the symbol is a common
+        word that might make the sentence read like it was poorly constructed.
+        E.g. for a symbol "count":
+      </p>
+      <CODE_SNIPPET>
+        // Sometimes we need |count| to be less than zero.
+      </CODE_SNIPPET>
+      <p>
+        or when quoting something which already contains quotes
+      </p>
+      <CODE_SNIPPET>
+        // Remember to call |StringWithoutSpaces("foo bar baz")|
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Object Ownership">
+    <SUMMARY>
+      Make the pointer ownership model as explicit as possible when it falls
+      outside the most common Objective-C usage idioms.  
+    </SUMMARY>
+    <BODY>
+      <p>
+        Instance variable pointers to objects derived from NSObject are
+        presumed to be retained, and should be documented as <b>weak</b> if
+        they are not retained by the class. However, instance variables which
+        are labeled as IBOutlets are presumed to not be retained by the class,
+        and should be documented as <b>strong</b> if the class does retain
+        them.
+      </p>
+      <p>
+        Where instance variables are pointers to CoreFoundation, C++, and
+        other non-Objective-C objects, they should always be documented in
+        comments as strong or weak. Be mindful that support for automatic C++
+        objects encapsulated in Objective-C objects is disabled by default, as
+        described <a href="http://chanson.livejournal.com/154253.html">here</a>.
+      </p>
+      <p>
+        Examples of strong and weak documentation:
+        <CODE_SNIPPET>
+          @interface MyDelegate : NSObject {
+           @private
+            IBOutlet* okButton_;        // normal NSControl
+            IBOutlet* myContextMenu_;   // manually-loaded menu (strong)
+
+            AnObjcObject* doohickey_;   // my doohickey
+            MyController* controller_;  // so we can send msgs back (weak, owns me)
+
+            // non-NSObject pointers...
+            CWackyCPPClass* wacky_;     // some cross-platform object (strong)
+            CFDictionaryRef* dict_;     // (strong)
+          }
+          @end
+        </CODE_SNIPPET>
+        <dl>
+          <dt>strong</dt><dd>The object will be <code>retain</code>'d by this class</dd>
+          <dt>weak</dt><dd>The object will be <b>not</b> be <code>retain</code>'d by this class
+          (e.g. a delegate).</dd>
+        </dl>
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  
+</CATEGORY>
+
+<CATEGORY title="Cocoa and Objective-C Features">
+
+  <STYLEPOINT title="Member Variables Should Be @private">
+    <SUMMARY>
+      Member variables should be declared <code>@private</code>.
+    </SUMMARY>
+    <BODY>
+      <CODE_SNIPPET>
+        @interface MyClass : NSObject {
+         @private
+          id myInstanceVariable_;
+        }
+        // public accessors, setter takes ownership
+        - (id)myInstanceVariable;
+        - (void)setMyInstanceVariable:(id)theVar;
+        @end
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+  
+  <STYLEPOINT title="Identify Designated Initializer">
+    <SUMMARY>
+      Comment and clearly identify your designated initializer.
+    </SUMMARY>
+    <BODY>
+      <p>
+        It is important for those who might be subclassing your class that the
+        designated initializer be clearly identified. That way, they only need
+        to subclass a single initializer (of potentially several) to guarantee
+        their subclass' initializer is called. It also helps those debugging
+        your class in the future understand the flow of initialization code if
+        they need to step through it.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Override Designated Initializer">
+    <SUMMARY>
+      When writing a subclass that requires an <code>init...</code> method,
+      make <i>sure</i> you override the superclass' designated initializer.
+    </SUMMARY>
+    <BODY>
+      <p>
+        If you fail to override the superclass' designated initializer, your
+        initializer may not be called in all cases, leading to subtle and
+        very difficult to find bugs.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Initialization">
+    <SUMMARY>
+      Don't initialize variables to <code>0</code> or <code>nil</code> in the
+      init method; it's redundant.
+    </SUMMARY>
+    <BODY>
+      <p>
+        All memory for a newly allocated object is initialized to 0 (except
+        for <var>isa</var>), so don't clutter up the <code>init</code> method
+        by re-initializing variables to 0 or <code>nil</code>.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Keep the Public API Simple">
+    <SUMMARY>
+      Keep your class simple; avoid "kitchen-sink" APIs. If a method doesn't
+      need to be public, don't make it so. Use a private category to prevent
+      cluttering the public header.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Unlike C++, Objective-C doesn't have a way to differentiate between
+        public and private methods &#8212; everything is public. As a result, avoid
+        placing methods in the public API unless they are actually expected to
+        be used by a consumer of the class. This helps reduce the likelihood
+        they'll be called when you're not expecting it. This includes methods
+        that are being overridden from the parent class. For internal
+        implementation methods, use a category defined in the implementation
+        file as opposed to adding them to the public header.
+      </p>
+      <CODE_SNIPPET>
+        // GTMFoo.m
+        #import "GTMFoo.h"
+
+        @interface GTMFoo (PrivateDelegateHandling)
+        - (NSString *)doSomethingWithDelegate;  // Declare private method
+        @end
+
+        @implementation GTMFoo(PrivateDelegateHandling)
+        ...
+        - (NSString *)doSomethingWithDelegate {
+          // Implement this method 
+        }
+        ...
+        @end
+      </CODE_SNIPPET>
+      <p>
+        Before Objective-C 2.0, if you declare a method in the private
+        <code>@interface</code>, but forget to implement it in the main
+        <code>@implementation</code>, the compiler will <i>not</i> object.
+        (This is because you don't implement these private methods in a
+        separate category.) The solution is to put the functions within
+        an <code>@implementation</code> that specifies the category.
+      </p>
+      <p>
+        If you are using Objective-C 2.0, you should instead declare your
+        private category using a <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/Articles/chapter_4_section_5.html#">class
+        extension</a>, for example: 
+      </p>
+      <CODE_SNIPPET>
+      @interface GMFoo () { ... }
+      </CODE_SNIPPET>
+      <p>
+        which will guarantee that the declared methods are implemented in the
+        <code>@implementation</code> section by issuing a compiler warning if
+        they are not.
+      </p>
+      <p>
+        Again, "private" methods are not really private. You could
+        accidentally override a superclass's "private" method, thus making a
+        very difficult bug to squash. In general, private methods should have
+        a fairly unique name that will prevent subclasses from unintentionally
+        overriding them.
+      </p>
+      <p>
+        Finally, Objective-C categories are a great way to segment a large
+        <code>@implementation</code> section into more understandable chunks
+        and to add new, application-specific functionality to the most
+        appropriate class. For example, instead of adding "middle truncation"
+        code to a random object in your app, make a new category on
+        <code>NSString</code>).
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  
+
+  <STYLEPOINT title="Use Root Frameworks">
+    <SUMMARY>
+      Include root frameworks over individual files.
+    </SUMMARY>
+    <BODY>
+      <p>
+        While it may seem tempting to include individual system headers from a
+        framework such as Cocoa or Foundation, in fact it's less work on the
+        compiler if you include the top-level root framework. The root
+        framework is generally pre-compiled and can be loaded much more
+        quickly. In addition, remember to use <code>#import</code> rather than
+        <code>#include</code>.
+      </p>
+      <CODE_SNIPPET>
+        #import &lt;Foundation/Foundation.h&gt;     // good
+      </CODE_SNIPPET>
+      <BAD_CODE_SNIPPET>
+        #import &lt;Foundation/NSArray.h&gt;        // avoid
+        #import &lt;Foundation/NSString.h&gt;
+        ...
+      </BAD_CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+  
+  <STYLEPOINT title="Prefer To autorelease At Time of Creation">
+    <SUMMARY>
+      When creating new temporary objects, <code>autorelease</code> them on
+      the same line as you create them rather than a separate
+      <code>release</code> later in the same method.
+    </SUMMARY>
+    <BODY>
+      <p>
+        While ever so slightly slower, this prevents someone from accidentally
+        removing the <code>release</code> or inserting a <code>return</code>
+        before it and introducing a memory leak. E.g.:
+      </p>
+      <BAD_CODE_SNIPPET>
+        // AVOID (unless you have a compelling performance reason)
+        MyController* controller = [[MyController alloc] init];
+        // ... code here that might return ...
+        [controller release];
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        // BETTER
+        MyController* controller = [[[MyController alloc] init] autorelease];
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Autorelease Then Retain">
+    <SUMMARY>
+      Assignment of objects follows the <code>autorelease</code> then
+      <code>retain</code> pattern.
+    </SUMMARY>
+    <BODY>
+      <p>
+        When assigning a new object to a variable, one must first release the
+        old object to avoid a memory leak. There are several "correct" ways to
+        handle this. We've chosen the "autorelease then retain" approach
+        because it's less prone to error. Be aware in tight loops it can fill
+        up the autorelease pool, and may be slightly less efficient, but we
+        feel the tradeoffs are acceptable.
+      </p>
+      <CODE_SNIPPET>
+        - (void)setFoo:(GMFoo *)aFoo {
+          [foo_ autorelease];  // Won't dealloc if |foo_| == |aFoo|
+          foo_ = [aFoo retain]; 
+        }
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Setters copy NSStrings">
+    <SUMMARY>
+      Setters taking an <code>NSString</code>, should always <code>copy</code>
+      the string it accepts.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Never just <code>retain</code> the string. This avoids the caller
+        changing it under you without your knowledge. Don't assume that
+        because you're accepting an <code>NSString</code> that it's not
+        actually an <code>NSMutableString</code>.
+      </p>
+      <CODE_SNIPPET>
+        - (void)setFoo:(NSString *)aFoo {
+          [foo_ autorelease];
+          foo_ = [aFoo copy];
+        }
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Avoid Throwing Exceptions">
+    <SUMMARY>
+      Don't <code>@throw</code> Objective-C exceptions, but you should be
+      prepared to catch them from third-party or OS calls.
+    </SUMMARY>
+    <BODY>
+      <p>
+        We do compile with <code>-fobjc-exceptions</code> (mainly so we get
+        <code>@synchronized</code>), but we don't <code>@throw</code>. Use of
+        <code>@try</code>, <code>@catch</code>, and <code>@finally</code> are
+        allowed when required to properly use 3rd party code or libraries. If
+        you do use them please document exactly which methods you expect to
+        throw.
+      </p>
+      <p>
+        Do not use the <code>NS_DURING</code>, <code>NS_HANDLER</code>,
+        <code>NS_ENDHANDLER</code>, <code>NS_VALUERETURN</code> and
+        <code>NS_VOIDRETURN</code> macros unless you are writing code that
+        needs to run on MacOS 10.2 or before.
+      </p>
+      <p>
+        Also be aware when writing Objective-C++ code that stack based objects
+        are <b>not</b> cleaned up when you throw an Objective-C exception.
+        Example:
+      </p>
+      <CODE_SNIPPET>
+        class exceptiontest {
+         public:
+          exceptiontest() { NSLog(@"Created"); }
+          ~exceptiontest() { NSLog(@"Destroyed"); }
+        };
+
+        void foo() {
+          exceptiontest a;
+          NSException *exception = [NSException exceptionWithName:@"foo"
+                                                           reason:@"bar"  
+                                                         userInfo:nil];
+          @throw exception;
+        }
+
+        int main(int argc, char *argv[]) {
+          GMAutoreleasePool pool;
+          @try {
+            foo();
+          }
+          @catch(NSException *ex) {
+            NSLog(@"exception raised");
+          }
+          return 0;
+        }
+      </CODE_SNIPPET>
+      <p>
+        will give you:
+      </p>
+      <CODE_SNIPPET>
+        2006-09-28 12:34:29.244 exceptiontest[23661] Created
+        2006-09-28 12:34:29.244 exceptiontest[23661] exception raised
+      </CODE_SNIPPET>
+      <p>
+        Note that the destructor for <i>a</i> never got called. This is a
+        major concern for stack based smartptrs such as
+        <code>shared_ptr</code> and <code>linked_ptr</code>, as well as any
+        STL objects that you may want to use. Therefore it pains us to say
+        that if you must use exceptions in your Objective-C++ code, use C++
+        exceptions whenever possible. You should never re-throw an Objective-C
+        exception, nor are stack based C++ objects (such as
+        <code>std::string</code>, <code>std::vector</code> etc.) allowed in
+        the body of any <code>@try</code>, <code>@catch</code>, or
+        <code>@finally</code> blocks.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+
+  <STYLEPOINT title="nil Checks">
+    <SUMMARY>
+      Use <code>nil</code> checks for logic flow only.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Use <code>nil</code> checks for logic flow of the application, not for
+        crash prevention. Sending a message to a <code>nil</code> object is
+        handled by the Objective-C runtime. If the method has no return
+        result, you're good to go. However if there is one, there may be
+        differences based on runtime architecture, return size, and OS X
+        version (see <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/Articles/chapter_2_section_3.html#//apple_ref/doc/uid/TP30001163-CH11-SW7">
+        Apple's documentation</a> for specifics).
+      </p>
+      <p>
+        Note that this is very different from checking C/C++ pointers against
+        <code>NULL</code>, which the runtime does not handle and will cause
+        your application to crash. You still need to make sure you do not
+        dereference a <code>NULL</code> pointer.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="BOOL Pitfalls">
+    <SUMMARY>
+      Be careful with <code>BOOL</code> return values and mixing
+      <code>bool</code> with <code>BOOL</code>. Avoid comparing directly
+      with <code>YES</code>.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Only use the constants YES and NO for <code>BOOL</code> return values
+        and assignments. Common mistakes include casting an array's size or
+        a pointer value as a BOOL, which depending on the value of the last
+        byte, could still result in a NO value.
+      </p>
+      <p>
+        Also be careful when interoperating with C++ and its <code>bool</code>
+        type. Don't just assume that <code>YES</code> and <code>NO</code>
+        map directly to <code>true</code> and <code>false</code>. You can use
+        the ternary operator to succinctly map between them.
+      </p>
+      <CODE_SNIPPET>
+        bool b = myBOOL ? true : false;  // to go one way...
+        myBOOL = b ? YES : NO;           // ... or the other
+      </CODE_SNIPPET>
+      <p>
+        Finally, don't directly compare <code>BOOL</code> variables directly
+        with <code>YES</code>. Not only is is harder to read for those
+        well-versed in C, the first point above demonstrates that return
+        values may not always be what you expect.
+      </p>
+      <BAD_CODE_SNIPPET>
+        BOOL great = [foo isGreat];
+        if (great == YES)
+          // ...be great!
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        BOOL great = [foo isGreat];
+        if (great)
+          // ...be great!
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
+</CATEGORY>
+
+<CATEGORY title="Cocoa Patterns">
+  
+  <STYLEPOINT title="Delegate Pattern">
+    <SUMMARY>
+      Delegate objects should not be retained.
+    </SUMMARY>
+    <BODY>
+      <p>
+        A class that implements the delegate pattern should:
+        <ol>
+          <li>
+            Have an instance variable named <var>delegate_</var> to reference
+            the delegate.
+          </li>
+          <li>
+            Thus, the accessor methods should be named <code>delegate</code>
+            and <code>setDelegate:</code>.
+          </li>
+          <li>
+            The <var>delegate_</var> object should <b>not</b> be retained.
+          </li>
+        </ol>
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Model/View/Controller">
+    <SUMMARY>
+      Separate the model from the view. Separate the controller from the
+      view and the model. Use <code>@protocol</code>s for callback APIs.
+    </SUMMARY>
+    <BODY>
+      <p>
+        <ul>
+          <li>
+            Separate model from view: don't build assumptions about the
+            presentation into the model or data source. Keep the interface
+            between the data source and the presentation abstract. Don't give
+            the model knowledge of its view. (A good rule of thumb is to ask
+            yourself if it's possible to have multiple presentations, with
+            different states, on a single instance of your data source.)
+          </li>
+          <li>
+            Separate controller from view and model: don't put all of the
+            "business logic" into view-related classes; this makes the code
+            very unusable. Make controller classes to host this code, but
+            ensure that the controller classes don't make too many assumptions
+            about the presentation.
+          </li>
+          <li>
+            Use a <code>protocol</code> for callback APIs where all the
+            methods must be implemented. Use a <code>category</code> (or an
+            "informal protocol") when not all the methods need to be
+            implemented.
+          </li>
+        </ul>
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+</CATEGORY>
+
+<HR/>
+
+
+
+<address>
+Mike Pinkerton <br/>
+Greg Miller <br/>
+Dave MacLachlan <br/>
+</address>
+</GUIDE>
