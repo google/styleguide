@@ -338,7 +338,7 @@
 <CATEGORY title="Naming">
   
   <p>
-    Naming rules are very import in maintainable code. Objective-C method
+    Naming rules are very important in maintainable code. Objective-C method
     names tend to be very long, but this has the benefit that a block of code
     can almost read like prose, thus rendering many comments unnecessary. </p>
     <p> When writing pure Objective-C code, we mostly follow standard <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html">
