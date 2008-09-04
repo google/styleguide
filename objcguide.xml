@@ -49,13 +49,13 @@
   Google's general recommendations. So, before reading this guide, please make
   sure you've read:
   <ul>
-  <li><a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/index.html">Apple's Cocoa
-  Coding Guidelines</a></li>
+  <li><a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/index.html">Apple's
+  Cocoa Coding Guidelines</a></li>
   <li>
   	
   	<div>
-  		<a href="http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml">
-  			Google's Open Source C++ Style Guide</a>
+  		<a href="http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml">Google's
+  			Open Source C++ Style Guide</a>
   	</div>
   </li>
   </ul>
@@ -80,10 +80,10 @@
 
   <p>
     Google has already released open-source code that conforms to these
-    guidelines as part of the <a href="http://code.google.com/p/google-toolbox-for-mac/">Google Toolbox for
-    Mac project</a> (abbreviated GTM throughout this document). Code meant to
-    be shared across different projects is a good candidate to be included in
-    this repository.
+    guidelines as part of the <a href="http://code.google.com/p/google-toolbox-for-mac/">Google
+    Toolbox for Mac project</a> (abbreviated GTM throughout this document).
+    Code meant to be shared across different projects is a good candidate to
+    be included in this repository.
   </p>
   
   
@@ -91,8 +91,8 @@
   <p>
     Note that this guide is not an Objective-C tutorial. We assume that the
     reader is familiar with the language. If you are new to Objective-C or
-    need a refresher, please read <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/index.html">
-    The Objective-C Programming Language</a>.
+    need a refresher, please read <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/index.html">The
+    Objective-C Programming Language</a>.
   </p>
 </CATEGORY>
 </OVERVIEW>
@@ -341,8 +341,8 @@
     Naming rules are very important in maintainable code. Objective-C method
     names tend to be very long, but this has the benefit that a block of code
     can almost read like prose, thus rendering many comments unnecessary. </p>
-    <p> When writing pure Objective-C code, we mostly follow standard <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html">
-    Objective-C naming rules</a>. These naming guidelines may differ
+    <p> When writing pure Objective-C code, we mostly follow standard <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html">Objective-C
+    naming rules</a>. These naming guidelines may differ
     significantly from those outlined in the C++ style guide. For example,
     Google's C++ style guide recommends the use of underscores between words
     in variable names, whereas this guide recommends the use of intercaps,
@@ -1070,8 +1070,8 @@
         handled by the Objective-C runtime. If the method has no return
         result, you're good to go. However if there is one, there may be
         differences based on runtime architecture, return size, and OS X
-        version (see <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/Articles/chapter_2_section_3.html#//apple_ref/doc/uid/TP30001163-CH11-SW7">
-        Apple's documentation</a> for specifics).
+        version (see <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/Articles/chapter_2_section_3.html#//apple_ref/doc/uid/TP30001163-CH11-SW7">Apple's
+        documentation</a> for specifics).
       </p>
       <p>
         Note that this is very different from checking C/C++ pointers against
