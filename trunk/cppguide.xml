@@ -2464,9 +2464,23 @@ Tashana Landray
              Compressed Pair</a> from <code>boost/compressed_pair.hpp</code>
              </li>
         <li> <a href="http://www.boost.org/libs/ptr_container/">
-             Pointer Container</a> from <code>boost/ptr_container</code> except
-             <code>ptr_array.hpp</code> and serialization
+             Pointer Container</a> from <code>boost/ptr_container</code> except serialization
              </li>
+        <li> <a href="http://www.boost.org/libs/array/">
+             Array</a> from <code>boost/array.hpp</code>
+             </li>
+        <li> <a href="http://www.boost.org/libs/graph/">
+             The Boost Graph Library (BGL)</a> from <code>boost/graph</code> except serialization
+             </li>
+        <li> <a href="http://www.boost.org/libs/property_map/">
+             Property Map</a> from <code>boost/property_map.hpp</code>
+             </li>
+        <li> The part of
+             <a href="http://www.boost.org/libs/iterator/">
+             Iterator</a> that deals with defining iterators:
+             <code>boost/iterator/iterator_adaptor.hpp</code>,
+             <code>boost/iterator/iterator_facade.hpp</code>, and
+             <code>boost/function_output_iterator.hpp</code></li>
       </ul>
       We are actively considering adding other Boost features to the list, so
       this rule may be relaxed in the future.
@@ -3167,11 +3181,13 @@ Tashana Landray
           often be more readable to line them up:
         </p>
         <CODE_SNIPPET>
-          ...
           DoSomething();                  // Comment here so the comments line up.
           DoSomethingElseThatIsLonger();  // Comment here so there are two spaces between
                                           // the code and the comment.
-          ...
+          { // One space before comment when opening a new scope is allowed,
+            // thus the comment lines up with the following comments and code.
+            DoSomethingElse();  // Two spaces before line comments normally.
+          }
         </CODE_SNIPPET>
       </SUBSECTION>
       <SUBSECTION title="NULL, true/false, 1, 2, 3...">
@@ -3783,10 +3799,9 @@ Tashana Landray
         const string &amp; str;  // Bad - spaces on both sides of &amp;
       </BAD_CODE_SNIPPET>
       <p>
-        You should do this consistently within a single file or
-        
-        
-        so when modifying an existing file, use the style in that
+        You should do this consistently within a single
+        file,
+        so, when modifying an existing file, use the style in that
         file.
       </p>
     </BODY>
