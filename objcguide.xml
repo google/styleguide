@@ -5,13 +5,13 @@
 
 
 <div align="right">
-	<address>
-		Mike Pinkerton<br/>
-		Greg Miller <br/>
-		Dave MacLachlan
-	</address>
+  <address>
+    Mike Pinkerton<br/>
+    Greg Miller <br/>
+    Dave MacLachlan
+  </address>
 </div>
-	
+  
 <OVERVIEW>
 
 <CATEGORY title="Important Note">
@@ -34,31 +34,40 @@
 
 <CATEGORY title="Background">
 
-  <p>Objective-C is a very dynamic, object-oriented extension of C.  It's
-  designed to be easy to use and read, while enabling sophisticated
-  object-oriented design. It is the primary development language for new
-  applications on Mac OS X and the iPhone.</p>
+  <p>
+    Objective-C is a very dynamic, object-oriented extension of C.  It's
+    designed to be easy to use and read, while enabling sophisticated
+    object-oriented design. It is the primary development language for new
+    applications on Mac OS X and the iPhone.
+  </p>
 
-  <p>Cocoa is one of the main application frameworks on Mac OS X. It is a
-  collection of Objective-C classes that provide for rapid development of
-  full-featured Mac OS X applications.</p>
+  <p>
+    Cocoa is one of the main application frameworks on Mac OS X. It is a
+    collection of Objective-C classes that provide for rapid development of
+    full-featured Mac OS X applications.
+  </p>
 
-  <p>Apple has already written a very good, and widely accepted, coding guide
-  for Objective-C. Google has also written a similar guide for C++. This
-  Objective-C guide aims to be a very natural combination of Apple's and
-  Google's general recommendations. So, before reading this guide, please make
-  sure you've read:
-  <ul>
-  <li><a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/index.html">Apple's
-  Cocoa Coding Guidelines</a></li>
-  <li>
-  	
-  	<div>
-  		<a href="http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml">Google's
-  			Open Source C++ Style Guide</a>
-  	</div>
-  </li>
-  </ul>
+  <p>
+    Apple has already written a very good, and widely accepted, coding guide
+    for Objective-C. Google has also written a similar guide for C++. This
+    Objective-C guide aims to be a very natural combination of Apple's and
+    Google's general recommendations. So, before reading this guide, please make
+    sure you've read:
+    <ul>
+      <li>
+        <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/index.html">
+          Apple's Cocoa Coding Guidelines
+        </a>
+      </li>
+      <li>
+        
+        <div>
+          <a href="http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml">
+            Google's Open Source C++ Style Guide
+          </a>
+        </div>
+      </li>
+    </ul>
   </p>
 
   
@@ -80,8 +89,11 @@
 
   <p>
     Google has already released open-source code that conforms to these
-    guidelines as part of the <a href="http://code.google.com/p/google-toolbox-for-mac/">Google
-    Toolbox for Mac project</a> (abbreviated GTM throughout this document).
+    guidelines as part of the 
+    <a href="http://code.google.com/p/google-toolbox-for-mac/">
+      Google Toolbox for Mac project
+    </a>
+    (abbreviated GTM throughout this document).
     Code meant to be shared across different projects is a good candidate to
     be included in this repository.
   </p>
@@ -91,124 +103,126 @@
   <p>
     Note that this guide is not an Objective-C tutorial. We assume that the
     reader is familiar with the language. If you are new to Objective-C or
-    need a refresher, please read <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/index.html">The
-    Objective-C Programming Language</a>.
+    need a refresher, please read 
+    <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/index.html">
+      The Objective-C Programming Language
+    </a>.
   </p>
 </CATEGORY>
 </OVERVIEW>
 
 <CATEGORY title="Example">
-	
+  
   <p>
     They say an example is worth a thousand words so let's start off with an
     example that should give you a feel for the style, spacing, naming, etc.
   </p>
 
   <p>
-		An example header file, demonstrating the correct commenting and spacing
+    An example header file, demonstrating the correct commenting and spacing
     for an <code>@interface</code> declaration
   </p>
 
-<pre>
-  //  GTMFoo.h
-  //  FooProject
-  //
-  //  Created by Greg Miller on 6/13/08.
-  //  Copyright 2008 Google, Inc. All rights reserved.
-  //
-
-  #import &lt;Foundation/Foundation.h&gt;
-
-  // A sample class demonstrating good Objective-C style. All interfaces,
-  // categories, and protocols (read: all top-level declarations in a header)
-  // MUST be commented. Comments must also be adjacent to the object they're
-  // documenting.
-  //
-  // (no blank line between this comment and the interface)
-  @interface GTMFoo : NSObject {
-   @private
-    NSString *foo_;
-    NSString *bar_;
-  }
-
-  // Returns an autoreleased instance of GMFoo. See -initWithString: for details
-  // about the argument.
-  + (id)fooWithString:(NSString *)string;
-
-  // Designated initializer. |string| will be copied and assigned to |foo_|.
-  - (id)initWithString:(NSString *)string;
-
-  // Gets and sets the string for |foo_|.
-  - (NSString *)foo;
-  - (void)setFoo:(NSString *)newFoo;
-
-  // Does some work on |blah| and returns YES if the work was completed
-  // successfuly, and NO otherwise.
-  - (BOOL)doWorkWithString:(NSString *)blah;
-
-  @end
-</pre>
-
+<CODE_SNIPPET>
+    //  GTMFoo.h
+    //  FooProject
+    //
+    //  Created by Greg Miller on 6/13/08.
+    //  Copyright 2008 Google, Inc. All rights reserved.
+    //
+    
+    #import &lt;Foundation/Foundation.h&gt;
+    
+    // A sample class demonstrating good Objective-C style. All interfaces,
+    // categories, and protocols (read: all top-level declarations in a header)
+    // MUST be commented. Comments must also be adjacent to the object they're
+    // documenting.
+    //
+    // (no blank line between this comment and the interface)
+    @interface GTMFoo : NSObject {
+     @private
+      NSString *foo_;
+      NSString *bar_;
+    }
+    
+    // Returns an autoreleased instance of GMFoo. See -initWithString: for details
+    // about the argument.
+    + (id)fooWithString:(NSString *)string;
+    
+    // Designated initializer. |string| will be copied and assigned to |foo_|.
+    - (id)initWithString:(NSString *)string;
+    
+    // Gets and sets the string for |foo_|.
+    - (NSString *)foo;
+    - (void)setFoo:(NSString *)newFoo;
+    
+    // Does some work on |blah| and returns YES if the work was completed
+    // successfuly, and NO otherwise.
+    - (BOOL)doWorkWithString:(NSString *)blah;
+    
+    @end
+  </CODE_SNIPPET>
+  
   <p>
-		An example source file, demonstating the correct commenting and spacing
+    An example source file, demonstating the correct commenting and spacing
     for the <code>@implementation</code> of an interface. It also includes the
     reference implementations for important methods like getters and setters,
     <code>init</code>, and <code>dealloc</code>.
   </p>
-
-<pre>
-  //
-  //  GTMFoo.m
-  //  FooProject
-  //
-  //  Created by Greg Miller on 6/13/08.
-  //  Copyright 2008 Google, Inc. All rights reserved.
-  //
-
-  #import "GTMFoo.h"
-
-
-  @implementation GTMFoo
-
-  + (id)fooWithString:(NSString *)string {
-    return [[[self alloc] initWithString:string] autorelease];
-  }
-
-  // Must always override super's designated initializer.
-  - (id)init {
-    return [self initWithString:nil];
-  }
-
-  - (id)initWithString:(NSString *)string {
-    if ((self = [super init])) {
-      foo_ = [string copy];
-      bar_ = [[NSString alloc] initWithFormat:@"hi %d", 3];
+  
+  <CODE_SNIPPET>
+    //
+    //  GTMFoo.m
+    //  FooProject
+    //
+    //  Created by Greg Miller on 6/13/08.
+    //  Copyright 2008 Google, Inc. All rights reserved.
+    //
+    
+    #import "GTMFoo.h"
+    
+    
+    @implementation GTMFoo
+    
+    + (id)fooWithString:(NSString *)string {
+      return [[[self alloc] initWithString:string] autorelease];
     }
-    return self;   
-  }
-
-  - (void)dealloc {
-    [foo_ release];
-    [bar_ release];
-    [super dealloc];
-  }
-
-  - (NSString *)foo {
-    return foo_;
-  }
-
-  - (void)setFoo:(NSString *)newFoo {
-    [foo_ autorelease];
-    foo_ = [newFoo copy];   
-  }
-
-  - (BOOL)doWorkWithString:(NSString *)blah {
-    // ...
-    return NO;
-  }
-
-  @end
-</pre>
+    
+    // Must always override super's designated initializer.
+    - (id)init {
+      return [self initWithString:nil];
+    }
+    
+    - (id)initWithString:(NSString *)string {
+      if ((self = [super init])) {
+        foo_ = [string copy];
+        bar_ = [[NSString alloc] initWithFormat:@"hi %d", 3];
+      }
+      return self;   
+    }
+    
+    - (void)dealloc {
+      [foo_ release];
+      [bar_ release];
+      [super dealloc];
+    }
+    
+    - (NSString *)foo {
+      return foo_;
+    }
+    
+    - (void)setFoo:(NSString *)newFoo {
+      [foo_ autorelease];
+      foo_ = [newFoo copy];   
+    }
+    
+    - (BOOL)doWorkWithString:(NSString *)blah {
+      // ...
+      return NO;
+    }
+    
+    @end
+  </CODE_SNIPPET>
 
 </CATEGORY>
 
@@ -828,11 +842,11 @@
     <BODY>
       <p>
         Unlike C++, Objective-C doesn't have a way to differentiate between
-        public and private methods &#8212; everything is public. As a result, avoid
-        placing methods in the public API unless they are actually expected to
-        be used by a consumer of the class. This helps reduce the likelihood
-        they'll be called when you're not expecting it. This includes methods
-        that are being overridden from the parent class. For internal
+        public and private methods &#8212; everything is public. As a result,
+        avoid placing methods in the public API unless they are actually
+        expected to be used by a consumer of the class. This helps reduce the
+        likelihood they'll be called when you're not expecting it. This includes
+        methods that are being overridden from the parent class. For internal
         implementation methods, use a category defined in the implementation
         file as opposed to adding them to the public header.
       </p>
@@ -1123,8 +1137,176 @@
       </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
-
+  
+  <STYLEPOINT title="Properties">
+    <SUMMARY>
+      Properties in general are allowed with the following caveat: properties
+      are an Objective-C 2.0 feature which will limit your code to running
+      on the iPhone and MacOS X 10.5 (Leopard) and higher. Dot notation to
+      access properties is not allowed.
+    </SUMMARY>
+    <BODY> 
+      <SUBSECTION title="Naming">
+        <p>
+          A property's associated instance variable's name must conform to the
+          trailing _ requirement. The property's name should be the same as its
+          associated instance variable without the trailing _.
+        </p>
+        <p>
+          Use the @synthesize directive to rename the property correctly.
+        </p>
+    
+        <CODE_SNIPPET>
+          @interface MyClass : NSObject {
+           @private
+            NSString *name_;
+          }
+          @property(copy, nonatomic) NSString *name;
+          @end
+          
+          @implementation MyClass
+          @synthesize name = name_;
+          @end
+        </CODE_SNIPPET>
+      </SUBSECTION>
+      <SUBSECTION title="Location">
+        <p>
+          A property's declaration must come immediately after the instance
+          variable block of a class interface. A property's definition must
+          come immediately after the <code>@implementation</code> block in a
+          class definition. They are indented at the same level as the 
+          <code>@interface</code> or <code>@implementation</code> statements
+          that they are enclosed in.
+        </p>
+        <CODE_SNIPPET>
+          @interface MyClass : NSObject {
+           @private
+            NSString *name_;
+          }
+          @property(copy, nonatomic) NSString *name;
+          @end
+          
+          @implementation MyClass
+          @synthesize name = name_;
+          - (id)init {
+          ...
+          }
+          @end
+        </CODE_SNIPPET>
+      </SUBSECTION>
+      <SUBSECTION title="Use Copy Attribute For Strings">
+        <p>
+          NSString properties should always be declared with the
+          <code>copy</code> attribute.
+        </p>
+        <p>
+          This logically follows from the requirement that setters for
+          NSStrings always must use <code>copy</code> instead of
+          <code>retain</code>.
+        </p>
+      </SUBSECTION>
+      <SUBSECTION title="Never synthesize CFType properties">
+        <p>
+          CFTypes should always have the <code>@dynamic</code> implementation
+          directive. 
+        </p>
+        <p>
+          Since CFTypes can't have the <code>retain</code> property
+          attribute, the developer must handle retaining and releasing the
+          value themselves. In the rare case that you do actually want
+          assignment it is better to make that completely clear by actually
+          implementing the setter and getter and commenting why that is the
+          case.
+        </p>
+      </SUBSECTION>
+      <SUBSECTION title="List out all implementation directives">
+        <p>
+          Use implementation directives for all properties even if they are
+          <code>@dynamic</code> by default.
+        </p>
+        <p>
+          Even though <code>@dynamic</code> is default, explicitly list it out
+          with all of the other property implementation directives making it
+          clear how every property in a class is handled at a single glance.
+        </p>
+        <BAD_CODE_SNIPPET>
+          @interface MyClass : NSObject
+          @property(readonly) NSString *name;
+          @end
+          
+          @implementation MyClass
+          .
+          .
+          .
+          - (NSString*)name {
+            return @"foo";
+          }
+          @end
+        </BAD_CODE_SNIPPET>
+        <CODE_SNIPPET>
+          @interface MyClass : NSObject
+          @property(readonly) NSString *name;
+          @end
+          
+          @implementation MyClass
+          @dynamic name;
+          .
+          .
+          .
+          - (NSString*)name {
+            return @"foo";
+          }
+          @end
+        </CODE_SNIPPET>
+      </SUBSECTION>
+      <SUBSECTION title="Atomicity">
+        <p>
+          Be aware of the overhead of properties. By default, all synthesized
+          setters and getters are atomic. This gives each set and get calls a
+          substantial amount of synchronization overhead. Declare your
+          properties <code>nonatomic</code> unless you require atomicity.
+        </p>
+      </SUBSECTION>
+      <SUBSECTION title="Dot notation">
+        <p>
+          We do not allow the use of dot notation to access properties for
+          the following reasons:
+        </p>
+        <ol>
+          <li>
+            Dot notation is purely syntactic sugar for standard method calls,
+            whose readability gains are debatable. It just gives you another
+            way to make method calls. 
+          </li>
+          <li>
+            It obscures the type that you are dereferencing. When one sees:
+            <code>[foo setBar:1]</code> it is immediately clear that you are
+            working with an Objective-C object. When one sees 
+            <code>foo.bar = 1</code> it is not clear if foo is an object, or
+            a struct/union/C++ class.
+          </li>
+          <li>
+            It allows you to do method calls that look like getters.
+            <BAD_CODE_SNIPPET>
+              NSString *upperCase = @"foo".uppercaseString;
+            </BAD_CODE_SNIPPET>
+            which is not only confusing, but difficult to spot in a code review.
+          </li>
+          <li>
+            It hides method calls.
+            <BAD_CODE_SNIPPET>
+              bar.value += 10;
+            </BAD_CODE_SNIPPET>
+            is actually two separate method calls (one to set and one to get)
+            and if your properties are not simple you may find a lot of work
+            being done in a hidden manner.
+          </li>
+        </ol>
+      </SUBSECTION>
+    </BODY>
+  </STYLEPOINT>
 </CATEGORY>
+
 
 <CATEGORY title="Cocoa Patterns">
   
