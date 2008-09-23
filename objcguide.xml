@@ -746,15 +746,15 @@
         <CODE_SNIPPET>
           @interface MyDelegate : NSObject {
            @private
-            IBOutlet* okButton_;        // normal NSControl
-            IBOutlet* myContextMenu_;   // manually-loaded menu (strong)
+            IBOutlet NSButton* okButton_;  // normal NSControl
+            IBOutlet NSMenu* myContextMenu_;  // manually-loaded menu (strong)
 
-            AnObjcObject* doohickey_;   // my doohickey
+            AnObjcObject* doohickey_;  // my doohickey
             MyController* controller_;  // so we can send msgs back (weak, owns me)
 
             // non-NSObject pointers...
-            CWackyCPPClass* wacky_;     // some cross-platform object (strong)
-            CFDictionaryRef* dict_;     // (strong)
+            CWackyCPPClass* wacky_;  // some cross-platform object (strong)
+            CFDictionaryRef* dict_;  // (strong)
           }
           @end
         </CODE_SNIPPET>
