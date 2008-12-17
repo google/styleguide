@@ -2149,8 +2149,9 @@ Tashana Landray
           You should not use the unsigned integer types such as
           <code>uint32_t</code>,
           unless the quantity you are representing is really a bit pattern
-          rather than a number. In particular, do not use unsigned types to
-          say a number will never be negative.  Instead, use
+          rather than a number, or unless you need defined
+          twos-complement overflow. In particular, do not use unsigned
+          types to say a number will never be negative.  Instead, use
           
           assertions for this.
         </p>
@@ -3472,8 +3473,9 @@ Tashana Landray
         <li> The open curly brace is always at the end of the same
              line as the last parameter.
              </li>
-        <li> The close curly brace is always on the last line by
-             itself.
+        <li> The close curly brace is either on the last line by itself
+             or (if other style rules permit) on the same line as the
+             open curly brace.
              </li>
         <li> There should be a space between the close parenthesis and
              the open curly brace.
