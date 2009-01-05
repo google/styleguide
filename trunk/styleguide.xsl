@@ -332,6 +332,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format">
     </I>
   </xsl:template>
 
+
   <!-- This passes through any HTML elements that the
     XML doc uses for minor formatting -->
   <xsl:template match="a|address|blockquote|br|center|cite|code|dd|div|dl|dt|em|hr|i|li|ol|p|pre|span|table|td|th|tr|ul|var|A|ADDRESS|BLOCKQUOTE|BR|CENTER|CITE|CODE|DD|DIV|DL|DT|EM|HR|I|LI|OL|P|PRE|SPAN|TABLE|TD|TH|TR|UL|VAR">

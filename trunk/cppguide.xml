@@ -2,9 +2,13 @@
 <?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
 <GUIDE title="Google C++ Style Guide">
 
+<p align="right">
+
+Revision 3.124
+</p>
 
 
-<div align="right">
+
 <address>
 Benjy Weinberger<br/>
 Craig Silverstein<br/>
@@ -12,7 +16,6 @@ Gregory Eitzmann<br/>
 Mark Mentovai<br/>
 Tashana Landray
 </address>
-</div>
 
 <OVERVIEW>
 <CATEGORY title="Important Note">
@@ -3317,6 +3320,10 @@ Tashana Landray
     can all read and understand everyone's code easily.
   </p>
   
+  <p>
+    To help you format code correctly, we've created a <A HREF="http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el">settings
+    file for emacs</A>.
+  </p>
 
   <STYLEPOINT title="Line Length">
     <SUMMARY>
@@ -4308,6 +4315,10 @@ Tashana Landray
 </PARTING_WORDS>
 
 <HR/>
+
+<p align="right">
+Revision 3.124
+</p>
 
 
 
