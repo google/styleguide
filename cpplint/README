@@ -1,0 +1,24 @@
+This is automated checker to make sure a C++ file follows Google's C++ style
+guide (http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml). As it
+heavily relies on regular expressions, cpplint.py won't catch all violations of
+the style guide and will very occasionally report a false positive. There is a
+list of things we currently don't handle very well at the top of cpplint.py,
+and we welcome patches to improve it.
+
+The linting tool takes a list of files as input. For full usage instructions,
+please see the output of:
+
+  ./cpplint.py --help
+
+Unit tests are provided in cpplint_unittest.py. This file can safely be ignored
+by end users who have downloaded this package and only want to run the lint
+tool.
+
+cpplint.py and its corresponding unit tests are Copyright (C) 2009 Google Inc.
+It is free software; you can redistribute it and/or modify it under the terms
+of either:
+
+  a) the GNU General Public License as published by the Free Software
+  Foundation; either version 1, or (at your option) any later version, or
+
+  b) the "Artistic License".
