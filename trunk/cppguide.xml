@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.124
+Revision 3.127
 </p>
 
 
@@ -1445,6 +1445,25 @@ Tashana Landray
   </STYLEPOINT>
 
   
+  <STYLEPOINT title="cpplint">
+    <SUMMARY>
+      Use <code>cpplint.py</code> to detect style errors.
+    </SUMMARY>
+    <BODY>
+      <p>
+        <code>cpplint.py</code> is a tool that reads a source file and
+        identifies many style errors.  It is not perfect, and has both false
+        positives and false negatives, but it is still a valuable tool.  False
+        positives can be ignored by putting <code>// NOLINT</code> at the end
+        of the line.
+      </p>
+      <p>
+        Some projects have instructions on how to run <code>cpplint.py</code>
+        from their project tools. If the project you are contributing to does
+        not, you can download <A HREF="http://google-styleguide.googlecode.com/svn/trunk/cpplint/cpplint.py"><code>cpplint.py</code></A> separately.
+      </p>
+    </BODY>
+  </STYLEPOINT>
 
   
 </CATEGORY>
@@ -3666,9 +3685,11 @@ Tashana Landray
       </BAD_CODE_SNIPPET>
       <p>
         In general, curly braces are not required for single-line
-        statements, but they are allowed if you like them.  Some
+        statements, but they are allowed if you like them;
+        conditional or loop statements with complex conditions or
+        statements may be more readable with curly braces. Some
         
-        
+        projects
         require that an <CODE>if</CODE> must always always have an
         accompanying brace.
       </p>
@@ -4317,7 +4338,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.124
+Revision 3.127
 </p>
 
 
