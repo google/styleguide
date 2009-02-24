@@ -248,6 +248,16 @@ class CpplintTest(CpplintTestBase):
         '// ' + 'x' * 100,
         'Lines should very rarely be longer than 100 characters'
         '  [whitespace/line_length] [4]')
+    self.TestLint(
+        '// http://g' + ('o' * 100) + 'gle.com/',
+        '')
+    self.TestLint(
+        '//   https://g' + ('o' * 100) + 'gle.com/',
+        '')
+    self.TestLint(
+        '//   https://g' + ('o' * 60) + 'gle.com/ and some comments',
+        'Lines should be <= 80 characters long'
+        '  [whitespace/line_length] [2]')
 
   # Test Variable Declarations.
   def testVariableDeclarations(self):
@@ -521,6 +531,18 @@ class CpplintTest(CpplintTestBase):
            bool foobar = swap(0,1);
         ''',
         'Add #include <algorithm> for swap  [build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
+        '''#include "base/foobar.h"
+           bool foobar = transform(a.begin(), a.end(), b.start(), Foo);
+        ''',
+        'Add #include <algorithm> for transform  '
+        '[build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
+        '''#include "base/foobar.h"
+           bool foobar = min_element(a.begin(), a.end());
+        ''',
+        'Add #include <algorithm> for min_element  '
+        '[build/include_what_you_use] [4]')
     self.TestIncludeWhatYouUse(
         '''foo->swap(0,1);
            foo.swap(0,1);
@@ -2410,16 +2432,6 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
     self.TestFunctionLengthCheckDefinition(self.TriggerLines(10), 5)
 
   def testFunctionLengthNotDeterminable(self):
-    # Too many lines before body.
-    code = 'void test()\n'
-    for i in range(100):
-      code += 'int arg%d,\n' % i
-    code += ') {}'
-    self.TestFunctionLengthsCheck(
-        code,
-        'Lint failed to find start of function body.'
-        '  [readability/fn_size] [5]')
-
     # Macro invocation without terminating semicolon.
     self.TestFunctionLengthsCheck(
         'MACRO(arg)',

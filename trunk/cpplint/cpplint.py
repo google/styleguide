@@ -118,7 +118,8 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 # We want an explicit list so we can list them all in cpplint --filter=.
 # If you add a new error message with a new category, add it to the list
 # here!  cpplint_unittest.py should tell you if you forget to do this.
-_ERROR_CATEGORIES = """\
+# \ used for clearer layout -- pylint: disable-msg=C6013
+_ERROR_CATEGORIES = '''\
   build/class
   build/deprecated
   build/endif_comment
@@ -171,7 +172,7 @@ _ERROR_CATEGORIES = """\
   whitespace/semicolon
   whitespace/tab
   whitespace/todo
-"""
+'''
 
 # We used to check for high-bit characters, but after much discussion we
 # decided those were OK, as long as they were in UTF-8 and didn't represent
@@ -384,6 +385,10 @@ class _CppLintState(object):
     Args:
       filters: A string of comma-separated filters (eg "+whitespace/indent").
                Each filter should start with + or -; else we die.
+
+    Raises:
+      ValueError: The comma-separated filters did not all start with '+' or '-'.
+                  E.g. "-,+whitespace,-whitespace/indent,whitespace/badfilter"
     """
     if not filters:
       self.filters = []
@@ -742,7 +747,7 @@ def CleanseComments(line):
   return _RE_PATTERN_CLEANSE_LINE_C_COMMENTS.sub('', line)
 
 
-class CleansedLines:
+class CleansedLines(object):
   """Holds 3 copies of all lines with different preprocessing applied to them.
 
   1) elided member contains lines without strings and comments,
@@ -858,7 +863,7 @@ def GetHeaderGuardCPPVariable(filename):
 def CheckForHeaderGuard(filename, lines, error):
   """Checks that the file contains a header guard.
 
-  Logs an error if no #ifndef header guard is present.  For google3
+  Logs an error if no #ifndef header guard is present.  For other
   headers, checks that the full pathname is used.
 
   Args:
@@ -1024,6 +1029,7 @@ def CheckPosixThreading(filename, clean_lines, linenum, error):
   line = clean_lines.elided[linenum]
   for single_thread_function, multithread_safe_function in threading_list:
     ix = line.find(single_thread_function)
+    # Comparisons made explicit for clarity -- pylint: disable-msg=C6403
     if ix >= 0 and (ix == 0 or (not line[ix - 1].isalnum() and
                                 line[ix - 1] not in ('_', '.', '>'))):
       error(filename, linenum, 'runtime/threadsafe_fn', 2,
@@ -1331,7 +1337,7 @@ def CheckForFunctionLengths(filename, clean_lines, linenum,
   joined_line = ''
 
   starting_func = False
-  regexp = r'(\w(\w|::|\*|\&|\s)*)\(' # decls * & space::name( ...
+  regexp = r'(\w(\w|::|\*|\&|\s)*)\('  # decls * & space::name( ...
   match_result = Match(regexp, line)
   if match_result:
     # If the name is all caps and underscores, figure it's a macro and
@@ -1343,10 +1349,7 @@ def CheckForFunctionLengths(filename, clean_lines, linenum,
 
   if starting_func:
     body_found = False
-    # Don't look too far for the function body. Lint might be mistaken about
-    # whether it's a function definition.
-    for start_linenum in xrange(linenum,
-                                min(linenum+100, clean_lines.NumLines())):
+    for start_linenum in xrange(linenum, clean_lines.NumLines()):
       start_line = lines[start_linenum]
       joined_line += ' ' + start_line.lstrip()
       if Search(r'(;|})', start_line):  # Declarations and trivial functions
@@ -1364,9 +1367,7 @@ def CheckForFunctionLengths(filename, clean_lines, linenum,
         function_state.Begin(function)
         break
     if not body_found:
-      # 50 lines after finding a line deemed to start a function
-      # definition, no body for the function was found. A macro
-      # invocation with no terminating semicolon could trigger this.
+      # No body for the function (or evidence of a non-function) was found.
       error(filename, linenum, 'readability/fn_size', 5,
             'Lint failed to find start of function body.')
   elif Match(r'^\}\s*$', line):  # function end
@@ -1404,6 +1405,7 @@ def CheckComment(comment, filename, linenum, error):
             '"// TODO(my_username): Stuff."')
 
     middle_whitespace = match.group(3)
+    # Comparisons made explicit for correctness -- pylint: disable-msg=C6403
     if middle_whitespace != ' ' and middle_whitespace != '':
       error(filename, linenum, 'whitespace/todo', 2,
             'TODO(my_username) should be followed by a space')
@@ -1498,6 +1500,7 @@ def CheckSpacing(filename, clean_lines, linenum, error):
   commentpos = line.find('//')
   if commentpos != -1:
     # Check if the // may be in quotes.  If so, ignore it
+    # Comparisons made explicit for clarity -- pylint: disable-msg=C6403
     if (line.count('"', 0, commentpos) -
         line.count('\\"', 0, commentpos)) % 2 == 0:   # not in quotes
       # Allow one space for new scopes, two spaces otherwise:
@@ -1885,7 +1888,11 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, error):
       is_header_guard = True
   # #include lines and header guards can be long, since there's no clean way to
   # split them.
-  if not line.startswith('#include') and not is_header_guard:
+  #
+  # URLs can be long too.  It's possible to split these, but it makes them
+  # harder to cut&paste.
+  if (not line.startswith('#include') and not is_header_guard and
+      not Match(r'^\s*//\s*http(s?)://\S*$', line)):
     line_width = GetLineWidth(line)
     if line_width > 100:
       error(filename, linenum, 'whitespace/line_length', 4,
@@ -2024,6 +2031,7 @@ def _ClassifyInclude(fileinfo, include, is_system):
     return _POSSIBLE_MY_HEADER
 
   return _OTHER_HEADER
+
 
 
 def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
@@ -2428,7 +2436,8 @@ _HEADERS_ACCEPTED_BUT_NOT_PROMOTED = {
 _RE_PATTERN_STRING = re.compile(r'\bstring\b')
 
 _re_pattern_algorithm_header = []
-for _template in ('copy', 'max', 'min', 'sort', 'swap'):
+for _template in ('copy', 'max', 'min', 'min_element', 'sort', 'swap',
+                  'transform'):
   # Match max<type>(..., ...), max(..., ...), but not foo->max, foo.max or
   # type::max().
   _re_pattern_algorithm_header.append(
@@ -2691,7 +2700,7 @@ def ParseArguments(args):
       verbosity = int(val)
     elif opt == '--filter':
       filters = val
-      if filters == '':
+      if not filters:
         PrintCategories()
 
   if not filenames:
