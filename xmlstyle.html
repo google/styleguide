@@ -1,0 +1,681 @@
+<style type="text/css">
+/* default css */
+table {
+font-size: 1em;
+line-height: inherit;
+}
+tr {
+text-align: left;
+}
+div, address, ol, ul, li, option, select {
+margin-top: 0px;
+margin-bottom: 0px;
+}
+p {
+margin: 0px;
+}
+body {
+margin: 6px;
+padding: 0px;
+font-family: Verdana, sans-serif;
+font-size: 10pt;
+background-color: #ffffff;
+}
+img {
+-moz-force-broken-image-icon: 1;
+}
+@media screen {
+html.pageview {
+background-color: #f3f3f3 !important;
+}
+body {
+min-height: 1100px;
+counter-reset: __goog_page__;
+}
+* html body {
+height: 1100px;
+}
+.pageview body {
+border-top: 1px solid #ccc;
+border-left: 1px solid #ccc;
+border-right: 2px solid #bbb;
+border-bottom: 2px solid #bbb;
+width: 648px !important;
+margin: 15px auto 25px;
+padding: 40px 50px;
+}
+/* IE6 */
+* html {
+overflow-y: scroll;
+}
+* html.pageview body {
+overflow-x: auto;
+}
+/* Prevent repaint errors when scrolling in Safari. This "Star-7" css hack
+targets Safari 3.1, but not WebKit nightlies and presumably Safari 4.
+That's OK because this bug is fixed in WebKit nightlies/Safari 4 :-). */
+html*#wys_frame::before {
+content: '\A0';
+position: fixed;
+overflow: hidden;
+width: 0;
+height: 0;
+top: 0;
+left: 0;
+}
+.writely-callout-data {
+display: none;
+*display: inline-block;
+*width: 0;
+*height: 0;
+*overflow: hidden;
+}
+.writely-footnote-marker {
+background-image: url('images/footnote_doc_icon.gif');
+background-color: transparent;
+background-repeat: no-repeat;
+width: 7px;
+overflow: hidden;
+height: 16px;
+vertical-align: top;
+-moz-user-select: none;
+}
+.editor .writely-footnote-marker {
+cursor: move;
+}
+.writely-footnote-marker-highlight {
+background-position: -15px 0;
+-moz-user-select: text;
+}
+.writely-footnote-hide-selection ::-moz-selection, .writely-footnote-hide-selection::-moz-selection {
+background: transparent;
+}
+.writely-footnote-hide-selection ::selection, .writely-footnote-hide-selection::selection {
+background: transparent;
+}
+.writely-footnote-hide-selection {
+cursor: move;
+}
+.editor .writely-comment-yellow {
+background-color: #FF9;
+background-position: -240px 0;
+}
+.editor .writely-comment-yellow-hover {
+background-color: #FF0;
+background-position: -224px 0;
+}
+.editor .writely-comment-blue {
+background-color: #C0D3FF;
+background-position: -16px 0;
+}
+.editor .writely-comment-blue-hover {
+background-color: #6292FE;
+background-position: 0 0;
+}
+.editor .writely-comment-orange {
+background-color: #FFDEAD;
+background-position: -80px 0;
+}
+.editor .writely-comment-orange-hover {
+background-color: #F90;
+background-position: -64px 0;
+}
+.editor .writely-comment-green {
+background-color: #99FBB3;
+background-position: -48px 0;
+}
+.editor .writely-comment-green-hover {
+background-color: #00F442;
+background-position: -32px 0;
+}
+.editor .writely-comment-cyan {
+background-color: #CFF;
+background-position: -208px 0;
+}
+.editor .writely-comment-cyan-hover {
+background-color: #0FF;
+background-position: -192px 0;
+}
+.editor .writely-comment-purple {
+background-color: #EBCCFF;
+background-position: -144px 0;
+}
+.editor .writely-comment-purple-hover {
+background-color: #90F;
+background-position: -128px 0;
+}
+.editor .writely-comment-magenta {
+background-color: #FCF;
+background-position: -112px 0;
+}
+.editor .writely-comment-magenta-hover {
+background-color: #F0F;
+background-position: -96px 0;
+}
+.editor .writely-comment-red {
+background-color: #FFCACA;
+background-position: -176px 0;
+}
+.editor .writely-comment-red-hover {
+background-color: #FF7A7A;
+background-position: -160px 0;
+}
+.editor .writely-comment-marker {
+background-image: url('images/markericons_horiz.gif');
+background-color: transparent;
+padding-right: 11px;
+background-repeat: no-repeat;
+width: 16px;
+height: 16px;
+-moz-user-select: none;
+}
+.editor .writely-comment-hidden {
+padding: 0;
+background: none;
+}
+.editor .writely-comment-marker-hidden {
+background: none;
+padding: 0;
+width: 0;
+}
+.editor .writely-comment-none {
+opacity: .2;
+filter:progid:DXImageTransform.Microsoft.Alpha(opacity=20);
+-moz-opacity: .2;
+}
+.editor .writely-comment-none-hover {
+opacity: .2;
+filter:progid:DXImageTransform.Microsoft.Alpha(opacity=20);
+-moz-opacity: .2;
+}
+.br_fix br:not(:-moz-last-node):not(:-moz-first-node) {
+position:relative;
+left: -1ex
+}
+.br_fix br+br {
+position: static !important
+}
+}
+h6 { font-size: 8pt }
+h5 { font-size: 8pt }
+h4 { font-size: 10pt }
+h3 { font-size: 12pt }
+h2 { font-size: 14pt }
+h1 { font-size: 18pt }
+blockquote {padding: 10px; border: 1px #DDD dashed }
+a img {border: 0}
+.pb {
+border-width: 0;
+page-break-after: always;
+/* We don't want this to be resizeable, so enforce a width and height
+using !important */
+height: 1px !important;
+width: 100% !important;
+}
+.editor .pb {
+border-top: 1px dashed #C0C0C0;
+border-bottom: 1px dashed #C0C0C0;
+}
+div.google_header, div.google_footer {
+position: relative;
+margin-top: 1em;
+margin-bottom: 1em;
+}
+/* Table of contents */
+.editor div.writely-toc {
+background-color: #f3f3f3;
+border: 1px solid #ccc;
+}
+.writely-toc > ol {
+padding-left: 3em;
+font-weight: bold;
+}
+ol.writely-toc-subheading {
+padding-left: 1em;
+font-weight: normal;
+}
+/* IE6 only */
+* html writely-toc ol {
+list-style-position: inside;
+}
+.writely-toc-none {
+list-style-type: none;
+}
+.writely-toc-decimal {
+list-style-type: decimal;
+}
+.writely-toc-upper-alpha {
+list-style-type: upper-alpha;
+}
+.writely-toc-lower-alpha {
+list-style-type: lower-alpha;
+}
+.writely-toc-upper-roman {
+list-style-type: upper-roman;
+}
+.writely-toc-lower-roman {
+list-style-type: lower-roman;
+}
+.writely-toc-disc {
+list-style-type: disc;
+}
+/* Ordered lists converted to numbered lists can preserve ordered types, and
+vice versa. This is confusing, so disallow it */
+ul[type="i"], ul[type="I"], ul[type="1"], ul[type="a"], ul[type="A"] {
+list-style-type: disc;
+}
+ol[type="disc"], ol[type="circle"], ol[type="square"] {
+list-style-type: decimal;
+}
+/* end default css */
+/* custom css */
+/* end custom css */
+/* ui edited css */
+body {
+font-family: Verdana;
+font-size: 10.0pt;
+line-height: normal;
+background-color: #ffffff;
+}
+/* end ui edited css */
+/* editor CSS */
+.editor a:visited {color: #551A8B}
+.editor table.zeroBorder {border: 1px dotted gray}
+.editor table.zeroBorder td {border: 1px dotted gray}
+.editor table.zeroBorder th {border: 1px dotted gray}
+.editor div.google_header, .editor div.google_footer {
+border: 2px #DDDDDD dashed;
+position: static;
+width: 100%;
+min-height: 2em;
+}
+.editor .misspell {background-color: yellow}
+.editor .writely-comment {
+font-size: 9pt;
+line-height: 1.4;
+padding: 1px;
+border: 1px dashed #C0C0C0
+}
+/* end editor CSS */
+</style>
+<style>
+body {
+margin: 0px;
+}
+#doc-contents {
+margin: 6px;
+}
+#google-view-footer {
+clear: both;
+border-top: thin solid;
+padding-top: 0.3em;
+padding-bottom: 0.3em;
+}
+a.google-small-link:link, a.google-small-link:visited {
+color:#112ABB;
+font-family:Arial,Sans-serif;
+font-size:11px !important;
+}
+body, p, div, td {
+direction: inherit;
+}
+@media print {
+#google-view-footer {
+display: none;
+}
+}
+</style>
+<script>
+function viewOnLoad() {
+if (document.location.href.indexOf('spi=1') != -1) {
+if (navigator.userAgent.toLowerCase().indexOf('msie') != -1) {
+window.print();
+} else {
+window.setTimeout(window.print, 10);
+}
+}
+if (document.location.href.indexOf('hgd=1') != -1) {
+var footer = document.getElementById("google-view-footer");
+if (footer) {
+footer.style.display = 'none';
+}
+}
+}
+</script>
+</head>
+<body>
+<div id="doc-contents">
+<div>
+
+<h1 style="text-align: center;">
+Google XML Document Format Style Guide</h1><div style="text-align: center;">Version 1.0<br>Copyright Google 2008<br><br></div><h2>Introduction</h2>This document provides a set of guidelines for general use when designing new XML document formats (and to some extent XML documents as well; see Section 11).&nbsp; Document formats usually include both formal parts (DTDs, schemas) and parts expressed in normative English prose.<br><br>These guidelines apply to new designs, and are not intended to force retroactive changes in existing designs.&nbsp; When participating in the creation of public or private document format designs, the guidelines may be helpful but should not control the group consensus.<br><br>This guide is meant for the design of XML that is to be generated and consumed by machines rather than human beings.&nbsp; Its rules are <i>not applicable</i> to formats such as XHTML (which should be formatted as much like HTML as possible) or ODF which are meant to express rich text.&nbsp; A document that includes embedded content in XHTML or some other rich-text format, but also contains purely machine-interpretable portions, SHOULD follow this style guide for the machine-interpretable portions.&nbsp; It also does not affect XML document formats that are created by translations from proto buffers or through some other type of format.<br><br>Brief rationales have been added to most of the guidelines.&nbsp; They are maintained in the same document in hopes that they won't get out of date, but they are not considered normative.<br><br>The terms MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are used in this document in the sense of <a title="RFC 2119" href="http://www.ietf.org/rfc/rfc2119.txt" id="iecm">RFC 2119.</a><br>&nbsp;<br><h2>1. To design or not to design, that is the question<br></h2><ol><li>Attempt to reuse existing XML formats whenever possible, especially those which allow extensions.&nbsp; Creating an entirely new format should be done only with care and consideration; read <a title="Tim Bray's warnings" href="http://www.tbray.org/ongoing/When/200x/2006/01/08/No-New-XML-Languages" id="d3cy">Tim Bray's warnings</a> first.&nbsp; Try to get wide review of your format, from outside your organization as well, if possible.&nbsp; [<i>Rationale:</i> New document formats have a cost: they must be reviewed, documented, and learned by users.]<br><br></li><li>If you are reusing or extending an existing format, make <i>sensible</i>
+
+use of the prescribed elements and attributes, especially any that are
+required.&nbsp; Don't completely repurpose them, but do try to see how they
+might be used in creative ways if the vanilla semantics aren't
+suitable.&nbsp; As a last resort when an element or attribute is required by the format but is not appropriate for your use case, use some
+fixed string as its value.&nbsp; [<i>Rationale:</i>&nbsp; Markup reuse is good, markup abuse is bad.]<br><br></li><li>When extending formats, use the implicit style of the existing format, even if it contradicts this guide.&nbsp; [<i>Rationale: </i>Consistency.]<br></li></ol><br><h2>2. Schemas</h2><ol><li>Document formats SHOULD be expressed using a schema language.&nbsp; [<i>Rationale: </i>Clarity and machine-checkability.]<br><br></li><li>The schema language SHOULD be <a title="RELAX NG" href="http://www.relaxng.org/" id="p1s7">RELAX NG</a> <a title="compact syntax" href="http://www.relaxng.org/compact-tutorial-20030326.html" id="ulci">compact syntax</a>.&nbsp; Embedded <a title="Schematron" href="http://www.schematron.com/" id="ymh-">Schematron</a> rules MAY be added to the schema for additional fine control.&nbsp; [<i>Rationale:</i>
+
+RELAX NG is the most flexible schema language, with very few arbitrary
+restrictions on designs.&nbsp; The compact syntax is quite easy to read and
+learn, and can be converted one-to-one to and from the XML syntax when
+necessary.&nbsp; Schematron handles arbitrary cross-element and
+cross-attribute constraints nicely.]<br><br></li><li>Schemas SHOULD use the <a title="&quot;Salami Slice&quot; style" href="http://www.xfront.com/GlobalVersusLocal.html#SecondDesign" id="r:fj">"Salami Slice" style</a> (one rule per element).&nbsp; Schemas MAY use the <a title="&quot;Russian Doll&quot; style" href="http://www.xfront.com/GlobalVersusLocal.html#FirstDesign" id="h14y">"Russian Doll" style</a> (schema resembles document) if they are short and simple.&nbsp; The <a title="&quot;Venetian Blind&quot; style" href="http://www.xfront.com/GlobalVersusLocal.html#ThirdDesign" id="dr_g">"Venetian Blind" style</a> (one rule per element type) is unsuited to RELAX NG and SHOULD NOT be used.<br><br></li><li>Regular expressions SHOULD be provided to assist in validating complex values.<br><br></li><li>DTDs and/or W3C XML Schemas MAY be provided for compatibility with existing products, tools, or users.&nbsp; [<i>Rationale:</i> We can't change the world all at once.]<br></li></ol></div><div><br><h2>3. Namespaces</h2><ol><li>Element names MUST be in a namespace, except
+when extending pre-existing document types that do not use namespaces.&nbsp;
+
+A default namespace SHOULD be used.&nbsp; [<i>Rationale:</i> Namespace-free
+documents are obsolete; every set of names should be in some
+namespace.&nbsp; Using a default namespace improves readability.]<br><br></li><li>Attribute
+names SHOULD NOT be in a namespace unless they are drawn from a foreign
+document type or are meant to be used in foreign document types.&nbsp; [<i>Rationale:</i> Attribute names in a namespace must always have a prefix, which is annoying to type and hard to read.]<br><br>
+</li><li>Namespace names are HTTP URIs.&nbsp; Namespace names SHOULD take the form <span style="font-family: Courier New;">http://example.com/</span><i style="font-family: Courier New;">whatever</i><span style="font-family: Courier New;">/</span><i><span style="font-family: Courier New;">year</span>, </i>where <i>whatever</i> is a unique value based on the name of the document type, and <i>year</i>
+
+is the year the namespace was created.&nbsp; There may be additional URI-path parts
+before the <i>year.</i>&nbsp; [<i>Rationale:</i> Existing convention.&nbsp; Providing the year allows for the possible recycling of code names.]<br><br></li><li>Namespaces MUST NOT be changed unless the semantics of particular elements or attributes has changed in drastically incompatible ways.&nbsp; [<i>Rationale:</i> Changing the namespace requires changing all client code.]<br><br></li><li>Namespace prefixes SHOULD be short (but not so short that they are likely to be conflict with another project).&nbsp; Single-letter prefixes MUST NOT be used. Prefixes SHOULD contain only lower-case ASCII letters.&nbsp; [<i>Rationale:</i> Ease of typing and absence of encoding compatibility problems.]</li></ol><br>
+
+<h2>4. Names and enumerated values</h2><b>Note: </b>"Names" refers to the names of elements, attributes, and enumerated values.<br><br><ol><li>All names MUST use lowerCamelCase. That is, they start with an initial lower-case letter, then each new word within the name starts with an initial capital letter. [<i>Rationale:</i> Adopting a single style provides consistency, which helps when referring to names since the capitalization is known and so does not have to be remembered.&nbsp; It matches Java style, and other languages can be dealt with using automated name conversion.]<br><br></li><li>Names MUST contain only ASCII letters and digits.&nbsp;
+[<i>Rationale:</i> Ease of typing and absence of encoding compatibility problems.]<br> <br></li><li>Names SHOULD NOT exceed 25 characters. Longer names SHOULD be
+avoided by devising concise and informative names.&nbsp; If a name can only remain within this limit by becoming obscure, the limit SHOULD be ignored.&nbsp; [<i>Rationale: </i>Longer names are awkward to use and require additional bandwidth.]<br><br></li><li>Published standard abbreviations, if sufficiently well-known, MAY be employed in constructing names. Ad hoc abbreviations MUST NOT be used.&nbsp; Acronyms MUST be treated as words for camel-casing purposes: informationUri, not informationURI. [<i>Rationale:</i>&nbsp; An abbreviation that is well known
+to one community is often incomprehensible to others who need to use
+the same document format (and who do understand the full name); treating an acronym as a word makes it easier to see where the word boundaries are.] <br></li></ol><p><br></p><p>
+
+</p><h2>
+5. Elements</h2><ol><li>All elements MUST contain either nothing, character content, or child elements.&nbsp; Mixed content MUST NOT be used.&nbsp; [<i>Rationale:</i> Many XML data models don't handle mixed content properly, and its use makes the element order-dependent.&nbsp; As always, textual formats are not covered by this rule.]<br><br></li><li>XML elements that merely wrap repeating child elements SHOULD NOT be used.&nbsp; [<i>Rationale:</i> They are not used in Atom and add nothing.]</li></ol>
+
+<p><br></p><h2>6. Attributes</h2><ol><li>Document formats MUST NOT depend on the order of attributes in a start-tag.&nbsp; [<i>Rationale:</i> Few XML parsers report the order, and it is not part of the XML Infoset.]<br><br></li><li>Elements SHOULD NOT be overloaded with too many attributes (no more
+than 10 as a rule of thumb).&nbsp; Instead, use child elements to
+encapsulate closely related attributes.&nbsp; [<i>Rationale:</i> This
+approach maintains the built-in extensibility that XML provides with
+elements, and is useful for providing forward compatibility as a
+specification evolves.]<br><br></li><li>Attributes MUST NOT be used to hold values in which line breaks are significant.&nbsp; [<i>Rationale:</i> Such line breaks are converted to spaces by conformant XML parsers.]<br><br></li><li>Document formats MUST allow either single or double quotation marks around attribute values.&nbsp; [<i>Rationale:</i>&nbsp; XML parsers don't report the difference.]<br></li></ol>
+
+<p><br></p>
+<p>
+</p><h2>
+7. Values</h2><ol><li>Numeric values SHOULD be 32-bit signed integers, 64-bit signed integers, or 64-bit IEEE doubles, all expressed in base 10.&nbsp; These correspond to the XML Schema types <span style="font-family: Courier New;">xsd:int</span>, <span style="font-family: Courier New;">xsd:long</span>, and <span style="font-family: Courier New;">xsd:double</span> respectively.&nbsp; If required in particular cases, <span style="font-family: Courier New;">xsd:integer</span> (unlimited-precision integer) values MAY also be used.&nbsp; [<i>Rationale:</i> There are far too many numeric types in XML Schema: these provide a reasonable subset.]&nbsp; <br><br></li><li>
+
+Boolean values SHOULD NOT be used (use enumerations instead).&nbsp; If they must be used, they MUST be expressed as <span style="font-family: Courier New;">true</span> or <span style="font-family: Courier New;">false</span>, corresponding to a subset of the XML Schema type <span style="font-family: Courier New;">xsd:boolean</span>.&nbsp; The alternative <span style="font-family: Courier New;">xsd:boolean</span> values <span style="font-family: Courier New;">1</span> and <span style="font-family: Courier New;">0</span> MUST NOT be used.&nbsp; [<i>Rationale:</i> Boolean arguments are not extensible.&nbsp; The additional flexibility of allowing numeric values is not abstracted away by any parser.]<br><br></li><li>Dates should be represented using <a title="RFC 3339" href="http://www.ietf.org/rfc/rfc3339.txt" id="sk98">RFC 3339</a> format, a subset of both
+ISO 8601 format and XML Schema <span style="font-family: Courier New;">xsd:dateTime</span> format.&nbsp; UTC times SHOULD be used rather than local times.&nbsp;
+
+[<i>Rationale:</i> There are far too many date formats and time zones, although it is recognized that sometimes local time preserves important information.]<br><br></li><li>Embedded syntax in character content and attribute values SHOULD NOT be
+used.&nbsp; Syntax in values means XML tools are largely useless.&nbsp; Syntaxes such as&nbsp; dates, URIs, and
+XPath expressions are exceptions.&nbsp; [<i>Rationale:</i>&nbsp;
+Users should be able to process XML documents using only an XML parser
+without requiring additional special-purpose parsers, which are easy to
+get wrong.]<br><br></li><li>Be careful with whitespace in values.&nbsp; XML parsers don't strip whitespace in elements, but do convert newlines to spaces in attributes.&nbsp; However, application frameworks may do more aggressive whitespace stripping.&nbsp; Your document format SHOULD give rules for whitespace stripping.<br></li></ol>
+
+<p><br>
+</p>
+<p>
+</p><h2>8. Key-value pairs<br></h2><ol><li>
+Simple key-value pairs SHOULD be represented with an empty element whose name represents the key, with the <span style="font-family: Courier New;">value</span> attribute containing the value. Elements that have a <span style="font-family: Courier New;">value</span> attribute MAY also have a <span style="font-family: Courier New;">unit</span> attribute to specify the unit of a measured value.&nbsp; For physical measurements, the <a title="SI system" href="http://en.wikipedia.org/wiki/International_System_of_Units" id="rhxg">SI system</a> SHOULD be used.&nbsp; [<i>Rationale:</i>
+
+Simplicity and design consistency.&nbsp; Keeping the value in an attribute
+hides it from the user, since displaying just the value without the key is not useful.]<br><br></li><li>If the number of possible keys is very large or unbounded, key-value pairs MAY be represented by a single generic element with <span style="font-family: Courier New;">key</span>, <span style="font-family: Courier New;">value</span>, and optional <span style="font-family: Courier New;">unit</span> and <span style="font-family: Courier New;">scheme</span>
+attributes (which serve to discriminate keys from different domains).&nbsp;
+In that case, also provide (not necessarily in the same document) a
+list of keys with human-readable explanations.</li></ol><br><h2>9. Binary data</h2><p><b>Note: </b>There are no hard and fast rules about whether binary data should be included as part of an XML document or not.&nbsp; If it's too large, it's probably better to link to it.</p><p><br></p><ol><li>Binary data MUST NOT be included directly as-is in XML documents, but MUST be encoded using Base64 encoding.&nbsp; [<i>Rationale:</i> XML does not allow arbitrary binary bytes.]<br><br></li><li>
+
+The line breaks required by Base64 MAY be omitted.&nbsp; [<i>Rationale:</i> The line breaks are meant to keep plain text lines short, but XML is not really plain text.]<br><br></li><li>An attribute named <span style="font-family: Courier New;">xsi:type</span> with value <span style="font-family: Courier New;">xs:base64Binary</span> MAY be attached to this element to signal that the Base64 format is in use.&nbsp; [Rationale: Opaque blobs should have decoding instructions attached.]<br><br></li></ol>
+<h2>10. Processing instructions</h2><ol><li>New processing instructions MUST NOT be created except in order to specify purely local processing conventions, and SHOULD be avoided altogether.&nbsp; Existing standardized processing instructions MAY be used.&nbsp; [<i>Rationale:</i> Processing instructions fit awkwardly into XML data models and can always be replaced by elements; they exist primarily to avoid breaking backward compatibility.]</li></ol><p>&nbsp;</p>
+
+<p>
+</p><p>&nbsp;</p><h2>11. Representation of XML document instances<br></h2><p><b>Note:</b>&nbsp; These points are only guidelines, as the format of program-created instances will often be outside the programmer's control (for example, when an XML serialization library is being used).&nbsp; <i>In no case</i> should XML parsers rely on these guidelines being followed.&nbsp; Use standard XML parsers, not hand-rolled hacks.<br></p><p><br></p><ol><li>The character encoding used SHOULD be UTF-8.&nbsp; Exceptions should require extremely compelling circumstances.&nbsp; [<i>Rationale:</i> UTF-8 is universal and in common use.]<br><br></li><li>Namespaces SHOULD be declared in the root element of a document wherever possible.&nbsp; [<i>Rationale: </i>Clarity and consistency.]<br><br></li><li>The mapping of namespace URIs to prefixes SHOULD remain constant throughout the document, and SHOULD also be used in documentation of the design.&nbsp; [<i>Rationale: </i>Clarity and consistency.]<br><br></li><li>Well-known prefixes such as html: (for XHTML), dc: (for Dublin Core metadata), and xs: (for XML Schema) should be used for standard namespaces.&nbsp; [<i>Rationale:</i> Human readability.]<br><br></li><li>Redundant whitespace in a tag SHOULD NOT be
+used.&nbsp; Use one space before each attribute in a start-tag; if the start
+tag is too long, the space MAY be replaced by a newline.&nbsp; [<i>Rationale:</i> Consistency and conciseness.]<br><br></li><li>Empty elements MAY be expressed as empty tags or a start-tag
+immediately followed by an end-tag. No distinction should be made
+between these two formats by any application.&nbsp; [<i>Rationale:</i> They are not distinguished by XML parsers.]<br><br></li><li>Documents MAY be pretty-printed using 2-space indentation for child
+elements.&nbsp; Elements that contain character content SHOULD NOT be
+wrapped.&nbsp; Long start-tags MAY be broken using newlines (possibly with extra indentation) after any attribute value except the last.&nbsp; [<i>Rationale:</i> General compatibility with our style.&nbsp; Wrapping character content affects its value.]<br><br></li><li>Attribute values MAY be surrounded with either quotation marks or apostrophes.
+Specifications MUST NOT require or forbid the use of either form.&nbsp; <span style="font-family: Courier New;">&amp;apos;</span> and <span style="font-family: Courier New;">&amp;quot;</span> may be freely used to escape each type of quote.&nbsp; [<i>Rationale:</i> No XML parsers report the distinction.]<br><br>
+
+</li><li>Comments MUST NOT be used to carry real data.&nbsp; Comments MAY be used to contain TODOs in hand-written XML.&nbsp; Comments SHOULD NOT be used at all in publicly transmitted documents. [<i>Rationale:&nbsp; </i>Comments are often discarded by parsers.]<br><br></li><li>If comments are nevertheless used, they SHOULD appear only in the document prolog or in elements that
+contain child elements.&nbsp; If pretty-printing is required, pretty-print
+comments like elements, but with line wrapping.&nbsp; Comments SHOULD NOT
+appear in elements that contain character content.&nbsp; [<i>Rationale:&nbsp; </i>Whitespace in and around comments improves readability, but embedding a
+comment in character content can lead to confusion about what
+whitespace is or is not in the content.]<br><br></li><li>Comments SHOULD have whitespace following <span style="font-family: Courier New;">&lt;!--</span> and preceding <span style="font-family: Courier New;">--&gt;</span>.&nbsp; [<i>Rationale:</i> Readability.]<br><br></li><li>CDATA sections MAY be used; they are equivalent to the use of <span style="font-family: Courier New;">&amp;amp;</span> and <span style="font-family: Courier New;">&amp;lt;</span>.&nbsp; Specifications MUST NOT require or forbid the use of CDATA sections.&nbsp; [<i>Rationale:</i> Few XML parsers report the distinction, and combinations of CDATA and text are often reported as single objects anyway.]<br><br></li><li>Entity references other than the XML standard entity references <span style="font-family: Courier New;">&amp;amp;</span>, <span style="font-family: Courier New;">&amp;lt;</span>, <span style="font-family: Courier New;">&amp;gt;</span>, <span style="font-family: Courier New;">&amp;quot;</span>, and <span style="font-family: Courier New;">&amp;apos;</span> MUST NOT be used.&nbsp; Character references MAY be used, but actual characters are preferred, unless the character encoding is not UTF-8.&nbsp; As usual, textual formats are exempt from this rule.<br></li></ol>
+
+<br><p>&nbsp;</p><p>
+</p>
+<p>
+</p><br><br><h2>
+12. Elements vs. Attributes
+</h2>
+<p>
+<b>Note:</b>&nbsp; There are no hard and fast rules for deciding when to use attributes and when to use elements.&nbsp; Here are some of the considerations that designers should take into account; no rationales are given.
+</p>
+<h3>
+12.1. General points:<br>
+</h3>
+
+<ol>
+<li>
+<p>
+Attributes are more restrictive than elements, and all designs have some elements, so an all-element design is simplest -- which is not the same as best.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+In a tree-style data model, elements are typically represented internally as nodes, which use more memory than the strings used to represent attributes.&nbsp; Sometimes the nodes are of different application-specific classes, which in many languages also takes up memory to represent the classes.
+</p>
+<p>
+<br>
+
+</p>
+</li>
+<li>
+<p>
+When streaming, elements are processed one at a time (possibly even piece by piece, depending on the XML parser you are using), whereas all the attributes of an element and their values are reported at once, which costs memory, particularly if some attribute values are very long.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+Both element content and attribute values need to be escaped appropriately, so escaping should not be a consideration in the design.
+</p>
+<p>
+<br>
+</p>
+
+</li>
+<li>
+<p>
+In some programming languages and libraries, processing elements is easier; in others, processing attributes is easier.&nbsp; Beware of using ease of processing as a criterion.&nbsp; In particular, XSLT can handle either with equal facility.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+If a piece of data should usually be shown to the user, consider using an element; if not, consider using an attribute.&nbsp; (This rule is often violated for one reason or another.)
+
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+If you are extending an existing schema, do things by analogy to how things are done in that schema.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+Sensible schema languages, meaning RELAX NG and Schematron, treat elements and attributes symmetrically.&nbsp; Older and cruder<a href="http://www.w3.org/TR/2004/REC-xmlschema-0-20041028/" id="h2c3" title="XML Schema"> </a>schema languages such as DTDs and XML Schema, tend to have better support for elements.
+
+</p>
+</li>
+</ol>
+<p>
+</p>
+<h3>
+12.2 Using elements<br>
+</h3>
+<ol>
+<li>
+<p>
+If something might appear more than once in a data model, use an element rather than introducing attributes with names like <span style="font-family: Courier New;">foo1, foo2, foo3</span> ....
+</p>
+
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+Use elements to represent a piece of information that can be considered an independent object and when the information is related via a parent/child relationship to another piece of information.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+Use elements when data incorporates strict typing or relationship rules.
+</p>
+<p>
+
+<br>
+</p>
+</li>
+<li>
+<p>
+If order matters between two pieces of data, use elements for them: attributes are inherently unordered.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+If a piece of data has, or might have, its own substructure, use it in an element: getting substructure into an attribute is always messy.&nbsp; Similarly, if the data is a constituent part of some larger piece of data, put it in an element.
+</p>
+
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+An exception to the previous rule: multiple whitespace-separated tokens can safely be put in an attribute.&nbsp; In principle, the separator can be anything, but schema-language validators are currently only able to handle whitespace, so it's best to stick with that.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+If a piece of data extends across multiple lines, use an element: XML parsers will change newlines in attribute values into spaces.
+
+<br><br></p></li><li>If a piece of data is very large, use an element so that its content can be streamed.<br><br></li>
+<li>
+<p>
+If a piece of data is in a natural language, put it in an element so you can use the <span style="font-family: Courier New;">xml:lang</span> attribute to label the language being used.&nbsp; Some kinds of natural-language text, like Japanese, often make use <a href="http://www.w3.org/TR/2001/REC-ruby-20010531" id="pa2f" title="annotations">annotations</a> that are conventionally represented using child elements; right-to-left languages like Hebrew and Arabic may similarly require child elements to manage <a href="http://www.w3.org/TR/2001/REC-ruby-20010531" id="ehyv" title="bidirectionality">bidirectionality</a> properly.
+</p>
+
+<p>
+</p>
+</li>
+</ol>
+<h3>
+12.3 Using attributes<br>
+</h3>
+<ol>
+<li>
+<p>
+If the data is a code from an enumeration, code list, or controlled vocabulary, put it in an attribute if possible.&nbsp; For example, language tags, currency codes, medical diagnostic codes, etc. are best handled as attributes.
+</p>
+<p>
+<br>
+
+</p>
+</li>
+<li>
+<p>
+If a piece of data is really metadata on some other piece of data (for example, representing a class or role that the main data serves,&nbsp; or specifying a method of processing it), put it in an attribute if possible.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+In particular, if a piece of data is an ID for some other piece of data, or a reference to such an ID, put the identifying piece in an attribute.&nbsp; When it's an ID, use the name <span style="font-family: Courier New;">xml:id</span> for the attribute.
+
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+Hypertext references are conventionally put in <span style="font-family: Courier New;">href</span> attributes.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+
+<p>
+If a piece of data is applicable to an element and any descendant elements unless it is overridden in some of them, it is conventional to put it in an attribute.&nbsp; Well-known examples are <span style="font-family: Courier New;">xml:lang</span>, <span style="font-family: Courier New;">xml:space</span>, <span style="font-family: Courier New;">xml:base</span>, and namespace declarations.
+</p>
+<p>
+<br>
+</p>
+</li>
+<li>
+<p>
+
+If terseness is really the <i>most</i> important thing, use attributes, but consider <span style="font-family: Courier New;">gzip</span> compression instead -- it works very well on documents with highly repetitive structures.</p></li>
+</ol></div><br><div><div><div><div><div>
+<br><h2>13. Parting words
+</h2>
+<p>
+</p><p>
+Use common sense and <i>BE CONSISTENT</i>.&nbsp;&nbsp; Design for extensibility.&nbsp; You <i>are</i> gonna need it.&nbsp; [<i>Rationale:</i> Long and painful experience.]<br></p><p><br> </p>
+
+<p>
+When designing XML formats, take a few minutes to look at other formats and determine their style.&nbsp; The point of having style guidelines is so that people can concentrate on what you are
+saying, rather than on how you are saying it. <br></p><p>
+<br>
+Break <i>ANY OR ALL</i> of these rules (yes, even the ones that say MUST) rather than create a crude, arbitrary, disgusting mess of a design if that's what following them slavishly would give you.&nbsp; In particular, random mixtures of attributes and child elements are hard to follow and hard to use, though it often makes good sense to use both when the data clearly fall into two different groups such as simple/complex or metadata/data.
+</p>
+<div><p>
+<br>
+Newbies always ask:
+</p>
+
+<p>
+&nbsp;&nbsp;&nbsp; "Elements or attributes?
+</p>
+<p>
+Which will serve me best?"
+</p>
+<p>
+&nbsp;&nbsp;&nbsp; Those who know roar like lions;
+</p>
+<p>
+&nbsp;&nbsp;&nbsp; Wise hackers smile like tigers.
+</p>
+<p>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --a <a href="http://en.wikipedia.org/wiki/Waka_%28poetry%29#Tanka" id="s3k3" title="tanka">tanka</a>, or extended haiku
+
+</p>
+</div>
+<p>
+<br>
+</p>
+<br>[TODO: if a registry of schemas is set up, add a link to it]<br><br></div><br></div><br></div></div></div><br>
+<br clear="all"/>
+</div>
