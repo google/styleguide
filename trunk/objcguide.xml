@@ -2,6 +2,11 @@
 <?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
 <GUIDE title="Google Objective-C Style Guide">
 
+<p align="right">
+
+Revision 2.11
+</p>
+
 
 
 <div align="right">
@@ -444,7 +449,7 @@
         };
         
         // file: mac_implementation.mm
-        #import "cross_platform_header.h"
+        #include "cross_platform_header.h"
         
         // A typical Objective-C class, using Objective-C naming.
         @interface MyDelegate : NSObject {
@@ -904,7 +909,58 @@
       </p>
     </BODY>
   </STYLEPOINT>
-  
+
+  <STYLEPOINT title="#import and #include">
+    <SUMMARY>
+      <code>#import</code> Objective-C/Objective-C++ headers, and
+      <code>#include</code> C/C++ headers.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Choose between <code>#import</code> and <code>#include</code> based
+        on the language of the header that you are including.
+      </p>
+      <ul>
+        <li>When including a header that uses Objective-C or Objective-C++,
+            use <code>#import</code>.</li>
+        <li>When including a standard C or C++ header, use
+            <code>#include</code>.  The header should provide its own <a href="cppguide.xml?showone=The__define_Guard#The__define_Guard">#define
+            guard</a>.</li>
+      </ul>
+      <p>
+        Some Objective-C headers lack <code>#define</code> guards, and expect
+        to be included only by <code>#import</code>.  As Objective-C headers
+        may only be included in Objective-C source files and other Objective-C
+        headers, using <code>#import</code> across the board is appropriate.
+      </p>
+      <p>
+        Standard C and C++ headers without any Objective-C in them can expect
+        to be included by ordinary C and C++ files.  Since there is no
+        <code>#import</code> in standard C or C++, such files will be
+        included by <code>#include</code> in those cases.  Using
+        <code>#include</code> for them in Objective-C source files as well
+        means that these headers will always be included with the same
+        semantics.
+      </p>
+      <p>
+        This rule helps avoid inadvertent errors in cross-platform
+        projects.  A Mac developer introducing a new C or C++ header might
+        forget to add <code>#define</code> guards, which would not cause
+        problems on the Mac if the new header were included with
+        <code>#import</code>, but would break builds on other platforms
+        where <code>#include</code> is used.  Being consistent by using
+        <code>#include</code> on all platforms means that compilation is
+        more likely to succeed everywhere or fail everywhere, and avoids
+        the frustration of files working only on some platforms.
+      </p>
+      <CODE_SNIPPET>
+        #import &lt;Cocoa/Cocoa.h&gt;
+        #include &lt;CoreFoundation/CoreFoundation.h&gt;
+        #import "GTMFoo.h"
+        #include "base/basictypes.h"
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
 
   <STYLEPOINT title="Use Root Frameworks">
     <SUMMARY>
@@ -917,7 +973,7 @@
         compiler if you include the top-level root framework. The root
         framework is generally pre-compiled and can be loaded much more
         quickly. In addition, remember to use <code>#import</code> rather than
-        <code>#include</code>.
+        <code>#include</code> for Objective-C frameworks.
       </p>
       <CODE_SNIPPET>
         #import &lt;Foundation/Foundation.h&gt;     // good
@@ -1371,6 +1427,10 @@
 </CATEGORY>
 
 <HR/>
+
+<p align="right">
+Revision 2.11
+</p>
 
 
 

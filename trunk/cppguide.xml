@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.127
+Revision 3.133
 </p>
 
 
@@ -146,8 +146,8 @@ Tashana Landray
 
   <STYLEPOINT title="Header File Dependencies">
     <SUMMARY>
-        Use forward declarations to minimize use of
-        <code>#include</code> in <code>.h</code> files.
+        Don't use an <code>#include</code> when a forward declaration
+	would suffice.
     </SUMMARY>
     <BODY>
       <p>
@@ -462,8 +462,8 @@ Tashana Landray
                    namespace {                           // This is in a .cc file.
 
                    // The content of a namespace is not indented
-                   enum { UNUSED, EOF, ERROR };          // Commonly used tokens.
-                   bool AtEof() { return pos_ == EOF; }  // Uses our namespace's EOF.
+                   enum { kUnused, kEOF, kError };       // Commonly used tokens.
+                   bool AtEof() { return pos_ == kEOF; }  // Uses our namespace's EOF.
 
                    }  // namespace
                  </CODE_SNIPPET>
@@ -742,52 +742,42 @@ Tashana Landray
     </BODY>
   </STYLEPOINT>
 
-  <STYLEPOINT title="Global Variables">
+  <STYLEPOINT title="Static and Global Variables">
     <SUMMARY>
-      Global variables of class types are forbidden.  Global variables
-      of built-in types are allowed, although non-<code>const</code>
-      globals are forbidden in threaded code.  Global variables should
-      never be initialized with the return value of a function.
+      Static or global variables of class type are forbidden: they cause
+      hard-to-find bugs due to indeterminate order of construction and
+      destruction.
     </SUMMARY>
     <BODY>
       <p>
-        Unfortunately the order in which constructors, destructors,
-        and initializers for global variables are called is only
-        partially specified and can change from build to build. This
-        can cause bugs that are very difficult to find.
+	Objects with static storage duration, including global variables,
+        static variables, static class member variables, and function static
+        variables, must be Plain Old Data (POD): only ints, chars, floats, and
+        void, and arrays of/structs of/pointers to POD. Static variables must
+        not be initialized with the result of a function; and non-const static
+        variables must not be used in threaded code.
       </p>
       <p>
-        Therefore we forbid global variables of class types (which
-        includes STL string, vector, etc.) because initialization
-        order might matter for their constructor, now or in the
-        future. Built-in types and structs of built-in types without
-        constructors are okay.
-        
-        If you need a global variable of a class
-        type, use the
-        <a href="http://en.wikipedia.org/wiki/Singleton_pattern">singleton
-        pattern</a>.
+        The order in which class constructors, destructors, and initializers for
+        static variables are called is only partially specified in C++ and can
+        even change from build to build, which can cause bugs that are difficult
+        to find. For example, at program-end time a static variable might have
+        been destroyed, but code still running -- perhaps in another thread --
+        tries to access it and fails.
       </p>
       <p>
-        For global string constants, use C style strings, <em>not</em>
-        STL strings:
+        As a result we only allow static variables to contain POD data.  This
+        rule completely disallows <code>vector</code> (use C arrays instead),
+        <code>string</code> (use <code>const char*</code>), or anything that
+        contains or points to any class instance in any way, from ever being a
+        part of a static variable.  For similar reasons, we don't allow static
+        variables to be initialized with the result of a function call.
       </p>
-      <CODE_SNIPPET>
-        const char kFrogSays[] = "ribbet";
-      </CODE_SNIPPET>
       
       <p>
-        Although we permit global variables in the global scope,
-        please be judicious in your use of them. Most global variables
-        should either be static data members of some class, or, if only
-        needed in one <code>.cc</code> file, defined in an unnamed
-        <a HREF="#Namespaces">namespace</a>. (As an alternative to using
-        an unnamed namespace, you can use <code>static</code> linkage to
-        limit the variable's scope.)
-      </p>
-      <p>
-        Please note that <code>static</code> class member variables
-        count as global variables, and should not be of class types!
+        If you need a static or global variable of a class type, consider
+        initializing a pointer which you never free from your main() function
+        or from pthread_once().
       </p>
       
       
@@ -1444,19 +1434,22 @@ Tashana Landray
     </BODY>
   </STYLEPOINT>
 
-  
   <STYLEPOINT title="cpplint">
     <SUMMARY>
-      Use <code>cpplint.py</code> to detect style errors.
+      Use
+      <code>cpplint.py</code>
+      to detect style errors.
     </SUMMARY>
     <BODY>
       <p>
-        <code>cpplint.py</code> is a tool that reads a source file and
+        <code>cpplint.py</code>
+	is a tool that reads a source file and
         identifies many style errors.  It is not perfect, and has both false
         positives and false negatives, but it is still a valuable tool.  False
-        positives can be ignored by putting <code>// NOLINT</code> at the end
-        of the line.
+        positives can be ignored by putting <code>// NOLINT</code> at
+        the end of the line.
       </p>
+      
       <p>
         Some projects have instructions on how to run <code>cpplint.py</code>
         from their project tools. If the project you are contributing to does
@@ -1501,7 +1494,7 @@ Tashana Landray
           void Foo(const string &amp;in, string *out);
         </CODE_SNIPPET>
         <p>
-          In fact it is a very strong convention that input
+          In fact it is a very strong convention in Google code that input
           arguments are values or <code>const</code> references while
           output arguments are pointers.  Input parameters may be
           <code>const</code> pointers, but we never allow
@@ -1948,7 +1941,7 @@ Tashana Landray
           </p>
           <p>
             Some say <code>printf</code> formatting is ugly and hard to
-            read, but streams are often no better.  Consider the following 
+            read, but streams are often no better.  Consider the following
             two fragments, both with the same typo.  Which is easier to
             discover?
           </p>
@@ -2104,7 +2097,7 @@ Tashana Landray
           (<code>const</code>) before the "noun" (<code>int</code>).
         </p>
         <p>
-          That said, while we encourage putting <code>const</code> first, 
+          That said, while we encourage putting <code>const</code> first,
           we do not require it.  But be consistent with the code around
           you!
         </p>
@@ -2560,7 +2553,7 @@ Tashana Landray
         </BAD_CODE_SNIPPET>
         <p>
           Type and variable names should typically be nouns: e.g.,
-          <code>FileOpener</code>, 
+          <code>FileOpener</code>,
           
           <code>num_errors</code>.
         </p>
@@ -2832,22 +2825,43 @@ Tashana Landray
 
   <STYLEPOINT title="Enumerator Names">
     <SUMMARY>
-      Enumerators should be all uppercase with underscores between
-      words: <code>MY_EXCITING_ENUM_VALUE</code>.
+      Enumerators should be named <i>either</i> like
+      <A HREF="#Constant_Names">constants</A> or like
+      <A HREF="#Macro_Names">macros</A>: either <code>kEnumName</code>
+      or <code>ENUM_NAME</code>.
     </SUMMARY>
     <BODY>
       <p>
-        The individual enumerators should be all uppercase.  The
-        enumeration name, <code>UrlTableErrors</code>, is a type, and
+        Preferably, the individual enumerators should be named like
+        <A HREF="#Constant_Names">constants</A>.  However, it is also
+        acceptable to name them like <A HREF="#Macro_Names">macros</A>.    The enumeration name,
+        <code>UrlTableErrors</code> (and
+        <code>AlternateUrlTableErrors</code>), is a type, and
         therefore mixed case.
       </p>
       <CODE_SNIPPET>
         enum UrlTableErrors {
+          kOK = 0,
+          kErrorOutOfMemory,
+          kErrorMalformedInput,
+        };
+        enum AlternateUrlTableErrors {
           OK = 0,
-          ERROR_OUT_OF_MEMORY,
-          ERROR_MALFORMED_INPUT,
+          OUT_OF_MEMORY = 1,
+          MALFORMED_INPUT = 2,
         };
       </CODE_SNIPPET>
+      <p>
+        Until January 2009, the style was to name enum values like
+        <A HREF="#Macro_Names">macros</A>.  This caused problems with
+        name collisions between enum values and macros.  Hence, the
+        change to prefer constant-style naming was put in place.  New
+        code should prefer constant-style naming if possible.
+        However, there is no reason to change old code to use
+        constant-style names, unless the old names are actually
+        causing a compile-time problem.
+      </p>
+      
     </BODY>
   </STYLEPOINT>
 
@@ -4338,7 +4352,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.127
+Revision 3.133
 </p>
 
 
