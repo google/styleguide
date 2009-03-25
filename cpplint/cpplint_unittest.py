@@ -258,6 +258,9 @@ class CpplintTest(CpplintTestBase):
         '//   https://g' + ('o' * 60) + 'gle.com/ and some comments',
         'Lines should be <= 80 characters long'
         '  [whitespace/line_length] [2]')
+    self.TestLint(
+        '// Read https://g' + ('o' * 60) + 'gle.com/' ,
+        '')
 
   # Test Variable Declarations.
   def testVariableDeclarations(self):
@@ -1098,6 +1101,8 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('switch (foo) {', '')
     self.TestLint('foo( bar)', 'Extra space after ( in function call'
                   '  [whitespace/parens] [4]')
+    self.TestLint('foobar( \\', '')
+    self.TestLint('foobar(     \\', '')
     self.TestLint('( a + b)', 'Extra space after ('
                   '  [whitespace/parens] [2]')
     self.TestLint('((a+b))', '')
@@ -1911,6 +1916,10 @@ class CpplintTest(CpplintTestBase):
       if message.find('legal/copyright') != -1:
         self.fail('Unexpected error: %s' % message)
 
+  def testInvalidIncrement(self):
+    self.TestLint('*count++;',
+                  'Changing pointer instead of value (or unused value of '
+                  'operator*).  [runtime/invalid_increment] [5]')
 
 class CleansedLinesTest(unittest.TestCase):
   def testInit(self):
