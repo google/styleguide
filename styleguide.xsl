@@ -3,7 +3,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 xmlns:dc="http://purl.org/dc/elements/1.1/"
 xmlns:dcq="http://purl.org/dc/qualifiers/1.0/"
-xmlns:fo="http://www.w3.org/1999/XSL/Format">
+xmlns:fo="http://www.w3.org/1999/XSL/Format"
+xmlns:fn="http://www.w3.org/2005/xpath-functions">
   <xsl:output method="html"/>
   <!-- Set to 1 to show explanations by default.  Set to 0 to hide them -->
   <xsl:variable name="show_explanation_default" select="0" />
@@ -30,13 +31,23 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format">
               <SCRIPT language="javascript" type="text/javascript">
 
                 function ShowHideByName(bodyName, buttonName) {
-                  var bodyElements = document.getElementsByName(bodyName);
+	          var bodyElements;
+                  if (document.getElementsByName) {
+                    bodyElements = document.getElementsByName(bodyName);
+                  } else {
+                    bodyElements = [document.getElementById(bodyName)];
+                  }
                   if (bodyElements.length != 1) {
                     alert("ShowHideByName() got the wrong number of bodyElements:  " + bodyElements.length);
                   } else {
                     var bodyElement = bodyElements[0];
-                    var buttonElements = document.getElementsByName(buttonName);
-                    var buttonElement = buttonElements[0];
+                    var buttonElement;
+                    if (document.getElementsByName) {
+                      var buttonElements = document.getElementsByName(buttonName);
+                      buttonElement = buttonElements[0];
+                    } else {
+                      buttonElement = document.getElementById(buttonName);
+                    }
                     if (bodyElement.style.display == "none" || bodyElement.style.display == "") {
                       bodyElement.style.display = "inline";
                       buttonElement.innerHTML = '<xsl:value-of select="$hide_button_text"/>';
@@ -48,14 +59,19 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format">
                 }
 
                 function ShowHideAll() {
-                  var allButtons = document.getElementsByName("show_hide_all_button");
-                  var allButton = allButtons[0];
+                  var allButton;
+                  if (document.getElementsByName) {
+                    var allButtons = document.getElementsByName("show_hide_all_button");
+	            allButton = allButtons[0];
+                  } else {
+                    allButton = document.getElementById("show_hide_all_button");
+                  }
                   if (allButton.innerHTML == '<xsl:value-of select="$hide_button_text"/>') {
                     allButton.innerHTML = '<xsl:value-of select="$show_button_text"/>';
-                    SetHiddenState(document.body.childNodes, "none", '<xsl:value-of select="$show_button_text"/>');
+                    SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '<xsl:value-of select="$show_button_text"/>');
                   } else {
                     allButton.innerHTML = '<xsl:value-of select="$hide_button_text"/>';
-                    SetHiddenState(document.body.childNodes, "inline", '<xsl:value-of select="$hide_button_text"/>');
+                    SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "inline", '<xsl:value-of select="$hide_button_text"/>');
                   }
                 }
 
@@ -81,9 +97,9 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format">
                     var showHideAllValue = showHideAllRegex.exec(window.location.href);
                     if (showHideAllValue != null) {
                       if (showHideAllValue[2] == "y") {
-                        SetHiddenState(document.body.childNodes, "inline", '<xsl:value-of select="$hide_button_text"/>');
+                        SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "inline", '<xsl:value-of select="$hide_button_text"/>');
                       } else {
-                        SetHiddenState(document.body.childNodes, "none", '<xsl:value-of select="$show_button_text"/>');
+                        SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '<xsl:value-of select="$show_button_text"/>');
                       }
                     }
                     var showOneRegex = new RegExp("[\\?&amp;](showone)=([^&amp;#]*)");
@@ -325,6 +341,30 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format">
     </SPAN>
   </xsl:template>
 
+  <xsl:template match="PY_CODE_SNIPPET">
+    <SPAN>
+      <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
+      <PRE><xsl:call-template name="print_python_code">
+             <xsl:with-param name="text" select="."/>
+           </xsl:call-template></PRE>
+    </SPAN>
+  </xsl:template>
+
+  <xsl:template match="BAD_PY_CODE_SNIPPET">
+    <SPAN>
+      <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
+      <PRE class="badcode"><xsl:call-template name="print_python_code">
+                             <xsl:with-param name="text" select="."/>
+                           </xsl:call-template></PRE>
+    </SPAN>
+  </xsl:template>
+
+  <xsl:template match="FUNCTION">
+    <xsl:call-template name="print_function_name">
+      <xsl:with-param name="text" select="."/>
+    </xsl:call-template>
+  </xsl:template>
+
   <xsl:template match="SYNTAX">
     <I>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
@@ -461,6 +501,280 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format">
     </xsl:if>
   </xsl:template>
 
+  <!-- Given text, determine the starting position of code.
+       This similar to num_leading_spaces_one_line but treats "Yes:" and "No:" 
+       as spaces. Also, if there is no code on the first line, it searches 
+       subsequent lines until a non-empty line is found.
+       Used to find the start of code in snippets like:
+       Yes: if(foo):
+       No : if(foo):
+       As well as:
+       Yes:
+         if (foo):
+  -->
+  <xsl:template name="code_start_index">
+    <xsl:param name="text"/>
+    <xsl:param name="current_count"/>
+    <xsl:choose>
+      <xsl:when test="starts-with($text, ' ')">
+        <xsl:call-template name="code_start_index">
+          <xsl:with-param name="text" select="substring($text, 2)"/>
+          <xsl:with-param name="current_count" select="$current_count + 1"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="starts-with($text, 'Yes:')">
+        <xsl:call-template name="code_start_index">
+          <xsl:with-param name="text" select="substring($text, 5)"/>
+          <xsl:with-param name="current_count" select="$current_count + 4"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="starts-with($text, 'No:')">
+        <xsl:call-template name="code_start_index">
+          <xsl:with-param name="text" select="substring($text, 4)"/>
+          <xsl:with-param name="current_count" select="$current_count + 3"/>
+        </xsl:call-template>
+      </xsl:when>
+      <!-- This is only reached if the first line is entirely whitespace or 
+           contains nothing but "Yes:" or "No:"-->
+      <xsl:when test="starts-with($text, '&#xA;')">
+        <xsl:call-template name="code_start_index">
+          <xsl:with-param name="text" select="substring($text, 2)"/>
+          <xsl:with-param name="current_count" select="0"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$current_count"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Helper for ends_with_colon. Determine whether the given line is nothing
+       but spaces and python-style comments. -->
+  <xsl:template name="is_blank_or_comment">
+    <xsl:param name="line"/>
+    <xsl:choose>
+      <xsl:when test="$line = ''">
+        <xsl:value-of select="1"/>
+      </xsl:when>
+      <xsl:when test="starts-with($line, '&#xA;')">
+        <xsl:value-of select="1"/>
+      </xsl:when>
+      <xsl:when test="starts-with($line, '#')">
+        <xsl:value-of select="1"/>
+      </xsl:when>
+      <xsl:when test="starts-with($line, ' ')">
+        <xsl:call-template name="is_blank_or_comment">
+          <xsl:with-param name="line" select="substring($line, 2)"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="0"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Determine whether the given line ends with a colon. Note that Python
+       style comments are ignored so the following lines return True:
+       - def foo():
+       - def foo():  # Bar
+       - if(foo):
+
+       But some code may confuse this function. For example the following are
+       also consider to "end_with_colon" even though they don't for Python
+       - foo(":  #")
+       - foo() # No need for :
+  -->
+  <xsl:template name="ends_with_colon">
+    <xsl:param name="line"/>
+    <xsl:param name="found_colon"/>
+    <xsl:choose>
+      <xsl:when test="$line = ''">
+        <xsl:value-of select="$found_colon"/>
+      </xsl:when>
+      <xsl:when test="starts-with($line, '&#xA;')">
+        <xsl:value-of select="$found_colon"/>
+      </xsl:when>
+      <xsl:when test="starts-with($line, ' ')">
+        <xsl:call-template name="ends_with_colon">
+          <xsl:with-param name="line" select="substring($line, 2)"/>
+          <xsl:with-param name="found_colon" select="$found_colon"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="starts-with($line, ':')">
+        <xsl:variable name="rest_is_comment">
+          <xsl:call-template name="is_blank_or_comment">
+            <xsl:with-param name="line" select="substring($line, 2)"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:choose>
+          <xsl:when test="$rest_is_comment = '1'">
+            <xsl:value-of select="1"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="ends_with_colon">
+              <xsl:with-param name="line" select="substring($line, 2)"/>
+              <xsl:with-param name="found_colon" select="0"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="ends_with_colon">
+          <xsl:with-param name="line" select="substring($line, 2)"/>
+          <xsl:with-param name="found_colon" select="0"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Prints one line of python code with proper indent and calls itself
+       recursively for the rest of the text.
+       This template uses "a", "b", "c" and "d" to refer to four key column
+       numbers. They are:
+       - a: the indentation common to all lines in a code snippet. This is
+            stripped out to allow for cleaner code in the xml.
+       - b: the indentation of the most out-dented line of code. This is
+            different from "a" when code is labelled with "Yes:" or "No:"
+       - c: the indentation of the current python block, in other words, the
+            indentation of the first line of this block, which is the
+            indentation of the last line we saw that ended with a colon.
+       - d: the "total" indentation of the line, ignorng possible "Yes:" or
+            "No:" text on the line.
+
+       For example, for the last line of the following code snippet, the
+       positions of a, b, c and d are indicated below:
+           Yes: def Foo():
+                  if bar():
+                    a += 1
+                    baz()
+           a    b c d
+
+       The algorithm is:
+       1) Split the text into first line and the rest. Note that the
+          substring-before function is supposed to handle the case where the
+          character is not present in the string but does not so we
+          automatically ignore the last line of the snippet which is always
+          empty (the closing snippet tag). This is consistent with the
+          behavior or print_without_leading_chars.
+       2) If the current is empty (only whitespace), print newline and call
+          itself recursively on the rest of the text with the rest of the
+          parameters unchanged.
+       3) Otherwise, measure "d"
+       4) Measure "c" by taking:
+          - the value of "d" if the previous line ended with a colon or the
+            current line is outdented compare to the previous line
+          - the indent of the previous line otherwise
+       5) Print line[a:c] (Note that we ignore line[0:a])
+       6) Print line[b:c] in an external span (in order to double the block
+          indent in external code).
+       7) Print line[c:<end>] with function names processed to produce both 
+          internal and external names.
+       8) If there are more lines, recurse.
+  -->
+  <xsl:template name="print_python_line_recursively">
+    <xsl:param name="text"/>
+    <xsl:param name="a"/>
+    <xsl:param name="b"/>
+    <xsl:param name="previous_indent"/>
+    <xsl:param name="previous_ends_with_colon"/>
+    <xsl:param name="is_first_line"/>
+    <xsl:variable name="line" select="substring-before($text, '&#xA;')"/>
+    <xsl:variable name="rest" select="substring-after($text, '&#xA;')"/>
+    <xsl:choose>
+      <xsl:when test="substring($line, $b) = '' and not($rest = '')">
+        <xsl:if test="not($is_first_line = '1')">
+          <xsl:text>&#xA;</xsl:text>
+        </xsl:if>
+        <xsl:call-template name="print_python_line_recursively">
+          <xsl:with-param name="text" select="$rest"/>
+          <xsl:with-param name="a" select="$a"/>
+          <xsl:with-param name="b" select="$b"/>
+          <xsl:with-param name="previous_indent" select="$previous_indent"/>
+          <xsl:with-param name="previous_ends_with_colon"
+                          select="$previous_ends_with_colon"/>
+          <xsl:with-param name="is_first_line" select="0"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="indent_after_b">
+          <xsl:call-template name="num_leading_spaces_one_line">
+            <xsl:with-param name="text" select="substring($line, $b + 1)"/>
+            <xsl:with-param name="current_count" select="0"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="d" select="$b + $indent_after_b"/>
+        <xsl:variable name="c">
+           <xsl:choose>
+             <xsl:when test="$previous_ends_with_colon = '1' or
+                             $previous_indent > $d">
+               <xsl:value-of select="$d"/>
+             </xsl:when>
+             <xsl:otherwise>
+               <xsl:value-of select="$previous_indent"/>
+             </xsl:otherwise>
+           </xsl:choose>
+        </xsl:variable>
+
+        <xsl:value-of select="substring($line, $a + 1, $c - $a)"/>
+        <span class="external">
+           <xsl:value-of select="substring($line, $b + 1, $c - $b)"/>
+        </span>
+        <xsl:call-template name="munge_function_names_in_text">
+          <xsl:with-param name="stripped_line"
+             select="substring($line, $c + 1)"/>
+        </xsl:call-template>
+        <xsl:if test="not(substring($rest, $a) = '')">
+          <xsl:text>&#xA;</xsl:text>
+          <xsl:call-template name="print_python_line_recursively">
+            <xsl:with-param name="text" select="$rest"/>
+            <xsl:with-param name="a" select="$a"/>
+            <xsl:with-param name="b" select="$b"/>
+            <xsl:with-param name="previous_indent" select="$c"/>
+            <xsl:with-param name="previous_ends_with_colon">
+              <xsl:call-template name="ends_with_colon">
+                <xsl:with-param name="line" select="$line"/>
+                <xsl:with-param name="found_colon" select="0"/>
+              </xsl:call-template>
+            </xsl:with-param>
+            <xsl:with-param name="is_first_line" select="0"/>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Print python code with internal and external styles.
+       In order to conform with PEP-8 externally, we identify 2-space indents
+       and an external-only 4-space indent.
+       Function names that are marked with $$FunctionName/$$ have an external
+       lower_with_underscore version added. -->
+  <xsl:template name="print_python_code">
+    <xsl:param name="text"/>
+
+    <xsl:variable name="a">
+       <xsl:call-template name="num_leading_spaces">
+         <xsl:with-param name="text" select="."/>
+         <xsl:with-param name="max_so_far" select="1000"/>
+       </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:variable name="b">
+      <xsl:call-template name="code_start_index">
+        <xsl:with-param name="text" select="$text"/>
+        <xsl:with-param name="current_count" select="0"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:call-template name="print_python_line_recursively">
+      <xsl:with-param name="text" select="$text"/>
+      <xsl:with-param name="a" select="$a"/>
+      <xsl:with-param name="b" select="$b"/>
+      <xsl:with-param name="previous_indent" select="$b"/>
+      <xsl:with-param name="previous_ends_with_colon" select="0"/>
+      <xsl:with-param name="is_first_line" select="1"/> 
+    </xsl:call-template>
+  </xsl:template>
+
   <!-- Given a block of text, each line terminated by \n, and a number n,
        emits the text with the first n characters of each line
        deleted.  If strip==1, then we omit blank lines at the beginning
@@ -474,6 +788,7 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format">
     <!-- TODO(csilvers): deal with case text doesn't end in a newline -->
     <xsl:variable name="line" select="substring-before($text, '&#xA;')"/>
     <xsl:variable name="rest" select="substring-after($text, '&#xA;')"/>
+    <xsl:variable name="stripped_line" select="substring($line, $trim_count+1)"/>
     <xsl:choose>
       <!-- $line (or $rest) is considered empty if we'd trim the entire line -->
       <xsl:when test="($strip = '1') and ($is_firstline = '1') and
@@ -481,10 +796,10 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format">
       </xsl:when>
       <xsl:when test="($strip = '1') and
                       (string-length($rest) &lt;= $trim_count)">
-        <xsl:value-of select="substring($line, $trim_count+1)"/>
+        <xsl:value-of select="$stripped_line"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="substring($line, $trim_count+1)"/>
+        <xsl:value-of select="$stripped_line"/>
         <xsl:text>&#xA;</xsl:text>
       </xsl:otherwise>
     </xsl:choose>
@@ -498,5 +813,66 @@ xmlns:fo="http://www.w3.org/1999/XSL/Format">
     </xsl:if>
   </xsl:template>
 
+  <!-- Given a line of code, find function names that are marked with $$ /$$ and
+       print out the line with the internal and external versions of the
+       function names.-->
+  <xsl:template name="munge_function_names_in_text">
+    <xsl:param name="stripped_line"/>
+    <xsl:choose>
+      <xsl:when test="contains($stripped_line, '$$')">
+        <xsl:value-of select="substring-before($stripped_line, '$$')"/>
+        <xsl:call-template name="print_function_name">
+          <xsl:with-param name="text" select="substring-after(substring-before($stripped_line, '/$$'), '$$')"/>
+        </xsl:call-template>
+        <xsl:call-template name="munge_function_names_in_text">
+          <xsl:with-param name="stripped_line" select="substring-after($stripped_line, '/$$')"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$stripped_line"/>
+     </xsl:otherwise>
+   </xsl:choose>
+  </xsl:template>
+
+  <!-- Given a function name, print out both the internal and external version
+       of the function name in their respective spans.-->
+  <xsl:template name="print_function_name">
+    <xsl:param name="text"/>
+    <span class="internal"><xsl:value-of select="$text"/></span>
+    <span class="external">
+      <xsl:call-template name="convert_camel_case_to_lowercase_with_under">
+        <xsl:with-param name="text" select="$text"/>
+      </xsl:call-template>
+    </span>
+  </xsl:template>
+
+  <!-- Given a single word of text convert it from CamelCase to
+       lower_with_under.
+       This means replacing each uppercase character with _ followed by the
+       lowercase version except for the first character which is replaced 
+       without adding the _.-->
+  <xsl:template name="convert_camel_case_to_lowercase_with_under">
+    <xsl:param name="text"/>
+    <xsl:param name="is_recursive_call"/>
+    <xsl:variable name="first_char" select="substring($text, 1, 1)"/>
+    <xsl:variable name="rest" select="substring($text, 2)"/>
+    <xsl:choose>
+      <xsl:when test="contains('ABCDEFGHIJKLMNOPQRSTUVWXYZ', $first_char)">
+        <xsl:if test="$is_recursive_call='1'">
+           <xsl:text>_</xsl:text>
+        </xsl:if>
+        <xsl:value-of select="translate($first_char, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$first_char" />
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="not($rest='')">
+      <xsl:call-template name="convert_camel_case_to_lowercase_with_under">
+        <xsl:with-param name="text" select="$rest"/>
+        <xsl:with-param name="is_recursive_call" select="1"/>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
 </xsl:stylesheet>
 
