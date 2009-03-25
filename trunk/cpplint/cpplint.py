@@ -148,6 +148,7 @@ _ERROR_CATEGORIES = '''\
   runtime/explicit
   runtime/int
   runtime/init
+  runtime/invalid_increment
   runtime/memset
   runtime/printf
   runtime/printf_format
@@ -1038,6 +1039,34 @@ def CheckPosixThreading(filename, clean_lines, linenum, error):
             '...) for improved thread safety.')
 
 
+# Matches invalid increment: *count++, which moves pointer insead of
+# incrementing a value.
+_RE_PATTERN_IVALID_INCREMENT = re.compile(
+    r'^\s*\*\w+(\+\+|--);')
+
+
+def CheckInvalidIncrement(filename, clean_lines, linenum, error):
+  """Checks for invalud increment *count++.
+
+  For example following function:
+  void increment_counter(int* count) {
+    *count++;
+  }
+  is invalid, because it effectively does count++, moving pointer, and should
+  be replaced with ++*count, (*count)++ or *count += 1.
+
+  Args:
+    filename: The name of the current file.
+    clean_lines: A CleansedLines instance containing the file.
+    linenum: The number of the line to check.
+    error: The function to call with any errors found.
+  """
+  line = clean_lines.elided[linenum]
+  if _RE_PATTERN_IVALID_INCREMENT.match(line):
+    error(filename, linenum, 'runtime/invalid_increment', 5,
+          'Changing pointer instead of value (or unused value of operator*).')
+
+
 class _ClassInfo(object):
   """Stores information about a class."""
 
@@ -1275,10 +1304,10 @@ def CheckSpacingForFunctionCall(filename, line, linenum, error):
       not Search(r' \([^)]+\)\([^)]*(\)|,$)', fncall) and
       # Ignore pointers/references to arrays.
       not Search(r' \([^)]+\)\[[^\]]+\]', fncall)):
-    if Search(r'\w\s*\(\s', fncall):      # a ( used for a fn call
+    if Search(r'\w\s*\(\s(?!\s*\\$)', fncall):      # a ( used for a fn call
       error(filename, linenum, 'whitespace/parens', 4,
             'Extra space after ( in function call')
-    elif Search(r'\(\s+[^(]', fncall):
+    elif Search(r'\(\s+(?!(\s*\\)|\()', fncall):
       error(filename, linenum, 'whitespace/parens', 2,
             'Extra space after (')
     if (Search(r'\w\s+\(', fncall) and
@@ -1892,7 +1921,7 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, error):
   # URLs can be long too.  It's possible to split these, but it makes them
   # harder to cut&paste.
   if (not line.startswith('#include') and not is_header_guard and
-      not Match(r'^\s*//\s*http(s?)://\S*$', line)):
+      not Match(r'^\s*//.*http(s?)://\S*$', line)):
     line_width = GetLineWidth(line)
     if line_width > 100:
       error(filename, linenum, 'whitespace/line_length', 4,
@@ -2543,6 +2572,7 @@ def ProcessLine(filename, file_extension,
   CheckForNonStandardConstructs(filename, clean_lines, line,
                                 class_state, error)
   CheckPosixThreading(filename, clean_lines, line, error)
+  CheckInvalidIncrement(filename, clean_lines, line, error)
 
 
 def ProcessFileData(filename, file_extension, lines, error):
