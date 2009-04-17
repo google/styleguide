@@ -838,12 +838,9 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
        of the function name in their respective spans.-->
   <xsl:template name="print_function_name">
     <xsl:param name="text"/>
-    <span class="internal"><xsl:value-of select="$text"/></span>
-    <span class="external">
       <xsl:call-template name="convert_camel_case_to_lowercase_with_under">
         <xsl:with-param name="text" select="$text"/>
       </xsl:call-template>
-    </span>
   </xsl:template>
 
   <!-- Given a single word of text convert it from CamelCase to
