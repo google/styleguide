@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 2.11
+Revision 2.12
 </p>
 
 
@@ -329,14 +329,15 @@ Revision 2.11
   <STYLEPOINT title="Exceptions">
     <SUMMARY>
       Format exceptions with each <code>@</code> label on its own line and a
-      space between the <code>@</code> label and the opening brace '{', as
-      well as between the <code>@catch</code> and the caught object
-      declaration.
+      space between the <code>@</code> label and the opening brace
+      (<code>{</code>), as well as between the <code>@catch</code> and the
+      caught object declaration.
     </SUMMARY>
     <BODY>
       <p>
-        If you must use Obj-C exceptions (please see <a href="#Exceptions">Exceptions</a> for reasons why you <b>should
-        not</b> be using exceptions) format them as follows:
+        If you must use Obj-C exceptions, format them as follows.  However, see
+        <a href="#Avoid_Throwing_Exceptions">Avoid Throwing Exceptions</a> for
+        reasons why you <b>should not</b> be using exceptions.
       </p>
       <CODE_SNIPPET>
         @try {
@@ -1429,7 +1430,7 @@ Revision 2.11
 <HR/>
 
 <p align="right">
-Revision 2.11
+Revision 2.12
 </p>
 
 
