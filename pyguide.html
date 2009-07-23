@@ -1,0 +1,2026 @@
+<HTML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcq="http://purl.org/dc/qualifiers/1.0/" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fn="http://www.w3.org/2005/xpath-functions">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Google Python Style Guide</TITLE>
+<LINK HREF="http://www.google.com/favicon.ico" type="image/x-icon" rel="shortcut icon">
+<LINK HREF="styleguide.css" type="text/css" rel="stylesheet">
+<SCRIPT language="javascript" type="text/javascript">
+
+                function ShowHideByName(bodyName, buttonName) {
+	          var bodyElements;
+                  if (document.getElementsByName) {
+                    bodyElements = document.getElementsByName(bodyName);
+                  } else {
+                    bodyElements = [document.getElementById(bodyName)];
+                  }
+                  if (bodyElements.length != 1) {
+                    alert("ShowHideByName() got the wrong number of bodyElements:  " + bodyElements.length);
+                  } else {
+                    var bodyElement = bodyElements[0];
+                    var buttonElement;
+                    if (document.getElementsByName) {
+                      var buttonElements = document.getElementsByName(buttonName);
+                      buttonElement = buttonElements[0];
+                    } else {
+                      buttonElement = document.getElementById(buttonName);
+                    }
+                    if (bodyElement.style.display == "none" || bodyElement.style.display == "") {
+                      bodyElement.style.display = "inline";
+                      buttonElement.innerHTML = '▽';
+                    } else {
+                      bodyElement.style.display = "none";
+                      buttonElement.innerHTML = '▶';
+                    }
+                  }
+                }
+
+                function ShowHideAll() {
+                  var allButton;
+                  if (document.getElementsByName) {
+                    var allButtons = document.getElementsByName("show_hide_all_button");
+	            allButton = allButtons[0];
+                  } else {
+                    allButton = document.getElementById("show_hide_all_button");
+                  }
+                  if (allButton.innerHTML == '▽') {
+                    allButton.innerHTML = '▶';
+                    SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '▶');
+                  } else {
+                    allButton.innerHTML = '▽';
+                    SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "inline", '▽');
+                  }
+                }
+
+                // Recursively sets state of all children
+                // of a particular node.
+                function SetHiddenState(root, newState, newButton) {
+                  for (var i = 0; i != root.length; i++) {
+                    SetHiddenState(root[i].childNodes, newState, newButton);
+                    if (root[i].className == 'showhide_button')  {
+                      root[i].innerHTML = newButton;
+                    }
+                    if (root[i].className == 'stylepoint_body')  {
+                      root[i].style.display = newState;
+                    }
+                  }
+                }
+
+
+                window.onload = function() {
+                  // if the URL contains "?showall=y", expand the details of all children
+                  {
+                    var showHideAllRegex = new RegExp("[\\?&](showall)=([^&#]*)");
+                    var showHideAllValue = showHideAllRegex.exec(window.location.href);
+                    if (showHideAllValue != null) {
+                      if (showHideAllValue[2] == "y") {
+                        SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "inline", '▽');
+                      } else {
+                        SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '▶');
+                      }
+                    }
+                    var showOneRegex = new RegExp("[\\?&](showone)=([^&#]*)");
+                    var showOneValue = showOneRegex.exec(window.location.href);
+                    if (showOneValue != null) {
+                      var body_name = showOneValue[2] + '__body';
+                      var button_name = showOneValue[2] + '__button';
+                      ShowHideByName(body_name, button_name);
+                    }
+
+                  }
+                }
+              </SCRIPT>
+</HEAD>
+<BODY>
+<H1>Google Python Style Guide</H1>
+  <p align="right">
+
+    Revision 2.12
+  </p>
+  
+  <address>
+    Amit Patel<br>
+    Antoine Picard<br>
+    Eugene Jhong<br>
+    Jeremy Hylton<br>
+    Matt Smart<br>
+    Mike Shields<br>
+  </address>
+  <DIV style="margin-left: 50%; font-size: 75%;">
+<P>
+        Each style point has a summary for which additional information is available
+        by toggling the accompanying arrow button that looks this way:
+        <SPAN class="showhide_button" style="margin-left: 0;">▶</SPAN>.
+        You may toggle all summaries with the big arrow button:
+      </P>
+<DIV style=" font-size: larger; margin-left: +2em;">
+<SPAN class="showhide_button" style="font-size: 180%;" onclick="javascript:ShowHideAll()" name="show_hide_all_button" id="show_hide_all_button">▶</SPAN>
+        Toggle all summaries
+      </DIV>
+</DIV>
+<DIV class="toc">
+<DIV class="toc_title">Table of Contents</DIV>
+<TABLE>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Python_Language_Rules">Python Language Rules</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#pychecker">pychecker</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports">Imports</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">Packages</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Exceptions">Exceptions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables">Global variables</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#List_Comprehensions">List Comprehensions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Iterators_and_Operators">Default Iterators and Operators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Generators">Generators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Using_apply,_filter,_map,_reduce">Using apply, filter, map, reduce</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lambda_Functions">Lambda Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Argument_Values">Default Argument Values</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Properties">Properties</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#True/False_evaluations">True/False evaluations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#String_Methods">String Methods</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lexical_Scoping">Lexical Scoping</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Function_and_Method_Decorators">Function and Method Decorators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Threading">Threading</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Power_Features">Power Features</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Python_Style_Rules">Python Style Rules</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Semicolons">Semicolons</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Line_length">Line length</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Parentheses">Parentheses</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Indentation">Indentation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Blank_Lines">Blank Lines</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Whitespace">Whitespace</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Python_Interpreter">Python Interpreter</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Comments">Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Classes">Classes</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Strings">Strings</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#TODO_Comments">TODO Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports_formatting">Imports formatting</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Statements">Statements</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Access_Control">Access Control</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Naming">Naming</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Main">Main</A></SPAN> </DIV></TD>
+</TR>
+</TABLE>
+</DIV>
+<H2>Overview</H2>
+  <SPAN class=""><H2 name="Important_Note" id="Important_Note">Important Note</H2>
+    <SPAN class=""><H3><A name="Displaying_Hidden_Details_in_this_Guide" id="Displaying_Hidden_Details_in_this_Guide">Displaying Hidden Details in this Guide</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Displaying_Hidden_Details_in_this_Guide__body','Displaying_Hidden_Details_in_this_Guide__button')" name="Displaying_Hidden_Details_in_this_Guide__button" id="Displaying_Hidden_Details_in_this_Guide__button">▶</SPAN>
+      <SPAN class="">
+       This style guide contains many details that are initially
+       hidden from view.  They are marked by the triangle icon, which you
+       see here on your left.  Click it now.
+       You should see "Hooray" appear below.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Displaying_Hidden_Details_in_this_Guide__body" id="Displaying_Hidden_Details_in_this_Guide__body" style="display: none"><SPAN class="link_button"><A href="?showone=Displaying_Hidden_Details_in_this_Guide#Displaying_Hidden_Details_in_this_Guide">
+            link
+          </A></SPAN>
+       <p>
+        Hooray!  Now you know you can expand points to get more
+        details.  Alternatively, there's a "toggle all" at the
+        top of this document.
+       </p>
+      </SPAN></SPAN>
+    </SPAN>
+  </SPAN>
+  <SPAN class=""><H2 name="Background" id="Background">Background</H2>
+    <p>
+      Python is the main scripting language used at Google.  This
+      style guide is a list of <em>do</em>s and <em>don't</em>s for Python
+      programs.
+    </p>
+    
+    
+    
+  </SPAN>
+  
+  <SPAN class=""><H2 name="Python_Language_Rules" id="Python_Language_Rules">Python Language Rules</H2>
+     
+    <SPAN class=""><H3><A name="pychecker" id="pychecker">pychecker</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('pychecker__body','pychecker__button')" name="pychecker__button" id="pychecker__button">▶</SPAN>
+      <SPAN class="">
+        Run <code>pychecker</code> over your code.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="pychecker__body" id="pychecker__body" style="display: none"><SPAN class="link_button"><A href="?showone=pychecker#pychecker">
+            link
+          </A></SPAN> 
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+        PyChecker is a tool for finding bugs in Python source code. It finds
+        problems that are typically caught by a compiler for less dynamic
+        languages like C and C++. It is similar to lint. Because of the
+        dynamic nature of Python, some warnings may be incorrect; however,
+        spurious warnings should be fairly infrequent.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+        Catches easy-to-miss errors like typos, use-vars-before-assignment, etc.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+        <code>pychecker</code> isn't perfect.  To take
+        advantage of it, we'll need to sometimes: a) Write around it b)
+        Suppress its warnings c) Improve it or d) Ignore it.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN> 
+        Make sure you run <code>pychecker</code> on your code.
+        </P>
+        
+        <p>
+          For information on how to run <code>pychecker</code>, see the
+          <a HREF="http://pychecker.sourceforge.net">pychecker
+         homepage</a>
+        </p>
+        <p>
+          To suppress warnings, you can set a module-level variable named
+          <code>__pychecker__</code> to suppress appropriate warnings.  
+          For example:
+        </p>
+        <SPAN class=""><PRE>
+<span class="external"></span>__pychecker__ = 'no-callinit no-classattr'</PRE></SPAN>
+        <p>
+        Suppressing in this way has the advantage that we can easily search
+        for suppressions and revisit them.
+        </p>
+        <p>
+          You can get a list of pychecker warnings by doing 
+          <code>pychecker --help</code>.
+        </p>
+        <p>
+        Unused argument warnings can be suppressed by using `_' as the
+        identifier for the unused argument or prefixing the argument name with
+        `unused_'.  In situations where changing the argument names is
+        infeasible, you can mention them at the beginning of the function.
+        For example:
+        </p>
+        <SPAN class=""><PRE>
+<span class="external"></span>def foo(a, unused_b, unused_c, d=None, e=None):
+  <span class="external">  </span>(d, e) = (d, e)  # Silence pychecker
+  <span class="external">  </span>return a
+<span class="external"></span>
+</PRE></SPAN>
+        <p>
+        Ideally, pychecker would be extended to ensure that such `unused
+        declarations' were true.
+        </p>
+        
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Imports" id="Imports">Imports</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports__body','Imports__button')" name="Imports__button" id="Imports__button">▶</SPAN>
+      <SPAN class="">
+        Use <code>import</code>s for packages and modules only.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Imports__body" id="Imports__body" style="display: none"><SPAN class="link_button"><A href="?showone=Imports#Imports">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+          Reusability mechanism for sharing code from one module to another.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+          Simplest and most commonly used way of sharing things.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN> <code>from foo import *</code> or 
+      <code>from foo import Bar</code> is
+      very nasty and can lead to serious maintenance issues because
+      it makes it hard to find module dependencies.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      Use <code>import x</code> for importing packages and modules.
+      Use <code>from x import y</code> only when <code>x</code> is a
+      package and <code>y</code> is a module.  This allows the
+      importer to refer to the module without specifying the full
+      package prefix.  For example the module
+      <code>sound.effects.echo</code> may be imported as follows:
+        </P>
+    <SPAN class=""><PRE>
+<span class="external"></span>from sound.effects import echo
+<span class="external"></span>...
+<span class="external"></span>echo.echofilter(input, output, delay=0.7, atten=4)
+<span class="external"></span>
+</PRE></SPAN>
+    <p>
+      Even if the module is in the same package, do not directly import
+      the module without the full package name.  This might cause the
+      package to be imported twice (with unintended side effects) when the 
+      "main" module that is used to start an application lives inside a 
+      package (and uses modules from that same package).
+    </p>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Packages" id="Packages">Packages</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Packages__body','Packages__button')" name="Packages__button" id="Packages__button">▶</SPAN>
+      <SPAN class="">
+        Import and refer to each module using the full pathname location of 
+        that module.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Packages__body" id="Packages__body" style="display: none"><SPAN class="link_button"><A href="?showone=Packages#Packages">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Avoids conflicts in module names.  Makes it easier to find modules.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      Makes it harder to deploy code because you have to replicate the
+      package hierarchy.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      All new code should refer to modules based on their package
+      name. 
+        </P>
+      <p>
+        Imports should be as follows:
+      </p>
+
+    
+    <SPAN class=""><PRE># Reference in code with complete name.
+import sound.effects.echo
+
+# Reference in code with just module name.
+from sound.effects import echo
+</PRE></SPAN>
+    
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Exceptions" id="Exceptions">Exceptions</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Exceptions__body','Exceptions__button')" name="Exceptions__button" id="Exceptions__button">▶</SPAN>
+      <SPAN class="">
+        Exceptions are allowed but must be used carefully.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Exceptions__body" id="Exceptions__body" style="display: none"><SPAN class="link_button"><A href="?showone=Exceptions#Exceptions">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      Exceptions are a means of breaking out of the normal flow of control
+      of a code block to handle errors or other exceptional conditions.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      The control flow of normal operation code is not cluttered by
+      error-handling code. It also allows the control flow to skip multiple
+      frames when a certain condition occurs, e.g., returning from N
+      nested functions in one step instead of having to carry-through
+      error codes.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      May cause the control flow to be confusing. Easy to miss error
+      cases when making library calls.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+        
+        
+      Exceptions must follow certain conditions:
+        
+        <ul>
+          <li>Raise exceptions like this: <code>raise MyException("Error
+            message")</code> or <code>raise MyException</code>.  Do not
+            use the two-argument form (<code>raise MyException, "Error
+            message"</code>) or deprecated string-based exceptions
+            (<code>raise "Error message"</code>).</li>
+          <li>Modules or packages should define their own domain-specific
+            base exception class, which should inherit from the built-in
+            Exception class.  The base exception for a module should be called
+            <code>Error</code>.
+            <SPAN class=""><PRE>
+<span class="external"></span>class Error(Exception):
+  <span class="external">  </span>pass</PRE></SPAN>
+</li>
+          <li>Never use catch-all <code>except:</code> statements, or
+            catch <code>Exception</code> or <code>StandardError</code>,
+            unless you are re-raising the exception or in the outermost
+            block in your thread (and printing an error message).  Python
+            is very tolerant in this regard and <code>except:</code> will
+            really catch everything including Python syntax errors.  It is
+            easy to hide real bugs using <code>except:</code>.</li>
+          <li>Minimize the amount of code in a
+            <code>try</code>/<code>except</code> block.  The larger the
+            body of the <code>try</code>, the more likely that an
+            exception will be raised by a line of code that you didn't
+            expect to raise an exception.  In those cases,
+            the <code>try</code>/<code>except</code> block hides a real
+            error.</li>
+          <li>Use the <code>finally</code> clause to execute code whether
+            or not an exception is raised in the <code>try</code> block.
+            This is often useful for cleanup, i.e., closing a file.</li>
+        </ul>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Global_variables" id="Global_variables">Global variables</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Global_variables__body','Global_variables__button')" name="Global_variables__button" id="Global_variables__button">▶</SPAN>
+      <SPAN class="">
+        Avoid global variables.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Global_variables__body" id="Global_variables__body" style="display: none"><SPAN class="link_button"><A href="?showone=Global_variables#Global_variables">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      Variables that are declared at the module level.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Occasionally useful.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      Has the potential to change module behavior during the import,
+      because assignments to module-level variables are done when the
+      module is imported.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      Avoid global variables in favor of class variables.  Some
+      exceptions are:
+      <ul>
+        <li>Default options for scripts.</li>
+        <li>Module-level constants.  For example: <code>PI = 3.14159</code>.
+          Constants should be named using all caps with underscores;
+          see <a HREF="#Naming">Naming</a> below.</li>
+        <li>It is sometimes useful for globals to cache values needed
+          or returned by functions.</li>
+        <li>If needed, globals should be made internal to the module
+          and accessed through public module level functions;
+          see <a HREF="#Naming">Naming</a> below.</li>
+      </ul>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Nested/Local/Inner_Classes_and_Functions" id="Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Nested/Local/Inner_Classes_and_Functions__body','Nested/Local/Inner_Classes_and_Functions__button')" name="Nested/Local/Inner_Classes_and_Functions__button" id="Nested/Local/Inner_Classes_and_Functions__button">▶</SPAN>
+      <SPAN class="">
+        Nested/local/inner classes and functions are fine.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Nested/Local/Inner_Classes_and_Functions__body" id="Nested/Local/Inner_Classes_and_Functions__body" style="display: none"><SPAN class="link_button"><A href="?showone=Nested/Local/Inner_Classes_and_Functions#Nested/Local/Inner_Classes_and_Functions">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      A class can be defined inside of a function or class.  A function
+      can be defined inside a function.  Nested functions have read-only
+      access to variables defined in enclosing scopes.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Allows definition of utility classes and functions that are only
+      used inside of a very limited scope. Very <a HREF="http://en.wikipedia.org/wiki/Abstract_data_type">ADT</a>-y.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      Instances of nested or local classes cannot be pickled.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      They are fine.
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="List_Comprehensions" id="List_Comprehensions">List Comprehensions</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('List_Comprehensions__body','List_Comprehensions__button')" name="List_Comprehensions__button" id="List_Comprehensions__button">▶</SPAN>
+      <SPAN class="">
+        Okay to use for simple cases.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="List_Comprehensions__body" id="List_Comprehensions__body" style="display: none"><SPAN class="link_button"><A href="?showone=List_Comprehensions#List_Comprehensions">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      List comprehensions and generator expressions provide a concise
+      and efficient way to create lists and iterators without
+      resorting to the use of <code>map()</code>,
+      <code>filter()</code>, or <code>lambda</code>.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Simple list comprehensions can be clearer and simpler than
+      other list creation techniques.  Generator expressions can be
+      very efficient, since they avoid the creation of a list
+      entirely.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      Complicated list comprehensions or generator expressions can be
+      hard to read.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      Okay to use for simple cases.  Each portion must fit on one line:
+      mapping expression, <code>for</code> clause, filter expression.
+      Multiple <code>for</code> clauses or filter expressions are not
+      permitted.  Use loops instead when things get more complicated.
+        </P>
+
+<SPAN class=""><PRE class="badcode">No<span class="external"></span>:
+  <span class="external"></span>result = [(x, y) for x in range(10) for y in range(5) if x * y &gt; 10]
+
+  <span class="external"></span>return ((x, y, z)
+  <span class="external"></span>        for x in xrange(5)
+  <span class="external"></span>        for y in xrange(5)
+  <span class="external"></span>        if x != y
+  <span class="external"></span>        for z in xrange(5)
+  <span class="external"></span>        if y != z)</PRE></SPAN>
+<SPAN class=""><PRE>Ye<span class="external"></span>s:
+  <span class="external"></span>result = []
+  <span class="external"></span>for x in range(10):
+    <span class="external">  </span>for y in range(5):
+      <span class="external">    </span>if x * y &gt; 10:
+        <span class="external">      </span>result.append((x, y))
+
+  <span class="external"></span>for x in xrange(5):
+    <span class="external">  </span>for y in xrange(5):
+      <span class="external">    </span>if x != y:
+        <span class="external">      </span>for z in xrange(5):
+          <span class="external">        </span>if y != z:
+            <span class="external">          </span>yield (x, y, z)
+
+  <span class="external"></span>return ((x, complicated_transform(x))
+  <span class="external"></span>        for x in long_generator_function(parameter)
+  <span class="external"></span>        if x is not None)
+
+  <span class="external"></span>squares = [x * x for x in range(10)]
+
+  <span class="external"></span>eat(jelly_bean for jelly_bean in jelly_beans
+  <span class="external"></span>    if jelly_bean.color == 'black')</PRE></SPAN>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Default_Iterators_and_Operators" id="Default_Iterators_and_Operators">Default Iterators and Operators</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Iterators_and_Operators__body','Default_Iterators_and_Operators__button')" name="Default_Iterators_and_Operators__button" id="Default_Iterators_and_Operators__button">▶</SPAN>
+      <SPAN class="">
+        Use default iterators and operators for types that support them, 
+        like lists, dictionaries, and files.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Default_Iterators_and_Operators__body" id="Default_Iterators_and_Operators__body" style="display: none"><SPAN class="link_button"><A href="?showone=Default_Iterators_and_Operators#Default_Iterators_and_Operators">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      Container types, like dictionaries and lists, define default
+      iterators and membership test operators ("in" and "not in").
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      The default iterators and operators are simple and efficient.
+      They express the operation directly, without extra method calls.
+      A function that uses default operators is generic. It can be
+      used with any type that supports the operation.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      You can't tell the type of objects by reading the method names
+      (e.g. has_key() means a dictionary).  This is also an advantage.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN> Use default iterators and operators for types
+      that support them, like lists, dictionaries, and files.  The
+      built-in types define iterator methods, too.  Prefer these
+      methods to methods that return lists, except that you should not
+      mutate a container while iterating over it.
+
+<SPAN class=""><PRE>Yes:  <span class="external"></span>for key in adict: ...
+      <span class="external"></span>if key not in adict: ...
+      <span class="external"></span>if obj in alist: ...
+      <span class="external"></span>for line in afile: ...
+      <span class="external"></span>for k, v in dict.iteritems(): ...</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:   <span class="external"></span>for key in adict.keys(): ...
+      <span class="external"></span>if not adict.has_key(key): ...
+      <span class="external"></span>for line in afile.readlines(): ...</PRE></SPAN>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Generators" id="Generators">Generators</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Generators__body','Generators__button')" name="Generators__button" id="Generators__button">▶</SPAN>
+      <SPAN class="">
+        Use generators as needed.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Generators__body" id="Generators__body" style="display: none"><SPAN class="link_button"><A href="?showone=Generators#Generators">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      A generator function returns an iterator that yields a value each
+      time it executes a yield statement.  After it yields a value, the
+      runtime state of the generator function is suspended until the
+      next value is needed.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Simpler code, because the state of local variables and control flow
+      are preserved for each call.  A generator uses less memory than a
+      function that creates an entire list of values at once.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN> 
+          None.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      Fine.  Use "Yields:" rather than "Returns:" in the
+      doc string for generator functions.
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Using_apply,_filter,_map,_reduce" id="Using_apply,_filter,_map,_reduce">Using apply, filter, map, reduce</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Using_apply,_filter,_map,_reduce__body','Using_apply,_filter,_map,_reduce__button')" name="Using_apply,_filter,_map,_reduce__button" id="Using_apply,_filter,_map,_reduce__button">▶</SPAN>
+      <SPAN class="">
+        Avoid in favor of list comprehensions and for-loops.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Using_apply,_filter,_map,_reduce__body" id="Using_apply,_filter,_map,_reduce__body" style="display: none"><SPAN class="link_button"><A href="?showone=Using_apply,_filter,_map,_reduce#Using_apply,_filter,_map,_reduce">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN> Built-in functions useful for manipulating
+      lists.  Commonly used in conjunction with <code>lambda</code>
+      functions.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Code is compact.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      Higher-order functional programming tends to be harder to understand.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN> Use list comprehensions when possible and limit
+      use to simple code and one-liners.  In general, if such code
+      grows longer than 60–80 chars or if it uses
+      multi-level function calls (e.g., <code>map(lambda x: x[1],
+      filter(…))</code>), that's a signal that you are better
+      off writing a regular loop instead.  Compare:
+<SPAN class=""><PRE>Yes: <span class="external"></span>list comprehensions: [x[1] for x in my_list if x[2] == 5]</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>map/filter:          map(lambda x: x[1], filter(lambda x: x[2] == 5, my_list))</PRE></SPAN>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Lambda_Functions" id="Lambda_Functions">Lambda Functions</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lambda_Functions__body','Lambda_Functions__button')" name="Lambda_Functions__button" id="Lambda_Functions__button">▶</SPAN>
+      <SPAN class="">
+        Okay for one-liners.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Lambda_Functions__body" id="Lambda_Functions__body" style="display: none"><SPAN class="link_button"><A href="?showone=Lambda_Functions#Lambda_Functions">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      Lambdas define anonymous functions in an expression, as
+      opposed to a statement.  They are often used to define callbacks or
+      operators for higher-order functions like <code>map()</code> and
+      <code>filter()</code>.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Convenient.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN> Harder to read and debug than local functions.  The
+      lack of names means stack traces are more difficult to
+      understand.  Expressiveness is limited because the function may
+      only contain an expression.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      Okay to use them for one-liners. If the code inside the lambda
+      function is any longer than 60–80 chars, it's probably better to
+      define it as a regular (nested) function.
+       <p>
+         For common operations like multiplication, use the functions from the
+         <code>operator</code> module instead of lambda functions.  For
+         example, prefer <code>operator.mul</code> to <code>lambda
+         x, y: x * y</code>.
+       </p>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Default_Argument_Values" id="Default_Argument_Values">Default Argument Values</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Argument_Values__body','Default_Argument_Values__button')" name="Default_Argument_Values__button" id="Default_Argument_Values__button">▶</SPAN>
+      <SPAN class="">
+        Okay in most cases.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Default_Argument_Values__body" id="Default_Argument_Values__body" style="display: none"><SPAN class="link_button"><A href="?showone=Default_Argument_Values#Default_Argument_Values">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      You can specify values for variables at the end of a function's
+      parameter list, e.g., <code>def foo(a, b=0):</code>. If
+      <code>foo</code> is called with only one argument,
+      <code>b</code> is set to 0. If it is called with two arguments,
+      <code>b</code> has the value of the second argument.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Often you have a function that uses lots of default values,
+      but—rarely—you want to override the
+      defaults. Default argument values provide an easy way to do this,
+      without having to define lots of functions for the rare
+      exceptions. Also, Python does not support overloaded
+      methods/functions and default arguments are an easy way of
+      "faking" the overloading behavior.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN> 
+      Default arguments are evaluated once at module load
+      time.  This may cause problems if the argument is a mutable
+      object such as a list or a dictionary.  If the function modifies
+      the object (e.g., by appending an item to a list), the default
+      value is modified.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      Okay to use with the following caveats:
+      <p>
+        Do not use mutable objects as default values in the function or method
+        definition.
+      </p>
+<SPAN class=""><PRE>Yes: <span class="external"></span>def foo(a, b=None):
+       <span class="external">  </span>if b is None:
+         <span class="external">    </span>b = []</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>def foo(a, b=[]):
+       <span class="external">  </span>...</PRE></SPAN>
+    <p>
+      Calling code must use named values for the default args.  This
+      helps document the code somewhat and helps prevent and detect
+      interface breakage when more arguments are added.
+    </p>
+<SPAN class=""><PRE>
+<span class="external"></span>def foo(a, b=1):
+  <span class="external">  </span>...</PRE></SPAN>
+<SPAN class=""><PRE>Yes: <span class="external"></span>foo(1)
+     <span class="external"></span>foo(1, b=2)</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>foo(1, 2)</PRE></SPAN>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Properties" id="Properties">Properties</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Properties__body','Properties__button')" name="Properties__button" id="Properties__button">▶</SPAN>
+      <SPAN class="">
+        Use properties for accessing or setting data where you would 
+        normally have used simple, lightweight accessor or setter methods. 
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Properties__body" id="Properties__body" style="display: none"><SPAN class="link_button"><A href="?showone=Properties#Properties">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN> A way to wrap method calls for getting and
+      setting an attribute as a standard attribute access when the
+      computation is lightweight.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN> Readability is increased by eliminating explicit
+      get and set method calls for simple attribute access.  Allows
+      calculations to be lazy.  Considered the Pythonic way to
+      maintain the interface of a class.  In terms of performance,
+      allowing properties bypasses needing trivial accessor methods
+      when a direct variable access is reasonable. This also allows
+      accessor methods to be added in the future without breaking the
+      interface.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN> Properties are specified after the getter and
+      setter methods are declared, requiring one to notice they are
+      used for properties farther down in the code (except for readonly
+      properties created with the <code>@property</code> decorator - see
+      below).  Must inherit from
+      <code>object</code>.  Can hide side-effects much like operator
+      overloading.  Can be confusing for subclasses.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN> Use properties in new code to access or
+      set data where you would normally have used simple, lightweight
+      accessor or setter methods.  Read-only properties should be created
+      with the <code>@property</code> 
+      <a HREF="#Function_and_Method_Decorators">decorator</a>.
+
+     <p><a id="properties-template-dp">
+      Inheritance with properties can be non-obvious if the property itself is
+      not overridden.  Thus one must make sure that accessor methods are
+      called indirectly to ensure methods overridden in subclasses are called
+      by the property (using the Template Method DP).
+     </a></p>
+
+     <SPAN class=""><PRE>Yes: <span class="external"></span>import math
+
+     <span class="external"></span>class Square(object):
+       <span class="external">  </span>"""A square with two properties: a writable area and a read-only perimeter.
+
+       <span class="external">  </span>To use:
+       <span class="external">  </span>&gt;&gt;&gt; sq = Square(3)
+       <span class="external">  </span>&gt;&gt;&gt; sq.area
+       <span class="external">  </span>9
+       <span class="external">  </span>&gt;&gt;&gt; sq.perimeter
+       <span class="external">  </span>12
+       <span class="external">  </span>&gt;&gt;&gt; sq.area = 16
+       <span class="external">  </span>&gt;&gt;&gt; sq.side
+       <span class="external">  </span>4
+       <span class="external">  </span>&gt;&gt;&gt; sq.perimeter
+       <span class="external">  </span>16
+       <span class="external">  </span>"""
+
+       <span class="external">  </span>def __init__(self, side):
+         <span class="external">    </span>self.side = side
+
+       <span class="external">  </span>def __get_area(self):
+         <span class="external">    </span>"""Calculates the 'area' property."""
+         <span class="external">    </span>return self.side ** 2
+
+       <span class="external">  </span>def ___get_area(self):
+         <span class="external">    </span>"""Indirect accessor for 'area' property."""
+         <span class="external">    </span>return self.__get_area()
+
+       <span class="external">  </span>def __set_area(self, area):
+         <span class="external">    </span>"""Sets the 'area' property."""
+         <span class="external">    </span>self.side = math.sqrt(area)
+
+       <span class="external">  </span>def ___set_area(self, area):
+         <span class="external">    </span>"""Indirect setter for 'area' property."""
+         <span class="external">    </span>self._SetArea(area)
+
+       <span class="external">  </span>area = property(___get_area, ___set_area,
+       <span class="external">  </span>                doc="""Gets or sets the area of the square.""")
+
+       <span class="external">  </span>@property
+       <span class="external">  </span>def perimeter(self):
+         <span class="external">    </span>return self.side * 4
+<span class="external"></span>
+</PRE></SPAN>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="True/False_evaluations" id="True/False_evaluations">True/False evaluations</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('True/False_evaluations__body','True/False_evaluations__button')" name="True/False_evaluations__button" id="True/False_evaluations__button">▶</SPAN>
+      <SPAN class="">
+        Use the "implicit" false if at all possible.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="True/False_evaluations__body" id="True/False_evaluations__body" style="display: none"><SPAN class="link_button"><A href="?showone=True/False_evaluations#True/False_evaluations">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN> Python evaluates certain values as <code>false</code>
+      when in a boolean context. A quick "rule of thumb" is that all
+      "empty" values are considered <code>false</code> so <code>0, None, [], {},
+      ""</code> all evaluate as <code>false</code> in a boolean context.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN> Conditions using Python booleans are easier to read
+      and less error-prone. In most cases, they're also faster.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      May look strange to C/C++ developers.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      Use the "implicit" false if at all possible, e.g., <code>if
+      foo:</code> rather than <code>if foo != []:</code>.  There are a
+      few caveats that you should keep in mind though:
+    <ul>
+      <li>
+        Never use <code>==</code> or <code>!=</code> to compare
+        singletons like <code>None</code>.  Use <code>is</code>
+        or <code>is not</code>.</li>
+
+      <li>Beware of writing <code>if x:</code> when you really mean
+        <code>if x is not None:</code>—e.g., when testing whether
+        a variable or argument that defaults to <code>None</code> was
+        set to some other value.  The other value might be a value
+        that's false in a boolean context!</li>
+
+      <li>
+        Never compare a boolean variable to <code>False</code> using
+        <code>==</code>.  Use <code>if not x:</code> instead. If
+        you need to distinguish <code>False</code> from
+        <code>None</code> then chain the expressions,
+        such as <code>if not x and x is not None:</code>.
+        </li>
+
+      <li>
+        For sequences (strings, lists, tuples), use the fact that
+        empty sequences are false, so <code>if not seq:</code> or
+        <code>if seq:</code> is preferable to <code>if
+        len(seq):</code> or <code>if not
+          len(seq):</code>.</li>
+
+      <li>
+        When handling integers, implicit false may involve more risk than
+        benefit (i.e., accidentally handling <code>None</code> as 0).  You may
+        compare a value which is known to be an integer (and is not the
+        result of <code>len()</code>) against the integer 0.
+<SPAN class=""><PRE>Yes: <span class="external"></span>if not users:
+       <span class="external">  </span>print 'no users'
+
+     <span class="external"></span>if foo == 0:
+       <span class="external">  </span>self.handle_zero()
+
+     <span class="external"></span>if i % 10 == 0:
+       <span class="external">  </span>self.handle_multiple_of_ten()</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>if len(users) == 0:
+       <span class="external">  </span>print 'no users'
+
+     <span class="external"></span>if foo is not None and not foo:
+       <span class="external">  </span>self.handle_zero()
+
+     <span class="external"></span>if not i % 10:
+       <span class="external">  </span>self.handle_multiple_of_ten()</PRE></SPAN>
+</li>
+
+      <li>
+        Note that <code>'0'</code> (i.e., <code>0</code> as string)
+        evaluates to true.</li>
+    </ul>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="String_Methods" id="String_Methods">String Methods</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('String_Methods__body','String_Methods__button')" name="String_Methods__button" id="String_Methods__button">▶</SPAN>
+      <SPAN class="">
+        Use string methods instead of the <code>string</code> module where
+        possible.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="String_Methods__body" id="String_Methods__body" style="display: none"><SPAN class="link_button"><A href="?showone=String_Methods#String_Methods">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN> String objects include methods for most
+      functions in the <code>string</code> module.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN> No need to import the <code>string</code> module;
+      methods work with both regular byte-strings and Unicode-strings.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      None.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN> Use string object methods. The <code>string</code> module is
+      deprecated in favor of string methods.
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>words = string.split(foo, ':')</PRE></SPAN>
+<SPAN class=""><PRE>Yes: <span class="external"></span>words = foo.split(':')</PRE></SPAN>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Lexical_Scoping" id="Lexical_Scoping">Lexical Scoping</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lexical_Scoping__body','Lexical_Scoping__button')" name="Lexical_Scoping__button" id="Lexical_Scoping__button">▶</SPAN>
+      <SPAN class="">
+        Okay to use.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Lexical_Scoping__body" id="Lexical_Scoping__body" style="display: none"><SPAN class="link_button"><A href="?showone=Lexical_Scoping#Lexical_Scoping">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      A nested Python function can refer to variables defined in
+      enclosing functions, but can not assign to them.  Variable
+      bindings are resolved using lexical scoping, that is, based on
+      the static program text.  Any assignment to a name in a block
+      will cause Python to treat all references to that name as a
+      local variable, even if the use precedes the assignment.  If a
+      global declaration occurs, the name is treated as a global
+      variable.
+    
+    <p>
+      An example of the use of this feature is:
+    </p>
+
+    <SPAN class=""><PRE>
+<span class="external"></span>def get_adder(summand1):
+  <span class="external">  </span>"""Returns a function that adds numbers to a given number."""
+  <span class="external">  </span>def adder(summand2):
+    <span class="external">    </span>return summand1 + summand2
+
+  <span class="external">  </span>return adder
+<span class="external"></span>
+</PRE></SPAN>
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Often results in clearer, more elegant code.  Especially comforting
+      to experienced Lisp and Scheme (and Haskell and ML and …)
+      programmers.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      Can lead to confusing bugs. Such as this example based on 
+      <a HREF="http://www.python.org/dev/peps/pep-0227/">PEP-0227</a>:
+<SPAN class=""><PRE class="badcode">
+<span class="external"></span>i = 4
+<span class="external"></span>def foo(x):
+  <span class="external">  </span>def bar():
+    <span class="external">    </span>print i,
+  <span class="external">  </span># ...
+  <span class="external">  </span># A bunch of code here
+  <span class="external">  </span># ...
+  <span class="external">  </span>for i in x:  # Ah, i *is* local to Foo, so this is what Bar sees
+    <span class="external">    </span>print i,
+  <span class="external">  </span>bar()</PRE></SPAN>
+      <p>
+        So <code>foo([1, 2, 3])</code> will print <code>1 2 3 3</code>, not
+        <code>1 2 3 4</code>.
+      </p> 
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      Okay to use.
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Function_and_Method_Decorators" id="Function_and_Method_Decorators">Function and Method Decorators</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Function_and_Method_Decorators__body','Function_and_Method_Decorators__button')" name="Function_and_Method_Decorators__button" id="Function_and_Method_Decorators__button">▶</SPAN>
+      <SPAN class="">
+        Use decorators judiciously when there is a clear advantage.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Function_and_Method_Decorators__body" id="Function_and_Method_Decorators__body" style="display: none"><SPAN class="link_button"><A href="?showone=Function_and_Method_Decorators#Function_and_Method_Decorators">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      
+      <a HREF="http://www.python.org/doc/2.4.3/whatsnew/node6.html">Decorators
+       for Functions and Methods</a>
+      (a.k.a "the <code>@</code> notation").
+      The most common decorators are <code>@classmethod</code> and
+      <code>@staticmethod</code>, for converting ordinary methods to class or
+      static methods. However, the decorator syntax allows for
+      user-defined decorators as well. Specifically, for some function
+      <code>my_decorator</code>, this:
+      <SPAN class=""><PRE>
+<span class="external"></span>class C(object):
+  <span class="external">  </span>@my_decorator
+  <span class="external">  </span>def method(self):
+    <span class="external">    </span># method body ...
+<span class="external"></span>
+</PRE></SPAN>
+
+      is equivalent to:
+      <SPAN class=""><PRE>
+<span class="external"></span>class C(object):
+  <span class="external">  </span>def method(self):
+    <span class="external">    </span># method body ...
+  <span class="external">  </span>method = my_decorator(method)
+<span class="external"></span>
+</PRE></SPAN>
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN> Elegantly specifies some transformation on a method; the
+      transformation might eliminate some repetitive code, enforce invariants,
+      etc.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN> Decorators can perform arbitrary operations on a
+      function's arguments or return values, resulting in surprising
+      implicit behavior.
+      Additionally, decorators execute at import time.  Failures in decorator
+      code are pretty much impossible to recover from.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN> Use decorators judiciously when there is a clear
+      advantage.  Decorators should follow the same import and naming
+      guidelines as functions.  Decorator pydoc should clearly state that the
+      function is a decorator.  Write unit tests for decorators.
+
+    <p>
+      Avoid external dependencies in the decorator itself (e.g. don't rely on
+      files, sockets, database connections, etc.), since they might not be
+      available when the decorator runs (at import time, perhaps from
+      <code>pychecker</code> or other tools).  A decorator that is
+      called with valid parameters should (as much as possible) be guaranteed
+      to succeed in all cases.
+    </p>
+    <p>
+      Decorators are a special case of "top level code" - see
+      <a HREF="#Main">main</a> for more discussion.
+    </p>
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Threading" id="Threading">Threading</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Threading__body','Threading__button')" name="Threading__button" id="Threading__button">▶</SPAN>
+      <SPAN class="">
+        Do not rely on the atomicity of built-in types.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Threading__body" id="Threading__body" style="display: none"><SPAN class="link_button"><A href="?showone=Threading#Threading">
+            link
+          </A></SPAN>
+        <p>
+          While Python's built-in data types such as dictionaries appear
+          to have atomic operations, there are corner cases where they
+          aren't atomic (e.g. if <code>__hash__</code> or
+          <code>__eq__</code> are implemented as Python methods) and their
+          atomicity should not be relied upon.  Neither should you rely on
+          atomic variable assignment (since this in turn depends on
+          dictionaries).
+        </p>
+
+        <p>
+          Use the Queue module's <code>Queue</code> data type as the preferred 
+          way to
+          communicate data between threads.  Otherwise, use the threading
+          module and its locking primitives.  Learn about the proper use
+          of condition variables so you can use
+          <code>threading.Condition</code> instead of using lower-level
+          locks.
+        </p>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Power_Features" id="Power_Features">Power Features</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Power_Features__body','Power_Features__button')" name="Power_Features__button" id="Power_Features__button">▶</SPAN>
+      <SPAN class="">
+        Avoid these features.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Power_Features__body" id="Power_Features__body" style="display: none"><SPAN class="link_button"><A href="?showone=Power_Features#Power_Features">
+            link
+          </A></SPAN>
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN> Python is an extremely flexible language and
+      gives you many fancy features such as metaclasses, access to bytecode,
+      on-the-fly compilation, dynamic inheritance, object reparenting,
+      import hacks, reflection, modification of system internals,
+      etc.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN> These are powerful language features.  They can
+      make your code more compact.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN> It's very tempting to use these "cool" features
+      when they're not absolutely necessary.  It's harder to read,
+      understand, and debug code that's using unusual features
+      underneath.  It doesn't seem that way at first (to the original
+      author), but when revisiting the code, it tends to be more
+      difficult than code that is longer but is straightforward.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN> 
+          Avoid these features in 
+          your code.
+        </P>
+      </SPAN></SPAN>
+    </SPAN>
+  </SPAN>
+  <SPAN class=""><H2 name="Python_Style_Rules" id="Python_Style_Rules">Python Style Rules</H2>
+    <SPAN class=""><H3><A name="Semicolons" id="Semicolons">Semicolons</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Semicolons__body','Semicolons__button')" name="Semicolons__button" id="Semicolons__button">▶</SPAN>
+      <SPAN class="">
+        Do not terminate your lines with semi-colons and do not use
+        semi-colons to put two commands on the same line.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Semicolons__body" id="Semicolons__body" style="display: none"><SPAN class="link_button"><A href="?showone=Semicolons#Semicolons">
+            link
+          </A></SPAN>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Line_length" id="Line_length">Line length</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Line_length__body','Line_length__button')" name="Line_length__button" id="Line_length__button">▶</SPAN>
+      <SPAN class="">
+        Maximum line length is <em>80 characters</em>.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Line_length__body" id="Line_length__body" style="display: none"><SPAN class="link_button"><A href="?showone=Line_length#Line_length">
+            link
+          </A></SPAN>
+    <p>
+      Exception: lines importing modules may end up longer than 80 
+      characters only if using Python 2.4 or 
+      earlier.
+    </p>
+
+    <p>
+      Make use of Python's
+      
+      <a HREF="http://www.python.org/doc/ref/implicit-joining.html">implicit
+      line joining inside parentheses, brackets and braces</a>.
+      If necessary, you can add an extra pair of parentheses around an
+      expression.
+    </p>
+
+    
+    <SPAN class=""><PRE>Yes: foo_bar(self, width, height, color='black', design=None, x='foo',
+             emphasis=None, highlight=0)
+
+     if (width == 0 and height == 0 and
+         color == 'red' and emphasis == 'strong'):</PRE></SPAN>
+
+
+    <p>
+      When a literal string won't fit on a single line, use parentheses for
+      implicit line joining.
+    </p>
+
+    <SPAN class=""><PRE>
+<span class="external"></span>x = ('This will build a very long long '
+<span class="external"></span>     'long long long long long long string')</PRE></SPAN>
+
+    <p>
+      Make note of the indentation of the elements in the line
+      continuation examples above; see the 
+      <a HREF="#indentation">indentation</a>
+      section for explanation.
+    </p>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Parentheses" id="Parentheses">Parentheses</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Parentheses__body','Parentheses__button')" name="Parentheses__button" id="Parentheses__button">▶</SPAN>
+      <SPAN class="">
+        Use parentheses sparingly.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Parentheses__body" id="Parentheses__body" style="display: none"><SPAN class="link_button"><A href="?showone=Parentheses#Parentheses">
+            link
+          </A></SPAN>
+    <p>
+      Do not use them in return statements or conditional statements unless 
+      using parentheses for implied line continuation. (See above.)  
+      It is however fine to use parentheses around tuples.
+    </p>
+
+<SPAN class=""><PRE>Yes: <span class="external"></span>if foo:
+       <span class="external">  </span>bar()
+     <span class="external"></span>while x:
+       <span class="external">  </span>x = bar()
+     <span class="external"></span>if x and y:
+       <span class="external">  </span>bar()
+     <span class="external"></span>if not x:
+       <span class="external">  </span>bar()
+     <span class="external"></span>return foo
+     <span class="external"></span>for (x, y) in dict.items(): ...</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>if (x):
+       <span class="external">  </span>bar()
+     <span class="external"></span>if not(x):
+       <span class="external">  </span>bar()
+     <span class="external"></span>return (foo)</PRE></SPAN>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Indentation" id="Indentation">Indentation</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Indentation__body','Indentation__button')" name="Indentation__button" id="Indentation__button">▶</SPAN>
+      <SPAN class="">
+        Indent your code blocks with <em>4 spaces</em>.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Indentation__body" id="Indentation__body" style="display: none"><SPAN class="link_button"><A href="?showone=Indentation#Indentation">
+            link
+          </A></SPAN>
+    <p>
+      Never use tabs or mix tabs and spaces.
+      In cases of implied line continuation, you should align wrapped elements
+      either vertically, as per the examples in the
+      <a HREF="#Line_length">line length</a> section; or using a hanging
+      indent of 4 spaces, in which case there should be no argument on
+      the first line.
+    </p>
+
+
+<SPAN class=""><PRE>Yes:   # Aligned with opening delimiter
+       foo = long_function_name(var_one, var_two,
+                                var_three, var_four)
+
+       # 4-space hanging indent; nothing on first line
+       foo = long_function_name(
+           var_one, var_two, var_three,
+           var_four)</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:    <span class="external"></span># Stuff on first line forbidden
+       <span class="external"></span>foo = long_function_name(var_one, var_two,
+       <span class="external"></span>    var_three, var_four)
+
+       <span class="external"></span># 2-space hanging indent forbidden
+       <span class="external"></span>foo = long_function_name(
+       <span class="external"></span>  var_one, var_two, var_three,
+       <span class="external"></span>  var_four)</PRE></SPAN>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Blank_Lines" id="Blank_Lines">Blank Lines</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Blank_Lines__body','Blank_Lines__button')" name="Blank_Lines__button" id="Blank_Lines__button">▶</SPAN>
+      <SPAN class="">
+        Two blank lines between top-level definitions, one blank line 
+        between method definitions.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Blank_Lines__body" id="Blank_Lines__body" style="display: none"><SPAN class="link_button"><A href="?showone=Blank_Lines#Blank_Lines">
+            link
+          </A></SPAN>
+    <p>
+      Two blank lines between top-level definitions, be they function
+      or class definitions.  One blank line between method definitions
+      and between the <code>class</code> line and the first method.
+      Use single blank lines as you judge appropriate within functions or
+      methods.
+    </p>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Whitespace" id="Whitespace">Whitespace</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Whitespace__body','Whitespace__button')" name="Whitespace__button" id="Whitespace__button">▶</SPAN>
+      <SPAN class="">
+        Follow standard typographic rules for the use of spaces around 
+        punctuation.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Whitespace__body" id="Whitespace__body" style="display: none"><SPAN class="link_button"><A href="?showone=Whitespace#Whitespace">
+            link
+          </A></SPAN>
+    <p>
+      No whitespace inside parentheses, brackets or braces.
+    </p>
+<SPAN class=""><PRE>Yes: <span class="external"></span>spam(ham[1], {eggs: 2}, [])</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>spam( ham[ 1 ], { eggs: 2 }, [ ] )</PRE></SPAN>
+    <p>
+      No whitespace before a comma, semicolon, or colon.  Do use
+      whitespace after a comma, semicolon, or colon except at the end
+      of the line.
+    </p>
+<SPAN class=""><PRE>Yes: <span class="external"></span>if x == 4:
+       <span class="external">  </span>print x, y
+     <span class="external"></span>x, y = y, x</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>if x == 4 :
+       <span class="external">  </span>print x , y
+     <span class="external"></span>x , y = y , x</PRE></SPAN>
+    <p>
+      No whitespace before the open paren/bracket that starts an argument list,
+      indexing or slicing.
+    </p>
+    <SPAN class=""><PRE>Yes: <span class="external"></span>spam(1)</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>spam (1)</PRE></SPAN>
+<SPAN class=""><PRE>Yes: <span class="external"></span>dict['key'] = list[index]</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>dict ['key'] = list [index]</PRE></SPAN>
+
+    <p>
+      Surround binary operators with a single space on either side for
+      assignment (<code>=</code>), comparisons (<code>==, &lt;, &gt;, !=,
+        &lt;&gt;, &lt;=, &gt;=, in, not in, is, is not</code>), and Booleans
+      (<code>and, or, not</code>).  Use your better judgment for the
+      insertion of spaces around arithmetic operators but always be
+      consistent about whitespace on either side of a binary operator.
+    </p>
+<SPAN class=""><PRE>Yes: <span class="external"></span>x == 1</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>x&lt;1</PRE></SPAN>
+    <p>
+      Don't use spaces around the '=' sign when used to indicate a
+      keyword argument or a default parameter value.
+    </p>
+<SPAN class=""><PRE>Yes: <span class="external"></span>def complex(real, imag=0.0): return magic(r=real, i=imag)</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>def complex(real, imag = 0.0): return magic(r = real, i = imag)</PRE></SPAN>
+
+    <p>
+      Don't use spaces to vertically align tokens on consecutive lines, since it
+      becomes a maintenance burden (applies to <code>:</code>, <code>#</code>,
+      <code>=</code>, etc.):
+    </p>
+<SPAN class=""><PRE>Yes:
+  foo = 1000  # comment
+  long_name = 2  # comment that should not be aligned
+
+  dictionary = {
+      "foo": 1,
+      "long_name": 2,
+      }</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:
+  foo       = 1000  # comment
+  long_name = 2     # comment that should not be aligned
+
+  dictionary = {
+      "foo"      : 1,
+      "long_name": 2,
+      }</PRE></SPAN>
+
+    
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Python_Interpreter" id="Python_Interpreter">Python Interpreter</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Python_Interpreter__body','Python_Interpreter__button')" name="Python_Interpreter__button" id="Python_Interpreter__button">▶</SPAN>
+      <SPAN class="">
+        Modules should begin with 
+        
+        <code>#!/usr/bin/env python&lt;version&gt;</code>
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Python_Interpreter__body" id="Python_Interpreter__body" style="display: none"><SPAN class="link_button"><A href="?showone=Python_Interpreter#Python_Interpreter">
+            link
+          </A></SPAN>
+    <p>
+      Modules should begin with a "shebang" line specifying the Python
+      interpreter used to execute the program:
+    </p>
+
+<SPAN class=""><PRE>
+<span class="external"></span>#!/usr/bin/env python2.4</PRE></SPAN>
+    
+    <p>
+      Always use the most specific version you can use, e.g.,
+      <code>/usr/bin/python2.4</code>, not
+      <code>/usr/bin/python2</code>. This makes it easier to find
+      dependencies when 
+      
+      upgrading to a different Python version
+      and also avoids confusion and breakage during use.  E.g., Does
+      <code>/usr/bin/python2</code> mean Python 2.0.1 or Python
+      2.3.0? 
+    </p>
+    
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Comments" id="Comments">Comments</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Comments__body','Comments__button')" name="Comments__button" id="Comments__button">▶</SPAN>
+      <SPAN class="">
+        Be sure to use the right style for module, function, method and in-line
+        comments.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Comments__body" id="Comments__body" style="display: none"><SPAN class="link_button"><A href="?showone=Comments#Comments">
+            link
+          </A></SPAN>
+
+    <P class="">
+<SPAN class="stylepoint_subsection">Doc Strings</SPAN>
+
+    <p>
+      Python has a unique commenting style using doc strings.  A doc
+      string is a string that is the first statement in a package,
+      module, class or function.  These strings can be extracted
+      automatically through the <code>__doc__</code> member of the
+      object and are used by <code>pydoc</code>.  (Try running
+      <code>pydoc</code> on your module to see how it looks.)  Our
+      convention for doc strings is to use the three double-quote
+      format for strings.  A doc string should be organized as a
+      summary line (one physical line) terminated by a period,
+      question mark, or exclamation point, followed by a blank line,
+      followed by the rest of the doc string starting at the same
+      cursor position as the first quote of the first line.  There are
+      more formatting guidelines for doc strings below.
+    </p>
+
+    </P>
+    <P class="">
+<SPAN class="stylepoint_subsection">Modules</SPAN>
+
+    
+    
+    <p>
+      Every file should contain the following items, in order:
+      <ul>
+        <li>a copyright statement (for example,
+          <code>Copyright 2008 Google Inc.</code>)</li>
+        <li>a license boilerplate.  Choose the appropriate boilerplate
+          for the license used by the project (for example, Apache 2.0, BSD, 
+          LGPL, GPL)</li>
+        <li>an author line to identify the original author of the file</li>
+      </ul>
+    </p>
+    </P>
+    <P class="">
+<SPAN class="stylepoint_subsection">Functions and Methods</SPAN>
+
+    <p>
+      Any function or method which is not both obvious and very short
+      needs a doc string. Additionally, any externally accessible
+      function or method regardless of length or simplicity needs a
+      doc string. The doc string should include what the function does
+      and have detailed descriptions of the input and output.  It
+      should not, generally, describe how it does it unless it's some
+      complicated algorithm.  For tricky code block/inline comments
+      within the code are more appropriate.  The doc string should give
+      enough information to write a call to the function without
+      looking at a single line of the function's code. Args should be
+      individually documented, an explanation following after a colon,
+      and should use a uniform hanging indent of 2 or 4 spaces. The
+      doc string should specify the expected types where specific types
+      are required. A "Raises:" section should list all exceptions
+      that can be raised by the function. The doc string for generator
+      functions should use "Yields:" rather than "Returns:".
+    </p>
+
+    <SPAN class=""><PRE>
+<span class="external"></span>def fetch_bigtable_rows(big_table, keys, other_silly_variable=None):
+  <span class="external">  </span>"""Fetches rows from a Bigtable.
+
+  <span class="external">  </span>Retrieves rows pertaining to the given keys from the Table instance
+  <span class="external">  </span>represented by big_table.  Silly things may happen if
+  <span class="external">  </span>other_silly_variable is not None.
+
+  <span class="external">  </span>Args:
+    <span class="external">    </span>big_table: An open Bigtable Table instance.
+    <span class="external">    </span>keys: A sequence of strings representing the key of each table row
+    <span class="external">    </span>    to fetch.
+    <span class="external">    </span>other_silly_variable: Another optional variable, that has a much
+    <span class="external">    </span>    longer name than the other args, and which does nothing.
+
+  <span class="external">  </span>Returns:
+    <span class="external">    </span>A dict mapping keys to the corresponding table row data
+    <span class="external">    </span>fetched. Each row is represented as a tuple of strings. For
+    <span class="external">    </span>example:
+
+    <span class="external">    </span>{'Serak': ('Rigel VII', 'Preparer'),
+    <span class="external">    </span> 'Zim': ('Irk', 'Invader'),
+    <span class="external">    </span> 'Lrrr': ('Omicron Persei 8', 'Emperor')}
+
+    <span class="external">    </span>If a key from the keys argument is missing from the dictionary,
+    <span class="external">    </span>then that row was not found in the table.
+
+  <span class="external">  </span>Raises:
+    <span class="external">    </span>IOError: An error occurred accessing the bigtable.Table object.
+  <span class="external">  </span>"""
+  <span class="external">  </span>pass
+<span class="external"></span>
+</PRE></SPAN>
+    </P>
+    <P class="">
+<SPAN class="stylepoint_subsection">Classes</SPAN>
+
+    <p>
+      Classes should have a doc string below the class definition describing
+      the class.  If your class has public attributes, they should be documented
+      here in an Attributes section and follow the same formatting as a
+      function's Args section.
+    </p>
+
+    <SPAN class=""><PRE>
+<span class="external"></span>class SampleClass(object):
+  <span class="external">  </span>"""Summary of class here.
+
+  <span class="external">  </span>Longer class information....
+  <span class="external">  </span>Longer class information....
+
+  <span class="external">  </span>Attributes:
+    <span class="external">    </span>likes_spam: A boolean indicating if we like SPAM or not.
+    <span class="external">    </span>eggs: An integer count of the eggs we have laid.
+  <span class="external">  </span>"""
+
+  <span class="external">  </span>def __init__(self, likes_spam=False):
+    <span class="external">    </span>"""Inits SampleClass with blah."""
+    <span class="external">    </span>self.likes_spam = likes_spam
+    <span class="external">    </span>self.eggs = 0
+
+  <span class="external">  </span>def public_method(self):
+    <span class="external">    </span>"""Performs operation blah."""
+<span class="external"></span>
+</PRE></SPAN>
+
+    </P>
+    <P class="">
+<SPAN class="stylepoint_subsection">Block and Inline Comments</SPAN>
+
+    <p>
+      The final place to have comments is in tricky parts of the
+      code. If you're going to have to explain it at the next 
+      <a HREF="http://en.wikipedia.org/wiki/Code_review">code review</a>, 
+      you should comment it now.  Complicated operations get a few lines of 
+      comments before the operations
+      commence. Non-obvious ones get comments at the end of the line.
+    </p>
+
+    <SPAN class=""><PRE>
+<span class="external"></span># We use a weighted dictionary search to find out where i is in
+<span class="external"></span># the array.  We extrapolate position based on the largest num
+<span class="external"></span># in the array and the array size and then do binary search to
+<span class="external"></span># get the exact number.
+
+<span class="external"></span>if i &amp; (i-1) == 0:        # true iff i is a power of 2
+<span class="external"></span>
+</PRE></SPAN>
+
+    <p>
+      To improve legibility, these comments should be at least 2 spaces away
+      from the code.
+    </p>
+
+    <p>
+      On the other hand, never describe the code. Assume the person
+      reading the code knows Python (though not what you're trying to
+      do) better than you do.
+    </p>
+
+    <SPAN class=""><PRE class="badcode">
+<span class="external"></span># BAD COMMENT: Now go through the b array and make sure whenever i occurs
+<span class="external"></span># the next element is i+1
+<span class="external"></span>
+</PRE></SPAN>
+
+    </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Classes" id="Classes">Classes</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Classes__body','Classes__button')" name="Classes__button" id="Classes__button">▶</SPAN>
+      <SPAN class="">
+        If a class inherits from no other base classes, explicitly inherit
+    from <code>object</code>.  This also applies to nested classes.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Classes__body" id="Classes__body" style="display: none"><SPAN class="link_button"><A href="?showone=Classes#Classes">
+            link
+          </A></SPAN>
+    <SPAN class=""><PRE class="badcode">No: <span class="external"></span>class SampleClass:
+      <span class="external">  </span>pass
+
+
+    <span class="external"></span>class OuterClass:
+
+      <span class="external">  </span>class InnerClass:
+        <span class="external">    </span>pass
+<span class="external"></span>
+</PRE></SPAN>
+
+    <SPAN class=""><PRE>Yes: <span class="external"></span>class SampleClass(object):
+       <span class="external">  </span>pass
+
+
+     <span class="external"></span>class OuterClass(object):
+
+       <span class="external">  </span>class InnerClass(object):
+         <span class="external">    </span>pass
+
+
+     <span class="external"></span>class ChildClass(ParentClass):
+       <span class="external">  </span>"""Explicitly inherits from another class already."""
+<span class="external"></span>
+</PRE></SPAN>
+
+    <p>Inheriting from <code>object</code> is needed to make properties work
+    properly, and it will protect your code from one particular potential 
+    incompatibility with Python 3000.  It also defines
+    special methods that implement the default semantics of objects including
+    <code>__new__</code>, <code>__init__</code>, <code>__delattr__</code>,
+    <code>__getattribute__</code>, <code>__setattr__</code>,
+    <code>__hash__</code>, <code>__repr__</code>, and <code>__str__</code>.
+    </p>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Strings" id="Strings">Strings</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Strings__body','Strings__button')" name="Strings__button" id="Strings__button">▶</SPAN>
+      <SPAN class="">
+        Use the <code>%</code> operator for formatting strings,
+        even when the parameters are all strings.  Use your best judgement
+        to decide between <code>+</code> and <code>%</code> though.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Strings__body" id="Strings__body" style="display: none"><SPAN class="link_button"><A href="?showone=Strings#Strings">
+            link
+          </A></SPAN>
+<SPAN class=""><PRE class="badcode">No: <span class="external"></span>x = '%s%s' % (a, b)  # use + in this case
+    <span class="external"></span>x = imperative + ', ' + expletive + '!'
+    <span class="external"></span>x = 'name: ' + name + '; score: ' + str(n)</PRE></SPAN>
+<SPAN class=""><PRE>Yes: <span class="external"></span>x = a + b
+     <span class="external"></span>x = '%s, %s!' % (imperative, expletive)
+     <span class="external"></span>x = 'name: %s; score: %d' % (name, n)</PRE></SPAN>
+
+    <p>
+      Avoid using the <code>+</code> and <code>+=</code> operators to
+      accumulate a string within a loop.  Since strings are immutable, this
+      creates unnecessary temporary objects and results in quadratic rather
+      than linear running time.  Instead, add each substring to a list and
+      <code>''.join</code> the list after the loop terminates (or, write each
+      substring to a <code>cStringIO.StringIO</code> buffer).
+    </p>
+
+<SPAN class=""><PRE class="badcode">No: <span class="external"></span>employee_table = '&lt;table&gt;'
+    <span class="external"></span>for last_name, first_name in employee_list:
+      <span class="external">  </span>employee_table += '&lt;tr&gt;&lt;td&gt;%s, %s&lt;/td&gt;&lt;/tr&gt;' % (last_name, first_name)
+    <span class="external"></span>employee_table += '&lt;/table&gt;'</PRE></SPAN>
+<SPAN class=""><PRE>Yes: <span class="external"></span>items = ['&lt;table&gt;']
+     <span class="external"></span>for last_name, first_name in employee_list:
+       <span class="external">  </span>items.append('&lt;tr&gt;&lt;td&gt;%s, %s&lt;/td&gt;&lt;/tr&gt;' % (last_name, first_name))
+     <span class="external"></span>items.append('&lt;/table&gt;')
+     <span class="external"></span>employee_table = ''.join(items)</PRE></SPAN>
+
+    <p>
+      Use <code>"""</code> for multi-line strings rather than
+      <code>'''</code>.  Note, however, that it is often cleaner to
+      use implicit line joining since multi-line strings do
+      not flow with the indentation of the rest of the program:
+    </p>
+
+    <SPAN class=""><PRE class="badcode">  No<span class="external"></span>:
+    <span class="external"></span>print """This is pretty ugly.
+Don'<span class="external"></span>t do this.
+"""<span class="external"></span>
+</PRE></SPAN>
+<SPAN class=""><PRE>Ye<span class="external"></span>s:
+  <span class="external"></span>print ("This is much nicer.\n"
+  <span class="external"></span>       "Do it this way.\n")</PRE></SPAN>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="TODO_Comments" id="TODO_Comments">TODO Comments</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('TODO_Comments__body','TODO_Comments__button')" name="TODO_Comments__button" id="TODO_Comments__button">▶</SPAN>
+    <SPAN class="">
+      Use <code>TODO</code> comments for code that is temporary, a
+      short-term solution, or good-enough but not perfect.
+    </SPAN>
+    <SPAN class=""><BR><SPAN class="stylepoint_body" name="TODO_Comments__body" id="TODO_Comments__body" style="display: none"><SPAN class="link_button"><A href="?showone=TODO_Comments#TODO_Comments">
+            link
+          </A></SPAN>
+      <p>
+        <code>TODO</code>s should include the string <code>TODO</code> in
+        all caps, followed by your
+        
+        name, e-mail address, or other
+        identifier
+        in parentheses.  A colon is optional. A comment explaining what there
+        is to do is required. The main purpose is to have
+        a consistent <code>TODO</code> format searchable by the person
+        adding the comment (who can provide more details upon request).  A
+        <code>TODO</code> is not a commitment to provide the fix yourself.
+      </p>
+      
+      <SPAN class=""><PRE># TODO(kl@gmail.com): Drop the use of "has_key".
+# TODO(Zeke) change this to use relations.</PRE></SPAN>
+      <p>
+        If your <code>TODO</code> is of the form "At a future date do
+        something" make sure that you either include a very specific
+        date ("Fix by November 2009") or a very specific event
+        ("Remove this code when all clients can handle XML responses.").
+      </p>
+    </SPAN></SPAN>
+  </SPAN>
+    <SPAN class=""><H3><A name="Imports_formatting" id="Imports_formatting">Imports formatting</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports_formatting__body','Imports_formatting__button')" name="Imports_formatting__button" id="Imports_formatting__button">▶</SPAN>
+      <SPAN class="">
+        Imports should be on separate lines.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Imports_formatting__body" id="Imports_formatting__body" style="display: none"><SPAN class="link_button"><A href="?showone=Imports_formatting#Imports_formatting">
+            link
+          </A></SPAN>
+    <p>
+      E.g.:
+    </p>
+
+<SPAN class=""><PRE>Yes: <span class="external"></span>import os
+     <span class="external"></span>import sys</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>import os, sys</PRE></SPAN>
+    <p>
+      Imports are always put at the top of the file, just after any
+      module comments and doc strings and before module globals and
+      constants.  Imports should be grouped with the order being most generic
+      to least generic:
+    </p>
+    <ul>
+      <li>standard library imports</li>
+      <li>third-party imports</li>
+      
+      <li>application-specific imports</li>
+    </ul>
+    <p>
+      Within each grouping, imports should be sorted lexicographically,
+      ignoring case, according to each module's full package path.
+    </p>
+    <SPAN class=""><PRE>
+<span class="external"></span>import foo
+<span class="external"></span>from foo import bar
+<span class="external"></span>from foo.bar import baz
+<span class="external"></span>from foo.bar import Quux
+<span class="external"></span>from Foob import ar</PRE></SPAN>
+    
+    
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Statements" id="Statements">Statements</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Statements__body','Statements__button')" name="Statements__button" id="Statements__button">▶</SPAN>
+      <SPAN class="">
+        Generally only one statement per line.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Statements__body" id="Statements__body" style="display: none"><SPAN class="link_button"><A href="?showone=Statements#Statements">
+            link
+          </A></SPAN>
+    <p>
+      However, you may put the
+      result of a test on the same line as the test only if the entire
+      statement fits on one line.  In particular, you can never do so
+      with <code>try</code>/<code>except</code> since the
+      <code>try</code> and <code>except</code> can't both fit on the
+      same line, and you can only do so with an <code>if</code> if
+      there is no <code>else</code>.
+    </p>
+
+    <SPAN class=""><PRE>Ye<span class="external"></span>s:
+
+  <span class="external"></span>if foo: bar(foo)</PRE></SPAN>
+<SPAN class=""><PRE class="badcode">No<span class="external"></span>:
+
+  <span class="external"></span>if foo: bar(foo)
+  <span class="external"></span>else:   baz(foo)
+
+  <span class="external"></span>try:               bar(foo)
+  <span class="external"></span>except ValueError: baz(foo)
+
+  <span class="external"></span>try:
+    <span class="external">  </span>bar(foo)
+  <span class="external"></span>except ValueError: baz(foo)
+<span class="external"></span>
+</PRE></SPAN>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Access_Control" id="Access_Control">Access Control</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Access_Control__body','Access_Control__button')" name="Access_Control__button" id="Access_Control__button">▶</SPAN>
+      <SPAN class="">
+        If an accessor function would be trivial you should use public variables
+        instead of accessor functions to avoid the extra cost of function 
+        calls in Python. When more functionality is added you can use 
+        <code>property</code> to keep the syntax consistent.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Access_Control__body" id="Access_Control__body" style="display: none"><SPAN class="link_button"><A href="?showone=Access_Control#Access_Control">
+            link
+          </A></SPAN>
+    <p>
+      On the other hand, if access is more complex, or the cost of accessing
+      the variable is significant, you should use function calls (following the
+      <a HREF="#naming">Naming</a> guidelines) such as <code>get_foo()</code>
+      and <code>set_foo()</code>. If the past behavior allowed access through a
+      property, do not bind the new accessor functions to the property. Any
+      code still attempting to access the variable by the old method should
+      break visibly so they are made aware of the change in complexity.
+    </p>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Naming" id="Naming">Naming</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Naming__body','Naming__button')" name="Naming__button" id="Naming__button">▶</SPAN>
+      <SPAN class="">
+        <code>module_name, package_name, ClassName, method_name, ExceptionName, 
+        function_name, GLOBAL_VAR_NAME, instance_var_name, 
+        function_parameter_name, local_var_name.</code>
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Naming__body" id="Naming__body" style="display: none"><SPAN class="link_button"><A href="?showone=Naming#Naming">
+            link
+          </A></SPAN>
+    <P class="">
+<SPAN class="stylepoint_subsection">Names to Avoid</SPAN>
+
+    <ul>
+      <li>single character names except for counters or iterators</li>
+      <li>dashes (<code>-</code>) in any package/module name</li>
+      <li>
+<code>__double_leading_and_trailing_underscore__</code> names 
+        (reserved by Python)</li>
+    </ul>
+
+    </P>
+    <P class="">
+<SPAN class="stylepoint_subsection">Naming Convention</SPAN>
+
+    <ul>
+      <li>
+        "Internal" means internal to a module or protected
+        or private within a class.</li>
+      <li>
+        Prepending a single underscore (<code>_</code>) has some
+        support for protecting module variables and functions (not included
+        with <code>import * from</code>).  Prepending a double underscore
+        (<code>__</code>) to an instance variable or method
+        effectively serves to make the variable or method private to its class
+        (using name mangling).</li>
+      <li>
+        Place related classes and top-level functions together in a 
+        module. Unlike Java,
+        there is no need to limit yourself to one class per module.</li>
+      <li>
+        Use CapWords for class names, but lower_with_under.py for module names.
+        Although there are many existing modules named CapWords.py, this is now
+        discouraged because it's confusing when the module happens to be 
+        named after a class.  ("wait -- did I write 
+        <code>import StringIO</code> or <code>from StringIO import
+        StringIO</code>?")</li>
+    </ul>
+
+    </P>
+    <P class="">
+<SPAN class="stylepoint_subsection">Guidelines derived from Guido's Recommendations</SPAN>
+
+    <table rules="all" border="1" cellspacing="2" cellpadding="2">
+      
+      <tr>
+        <th>Type</th>
+        <th>Public</th>
+        <th>Internal</th>
+      </tr>
+      
+
+      
+      <tr>
+        <td>Packages</td>
+        <td><code>lower_with_under</code></td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td>Modules</td>
+        <td><code>lower_with_under</code></td>
+        <td><code>_lower_with_under</code></td>
+      </tr>
+
+      <tr>
+        <td>Classes</td>
+        <td><code>CapWords</code></td>
+        <td><code>_CapWords</code></td>
+      </tr>
+
+      <tr>
+        <td>Exceptions</td>
+        <td><code>CapWords</code></td>
+        <td></td>
+      </tr>
+
+      
+
+      <tr>
+        <td>Functions</td>
+        <td><code>lower_with_under()</code></td>
+        <td><code>_lower_with_under()</code></td>
+      </tr>
+
+      <tr>
+        <td>Global/Class Constants</td>
+        <td><code>CAPS_WITH_UNDER</code></td>
+        <td><code>_CAPS_WITH_UNDER</code></td>
+      </tr>
+
+      <tr>
+        <td>Global/Class Variables</td>
+        <td><code>lower_with_under</code></td>
+        <td><code>_lower_with_under</code></td>
+      </tr>
+
+      <tr>
+        <td>Instance Variables</td>
+        <td><code>lower_with_under</code></td>
+        <td><code>_lower_with_under (protected) or __lower_with_under (private)</code></td>
+      </tr>
+
+      
+
+      <tr>
+        <td>Method Names</td>
+        <td><code>lower_with_under()</code></td>
+        <td><code>_lower_with_under() (protected) or __lower_with_under() (private)</code></td>
+      </tr>
+
+      <tr>
+        <td>Function/Method Parameters</td>
+        <td><code>lower_with_under</code></td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td>Local Variables</td>
+        <td><code>lower_with_under</code></td>
+        <td></td>
+      </tr>
+      
+
+    </table>
+
+    
+   </P>
+      </SPAN></SPAN>
+    </SPAN>
+    <SPAN class=""><H3><A name="Main" id="Main">Main</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Main__body','Main__button')" name="Main__button" id="Main__button">▶</SPAN>
+      <SPAN class="">
+        Even a file meant to be used as a script should be importable and a 
+        mere import should not have the side effect of executing the script's 
+        main functionality. The main functionality should be in a main() 
+        function.
+      </SPAN>
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Main__body" id="Main__body" style="display: none"><SPAN class="link_button"><A href="?showone=Main#Main">
+            link
+          </A></SPAN>
+    <p>
+      In Python,
+      <code>pychecker</code>, <code>pydoc</code>, and unit tests
+      require modules to be importable.  Your code should always check
+      <code>if __name__ == '__main__'</code> before executing your
+      main program so that the main program is not executed when the
+      module is imported.  
+      
+    </p>
+
+    
+
+    
+
+    
+
+    <SPAN class=""><PRE>
+<span class="external"></span>def main():
+   <span class="external">   </span>...
+
+<span class="external"></span>if __name__ == '__main__':
+  <span class="external">  </span>main()
+<span class="external"></span>
+</PRE></SPAN>
+
+    <p>
+      All code at the top level will be executed when the module is
+      imported.  Be careful not to call functions, create objects, or
+      perform other operations that should not be executed when the
+      file is being <code>pycheck</code>ed or <code>pydoc</code>ed.
+    </p>
+      </SPAN></SPAN>
+    </SPAN>
+  </SPAN>
+
+<H2>Parting Words</H2>
+    <p>
+      <em>BE CONSISTENT</em>.
+    </p>
+
+    <p>
+      If you're editing code, take a few minutes to look at the code
+      around you and determine its style.  If they use spaces around
+      all their arithmetic operators, you should too.  If their
+      comments have little boxes of hash marks around them, make your
+      comments have little boxes of hash marks around them too.
+    </p>
+
+    <p>
+      The point of having style guidelines is to have a common vocabulary
+      of coding so people can concentrate on what you're saying rather
+      than on how you're saying it.  We present global style rules here so
+      people know the vocabulary, but local style is also important.  If
+      code you add to a file looks drastically different from the existing
+      code around it, it throws readers out of their rhythm when they go to
+      read it.  Avoid this.
+    </p>
+
+
+
+<p align="right">
+Revision 2.12
+</p>
+
+
+<address>
+  Amit Patel<br>
+  Antoine Picard<br>
+  Eugene Jhong<br>
+  Jeremy Hylton<br>
+  Matt Smart<br>
+  Mike Shields<br>
+</address>
+</BODY>
+</HTML>
