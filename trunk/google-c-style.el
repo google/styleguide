@@ -27,6 +27,25 @@
 
 ;;; Code:
 
+(defun google-c-lineup-to-previous-line (langelem)
+  "Indents to the beginning of the first syntagm on the previous line.
+
+Suitable for inclusion in `c-offsets-alist'.  Works with: Any syntactic symbol."
+  (save-excursion (vector (c-langelem-col c-syntactic-element))))
+
+;; Wrapper function needed for Emacs 21 and XEmacs (Emacs 22 offers the more
+;; elegant solution of composing a list of lineup functions or quantities with
+;; operators such as "add")
+(defun google-c-lineup-open-paren (langelem)
+  "Indents to the beginning of the current C statement plus 4 spaces.
+
+This implements title \"Function Declarations and Definitions\" of the Google
+C++ Style Guide for the case where the previous line ends with an open
+parenthese.
+
+Suitable for inclusion in `c-offsets-alist'."
+  (vector (+ 4 (elt (google-c-lineup-to-previous-line langelem) 0))))
+
 (defconst google-c-style
   `((c-recognize-knr-p . nil)
     (c-enable-xemacs-performance-kludge-p . t) ; speed up indentation in XEmacs
@@ -64,7 +83,7 @@
                        defun-close-semi
                        list-close-comma
                        scope-operator))
-    (c-offsets-alist . ((arglist-intro . ++)
+    (c-offsets-alist . ((arglist-intro google-c-lineup-open-paren)
                         (func-decl-cont . ++)
                         (member-init-intro . ++)
                         (inher-intro . ++)
