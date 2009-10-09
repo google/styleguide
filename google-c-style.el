@@ -27,25 +27,38 @@
 
 ;;; Code:
 
-(defun google-c-lineup-to-previous-line (langelem)
-  "Indents to the beginning of the first syntagm on the previous line.
-
-Suitable for inclusion in `c-offsets-alist'.  Works with: Any syntactic symbol."
-  (save-excursion (vector (c-langelem-col c-syntactic-element))))
+;; For some reason 1) c-backward-syntactic-ws is a macro and 2)  under Emacs 22
+;; bytecode cannot call (unexpanded) macros at run time:
+(eval-when-compile (require 'cc-defs))
 
 ;; Wrapper function needed for Emacs 21 and XEmacs (Emacs 22 offers the more
 ;; elegant solution of composing a list of lineup functions or quantities with
 ;; operators such as "add")
-(defun google-c-lineup-open-paren (langelem)
-  "Indents to the beginning of the current C statement plus 4 spaces.
+(defun google-c-lineup-expression-plus-4 (langelem)
+  "Indents to the beginning of the current C expression plus 4 spaces.
 
 This implements title \"Function Declarations and Definitions\" of the Google
 C++ Style Guide for the case where the previous line ends with an open
 parenthese.
 
-Suitable for inclusion in `c-offsets-alist'."
-  (vector (+ 4 (elt (google-c-lineup-to-previous-line langelem) 0))))
+\"Current C expression\", as per the Google Style Guide and as clarified by
+subsequent discussions,
+means the whole expression regardless of the number of nested parentheses, but
+excluding non-expression material such as \"if(\" and \"for(\" control
+structures.
 
+Suitable for inclusion in `c-offsets-alist'."
+  (save-excursion
+    (back-to-indentation)
+    ;; Go to beginning of *previous* line:
+    (c-backward-syntactic-ws)
+    (back-to-indentation)
+    ;; We are making a reasonable assumption that if there is a control
+    ;; structure to indent past, it has to be at the beginning of the line.
+    (if (looking-at "\\(\\(if\\|for\\|while\\)\\s *(\\)")
+        (goto-char (match-end 1)))
+    (vector (+ 4 (current-column)))))
+        
 (defconst google-c-style
   `((c-recognize-knr-p . nil)
     (c-enable-xemacs-performance-kludge-p . t) ; speed up indentation in XEmacs
@@ -83,7 +96,7 @@ Suitable for inclusion in `c-offsets-alist'."
                        defun-close-semi
                        list-close-comma
                        scope-operator))
-    (c-offsets-alist . ((arglist-intro google-c-lineup-open-paren)
+    (c-offsets-alist . ((arglist-intro google-c-lineup-expression-plus-4)
                         (func-decl-cont . ++)
                         (member-init-intro . ++)
                         (inher-intro . ++)
