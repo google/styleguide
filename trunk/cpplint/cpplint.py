@@ -92,6 +92,7 @@ import unicodedata
 
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
+                   [--counting=total|toplevel|detailed]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -130,6 +131,13 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
       To see a list of all the categories used in cpplint, pass no arg:
          --filter=
+
+    counting=total|toplevel|detailed
+      The total number of errors found is always printed. If
+      'toplevel' is provided, then the count of errors in each of
+      the top-level categories like 'build' and 'whitespace' will
+      also be printed. If 'detailed' is provided, then a count
+      is provided for each category like 'build/class'.
 """
 
 # We categorize each error message we print.  Here are the categories.
@@ -144,6 +152,7 @@ _ERROR_CATEGORIES = '''\
   build/forward_decl
   build/header_guard
   build/include
+  build/include_alpha
   build/include_order
   build/include_what_you_use
   build/namespaces
@@ -167,7 +176,9 @@ _ERROR_CATEGORIES = '''\
   runtime/int
   runtime/init
   runtime/invalid_increment
+  runtime/member_string_references
   runtime/memset
+  runtime/operator
   runtime/printf
   runtime/printf_format
   runtime/references
@@ -197,7 +208,7 @@ _ERROR_CATEGORIES = '''\
 # flag. By default all errors are on, so only add here categories that should be
 # off by default (i.e., categories that must be enabled by the --filter= flags).
 # All entries here should start with a '-' or '+', as in the --filter= flag.
-_DEFAULT_FILTERS = []
+_DEFAULT_FILTERS = [ '-build/include_alpha' ]
 
 # We used to check for high-bit characters, but after much discussion we
 # decided those were OK, as long as they were in UTF-8 and didn't represent
@@ -330,7 +341,40 @@ class _IncludeState(dict):
 
   def __init__(self):
     dict.__init__(self)
+    # The name of the current section.
     self._section = self._INITIAL_SECTION
+    # The path of last found header.
+    self._last_header = ''
+
+  def CanonicalizeAlphabeticalOrder(self, header_path):
+    """Returns a path canonicalized for alphabetical comparisson.
+
+    - replaces "-" with "_" so they both cmp the same.
+    - removes '-inl' since we don't require them to be after the main header.
+    - lowercase everything, just in case.
+
+    Args:
+      header_path: Path to be canonicalized.
+
+    Returns:
+      Canonicalized path.
+    """
+    return header_path.replace('-inl.h', '.h').replace('-', '_').lower()
+
+  def IsInAlphabeticalOrder(self, header_path):
+    """Check if a header is in alphabetical order with the previous header.
+
+    Args:
+      header_path: Header to be checked.
+
+    Returns:
+      Returns true if the header is in alphabetical order.
+    """
+    canonical_header = self.CanonicalizeAlphabeticalOrder(header_path)
+    if self._last_header > canonical_header:
+      return False
+    self._last_header = canonical_header
+    return True
 
   def CheckNextIncludeOrder(self, header_type):
     """Returns a non-empty error message if the next header is out of order.
@@ -350,15 +394,19 @@ class _IncludeState(dict):
                      (self._TYPE_NAMES[header_type],
                       self._SECTION_NAMES[self._section]))
 
+    last_section = self._section
+
     if header_type == _C_SYS_HEADER:
       if self._section <= self._C_SECTION:
         self._section = self._C_SECTION
       else:
+        self._last_header = ''
         return error_message
     elif header_type == _CPP_SYS_HEADER:
       if self._section <= self._CPP_SECTION:
         self._section = self._CPP_SECTION
       else:
+        self._last_header = ''
         return error_message
     elif header_type == _LIKELY_MY_HEADER:
       if self._section <= self._MY_H_SECTION:
@@ -376,6 +424,9 @@ class _IncludeState(dict):
       assert header_type == _OTHER_HEADER
       self._section = self._OTHER_H_SECTION
 
+    if last_section != self._section:
+      self._last_header = ''
+
     return ''
 
 
@@ -387,6 +438,8 @@ class _CppLintState(object):
     self.error_count = 0    # global count of reported errors
     # filters to apply when emitting error messages
     self.filters = _DEFAULT_FILTERS[:]
+    self.counting = 'total'  # In what way are we counting errors?
+    self.errors_by_category = {}  # string to int dict storing error counts
 
     # output format:
     # "emacs" - format that emacs can parse (default)
@@ -402,6 +455,10 @@ class _CppLintState(object):
     last_verbose_level = self.verbose_level
     self.verbose_level = level
     return last_verbose_level
+
+  def SetCountingStyle(self, counting_style):
+    """Sets the module's counting options."""
+    self.counting = counting_style
 
   def SetFilters(self, filters):
     """Sets the error-message filters.
@@ -428,14 +485,27 @@ class _CppLintState(object):
         raise ValueError('Every filter in --filters must start with + or -'
                          ' (%s does not)' % filt)
 
-  def ResetErrorCount(self):
+  def ResetErrorCounts(self):
     """Sets the module's error statistic back to zero."""
     self.error_count = 0
+    self.errors_by_category = {}
 
-  def IncrementErrorCount(self):
+  def IncrementErrorCount(self, category):
     """Bumps the module's error statistic."""
     self.error_count += 1
+    if self.counting in ('toplevel', 'detailed'):
+      if self.counting != 'detailed':
+        category = category.split('/')[0]
+      if category not in self.errors_by_category:
+        self.errors_by_category[category] = 0
+      self.errors_by_category[category] += 1
 
+  def PrintErrorCounts(self):
+    """Print a summary of errors by category, and the total."""
+    for category, count in self.errors_by_category.iteritems():
+      sys.stderr.write('Category \'%s\' errors found: %d\n' %
+                       (category, count))
+    sys.stderr.write('Total errors found: %d\n' % self.error_count)
 
 _cpplint_state = _CppLintState()
 
@@ -458,6 +528,11 @@ def _VerboseLevel():
 def _SetVerboseLevel(level):
   """Sets the module's verbosity, and returns the previous setting."""
   return _cpplint_state.SetVerboseLevel(level)
+
+
+def _SetCountingStyle(level):
+  """Sets the module's counting options."""
+  _cpplint_state.SetCountingStyle(level)
 
 
 def _Filters():
@@ -668,7 +743,7 @@ def Error(filename, linenum, category, confidence, message):
   # There are two ways we might decide not to print an error message:
   # the verbosity level isn't high enough, or the filters filter it out.
   if _ShouldPrintError(category, confidence):
-    _cpplint_state.IncrementErrorCount()
+    _cpplint_state.IncrementErrorCount(category)
     if _cpplint_state.output_format == 'vs7':
       sys.stderr.write('%s(%s):  %s  [%s] [%d]\n' % (
           filename, linenum, message, category, confidence))
@@ -931,7 +1006,7 @@ def CheckForHeaderGuard(filename, lines, error):
 
   # The guard should be PATH_FILE_H_, but we also allow PATH_FILE_H__
   # for backward compatibility.
-  if ifndef != cppvar:
+  if ifndef != cppvar and not Search(r'\bNOLINT\b', lines[ifndef_linenum]):
     error_level = 0
     if ifndef != cppvar + '_':
       error_level = 5
@@ -939,7 +1014,8 @@ def CheckForHeaderGuard(filename, lines, error):
     error(filename, ifndef_linenum, 'build/header_guard', error_level,
           '#ifndef header guard has wrong style, please use: %s' % cppvar)
 
-  if endif != ('#endif  // %s' % cppvar):
+  if (endif != ('#endif  // %s' % cppvar) and
+      not Search(r'\bNOLINT\b', lines[endif_linenum])):
     error_level = 0
     if endif != ('#endif  // %s' % (cppvar + '_')):
       error_level = 5
@@ -1067,14 +1143,14 @@ def CheckPosixThreading(filename, clean_lines, linenum, error):
             '...) for improved thread safety.')
 
 
-# Matches invalid increment: *count++, which moves pointer insead of
+# Matches invalid increment: *count++, which moves pointer instead of
 # incrementing a value.
-_RE_PATTERN_IVALID_INCREMENT = re.compile(
+_RE_PATTERN_INVALID_INCREMENT = re.compile(
     r'^\s*\*\w+(\+\+|--);')
 
 
 def CheckInvalidIncrement(filename, clean_lines, linenum, error):
-  """Checks for invalud increment *count++.
+  """Checks for invalid increment *count++.
 
   For example following function:
   void increment_counter(int* count) {
@@ -1090,7 +1166,7 @@ def CheckInvalidIncrement(filename, clean_lines, linenum, error):
     error: The function to call with any errors found.
   """
   line = clean_lines.elided[linenum]
-  if _RE_PATTERN_IVALID_INCREMENT.match(line):
+  if _RE_PATTERN_INVALID_INCREMENT.match(line):
     error(filename, linenum, 'runtime/invalid_increment', 5,
           'Changing pointer instead of value (or unused value of operator*).')
 
@@ -1154,8 +1230,9 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
   - classes with virtual methods need virtual destructors (compiler warning
     available, but not turned on yet.)
 
-  Additionally, check for constructor/destructor style violations as it
-  is very convenient to do so while checking for gcc-2 compliance.
+  Additionally, check for constructor/destructor style violations and reference
+  members, as it is very convenient to do so while checking for
+  gcc-2 compliance.
 
   Args:
     filename: The name of the current file.
@@ -1208,6 +1285,18 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
             line):
     error(filename, linenum, 'build/deprecated', 3,
           '>? and <? (max and min) operators are non-standard and deprecated.')
+
+  if Search(r'^\s*const\s*string\s*&\s*\w+\s*;', line):
+    # TODO(unknown): Could it be expanded safely to arbitrary references,
+    # without triggering too many false positives? The first
+    # attempt triggered 5 warnings for mostly benign code in the regtest, hence
+    # the restriction.
+    # Here's the original regexp, for the reference:
+    # type_name = r'\w+((\s*::\s*\w+)|(\s*<\s*\w+?\s*>))?'
+    # r'\s*const\s*' + type_name + '\s*&\s*\w+\s*;'
+    error(filename, linenum, 'runtime/member_string_references', 2,
+          'const string& members are dangerous. It is much better to use '
+          'alternatives, such as pointers or simple constants.')
 
   # Track class entry and exit, and attempt to find cases within the
   # class declaration that don't meet the C++ style
@@ -2149,6 +2238,9 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
         error(filename, linenum, 'build/include_order', 4,
               '%s. Should be: %s.h, c system, c++ system, other.' %
               (error_message, fileinfo.BaseName()))
+      if not include_state.IsInAlphabeticalOrder(include):
+        error(filename, linenum, 'build/include_alpha', 4,
+              'Include "%s" not in alphabetical order' % include)
 
   # Look for any of the stream classes that are part of standard C++.
   match = _RE_PATTERN_INCLUDE.match(line)
@@ -2227,16 +2319,18 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
   # Parameterless conversion functions, such as bool(), are allowed as they are
   # probably a member operator declaration or default constructor.
   match = Search(
-      r'\b(int|float|double|bool|char|int32|uint32|int64|uint64)\([^)]', line)
+      r'(\bnew\s+)?\b'  # Grab 'new' operator, if it's there
+      r'(int|float|double|bool|char|int32|uint32|int64|uint64)\([^)]', line)
   if match:
     # gMock methods are defined using some variant of MOCK_METHODx(name, type)
     # where type may be float(), int(string), etc.  Without context they are
     # virtually indistinguishable from int(x) casts.
-    if not Match(r'^\s*MOCK_(CONST_)?METHOD\d+(_T)?\(', line):
+    if (match.group(1) is None and  # If new operator, then this isn't a cast
+        not Match(r'^\s*MOCK_(CONST_)?METHOD\d+(_T)?\(', line)):
       error(filename, linenum, 'readability/casting', 4,
             'Using deprecated casting style.  '
             'Use static_cast<%s>(...) instead' %
-            match.group(1))
+            match.group(2))
 
   CheckCStyleCast(filename, linenum, line, clean_lines.raw_lines[linenum],
                   'static_cast',
@@ -2322,6 +2416,16 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
   if Search(r'\bsscanf\b', line):
     error(filename, linenum, 'runtime/printf', 1,
           'sscanf can be ok, but is slow and can overflow buffers.')
+
+  # Check if some verboten operator overloading is going on
+  # TODO(unknown): catch out-of-line unary operator&:
+  #   class X {};
+  #   int operator&(const X& x) { return 42; }  // unary operator&
+  # The trick is it's hard to tell apart from binary operator&:
+  #   class Y { int operator&(const Y& x) { return 23; } }; // binary operator&
+  if Search(r'\boperator\s*&\s*\(\s*\)', line):
+    error(filename, linenum, 'runtime/operator', 4,
+          'Unary operator& is dangerous.  Do not use it.')
 
   # Check for suspicious usage of "if" like
   # } if (a == b) {
@@ -2879,6 +2983,7 @@ def ParseArguments(args):
   """
   try:
     (opts, filenames) = getopt.getopt(args, '', ['help', 'output=', 'verbose=',
+                                                 'counting=',
                                                  'filter='])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
@@ -2886,6 +2991,7 @@ def ParseArguments(args):
   verbosity = _VerboseLevel()
   output_format = _OutputFormat()
   filters = ''
+  counting_style = ''
 
   for (opt, val) in opts:
     if opt == '--help':
@@ -2900,6 +3006,10 @@ def ParseArguments(args):
       filters = val
       if not filters:
         PrintCategories()
+    elif opt == '--counting':
+      if val not in ('total', 'toplevel', 'detailed'):
+        PrintUsage('Valid counting options are total, toplevel, and detailed')
+      counting_style = val
 
   if not filenames:
     PrintUsage('No files were specified.')
@@ -2907,6 +3017,7 @@ def ParseArguments(args):
   _SetOutputFormat(output_format)
   _SetVerboseLevel(verbosity)
   _SetFilters(filters)
+  _SetCountingStyle(counting_style)
 
   return filenames
 
@@ -2921,10 +3032,11 @@ def main():
                                          codecs.getwriter('utf8'),
                                          'replace')
 
-  _cpplint_state.ResetErrorCount()
+  _cpplint_state.ResetErrorCounts()
   for filename in filenames:
     ProcessFile(filename, _cpplint_state.verbose_level)
-  sys.stderr.write('Total errors found: %d\n' % _cpplint_state.error_count)
+  _cpplint_state.PrintErrorCounts()
+
   sys.exit(_cpplint_state.error_count > 0)
 
 

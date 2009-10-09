@@ -438,6 +438,12 @@ class CpplintTest(CpplintTestBase):
     self.TestLint(
         'operator bool();  // Conversion operator, o.k.',
         '')
+    self.TestLint(
+        'new int64(123);  // "new" operator on basic type, o.k.',
+        '')
+    self.TestLint(
+        'new   int64(123);  // "new" operator on basic type, weird spacing',
+        '')
 
   # The second parameter to a gMock method definition is a function signature
   # that often looks like a bad cast but should not picked up by lint.
@@ -975,6 +981,50 @@ class CpplintTest(CpplintTestBase):
         'Potential format string bug. Do StringPrintf("%s", foo) instead.'
         ''
         '  [runtime/printf] [4]')
+
+  # Test disallowed use of operator& and other operators.
+  def testIllegalOperatorOverloading(self):
+    errmsg = ('Unary operator& is dangerous.  Do not use it.'
+              '  [runtime/operator] [4]')
+    self.TestLint('void operator=(const Myclass&)', '')
+    self.TestLint('void operator&(int a, int b)', '')   # binary operator& ok
+    self.TestLint('void operator&() { }', errmsg)
+    self.TestLint('void operator & (  ) { }',
+                  ['Extra space after (  [whitespace/parens] [2]',
+                   errmsg
+                   ])
+
+  # const string reference members are dangerous..
+  def testConstStringReferenceMembers(self):
+    errmsg = ('const string& members are dangerous. It is much better to use '
+              'alternatives, such as pointers or simple constants.'
+              '  [runtime/member_string_references] [2]')
+
+    members_declarations = ['const string& church',
+                            'const string &turing',
+                            'const string & godel']
+    # TODO(unknown): Enable also these tests if and when we ever
+    # decide to check for arbitrary member references.
+    #                         "const Turing & a",
+    #                         "const Church& a",
+    #                         "const vector<int>& a",
+    #                         "const     Kurt::Godel    &    godel",
+    #                         "const Kazimierz::Kuratowski& kk" ]
+
+    # The Good.
+
+    self.TestLint('void f(const string&)', '')
+    self.TestLint('const string& f(const string& a, const string& b)', '')
+    self.TestLint('typedef const string& A;', '')
+
+    for decl in members_declarations:
+      self.TestLint(decl + ' = b;', '')
+      self.TestLint(decl + '      =', '')
+
+    # The Bad.
+
+    for decl in members_declarations:
+      self.TestLint(decl + ';', errmsg)
 
   # Variable-length arrays are not permitted.
   def testVariableLengthArrayDetection(self):
@@ -1904,6 +1954,27 @@ class CpplintTest(CpplintTestBase):
             '  [build/header_guard] [5]' % expected_guard),
         error_collector.ResultList())
 
+    # incorrect header guard with nolint
+    error_collector = ErrorCollector(self.assert_)
+    cpplint.ProcessFileData(file_path, 'h',
+                            ['#ifndef FOO  // NOLINT',
+                             '#define FOO',
+                             '#endif  // FOO NOLINT'],
+                            error_collector)
+    self.assertEquals(
+        0,
+        error_collector.ResultList().count(
+            '#ifndef header guard has wrong style, please use: %s'
+            '  [build/header_guard] [5]' % expected_guard),
+        error_collector.ResultList())
+    self.assertEquals(
+        0,
+        error_collector.ResultList().count(
+            '#endif line should be "#endif  // %s"'
+            '  [build/header_guard] [5]' % expected_guard),
+        error_collector.ResultList())
+
+
   def testBuildInclude(self):
     # Test that include statements have slashes in them.
     self.TestLint('#include "foo.h"',
@@ -2137,7 +2208,6 @@ class CleansedLinesTest(unittest.TestCase):
 class OrderOfIncludesTest(CpplintTestBase):
   def setUp(self):
     self.include_state = cpplint._IncludeState()
-
     # Cheat os.path.abspath called in FileInfo class.
     self.os_path_abspath_orig = os.path.abspath
     os.path.abspath = lambda value: value
@@ -2254,24 +2324,6 @@ class OrderOfIncludesTest(CpplintTestBase):
                                         '"bar/bar-inl.h"',
                                         '"bar/bar.h"']),
                                 '')
-    # Test everything in a good but slightly deprecated order.
-    self.TestLanguageRulesCheck('foo/foo.cc',
-                                Format(['"foo/foo.h"',
-                                        '<stdio.h>',
-                                        '<string>',
-                                        '"foo/foo-inl.h"',
-                                        '"bar/bar-inl.h"',
-                                        '"bar/bar.h"']),
-                                '')
-    # Test everything in a good but deprecated order.
-    self.TestLanguageRulesCheck('foo/foo.cc',
-                                Format(['<stdio.h>',
-                                        '<string>',
-                                        '"foo/foo-inl.h"',
-                                        '"bar/bar-inl.h"',
-                                        '"foo/foo.h"',
-                                        '"bar/bar.h"']),
-                                '')
 
     # Test bad orders.
     self.TestLanguageRulesCheck(
@@ -2301,6 +2353,21 @@ class OrderOfIncludesTest(CpplintTestBase):
     self.TestLanguageRulesCheck('foo/internal/foo.cc',
                                 Format(['"foo/other/public/foo.h"',
                                         '<string>']),
+                                '')
+    self.TestLanguageRulesCheck('foo/foo.cc',
+                                Format(['"foo/foo.h"',
+                                        '<string>',
+                                        '"base/google.h"',
+                                        '"base/flags.h"']),
+                                'Include "base/flags.h" not in alphabetical '
+                                'order  [build/include_alpha] [4]')
+    # According to the style, -inl.h should come before .h, but we don't
+    # complain about that.
+    self.TestLanguageRulesCheck('foo/foo.cc',
+                                Format(['"foo/foo-inl.h"',
+                                        '"foo/foo.h"',
+                                        '"base/google.h"',
+                                        '"base/google-inl.h"']),
                                 '')
 
 
@@ -2741,7 +2808,16 @@ class NoNonVirtualDestructorsTest(CpplintTestBase):
          'The class Foo probably needs a virtual destructor due to having '
          'virtual method(s), one declared at line 2.  [runtime/virtual] [4]'])
 
+# pylint: disable-msg=C6409
+def setUp():
+  """ Runs before all tests are executed.
+  """
+  # Enable all filters, so we don't miss anything that is off by default.
+  cpplint._DEFAULT_FILTERS = []
+  cpplint._cpplint_state.SetFilters('')
 
+
+# pylint: disable-msg=C6409
 def tearDown():
   """A global check to make sure all error-categories have been tested.
 
@@ -2756,6 +2832,7 @@ def tearDown():
     # we assume we shouldn't run the test
     pass
 
+
 if __name__ == '__main__':
   import sys
   # We don't want to run the VerifyAllCategoriesAreSeen() test unless
@@ -2766,4 +2843,6 @@ if __name__ == '__main__':
   global _run_verifyallcategoriesseen
   _run_verifyallcategoriesseen = (len(sys.argv) == 1)
 
+  setUp()
   unittest.main()
+  tearDown()
