@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.133
+Revision 3.146
 </p>
 
 
@@ -96,6 +96,7 @@ Tashana Landray
     reader is familiar with the language.
     
   </p>
+  
 </CATEGORY>
 </OVERVIEW>
 
@@ -750,34 +751,42 @@ Tashana Landray
     </SUMMARY>
     <BODY>
       <p>
-	Objects with static storage duration, including global variables,
+        Objects with static storage duration, including global variables,
         static variables, static class member variables, and function static
-        variables, must be Plain Old Data (POD): only ints, chars, floats, and
-        void, and arrays of/structs of/pointers to POD. Static variables must
-        not be initialized with the result of a function; and non-const static
-        variables must not be used in threaded code.
+        variables, must be Plain Old Data (POD): only ints, chars, floats, or
+        pointers, or arrays/structs of POD.
       </p>
       <p>
-        The order in which class constructors, destructors, and initializers for
+        The order in which class constructors and initializers for
         static variables are called is only partially specified in C++ and can
         even change from build to build, which can cause bugs that are difficult
-        to find. For example, at program-end time a static variable might have
+        to find.  Therefore in addition to banning globals of class type, we do
+        not allow static POD variables to be initialized with the result of a
+        function, unless that function (such as getenv(), or getpid()) does not
+        itself depend on any other globals.
+      </p>
+      <p>
+        Likewise, the order in which destructors are called is defined to be the
+        reverse of the order in which the constructors were called.  Since
+        constructor order is indeterminate, so is destructor order.
+        For example, at program-end time a static variable might have
         been destroyed, but code still running -- perhaps in another thread --
-        tries to access it and fails.
+        tries to access it and fails.  Or the destructor for a static 'string'
+        variable might be run prior to the destructor for another variable that
+        contains a reference to that string.
       </p>
       <p>
         As a result we only allow static variables to contain POD data.  This
-        rule completely disallows <code>vector</code> (use C arrays instead),
-        <code>string</code> (use <code>const char*</code>), or anything that
-        contains or points to any class instance in any way, from ever being a
-        part of a static variable.  For similar reasons, we don't allow static
-        variables to be initialized with the result of a function call.
+        rule completely disallows <code>vector</code> (use C arrays instead), or
+        <code>string</code> (use <code>const char []</code>).
       </p>
       
       <p>
         If you need a static or global variable of a class type, consider
-        initializing a pointer which you never free from your main() function
-        or from pthread_once().
+        initializing a pointer (which will never be freed), from either your
+        main() function or from pthread_once().  Note that this must be a raw
+        pointer, not a "smart" pointer, since the smart pointer's destructor
+        will have the order-of-destructor issue that we are trying to avoid.
       </p>
       
       
@@ -792,9 +801,9 @@ Tashana Landray
 
   <STYLEPOINT title="Doing Work in Constructors">
     <SUMMARY>
-      Do only trivial initialization in a constructor.  If at all
-      possible, use an <code>Init()</code> method for non-trivial
-      initialization.
+      In general, constructors should merely set member variables to their
+      initial values.  Any complex initialization should go in an explicit
+      <code>Init()</code> method.
     </SUMMARY>
     <BODY>
       <DEFINITION>
@@ -835,9 +844,9 @@ Tashana Landray
       </CONS>
       <DECISION>
         If your object requires non-trivial initialization, consider
-        having an explicit <code>Init()</code> method and/or adding a
-        member flag that indicates whether the object was successfully
-        initialized.
+        having an explicit <code>Init()</code> method.  In particular,
+        constructors should not call virtual functions, attempt to raise
+        errors, access potentially uninitialized global variables, etc.
       </DECISION>
     </BODY>
   </STYLEPOINT>
@@ -863,7 +872,7 @@ Tashana Landray
       </CONS>
       <DECISION>
         <p>
-          If your class defines member variables has no other
+          If your class defines member variables and has no other
           constructors you must define a default constructor (one that
           takes no arguments). It should preferably initialize the
           object in such a way that its internal state is consistent
@@ -933,19 +942,22 @@ Tashana Landray
 
   <STYLEPOINT title="Copy Constructors">
     <SUMMARY>
-      Use copy constructors only when your code needs to copy a class;
-      most do not need to be copied and so should use
-      <code>DISALLOW_COPY_AND_ASSIGN</code>.
+      Provide a copy constructor and assignment operator only when necessary.
+      Otherwise, disable them with <code>DISALLOW_COPY_AND_ASSIGN</code>.
     </SUMMARY>
     <BODY>
       <DEFINITION>
-        The copy constructor is used when copying one object into a
-        new one (especially when passing objects by value).
+        The copy constructor and assignment operator are used to create copies
+        of objects. The copy constructor is implicitly invoked by the
+        compiler in some situations, e.g. passing objects by value.
       </DEFINITION>
       <PROS>
         Copy constructors make it easy to copy objects.  STL
         containers require that all contents be copyable and
-        assignable.
+        assignable. Copy constructors can be more efficient than
+        <code>CopyFrom()</code>-style workarounds because they combine
+        construction with copying, the compiler can elide them in some
+        contexts, and they make it easier to avoid heap allocation.
       </PROS>
       <CONS>
         Implicit copying of objects in C++ is a rich source of bugs
@@ -956,19 +968,35 @@ Tashana Landray
       </CONS>
       <DECISION>
         <p>
-          Most classes do not need to be copyable, and should not have a
-          copy constructor or an assignment operator. Unfortunately, the
-          compiler generates these for you, and makes them public, if
-          you do not declare them yourself.
+          Few classes need to be copyable. Most should have neither a
+          copy constructor nor an assignment operator. In many situations,
+          a pointer or reference will work just as well as a copied value,
+          with better performance. For example, you can pass function
+          parameters by reference or pointer instead of by value, and you can
+          store pointers rather than objects in an STL container.
         </p>
-        
         <p>
-          Consider adding dummy declarations for the copy constructor and
-          assignment operator in the class' <code>private:</code> section,
-          without providing definitions. With these dummy routines marked
-          private, a compilation error will be raised if other code
-          attempts to use them.  For convenience, a
-          <code>DISALLOW_COPY_AND_ASSIGN</code> macro can be used:
+          If your class needs to be copyable, prefer providing a copy method,
+          such as <code>CopyFrom()</code> or <code>Clone()</code>, rather than
+          a copy constructor, because such methods cannot be invoked
+          implicitly. If a copy method is insufficient in your situation
+          (e.g. for performance reasons, or because your class needs to be
+          stored by value in an STL container), provide both a copy
+          constructor and assignment operator.
+        </p>
+        <p>
+          If your class does not need a copy constructor or assignment
+          operator, you must explicitly disable them.
+          
+          
+          To do so, add dummy declarations for the copy constructor and
+          assignment operator in the <code>private:</code> section of your
+          class, but do not provide any corresponding definition (so that
+          any attempt to use them results in a link error). 
+        </p>
+        <p>
+          For convenience, a <code>DISALLOW_COPY_AND_ASSIGN</code> macro
+          can be used:
         </p>
         <CODE_SNIPPET>
           // A macro to disallow the copy constructor and operator= functions
@@ -991,23 +1019,6 @@ Tashana Landray
           };
         </CODE_SNIPPET>
         <p>
-          In almost all cases your class should use the
-          <code>DISALLOW_COPY_AND_ASSIGN</code>
-          macro as described above.  If your class is one of the rare
-          classes that does need to be copyable, you should document why
-          this is so in the header file for that class, and you should
-          define the copy constructor and assignment operator
-          appropriately.  Remember to check for self-assignment in
-          <code>operator=</code>.
-        </p>
-        <p>
-          You may be tempted to make your class copyable so that you
-          can use it as a value in STL containers. In almost all such
-          cases you should really put <em>pointers</em> to your
-          objects in the STL container.  You may also want to consider
-          using
-          
-          <code>std::tr1::shared_ptr</code>.
         </p>
         
       </DECISION>
@@ -1107,7 +1118,7 @@ Tashana Landray
         <p>
           Limit the use of <code>protected</code> to those member
           functions that might need to be accessed from subclasses.
-          Note that <a href="#Access_Control">data members must always
+          Note that <a href="#Access_Control">data members should
           be private</a>.
         </p>
         <p>
@@ -1256,16 +1267,18 @@ Tashana Landray
                </li>
         </ul>
         Overloading also has surprising ramifications.  For instance,
-        you can't forward declare classes that overload
-        <code>operator&amp;</code>.
+        if a class overloads unary <code>operator&amp;</code>, it
+        cannot safely be forward-declared.
       </CONS>
       <DECISION>
         <p>
           In general, do not overload operators. The assignment operator
           (<code>operator=</code>), in particular, is insidious and
           should be avoided.  You can define functions like
-          <code>Equals()</code> and <code>CopyFrom()</code> if you need
-          them.
+          <code>Equals()</code> and <code>CopyFrom()</code> if you
+          need them.  Likewise, avoid the dangerous
+          unary <code>operator&amp;</code> at all costs, if there's
+          any possibility the class might be forward-declared.
         </p>
         <p>
           However, there may be rare cases where you need to overload
@@ -1296,10 +1309,15 @@ Tashana Landray
   <STYLEPOINT title="Access Control">
     <SUMMARY>
       Make <em>all</em> data members <code>private</code>, and provide
-      access to them through accessor functions as needed.  Typically
-      a variable would be called <code>foo_</code> and the accessor
-      function <code>foo()</code>.  You may also want a mutator
-      function <code>set_foo()</code>.
+      access to them through accessor functions as needed (for
+      technical reasons, we allow data members of a test fixture class
+      to be <code>protected</code> when using
+      
+      <A HREF="http://code.google.com/p/googletest/">
+      Google Test</A>). Typically a variable would be
+      called <code>foo_</code> and the accessor function
+      <code>foo()</code>.  You may also want a mutator function
+      <code>set_foo()</code>.
     </SUMMARY>
     <BODY>
       <p>
@@ -2603,7 +2621,7 @@ Tashana Landray
       convention that your
       
       project
-      uses.
+      uses. If there is no consistent local pattern to follow, prefer "_".
     </SUMMARY>
     <BODY>
       <p>
@@ -2978,8 +2996,8 @@ Tashana Landray
 
       <SUBSECTION title="File Contents">
         <p>
-          Every file should have a comment at the top, below the
-          and author line, that describes the contents of the file.
+          Every file should have a comment at the top, below the copyright
+          notice and author line, that describes the contents of the file.
         </p>
         <p>
           Generally a <code>.h</code> file will describe the classes
@@ -4003,7 +4021,7 @@ Tashana Landray
     </BODY>
   </STYLEPOINT>
 
-  <STYLEPOINT title="Initializer Lists">
+  <STYLEPOINT title="Constructor Initializer Lists">
     <SUMMARY>
       Constructor initializer lists can be all on one line or with
       subsequent lines indented four spaces.
@@ -4064,6 +4082,13 @@ Tashana Landray
 
         }  // namespace
       </BAD_CODE_SNIPPET>
+      <p>
+        When declaring nested namespaces, put each namespace on its own line.
+      </p>
+      <CODE_SNIPPET>
+        namespace foo {
+        namespace bar {
+      </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
 
@@ -4352,7 +4377,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.133
+Revision 3.146
 </p>
 
 

@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/REC-html4/strict.dtd">
-<HTML>
+<HTML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcq="http://purl.org/dc/qualifiers/1.0/" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fn="http://www.w3.org/2005/xpath-functions">
 <HEAD>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>Google Python Style Guide</TITLE>
@@ -95,7 +94,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.12
+    Revision 2.14
   </p>
   
   <address>
@@ -124,7 +123,7 @@
 <TR valign="top" class="">
 <TD><DIV class="toc_category"><A href="#Python_Language_Rules">Python Language Rules</A></DIV></TD>
 <TD><DIV class="toc_stylepoint">
-<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#pychecker">pychecker</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports">Imports</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">Packages</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Exceptions">Exceptions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables">Global variables</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#List_Comprehensions">List Comprehensions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Iterators_and_Operators">Default Iterators and Operators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Generators">Generators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Using_apply,_filter,_map,_reduce">Using apply, filter, map, reduce</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lambda_Functions">Lambda Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Argument_Values">Default Argument Values</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Properties">Properties</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#True/False_evaluations">True/False evaluations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#String_Methods">String Methods</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lexical_Scoping">Lexical Scoping</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Function_and_Method_Decorators">Function and Method Decorators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Threading">Threading</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Power_Features">Power Features</A></SPAN> </DIV></TD>
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#pychecker">pychecker</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports">Imports</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">Packages</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Exceptions">Exceptions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables">Global variables</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#List_Comprehensions">List Comprehensions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Iterators_and_Operators">Default Iterators and Operators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Generators">Generators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lambda_Functions">Lambda Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Argument_Values">Default Argument Values</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Properties">Properties</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#True/False_evaluations">True/False evaluations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Deprecated_Language_Features">Deprecated Language Features</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lexical_Scoping">Lexical Scoping</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Function_and_Method_Decorators">Function and Method Decorators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Threading">Threading</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Power_Features">Power Features</A></SPAN> </DIV></TD>
 </TR>
 <TR valign="top" class="">
 <TD><DIV class="toc_category"><A href="#Python_Style_Rules">Python Style Rules</A></DIV></TD>
@@ -438,9 +437,9 @@ from sound.effects import echo
           </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
-      A class can be defined inside of a function or class.  A function
-      can be defined inside a function.  Nested functions have read-only
-      access to variables defined in enclosing scopes.
+      A class can be defined inside of a method, function, or class.  A
+      function can be defined inside a method or function.  Nested functions
+      have read-only access to variables defined in enclosing scopes.
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Pros:  </SPAN>
@@ -601,39 +600,6 @@ from sound.effects import echo
         </P>
       </SPAN></SPAN>
     </SPAN>
-    <SPAN class=""><H3><A name="Using_apply,_filter,_map,_reduce" id="Using_apply,_filter,_map,_reduce">Using apply, filter, map, reduce</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Using_apply,_filter,_map,_reduce__body','Using_apply,_filter,_map,_reduce__button')" name="Using_apply,_filter,_map,_reduce__button" id="Using_apply,_filter,_map,_reduce__button">▶</SPAN>
-      <SPAN class="">
-        Avoid in favor of list comprehensions and for-loops.
-      </SPAN>
-      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Using_apply,_filter,_map,_reduce__body" id="Using_apply,_filter,_map,_reduce__body" style="display: none"><SPAN class="link_button"><A href="?showone=Using_apply,_filter,_map,_reduce#Using_apply,_filter,_map,_reduce">
-            link
-          </A></SPAN>
-        <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN> Built-in functions useful for manipulating
-      lists.  Commonly used in conjunction with <code>lambda</code>
-      functions.
-        </P>
-        <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Code is compact.
-        </P>
-        <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      Higher-order functional programming tends to be harder to understand.
-        </P>
-        <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN> Use list comprehensions when possible and limit
-      use to simple code and one-liners.  In general, if such code
-      grows longer than 60–80 chars or if it uses
-      multi-level function calls (e.g., <code>map(lambda x: x[1],
-      filter(…))</code>), that's a signal that you are better
-      off writing a regular loop instead.  Compare:
-<SPAN class=""><PRE>Yes: <span class="external"></span>list comprehensions: [x[1] for x in my_list if x[2] == 5]</PRE></SPAN>
-<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>map/filter:          map(lambda x: x[1], filter(lambda x: x[2] == 5, my_list))</PRE></SPAN>
-        </P>
-      </SPAN></SPAN>
-    </SPAN>
     <SPAN class=""><H3><A name="Lambda_Functions" id="Lambda_Functions">Lambda Functions</A></H3>
 <SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lambda_Functions__body','Lambda_Functions__button')" name="Lambda_Functions__button" id="Lambda_Functions__button">▶</SPAN>
       <SPAN class="">
@@ -720,8 +686,8 @@ from sound.effects import echo
 <SPAN class=""><PRE class="badcode">No:  <span class="external"></span>def foo(a, b=[]):
        <span class="external">  </span>...</PRE></SPAN>
     <p>
-      Calling code must use named values for the default args.  This
-      helps document the code somewhat and helps prevent and detect
+      Calling code must use named values for arguments with a default value.
+      This helps document the code somewhat and helps prevent and detect
       interface breakage when more arguments are added.
     </p>
 <SPAN class=""><PRE>
@@ -912,32 +878,38 @@ from sound.effects import echo
         </P>
       </SPAN></SPAN>
     </SPAN>
-    <SPAN class=""><H3><A name="String_Methods" id="String_Methods">String Methods</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('String_Methods__body','String_Methods__button')" name="String_Methods__button" id="String_Methods__button">▶</SPAN>
+    <SPAN class=""><H3><A name="Deprecated_Language_Features" id="Deprecated_Language_Features">Deprecated Language Features</A></H3>
+<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Deprecated_Language_Features__body','Deprecated_Language_Features__button')" name="Deprecated_Language_Features__button" id="Deprecated_Language_Features__button">▶</SPAN>
       <SPAN class="">
-        Use string methods instead of the <code>string</code> module where
-        possible.
+        Use string methods instead of the <code>string</code> module
+        where possible.  Use function call syntax instead
+        of <code>apply</code>.  Use list comprehensions
+        and <code>for</code> loops instead of <code>filter</code>,
+        <code>map</code>, and <code>reduce</code>.
       </SPAN>
-      <SPAN class=""><BR><SPAN class="stylepoint_body" name="String_Methods__body" id="String_Methods__body" style="display: none"><SPAN class="link_button"><A href="?showone=String_Methods#String_Methods">
+      <SPAN class=""><BR><SPAN class="stylepoint_body" name="Deprecated_Language_Features__body" id="Deprecated_Language_Features__body" style="display: none"><SPAN class="link_button"><A href="?showone=Deprecated_Language_Features#Deprecated_Language_Features">
             link
           </A></SPAN>
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN> String objects include methods for most
-      functions in the <code>string</code> module.
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+          Current versions of Python provide alternative constructs
+          that people find generally preferable.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN> No need to import the <code>string</code> module;
-      methods work with both regular byte-strings and Unicode-strings.
-        </P>
-        <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      None.
-        </P>
-        <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN> Use string object methods. The <code>string</code> module is
-      deprecated in favor of string methods.
-<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>words = string.split(foo, ':')</PRE></SPAN>
-<SPAN class=""><PRE>Yes: <span class="external"></span>words = foo.split(':')</PRE></SPAN>
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+          We do not use any Python version which does not support
+          these features, so there is no reason not to use the new
+          styles.
+<SPAN class=""><PRE class="badcode">No:  <span class="external"></span>words = string.split(foo, ':')
+
+     <span class="external"></span>map(lambda x: x[1], filter(lambda x: x[2] == 5, my_list))
+
+     <span class="external"></span>apply(fn, args, kwargs)</PRE></SPAN>
+<SPAN class=""><PRE>Yes: <span class="external"></span>words = foo.split(':')
+
+     <span class="external"></span>[x[1] for x in my_list if x[2] == 5]
+
+     <span class="external"></span>fn(*args, **kwargs)</PRE></SPAN>
         </P>
       </SPAN></SPAN>
     </SPAN>
@@ -2011,7 +1983,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.12
+Revision 2.14
 </p>
 
 

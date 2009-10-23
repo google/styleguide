@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 2.12
+Revision 2.14
 </p>
 
 
@@ -16,7 +16,7 @@ Revision 2.12
     Dave MacLachlan
   </address>
 </div>
-  
+ 
 <OVERVIEW>
 
 <CATEGORY title="Important Note">
@@ -94,7 +94,7 @@ Revision 2.12
 
   <p>
     Google has already released open-source code that conforms to these
-    guidelines as part of the 
+    guidelines as part of the
     <a href="http://code.google.com/p/google-toolbox-for-mac/">
       Google Toolbox for Mac project
     </a>
@@ -102,13 +102,13 @@ Revision 2.12
     Code meant to be shared across different projects is a good candidate to
     be included in this repository.
   </p>
-  
+ 
   
 
   <p>
     Note that this guide is not an Objective-C tutorial. We assume that the
     reader is familiar with the language. If you are new to Objective-C or
-    need a refresher, please read 
+    need a refresher, please read
     <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/index.html">
       The Objective-C Programming Language
     </a>.
@@ -117,7 +117,7 @@ Revision 2.12
 </OVERVIEW>
 
 <CATEGORY title="Example">
-  
+ 
   <p>
     They say an example is worth a thousand words so let's start off with an
     example that should give you a feel for the style, spacing, naming, etc.
@@ -135,9 +135,9 @@ Revision 2.12
     //  Created by Greg Miller on 6/13/08.
     //  Copyright 2008 Google, Inc. All rights reserved.
     //
-    
+   
     #import &lt;Foundation/Foundation.h&gt;
-    
+   
     // A sample class demonstrating good Objective-C style. All interfaces,
     // categories, and protocols (read: all top-level declarations in a header)
     // MUST be commented. Comments must also be adjacent to the object they're
@@ -149,32 +149,32 @@ Revision 2.12
       NSString *foo_;
       NSString *bar_;
     }
-    
+   
     // Returns an autoreleased instance of GMFoo. See -initWithString: for details
     // about the argument.
     + (id)fooWithString:(NSString *)string;
-    
+   
     // Designated initializer. |string| will be copied and assigned to |foo_|.
     - (id)initWithString:(NSString *)string;
-    
+   
     // Gets and sets the string for |foo_|.
     - (NSString *)foo;
     - (void)setFoo:(NSString *)newFoo;
-    
+   
     // Does some work on |blah| and returns YES if the work was completed
     // successfuly, and NO otherwise.
     - (BOOL)doWorkWithString:(NSString *)blah;
-    
+   
     @end
   </CODE_SNIPPET>
-  
+ 
   <p>
     An example source file, demonstating the correct commenting and spacing
     for the <code>@implementation</code> of an interface. It also includes the
     reference implementations for important methods like getters and setters,
     <code>init</code>, and <code>dealloc</code>.
   </p>
-  
+ 
   <CODE_SNIPPET>
     //
     //  GTMFoo.m
@@ -183,49 +183,49 @@ Revision 2.12
     //  Created by Greg Miller on 6/13/08.
     //  Copyright 2008 Google, Inc. All rights reserved.
     //
-    
+   
     #import "GTMFoo.h"
-    
-    
+   
+   
     @implementation GTMFoo
-    
+   
     + (id)fooWithString:(NSString *)string {
       return [[[self alloc] initWithString:string] autorelease];
     }
-    
+   
     // Must always override super's designated initializer.
     - (id)init {
       return [self initWithString:nil];
     }
-    
+   
     - (id)initWithString:(NSString *)string {
       if ((self = [super init])) {
         foo_ = [string copy];
         bar_ = [[NSString alloc] initWithFormat:@"hi %d", 3];
       }
-      return self;   
+      return self;  
     }
-    
+   
     - (void)dealloc {
       [foo_ release];
       [bar_ release];
       [super dealloc];
     }
-    
+   
     - (NSString *)foo {
       return foo_;
     }
-    
+   
     - (void)setFoo:(NSString *)newFoo {
       [foo_ autorelease];
-      foo_ = [newFoo copy];   
+      foo_ = [newFoo copy];  
     }
-    
+   
     - (BOOL)doWorkWithString:(NSString *)blah {
       // ...
       return NO;
     }
-    
+   
     @end
   </CODE_SNIPPET>
 
@@ -291,7 +291,7 @@ Revision 2.12
       </p>
       <p>
         If you have too many parameters to fit on one line, giving each its
-        own line is preferred. If multiple lines are used, align each using 
+        own line is preferred. If multiple lines are used, align each using
         the <code>:</code> before the parameter.
       </p>
       <CODE_SNIPPET>
@@ -301,9 +301,33 @@ Revision 2.12
           ...
         }
       </CODE_SNIPPET>
+      <p>
+        When the first keyword is shorter than the others, indent the later
+        lines by at least four spaces. You can do this by making keywords
+        line up vertically, not aligning colons:
+      </p>
+      <CODE_SNIPPET>
+        - (void)short:(GTMFoo *)theFoo
+            longKeyword:(NSRect)theRect
+            evenLongerKeyword:(float)theInterval {
+          ...
+        }
+      </CODE_SNIPPET>
+      <p>
+        Or you may align all colons, indenting the first keyword if needed,
+        as below. In editing existing source, use the convention in that
+        file.
+      </p>
+      <CODE_SNIPPET>
+        - (void)        short:(GTMFoo *)theFoo
+                  longKeyword:(NSRect)theRect
+            evenLongerKeyword:(float)theInterval {
+          ...
+        }
+      </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
-  
+
   <STYLEPOINT title="@public and @private">
     <SUMMARY>
       The <code>@public</code> and <code>@private</code> access modifiers
@@ -322,7 +346,7 @@ Revision 2.12
           ...
         }
         @end
-      </CODE_SNIPPET>      
+      </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
 
@@ -352,11 +376,11 @@ Revision 2.12
       </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
-  
+
 </CATEGORY>
 
 <CATEGORY title="Naming">
-  
+
   <p>
     Naming rules are very important in maintainable code. Objective-C method
     names tend to be very long, but this has the benefit that a block of code
@@ -367,6 +391,12 @@ Revision 2.12
     Google's C++ style guide recommends the use of underscores between words
     in variable names, whereas this guide recommends the use of intercaps,
     which is standard in the Objective-C community.
+  </p>
+  <p>
+    Any class, category, method, or variable name may use all capitals for
+    <a href="http://en.wikipedia.org/wiki/Initialism">initialisms</a>
+    within the name. This follows Apple's standard of using all capitals
+    within a name for initialisms such as URL, TIFF, and EXIF.
   </p>
   <p>
     When writing Objective-C++, however, things are not so cut and dry. Many
@@ -440,7 +470,7 @@ Revision 2.12
       </p>
       <CODE_SNIPPET>
         // file: cross_platform_header.h
-        
+
         class CrossPlatformAPI {
          public:
           ...
@@ -448,10 +478,10 @@ Revision 2.12
          private:
           int an_instance_var_;
         };
-        
+
         // file: mac_implementation.mm
         #include "cross_platform_header.h"
-        
+
         // A typical Objective-C class, using Objective-C naming.
         @interface MyDelegate : NSObject {
          @private
@@ -468,7 +498,7 @@ Revision 2.12
           NSLog(@"%@", tempString);
         }
         @end
-        
+
         // The platform-specific implementation of the C++ class, using
         // C++ naming.
         int CrossPlatformAPI::DoSomethingPlatformSpecific() {
@@ -479,7 +509,7 @@ Revision 2.12
       </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
-  
+
   <STYLEPOINT title="Class Names">
     <SUMMARY>
       Class names (along with category and protocol names) should start as
@@ -502,7 +532,7 @@ Revision 2.12
       Category names should start with a 2 or 3 character prefix
       identifying the category as part of a project or open for general
       use. The category name should incorporate the name of the class it's
-      extending.      
+      extending.
     </SUMMARY>
     <BODY>
       <p>
@@ -520,7 +550,7 @@ Revision 2.12
       </p>
     </BODY>
   </STYLEPOINT>
-  
+
   <STYLEPOINT title="Objective-C Method Names">
     <SUMMARY>
       Method names should start as lowercase and then use mixed case.
@@ -571,36 +601,36 @@ Revision 2.12
           code immediately understandable by a new reader. For example:
         </p>
         <BAD_CODE_SNIPPET>
-          int w;     
-          int nerr;          
-          int nCompConns; 
+          int w;
+          int nerr;
+          int nCompConns;
           tix = [[NSMutableArray alloc] init];
           obj = [someObject object];
           p = [network port];
         </BAD_CODE_SNIPPET>
         <CODE_SNIPPET>
-          int numErrors;                
-          int numCompletedConnections; 
+          int numErrors;
+          int numCompletedConnections;
           tickets = [[NSMutableArray alloc] init];
           userInfo = [someObject object];
           port = [network port];
         </CODE_SNIPPET>
       </SUBSECTION>
-      
+
       <SUBSECTION title="Instance Variables">
         <p>
           Instance variables are mixed case and should be suffixed with a
           trailing underscore, e.g. <var>usernameTextField_</var>. However,
           we permit an exception when binding to a member variable using
-          KVO/KVC and Objective-C 2.0 cannot be used (due to OS release 
+          KVO/KVC and Objective-C 2.0 cannot be used (due to OS release
           constraints). In this case, it is acceptable to prefix the variable
-          with an underscore, per Apple's accepted practices for key/value 
+          with an underscore, per Apple's accepted practices for key/value
           naming. If Objective-C 2.0 can be used, <code>@property</code> and
           <code>@synthesize</code> provide a solution that conforms to the
           naming guidelines.
         </p>
       </SUBSECTION>
-      
+
       <SUBSECTION title="Constants">
         <p>
           Constant names (#defines, enums, const local variables, etc.) should
@@ -729,7 +759,7 @@ Revision 2.12
   <STYLEPOINT title="Object Ownership">
     <SUMMARY>
       Make the pointer ownership model as explicit as possible when it falls
-      outside the most common Objective-C usage idioms.  
+      outside the most common Objective-C usage idioms.
     </SUMMARY>
     <BODY>
       <p>
@@ -772,7 +802,7 @@ Revision 2.12
       </p>
     </BODY>
   </STYLEPOINT>
-  
+
 </CATEGORY>
 
 <CATEGORY title="Cocoa and Objective-C Features">
@@ -794,7 +824,7 @@ Revision 2.12
       </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
-  
+
   <STYLEPOINT title="Identify Designated Initializer">
     <SUMMARY>
       Comment and clearly identify your designated initializer.
@@ -867,7 +897,7 @@ Revision 2.12
         @implementation GTMFoo(PrivateDelegateHandling)
         ...
         - (NSString *)doSomethingWithDelegate {
-          // Implement this method 
+          // Implement this method
         }
         ...
         @end
@@ -883,7 +913,7 @@ Revision 2.12
       <p>
         If you are using Objective-C 2.0, you should instead declare your
         private category using a <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/Articles/chapter_4_section_5.html#">class
-        extension</a>, for example: 
+        extension</a>, for example:
       </p>
       <CODE_SNIPPET>
       @interface GMFoo () { ... }
@@ -986,7 +1016,7 @@ Revision 2.12
       </BAD_CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
-  
+
   <STYLEPOINT title="Prefer To autorelease At Time of Creation">
     <SUMMARY>
       When creating new temporary objects, <code>autorelease</code> them on
@@ -1029,7 +1059,7 @@ Revision 2.12
       <CODE_SNIPPET>
         - (void)setFoo:(GMFoo *)aFoo {
           [foo_ autorelease];  // Won't dealloc if |foo_| == |aFoo|
-          foo_ = [aFoo retain]; 
+          foo_ = [aFoo retain];
         }
       </CODE_SNIPPET>
     </BODY>
@@ -1091,7 +1121,7 @@ Revision 2.12
         void foo() {
           exceptiontest a;
           NSException *exception = [NSException exceptionWithName:@"foo"
-                                                           reason:@"bar"  
+                                                           reason:@"bar"
                                                          userInfo:nil];
           @throw exception;
         }
@@ -1155,30 +1185,58 @@ Revision 2.12
 
   <STYLEPOINT title="BOOL Pitfalls">
     <SUMMARY>
-      Be careful with <code>BOOL</code> return values and mixing
-      <code>bool</code> with <code>BOOL</code>. Avoid comparing directly
-      with <code>YES</code>.
+      Be careful when converting general integral values to <code>BOOL</code>.
+      Avoid comparing directly with <code>YES</code>.
     </SUMMARY>
     <BODY>
       <p>
-        Only use the constants YES and NO for <code>BOOL</code> return values
-        and assignments. Common mistakes include casting an array's size or
-        a pointer value as a BOOL, which depending on the value of the last
-        byte, could still result in a NO value.
+        <code>BOOL</code> is defined as an unsigned char in Objective-C which
+        means that it can have values other than <code>YES</code> (1) and
+        <code>NO</code> (0). Do not cast or convert general integral values
+        directly to <code>BOOL</code>. Common mistakes include casting or
+        converting an array's size, a pointer value, or the result of a bitwise
+        logic operation to a <code>BOOL</code> which, depending on the value of
+        the last byte of the integral result, could still result in a
+        <code>NO</code> value. When converting a general integral value to a
+        <code>BOOL</code> use ternery operators to return a <code>YES</code>
+        or <code>NO</code> value.
       </p>
       <p>
-        Also be careful when interoperating with C++ and its <code>bool</code>
-        type. Don't just assume that <code>YES</code> and <code>NO</code>
-        map directly to <code>true</code> and <code>false</code>. You can use
-        the ternary operator to succinctly map between them.
+        You can safely interchange and convert <code>BOOL</code>,
+        <code>_Bool</code> and <code>bool</code> (see C++ Std 4.7.4, 4.12 and
+        C99 Std 6.3.1.2). You cannot safely interchange <code>BOOL</code> and
+        <code>Boolean</code> so treat <code>Booleans</code> as a general
+        integral value as discussed above. Only use <code>BOOL</code> in
+        Objective C method signatures.
       </p>
+      <p>
+        Using logical operators (<code>&amp;&amp;</code>, <code>||</code> and
+        <code>!</code>) with <code>BOOL</code> is also valid and will return
+        values that can be safely converted to <code>BOOL</code> without the
+        need for a ternery operator.
+      </p>
+      <BAD_CODE_SNIPPET>
+        - (BOOL)isBold {
+          return [self fontTraits] &amp; NSFontBoldTrait;
+        }
+        - (BOOL)isValid {
+          return [self stringValue];
+        }
+      </BAD_CODE_SNIPPET>
       <CODE_SNIPPET>
-        bool b = myBOOL ? true : false;  // to go one way...
-        myBOOL = b ? YES : NO;           // ... or the other
+        - (BOOL)isBold {
+          return ([self fontTraits] &amp; NSFontBoldTrait) ? YES : NO;
+        }
+        - (BOOL)isValid {
+          return [self stringValue] != nil;
+        }
+        - (BOOL)isEnabled {
+          return [self isValid] &amp;&amp; [self isBold];
+        }
       </CODE_SNIPPET>
       <p>
-        Finally, don't directly compare <code>BOOL</code> variables directly
-        with <code>YES</code>. Not only is is harder to read for those
+        Also, don't directly compare <code>BOOL</code> variables directly
+        with <code>YES</code>. Not only is it harder to read for those
         well-versed in C, the first point above demonstrates that return
         values may not always be what you expect.
       </p>
@@ -1192,9 +1250,10 @@ Revision 2.12
         if (great)
           // ...be great!
       </CODE_SNIPPET>
+
     </BODY>
   </STYLEPOINT>
-  
+
   <STYLEPOINT title="Properties">
     <SUMMARY>
       Properties in general are allowed with the following caveat: properties
@@ -1202,7 +1261,7 @@ Revision 2.12
       on the iPhone and MacOS X 10.5 (Leopard) and higher. Dot notation to
       access properties is not allowed.
     </SUMMARY>
-    <BODY> 
+    <BODY>
       <SUBSECTION title="Naming">
         <p>
           A property's associated instance variable's name must conform to the
@@ -1212,7 +1271,7 @@ Revision 2.12
         <p>
           Use the @synthesize directive to rename the property correctly.
         </p>
-    
+
         <CODE_SNIPPET>
           @interface MyClass : NSObject {
            @private
@@ -1220,7 +1279,7 @@ Revision 2.12
           }
           @property(copy, nonatomic) NSString *name;
           @end
-          
+
           @implementation MyClass
           @synthesize name = name_;
           @end
@@ -1231,7 +1290,7 @@ Revision 2.12
           A property's declaration must come immediately after the instance
           variable block of a class interface. A property's definition must
           come immediately after the <code>@implementation</code> block in a
-          class definition. They are indented at the same level as the 
+          class definition. They are indented at the same level as the
           <code>@interface</code> or <code>@implementation</code> statements
           that they are enclosed in.
         </p>
@@ -1242,7 +1301,7 @@ Revision 2.12
           }
           @property(copy, nonatomic) NSString *name;
           @end
-          
+
           @implementation MyClass
           @synthesize name = name_;
           - (id)init {
@@ -1265,7 +1324,7 @@ Revision 2.12
       <SUBSECTION title="Never synthesize CFType properties">
         <p>
           CFTypes should always have the <code>@dynamic</code> implementation
-          directive. 
+          directive.
         </p>
         <p>
           Since CFTypes can't have the <code>retain</code> property
@@ -1290,7 +1349,7 @@ Revision 2.12
           @interface MyClass : NSObject
           @property(readonly) NSString *name;
           @end
-          
+
           @implementation MyClass
           .
           .
@@ -1304,7 +1363,7 @@ Revision 2.12
           @interface MyClass : NSObject
           @property(readonly) NSString *name;
           @end
-          
+
           @implementation MyClass
           @dynamic name;
           .
@@ -1333,12 +1392,12 @@ Revision 2.12
           <li>
             Dot notation is purely syntactic sugar for standard method calls,
             whose readability gains are debatable. It just gives you another
-            way to make method calls. 
+            way to make method calls.
           </li>
           <li>
             It obscures the type that you are dereferencing. When one sees:
             <code>[foo setBar:1]</code> it is immediately clear that you are
-            working with an Objective-C object. When one sees 
+            working with an Objective-C object. When one sees
             <code>foo.bar = 1</code> it is not clear if foo is an object, or
             a struct/union/C++ class.
           </li>
@@ -1366,7 +1425,7 @@ Revision 2.12
 
 
 <CATEGORY title="Cocoa Patterns">
-  
+
   <STYLEPOINT title="Delegate Pattern">
     <SUMMARY>
       Delegate objects should not be retained.
@@ -1430,7 +1489,7 @@ Revision 2.12
 <HR/>
 
 <p align="right">
-Revision 2.12
+Revision 2.14
 </p>
 
 
