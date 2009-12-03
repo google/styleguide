@@ -162,7 +162,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
   </xsl:template>
 
   <xsl:template match="CATEGORY">
-    <SPAN>
+    <DIV>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
       <H2>
         <xsl:variable name="category_name">
@@ -175,11 +175,11 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
         <xsl:value-of select="@title"/>
       </H2>
       <xsl:apply-templates/>
-    </SPAN>
+    </DIV>
   </xsl:template>
 
   <xsl:template match="STYLEPOINT">
-    <SPAN>
+    <DIV>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
       <xsl:variable name="stylepoint_name">
         <xsl:call-template name="anchorname">
@@ -222,23 +222,22 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
       <xsl:apply-templates>
         <xsl:with-param name="anchor_prefix" select="$stylepoint_name" />
       </xsl:apply-templates>
-    </SPAN>
+    </DIV>
   </xsl:template>
 
   <xsl:template match="SUMMARY">
     <xsl:param name="anchor_prefix" />
-    <SPAN>
+    <DIV style="display:inline;">
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
       <xsl:apply-templates/>
-    </SPAN>
+    </DIV>
   </xsl:template>
 
   <xsl:template match="BODY">
     <xsl:param name="anchor_prefix" />
-    <SPAN>
+    <DIV>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
-      <BR/>
-      <SPAN class="stylepoint_body">
+      <DIV class="stylepoint_body">
         <xsl:attribute name="name"><xsl:value-of select="$anchor_prefix"/><xsl:value-of select="$body_suffix"/></xsl:attribute>
         <xsl:attribute name="id"><xsl:value-of select="$anchor_prefix"/><xsl:value-of select="$body_suffix"/></xsl:attribute>
         <xsl:attribute name="style">
@@ -254,8 +253,8 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
           </A>
         </SPAN>
         <xsl:apply-templates/>
-      </SPAN>
-    </SPAN>
+      </DIV>
+    </DIV>
   </xsl:template>
 
   <xsl:template match="DEFINITION">
@@ -293,9 +292,9 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
   <xsl:template match="TODO">
     <P>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
-      <SPAN style="font-size: 150%;">TODO:
+      <DIV style="font-size: 150%;">TODO:
         <xsl:apply-templates/>
-      </SPAN>
+      </DIV>
     </P>
   </xsl:template>
 
@@ -308,7 +307,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
   </xsl:template>
 
   <xsl:template match="CODE_SNIPPET">
-    <SPAN>
+    <DIV>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
       <PRE><xsl:call-template name="print_without_leading_chars">
            <xsl:with-param name="text" select="."/>
@@ -321,11 +320,11 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
              </xsl:call-template>
            </xsl:with-param>
          </xsl:call-template></PRE>
-    </SPAN>
+    </DIV>
   </xsl:template>
 
   <xsl:template match="BAD_CODE_SNIPPET">
-    <SPAN>
+    <DIV>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
       <PRE class="badcode"><xsl:call-template name="print_without_leading_chars">
            <xsl:with-param name="text" select="."/>
@@ -338,25 +337,25 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
              </xsl:call-template>
            </xsl:with-param>
          </xsl:call-template></PRE>
-    </SPAN>
+    </DIV>
   </xsl:template>
 
   <xsl:template match="PY_CODE_SNIPPET">
-    <SPAN>
+    <DIV>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
       <PRE><xsl:call-template name="print_python_code">
              <xsl:with-param name="text" select="."/>
            </xsl:call-template></PRE>
-    </SPAN>
+    </DIV>
   </xsl:template>
 
   <xsl:template match="BAD_PY_CODE_SNIPPET">
-    <SPAN>
+    <DIV>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
       <PRE class="badcode"><xsl:call-template name="print_python_code">
                              <xsl:with-param name="text" select="."/>
                            </xsl:call-template></PRE>
-    </SPAN>
+    </DIV>
   </xsl:template>
 
   <xsl:template match="FUNCTION">
