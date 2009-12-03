@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.146
+Revision 3.154
 </p>
 
 
@@ -1581,7 +1581,8 @@ Tashana Landray
 
   <STYLEPOINT title="Default Arguments">
     <SUMMARY>
-      We do not allow default function parameters.
+      We do not allow default function parameters, except in
+      a few uncommon situations explained below.
     </SUMMARY>
     <BODY>
       <PROS>
@@ -1600,10 +1601,23 @@ Tashana Landray
         the new code.
       </CONS>
       <DECISION>
-        We require all arguments to be explicitly specified, to
-        force programmers to consider the API and the values they are
-        passing for each argument rather than silently accepting
-        defaults they may not be aware of.
+        <p>
+          Except as described below, we require all arguments to be
+          explicitly specified, to force programmers to consider the API
+          and the values they are passing for each argument rather than
+          silently accepting defaults they may not be aware of.
+        </p>
+        <p>
+          One specific exception is when default arguments are used to
+          simulate variable-length argument lists.
+        </p>
+        <CODE_SNIPPET>
+          // Support up to 4 params by using a default empty AlphaNum.
+          string StrCat(const AlphaNum &amp;a,
+                        const AlphaNum &amp;b = gEmptyAlphaNum,
+                        const AlphaNum &amp;c = gEmptyAlphaNum,
+                        const AlphaNum &amp;d = gEmptyAlphaNum);
+        </CODE_SNIPPET>
       </DECISION>
     </BODY>
   </STYLEPOINT>
@@ -2411,6 +2425,9 @@ Tashana Landray
         <li> Try not to use macros that expand to unbalanced C++
              constructs, or at least document that behavior well.
              </li>
+        <li> Prefer not using <code>##</code> to generate function/class/variable
+             names.
+             </li>
       </ul>
     </BODY>
   </STYLEPOINT>
@@ -2494,6 +2511,9 @@ Tashana Landray
       who might read and maintain code, we only allow an approved subset of
       Boost features.  Currently, the following libraries are permitted:
       <ul>
+        <li> <a href="http://www.boost.org/libs/utility/call_traits.htm">
+             Call Traits</a> from <code>boost/call_traits.hpp</code>
+             </li>
         <li> <a href="http://www.boost.org/libs/utility/compressed_pair.htm">
              Compressed Pair</a> from <code>boost/compressed_pair.hpp</code>
              </li>
@@ -3493,8 +3513,7 @@ Tashana Landray
         If you have too much text to fit on one line:
       </p>
       <CODE_SNIPPET>
-        ReturnType ClassName::ReallyLongFunctionName(Type par_name1,
-                                                     Type par_name2,
+        ReturnType ClassName::ReallyLongFunctionName(Type par_name1, Type par_name2,
                                                      Type par_name3) {
           DoSomething();
           ...
@@ -3882,15 +3901,18 @@ Tashana Landray
       <CODE_SNIPPET>
         if (this_one_thing &gt; this_other_thing &amp;&amp;
             a_third_thing == a_fourth_thing &amp;&amp;
-            yet_another &amp; last_one) {
+            yet_another &amp;&amp; last_one) {
           ...
         }
       </CODE_SNIPPET>
       <p>
-        Note that both of the <code>&amp;&amp;</code> logical AND
-        operators are the end of the line.  Feel free to insert extra
-        parentheses judiciously, because they can be very helpful in
-        increasing readability when used appropriately.
+        Note that when the code wraps in this example, both of
+        the <code>&amp;&amp;</code> logical AND operators are at the
+        end of the line.  This is more common in Google code, though
+        wrapping all operators at the beginning of the line is also
+        allowed.  Feel free to insert extra parentheses judiciously,
+        because they can be very helpful in increasing readability
+        when used appropriately.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -4166,7 +4188,7 @@ Tashana Landray
         vector&lt;char *&gt; x;           // Spaces between type and pointer are
                                     // okay, but be consistent.
         set&lt;list&lt;string&gt; &gt; x;       // C++ requires a space in &gt; &gt;.
-        set&lt; list&lt;string&gt; &gt; x;      // You may optionally make use
+        set&lt; list&lt;string&gt; &gt; x;      // You may optionally use
                                     // symmetric spacing in &lt; &lt;.
         </CODE_SNIPPET>
       </SUBSECTION>
@@ -4377,7 +4399,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.146
+Revision 3.154
 </p>
 
 
