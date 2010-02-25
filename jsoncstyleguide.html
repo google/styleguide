@@ -4,7 +4,7 @@
 <TITLE>Google JSON Style Guide</TITLE>
 <META content="text/html; charset=utf-8" http-equiv="Content-Type">
 <LINK rel="shortcut icon" type="image/x-icon" HREF="http://www.google.com/favicon.ico">
-<LINK rel="stylesheet" type="text/css" HREF="styleguide.css">
+<LINK rel="stylesheet" type="text/css" HREF="jsoncstyleguide.css">
 <SCRIPT type="text/javascript" language="javascript">
 
                 function ShowHideByName(bodyName, buttonName) {
@@ -307,13 +307,13 @@ This style guide contains many details that are initially hidden from view.  The
 <ul>
 <li>property - a name/value pair inside a JSON object.</li>
 <li>property name - the name (or key) portion of the property.</li>
-<li>property value - the value portion of the property:</li>
+<li>property value - the value portion of the property.</li>
 </ul>
 
 <DIV class="">
 <PRE>{
   // The name/value pair together is a "property".
-  "propertyName" : "propertyValue"
+  "propertyName": "propertyValue"
 }
 </PRE>
 </DIV>
@@ -348,7 +348,7 @@ No comments in JSON objects.
 <PRE class="badcode">{
   // You may see comments in the examples below,
   // But don't include comments in your JSON.
-  "propertyName" : "propertyValue"
+  "propertyName": "propertyValue"
 }
 </PRE>
 </DIV>
@@ -374,7 +374,7 @@ Use double quotes.
             link
           </A></SPAN>
 
-<p>If a property requires quotes, double quotes must be used.  All property names must be surrounded by double quotes.  Property values of type string must be surrounded by double quotes.  Other value types (like boolean or number) do not need double quotes</p>
+<p>If a property requires quotes, double quotes must be used.  All property names must be surrounded by double quotes.  Property values of type string must be surrounded by double quotes.  Other value types (like boolean or number) should not be surrounded by double quotes.</p>
 
 </DIV>
 </DIV>
@@ -388,7 +388,7 @@ Use double quotes.
 <SPAN class="showhide_button" onclick="javascript:ShowHideByName('Flattened_data_vs_Structured_Hierarchy__body','Flattened_data_vs_Structured_Hierarchy__button')" name="Flattened_data_vs_Structured_Hierarchy__button" id="Flattened_data_vs_Structured_Hierarchy__button">▶</SPAN>
 
 <DIV style="display:inline;" class="">
-Data should not be arbitrarily grouped for convenience
+Data should not be arbitrarily grouped for convenience.
 </DIV>
 
 <DIV class="">
@@ -404,13 +404,13 @@ Data should not be arbitrarily grouped for convenience
 
 <DIV class="">
 <PRE>{
-  "company" : "Google",
-  "website" : "http://www.google.com/",
-  "addressLine1" : "111 8th Ave",
-  "addressLine2" : "4th Floor",
-  "state" : "NY",
-  "city" : "New York",
-  "zip" : "10011"
+  "company": "Google",
+  "website": "http://www.google.com/",
+  "addressLine1": "111 8th Ave",
+  "addressLine2": "4th Floor",
+  "state": "NY",
+  "city": "New York",
+  "zip": "10011"
 }</PRE>
 </DIV>
 
@@ -418,14 +418,14 @@ Data should not be arbitrarily grouped for convenience
 
 <DIV class="">
 <PRE>{
-  "company" : "Google",
-  "website" : "http://www.google.com/",
-  "address" : {
-    "line1" : "111 8th Ave",
-    "line2" : "4th Floor",
-    "state" : "NY",
-     "city" : "New York",
-    "zip" : "10011"
+  "company": "Google",
+  "website": "http://www.google.com/",
+  "address": {
+    "line1": "111 8th Ave",
+    "line2": "4th Floor",
+    "state": "NY",
+    "city": "New York",
+    "zip": "10011"
   }
 }</PRE>
 </DIV>
@@ -464,11 +464,11 @@ Choose meaningful property names.
 <li>Subsequent characters can be a letter, a digit, an underscore, or a dollar sign.</li>
 <li>Reserved JavaScript keywords should be avoided (A list of reserved JavaScript keywords can be found below).</li>
 </ul>
-<p>These guidelines mirror the guidelines for naming JavaScript identifiers.  This allows JavaScript clients to access properties using dot notation (for example, result.thisIsAnInstanceVariable).  Here's an example of an object with one property:</p>
+<p>These guidelines mirror the guidelines for naming JavaScript identifiers.  This allows JavaScript clients to access properties using dot notation.  (for example, <code>result.thisIsAnInstanceVariable</code>).  Here's an example of an object with one property:</p>
 
 <DIV class="">
 <PRE>{
-  "thisPropertyIsAnIdentifier" : "identifier value"
+  "thisPropertyIsAnIdentifier": "identifier value"
 }
 </PRE>
 </DIV>
@@ -494,8 +494,8 @@ JSON maps can use any Unicode character in key names.
             link
           </A></SPAN>
 
-<p>The property name naming rules do not apply when a JSON object is used as a map.  A map (also referred to as associative arrays) is a data type with arbitrary key/value pairs that use the keys to access the corresponding values.  JSON objects and JSON maps look the same at runtime; this distinction is relevant to the design of the API.  The API documentation should indicate when JSON objects are used as maps.</p>
-<p>The keys of a map do not have to obey the naming guidelines for property names.  Map keys may contain any Unicode characters.  Clients can access these properties using the square bracket notation familiar for maps (for example, result.thumbnails["72"]).</p>
+<p>The property name naming rules do not apply when a JSON object is used as a map.  A map (also referred to as an associative array) is a data type with arbitrary key/value pairs that use the keys to access the corresponding values.  JSON objects and JSON maps look the same at runtime; this distinction is relevant to the design of the API.  The API documentation should indicate when JSON objects are used as maps.</p>
+<p>The keys of a map do not have to obey the naming guidelines for property names.  Map keys may contain any Unicode characters.  Clients can access these properties using the square bracket notation familiar for maps (for example, <code>result.thumbnails["72"]</code>).</p>
 
 <DIV class="">
 <PRE>{
@@ -509,9 +509,9 @@ JSON maps can use any Unicode character in key names.
   },
   // The "thumbnails" property is a map that maps
   // a pixel size to the thumbnail url of that size.
-  "thumbnails" : {
-    "72" : "http://url.to.72px.thumbnail",
-    "144" : "http://url.to.144px.thumbnail"
+  "thumbnails": {
+    "72": "http://url.to.72px.thumbnail",
+    "144": "http://url.to.144px.thumbnail"
   }
 }
 </PRE>
@@ -561,17 +561,17 @@ Array types should have plural property names.  All other property names should 
             link
           </A></SPAN>
 
-<p>Arrays usually contain multiple items, and a plural property name reflects this.  An example of this can be seen in the reserved names below.  The "items" property name is plural because it represents an array of item objects.  Most of the other fields are singular.</p>
-<p>There may be exceptions to this, especially when referring to numeric property values.  For example, in the reserved names, "totalItems" makes more sense than "totalItem".  However, technically, this is not violating the style guide, since "totalItems" can be viewed as "totalOfItems", where "total" is singular (as per the style guide), and "OfItems" serves to qualify the total.  The field name could also be changed to "itemCount" to look singular.</p>
+<p>Arrays usually contain multiple items, and a plural property name reflects this.  An example of this can be seen in the reserved names below.  The <code>items</code> property name is plural because it represents an array of item objects.  Most of the other fields are singular.</p>
+<p>There may be exceptions to this, especially when referring to numeric property values.  For example, in the reserved names, <code>totalItems</code> makes more sense than <code>totalItem</code>.  However, technically, this is not violating the style guide, since <code>totalItems</code> can be viewed as <code>totalOfItems</code>, where <code>total</code> is singular (as per the style guide), and <code>OfItems</code> serves to qualify the total.  The field name could also be changed to <code>itemCount</code> to look singular.</p>
 
 <DIV class="">
 <PRE>{
   // Singular
-  "author" : "lisa",
+  "author": "lisa",
   // An array of siblings, plural
-  "siblings" : [ "bart", "maggie"],
+  "siblings": [ "bart", "maggie"],
   // "totalItem" doesn't sound right
-  "totalItems" : 10,
+  "totalItems": 10,
   // But maybe "itemCount" is better
   "itemCount": 10,
 }
@@ -590,7 +590,7 @@ Array types should have plural property names.  All other property names should 
 <SPAN class="showhide_button" onclick="javascript:ShowHideByName('Naming_Conflicts__body','Naming_Conflicts__button')" name="Naming_Conflicts__button" id="Naming_Conflicts__button">▶</SPAN>
 
 <DIV style="display:inline;" class="">
-Avoid naming conflicts by choosing a new property name, or versioning the API.
+Avoid naming conflicts by choosing a new property name or versioning the API.
 </DIV>
 
 <DIV class="">
@@ -603,25 +603,25 @@ Avoid naming conflicts by choosing a new property name, or versioning the API.
 
 <DIV class="">
 <PRE>{
-  "apiVersion" : "1.0",
-  "data" : {
-    "recipeName" : "pizza",
-    "ingredients" : ["tomatoes", "cheese", "sausage"]
+  "apiVersion": "1.0",
+  "data": {
+    "recipeName": "pizza",
+    "ingredients": ["tomatoes", "cheese", "sausage"]
   }
 }
 </PRE>
 </DIV>
 
-<p>If in the future we wish to make "ingredients" a reserved word, we can do one of two things:</p>
+<p>If in the future we wish to make <code>ingredients</code> a reserved word, we can do one of two things:</p>
 <p>1) Choose a different name:</p>
 
 <DIV class="">
 <PRE>{
-  "apiVersion" : "1.0",
-  "data" : {
-    "recipeName" : "pizza",
-    "ingredientsData" : "Some new property",
-    "ingredients" : ["tomatoes", "cheese", "sausage"]
+  "apiVersion": "1.0",
+  "data": {
+    "recipeName": "pizza",
+    "ingredientsData": "Some new property",
+    "ingredients": ["tomatoes", "cheese", "sausage"]
   }
 }
 </PRE>
@@ -631,11 +631,11 @@ Avoid naming conflicts by choosing a new property name, or versioning the API.
 
 <DIV class="">
 <PRE>{
-  "apiVersion" : "2.0",
-  "data" : {
-    "recipeName" : "pizza",
-    "ingredients" : "Some new property",
-    "recipeIngredients" : ["tomatos", "cheese", "sausage"]
+  "apiVersion": "2.0",
+  "data": {
+    "recipeName": "pizza",
+    "ingredients": "Some new property",
+    "recipeIngredients": ["tomatos", "cheese", "sausage"]
   }
 }
 </PRE>
@@ -658,7 +658,7 @@ Avoid naming conflicts by choosing a new property name, or versioning the API.
 <SPAN class="showhide_button" onclick="javascript:ShowHideByName('Property_Value_Format__body','Property_Value_Format__button')" name="Property_Value_Format__button" id="Property_Value_Format__button">▶</SPAN>
 
 <DIV style="display:inline;" class="">
-Property values must be Unicode booleans, numbers, strings, objects, arrays, and <code>null</code>.
+Property values must be Unicode booleans, numbers, strings, objects, arrays, or <code>null</code>.
 </DIV>
 
 <DIV class="">
@@ -677,7 +677,7 @@ Property values must be Unicode booleans, numbers, strings, objects, arrays, and
   "answerToLife": 42,     // number
   "name": "Bart",         // string
   "moreData": {},         // object
-  "anArray": []           // array
+  "things": []            // array
 }
 </PRE>
 </DIV>
@@ -704,7 +704,7 @@ Property values must be Unicode booleans, numbers, strings, objects, arrays, and
 <SPAN class="showhide_button" onclick="javascript:ShowHideByName('Empty/Null_Property_Values__body','Empty/Null_Property_Values__button')" name="Empty/Null_Property_Values__button" id="Empty/Null_Property_Values__button">▶</SPAN>
 
 <DIV style="display:inline;" class="">
-If a property is optional or has an empty/null value, consider dropping the property from the JSON, unless there's a strong semantic reason for its existence.
+Consider removing empty or <code>null</code> values.
 </DIV>
 
 <DIV class="">
@@ -713,17 +713,19 @@ If a property is optional or has an empty/null value, consider dropping the prop
             link
           </A></SPAN>
 
-<p>If a property is optional or has an empty/null value, consider dropping the property from the JSON, unless there's a strong semantic reason for its existence.</p>
+<p>If a property is optional or has an empty or <code>null</code> value, consider dropping the property from the JSON, unless there's a strong semantic reason for its existence.</p>
 
 <DIV class="">
 <PRE>{
-  "volume" : 10,
+  "volume": 10,
+
   // Even though the "balance" property's value is zero, it should be left in,
   // since "0" signifies "even balance" (the value could be "-1" for left
   // balance and "+1" for right balance.
-  "balance" : 0,
+  "balance": 0,
+
   // The "currentlyPlaying" property can be left out since it is null.
-  // "currentlyPlaying" : null
+  // "currentlyPlaying": null
 }
 </PRE>
 </DIV>
@@ -763,11 +765,11 @@ Enum values should be represented as strings.
 </PRE>
 </DIV>
 
-<p>JSON Object:</p>
+<p>JSON object:</p>
 
 <DIV class="">
 <PRE>{
-  "color" : "WHITE"
+  "color": "WHITE"
 }
 </PRE>
 </DIV>
@@ -805,7 +807,7 @@ Dates should be formatted as recommended by RFC 3339.
 
 <DIV class="">
 <PRE>{
-  "lastUpdate" : "2007-11-06T16:34:41.000Z"
+  "lastUpdate": "2007-11-06T16:34:41.000Z"
 }
 </PRE>
 </DIV>
@@ -837,7 +839,7 @@ Time durations should be formatted as recommended by ISO 8601.
 <PRE>{
   // three years, six months, four days, twelve hours,
   // thirty minutes, and five seconds
-  "duration" : "P3Y6M4DT12H30M5S"
+  "duration": "P3Y6M4DT12H30M5S"
 }
 </PRE>
 </DIV>
@@ -868,7 +870,7 @@ Latitudes/Longitudes should be formatted as recommended by ISO 6709.
 <DIV class="">
 <PRE>{
   // The latitude/longitude location of the statue of liberty.
-  "statueOfLiberty" : "+40.6894-074.0447"
+  "statueOfLiberty": "+40.6894-074.0447"
 }
 </PRE>
 </DIV>
@@ -883,7 +885,7 @@ Latitudes/Longitudes should be formatted as recommended by ISO 6709.
 <DIV class="">
 <H2 name="JSON_Structure_&amp;_Reserved_Property_Names" id="JSON_Structure_&amp;_Reserved_Property_Names">JSON Structure &amp; Reserved Property Names</H2>
 
-<p>In order to maintain a consistent interface across APIs, JSON objects should follow the structure outlined below.  This structure applies to both requests and responses made with JSON.  Within this structure, there are certain property names that are reserved for specific uses.  These properties are NOT required; in other words, each reserved property may appear zero or one time.  But if a service needs these properties, this naming convention is recommend.  Here is a schema of the JSON structure, represented in <a href="http://www.google.com/url?sa=D&amp;q=http%3A%2F%2Forderly-json.org%2F">Orderly</a> format (which in turn can be compiled into a <a href="http://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fjson-schema.org%2F">JSONSchema</a>).  You can few examples of the JSON structure at the end of this guide.</p>
+<p>In order to maintain a consistent interface across APIs, JSON objects should follow the structure outlined below.  This structure applies to both requests and responses made with JSON.  Within this structure, there are certain property names that are reserved for specific uses.  These properties are NOT required; in other words, each reserved property may appear zero or one times.  But if a service needs these properties, this naming convention is recommend.  Here is a schema of the JSON structure, represented in <a href="http://www.google.com/url?sa=D&amp;q=http%3A%2F%2Forderly-json.org%2F">Orderly</a> format (which in turn can be compiled into a <a href="http://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fjson-schema.org%2F">JSONSchema</a>).  You can few examples of the JSON structure at the end of this guide.</p>
 
 <DIV class="">
 <PRE>object {
@@ -965,11 +967,11 @@ Property Value Type: string<br>Parent: -
             link
           </A></SPAN>
 
-<p>Represents the desired version of the service API in a request, and the version of the service API that's served in the response.  "apiVersion" should always be present.  This is not related to the version of the data.  Versioning of data should be handled through some other mechanism such as etags.</p>
+<p>Represents the desired version of the service API in a request, and the version of the service API that's served in the response.  <code>apiVersion</code> should always be present.  This is not related to the version of the data.  Versioning of data should be handled through some other mechanism such as etags.</p>
 <p>Example:</p>
 
 <DIV class="">
-<PRE>{ "apiVersion" : "2.1" }
+<PRE>{ "apiVersion": "2.1" }
 </PRE>
 </DIV>
 
@@ -994,7 +996,7 @@ Property Value Type: string<br>Parent: -
             link
           </A></SPAN>
 
-<p>Client sets this value and server echos data in the response.   This is useful in JSON-P and batch situations , where the user can use the "context" to correlate responses with requests.  This property is a top-level property because the "context" should present regardless of whether the response was successful or an error.  "Context" differs from "id" in that "context" is specified by the user while "id" is assigned by the service.</p>
+<p>Client sets this value and server echos data in the response.   This is useful in JSON-P and batch situations , where the user can use the <code>context</code> to correlate responses with requests.  This property is a top-level property because the <code>context</code> should present regardless of whether the response was successful or an error.  <code>context</code> differs from <code>id</code> in that <code>context</code> is specified by the user while <code>id</code> is assigned by the service.</p>
 <p>Example:</p>
 <p>Request #1:</p>
 
@@ -1014,10 +1016,10 @@ Property Value Type: string<br>Parent: -
 
 <DIV class="">
 <PRE>{
-  "context" : "bart",
-  "data" : {
-    "items" : []
-}
+  "context": "bart",
+  "data": {
+    "items": []
+  }
 }
 </PRE>
 </DIV>
@@ -1026,15 +1028,15 @@ Property Value Type: string<br>Parent: -
 
 <DIV class="">
 <PRE>{
-  "context" : "lisa",
-  "data" : {
-    "items" : []
-}
+  "context": "lisa",
+  "data": {
+    "items": []
+  }
 }
 </PRE>
 </DIV>
 
-<p>Common JavaScript handler code to process both response:</p>
+<p>Common JavaScript handler code to process both responses:</p>
 
 <DIV class="">
 <PRE>function handleResponse(response) {
@@ -1072,7 +1074,7 @@ Property Value Type: string<br>Parent: -
 <p>Example:</p>
 
 <DIV class="">
-<PRE>{ "id" : "1" }
+<PRE>{ "id": "1" }
 </PRE>
 </DIV>
 
@@ -1097,15 +1099,15 @@ Property Value Type: string<br>Parent: -
             link
           </A></SPAN>
 
-<p>Represents the operation to perform, or that was performed, on the data.  In the case of a JSON request, the "method" property can be used to indicate which operation to perform on the data.  In the case of a JSON response, the "method" property can indicate the operation performed on the data.</p>
-<p>One example of this is in JSON-RPC requests, where "method" indicates the operation to perform on the "params" property:</p>
+<p>Represents the operation to perform, or that was performed, on the data.  In the case of a JSON request, the <code>method</code> property can be used to indicate which operation to perform on the data.  In the case of a JSON response, the <code>method</code> property can indicate the operation performed on the data.</p>
+<p>One example of this is in JSON-RPC requests, where <code>method</code> indicates the operation to perform on the <code>params</code> property:</p>
 
 <DIV class="">
 <PRE>{
-  "method" : "people.get",
-  "params" : {
-    "userId" : "@me",
-    "groupId" : "@self"
+  "method": "people.get",
+  "params": {
+    "userId": "@me",
+    "groupId": "@self"
   }
 }
 </PRE>
@@ -1132,15 +1134,15 @@ Property Value Type: object<br>Parent: -
             link
           </A></SPAN>
 
-<p>This object serves as a map of input parameters to send to an RPC request.  It can be used in conjunction with the "method" property to execute an RPC function.  If an RPC function does not need parameters, this property can be omitted.</p>
+<p>This object serves as a map of input parameters to send to an RPC request.  It can be used in conjunction with the <code>method</code> property to execute an RPC function.  If an RPC function does not need parameters, this property can be omitted.</p>
 <p>Example:</p>
 
 <DIV class="">
 <PRE>{
-  "method" : "people.get",
-  "params" : {
-    "userId" : "@me",
-    "groupId" : "@self"
+  "method": "people.get",
+  "params": {
+    "userId": "@me",
+    "groupId": "@self"
   }
 }
 </PRE>
@@ -1167,7 +1169,7 @@ Property Value Type: object<br>Parent: -
             link
           </A></SPAN>
 
-<p>Container for all the data from a response.  This property itself has many reserved property names, which are described below.  Services are free to add their own data to this object.  A JSON response should contain either a "data" object or an "error" object, but not both.  If both "data" and "error" are present, the "error" object takes precedence.</p>
+<p>Container for all the data from a response.  This property itself has many reserved property names, which are described below.  Services are free to add their own data to this object.  A JSON response should contain either a <code>data</code> object or an <code>error</code> object, but not both.  If both <code>data</code> and <code>error</code> are present, the <code>error</code> object takes precedence.</p>
 
 </DIV>
 </DIV>
@@ -1190,20 +1192,20 @@ Property Value Type: object<br>Parent: -
             link
           </A></SPAN>
 
-<p>Indicates that an error has occurred, with details about the error.  The error format supports either one or more errors returned from the service.  A JSON response should contain either a "data" object or an "error" object, but not both.  If both "data" and "error" are present, the "error" object takes precedence.</p>
+<p>Indicates that an error has occurred, with details about the error.  The error format supports either one or more errors returned from the service.  A JSON response should contain either a <code>data</code> object or an <code>error</code> object, but not both.  If both <code>data</code> and <code>error</code> are present, the <code>error</code> object takes precedence.</p>
 <p>Example:</p>
 
 <DIV class="">
 <PRE>{
-  "apiVersion" : "2.0",
-  "error" : {
-    "code" : 404,
-    "message" : "File Not Found",
-    "errors" : [{
+  "apiVersion": "2.0",
+  "error": {
+    "code": 404,
+    "message": "File Not Found",
+    "errors": [{
       "domain": "Calendar",
       "reason": "ResourceNotFoundException",
       "message": "File Not Found
-....}]
+    }]
   }
 }
 </PRE>
@@ -1219,7 +1221,7 @@ Property Value Type: object<br>Parent: -
 <DIV class="">
 <H2 name="Reserved_Property_Names_in_the_data_object" id="Reserved_Property_Names_in_the_data_object">Reserved Property Names in the data object</H2>
 
-<p>The "data" property of the JSON object may contain the following properties.</p>
+<p>The <code>data</code> property of the JSON object may contain the following properties.</p>
 
 <DIV class="">
 <H3>
@@ -1238,7 +1240,7 @@ Property Value Type: string<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The "kind" property serves as a guide to what type of information this particular object stores.  It can be present at the "data" level, or at the "items" level, or in any object where its helpful to distinguish between various types of objects.  If the "kind" object is present, it should be the first property in the object (See the "Property Ordering" section below for more details).</p>
+<p>The <code>kind</code> property serves as a guide to what type of information this particular object stores.  It can be present at the <code>data</code> level, or at the <code>items</code> level, or in any object where its helpful to distinguish between various types of objects.  If the <code>kind</code> object is present, it should be the first property in the object (See the "Property Ordering" section below for more details).</p>
 <p>Example:</p>
 
 <DIV class="">
@@ -1274,7 +1276,7 @@ Property Value Type: string<br>Parent: <code>data</code>
 
 <DIV class="">
 <PRE>{
-  "data" : {
+  "data": {
     "kind": "user",
     "fields": "author,id",
     "id": "bart",
@@ -1337,7 +1339,7 @@ Property Value Type: string<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>A globally unique string used to reference the object.  The specific details of the "id" property are left up to the service.</p>
+<p>A globally unique string used to reference the object.  The specific details of the <code>id</code> property are left up to the service.</p>
 <p>Example:</p>
 
 <DIV class="">
@@ -1403,7 +1405,7 @@ Property Value Type: string (formatted as specified in RFC 3339)<br>Parent: <cod
             link
           </A></SPAN>
 
-<p>Indicates the last date/time (RFC 3339) the item was updated, as defined by the service.</p>
+<p>Indicates the last date/time (<a href="http://www.ietf.org/rfc/rfc3339.txt">RFC 3339</a>) the item was updated, as defined by the service.</p>
 <p>Example:</p>
 
 <DIV class="">
@@ -1469,13 +1471,13 @@ Property Value Type: array<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The property name "items" is reserved to represent an array of items (for example, photos in Picasa, videos in YouTube).  This construct is intended to provide a standard location for collections related to the current result.  For example, the JSON output could be plugged into a generic pagination system that knows to page on the "items" array.  If "items" exists, it should be the last property in the "data" object (See the "Property Ordering" section below for more details).</p>
+<p>The property name <code>items</code> is reserved to represent an array of items (for example, photos in Picasa, videos in YouTube).  This construct is intended to provide a standard location for collections related to the current result.  For example, the JSON output could be plugged into a generic pagination system that knows to page on the <code>items</code> array.  If <code>items</code> exists, it should be the last property in the <code>data</code> object (See the "Property Ordering" section below for more details).</p>
 <p>Example:</p>
 
 <DIV class="">
 <PRE>{
-  "data" {
-    "items" : [
+  "data": {
+    "items": [
       { /* Object #1 */ },
       { /* Object #2 */ },
       ...
@@ -1495,7 +1497,14 @@ Property Value Type: array<br>Parent: <code>data</code>
 <DIV class="">
 <H2 name="Reserved_Property_Names_for_Paging" id="Reserved_Property_Names_for_Paging">Reserved Property Names for Paging</H2>
 
-<p>The following properties are located in the "data" object, and are related to paging items.  Some of the language and concepts are borrowed from the <a href="TDOD">OpenSearch specification</a>.  The paging properties listed below allows users to page based on number of items.  However some services may wish to offer page-based paging.  For example, rather than jump to item number 200, some services may request page number 20.  For these cases, two page-based properties have been added: "pageIndex" and "totalPages".  An example of how to use these properties to implement paging can be found at the end of this guide.</p>
+<p>The following properties are located in the <code>data</code> object, and help page through a list of items.  Some of the language and concepts are borrowed from the <a href="http://www.opensearch.org/Home">OpenSearch specification</a>.</p>
+<p>The paging properties below allow for various styles of paging, including:</p>
+<ul>
+<li>Previous/Next paging - Allows user's to move forward and backward through a list, one page at a time.  The <code>nextLink</code> and <code>previousLink</code> properties (described in the "Reserved Property Names for Links" section below) are used for this style of paging.</li>
+<li>Index-based paging - Allows user's to jump directly to a specific item position within a list of items.  For example, to load 10 items starting at item 200, the developer may point the user to a url with the query string <code>?startIndex=200</code>.</li>
+<li>Page-based paging - Allows user's to jump directly to a specific page within the items.  This is similar to index-based paging, but saves the developer the extra step of having to calculate the item index for a new page of items.  For example, rather than jump to item number 200, the developer could jump to page 20.  The urls during page-based paging could use the query string <code>?page=1</code> or <code>?page=20</code>.  The <code>pageIndex</code> and <code>totalPages</code> properties are used for this style of paging.</li>
+</ul>
+<p>An example of how to use these properties to implement paging can be found at the end of this guide.</p>
 
 <DIV class="">
 <H3>
@@ -1514,7 +1523,7 @@ Property Value Type: integer<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The number of items in this result set.  Should be equivalent to items.length, and is provided as a convenience property.  Say for example a developer requests a set of search items, and asks for 10 items per page.  The total set of that search has 14 total items.  The first page of items will have 10 items in it, so both "itemsPerPage" and "currentItemCount" will equal "10".  The next page of items will have the remaining 4 items; "itemsPerPage" will still be "10", but "currentItemCount" will be "4".</p>
+<p>The number of items in this result set.  Should be equivalent to items.length, and is provided as a convenience property.  For example, suppose a developer requests a set of search items, and asks for 10 items per page.  The total set of that search has 14 total items.  The first page of items will have 10 items in it, so both <code>itemsPerPage</code> and <code>currentItemCount</code> will equal "10".  The next page of items will have the remaining 4 items; <code>itemsPerPage</code> will still be "10", but <code>currentItemCount</code> will be "4".</p>
 <p>Example:</p>
 
 <DIV class="">
@@ -1550,7 +1559,7 @@ Property Value Type: integer<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The number of items in the result.  This is not necessarily the size of the data.items array; if we are viewing the last page of items, the size of data.items may be less than "itemsPerPage".  However the size of data.items should not exceed "itemsPerPage".</p>
+<p>The number of items in the result.  This is not necessarily the size of the data.items array; if we are viewing the last page of items, the size of data.items may be less than <code>itemsPerPage</code>.  However the size of data.items should not exceed <code>itemsPerPage</code>.</p>
 <p>Example:</p>
 
 <DIV class="">
@@ -1584,7 +1593,7 @@ Property Value Type: integer<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The index of the first item in data.items.  For consistency, "startIndex" should be 1-based.  For example, the first item in the first set of items should have a "startIndex" of 1.  If the user requests the next set of data, the "startIndex" may be 10.</p>
+<p>The index of the first item in data.items.  For consistency, <code>startIndex</code> should be 1-based.  For example, the first item in the first set of items should have a <code>startIndex</code> of 1.  If the user requests the next set of data, the <code>startIndex</code> may be 10.</p>
 <p>Example:</p>
 
 <DIV class="">
@@ -1618,7 +1627,7 @@ Property Value Type: integer<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The total number of items available in this set.  For example, if a user has 100 blog posts, the response may only contain 10 items, but the "totalItems" would be 100.</p>
+<p>The total number of items available in this set.  For example, if a user has 100 blog posts, the response may only contain 10 items, but the <code>totalItems</code> would be 100.</p>
 <p>Example:</p>
 
 <DIV class="">
@@ -1652,13 +1661,13 @@ Property Value Type: string<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>A uri template indicating how users can calculate subsequent paging links.  The uri template also has some reserved variable names: {index} representing the item number to load, and {pageIndex}, representing the page number to load.</p>
+<p>A URI template indicating how users can calculate subsequent paging links.  The URI template also has some reserved variable names: <code>{index}</code> representing the item number to load, and <code>{pageIndex}</code>, representing the page number to load.</p>
 <p>Example:</p>
 
 <DIV class="">
 <PRE>{
   "data": {
-    "pagingLinkTemplate" : "http://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N"
+    "pagingLinkTemplate": "http://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N"
   }
 }
 </PRE>
@@ -1686,13 +1695,13 @@ Property Value Type: integer<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The index of the current page of items.  For consistency, "pageIndex" should be 1-based.  For example, the first page of items has a "pageIndex" of 1.  "pageIndex" can also be calculated from the item-based paging properties: "pageIndex" = floor(startIndex / itemsPerPage) + 1.</p>
+<p>The index of the current page of items.  For consistency, <code>pageIndex</code> should be 1-based.  For example, the first page of items has a <code>pageIndex</code> of 1.  <code>pageIndex</code> can also be calculated from the item-based paging properties: <code>pageIndex = floor(startIndex / itemsPerPage) + 1</code>.</p>
 <p>Example:</p>
 
 <DIV class="">
 <PRE>{
   "data": {
-    "pageIndex" : 1
+    "pageIndex": 1
   }
 }
 </PRE>
@@ -1720,13 +1729,13 @@ Property Value Type: integer<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The total number of pages in the result set.  "totalPages" can also be calculated from the item-based paging properties above: "totalPages" = ceiling(totalItems / itemsPerPage).</p>
+<p>The total number of pages in the result set.  <code>totalPages</code> can also be calculated from the item-based paging properties above: <code>totalPages = ceiling(totalItems / itemsPerPage)</code>.</p>
 <p>Example:</p>
 
 <DIV class="">
 <PRE>{
   "data": {
-    "totalPages" : 50
+    "totalPages": 50
   }
 }
 </PRE>
@@ -1742,7 +1751,7 @@ Property Value Type: integer<br>Parent: <code>data</code>
 <DIV class="">
 <H2 name="Reserved_Property_Names_for_Links" id="Reserved_Property_Names_for_Links">Reserved Property Names for Links</H2>
 
-<p>The following properties are located in the "data" object, and represent references to other resources.  There are two forms of link properties: 1) objects, which can contain any sort of reference (such as a JSON-RPC object), and 2) uri strings, which represent uris to resources (and will always be suffixed with "Link").</p>
+<p>The following properties are located in the <code>data</code> object, and represent references to other resources.  There are two forms of link properties: 1) objects, which can contain any sort of reference (such as a JSON-RPC object), and 2) URI strings, which represent URIs to resources (and will always be suffixed with "Link").</p>
 
 <DIV class="">
 <H3>
@@ -1761,14 +1770,14 @@ Property Value Type: object / string<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The self link can be used to retrieve the item's data.  For example, in a list of a user's Picasa album, each album object in the "items" array could contain a "selfLink" that can be used to retrieve data related to that particular album.</p>
+<p>The self link can be used to retrieve the item's data.  For example, in a list of a user's Picasa album, each album object in the <code>items</code> array could contain a <code>selfLink</code> that can be used to retrieve data related to that particular album.</p>
 <p>Example:</p>
 
 <DIV class="">
 <PRE>{
   "data": {
-    "self" : { },
-    "selfLink" : "http://www.google.com/feeds/album/1234"
+    "self": { },
+    "selfLink": "http://www.google.com/feeds/album/1234"
   }
 }
 </PRE>
@@ -1802,8 +1811,8 @@ Property Value Type: object / string<br>Parent: <code>data</code>
 <DIV class="">
 <PRE>{
   "data": {
-    "edit" : { },
-    "editLink" : "http://www.google.com/feeds/album/1234/edit"
+    "edit": { },
+    "editLink": "http://www.google.com/feeds/album/1234/edit"
   }
 }
 </PRE>
@@ -1831,14 +1840,14 @@ Property Value Type: object / string<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The next link indicates how more data can be retrieved.  It points to the location to load the next set of data.  It can be used in conjunction with the itemsPerPage, startIndex and totalItems properties in order to page through data.</p>
+<p>The next link indicates how more data can be retrieved.  It points to the location to load the next set of data.  It can be used in conjunction with the <code>itemsPerPage</code>, <code>startIndex</code> and <code>totalItems</code> properties in order to page through data.</p>
 <p>Example:</p>
 
 <DIV class="">
 <PRE>{
   "data": {
-    "next" : { },
-    "nextLink" : "http://www.google.com/feeds/album/1234/next"
+    "next": { },
+    "nextLink": "http://www.google.com/feeds/album/1234/next"
   }
 }
 </PRE>
@@ -1866,14 +1875,14 @@ Property Value Type: object / string<br>Parent: <code>data</code>
             link
           </A></SPAN>
 
-<p>The previous link indicates how more data can be retrieved.  It points to the location to load the previous set of data.  It can be used in conjunction with the itemsPerPage, startIndex and totalItems properties in order to page through data.</p>
+<p>The previous link indicates how more data can be retrieved.  It points to the location to load the previous set of data.  It can be used in conjunction with the <code>itemsPerPage</code>, <code>startIndex</code> and <code>totalItems</code> properties in order to page through data.</p>
 <p>Example:</p>
 
 <DIV class="">
 <PRE>{
   "data": {
-    "previous" : { },
-    "previousLink" : "http://www.google.com/feeds/album/1234/next"
+    "previous": { },
+    "previousLink": "http://www.google.com/feeds/album/1234/next"
   }
 }
 </PRE>
@@ -1889,7 +1898,7 @@ Property Value Type: object / string<br>Parent: <code>data</code>
 <DIV class="">
 <H2 name="Reserved_Property_Names_in_the_error_object" id="Reserved_Property_Names_in_the_error_object">Reserved Property Names in the error object</H2>
 
-<p>The "error" property of the JSON object may contain the following properties.</p>
+<p>The <code>error</code> property of the JSON object may contain the following properties.</p>
 
 <DIV class="">
 <H3>
@@ -1980,7 +1989,7 @@ Property Value Type: array<br>Parent: <code>error</code>
 <p>Example:</p>
 
 <DIV class="">
-<PRE>{ "error" : { "errors" : [] } }
+<PRE>{ "error": { "errors": [] } }
 </PRE>
 </DIV>
 
@@ -2253,7 +2262,7 @@ Property Value Type: string<br>Parent: <code>error.errors</code>
             link
           </A></SPAN>
 
-<p>Suppose a parser is responsible for parsing a raw JSON stream into a specific object.  The "kind" property guides the parser to instantiate the appropriate object.  Therefore it should be the first property in the JSON object.  This only applies when objects have a "kind" property (usually found in the "data" and "items" properties).</p>
+<p>Suppose a parser is responsible for parsing a raw JSON stream into a specific object.  The <code>kind</code> property guides the parser to instantiate the appropriate object.  Therefore it should be the first property in the JSON object.  This only applies when objects have a <code>kind</code> property (usually found in the <code>data</code> and <code>items</code> properties).</p>
 
 </DIV>
 </DIV>
@@ -2268,7 +2277,7 @@ Property Value Type: string<br>Parent: <code>error.errors</code>
 
 <DIV style="display:inline;" class="">
 
-<code>items</code> should be the last property in the "data" object
+<code>items</code> should be the last property in the <code>data</code> object
 </DIV>
 
 <DIV class="">
@@ -2301,14 +2310,14 @@ Property Value Type: string<br>Parent: <code>error.errors</code>
 // "Kind" is always the first property in its parent object.
 // The "items" property is the last property in the "data" object.
 {
-  "data" : {
-    "kind" : "album",
-    "title" : "My Photo Album",
-    "description" : "An album in the user's account",
-    "items" : [
+  "data": {
+    "kind": "album",
+    "title": "My Photo Album",
+    "description": "An album in the user's account",
+    "items": [
       {
-        "kind" : "photo",
-        "title" : "My First Photo"
+        "kind": "photo",
+        "title": "My First Photo"
       }
     ]
   }
@@ -2333,7 +2342,7 @@ Property Value Type: string<br>Parent: <code>error.errors</code>
 <SPAN class="showhide_button" onclick="javascript:ShowHideByName('YouTube_JSON_API__body','YouTube_JSON_API__button')" name="YouTube_JSON_API__button" id="YouTube_JSON_API__button">▶</SPAN>
 
 <DIV style="display:inline;" class="">
-Here's an example of the YouTube JSON API's response object.
+Here's an example of the YouTube JSON API's response object.  You can learn more about YouTube's JSON API here: <a href="http://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html">http://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html</a>.
 </DIV>
 
 <DIV class="">
@@ -2421,21 +2430,21 @@ This example demonstrates how the Google search items could be represented as a 
 
 <DIV class="">
 <PRE>{
-  "apiVersion" : "2.1",
-  "id" : "1",
-  "data" : {
-    "query" : "chicago style pizza",
-    "time" : "0.1",
-    "currentItemCount" : 10,
-    "itemsPerPage" : 10,
-    "startIndex" : 11,
-    "totalItems" : 2700000,
-    "nextLink" : "http://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=20&amp;sa=N"
-    "previousLink" : "http://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=0&amp;sa=N",
-    "pagingLinkTemplate" : "http://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N",
-    "items" : [
+  "apiVersion": "2.1",
+  "id": "1",
+  "data": {
+    "query": "chicago style pizza",
+    "time": "0.1",
+    "currentItemCount": 10,
+    "itemsPerPage": 10,
+    "startIndex": 11,
+    "totalItems": 2700000,
+    "nextLink": "http://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=20&amp;sa=N"
+    "previousLink": "http://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=0&amp;sa=N",
+    "pagingLinkTemplate": "http://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N",
+    "items": [
       {
-        "title" : "Pizz'a Chicago Home Page"
+        "title": "Pizz'a Chicago Home Page"
         // More fields for the search results
       }
       // More search results
@@ -2495,22 +2504,22 @@ A list of reserved JavaScript words that should be avoided in property names.
 </p>
 
 <DIV class="">
-<PRE>abstract 
-boolean break byte 
-case catch char class const continue 
-debugger default delete do double 
-else enum export extends 
-false final finally float for function 
-goto 
-if implements import in instanceof int interface 
-let long 
-native new null 
-package private protected public 
-return 
-short static super switch synchronized 
-this throw throws transient true try typeof 
-var volatile void 
-while with 
+<PRE class="badcode">abstract
+boolean break byte
+case catch char class const continue
+debugger default delete do double
+else enum export extends
+false final finally float for function
+goto
+if implements import in instanceof int interface
+let long
+native new null
+package private protected public
+return
+short static super switch synchronized
+this throw throws transient true try typeof
+var volatile void
+while with
 yield</PRE>
 </DIV>
 
