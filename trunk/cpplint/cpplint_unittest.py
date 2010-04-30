@@ -46,22 +46,22 @@ import cpplint
 # is in cpplint._ERROR_CATEGORIES, to help keep that list up to date.
 class ErrorCollector:
   # These are a global list, covering all categories seen ever.
-  _ERROR_CATEGORIES = [x.strip()    # get rid of leading whitespace
-                       for x in cpplint._ERROR_CATEGORIES.split()]
+  _ERROR_CATEGORIES = cpplint._ERROR_CATEGORIES
   _SEEN_ERROR_CATEGORIES = {}
 
   def __init__(self, assert_fn):
     """assert_fn: a function to call when we notice a problem."""
     self._assert_fn = assert_fn
     self._errors = []
+    cpplint.ResetNolintSuppressions()
 
-  def __call__(self, unused_filename, unused_linenum,
+  def __call__(self, unused_filename, linenum,
                category, confidence, message):
     self._assert_fn(category in self._ERROR_CATEGORIES,
                     'Message "%s" has category "%s",'
                     ' which is not in _ERROR_CATEGORIES' % (message, category))
     self._SEEN_ERROR_CATEGORIES[category] = 1
-    if cpplint._ShouldPrintError(category, confidence):
+    if cpplint._ShouldPrintError(category, confidence, linenum):
       self._errors.append('%s  [%s] [%d]' % (message, category, confidence))
 
   def Results(self):
@@ -294,6 +294,38 @@ class CpplintTest(CpplintTestBase):
     self.TestLint(
         '// Read https://g' + ('o' * 60) + 'gle.com/' ,
         '')
+
+  # Test error suppression annotations.
+  def testErrorSuppression(self):
+    # Two errors on same line:
+    self.TestLint(
+        'long a = (int64) 65;',
+        ['Using C-style cast.  Use static_cast<int64>(...) instead'
+         '  [readability/casting] [4]',
+         'Use int16/int64/etc, rather than the C type long'
+         '  [runtime/int] [4]',
+         ])
+    # One category of error suppressed:
+    self.TestLint(
+        'long a = (int64) 65;  // NOLINT(runtime/int)',
+        'Using C-style cast.  Use static_cast<int64>(...) instead'
+        '  [readability/casting] [4]')
+    # All categories suppressed: (two aliases)
+    self.TestLint('long a = (int64) 65;  // NOLINT', '')
+    self.TestLint('long a = (int64) 65;  // NOLINT(*)', '')
+    # Malformed NOLINT directive:
+    self.TestLint(
+        'long a = 65;  // NOLINT(foo)',
+         ['Unknown NOLINT error category: foo'
+          '  [readability/nolint] [5]',
+          'Use int16/int64/etc, rather than the C type long  [runtime/int] [4]',
+          ])
+    # Irrelevant NOLINT directive has no effect:
+    self.TestLint(
+        'long a = 65;  // NOLINT(readability/casting)',
+         'Use int16/int64/etc, rather than the C type long'
+         '  [runtime/int] [4]')
+
 
   # Test Variable Declarations.
   def testVariableDeclarations(self):
@@ -577,6 +609,12 @@ class CpplintTest(CpplintTestBase):
     self.TestIncludeWhatYouUse(
         'void a(const string &foobar);',
         'Add #include <string> for string  [build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
+        'void a(const std::string &foobar);',
+        'Add #include <string> for string  [build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
+        'void a(const my::string &foobar);',
+        '')  # Avoid false positives on strings in other namespaces.
     self.TestIncludeWhatYouUse(
         '''#include "base/foobar.h"
            bool foobar = swap(0,1);
@@ -1627,9 +1665,9 @@ class CpplintTest(CpplintTestBase):
   def testLabel(self):
     self.TestLint('public:',
                   'Labels should always be indented at least one space.  '
-                  'If this is a member-initializer list in a constructor, '
-                  'the colon should be on the line after the definition '
-                  'header.  [whitespace/labels] [4]')
+                  'If this is a member-initializer list in a constructor or '
+                  'the base class list in a class definition, the colon should '
+                  'be on the following line.  [whitespace/labels] [4]')
     self.TestLint('  public:', '')
     self.TestLint('   public:', '')
     self.TestLint(' public:', '')
@@ -1974,6 +2012,16 @@ class CpplintTest(CpplintTestBase):
             '  [build/header_guard] [5]' % expected_guard),
         error_collector.ResultList())
 
+    # Special case for flymake
+    error_collector = ErrorCollector(self.assert_)
+    cpplint.ProcessFileData('mydir/foo_flymake.h',
+                            'h', [], error_collector)
+    self.assertEquals(
+        1,
+        error_collector.ResultList().count(
+            'No #ifndef header guard found, suggested CPP variable is: %s'
+            '  [build/header_guard] [5]' % expected_guard),
+        error_collector.ResultList())
 
   def testBuildInclude(self):
     # Test that include statements have slashes in them.
@@ -2728,9 +2776,10 @@ class NoNonVirtualDestructorsTest(CpplintTestBase):
            public Foo {
               virtual void goo();
            };''',
-        'Labels should always be indented at least one space.  If this is a '
-        'member-initializer list in a constructor, the colon should be on the '
-        'line after the definition header.  [whitespace/labels] [4]')
+        'Labels should always be indented at least one space.  '
+        'If this is a member-initializer list in a constructor or '
+        'the base class list in a class definition, the colon should '
+        'be on the following line.  [whitespace/labels] [4]')
 
   def testNoDestructorWhenVirtualNeeded(self):
     self.TestMultiLineLintRE(
@@ -2807,6 +2856,13 @@ class NoNonVirtualDestructorsTest(CpplintTestBase):
          '[whitespace/braces] [4]',
          'The class Foo probably needs a virtual destructor due to having '
          'virtual method(s), one declared at line 2.  [runtime/virtual] [4]'])
+
+  def testSnprintfSize(self):
+    self.TestLint('vsnprintf(NULL, 0, format)', '')
+    self.TestLint('snprintf(fisk, 1, format)',
+                  'If you can, use sizeof(fisk) instead of 1 as the 2nd arg '
+                  'to snprintf.  [runtime/printf] [3]')
+
 
 # pylint: disable-msg=C6409
 def setUp():
