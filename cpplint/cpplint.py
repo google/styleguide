@@ -102,8 +102,9 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
   certain of the problem, and 1 meaning it could be a legitimate construct.
   This will miss some errors, and is not a substitute for a code review.
 
-  To prevent specific lines from being linted, add a '// NOLINT' comment to the
-  end of the line.
+  To suppress false-positive errors of a certain category, add a
+  'NOLINT(category)' comment to the line.  NOLINT or NOLINT(*)
+  suppresses errors of all categories on that line.
 
   The files passed in will be linted; at least one file must be provided.
   Linted extensions are .cc, .cpp, and .h.  Other file types will be ignored.
@@ -145,64 +146,65 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 # If you add a new error message with a new category, add it to the list
 # here!  cpplint_unittest.py should tell you if you forget to do this.
 # \ used for clearer layout -- pylint: disable-msg=C6013
-_ERROR_CATEGORIES = '''\
-  build/class
-  build/deprecated
-  build/endif_comment
-  build/forward_decl
-  build/header_guard
-  build/include
-  build/include_alpha
-  build/include_order
-  build/include_what_you_use
-  build/namespaces
-  build/printf_format
-  build/storage_class
-  legal/copyright
-  readability/braces
-  readability/casting
-  readability/check
-  readability/constructors
-  readability/fn_size
-  readability/function
-  readability/multiline_comment
-  readability/multiline_string
-  readability/streams
-  readability/todo
-  readability/utf8
-  runtime/arrays
-  runtime/casting
-  runtime/explicit
-  runtime/int
-  runtime/init
-  runtime/invalid_increment
-  runtime/member_string_references
-  runtime/memset
-  runtime/operator
-  runtime/printf
-  runtime/printf_format
-  runtime/references
-  runtime/rtti
-  runtime/sizeof
-  runtime/string
-  runtime/threadsafe_fn
-  runtime/virtual
-  whitespace/blank_line
-  whitespace/braces
-  whitespace/comma
-  whitespace/comments
-  whitespace/end_of_line
-  whitespace/ending_newline
-  whitespace/indent
-  whitespace/labels
-  whitespace/line_length
-  whitespace/newline
-  whitespace/operators
-  whitespace/parens
-  whitespace/semicolon
-  whitespace/tab
-  whitespace/todo
-'''
+_ERROR_CATEGORIES = [
+  'build/class',
+  'build/deprecated',
+  'build/endif_comment',
+  'build/forward_decl',
+  'build/header_guard',
+  'build/include',
+  'build/include_alpha',
+  'build/include_order',
+  'build/include_what_you_use',
+  'build/namespaces',
+  'build/printf_format',
+  'build/storage_class',
+  'legal/copyright',
+  'readability/braces',
+  'readability/casting',
+  'readability/check',
+  'readability/constructors',
+  'readability/fn_size',
+  'readability/function',
+  'readability/multiline_comment',
+  'readability/multiline_string',
+  'readability/nolint',
+  'readability/streams',
+  'readability/todo',
+  'readability/utf8',
+  'runtime/arrays',
+  'runtime/casting',
+  'runtime/explicit',
+  'runtime/int',
+  'runtime/init',
+  'runtime/invalid_increment',
+  'runtime/member_string_references',
+  'runtime/memset',
+  'runtime/operator',
+  'runtime/printf',
+  'runtime/printf_format',
+  'runtime/references',
+  'runtime/rtti',
+  'runtime/sizeof',
+  'runtime/string',
+  'runtime/threadsafe_fn',
+  'runtime/virtual',
+  'whitespace/blank_line',
+  'whitespace/braces',
+  'whitespace/comma',
+  'whitespace/comments',
+  'whitespace/end_of_line',
+  'whitespace/ending_newline',
+  'whitespace/indent',
+  'whitespace/labels',
+  'whitespace/line_length',
+  'whitespace/newline',
+  'whitespace/operators',
+  'whitespace/parens',
+  'whitespace/semicolon',
+  'whitespace/tab',
+  'whitespace/todo'
+  ]
 
 # The default state of the category filter. This is overrided by the --filter=
 # flag. By default all errors are on, so only add here categories that should be
@@ -218,8 +220,8 @@ _DEFAULT_FILTERS = [ '-build/include_alpha' ]
 _STL_HEADERS = frozenset([
     'algobase.h', 'algorithm', 'alloc.h', 'bitset', 'deque', 'exception',
     'function.h', 'functional', 'hash_map', 'hash_map.h', 'hash_set',
-    'hash_set.h', 'iterator', 'list', 'list.h', 'map', 'memory', 'pair.h',
-    'pthread_alloc', 'queue', 'set', 'set.h', 'sstream', 'stack',
+    'hash_set.h', 'iterator', 'list', 'list.h', 'map', 'memory', 'new',
+    'pair.h', 'pthread_alloc', 'queue', 'set', 'set.h', 'sstream', 'stack',
     'stl_alloc.h', 'stl_relops.h', 'type_traits.h',
     'utility', 'vector', 'vector.h',
     ])
@@ -287,6 +289,61 @@ _OTHER_HEADER = 5
 
 _regexp_compile_cache = {}
 
+# Finds occurrences of NOLINT or NOLINT(...).
+_RE_SUPPRESSION = re.compile(r'\bNOLINT\b(\([^)]*\))?')
+
+# {str, set(int)}: a map from error categories to sets of linenumbers
+# on which those errors are expected and should be suppressed.
+_error_suppressions = {}
+
+def ParseNolintSuppressions(filename, raw_line, linenum, error):
+  """Updates the global list of error-suppressions.
+
+  Parses any NOLINT comments on the current line, updating the global
+  error_suppressions store.  Reports an error if the NOLINT comment
+  was malformed.
+
+  Args:
+    filename: str, the name of the input file.
+    raw_line: str, the line of input text, with comments.
+    linenum: int, the number of the current line.
+    error: function, an error handler.
+  """
+  # FIXME(adonovan): "NOLINT(" is misparsed as NOLINT(*).
+  m = _RE_SUPPRESSION.search(raw_line)
+  if m:
+    category = m.group(1)
+    if category in (None, '(*)'):  # => "suppress all"
+      _error_suppressions.setdefault(None, set()).add(linenum)
+    else:
+      if category.startswith('(') and category.endswith(')'):
+        category = category[1:-1]
+        if category in _ERROR_CATEGORIES:
+          _error_suppressions.setdefault(category, set()).add(linenum)
+        else:
+          error(filename, linenum, 'readability/nolint', 5,
+            'Unknown NOLINT error category: %s' % category)
+
+
+def ResetNolintSuppressions():
+  "Resets the set of NOLINT suppressions to empty."
+  _error_suppressions.clear()
+
+
+def IsErrorSuppressedByNolint(category, linenum):
+  """Returns true if the specified error category is suppressed on this line.
+
+  Consults the global error_suppressions map populated by
+  ParseNolintSuppressions/ResetNolintSuppressions.
+
+  Args:
+    category: str, the category of the error.
+    linenum: int, the current line number.
+  Returns:
+    bool, True iff the error should be suppressed due to a NOLINT comment.
+  """
+  return (linenum in _error_suppressions.get(category, set()) or
+          linenum in _error_suppressions.get(None, set()))
 
 def Match(pattern, s):
   """Matches the string with the pattern, caching the compiled regexp."""
@@ -701,10 +758,15 @@ class FileInfo:
     return self.Extension()[1:] in ('c', 'cc', 'cpp', 'cxx')
 
 
-def _ShouldPrintError(category, confidence):
-  """Returns true iff confidence >= verbose, and category passes filter."""
-  # There are two ways we might decide not to print an error message:
+def _ShouldPrintError(category, confidence, linenum):
+  """Returns true iff confidence >= verbose, category passes
+  filter and is not NOLINT-suppressed."""
+
+  # There are three ways we might decide not to print an error message:
+  # a "NOLINT(category)" comment appears in the source,
   # the verbosity level isn't high enough, or the filters filter it out.
+  if IsErrorSuppressedByNolint(category, linenum):
+    return False
   if confidence < _cpplint_state.verbose_level:
     return False
 
@@ -731,6 +793,10 @@ def Error(filename, linenum, category, confidence, message):
   that is, how certain we are this is a legitimate style regression, and
   not a misidentification or a use that's sometimes justified.
 
+  False positives can be suppressed by the use of
+  "cpplint(category)"  comments on the offending line.  These are
+  parsed into _error_suppressions.
+
   Args:
     filename: The name of the file containing the error.
     linenum: The number of the line containing the error.
@@ -742,9 +808,7 @@ def Error(filename, linenum, category, confidence, message):
       and 1 meaning that it could be a legitimate construct.
     message: The error message.
   """
-  # There are two ways we might decide not to print an error message:
-  # the verbosity level isn't high enough, or the filters filter it out.
-  if _ShouldPrintError(category, confidence):
+  if _ShouldPrintError(category, confidence, linenum):
     _cpplint_state.IncrementErrorCount(category)
     if _cpplint_state.output_format == 'vs7':
       sys.stderr.write('%s(%s):  %s  [%s] [%d]\n' % (
@@ -962,6 +1026,10 @@ def GetHeaderGuardCPPVariable(filename):
 
   """
 
+  # Restores original filename in case that cpplint is invoked from Emacs's
+  # flymake.
+  filename = re.sub(r'_flymake\.h$', '.h', filename)
+
   fileinfo = FileInfo(filename)
   return re.sub(r'[-./\s]', '_', fileinfo.RepositoryName()).upper() + '_'
 
@@ -1008,20 +1076,23 @@ def CheckForHeaderGuard(filename, lines, error):
 
   # The guard should be PATH_FILE_H_, but we also allow PATH_FILE_H__
   # for backward compatibility.
-  if ifndef != cppvar and not Search(r'\bNOLINT\b', lines[ifndef_linenum]):
+  if ifndef != cppvar:
     error_level = 0
     if ifndef != cppvar + '_':
       error_level = 5
 
+    ParseNolintSuppressions(filename, lines[ifndef_linenum], ifndef_linenum,
+                            error)
     error(filename, ifndef_linenum, 'build/header_guard', error_level,
           '#ifndef header guard has wrong style, please use: %s' % cppvar)
 
-  if (endif != ('#endif  // %s' % cppvar) and
-      not Search(r'\bNOLINT\b', lines[endif_linenum])):
+  if endif != ('#endif  // %s' % cppvar):
     error_level = 0
     if endif != ('#endif  // %s' % (cppvar + '_')):
       error_level = 5
 
+    ParseNolintSuppressions(filename, lines[endif_linenum], endif_linenum,
+                            error)
     error(filename, endif_linenum, 'build/header_guard', error_level,
           '#endif line should be "#endif  // %s"' % cppvar)
 
@@ -1519,8 +1590,7 @@ def CheckForFunctionLengths(filename, clean_lines, linenum,
       error(filename, linenum, 'readability/fn_size', 5,
             'Lint failed to find start of function body.')
   elif Match(r'^\}\s*$', line):  # function end
-    if not Search(r'\bNOLINT\b', raw_line):
-      function_state.Check(error, filename, linenum)
+    function_state.Check(error, filename, linenum)
     function_state.End()
   elif not Match(r'^\s*$', line):
     function_state.Count()  # Count non-blank/non-comment lines.
@@ -2027,8 +2097,10 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, error):
                                                           line):
     error(filename, linenum, 'whitespace/labels', 4,
           'Labels should always be indented at least one space.  '
-          'If this is a member-initializer list in a constructor, '
-          'the colon should be on the line after the definition header.')
+          'If this is a member-initializer list in a constructor or '
+          'the base class list in a class definition, the colon should '
+          'be on the following line.')
+
 
   # Check if the line is a header guard.
   is_header_guard = False
@@ -2401,7 +2473,8 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
 
   # When snprintf is used, the second argument shouldn't be a literal.
   match = Search(r'snprintf\s*\(([^,]*),\s*([0-9]*)\s*,', line)
-  if match:
+  if match and match.group(2) != '0':
+    # If 2nd arg is zero, snprintf is used to calculate size.
     error(filename, linenum, 'runtime/printf', 3,
           'If you can, use sizeof(%s) instead of %s as the 2nd arg '
           'to snprintf.' % (match.group(1), match.group(2)))
@@ -2750,8 +2823,13 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
       continue
 
     # String is special -- it is a non-templatized type in STL.
-    if _RE_PATTERN_STRING.search(line):
-      required['<string>'] = (linenum, 'string')
+    m = _RE_PATTERN_STRING.search(line)
+    if m:
+      # Don't warn about strings in non-STL namespaces:
+      # (We check only the first match per line; good enough.)
+      prefix = line[:m.start()]
+      if prefix.endswith('std::') or not prefix.endswith('::'):
+        required['<string>'] = (linenum, 'string')
 
     for pattern, template, header in _re_pattern_algorithm_header:
       if pattern.search(line):
@@ -2783,9 +2861,7 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
   # found.
   # e.g. If the file name is 'foo_flymake.cc', we should search for 'foo.h'
   # instead of 'foo_flymake.h'
-  emacs_flymake_suffix = '_flymake.cc'
-  if abs_filename.endswith(emacs_flymake_suffix):
-    abs_filename = abs_filename[:-len(emacs_flymake_suffix)] + '.cc'
+  abs_filename = re.sub(r'_flymake\.cc$', '.cc', abs_filename)
 
   # include_state is modified during iteration, so we iterate over a copy of
   # the keys.
@@ -2836,9 +2912,8 @@ def ProcessLine(filename, file_extension,
 
   """
   raw_lines = clean_lines.raw_lines
+  ParseNolintSuppressions(filename, raw_lines[line], line, error)
   CheckForFunctionLengths(filename, clean_lines, line, function_state, error)
-  if Search(r'\bNOLINT\b', raw_lines[line]):  # ignore nolint lines
-    return
   CheckForMultilineCommentsAndStrings(filename, clean_lines, line, error)
   CheckStyle(filename, clean_lines, line, file_extension, error)
   CheckLanguage(filename, clean_lines, line, file_extension, include_state,
@@ -2866,6 +2941,8 @@ def ProcessFileData(filename, file_extension, lines, error):
   function_state = _FunctionState()
   class_state = _ClassState()
 
+  ResetNolintSuppressions()
+
   CheckForCopyright(filename, lines, error)
 
   if file_extension == 'h':
@@ -2885,7 +2962,6 @@ def ProcessFileData(filename, file_extension, lines, error):
   CheckForUnicodeReplacementCharacters(filename, lines, error)
 
   CheckForNewlineAtEOF(filename, lines, error)
-
 
 def ProcessFile(filename, vlevel):
   """Does google-lint on a single file.
@@ -2968,7 +3044,7 @@ def PrintCategories():
 
   These are the categories used to filter messages via --filter.
   """
-  sys.stderr.write(_ERROR_CATEGORIES)
+  sys.stderr.write(''.join('  %s\n' % cat for cat in _ERROR_CATEGORIES))
   sys.exit(0)
 
 
