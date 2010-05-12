@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.154
+Revision 3.161
 </p>
 
 
@@ -204,6 +204,16 @@ Tashana Landray
         include several header files.
       </p>
       
+      <SUBSECTION title="Note:">
+        If you use a symbol <code>Foo</code> in your source file, you
+        should bring in a definition for <code>Foo</code> yourself,
+        either via an #include or via a forward declaration.  Do not
+        depend on the symbol being brought in transitively via headers
+        not directly included.  One exception is if <code>Foo</code>
+        is used in <code>myfile.cc</code>, it's ok to #include (or
+        forward-declare) <code>Foo</code> in <code>myfile.h</code>,
+        instead of <code>myfile.cc</code>.
+      </SUBSECTION>
     </BODY>
   </STYLEPOINT>
 
@@ -1308,7 +1318,7 @@ Tashana Landray
 
   <STYLEPOINT title="Access Control">
     <SUMMARY>
-      Make <em>all</em> data members <code>private</code>, and provide
+      Make data members <code>private</code>, and provide
       access to them through accessor functions as needed (for
       technical reasons, we allow data members of a test fixture class
       to be <code>protected</code> when using
@@ -1318,6 +1328,8 @@ Tashana Landray
       called <code>foo_</code> and the accessor function
       <code>foo()</code>.  You may also want a mutator function
       <code>set_foo()</code>.
+      Exception: <code>static const</code> data members (typically
+      called <code>kFoo</code>) need not be <code>private</code>.
     </SUMMARY>
     <BODY>
       <p>
@@ -1349,14 +1361,15 @@ Tashana Landray
       </p>
       <ul>
         <li> Typedefs and Enums</li>
-        <li> Constants</li>
+        <li> Constants (<code>static const</code> data members)</li>
         <li> Constructors</li>
         <li> Destructor</li>
         <li> Methods, including static methods</li>
-        <li> Data Members, including static data members</li>
+        <li> Data Members (except <code>static const</code> data members)</li>
       </ul>
       <p>
-        The <code>DISALLOW_COPY_AND_ASSIGN</code> macro invocation
+        Friend declarations should always be in the private section, and
+        the <code>DISALLOW_COPY_AND_ASSIGN</code> macro invocation
         should be at the end of the <code>private:</code> section. It
         should be the last thing in the class. See <a HREF="#Copy_Constructors">Copy Constructors</a>.
       </p>
@@ -2810,11 +2823,18 @@ Tashana Landray
       <SUBSECTION title="Regular Functions">
         <p>
           Functions should start with a capital letter and have a
-          capital letter for each new word. No underscores:
+          capital letter for each new word. No underscores.
+        </p>
+        <p> 
+          If your function crashes upon an error, you should append OrDie to
+          the function name. This only applies to functions which could be
+          used by production code and to errors that are reasonably
+          likely to occur during normal operation.
         </p>
         <CODE_SNIPPET>
           AddTableEntry()
           DeleteUrl()
+          OpenFileOrDie()
         </CODE_SNIPPET>
       </SUBSECTION>
 
@@ -3912,7 +3932,10 @@ Tashana Landray
         wrapping all operators at the beginning of the line is also
         allowed.  Feel free to insert extra parentheses judiciously,
         because they can be very helpful in increasing readability
-        when used appropriately.
+        when used appropriately.  Also note that you should always use the
+        punctuation operators, such as <code>&amp;&amp;</code> and
+        <code>~</code>, rather than the word operators, such as <code>and</code>
+        and <code>compl</code>.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -4399,7 +4422,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.154
+Revision 3.161
 </p>
 
 
