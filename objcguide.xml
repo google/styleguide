@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 2.14
+Revision 2.18
 </p>
 
 
@@ -292,7 +292,7 @@ Revision 2.14
       <p>
         If you have too many parameters to fit on one line, giving each its
         own line is preferred. If multiple lines are used, align each using
-        the <code>:</code> before the parameter.
+        the colon before the parameter.
       </p>
       <CODE_SNIPPET>
         - (void)doSomethingWith:(GTMFoo *)theFoo
@@ -313,17 +313,55 @@ Revision 2.14
           ...
         }
       </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Method Invocations">
+    <SUMMARY>
+      Method invocations should be formatted much like method declarations.
+      When there's a choice of formatting styles, follow the convention
+      already used in a given source file.
+    </SUMMARY>
+    <BODY>
       <p>
-        Or you may align all colons, indenting the first keyword if needed,
-        as below. In editing existing source, use the convention in that
-        file.
+        Invocations should have all arguments on one line:
       </p>
       <CODE_SNIPPET>
-        - (void)        short:(GTMFoo *)theFoo
-                  longKeyword:(NSRect)theRect
-            evenLongerKeyword:(float)theInterval {
-          ...
-        }
+        [myObject doFooWith:arg1 name:arg2 error:arg3];
+      </CODE_SNIPPET>
+      <p>
+        or have one argument per line, with colons aligned:
+      </p>
+      <CODE_SNIPPET>
+        [myObject doFooWith:arg1
+                       name:arg2
+                      error:arg3];
+      </CODE_SNIPPET>
+      <p>
+        Don't use any of these styles:
+      </p>
+      <BAD_CODE_SNIPPET>
+        [myObject doFooWith:arg1 name:arg2  // some lines with &gt;1 arg
+                      error:arg3];
+
+        [myObject doFooWith:arg1
+                       name:arg2 error:arg3];
+
+        [myObject doFooWith:arg1
+                  name:arg2  // aligning keywords instead of colons
+                  error:arg3];
+      </BAD_CODE_SNIPPET>
+
+      <p>
+        As with declarations and definitions, when the keyword lengths make
+        it impossible to align colons and still have four leading
+        spaces, indent later lines by four spaces and align keywords after the
+        first one, instead of aligning the colons.
+      </p>
+      <CODE_SNIPPET>
+        [myObj short:arg1
+            longKeyword:arg2
+            evenLongerKeyword:arg3];
       </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
@@ -1065,6 +1103,29 @@ Revision 2.14
     </BODY>
   </STYLEPOINT>
 
+  <STYLEPOINT title="dealloc should process instance variables in declaration                      order">
+    <SUMMARY>
+      <code>dealloc</code> should process instance variables in the same order
+      the <code>@interface</code> declares them, so it is easier for a reviewer
+      to verify.
+    </SUMMARY>
+    <BODY>
+      <p>
+        A code reviewer checking a new or revised <code>dealloc</code>
+        implementation needs to make sure that every retained instance
+        variable gets released.
+      </p>
+      <p>
+        To simplify reviewing <code>dealloc</code>, order the code so that
+        the retained instance variables get released in the same order that
+        they are declared in the <code>@interface</code>. If
+        <code>dealloc</code> invokes other methods that release instance
+        variables, add comments describing what instance variables those
+        methods handle.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
   <STYLEPOINT title="Setters copy NSStrings">
     <SUMMARY>
       Setters taking an <code>NSString</code>, should always <code>copy</code>
@@ -1474,10 +1535,10 @@ Revision 2.14
             about the presentation.
           </li>
           <li>
-            Use a <code>protocol</code> for callback APIs where all the
-            methods must be implemented. Use a <code>category</code> (or an
-            "informal protocol") when not all the methods need to be
-            implemented.
+            Define callback APIs with <code>@protocol</code>, using
+            <code>@optional</code> if not all the methods are required.
+            (Exception: when using Objective-C 1.0, <code>@optional</code> isn't
+            available, so use a category to define an "informal protocol".)
           </li>
         </ul>
       </p>
@@ -1489,7 +1550,7 @@ Revision 2.14
 <HR/>
 
 <p align="right">
-Revision 2.14
+Revision 2.18
 </p>
 
 
