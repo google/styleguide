@@ -1,13 +1,16 @@
 body {
-  background-color: #ffffff;
-  color: black;
-  margin-right: 1in;
-  margin-left: 1in;
+  background-color: #fff;
+  color: #333;
+  font-family: sans-serif;
+  font-size: 10pt;
+  margin-right: 100px;
+  margin-left: 100px;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  color: #3366ff;
-  font-family: sans-serif;
+h1, h2, h3, h4, h5, h6, .toc_title {
+  color: #06c;
+  margin-top: 2em;
+  margin-bottom: 1em;
 }
 
 h1 {
@@ -15,105 +18,106 @@ h1 {
   font-size: 18pt;
 }
 
-h2 {
-  margin-left: -0.5in;
-  margin-top: 0.5in;
-}
-
-h3 {
-  margin-left: -0.25in;
-}
-
-h4 {
-  margin-left: -0.125in;
-}
-
-hr {
-  margin-left: -1in;
-}
-
-.h2toc {
-  font-size: 12pt;
-  color: #3366ff;
+h2, .toc_title {
   font-weight: bold;
-  margin-left: 0.5in;
-  line-height: 200%;
+  font-size: 12pt;
+  margin-left: -40px;
 }
 
-.h3toc {
-  font-size: 11pt;
-  color: #3366ff;
-  font-weight: normal;
-  margin-left: 1in;
+h3, h4, h5, h6 {
+  font-size: 10pt;
+  margin-left: -20px;
 }
 
-/* Use the <code> tag for bits of code and <var> for variables and objects. */
-code,samp,var {
-  color: #005000;
-  font-size: 110%;
+.toc_category, .toc_stylepoint {
+  font-size: 10pt;
+  padding-top: .3em;
+  padding-bottom: .3em;
 }
 
-PRE {
-  margin-left: 2%;
+table {
+  border-collapse: collapse;
+}
+
+td, th {
+  border: 1px solid #ccc;
+  padding: 2px 12px;
+  font-size: 10pt;
+}
+
+.toc td, .toc th {
+  border-width: 1px 5px;
+}
+
+code, samp, var {
+  color: #060;
+}
+
+pre {
   font-size: 10pt;
   display: block;
-  color: #005000;
-  background-color: #fbfefb;
-  border-color: #fafffa;
-  border-left-width: 1px;
-  border-right-width: 0px;
-  border-top-width: 0px;
-  border-bottom-width: 0px;
+  color: #060;
+  background-color: #f8fff8;
+  border-color: #f0fff0;
   border-style: solid;
-  border-top: 1px solid #fffaff;
-  border-left: 1px solid #fffaff;
-  border-right: 1px dotted #eff0ef;
-  border-bottom: 1px dotted #eff0ef;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+  border-left-width: 5px;
   padding-left: 12px;
   padding-right: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-PRE {
-  -moz-border-radius: 12px;
+pre.badcode {
+  color: #c00;
+  background-color: #fff8f8;
+  border-color: #fff0f0;
 }
 
-PRE.badcode {
-  color: #CC0000;
-  background-color: #fffcfc;
-  border-right: 1px solid #f0efef;
-  border-bottom: 1px solid #f0efef;
-  border-top: 1px dotted #faffff;
-  border-left: 1px dotted #faffff;
-}
-
-TABLE {
-  border-collapse: collapse;
-  border-color: #dddddd;
-  border-style: dotted;
-}
-
-TD {
-  border-color: #bbbbbb;
+.showhide_button {
+  float: left;
+  cursor: pointer;
+  border-width: 1px;
   border-style: solid;
-  border-width: thin
+  border-color: #ddd #aaa #aaa #ddd;
+  padding: 0 3px 1px;
+  margin: 0 4px 8px 0;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
 }
 
-TH {
-  border-collapse: collapse;
-  border-color: #dddddd;
-  border-style: none;
-  border-width: thin;
-  color: #444444;
-  font-family: sans-serif;
+.link_button {
+  float: left;
+  display: none;
+  background-color: #f8f8ff;
+  border-color: #f0f0ff;
+  border-style: solid;
+  border-width: 1px;
+  font-size: 75%;
+  margin-top: 0;
+  margin-left: -50px;
+  padding: 4px;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
 }
 
 address {
   text-align: right;
 }
 
+hr {
+  margin-top: 3.5em;
+  border-width: 1px;
+  color: #fff;
+}
+
 .stylepoint_section {
+  display: block;
+  margin-bottom: 1em;
   color: #5588ff;
   font-family: sans-serif;
   font-size: 90%;
@@ -129,53 +133,15 @@ address {
   margin-left: -1%;
 }
 
-.showhide_button {
-  border-color: #dddddd;
-  border-style: outset;
-  border-width: medium;
-  cursor: pointer;
+.stylepoint_subsubsection {
+  color: #667799;
   font-family: sans-serif;
+  font-size: 80%;
+  font-weight: bold;
+  margin-left: 0;
 }
 
-
-.link_button {
-  background-color: #ffffd0;
-  border-color: #fcfca0;
-  border-style: solid;
-  border-width: 1px;
-  font-family: sans-serif;
-  font-size: 75%;
-  font-variant: small-caps;
-  margin-left: -2%;
-  padding-left: 1px;
-  padding-right: 1px;
-  padding-top: 1px;
-  padding-bottom: 1px;
+.revision {
+  text-align: right;
 }
 
-.toc {
-  background-color: #fcfcff;
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-.toc_title {
-  font-family: sans-serif;
-  font-size: 110%;
-  font-weight: 700;
-}
-
-.toc_category {
-  margin-left: 5%;
-  font-family: sans-serif;
-}
-
-.toc_stylepoint {
-  margin-left: 5%;
-  font-family: sans-serif;
-  font-size: 90%;
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
