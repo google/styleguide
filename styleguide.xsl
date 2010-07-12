@@ -32,10 +32,13 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
 
                 function ShowHideByName(bodyName, buttonName) {
 	          var bodyElements;
+                  var linkElement;
                   if (document.getElementsByName) {
                     bodyElements = document.getElementsByName(bodyName);
+                    linkElement = document.getElementsByName('link-' + buttonName)[0];
                   } else {
                     bodyElements = [document.getElementById(bodyName)];
+                    linkElement = document.getElementById('link-' + buttonName);
                   }
                   if (bodyElements.length != 1) {
                     alert("ShowHideByName() got the wrong number of bodyElements:  " + bodyElements.length);
@@ -50,9 +53,11 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
                     }
                     if (bodyElement.style.display == "none" || bodyElement.style.display == "") {
                       bodyElement.style.display = "inline";
+                      linkElement.style.display = "block";
                       buttonElement.innerHTML = '<xsl:value-of select="$hide_button_text"/>';
                     } else {
                       bodyElement.style.display = "none";
+                      linkElement.style.display = "none";
                       buttonElement.innerHTML = '<xsl:value-of select="$show_button_text"/>';
                     }
                   }
@@ -83,7 +88,8 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
                     if (root[i].className == 'showhide_button')  {
                       root[i].innerHTML = newButton;
                     }
-                    if (root[i].className == 'stylepoint_body')  {
+                    if (root[i].className == 'stylepoint_body' ||
+                        root[i].className == 'link_button')  {
                       root[i].style.display = newState;
                     }
                   }
@@ -136,11 +142,12 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
       <P>
         Each style point has a summary for which additional information is available
         by toggling the accompanying arrow button that looks this way:
-        <SPAN class="showhide_button" style="margin-left: 0;"><xsl:value-of select="$show_button_text"/></SPAN>.
+        <SPAN class="showhide_button" style="margin-left: 0; float: none">
+          <xsl:value-of select="$show_button_text"/></SPAN>.
         You may toggle all summaries with the big arrow button:
       </P>
       <DIV style=" font-size: larger; margin-left: +2em;">
-        <SPAN class="showhide_button" style="font-size: 180%;">
+        <SPAN class="showhide_button" style="font-size: 180%; float: none">
           <xsl:attribute name="onclick"><xsl:value-of select="'javascript:ShowHideAll()'"/></xsl:attribute>
           <xsl:attribute name="name"><xsl:value-of select="$show_hide_all_button"/></xsl:attribute>
           <xsl:attribute name="id"><xsl:value-of select="$show_hide_all_button"/></xsl:attribute>
@@ -152,7 +159,6 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
     <xsl:call-template name="TOC">
       <xsl:with-param name="root" select=".."/>
     </xsl:call-template>
-    <H2>Overview</H2>
     <xsl:apply-templates/>
   </xsl:template>
 
@@ -213,6 +219,12 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
         <xsl:value-of select="$buttonName"/>
         <xsl:text>')</xsl:text>
       </xsl:variable>
+      <SPAN class="link_button" id="link-{$buttonName}" name="link-{$buttonName}">
+        <A>
+          <xsl:attribute name="href">?showone=<xsl:value-of select="$stylepoint_name"/>#<xsl:value-of select="$stylepoint_name"/></xsl:attribute>
+          link
+        </A>
+      </SPAN>
       <SPAN class="showhide_button">
         <xsl:attribute name="onclick"><xsl:value-of select="$onclick_definition"/></xsl:attribute>
         <xsl:attribute name="name"><xsl:value-of select="$buttonName"/></xsl:attribute>
@@ -246,12 +258,6 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
             <xsl:otherwise>display: none</xsl:otherwise>
           </xsl:choose>
         </xsl:attribute>
-        <SPAN class="link_button">
-          <A>
-            <xsl:attribute name="href">?showone=<xsl:value-of select="$anchor_prefix"/>#<xsl:value-of select="$anchor_prefix"/></xsl:attribute>
-            link
-          </A>
-        </SPAN>
         <xsl:apply-templates/>
       </DIV>
     </DIV>
@@ -302,6 +308,14 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
     <P>
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
       <SPAN class="stylepoint_subsection"><xsl:value-of select="@title"/>  </SPAN>
+      <xsl:apply-templates/>
+    </P>
+  </xsl:template>
+
+  <xsl:template match="SUBSUBSECTION">
+    <P>
+      <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
+      <SPAN class="stylepoint_subsubsection"><xsl:value-of select="@title"/>  </SPAN>
       <xsl:apply-templates/>
     </P>
   </xsl:template>
