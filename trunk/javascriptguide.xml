@@ -3,7 +3,7 @@
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
     
-    Revision 2.2
+    Revision 2.3
   </p>
   
   <address>
@@ -995,10 +995,16 @@
         </CODE_SNIPPET>
         <p><code>@private</code> properties are accessible to all code in the
           same file, plus all static methods and instance methods of that class
-          that "owns" the property, if the property belongs to a class.</p>
+          that "owns" the property, if the property belongs to a class. They
+          cannot be accessed or overridden from a subclass in a different file.</p>
         <p><code>@protected</code> properties are accessible to all code in the
           same file, plus any static methods and instance methods of any subclass
           of a class that "owns" the property.</p>
+        <p>Note that these semantics differ from those of C++ and Java, in that
+          they grant private and protected access to all code in the same file,
+          not just in the same class or class hierarchy. Also, unlike in C++,
+          private properties cannot be overriden by a subclass.
+        </p>
         <CODE_SNIPPET>
           // File 1.
 
@@ -3015,7 +3021,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.2
+    Revision 2.3
   </p>
 
   
