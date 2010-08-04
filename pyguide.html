@@ -8,10 +8,13 @@
 
                 function ShowHideByName(bodyName, buttonName) {
 	          var bodyElements;
+                  var linkElement;
                   if (document.getElementsByName) {
                     bodyElements = document.getElementsByName(bodyName);
+                    linkElement = document.getElementsByName('link-' + buttonName)[0];
                   } else {
                     bodyElements = [document.getElementById(bodyName)];
+                    linkElement = document.getElementById('link-' + buttonName);
                   }
                   if (bodyElements.length != 1) {
                     alert("ShowHideByName() got the wrong number of bodyElements:  " + bodyElements.length);
@@ -26,9 +29,11 @@
                     }
                     if (bodyElement.style.display == "none" || bodyElement.style.display == "") {
                       bodyElement.style.display = "inline";
+                      linkElement.style.display = "block";
                       buttonElement.innerHTML = '▽';
                     } else {
                       bodyElement.style.display = "none";
+                      linkElement.style.display = "none";
                       buttonElement.innerHTML = '▶';
                     }
                   }
@@ -59,7 +64,8 @@
                     if (root[i].className == 'showhide_button')  {
                       root[i].innerHTML = newButton;
                     }
-                    if (root[i].className == 'stylepoint_body')  {
+                    if (root[i].className == 'stylepoint_body' ||
+                        root[i].className == 'link_button')  {
                       root[i].style.display = newState;
                     }
                   }
@@ -109,11 +115,11 @@
 <P>
         Each style point has a summary for which additional information is available
         by toggling the accompanying arrow button that looks this way:
-        <SPAN class="showhide_button" style="margin-left: 0;">▶</SPAN>.
+        <SPAN class="showhide_button" style="margin-left: 0; float: none">▶</SPAN>.
         You may toggle all summaries with the big arrow button:
       </P>
 <DIV style=" font-size: larger; margin-left: +2em;">
-<SPAN class="showhide_button" style="font-size: 180%;" onclick="javascript:ShowHideAll()" name="show_hide_all_button" id="show_hide_all_button">▶</SPAN>
+<SPAN class="showhide_button" style="font-size: 180%; float: none" onclick="javascript:ShowHideAll()" name="show_hide_all_button" id="show_hide_all_button">▶</SPAN>
         Toggle all summaries
       </DIV>
 </DIV>
@@ -132,12 +138,13 @@
 </TR>
 </TABLE>
 </DIV>
-<H2>Overview</H2>
   <DIV class="">
 <H2 name="Important_Note" id="Important_Note">Important Note</H2>
     <DIV class="">
 <H3><A name="Displaying_Hidden_Details_in_this_Guide" id="Displaying_Hidden_Details_in_this_Guide">Displaying Hidden Details in this Guide</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Displaying_Hidden_Details_in_this_Guide__body','Displaying_Hidden_Details_in_this_Guide__button')" name="Displaying_Hidden_Details_in_this_Guide__button" id="Displaying_Hidden_Details_in_this_Guide__button">▶</SPAN>
+<SPAN class="link_button" id="link-Displaying_Hidden_Details_in_this_Guide__button" name="link-Displaying_Hidden_Details_in_this_Guide__button"><A href="?showone=Displaying_Hidden_Details_in_this_Guide#Displaying_Hidden_Details_in_this_Guide">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Displaying_Hidden_Details_in_this_Guide__body','Displaying_Hidden_Details_in_this_Guide__button')" name="Displaying_Hidden_Details_in_this_Guide__button" id="Displaying_Hidden_Details_in_this_Guide__button">▶</SPAN>
       <DIV style="display:inline;" class="">
        This style guide contains many details that are initially
        hidden from view.  They are marked by the triangle icon, which you
@@ -145,9 +152,6 @@
        You should see "Hooray" appear below.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Displaying_Hidden_Details_in_this_Guide__body" id="Displaying_Hidden_Details_in_this_Guide__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Displaying_Hidden_Details_in_this_Guide#Displaying_Hidden_Details_in_this_Guide">
-            link
-          </A></SPAN>
        <p>
         Hooray!  Now you know you can expand points to get more
         details.  Alternatively, there's a "toggle all" at the
@@ -173,14 +177,13 @@
      
     <DIV class="">
 <H3><A name="pychecker" id="pychecker">pychecker</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('pychecker__body','pychecker__button')" name="pychecker__button" id="pychecker__button">▶</SPAN>
+<SPAN class="link_button" id="link-pychecker__button" name="link-pychecker__button"><A href="?showone=pychecker#pychecker">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('pychecker__body','pychecker__button')" name="pychecker__button" id="pychecker__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Run <code>pychecker</code> over your code.
       </DIV>
-      <DIV class=""><DIV class="stylepoint_body" name="pychecker__body" id="pychecker__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=pychecker#pychecker">
-            link
-          </A></SPAN> 
+      <DIV class=""><DIV class="stylepoint_body" name="pychecker__body" id="pychecker__body" style="display: none"> 
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
         PyChecker is a tool for finding bugs in Python source code. It finds
@@ -246,14 +249,13 @@
     </DIV>
     <DIV class="">
 <H3><A name="Imports" id="Imports">Imports</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports__body','Imports__button')" name="Imports__button" id="Imports__button">▶</SPAN>
+<SPAN class="link_button" id="link-Imports__button" name="link-Imports__button"><A href="?showone=Imports#Imports">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports__body','Imports__button')" name="Imports__button" id="Imports__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use <code>import</code>s for packages and modules only.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Imports__body" id="Imports__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Imports#Imports">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
           Reusability mechanism for sharing code from one module to another.
@@ -294,15 +296,14 @@
     </DIV>
     <DIV class="">
 <H3><A name="Packages" id="Packages">Packages</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Packages__body','Packages__button')" name="Packages__button" id="Packages__button">▶</SPAN>
+<SPAN class="link_button" id="link-Packages__button" name="link-Packages__button"><A href="?showone=Packages#Packages">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Packages__body','Packages__button')" name="Packages__button" id="Packages__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Import and refer to each module using the full pathname location of 
         that module.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Packages__body" id="Packages__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Packages#Packages">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Pros:  </SPAN>
       Avoids conflicts in module names.  Makes it easier to find modules.
@@ -333,14 +334,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Exceptions" id="Exceptions">Exceptions</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Exceptions__body','Exceptions__button')" name="Exceptions__button" id="Exceptions__button">▶</SPAN>
+<SPAN class="link_button" id="link-Exceptions__button" name="link-Exceptions__button"><A href="?showone=Exceptions#Exceptions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Exceptions__body','Exceptions__button')" name="Exceptions__button" id="Exceptions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Exceptions are allowed but must be used carefully.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Exceptions__body" id="Exceptions__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Exceptions#Exceptions">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       Exceptions are a means of breaking out of the normal flow of control
@@ -402,14 +402,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Global_variables" id="Global_variables">Global variables</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Global_variables__body','Global_variables__button')" name="Global_variables__button" id="Global_variables__button">▶</SPAN>
+<SPAN class="link_button" id="link-Global_variables__button" name="link-Global_variables__button"><A href="?showone=Global_variables#Global_variables">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Global_variables__body','Global_variables__button')" name="Global_variables__button" id="Global_variables__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Avoid global variables.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Global_variables__body" id="Global_variables__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Global_variables#Global_variables">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       Variables that are declared at the module level.
@@ -444,14 +443,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Nested/Local/Inner_Classes_and_Functions" id="Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Nested/Local/Inner_Classes_and_Functions__body','Nested/Local/Inner_Classes_and_Functions__button')" name="Nested/Local/Inner_Classes_and_Functions__button" id="Nested/Local/Inner_Classes_and_Functions__button">▶</SPAN>
+<SPAN class="link_button" id="link-Nested/Local/Inner_Classes_and_Functions__button" name="link-Nested/Local/Inner_Classes_and_Functions__button"><A href="?showone=Nested/Local/Inner_Classes_and_Functions#Nested/Local/Inner_Classes_and_Functions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Nested/Local/Inner_Classes_and_Functions__body','Nested/Local/Inner_Classes_and_Functions__button')" name="Nested/Local/Inner_Classes_and_Functions__button" id="Nested/Local/Inner_Classes_and_Functions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Nested/local/inner classes and functions are fine.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Nested/Local/Inner_Classes_and_Functions__body" id="Nested/Local/Inner_Classes_and_Functions__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Nested/Local/Inner_Classes_and_Functions#Nested/Local/Inner_Classes_and_Functions">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       A class can be defined inside of a method, function, or class.  A
@@ -475,14 +473,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="List_Comprehensions" id="List_Comprehensions">List Comprehensions</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('List_Comprehensions__body','List_Comprehensions__button')" name="List_Comprehensions__button" id="List_Comprehensions__button">▶</SPAN>
+<SPAN class="link_button" id="link-List_Comprehensions__button" name="link-List_Comprehensions__button"><A href="?showone=List_Comprehensions#List_Comprehensions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('List_Comprehensions__body','List_Comprehensions__button')" name="List_Comprehensions__button" id="List_Comprehensions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Okay to use for simple cases.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="List_Comprehensions__body" id="List_Comprehensions__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=List_Comprehensions#List_Comprehensions">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       List comprehensions and generator expressions provide a concise
@@ -545,15 +542,14 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Default_Iterators_and_Operators" id="Default_Iterators_and_Operators">Default Iterators and Operators</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Iterators_and_Operators__body','Default_Iterators_and_Operators__button')" name="Default_Iterators_and_Operators__button" id="Default_Iterators_and_Operators__button">▶</SPAN>
+<SPAN class="link_button" id="link-Default_Iterators_and_Operators__button" name="link-Default_Iterators_and_Operators__button"><A href="?showone=Default_Iterators_and_Operators#Default_Iterators_and_Operators">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Iterators_and_Operators__body','Default_Iterators_and_Operators__button')" name="Default_Iterators_and_Operators__button" id="Default_Iterators_and_Operators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use default iterators and operators for types that support them, 
         like lists, dictionaries, and files.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Default_Iterators_and_Operators__body" id="Default_Iterators_and_Operators__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Default_Iterators_and_Operators#Default_Iterators_and_Operators">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       Container types, like dictionaries and lists, define default
@@ -591,14 +587,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Generators" id="Generators">Generators</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Generators__body','Generators__button')" name="Generators__button" id="Generators__button">▶</SPAN>
+<SPAN class="link_button" id="link-Generators__button" name="link-Generators__button"><A href="?showone=Generators#Generators">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Generators__body','Generators__button')" name="Generators__button" id="Generators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use generators as needed.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Generators__body" id="Generators__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Generators#Generators">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       A generator function returns an iterator that yields a value each
@@ -625,14 +620,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Lambda_Functions" id="Lambda_Functions">Lambda Functions</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lambda_Functions__body','Lambda_Functions__button')" name="Lambda_Functions__button" id="Lambda_Functions__button">▶</SPAN>
+<SPAN class="link_button" id="link-Lambda_Functions__button" name="link-Lambda_Functions__button"><A href="?showone=Lambda_Functions#Lambda_Functions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lambda_Functions__body','Lambda_Functions__button')" name="Lambda_Functions__button" id="Lambda_Functions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Okay for one-liners.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Lambda_Functions__body" id="Lambda_Functions__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Lambda_Functions#Lambda_Functions">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       Lambdas define anonymous functions in an expression, as
@@ -666,14 +660,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Default_Argument_Values" id="Default_Argument_Values">Default Argument Values</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Argument_Values__body','Default_Argument_Values__button')" name="Default_Argument_Values__button" id="Default_Argument_Values__button">▶</SPAN>
+<SPAN class="link_button" id="link-Default_Argument_Values__button" name="link-Default_Argument_Values__button"><A href="?showone=Default_Argument_Values#Default_Argument_Values">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Argument_Values__body','Default_Argument_Values__button')" name="Default_Argument_Values__button" id="Default_Argument_Values__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Okay in most cases.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Default_Argument_Values__body" id="Default_Argument_Values__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Default_Argument_Values#Default_Argument_Values">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       You can specify values for variables at the end of a function's
@@ -728,15 +721,14 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Properties" id="Properties">Properties</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Properties__body','Properties__button')" name="Properties__button" id="Properties__button">▶</SPAN>
+<SPAN class="link_button" id="link-Properties__button" name="link-Properties__button"><A href="?showone=Properties#Properties">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Properties__body','Properties__button')" name="Properties__button" id="Properties__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use properties for accessing or setting data where you would 
         normally have used simple, lightweight accessor or setter methods. 
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Properties__body" id="Properties__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Properties#Properties">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN> A way to wrap method calls for getting and
       setting an attribute as a standard attribute access when the
@@ -825,14 +817,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="True/False_evaluations" id="True/False_evaluations">True/False evaluations</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('True/False_evaluations__body','True/False_evaluations__button')" name="True/False_evaluations__button" id="True/False_evaluations__button">▶</SPAN>
+<SPAN class="link_button" id="link-True/False_evaluations__button" name="link-True/False_evaluations__button"><A href="?showone=True/False_evaluations#True/False_evaluations">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('True/False_evaluations__body','True/False_evaluations__button')" name="True/False_evaluations__button" id="True/False_evaluations__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use the "implicit" false if at all possible.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="True/False_evaluations__body" id="True/False_evaluations__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=True/False_evaluations#True/False_evaluations">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN> Python evaluates certain values as <code>false</code>
       when in a boolean context. A quick "rule of thumb" is that all
@@ -911,7 +902,9 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Deprecated_Language_Features" id="Deprecated_Language_Features">Deprecated Language Features</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Deprecated_Language_Features__body','Deprecated_Language_Features__button')" name="Deprecated_Language_Features__button" id="Deprecated_Language_Features__button">▶</SPAN>
+<SPAN class="link_button" id="link-Deprecated_Language_Features__button" name="link-Deprecated_Language_Features__button"><A href="?showone=Deprecated_Language_Features#Deprecated_Language_Features">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Deprecated_Language_Features__body','Deprecated_Language_Features__button')" name="Deprecated_Language_Features__button" id="Deprecated_Language_Features__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use string methods instead of the <code>string</code> module
         where possible.  Use function call syntax instead
@@ -920,9 +913,6 @@ from sound.effects import echo
         <code>map</code>, and <code>reduce</code>.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Deprecated_Language_Features__body" id="Deprecated_Language_Features__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Deprecated_Language_Features#Deprecated_Language_Features">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
           Current versions of Python provide alternative constructs
@@ -948,14 +938,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Lexical_Scoping" id="Lexical_Scoping">Lexical Scoping</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lexical_Scoping__body','Lexical_Scoping__button')" name="Lexical_Scoping__button" id="Lexical_Scoping__button">▶</SPAN>
+<SPAN class="link_button" id="link-Lexical_Scoping__button" name="link-Lexical_Scoping__button"><A href="?showone=Lexical_Scoping#Lexical_Scoping">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lexical_Scoping__body','Lexical_Scoping__button')" name="Lexical_Scoping__button" id="Lexical_Scoping__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Okay to use.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Lexical_Scoping__body" id="Lexical_Scoping__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Lexical_Scoping#Lexical_Scoping">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       A nested Python function can refer to variables defined in
@@ -1015,14 +1004,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Function_and_Method_Decorators" id="Function_and_Method_Decorators">Function and Method Decorators</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Function_and_Method_Decorators__body','Function_and_Method_Decorators__button')" name="Function_and_Method_Decorators__button" id="Function_and_Method_Decorators__button">▶</SPAN>
+<SPAN class="link_button" id="link-Function_and_Method_Decorators__button" name="link-Function_and_Method_Decorators__button"><A href="?showone=Function_and_Method_Decorators#Function_and_Method_Decorators">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Function_and_Method_Decorators__body','Function_and_Method_Decorators__button')" name="Function_and_Method_Decorators__button" id="Function_and_Method_Decorators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use decorators judiciously when there is a clear advantage.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Function_and_Method_Decorators__body" id="Function_and_Method_Decorators__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Function_and_Method_Decorators#Function_and_Method_Decorators">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       
@@ -1086,14 +1074,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Threading" id="Threading">Threading</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Threading__body','Threading__button')" name="Threading__button" id="Threading__button">▶</SPAN>
+<SPAN class="link_button" id="link-Threading__button" name="link-Threading__button"><A href="?showone=Threading#Threading">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Threading__body','Threading__button')" name="Threading__button" id="Threading__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Do not rely on the atomicity of built-in types.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Threading__body" id="Threading__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Threading#Threading">
-            link
-          </A></SPAN>
         <p>
           While Python's built-in data types such as dictionaries appear
           to have atomic operations, there are corner cases where they
@@ -1117,14 +1104,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Power_Features" id="Power_Features">Power Features</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Power_Features__body','Power_Features__button')" name="Power_Features__button" id="Power_Features__button">▶</SPAN>
+<SPAN class="link_button" id="link-Power_Features__button" name="link-Power_Features__button"><A href="?showone=Power_Features#Power_Features">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Power_Features__body','Power_Features__button')" name="Power_Features__button" id="Power_Features__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Avoid these features.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Power_Features__body" id="Power_Features__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Power_Features#Power_Features">
-            link
-          </A></SPAN>
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN> Python is an extremely flexible language and
       gives you many fancy features such as metaclasses, access to bytecode,
@@ -1156,27 +1142,25 @@ from sound.effects import echo
 <H2 name="Python_Style_Rules" id="Python_Style_Rules">Python Style Rules</H2>
     <DIV class="">
 <H3><A name="Semicolons" id="Semicolons">Semicolons</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Semicolons__body','Semicolons__button')" name="Semicolons__button" id="Semicolons__button">▶</SPAN>
+<SPAN class="link_button" id="link-Semicolons__button" name="link-Semicolons__button"><A href="?showone=Semicolons#Semicolons">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Semicolons__body','Semicolons__button')" name="Semicolons__button" id="Semicolons__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Do not terminate your lines with semi-colons and do not use
         semi-colons to put two commands on the same line.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Semicolons__body" id="Semicolons__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Semicolons#Semicolons">
-            link
-          </A></SPAN>
       </DIV></DIV>
     </DIV>
     <DIV class="">
 <H3><A name="Line_length" id="Line_length">Line length</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Line_length__body','Line_length__button')" name="Line_length__button" id="Line_length__button">▶</SPAN>
+<SPAN class="link_button" id="link-Line_length__button" name="link-Line_length__button"><A href="?showone=Line_length#Line_length">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Line_length__body','Line_length__button')" name="Line_length__button" id="Line_length__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Maximum line length is <em>80 characters</em>.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Line_length__body" id="Line_length__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Line_length#Line_length">
-            link
-          </A></SPAN>
     <p>
       Exception: lines importing modules may end up longer than 80 
       characters only if using Python 2.4 or 
@@ -1219,14 +1203,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Parentheses" id="Parentheses">Parentheses</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Parentheses__body','Parentheses__button')" name="Parentheses__button" id="Parentheses__button">▶</SPAN>
+<SPAN class="link_button" id="link-Parentheses__button" name="link-Parentheses__button"><A href="?showone=Parentheses#Parentheses">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Parentheses__body','Parentheses__button')" name="Parentheses__button" id="Parentheses__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use parentheses sparingly.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Parentheses__body" id="Parentheses__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Parentheses#Parentheses">
-            link
-          </A></SPAN>
     <p>
       Do not use them in return statements or conditional statements unless 
       using parentheses for implied line continuation. (See above.)  
@@ -1252,14 +1235,13 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Indentation" id="Indentation">Indentation</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Indentation__body','Indentation__button')" name="Indentation__button" id="Indentation__button">▶</SPAN>
+<SPAN class="link_button" id="link-Indentation__button" name="link-Indentation__button"><A href="?showone=Indentation#Indentation">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Indentation__body','Indentation__button')" name="Indentation__button" id="Indentation__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Indent your code blocks with <em>4 spaces</em>.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Indentation__body" id="Indentation__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Indentation#Indentation">
-            link
-          </A></SPAN>
     <p>
       Never use tabs or mix tabs and spaces.
       In cases of implied line continuation, you should align wrapped elements
@@ -1290,15 +1272,14 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Blank_Lines" id="Blank_Lines">Blank Lines</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Blank_Lines__body','Blank_Lines__button')" name="Blank_Lines__button" id="Blank_Lines__button">▶</SPAN>
+<SPAN class="link_button" id="link-Blank_Lines__button" name="link-Blank_Lines__button"><A href="?showone=Blank_Lines#Blank_Lines">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Blank_Lines__body','Blank_Lines__button')" name="Blank_Lines__button" id="Blank_Lines__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Two blank lines between top-level definitions, one blank line 
         between method definitions.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Blank_Lines__body" id="Blank_Lines__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Blank_Lines#Blank_Lines">
-            link
-          </A></SPAN>
     <p>
       Two blank lines between top-level definitions, be they function
       or class definitions.  One blank line between method definitions
@@ -1310,15 +1291,14 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Whitespace" id="Whitespace">Whitespace</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Whitespace__body','Whitespace__button')" name="Whitespace__button" id="Whitespace__button">▶</SPAN>
+<SPAN class="link_button" id="link-Whitespace__button" name="link-Whitespace__button"><A href="?showone=Whitespace#Whitespace">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Whitespace__body','Whitespace__button')" name="Whitespace__button" id="Whitespace__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Follow standard typographic rules for the use of spaces around 
         punctuation.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Whitespace__body" id="Whitespace__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Whitespace#Whitespace">
-            link
-          </A></SPAN>
     <p>
       No whitespace inside parentheses, brackets or braces.
     </p>
@@ -1388,16 +1368,15 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Python_Interpreter" id="Python_Interpreter">Python Interpreter</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Python_Interpreter__body','Python_Interpreter__button')" name="Python_Interpreter__button" id="Python_Interpreter__button">▶</SPAN>
+<SPAN class="link_button" id="link-Python_Interpreter__button" name="link-Python_Interpreter__button"><A href="?showone=Python_Interpreter#Python_Interpreter">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Python_Interpreter__body','Python_Interpreter__button')" name="Python_Interpreter__button" id="Python_Interpreter__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Modules should begin with 
         
         <code>#!/usr/bin/env python&lt;version&gt;</code>
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Python_Interpreter__body" id="Python_Interpreter__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Python_Interpreter#Python_Interpreter">
-            link
-          </A></SPAN>
     <p>
       Modules should begin with a "shebang" line specifying the Python
       interpreter used to execute the program:
@@ -1422,15 +1401,14 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Comments" id="Comments">Comments</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Comments__body','Comments__button')" name="Comments__button" id="Comments__button">▶</SPAN>
+<SPAN class="link_button" id="link-Comments__button" name="link-Comments__button"><A href="?showone=Comments#Comments">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Comments__body','Comments__button')" name="Comments__button" id="Comments__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Be sure to use the right style for module, function, method and in-line
         comments.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Comments__body" id="Comments__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Comments#Comments">
-            link
-          </A></SPAN>
 
     <P class="">
 <SPAN class="stylepoint_subsection">Doc Strings</SPAN>
@@ -1602,15 +1580,14 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Classes" id="Classes">Classes</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Classes__body','Classes__button')" name="Classes__button" id="Classes__button">▶</SPAN>
+<SPAN class="link_button" id="link-Classes__button" name="link-Classes__button"><A href="?showone=Classes#Classes">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Classes__body','Classes__button')" name="Classes__button" id="Classes__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         If a class inherits from no other base classes, explicitly inherit
     from <code>object</code>.  This also applies to nested classes.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Classes__body" id="Classes__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Classes#Classes">
-            link
-          </A></SPAN>
     <DIV class=""><PRE class="badcode">No: <span class="external"></span>class SampleClass:
       <span class="external">  </span>pass
 
@@ -1649,16 +1626,15 @@ from sound.effects import echo
     </DIV>
     <DIV class="">
 <H3><A name="Strings" id="Strings">Strings</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Strings__body','Strings__button')" name="Strings__button" id="Strings__button">▶</SPAN>
+<SPAN class="link_button" id="link-Strings__button" name="link-Strings__button"><A href="?showone=Strings#Strings">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Strings__body','Strings__button')" name="Strings__button" id="Strings__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use the <code>%</code> operator for formatting strings,
         even when the parameters are all strings.  Use your best judgement
         to decide between <code>+</code> and <code>%</code> though.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Strings__body" id="Strings__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Strings#Strings">
-            link
-          </A></SPAN>
 <DIV class=""><PRE class="badcode">No: <span class="external"></span>x = '%s%s' % (a, b)  # use + in this case
     <span class="external"></span>x = imperative + ', ' + expletive + '!'
     <span class="external"></span>x = 'name: ' + name + '; score: ' + str(n)</PRE></DIV>
@@ -1704,15 +1680,14 @@ Don'<span class="external"></span>t do this.
     </DIV>
     <DIV class="">
 <H3><A name="TODO_Comments" id="TODO_Comments">TODO Comments</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('TODO_Comments__body','TODO_Comments__button')" name="TODO_Comments__button" id="TODO_Comments__button">▶</SPAN>
+<SPAN class="link_button" id="link-TODO_Comments__button" name="link-TODO_Comments__button"><A href="?showone=TODO_Comments#TODO_Comments">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('TODO_Comments__body','TODO_Comments__button')" name="TODO_Comments__button" id="TODO_Comments__button">▶</SPAN>
     <DIV style="display:inline;" class="">
       Use <code>TODO</code> comments for code that is temporary, a
       short-term solution, or good-enough but not perfect.
     </DIV>
     <DIV class=""><DIV class="stylepoint_body" name="TODO_Comments__body" id="TODO_Comments__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=TODO_Comments#TODO_Comments">
-            link
-          </A></SPAN>
       <p>
         <code>TODO</code>s should include the string <code>TODO</code> in
         all caps, followed by your
@@ -1738,14 +1713,13 @@ Don'<span class="external"></span>t do this.
   </DIV>
     <DIV class="">
 <H3><A name="Imports_formatting" id="Imports_formatting">Imports formatting</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports_formatting__body','Imports_formatting__button')" name="Imports_formatting__button" id="Imports_formatting__button">▶</SPAN>
+<SPAN class="link_button" id="link-Imports_formatting__button" name="link-Imports_formatting__button"><A href="?showone=Imports_formatting#Imports_formatting">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports_formatting__body','Imports_formatting__button')" name="Imports_formatting__button" id="Imports_formatting__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Imports should be on separate lines.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Imports_formatting__body" id="Imports_formatting__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Imports_formatting#Imports_formatting">
-            link
-          </A></SPAN>
     <p>
       E.g.:
     </p>
@@ -1782,14 +1756,13 @@ Don'<span class="external"></span>t do this.
     </DIV>
     <DIV class="">
 <H3><A name="Statements" id="Statements">Statements</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Statements__body','Statements__button')" name="Statements__button" id="Statements__button">▶</SPAN>
+<SPAN class="link_button" id="link-Statements__button" name="link-Statements__button"><A href="?showone=Statements#Statements">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Statements__body','Statements__button')" name="Statements__button" id="Statements__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Generally only one statement per line.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Statements__body" id="Statements__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Statements#Statements">
-            link
-          </A></SPAN>
     <p>
       However, you may put the
       result of a test on the same line as the test only if the entire
@@ -1820,7 +1793,9 @@ Don'<span class="external"></span>t do this.
     </DIV>
     <DIV class="">
 <H3><A name="Access_Control" id="Access_Control">Access Control</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Access_Control__body','Access_Control__button')" name="Access_Control__button" id="Access_Control__button">▶</SPAN>
+<SPAN class="link_button" id="link-Access_Control__button" name="link-Access_Control__button"><A href="?showone=Access_Control#Access_Control">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Access_Control__body','Access_Control__button')" name="Access_Control__button" id="Access_Control__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         If an accessor function would be trivial you should use public variables
         instead of accessor functions to avoid the extra cost of function 
@@ -1828,9 +1803,6 @@ Don'<span class="external"></span>t do this.
         <code>property</code> to keep the syntax consistent.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Access_Control__body" id="Access_Control__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Access_Control#Access_Control">
-            link
-          </A></SPAN>
     <p>
       On the other hand, if access is more complex, or the cost of accessing
       the variable is significant, you should use function calls (following the
@@ -1844,16 +1816,15 @@ Don'<span class="external"></span>t do this.
     </DIV>
     <DIV class="">
 <H3><A name="Naming" id="Naming">Naming</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Naming__body','Naming__button')" name="Naming__button" id="Naming__button">▶</SPAN>
+<SPAN class="link_button" id="link-Naming__button" name="link-Naming__button"><A href="?showone=Naming#Naming">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Naming__body','Naming__button')" name="Naming__button" id="Naming__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         <code>module_name, package_name, ClassName, method_name, ExceptionName, 
         function_name, GLOBAL_VAR_NAME, instance_var_name, 
         function_parameter_name, local_var_name.</code>
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Naming__body" id="Naming__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Naming#Naming">
-            link
-          </A></SPAN>
     <P class="">
 <SPAN class="stylepoint_subsection">Names to Avoid</SPAN>
 
@@ -1986,7 +1957,9 @@ Don'<span class="external"></span>t do this.
     </DIV>
     <DIV class="">
 <H3><A name="Main" id="Main">Main</A></H3>
-<SPAN class="showhide_button" onclick="javascript:ShowHideByName('Main__body','Main__button')" name="Main__button" id="Main__button">▶</SPAN>
+<SPAN class="link_button" id="link-Main__button" name="link-Main__button"><A href="?showone=Main#Main">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Main__body','Main__button')" name="Main__button" id="Main__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Even a file meant to be used as a script should be importable and a 
         mere import should not have the side effect of executing the script's 
@@ -1994,9 +1967,6 @@ Don'<span class="external"></span>t do this.
         function.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Main__body" id="Main__body" style="display: none">
-<SPAN class="link_button"><A href="?showone=Main#Main">
-            link
-          </A></SPAN>
     <p>
       In Python,
       <code>pychecker</code>, <code>pydoc</code>, and unit tests
