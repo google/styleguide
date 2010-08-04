@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 2.18
+Revision 2.20
 </p>
 
 
@@ -415,6 +415,27 @@ Revision 2.18
     </BODY>
   </STYLEPOINT>
 
+  <STYLEPOINT title="Protocols">
+    <SUMMARY>
+      There should not be a space between the type identifier and the name
+      of the protocol encased in angle brackets.
+    </SUMMARY>
+    <BODY>
+      <p>
+        This applies to class declarations, instance variables, and method
+        delcarations. For example:
+      </p>
+      <CODE_SNIPPET>
+        @interface MyProtocoledClass : NSObject&lt;NSWindowDelegate&gt; {
+         @private
+          id&lt;MyFancyDelegate&gt; delegate_;
+        }
+        - (void)setDelegate:(id&lt;MyFancyDelegate&gt;)aDelegate;
+        @end
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
 </CATEGORY>
 
 <CATEGORY title="Naming">
@@ -585,6 +606,10 @@ Revision 2.18
         namespace. If the code isn't meant to be shared and/or doesn't run in
         a different address-space, the method naming isn't quite as
         important.
+      </p>
+      <p>
+        There should be a single space between the class name and the opening
+        parenthesis of the category.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -1165,7 +1190,7 @@ Revision 2.18
         Do not use the <code>NS_DURING</code>, <code>NS_HANDLER</code>,
         <code>NS_ENDHANDLER</code>, <code>NS_VALUERETURN</code> and
         <code>NS_VOIDRETURN</code> macros unless you are writing code that
-        needs to run on MacOS 10.2 or before.
+        needs to run on Mac OS X 10.2 or before.
       </p>
       <p>
         Also be aware when writing Objective-C++ code that stack based objects
@@ -1319,8 +1344,8 @@ Revision 2.18
     <SUMMARY>
       Properties in general are allowed with the following caveat: properties
       are an Objective-C 2.0 feature which will limit your code to running
-      on the iPhone and MacOS X 10.5 (Leopard) and higher. Dot notation to
-      access properties is not allowed.
+      on the iPhone and Mac OS X 10.5 (Leopard) and higher. Dot notation
+      is allowed only for access to a declared <code>@property</code>.
     </SUMMARY>
     <BODY>
       <SUBSECTION title="Naming">
@@ -1446,39 +1471,20 @@ Revision 2.18
       </SUBSECTION>
       <SUBSECTION title="Dot notation">
         <p>
-          We do not allow the use of dot notation to access properties for
-          the following reasons:
+          Dot notation is idiomatic style for Objective-C 2.0. It may be used
+          when doing simple operations to get and set a <code>@property</code>
+          of an object, but should not be used to invoke other object behavior.
         </p>
-        <ol>
-          <li>
-            Dot notation is purely syntactic sugar for standard method calls,
-            whose readability gains are debatable. It just gives you another
-            way to make method calls.
-          </li>
-          <li>
-            It obscures the type that you are dereferencing. When one sees:
-            <code>[foo setBar:1]</code> it is immediately clear that you are
-            working with an Objective-C object. When one sees
-            <code>foo.bar = 1</code> it is not clear if foo is an object, or
-            a struct/union/C++ class.
-          </li>
-          <li>
-            It allows you to do method calls that look like getters.
-            <BAD_CODE_SNIPPET>
-              NSString *upperCase = @"foo".uppercaseString;
-            </BAD_CODE_SNIPPET>
-            which is not only confusing, but difficult to spot in a code review.
-          </li>
-          <li>
-            It hides method calls.
-            <BAD_CODE_SNIPPET>
-              bar.value += 10;
-            </BAD_CODE_SNIPPET>
-            is actually two separate method calls (one to set and one to get)
-            and if your properties are not simple you may find a lot of work
-            being done in a hidden manner.
-          </li>
-        </ol>
+        <CODE_SNIPPET>
+          NSString *oldName = myObject.name;
+          myObject.name = @"Alice";
+        </CODE_SNIPPET>
+        <BAD_CODE_SNIPPET>
+          NSArray *array = [[NSArray arrayWithObject:@"hello"] retain];
+
+          NSUInteger numberOfItems = array.count;  // not a property
+          array.release;                           // not a property
+        </BAD_CODE_SNIPPET>
       </SUBSECTION>
     </BODY>
   </STYLEPOINT>
@@ -1550,7 +1556,7 @@ Revision 2.18
 <HR/>
 
 <p align="right">
-Revision 2.18
+Revision 2.20
 </p>
 
 
