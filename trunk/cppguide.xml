@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.161
+Revision 3.170
 </p>
 
 
@@ -148,7 +148,7 @@ Tashana Landray
   <STYLEPOINT title="Header File Dependencies">
     <SUMMARY>
         Don't use an <code>#include</code> when a forward declaration
-	would suffice.
+        would suffice.
     </SUMMARY>
     <BODY>
       <p>
@@ -178,7 +178,13 @@ Tashana Landray
              <code>Foo&amp;</code>.
              </li>
         <li> We can declare (but not define) functions with arguments,
-             and/or return values, of type <code>Foo</code>.
+             and/or return values, of type <code>Foo</code>.  (One
+             exception is if an argument <code>Foo</code>
+             or <code>const Foo&amp;</code> has a
+             non-<code>explicit</code>, one-argument constructor,
+             
+             in which case we need the full definition to support
+             automatic type conversion.)
              </li>
         <li> We can declare static data members of type
              <code>Foo</code>.  This is because static data members
@@ -386,7 +392,7 @@ Tashana Landray
       <p>
         <code><var>dir/foo</var>.cc</code> and
         <code><var>dir2/foo2</var>.h</code> are often in the same
-        directory (e.g. <code>base/basictypes_unittest.cc</code> and
+        directory (e.g. <code>base/basictypes_test.cc</code> and
         <code>base/basictypes.h</code>), but can be in different
         directories too.
       </p>
@@ -581,13 +587,35 @@ Tashana Landray
                  </li>
 
             <li> Namespace aliases are allowed anywhere in a
-                 <code>.cc</code> file, and in functions and methods in
-                 <code>.h</code> files.
+                 <code>.cc</code> file, anywhere inside the named
+                 namespace that wraps an entire <code>.h</code> file,
+                 and in functions and methods.
                  <CODE_SNIPPET>
-                   // OK in .cc files.
-                   // Must be in a function or method in .h files.
+                   // Shorten access to some commonly used names in .cc files.
                    namespace fbz = ::foo::bar::baz;
+
+                   // Shorten access to some commonly used names (in a .h file).
+                   namespace librarian {
+                   // The following alias is avaliable to all files including
+                   // this header (in namespace librarian):
+                   // alias names should therefore be chosen consistently
+                   // within a project.
+                   namespace pd_s = ::pipeline_diagnostics::sidetable;
+
+                   inline void my_inline_function() {
+                     // namespace alias local to a function (or method).
+                     namespace fbz = ::foo::bar::baz;
+                     ...
+                   }
+                   }  // namespace librarian
                  </CODE_SNIPPET>
+                 <p>
+                 Note that an alias in a .h file is visible to everyone
+                 #including that file, so public headers (those available
+                 outside a project) and headers transitively #included by them,
+                 should avoid defining aliases, as part of the general
+                 goal of keeping public APIs as small as possible.
+                 </p>
                  </li>
           </ul>
         </SUBSECTION>
@@ -1474,7 +1502,7 @@ Tashana Landray
     <BODY>
       <p>
         <code>cpplint.py</code>
-	is a tool that reads a source file and
+        is a tool that reads a source file and
         identifies many style errors.  It is not perfect, and has both false
         positives and false negatives, but it is still a valuable tool.  False
         positives can be ignored by putting <code>// NOLINT</code> at
@@ -1547,10 +1575,10 @@ Tashana Landray
 
   <STYLEPOINT title="Function Overloading">
     <SUMMARY>
-      Use overloaded functions (including constructors) only in cases
-      where input can be specified in different types that contain the
-      same information.  Do not use function overloading to simulate
-      <A HREF="#Default_Arguments">default function parameters</A>.
+      Use overloaded functions (including constructors) only if a
+      reader looking at a call site can get a good idea of what is
+      happening without having to first figure out exactly which
+      overload is being called.
     </SUMMARY>
     <BODY>
       <DEFINITION>
@@ -1574,20 +1602,18 @@ Tashana Landray
         convenient for Visitors.
       </PROS>
       <CONS>
-        One reason to minimize function overloading is that
-        overloading can make it hard to tell which function is being
-        called at a particular call site.  Another one is that most
-        people are confused by the semantics of inheritance if a
-        deriving class overrides only some of the variants of a
-        function.  Moreover, reading client code of a library may
-        become unnecessarily hard because of all the reasons against
-        <A HREF="#Default_Arguments">default function parameters</A>.
+        If a function is overloaded by the argument types alone, a
+        reader may have to understand C++'s complex matching rules in
+        order to tell what's going on.  Also many people are confused
+        by the semantics of inheritance if a derived class overrides
+        only some of the variants of a function.
       </CONS>
       <DECISION>
         If you want to overload a function, consider qualifying the
         name with some information about the arguments, e.g.,
         <code>AppendString()</code>, <code>AppendInt()</code> rather
         than just <code>Append()</code>.
+        
       </DECISION>
     </BODY>
   </STYLEPOINT>
@@ -2517,40 +2543,97 @@ Tashana Landray
       techniques, and an excessively "functional" style of programming.
       
     </CONS>
-    
     <DECISION>
       
-      In order to maintain a high level of readability for all contributors
-      who might read and maintain code, we only allow an approved subset of
-      Boost features.  Currently, the following libraries are permitted:
-      <ul>
-        <li> <a href="http://www.boost.org/libs/utility/call_traits.htm">
-             Call Traits</a> from <code>boost/call_traits.hpp</code>
-             </li>
-        <li> <a href="http://www.boost.org/libs/utility/compressed_pair.htm">
-             Compressed Pair</a> from <code>boost/compressed_pair.hpp</code>
-             </li>
-        <li> <a href="http://www.boost.org/libs/ptr_container/">
-             Pointer Container</a> from <code>boost/ptr_container</code> except serialization
-             </li>
-        <li> <a href="http://www.boost.org/libs/array/">
-             Array</a> from <code>boost/array.hpp</code>
-             </li>
-        <li> <a href="http://www.boost.org/libs/graph/">
-             The Boost Graph Library (BGL)</a> from <code>boost/graph</code> except serialization
-             </li>
-        <li> <a href="http://www.boost.org/libs/property_map/">
-             Property Map</a> from <code>boost/property_map.hpp</code>
-             </li>
-        <li> The part of
-             <a href="http://www.boost.org/libs/iterator/">
-             Iterator</a> that deals with defining iterators:
-             <code>boost/iterator/iterator_adaptor.hpp</code>,
-             <code>boost/iterator/iterator_facade.hpp</code>, and
-             <code>boost/function_output_iterator.hpp</code></li>
-      </ul>
-      We are actively considering adding other Boost features to the list, so
-      this rule may be relaxed in the future.
+      <div>
+        
+        In order to maintain a high level of readability for all contributors
+        who might read and maintain code, we only allow an approved subset of
+        Boost features.  Currently, the following libraries are permitted:
+        <ul>
+          <li> <a href="http://www.boost.org/libs/utility/call_traits.htm">
+               Call Traits</a> from <code>boost/call_traits.hpp</code>
+               </li>
+          <li> <a href="http://www.boost.org/libs/utility/compressed_pair.htm">
+               Compressed Pair</a> from <code>boost/compressed_pair.hpp</code>
+               </li>
+          <li> <a href="http://www.boost.org/libs/ptr_container/">
+               Pointer Container</a> from <code>boost/ptr_container</code> except
+               serialization and wrappers for containers not in the C++03
+               standard (<code>ptr_circular_buffer.hpp</code> and
+               <code>ptr_unordered*</code>)
+               </li>
+          <li> <a href="http://www.boost.org/libs/array/">
+               Array</a> from <code>boost/array.hpp</code>
+               </li>
+          <li> <a href="http://www.boost.org/libs/graph/">
+               The Boost Graph Library (BGL)</a> from <code>boost/graph</code>,
+               except serialization (<code>adj_list_serialize.hpp</code>) and
+               parallel/distributed algorithms and data structures
+               (<code>boost/graph/parallel/*</code> and
+               <code>boost/graph/distributed/*</code>).
+               </li>
+          <li> <a href="http://www.boost.org/libs/property_map/">
+               Property Map</a> from <code>boost/property_map</code>, except
+               parallel/distributed property maps
+               (<code>boost/property_map/parallel/*</code>).
+               </li>
+          <li> The part of
+               <a href="http://www.boost.org/libs/iterator/">
+               Iterator</a> that deals with defining iterators:
+               <code>boost/iterator/iterator_adaptor.hpp</code>,
+               <code>boost/iterator/iterator_facade.hpp</code>, and
+               <code>boost/function_output_iterator.hpp</code></li>
+        </ul>
+        We are actively considering adding other Boost features to the list, so
+        this rule may be relaxed in the future.
+      </div>
+    </DECISION>
+  </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="C++0x">
+  <SUMMARY>
+    Use only approved libraries and language extensions from C++0x.
+    Currently, none are approved.
+  </SUMMARY>
+  <BODY>
+    <DEFINITION>
+      C++0x is the next ISO C++ standard, currently in
+      <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2010/n3092.pdf">final
+      committee draft</a> form.  It contains
+      <a href="http://en.wikipedia.org/wiki/C%2B%2B0x">significant
+      changes</a> both to the language and libraries.
+    </DEFINITION>
+    <PROS>
+      We expect that C++0x will become the next standard, and eventually will
+      be supported by most C++ compilers.  It standardizes some common C++
+      extensions that we use already, allows shorthands for some operations,
+      and has some safety improvements.
+    </PROS>
+    <CONS>
+      <p>
+        The C++0x standard is substantialy more complex than its predecessor
+        (1,300 pages versus 800 pages), and is
+        unfamilar to many developers.  The long-term effects of some
+        features on code readability and maintenance are unknown.  We cannot
+        predict when its various features will be implemented uniformly by
+        tools that may be of interest (gcc, icc, clang, Eclipse, etc.).
+      </p>
+      <p>
+        As with <a href="#Boost">Boost</a>, some C++0x extensions encourage
+        coding practices that hamper readability&#8212;for example by removing
+        checked redundancy (such as type names) that may be helpful to readers,
+        or by encouraging template metaprogramming.  Other extensions
+        duplicate functionality available through existing
+        mechanisms, which may lead to
+        confusion and conversion costs.
+      </p>
+    </CONS>
+    <DECISION>
+      Use only C++0x libraries and language features that have been approved
+      for use.  Currently, no such features are approved.
+      Features will be approved individually as appropriate.
     </DECISION>
   </BODY>
   </STYLEPOINT>
@@ -2665,6 +2748,7 @@ Tashana Landray
           my_useful_class.cc<br/>
           my-useful-class.cc<br/>
           myusefulclass.cc<br/>
+          myusefulclass_test.cc  // _unittest and _regtest are deprecated.<br/>
         </code>
       </p>
       <p>
@@ -2825,7 +2909,7 @@ Tashana Landray
           Functions should start with a capital letter and have a
           capital letter for each new word. No underscores.
         </p>
-        <p> 
+        <p>
           If your function crashes upon an error, you should append OrDie to
           the function name. This only applies to functions which could be
           used by production code and to errors that are reasonably
@@ -3942,15 +4026,23 @@ Tashana Landray
 
   <STYLEPOINT title="Return Values">
     <SUMMARY>
-      Do not surround the <code>return</code> expression with parentheses.
+      Do not needlessly surround the <code>return</code> expression with
+      parentheses.
     </SUMMARY>
     <BODY>
       <p>
-        Return values should not have parentheses:
+        Use parentheses in <code>return expr;</code> only where you would use
+        them in <code>x = expr;</code>.
       </p>
       <CODE_SNIPPET>
-        return x;  // not return(x);
+        return result;                  // No parentheses in the simple case.
+        return (some_long_condition &amp;&amp;  // Parentheses ok to make a complex
+                another_condition);     //     expression more readable.
       </CODE_SNIPPET>
+      <BAD_CODE_SNIPPET>
+        return (value);                // You wouldn't write var = (value);
+        return(result);                // return is not a function!
+      </BAD_CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
 
@@ -4422,7 +4514,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.161
+Revision 3.170
 </p>
 
 
