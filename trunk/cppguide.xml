@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.170
+Revision 3.171
 </p>
 
 
@@ -3477,6 +3477,43 @@ Tashana Landray
     </BODY>
   </STYLEPOINT>
 
+  <STYLEPOINT title="Deprecation Comments">
+    <SUMMARY>
+      Mark deprecated interface points with <code>DEPRECATED</code> comments.
+    </SUMMARY>
+    <BODY>
+      <p>
+      You can mark an interface as deprecated by writing a comment containing
+      the word <code>DEPRECATED</code> in all caps.  The comment goes either
+      before the declaration of the interface or on the same line as the
+      declaration.
+      </p>
+      
+      <p>
+      After the word <code>DEPRECATED</code>, write your name, e-mail address,
+      or other identifier in parentheses.
+      </p>
+      <p>
+      A deprecation comment must include simple, clear directions for people to
+      fix their callsites.  In C++, you can implement a deprecated function as
+      an inline function that calls the new interface point.
+      </p>
+      <p>
+      Marking an interface point <code>DEPRECATED</code> will not magically
+      cause any callsites to change.  If you want people to actually stop using
+      the deprecated facility, you will have to fix the callsites yourself or
+      recruit a crew to help you.
+      </p>
+      <p>
+      New code should not contain calls to deprecated interface points.  Use
+      the new interface point instead.  If you cannot understand the
+      directions, find the person who created the deprecation and ask them for
+      help using the new interface point.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+
 </CATEGORY>
 
 <CATEGORY title="Formatting">
@@ -4514,7 +4551,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.170
+Revision 3.171
 </p>
 
 
