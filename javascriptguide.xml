@@ -3,7 +3,7 @@
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
     
-    Revision 2.3
+    Revision 2.9
   </p>
   
   <address>
@@ -170,6 +170,32 @@
         <p>Nested functions can be very useful, for example in the creation of
           continuations and for the task of hiding helper functions. Feel free
           to use them.</p>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Function Declarations Within Blocks">
+      <SUMMARY>No</SUMMARY>
+      <BODY>
+        <p>Do not do this:</p>
+        <BAD_CODE_SNIPPET>
+          if (x) {
+            function foo() {}
+          }
+        </BAD_CODE_SNIPPET>
+
+        <p>While most script engines support Function Declarations within blocks
+          it is not part of ECMAScript (see
+          <a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMA-262</a>,
+          clause 13 and 14). Worse implementations are inconsistent with each
+          other and with future EcmaScript proposals. ECMAScript only allows for
+          Function Declarations in the root statement list of a script or
+          function. Instead use a variable initialized with a Function
+          Expression to define a function within a block:</p>
+        <CODE_SNIPPET>
+           if (x) {
+             var foo = function() {}
+           }
+        </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
 
@@ -548,6 +574,20 @@
           avoided.</p>
       </BODY>
     </STYLEPOINT>
+
+    <STYLEPOINT title="Internet Explorer's Conditional Comments">
+      <SUMMARY>No</SUMMARY>
+      <BODY>
+        <p>Don't do this:</p>
+        <CODE_SNIPPET>
+        var f = function () {
+            /*@cc_on if (@_jscript) { return 2* @*/  3; /*@ } @*/
+        };
+        </CODE_SNIPPET>
+        <p>Conditional Comments hinder automated tools as they can vary the
+        JavaScript syntax tree at runtime.</p>
+      </BODY>
+    </STYLEPOINT>
   </CATEGORY>
 
   <CATEGORY title="JavaScript Style Rules">
@@ -682,6 +722,65 @@
             </CODE_SNIPPET>
             
             
+          </SUBSUBSECTION>
+          <SUBSUBSECTION title="Alias long type names to improve readability">
+            <p>Use local aliases for fully-qualified types if doing so improves
+              readability. The name of a local alias should match the last part
+              of the type.</p>
+            <CODE_SNIPPET>
+              /**
+               * @constructor
+               */
+              some.long.namespace.MyClass = function() {
+              };
+
+              /**
+               * @param {some.long.namespace.MyClass} a
+               */
+              some.long.namespace.MyClass.staticHelper = function(a) {
+                ...
+              };
+
+              myapp.main = function() {
+                var MyClass = some.long.namespace.MyClass;
+                var staticHelper = some.long.namespace.MyClass.staticHelper;
+                staticHelper(new MyClass());
+              };
+            </CODE_SNIPPET>
+            <p>Do not alias namespaces.</p>
+            <BAD_CODE_SNIPPET>
+              myapp.main = function() {
+                var namespace = some.long.namespace;
+                namespace.MyClass.staticHelper(new namespace.MyClass());
+              };
+            </BAD_CODE_SNIPPET>
+            <p>Avoid accessing properties of an aliased type, unless it is an
+              enum.</p>
+            <CODE_SNIPPET>
+              /** @enum {string} */
+              some.long.namespace.Fruit = {
+                APPLE: 'a',
+                BANANA: 'b'
+              };
+
+              myapp.main = function() {
+                var Fruit = some.long.namespace.Fruit;
+                switch (fruit) {
+                  case Fruit.APPLE:
+                    ...
+                  case Fruit.BANANA:
+                    ...
+                }
+              };
+            </CODE_SNIPPET>
+            <BAD_CODE_SNIPPET>
+              myapp.main = function() {
+                var MyClass = some.long.namespace.MyClass;
+                MyClass.staticHelper(null);
+              };
+            </BAD_CODE_SNIPPET>
+            <p>Never create aliases in the global scope. Use them only in
+              function blocks.</p>
           </SUBSUBSECTION>
         </SUBSECTION>
         <SUBSECTION title="Filenames">
@@ -2221,6 +2320,38 @@
               </tr>
 
               <tr>
+                <td><a name="tag-lends">@lends</a></td>
+                <td>
+                  <tt>@lends objectName</tt><br/>
+                  <tt>@lends {objectName}</tt>
+                  <p><i>For example:</i></p>
+                  <CODE_SNIPPET>
+                    goog.object.extend(
+                        Button.prototype,
+                        /** @lends {Button.prototype} */ {
+                          isButton: function() { return true; }
+                        });
+                  </CODE_SNIPPET>
+                </td>
+                <td>
+                  Indicates that the keys of an object literal should
+                  be treated as properties of some other object. This annotation
+                  should only appear on object literals.<p/>
+
+                  Notice that the name in braces is not a type name like
+                  in other annotations. It's an object name. It names
+                  the object on which the properties are "lent".
+                  For example, <tt>@type {Foo}</tt> means "an instance of Foo",
+                  but <tt>@lends {Foo}</tt> means "the constructor Foo".<p/>
+
+                  The <a href="http://code.google.com/p/jsdoc-toolkit/wiki/TagLends">
+                  JSDoc Toolkit docs</a> have more information on this
+                  annotation.
+                </td>
+                <td>Yes</td>
+              </tr>
+
+              <tr>
                 <td><a name="tag-private">@private</a></td>
                 <td>
                   <tt>@private</tt>
@@ -2674,7 +2805,6 @@
               <li>@function</li>
               <li>@ignore</li>
               <li>@inner</li>
-              <li>@lends</li>
               <li>@link</li>
               <li>@memberOf</li>
               <li>@name</li>
@@ -3021,7 +3151,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.3
+    Revision 2.9
   </p>
 
   

@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.171
+Revision 3.174
 </p>
 
 
@@ -3151,12 +3151,12 @@ Tashana Landray
     <BODY>
       <CODE_SNIPPET>
         // Iterates over the contents of a GargantuanTable.  Sample usage:
-        //    GargantuanTable_Iterator* iter = table-&gt;NewIterator();
+        //    GargantuanTableIterator* iter = table-&gt;NewIterator();
         //    for (iter-&gt;Seek("foo"); !iter-&gt;done(); iter-&gt;Next()) {
         //      process(iter-&gt;key(), iter-&gt;value());
         //    }
         //    delete iter;
-        class GargantuanTable_Iterator {
+        class GargantuanTableIterator {
           ...
         };
       </CODE_SNIPPET>
@@ -3260,7 +3260,7 @@ Tashana Landray
       <SUBSECTION title="Function Definitions">
         <p>
           Each function definition should have a comment describing
-          what the function does and anything tricky about how it does
+          what the function does if there's anything tricky about how it does
           its job.  For example, in the definition comment you might
           describe any coding tricks you use, give an overview of the
           steps you go through, or explain why you chose to implement
@@ -4356,9 +4356,10 @@ Tashana Landray
       <p>
         This is more a principle than a rule: don't use blank lines
         when you don't have to.  In particular, don't put more than
-        one or two blank lines between functions, don't start or end
-        functions with a blank line, and be discriminating with your
-        use of blank lines inside functions.
+        one or two blank lines between functions, resist starting
+        functions with a blank line, don't end functions with a blank
+        line, and be discriminating with your use of blank lines
+        inside functions.
       </p>
       <p>
         The basic principle is: The more code that fits on one screen,
@@ -4369,39 +4370,16 @@ Tashana Landray
         whitespace.
       </p>
       <p>
-        Don't start or end functions with blank lines:
-        <BAD_CODE_SNIPPET>
-          void Function() {
-
-            // Unnecessary blank lines before and after
-
-          }
-        </BAD_CODE_SNIPPET>
+        Some rules of thumb to help when blank lines may be useful:
       </p>
-      <p>
-        Don't start and end blocks with blank lines either:
-        <BAD_CODE_SNIPPET>
-          while (condition) {
-            // Unnecessary blank line after
-
-          }
-          if (condition) {
-
-            // Unnecessary blank line before
-          }
-        </BAD_CODE_SNIPPET>
-        However, it's okay to add blank lines between a chain of
-        if-else blocks:
-        <CODE_SNIPPET>
-        if (condition) {
-          // Some lines of code too small to move to another function,
-          // followed by a blank line.
-
-        } else {
-          // Another block of code
-        }
-        </CODE_SNIPPET>
-      </p>
+      <ul>
+        <li> Blank lines at the beginning or end of a function very
+             rarely help readability.
+             </li>
+        <li> Blank lines inside a chain of if-else blocks may well
+             help readability.
+             </li>
+      </ul>
     </BODY>
   </STYLEPOINT>
 </CATEGORY>
@@ -4551,7 +4529,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.171
+Revision 3.174
 </p>
 
 

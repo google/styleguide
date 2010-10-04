@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 2.20
+Revision 2.21
 </p>
 
 
@@ -932,6 +932,22 @@ Revision 2.20
     </BODY>
   </STYLEPOINT>
 
+  <STYLEPOINT title="Avoid +new">
+    <SUMMARY>
+      Do not invoke the <code>NSObject</code> class method <code>new</code>,
+      nor override it in a subclass. Instead, use <code>alloc</code> and
+      <code>init</code> methods to instantiate retained objects.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Modern Objective-C code explicitly calls <code>alloc</code> and an
+        <code>init</code> method to create and retain an object.  As the
+        <code>new</code> class method is rarely used, it makes reviewing code
+        for correct memory management more difficult.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
   <STYLEPOINT title="Keep the Public API Simple">
     <SUMMARY>
       Keep your class simple; avoid "kitchen-sink" APIs. If a method doesn't
@@ -1556,7 +1572,7 @@ Revision 2.20
 <HR/>
 
 <p align="right">
-Revision 2.20
+Revision 2.21
 </p>
 
 
