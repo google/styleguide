@@ -719,10 +719,11 @@ class FileInfo:
              not os.path.exists(os.path.join(root_dir, ".git")) and
              not os.path.exists(os.path.join(root_dir, ".hg"))):
         root_dir = os.path.dirname(root_dir)
-        if (os.path.exists(os.path.join(root_dir, ".git")) or
-            os.path.exists(os.path.join(root_dir, ".hg"))):
-          prefix = os.path.commonprefix([root_dir, project_dir])
-          return fullname[len(prefix) + 1:]
+
+      if (os.path.exists(os.path.join(root_dir, ".git")) or
+          os.path.exists(os.path.join(root_dir, ".hg"))):
+        prefix = os.path.commonprefix([root_dir, project_dir])
+        return fullname[len(prefix) + 1:]
 
     # Don't know what to do; header guard warnings may be wrong...
     return fullname
