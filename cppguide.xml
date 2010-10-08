@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.174
+Revision 3.175
 </p>
 
 
@@ -596,7 +596,7 @@ Tashana Landray
 
                    // Shorten access to some commonly used names (in a .h file).
                    namespace librarian {
-                   // The following alias is avaliable to all files including
+                   // The following alias is available to all files including
                    // this header (in namespace librarian):
                    // alias names should therefore be chosen consistently
                    // within a project.
@@ -4529,7 +4529,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.174
+Revision 3.175
 </p>
 
 
