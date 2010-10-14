@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.175
+Revision 3.178
 </p>
 
 
@@ -1756,7 +1756,7 @@ Tashana Landray
 
           <li>More generally, exceptions make the control flow of
           programs difficult to evaluate by looking at code: functions
-          may return in places you don't expect. This results
+          may return in places you don't expect. This causes
           maintainability and debugging difficulties. You can minimize
           this cost via some rules on how and where exceptions can be
           used, but at the cost of more that a developer needs to know
@@ -1801,7 +1801,7 @@ Tashana Landray
         <p>
           Given that Google's existing code is not exception-tolerant, the
           costs of using exceptions are somewhat greater than the costs in
-          in a new project.  The conversion process would be slow and
+          a new project.  The conversion process would be slow and
           error-prone.  We don't believe that the available alternatives to
           exceptions, such as error codes and assertions, introduce a
           significant burden.
@@ -3602,9 +3602,7 @@ Tashana Landray
         You shouldn't hard-code user-facing text in source, even English,
         so use of non-ASCII characters should be rare.  However, in certain
         cases it is appropriate to include such words in your code.  For
-        example, if your code parses data files from foreign
-        
-        
+        example, if your code parses data files from foreign sources,
         it may be appropriate to hard-code the non-ASCII string(s) used in
         those data files as delimiters.  More commonly, unittest code
         (which does not
@@ -3867,7 +3865,7 @@ Tashana Landray
         if (x == kBar) return new Bar();
       </CODE_SNIPPET>
       <p>
-        This is not allowed if the if statement has an
+        This is not allowed when the if statement has an
         <code>else</code>:
       </p>
       <BAD_CODE_SNIPPET>
@@ -4529,7 +4527,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.175
+Revision 3.178
 </p>
 
 
