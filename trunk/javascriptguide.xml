@@ -994,7 +994,7 @@
 
             if (searchableCollection(allYourStuff).contains(theStuffYouWant) &amp;&amp;
                 !ambientNotification.isActive() &amp;&amp; (client.isAmbientSupported() ||
-                                                    client.alwaysTryAmbientAnyways()) {
+                                                    client.alwaysTryAmbientAnyways())) {
               ambientNotification.activate();
             }
           </CODE_SNIPPET>
