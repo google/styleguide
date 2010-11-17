@@ -1736,9 +1736,12 @@ def CheckSpacing(filename, clean_lines, linenum, error):
         # but some lines are exceptions -- e.g. if they're big
         # comment delimiters like:
         # //----------------------------------------------------------
+        # or are an empty C++ style Doxygen comment, like:
+        # ///
         # or they begin with multiple slashes followed by a space:
         # //////// Header comment
         match = (Search(r'[=/-]{4,}\s*$', line[commentend:]) or
+                 Search(r'^/$', line[commentend:]) or
                  Search(r'^/+ ', line[commentend:]))
         if not match:
           error(filename, linenum, 'whitespace/comments', 4,
