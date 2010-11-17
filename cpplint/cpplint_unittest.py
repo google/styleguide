@@ -1511,6 +1511,7 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('//////', '')
     self.TestLint('////// x', '')
     self.TestLint('/// x', '')
+    self.TestLint('///', '') # Empty Doxygen comment
     self.TestLint('////x', 'Should have a space between // and comment'
                   '  [whitespace/comments] [4]')
 
