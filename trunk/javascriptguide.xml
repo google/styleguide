@@ -3,7 +3,7 @@
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
     
-    Revision 2.9
+    Revision 2.11
   </p>
   
   <address>
@@ -2064,6 +2064,8 @@
           </CODE_SNIPPET>
         </SUBSECTION>
 
+        
+
         <SUBSECTION title="JSDoc Tag Reference">
           <table border="1" style="border-collapse:collapse" cellpadding="4">
             <thead>
@@ -2755,6 +2757,8 @@
                 <td>Yes</td>
               </tr>
 
+              
+
               <tr>
                 <td><a name="tag-externs">@externs</a></td>
                 <td>
@@ -3151,7 +3155,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.9
+    Revision 2.11
   </p>
 
   
