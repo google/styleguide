@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.178
+Revision 3.180
 </p>
 
 
@@ -739,9 +739,11 @@ Tashana Landray
         particular, initialization should be used instead of
         declaration and assignment, e.g.
       </p>
-      <CODE_SNIPPET>
+      <BAD_CODE_SNIPPET>
         int i;
         i = f();      // Bad -- initialization separate from declaration.
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
         int j = g();  // Good -- declaration has initialization.
       </CODE_SNIPPET>
       <p>
@@ -3018,7 +3020,7 @@ Tashana Landray
         Please see the <a href="#Preprocessor_Macros">description of
         macros</a>; in general macros should <em>not</em> be used.
         However, if they are absolutely needed, then they should be
-        named like enum value names with all capitals and underscores.
+        named with all capitals and underscores.
       </p>
       <CODE_SNIPPET>
         #define ROUND(x) ...
@@ -4527,7 +4529,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.178
+Revision 3.180
 </p>
 
 

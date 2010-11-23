@@ -100,7 +100,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.15
+    Revision 2.18
   </p>
   
   <address>
@@ -262,35 +262,38 @@
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Pros:  </SPAN>
-          Simplest and most commonly used way of sharing things.
+          The namespace management convention is simple.  The source of each
+          identifier is indicated in a consistent way; <code>x.Obj</code> says
+          that object <code>Obj</code> is defined in module <code>x</code>.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN> <code>from foo import *</code> or 
-      <code>from foo import Bar</code> is
-      very nasty and can lead to serious maintenance issues because
-      it makes it hard to find module dependencies.
+<SPAN class="stylepoint_section">Cons: </SPAN> Module names can still collide.  Some module names are
+          inconveniently long.
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Decision:  </SPAN>
-      Use <code>import x</code> for importing packages and modules.
-      Use <code>from x import y</code> only when <code>x</code> is a
-      package and <code>y</code> is a module.  This allows the
-      importer to refer to the module without specifying the full
-      package prefix.  For example the module
-      <code>sound.effects.echo</code> may be imported as follows:
+          Use <code>import x</code> for importing packages and modules.
+          <br>
+          Use <code>from x import y</code> where <code>x</code> is
+          the package prefix and <code>y</code> is the module name with no
+          prefix.
+          <br>
+          Use <code>from x import y as z</code> if two modules named
+          <code>z</code> are to be imported or if <code>y</code> is an
+          inconveniently long name.
         </P>
+        For example the module
+        <code>sound.effects.echo</code> may be imported as follows:
     <DIV class=""><PRE>
 <span class="external"></span>from sound.effects import echo
 <span class="external"></span>...
-<span class="external"></span>echo.echofilter(input, output, delay=0.7, atten=4)
+<span class="external"></span>echo.EchoFilter(input, output, delay=0.7, atten=4)
 <span class="external"></span>
 </PRE></DIV>
     <p>
-      Even if the module is in the same package, do not directly import
-      the module without the full package name.  This might cause the
-      package to be imported twice (with unintended side effects) when the 
-      "main" module that is used to start an application lives inside a 
-      package (and uses modules from that same package).
+      Do not use relative names in imports. Even if the module is in the
+      same package, use the full package name.  This helps prevent
+      unintentionally importing a package twice.
     </p>
       </DIV></DIV>
     </DIV>
@@ -300,8 +303,7 @@
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Packages__body','Packages__button')" name="Packages__button" id="Packages__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Import and refer to each module using the full pathname location of 
-        that module.
+        Import each module using the full pathname location of the module.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Packages__body" id="Packages__body" style="display: none">
         <P class="">
@@ -315,21 +317,19 @@
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Decision:  </SPAN>
-      All new code should refer to modules based on their package
-      name. 
+          All new code should import each module by its full package name.
+          
         </P>
       <p>
         Imports should be as follows:
       </p>
-
     
     <DIV class=""><PRE># Reference in code with complete name.
 import sound.effects.echo
 
-# Reference in code with just module name.
+# Reference in code with just module name (preferred).
 from sound.effects import echo
 </PRE></DIV>
-    
       </DIV></DIV>
     </DIV>
     <DIV class="">
@@ -1389,12 +1389,9 @@ from sound.effects import echo
       Always use the most specific version you can use, e.g.,
       <code>/usr/bin/python2.4</code>, not
       <code>/usr/bin/python2</code>. This makes it easier to find
-      dependencies when 
-      
-      upgrading to a different Python version
+      dependencies when upgrading to a different Python version
       and also avoids confusion and breakage during use.  E.g., Does
-      <code>/usr/bin/python2</code> mean Python 2.0.1 or Python
-      2.3.0? 
+      <code>/usr/bin/python2</code> mean Python 2.0.1 or Python 2.3.0?
     </p>
     
       </DIV></DIV>
@@ -2028,7 +2025,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.15
+Revision 2.18
 </p>
 
 
