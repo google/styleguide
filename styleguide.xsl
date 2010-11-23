@@ -449,7 +449,9 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
        Substitutes underscore for characters unsuitable for URLs  -->
   <xsl:template name="anchorname">
     <xsl:param name="sectionname"/>
-    <xsl:value-of select="translate($sectionname,' ()#','____')"/>
+    <!-- strange quoting necessary to strip apostrophes -->
+    <xsl:variable name="bad_characters" select="&quot; ()#'&quot;"/>
+    <xsl:value-of select="translate($sectionname,$bad_characters,'_____')"/>
   </xsl:template>
 
   <!-- Given text, evaluates to the number of leading spaces. -->
