@@ -3,7 +3,7 @@
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
     
-    Revision 2.11
+    Revision 2.20
   </p>
   
   <address>
@@ -504,6 +504,15 @@
           at compile time; whitespace after the slash will result in tricky
           errors; and while most script engines support this, it is not part
           of ECMAScript. </p>
+        <p>Use string concatenation instead:</p>
+        <CODE_SNIPPET>
+          var myString = 'A rather long string of English text, an error message ' +
+              'actually that just keeps going and going -- an error ' +
+              'message to make the Energizer bunny blush (right through ' +
+              'those Schwarzenegger shades)! Where was I? Oh yes, ' +
+              'you\'ve got an error and all the extraneous whitespace is ' +
+              'just gravy.  Have a nice day.';
+        </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
 
@@ -579,11 +588,11 @@
       <SUMMARY>No</SUMMARY>
       <BODY>
         <p>Don't do this:</p>
-        <CODE_SNIPPET>
+        <BAD_CODE_SNIPPET>
         var f = function () {
             /*@cc_on if (@_jscript) { return 2* @*/  3; /*@ } @*/
         };
-        </CODE_SNIPPET>
+        </BAD_CODE_SNIPPET>
         <p>Conditional Comments hinder automated tools as they can vary the
         JavaScript syntax tree at runtime.</p>
       </BODY>
@@ -597,7 +606,6 @@
           <code>variableNamesLikeThis</code>, <code>ClassNamesLikeThis</code>,
           <code>EnumNamesLikeThis</code>, <code>methodNamesLikeThis</code>,
           and <code>SYMBOLIC_CONSTANTS_LIKE_THIS</code>.</p>
-        <p>Expand for more information.</p>
       </SUMMARY>
       <BODY>
         <SUBSECTION title="Properties and methods">
@@ -830,7 +838,7 @@
     </STYLEPOINT>
 
     <STYLEPOINT title="Code formatting">
-      <SUMMARY>Expand for more info.</SUMMARY>
+      <SUMMARY>Expand for more information.</SUMMARY>
       <BODY>
         <p>We follow the <a href="cppguide.xml#Formatting">C++ formatting
           rules</a> in spirit, with the following additional clarifications.</p>
@@ -943,19 +951,29 @@
               // ...
             }
           </CODE_SNIPPET>
+          <p>When the function call is itself indented, you're free to start the
+          4-space indent relative to the beginning of the original statement
+          or relative to the beginning of the current function call.
+          The following are all acceptable indentation styles.</p>
+          <CODE_SNIPPET>
+            if (veryLongFunctionNameA(
+                    veryLongArgumentName) ||
+                veryLongFunctionNameB(
+                veryLongArgumentName)) {
+              veryLongFunctionNameC(veryLongFunctionNameD(
+                  veryLongFunctioNameE(
+                      veryLongFunctionNameF)));
+            }
+          </CODE_SNIPPET>
         </SUBSECTION>
         <SUBSECTION title="Passing Anonymous Functions">
           <p>When declaring an anonymous function in the list of arguments for
             a function call, the body of the function is indented two spaces
-            from the left edge of the function call or the statement, not two
-            spaces from the left edge of the function keyword. This is to make
-            the body of the anonymous function easier to read (i.e. not be all
-            squished up into the right half of the screen).</p>
+            from the left edge of the statement, or two spaces from the left
+            edge of the function keyword. This is to make the body of the
+            anonymous function easier to read (i.e. not be all squished up into
+            the right half of the screen).</p>
           <CODE_SNIPPET>
-            var names = items.map(function(item) {
-                                    return item.name;
-                                  });
-
             prefix.something.reallyLongFunctionName('whatever', function(a1, a2) {
               if (a1.equals(a2)) {
                 someOtherLongFunctionName(a1);
@@ -963,6 +981,12 @@
                 andNowForSomethingCompletelyDifferent(a2.parrot);
               }
             });
+
+            var names = prefix.something.myExcellentMapFunction(
+                verboselyNamedCollectionOfItems,
+                function(item) {
+                  return item.name;
+                });
           </CODE_SNIPPET>
         </SUBSECTION>
         <SUBSECTION title="More Indentation">
@@ -1063,7 +1087,12 @@
         <p>We recommend the use of the JSDoc annotations <code>@private</code> and
           <code>@protected</code> to indicate visibility levels for classes,
           functions, and properties.</p>
-        
+        <p>The --jscomp_warning=visibility compiler flag turns on compiler
+          warnings for visibility violations. See
+          <a href="http://code.google.com/p/closure-compiler/wiki/Warnings">
+            Closure Compiler
+          Warnings</a>.
+        </p>
         <p><code>@private</code> global variables and functions are only
           accessible to code in the same file.</p>
         <p>Constructors marked <code>@private</code> may only be instantiated by
@@ -1302,6 +1331,18 @@
               </tr>
 
               <tr>
+                <td>Function <code>new</code> Type</td>
+                <td>
+                  <code>{function(new:goog.ui.Menu, string)}</code><br/>
+                  A constructor that takes one argument (a string), and
+                  creates a new instance of goog.ui.Menu when called
+                  with the 'new' keyword.
+                </td>
+                <td>Specifies the constructed type of a constructor.</td>
+                <td/>
+              </tr>
+
+              <tr>
                 <td>Variable arguments</td>
                 <td>
                   <code>{function(string, ...[number]): number}</code><br/>
@@ -1359,6 +1400,14 @@
                 <td>The ALL type</td>
                 <td><code>{*}</code></td>
                 <td>Indicates that the variable can take on any type.</td>
+                <td/>
+              </tr>
+
+              <tr>
+                <td>The UNKNOWN type</td>
+                <td><code>{?}</code></td>
+                <td>Indicates that the variable can take on any type,
+                    and the compiler should not type-check any uses of it.</td>
                 <td/>
               </tr>
             </tbody>
@@ -1900,10 +1949,10 @@
         </SUBSECTION>
 
         <SUBSECTION title="Method and Function Comments">
-          <p>A description must be provided along with parameters.  Use full
-            sentences. Method descriptions should start with a sentence written
-            in the third person declarative voice.</p>
-
+          <p>A description must be provided along with parameters.
+             When appropriate or necessary, use full sentences. Method
+             descriptions should start with a sentence written in the third
+             person declarative voice.</p>
           <CODE_SNIPPET>
             /**
              * Converts text to some completely different text.
@@ -2064,7 +2113,29 @@
           </CODE_SNIPPET>
         </SUBSECTION>
 
-        
+        <SUBSECTION title="Template types">
+          <a name="Template_types"/>
+          <p>The compiler has limited support for template types. It can only
+            infer the type of <tt>this</tt> inside an anonymous function
+            literal from the type of the <tt>this</tt> argument and whether the
+            <tt>this</tt> argument is missing.</p>
+
+          <CODE_SNIPPET>
+            /**
+             * @param {function(this:T, ...)} fn
+             * @param {T} thisObj
+             * @param {...*} var_args
+             * @template T
+             */
+            goog.bind = function(fn, thisObj, var_args) {
+            ...
+            };
+            // Possibly generates a missing property warning.
+            goog.bind(function() { this.someProperty; }, new SomeClass());
+            // Generates an undefined this warning.
+            goog.bind(function() { this.someProperty; });
+          </CODE_SNIPPET>
+        </SUBSECTION>
 
         <SUBSECTION title="JSDoc Tag Reference">
           <table border="1" style="border-collapse:collapse" cellpadding="4">
@@ -2096,7 +2167,10 @@
                 </td>
                 <td>
                   Used with method, function and constructor calls to document
-                  the arguments of a function.
+                  the arguments of a function.<p/>
+
+                  Type names must be enclosed in curly braces. If the type
+                  is omitted, the compiler will not type-check the parameter.
                 </td>
                 <td>Fully supported.</td>
               </tr>
@@ -2121,7 +2195,10 @@
                   type.  When writing descriptions for boolean parameters,
                   prefer "Whether the component is visible" to "True if the
                   component is visible, false otherwise". If there is no return
-                  value, do not use an <code>@return</code> tag.
+                  value, do not use an <code>@return</code> tag.<p/>
+
+                  Type names must be enclosed in curly braces. If the type
+                  is omitted, the compiler will not type-check the return value.
                 </td>
                 <td>Fully supported.</td>
               </tr>
@@ -2757,7 +2834,28 @@
                 <td>Yes</td>
               </tr>
 
-              
+              <tr>
+                <td><a name="tag-template">@template</a></td>
+                <td>
+                  <tt>@template</tt>
+                  <p><i>For example:</i></p>
+                  <CODE_SNIPPET>
+                    /**
+                     * @param {function(this:T, ...)} fn
+                     * @param {T} thisObj
+                     * @param {...*} var_args
+                     * @template T
+                     */
+                    goog.bind = function(fn, thisObj, var_args) {
+                    ...
+                    };
+                  </CODE_SNIPPET>
+                </td>
+                <td>
+                  This annotation can be used to declare a template typename.
+                </td>
+                <td>Yes with <a href="#Template_types">limitations.</a></td>
+              </tr>
 
               <tr>
                 <td><a name="tag-externs">@externs</a></td>
@@ -3155,7 +3253,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.11
+    Revision 2.20
   </p>
 
   

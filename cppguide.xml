@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.180
+Revision 3.188
 </p>
 
 
@@ -161,7 +161,7 @@ Tashana Landray
         header files.
       </p>
       <p>
-        You can significantly minimize the number of header files you
+        You can significantly reduce the number of header files you
         need to include in your own header files by using forward
         declarations.  For example, if your header file uses the
         <code>File</code> class in ways that do not require access to
@@ -355,7 +355,7 @@ Tashana Landray
       <p>
         
         All of a project's header files should be
-        listed as descentants of the project's source directory
+        listed as descendants of the project's source directory
         without use of UNIX directory shortcuts <code>.</code> (the current
         directory) or <code>..</code> (the parent directory).  For
         example,
@@ -367,8 +367,8 @@ Tashana Landray
         #include "base/logging.h"
       </CODE_SNIPPET>
       <p>
-        In <code><var>dir/foo</var>.cc</code>, whose main purpose is
-        to implement or test the stuff in
+        In <code><var>dir/foo</var>.cc</code> or <code><var>dir/foo_test</var>.cc</code>,
+	whose main purpose is to implement or test the stuff in
         <code><var>dir2/foo2</var>.h</code>, order your includes as
         follows:
       </p>
@@ -1464,34 +1464,46 @@ Tashana Landray
     <SUMMARY>
       If you actually need pointer semantics, <code>scoped_ptr</code>
       is great.  You should only use <code>std::tr1::shared_ptr</code>
-      under very specific conditions, such as when objects need to be
-      held by STL containers.  You should never use <code>auto_ptr</code>.
+      with a non-const referent when it is truly necessary to share ownership
+      of an object (e.g. inside an STL container). You should never use
+      <code>auto_ptr</code>.
     </SUMMARY>
     <BODY>
-      <p>
-        "Smart" pointers are objects that act like pointers but have
-        added semantics.  When a <code>scoped_ptr</code> is
-        destroyed, for instance, it deletes the object it's pointing
-        to.  <code>shared_ptr</code> is the same way, but implements
-        reference-counting so only the last pointer to an object
-        deletes it.
-      </p>
-      <p>
-        Generally speaking, we prefer that we design code with clear
-        object ownership.  The clearest object ownership is obtained by
-        using an object directly as a field or local variable, without
-        using pointers at all.  On the other extreme, by their very definition,
-        reference counted pointers are owned by nobody.  The problem with
-        this design is that it is easy to create circular references or other
-        strange conditions that cause an object to never be deleted.
-        It is also slow to perform atomic operations every time a value is
-        copied or assigned.
-      </p>
-      <p>
-        Although they are not recommended, reference counted pointers are
-        sometimes the simplest and most elegant way to solve a problem.
-        
-      </p>
+      <DEFINITION>
+        "Smart" pointers are objects that act like pointers, but automate
+        management of the underlying memory. 
+      </DEFINITION>
+      <PROS>
+        Smart pointers are extremely useful for preventing memory leaks, and
+        are essential for writing exception-safe code. They also formalize
+        and document the ownership of dynamically allocated memory.
+      </PROS>
+      <CONS>
+        We prefer designs in which objects have single, fixed owners. Smart
+        pointers which enable sharing or transfer of ownership can act as a
+        tempting alternative to a careful design of ownership semantics,
+        leading to confusing code and even bugs in which memory is never
+        deleted. The semantics of smart pointers (especially
+        <code>auto_ptr</code>) can be nonobvious and confusing. The
+        exception-safety benefits of smart pointers are not decisive, since
+        we do not allow exceptions.
+      </CONS>
+      <DECISION>
+        <dl>
+          <dt><code>scoped_ptr</code></dt>
+          <dd>Straightforward and risk-free. Use wherever appropriate.</dd>
+          <dt><code>auto_ptr</code></dt>
+          <dd>Confusing and bug-prone ownership-transfer semantics. Do not use.
+            </dd>
+          <dt><code>shared_ptr</code></dt>
+          <dd>
+          Safe with const referents (i.e. <code>shared_ptr&lt;const
+          T&gt;</code>). Reference-counted pointers with non-const referents
+          can occasionally be the best design, but try to rewrite with single
+          owners where possible. 
+          </dd>
+        </dl>
+      </DECISION>
     </BODY>
   </STYLEPOINT>
 
@@ -3456,14 +3468,20 @@ Tashana Landray
     <BODY>
       <p>
         <code>TODO</code>s should include the string <code>TODO</code> in
-        all caps, followed by your
+        all caps, followed by the
         
         name, e-mail address, or other
         identifier
-        in parentheses.  A colon is optional.  The main purpose is to have
-        a consistent <code>TODO</code> format searchable by the person
-        adding the comment (who can provide more details upon request).  A
-        <code>TODO</code> is not a commitment to provide the fix yourself.
+        of the person who can best provide context about the problem
+        referenced by the <code>TODO</code>.  A colon is optional.  The main
+        purpose is to have a consistent <code>TODO</code> format that can be
+        searched to find the person who can provide more details upon request.
+        A <code>TODO</code> is not a commitment that the person referenced
+        will fix the problem.  Thus when you create a <code>TODO</code>, it is
+        almost always your
+        
+        name
+        that is given.
       </p>
       
       <CODE_SNIPPET>
@@ -4105,12 +4123,12 @@ Tashana Landray
 
   <STYLEPOINT title="Preprocessor Directives">
     <SUMMARY>
-      Preprocessor directives should not be indented but should
-      instead start at the beginning of the line.
+      The hash mark that starts a preprocessor directive should
+      always be at the beginning of the line.
     </SUMMARY>
     <BODY>
       <p>
-        Even when pre-processor directives are within the body of
+        Even when preprocessor directives are within the body of
         indented code, the directives should start at the beginning of
         the line.
       </p>
@@ -4119,6 +4137,9 @@ Tashana Landray
           if (lopsided_score) {
         #if DISASTER_PENDING      // Correct -- Starts at beginning of line
             DropEverything();
+        # if NOTIFY               // OK but not required -- Spaces after #
+            NotifyClient();
+        # endif
         #endif
             BackToNormal();
           }
@@ -4529,7 +4550,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.180
+Revision 3.188
 </p>
 
 

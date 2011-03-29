@@ -100,7 +100,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.19
+    Revision 2.20
   </p>
   
   <address>
@@ -134,7 +134,7 @@
 <TR valign="top" class="">
 <TD><DIV class="toc_category"><A href="#Python_Style_Rules">Python Style Rules</A></DIV></TD>
 <TD><DIV class="toc_stylepoint">
-<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Semicolons">Semicolons</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Line_length">Line length</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Parentheses">Parentheses</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Indentation">Indentation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Blank_Lines">Blank Lines</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Whitespace">Whitespace</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Python_Interpreter">Python Interpreter</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Comments">Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Classes">Classes</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Strings">Strings</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#TODO_Comments">TODO Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports_formatting">Imports formatting</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Statements">Statements</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Access_Control">Access Control</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Naming">Naming</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Main">Main</A></SPAN> </DIV></TD>
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Semicolons">Semicolons</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Line_length">Line length</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Parentheses">Parentheses</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Indentation">Indentation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Blank_Lines">Blank Lines</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Whitespace">Whitespace</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Shebang_Line">Shebang Line</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Comments">Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Classes">Classes</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Strings">Strings</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#TODO_Comments">TODO Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports_formatting">Imports formatting</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Statements">Statements</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Access_Control">Access Control</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Naming">Naming</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Main">Main</A></SPAN> </DIV></TD>
 </TR>
 </TABLE>
 </DIV>
@@ -1370,36 +1370,34 @@ from sound.effects import echo
     
       </DIV></DIV>
     </DIV>
-    <DIV class="">
-<H3><A name="Python_Interpreter" id="Python_Interpreter">Python Interpreter</A></H3>
-<SPAN class="link_button" id="link-Python_Interpreter__button" name="link-Python_Interpreter__button"><A href="?showone=Python_Interpreter#Python_Interpreter">
-          link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Python_Interpreter__body','Python_Interpreter__button')" name="Python_Interpreter__button" id="Python_Interpreter__button">▶</SPAN>
-      <DIV style="display:inline;" class="">
-        Modules should begin with 
-        
-        <code>#!/usr/bin/env python&lt;version&gt;</code>
-      </DIV>
-      <DIV class=""><DIV class="stylepoint_body" name="Python_Interpreter__body" id="Python_Interpreter__body" style="display: none">
-    <p>
-      Modules should begin with a "shebang" line specifying the Python
-      interpreter used to execute the program:
-    </p>
 
-<DIV class=""><PRE>
-<span class="external"></span>#!/usr/bin/env python2.4</PRE></DIV>
-    
-    <p>
-      Always use the most specific version you can use, e.g.,
-      <code>/usr/bin/python2.4</code>, not
-      <code>/usr/bin/python2</code>. This makes it easier to find
-      dependencies when upgrading to a different Python version
-      and also avoids confusion and breakage during use.  E.g., Does
-      <code>/usr/bin/python2</code> mean Python 2.0.1 or Python 2.3.0?
-    </p>
-    
+    <a name="Python_Interpreter"></a>
+    <DIV class="">
+<H3><A name="Shebang_Line" id="Shebang_Line">Shebang Line</A></H3>
+<SPAN class="link_button" id="link-Shebang_Line__button" name="link-Shebang_Line__button"><A href="?showone=Shebang_Line#Shebang_Line">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Shebang_Line__body','Shebang_Line__button')" name="Shebang_Line__button" id="Shebang_Line__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        All <code>.py</code> files (except <code>__init__.py</code> package
+        files) should begin with a
+        
+        <code>#!/usr/bin/python&lt;version&gt;</code>
+        shebang line.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Shebang_Line__body" id="Shebang_Line__body" style="display: none">
+        
+        <p>
+          Always use the most specific version that you can to ensure
+          compatibility. For examples, if your program uses a language feature
+          that that first appeared in Python 2.4, use
+          <code>/usr/bin/python2.4</code> (or something newer) instead of
+          <code>/usr/bin/python2</code>. Otherwise, your program might not
+          behave the way you expect it to, because the interpreter uses an
+          older version of the language.
+        </p>
       </DIV></DIV>
     </DIV>
+
     <DIV class="">
 <H3><A name="Comments" id="Comments">Comments</A></H3>
 <SPAN class="link_button" id="link-Comments__button" name="link-Comments__button"><A href="?showone=Comments#Comments">
@@ -2029,7 +2027,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.19
+Revision 2.20
 </p>
 
 
