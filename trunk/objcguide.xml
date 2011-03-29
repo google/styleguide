@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 2.21
+Revision 2.24
 </p>
 
 
@@ -169,7 +169,7 @@ Revision 2.21
   </CODE_SNIPPET>
  
   <p>
-    An example source file, demonstating the correct commenting and spacing
+    An example source file, demonstrating the correct commenting and spacing
     for the <code>@implementation</code> of an interface. It also includes the
     reference implementations for important methods like getters and setters,
     <code>init</code>, and <code>dealloc</code>.
@@ -228,6 +228,18 @@ Revision 2.21
    
     @end
   </CODE_SNIPPET>
+
+  <p>
+    Blank lines before and after <code>@interface</code>,
+    <code>@implementation</code>, and <code>@end</code> are optional. If your
+    <code>@interface</code> declares instance variables, as most do, any blank
+    line should come after the closing brace (<code>}</code>).
+  <p>
+  </p>
+    Unless an interface or implementation is very short, such as when declaring
+    a handful of private methods or a bridge class, adding blank lines usually
+    helps readability.
+  </p>
 
 </CATEGORY>
 
@@ -918,6 +930,21 @@ Revision 2.21
     </BODY>
   </STYLEPOINT>
 
+  <STYLEPOINT title="Overridden NSObject Method Placement">
+    <SUMMARY>
+      It is strongly recommended and typical practice to place overridden
+      methods of <code>NSObject</code> at the top of an
+      <code>@implementation</code>.
+    </SUMMARY>
+    <BODY>
+      This commonly applies (but is not limited) to the <code>init...</code>,
+      <code>copyWithZone:</code>, and <code>dealloc</code> methods.
+      <code>init...</code> methods should be grouped together, followed by
+      the <code>copyWithZone:</code> method, and finally the
+      <code>dealloc</code> method.
+    </BODY>
+  </STYLEPOINT>
+
   <STYLEPOINT title="Initialization">
     <SUMMARY>
       Don't initialize variables to <code>0</code> or <code>nil</code> in the
@@ -1368,7 +1395,9 @@ Revision 2.21
         <p>
           A property's associated instance variable's name must conform to the
           trailing _ requirement. The property's name should be the same as its
-          associated instance variable without the trailing _.
+          associated instance variable without the trailing _. The optional
+          space between the <code>@property</code> and the opening parenthesis
+          should be omitted, as seen in the examples.
         </p>
         <p>
           Use the @synthesize directive to rename the property correctly.
@@ -1572,7 +1601,7 @@ Revision 2.21
 <HR/>
 
 <p align="right">
-Revision 2.21
+Revision 2.24
 </p>
 
 
