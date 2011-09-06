@@ -1,7 +1,6 @@
 #!/usr/bin/python2.4
 #
-# Copyright (c) 2011 Google Inc. All rights reserved.
-# Copyright (c) 2009 Torch Mobile Inc.
+# Copyright (c) 2009 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -194,7 +193,6 @@ _ERROR_CATEGORIES = [
   'whitespace/braces',
   'whitespace/comma',
   'whitespace/comments',
-  'whitespace/declaration',
   'whitespace/end_of_line',
   'whitespace/ending_newline',
   'whitespace/indent',
@@ -1245,27 +1243,6 @@ def CheckInvalidIncrement(filename, clean_lines, linenum, error):
   if _RE_PATTERN_INVALID_INCREMENT.match(line):
     error(filename, linenum, 'runtime/invalid_increment', 5,
           'Changing pointer instead of value (or unused value of operator*).')
-
-
-# Matches Foo *foo declarations.
-_RE_PATTERN_POINTER_DECLARATION_WHITESPACE = re.compile(
-    r'\s*\w+(?<!\breturn|\bdelete)\s+(?P<pointer_operator>\*|\&)\w+')
-
-def CheckPointerDeclarationWhitespace(filename, clean_lines, linenum, error):
-  """Checks for Foo *foo declarations.
-
-  Args:
-    filename: The name of the current file.
-    clean_lines: A CleansedLines instance containing the file.
-    linenum: The number of the line to check.
-    error: The function to call with any errors found.
-  """
-  line = clean_lines.elided[linenum]
-  matched = _RE_PATTERN_POINTER_DECLARATION_WHITESPACE.match(line)
-  if matched:
-    error(filename, linenum, 'whitespace/declaration', 3,
-          'Declaration has space between type name and %s in %s' %
-          (matched.group('pointer_operator'), matched.group(0).strip()))
 
 
 class _ClassInfo(object):
@@ -2949,7 +2926,6 @@ def ProcessLine(filename, file_extension,
                                 class_state, error)
   CheckPosixThreading(filename, clean_lines, line, error)
   CheckInvalidIncrement(filename, clean_lines, line, error)
-  CheckPointerDeclarationWhitespace(filename, clean_lines, line, error)
 
 
 def ProcessFileData(filename, file_extension, lines, error):
