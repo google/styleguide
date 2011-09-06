@@ -1,8 +1,7 @@
 #!/usr/bin/python2.4
 # -*- coding: utf-8; -*-
 #
-# Copyright (c) 2011 Google Inc. All rights reserved.
-# Copyright (C) 2009 Torch Mobile Inc.
+# Copyright (c) 2009 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -349,7 +348,7 @@ class CpplintTest(CpplintTestBase):
         'Using C-style cast.  Use static_cast<int>(...) instead'
         '  [readability/casting] [4]')
     self.TestLint(
-        'int* a = (int *)NULL;',
+        'int *a = (int *)NULL;',
         'Using C-style cast.  Use reinterpret_cast<int *>(...) instead'
         '  [readability/casting] [4]')
 
@@ -1646,19 +1645,6 @@ class CpplintTest(CpplintTestBase):
                    'Missing space after ,  [whitespace/comma] [3]'])
     self.TestLint('f(a, /* name */ b);', '')
     self.TestLint('f(a, /* name */b);', '')
-
-  def testPointerDeclarationWhitespace(self):
-    self.TestLint('int* b;', '')
-    self.TestLint('int *b;',
-                  'Declaration has space between type name and * in int *b  '
-                  '[whitespace/declaration] [3]')
-    self.TestLint('return *b;', '')
-    self.TestLint('delete *b;', '')
-    self.TestLint('int& b;', '')
-    self.TestLint('int &b;',
-                  'Declaration has space between type name and & in int &b  '
-                  '[whitespace/declaration] [3]')
-    self.TestLint('return &b;', '')
 
   def testIndent(self):
     self.TestLint('static int noindent;', '')
