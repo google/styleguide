@@ -2918,7 +2918,7 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
 
 def ProcessLine(filename, file_extension,
                 clean_lines, line, include_state, function_state,
-                class_state, error):
+                class_state, error, extra_check_functions=[]):
   """Processes a single line in the file.
 
   Args:
@@ -2933,7 +2933,9 @@ def ProcessLine(filename, file_extension,
                  the current stack of nested class declarations being parsed.
     error: A callable to which errors are reported, which takes 4 arguments:
            filename, line number, error level, and message
-
+    extra_check_functions: An array of additional check functions that will be
+                           run on each source line. Each function takes 4
+                           arguments: filename, clean_lines, line, error
   """
   raw_lines = clean_lines.raw_lines
   ParseNolintSuppressions(filename, raw_lines[line], line, error)
@@ -2946,9 +2948,11 @@ def ProcessLine(filename, file_extension,
                                 class_state, error)
   CheckPosixThreading(filename, clean_lines, line, error)
   CheckInvalidIncrement(filename, clean_lines, line, error)
+  for check_fn in extra_check_functions:
+    check_fn(filename, clean_lines, line, error)
 
-
-def ProcessFileData(filename, file_extension, lines, error):
+def ProcessFileData(filename, file_extension, lines, error,
+                    extra_check_functions=[]):
   """Performs lint checks and reports any errors to the given error function.
 
   Args:
@@ -2957,6 +2961,10 @@ def ProcessFileData(filename, file_extension, lines, error):
     lines: An array of strings, each representing a line of the file, with the
            last element being empty if the file is termined with a newline.
     error: A callable to which errors are reported, which takes 4 arguments:
+           filename, line number, error level, and message
+    extra_check_functions: An array of additional check functions that will be
+                           run on each source line. Each function takes 4
+                           arguments: filename, clean_lines, line, error
   """
   lines = (['// marker so line numbers and indices both start at 1'] + lines +
            ['// marker so line numbers end in a known way'])
@@ -2976,7 +2984,8 @@ def ProcessFileData(filename, file_extension, lines, error):
   clean_lines = CleansedLines(lines)
   for line in xrange(clean_lines.NumLines()):
     ProcessLine(filename, file_extension, clean_lines, line,
-                include_state, function_state, class_state, error)
+                include_state, function_state, class_state, error,
+                extra_check_functions)
   class_state.CheckFinished(filename, error)
 
   CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error)
@@ -2987,7 +2996,7 @@ def ProcessFileData(filename, file_extension, lines, error):
 
   CheckForNewlineAtEOF(filename, lines, error)
 
-def ProcessFile(filename, vlevel):
+def ProcessFile(filename, vlevel, extra_check_functions=[]):
   """Does google-lint on a single file.
 
   Args:
@@ -2995,6 +3004,10 @@ def ProcessFile(filename, vlevel):
 
     vlevel: The level of errors to report.  Every error of confidence
     >= verbose_level will be reported.  0 is a good default.
+
+    extra_check_functions: An array of additional check functions that will be
+                           run on each source line. Each function takes 4
+                           arguments: filename, clean_lines, line, error
   """
 
   _SetVerboseLevel(vlevel)
@@ -3039,7 +3052,8 @@ def ProcessFile(filename, vlevel):
       and file_extension != 'cpp'):
     sys.stderr.write('Ignoring %s; not a .cc or .h file\n' % filename)
   else:
-    ProcessFileData(filename, file_extension, lines, Error)
+    ProcessFileData(filename, file_extension, lines, Error,
+                    extra_check_functions)
     if carriage_return_found and os.linesep != '\r\n':
       # Use 0 for linenum since outputing only one error for potentially
       # several lines.
