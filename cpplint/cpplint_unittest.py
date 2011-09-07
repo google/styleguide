@@ -294,6 +294,13 @@ class CpplintTest(CpplintTestBase):
     self.TestLint(
         '// Read https://g' + ('o' * 60) + 'gle.com/' ,
         '')
+    self.TestLint(
+        '// $Id: g' + ('o' * 80) + 'gle.cc#1 $',
+        '')
+    self.TestLint(
+        '// $Id: g' + ('o' * 80) + 'gle.cc#1',
+        'Lines should be <= 80 characters long'
+        '  [whitespace/line_length] [2]')
 
   # Test error suppression annotations.
   def testErrorSuppression(self):
@@ -488,6 +495,16 @@ class CpplintTest(CpplintTestBase):
         '')
     self.TestLint(
         'MOCK_CONST_METHOD2_T(method, double(float, float));',
+        '')
+
+  # Like gMock method definitions, MockCallback instantiations look very similar
+  # to bad casts.
+  def testMockCallback(self):
+    self.TestLint(
+        'MockCallback<bool(int)>',
+        '')
+    self.TestLint(
+        'MockCallback<int(float, char)>',
         '')
 
   # Test sizeof(type) cases.
@@ -737,7 +754,7 @@ class CpplintTest(CpplintTestBase):
     self.assertEquals((False, ''), f('a.cc', 'b.h'))
 
   def testCleanseLine(self):
-    self.assertEquals('int foo = 0;  ',
+    self.assertEquals('int foo = 0;',
                       cpplint.CleanseComments('int foo = 0;  // danger!'))
     self.assertEquals('int o = 0;',
                       cpplint.CleanseComments('int /* foo */ o = 0;'))
@@ -1288,7 +1305,7 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('void foo(const typename tm& tm);', '')
     # Returning an address of something is not prohibited.
     self.TestLint('return &something;', '')
-    self.TestLint('if (condition) {return &something;}', '')
+    self.TestLint('if (condition) {return &something; }', '')
     self.TestLint('if (condition) return &something;', '')
     self.TestLint('if (condition) address = &something;', '')
     self.TestLint('if (condition) result = lhs&rhs;', '')
@@ -1317,11 +1334,29 @@ class CpplintTest(CpplintTestBase):
 
   def testSpacingForFncall(self):
     self.TestLint('if (foo) {', '')
-    self.TestLint('for (foo;bar;baz) {', '')
+    self.TestLint('for (foo; bar; baz) {', '')
+    self.TestLint('for (;;) {', '')
+    # Test that there is no warning when increment statement is empty.
+    self.TestLint('for (foo; baz;) {', '')
+    self.TestLint('for (foo;bar;baz) {', 'Missing space after ;'
+                  '  [whitespace/semicolon] [3]')
+    # we don't warn about this semicolon, at least for now
+    self.TestLint('if (condition) {return &something; }',
+                  '')
+    # seen in some macros
+    self.TestLint('DoSth();\\', '')
+    # Test that there is no warning about semicolon here.
+    self.TestLint('abc;// this is abc',
+                  'At least two spaces is best between code'
+                  ' and comments  [whitespace/comments] [2]')
     self.TestLint('while (foo) {', '')
     self.TestLint('switch (foo) {', '')
     self.TestLint('foo( bar)', 'Extra space after ( in function call'
                   '  [whitespace/parens] [4]')
+    self.TestLint('foo(  // comment', '')
+    self.TestLint('foo( // comment',
+                  'At least two spaces is best between code'
+                  ' and comments  [whitespace/comments] [2]')
     self.TestLint('foobar( \\', '')
     self.TestLint('foobar(     \\', '')
     self.TestLint('( a + b)', 'Extra space after ('
@@ -2204,22 +2239,26 @@ class CleansedLinesTest(unittest.TestCase):
     lines = ['Line 1',
              'Line 2',
              'Line 3 // Comment test',
-             'Line 4 "foo"']
+             'Line 4 /* Comment test */',
+             'Line 5 "foo"']
+
 
     clean_lines = cpplint.CleansedLines(lines)
     self.assertEquals(lines, clean_lines.raw_lines)
-    self.assertEquals(4, clean_lines.NumLines())
+    self.assertEquals(5, clean_lines.NumLines())
 
     self.assertEquals(['Line 1',
                        'Line 2',
-                       'Line 3 ',
-                       'Line 4 "foo"'],
+                       'Line 3',
+                       'Line 4',
+                       'Line 5 "foo"'],
                       clean_lines.lines)
 
     self.assertEquals(['Line 1',
                        'Line 2',
-                       'Line 3 ',
-                       'Line 4 ""'],
+                       'Line 3',
+                       'Line 4',
+                       'Line 5 ""'],
                       clean_lines.elided)
 
   def testInitEmpty(self):
@@ -2800,6 +2839,28 @@ class NoNonVirtualDestructorsTest(CpplintTestBase):
   def testNoWarnWhenDerived(self):
     self.TestMultiLineLint(
         '''class Foo : public Goo {
+             virtual void foo();
+           };''',
+        '')
+
+  def testNoDestructorWhenVirtualNeededClassDecorated(self):
+    self.TestMultiLineLintRE(
+        '''class LOCKABLE API Foo {
+             virtual void foo();
+           };''',
+        'The class Foo probably needs a virtual destructor')
+
+  def testDestructorNonVirtualWhenVirtualNeededClassDecorated(self):
+    self.TestMultiLineLintRE(
+        '''class LOCKABLE API Foo {
+             ~Foo();
+             virtual void foo();
+           };''',
+        'The class Foo probably needs a virtual destructor')
+
+  def testNoWarnWhenDerivedClassDecorated(self):
+    self.TestMultiLineLint(
+        '''class LOCKABLE API Foo : public Goo {
              virtual void foo();
            };''',
         '')

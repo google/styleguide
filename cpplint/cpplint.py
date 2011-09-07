@@ -235,11 +235,11 @@ _CPP_HEADERS = frozenset([
     'cstdio', 'cstdlib', 'cstring', 'ctime', 'cwchar', 'cwctype',
     'defalloc.h', 'deque.h', 'editbuf.h', 'exception', 'fstream',
     'fstream.h', 'hashtable.h', 'heap.h', 'indstream.h', 'iomanip',
-    'iomanip.h', 'ios', 'iosfwd', 'iostream', 'iostream.h', 'istream.h',
-    'iterator.h', 'limits', 'map.h', 'multimap.h', 'multiset.h',
-    'numeric', 'ostream.h', 'parsestream.h', 'pfstream.h', 'PlotFile.h',
-    'procbuf.h', 'pthread_alloc.h', 'rope', 'rope.h', 'ropeimpl.h',
-    'SFile.h', 'slist', 'slist.h', 'stack.h', 'stdexcept',
+    'iomanip.h', 'ios', 'iosfwd', 'iostream', 'iostream.h', 'istream',
+    'istream.h', 'iterator.h', 'limits', 'map.h', 'multimap.h', 'multiset.h',
+    'numeric', 'ostream', 'ostream.h', 'parsestream.h', 'pfstream.h',
+    'PlotFile.h', 'procbuf.h', 'pthread_alloc.h', 'rope', 'rope.h',
+    'ropeimpl.h', 'SFile.h', 'slist', 'slist.h', 'stack.h', 'stdexcept',
     'stdiostream.h', 'streambuf.h', 'stream.h', 'strfile.h', 'string',
     'strstream', 'strstream.h', 'tempbuf.h', 'tree.h', 'typeinfo', 'valarray',
     ])
@@ -913,7 +913,7 @@ def CleanseComments(line):
   """
   commentpos = line.find('//')
   if commentpos != -1 and not IsCppString(line[:commentpos]):
-    line = line[:commentpos]
+    line = line[:commentpos].rstrip()
   # get rid of /* ... */
   return _RE_PATTERN_CLEANSE_LINE_C_COMMENTS.sub('', line)
 
@@ -1378,11 +1378,14 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
   # style guidelines, but it seems to perform well enough in testing
   # to be a worthwhile addition to the checks.
   classinfo_stack = class_state.classinfo_stack
-  # Look for a class declaration
+  # Look for a class declaration. The regexp accounts for decorated classes
+  # such as in:
+  # class LOCKABLE API Object {
+  # };
   class_decl_match = Match(
-      r'\s*(template\s*<[\w\s<>,:]*>\s*)?(class|struct)\s+(\w+(::\w+)*)', line)
+      r'\s*(template\s*<[\w\s<>,:]*>\s*)?(class|struct)\s+([A-Z_]+\s+)*(\w+(::\w+)*)', line)
   if class_decl_match:
-    classinfo_stack.append(_ClassInfo(class_decl_match.group(3), linenum))
+    classinfo_stack.append(_ClassInfo(class_decl_match.group(4), linenum))
 
   # Everything else in this function uses the top of the stack if it's
   # not empty.
@@ -1824,6 +1827,14 @@ def CheckSpacing(filename, clean_lines, linenum, error):
     error(filename, linenum, 'whitespace/comma', 3,
           'Missing space after ,')
 
+  # You should always have a space after a semicolon
+  # except for few corner cases
+  # TODO(unknown): clarify if 'if (1) { return 1;}' is requires one more
+  # space after ;
+  if Search(r';[^\s};\\)/]', line):
+    error(filename, linenum, 'whitespace/semicolon', 3,
+          'Missing space after ;')
+
   # Next we will look for issues with function calls.
   CheckSpacingForFunctionCall(filename, line, linenum, error)
 
@@ -2119,8 +2130,12 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, error):
   #
   # URLs can be long too.  It's possible to split these, but it makes them
   # harder to cut&paste.
+  #
+  # The "$Id:...$" comment may also get very long without it being the
+  # developers fault.
   if (not line.startswith('#include') and not is_header_guard and
-      not Match(r'^\s*//.*http(s?)://\S*$', line)):
+      not Match(r'^\s*//.*http(s?)://\S*$', line) and
+      not Match(r'^// \$Id:.*#[0-9]+ \$$', line)):
     line_width = GetLineWidth(line)
     if line_width > 100:
       error(filename, linenum, 'whitespace/line_length', 4,
@@ -2402,9 +2417,12 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
   if match:
     # gMock methods are defined using some variant of MOCK_METHODx(name, type)
     # where type may be float(), int(string), etc.  Without context they are
-    # virtually indistinguishable from int(x) casts.
+    # virtually indistinguishable from int(x) casts. Likewise, gMock's
+    # MockCallback takes a template parameter of the form return_type(arg_type),
+    # which looks much like the cast we're trying to detect.
     if (match.group(1) is None and  # If new operator, then this isn't a cast
-        not Match(r'^\s*MOCK_(CONST_)?METHOD\d+(_T)?\(', line)):
+        not (Match(r'^\s*MOCK_(CONST_)?METHOD\d+(_T)?\(', line) or
+             Match(r'^\s*MockCallback<.*>', line))):
       error(filename, linenum, 'readability/casting', 4,
             'Using deprecated casting style.  '
             'Use static_cast<%s>(...) instead' %
@@ -2634,15 +2652,17 @@ def CheckCStyleCast(filename, linenum, line, raw_line, cast_type, pattern,
   # eg, void foo(int); or void foo(int) const;
   # The equals check is for function pointer assignment.
   # eg, void *(*foo)(int) = ...
+  # The > is for MockCallback<...> ...
   #
   # Right now, this will only catch cases where there's a single argument, and
   # it's unnamed.  It should probably be expanded to check for multiple
   # arguments with some unnamed.
-  function_match = Match(r'\s*(\)|=|(const)?\s*(;|\{|throw\(\)))', remainder)
+  function_match = Match(r'\s*(\)|=|(const)?\s*(;|\{|throw\(\)|>))', remainder)
   if function_match:
     if (not function_match.group(3) or
         function_match.group(3) == ';' or
-        raw_line.find('/*') < 0):
+        ('MockCallback<' not in raw_line and
+         '/*' not in raw_line)):
       error(filename, linenum, 'readability/function', 3,
             'All parameters should be named in a function')
     return
