@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.188
+Revision 3.199
 </p>
 
 
@@ -209,7 +209,6 @@ Tashana Landray
         definitions of the classes they use, and usually have to
         include several header files.
       </p>
-      
       <SUBSECTION title="Note:">
         If you use a symbol <code>Foo</code> in your source file, you
         should bring in a definition for <code>Foo</code> yourself,
@@ -383,11 +382,13 @@ Tashana Landray
              <code>.h</code> files.</li>
       </ol>
       <p>
-        The preferred ordering reduces hidden dependencies.  We want
-        every header file to be compilable on its own.  The easiest
-        way to achieve this is to make sure that every one of them is
-        the first <code>.h</code> file <code>#include</code>d in some
-        <code>.cc</code>.  
+        With the preferred ordering, if <code><var>dir/foo2</var>.h</code>
+        omits any necessary includes, the build of
+        <code><var>dir/foo</var>.cc</code> or
+        <code><var>dir/foo</var>_test.cc</code> will break.
+        Thus, this rule ensures that build breaks show up first
+        for the people working on these files, not for innocent people
+        in other packages.
       </p>
       <p>
         <code><var>dir/foo</var>.cc</code> and
@@ -412,7 +413,6 @@ Tashana Landray
 
         #include &lt;sys/types.h&gt;
         #include &lt;unistd.h&gt;
-
         #include &lt;hash_map&gt;
         #include &lt;vector&gt;
 
@@ -468,6 +468,7 @@ Tashana Landray
       <DECISION>
         <p>
           Use namespaces according to the policy described below.
+          Terminate namespaces with comments as shown in the given examples.
         </p>
 
         <SUBSECTION title="Unnamed Namespaces">
@@ -490,9 +491,7 @@ Tashana Landray
                    associated with a particular class may be declared
                    in that class as types, static data members or
                    static member functions rather than as members of
-                   an unnamed namespace.  Terminate the unnamed
-                   namespace as shown, with a comment <code>//
-                   namespace</code>.
+                   an unnamed namespace.
                  </p>
                  </li>
             <li> Do not use unnamed namespaces in <code>.h</code>
@@ -1239,7 +1238,7 @@ Tashana Landray
           An interface class can never be directly instantiated
           because of the pure virtual method(s) it declares.  To make
           sure all implementations of the interface can be destroyed
-          correctly, they must also declare a virtual destructor (in
+          correctly, the interface must also declare a virtual destructor (in
           an exception to the first rule, this should not be pure).  See
           Stroustrup, <cite>The C++ Programming Language</cite>, 3rd
           edition, section 12.4 for details.
@@ -1574,14 +1573,24 @@ Tashana Landray
           non-<code>const</code> reference parameters.
         </p>
         <p>
-          One case when you might want an input parameter to be a
-          <code>const</code> pointer is if you want to emphasize that the
-          argument is not copied, so it must exist for the lifetime of the
-          object; it is usually best to document this in comments as
-          well.  STL adapters such as <code>bind2nd</code> and
-          <code>mem_fun</code> do not permit reference parameters, so
-          you must declare functions with pointer parameters in these
-          cases, too.
+
+         However, there are some instances where using <code>const T*</code>
+         is preferable to <code>const T&amp;</code> for input parameters. For
+         example:
+
+         You want to pass in NULL.
+
+         The function saves a pointer or reference to the input.
+         
+
+         Remember that most of the time input parameters are going to be
+         specified as <code>const T&amp;</code>.  Using <code>const T*</code>
+         instead communicates to the reader that the input is somehow treated
+         differently.  So if you choose <code>const T*</code> rather than
+         <code>const T&amp;</code>, do so for a concrete reason; otherwise it
+         will likely confuse readers by making them look for an explanation
+         that doesn't exist.
+
         </p>
       </DECISION>
     </BODY>
@@ -2606,28 +2615,29 @@ Tashana Landray
   </BODY>
   </STYLEPOINT>
 
-  <STYLEPOINT title="C++0x">
+  <STYLEPOINT title="C++11">
   <SUMMARY>
-    Use only approved libraries and language extensions from C++0x.
+    Use only approved libraries and language extensions from C++11 (formerly
+    known as C++0x).
     Currently, none are approved.
   </SUMMARY>
   <BODY>
     <DEFINITION>
-      C++0x is the next ISO C++ standard, currently in
-      <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2010/n3092.pdf">final
-      committee draft</a> form.  It contains
-      <a href="http://en.wikipedia.org/wiki/C%2B%2B0x">significant
+      C++11 is the latest ISO C++ standard.
+      It contains
+      <a href="http://en.wikipedia.org/wiki/C%2B%2B11">significant
       changes</a> both to the language and libraries.
+      
     </DEFINITION>
     <PROS>
-      We expect that C++0x will become the next standard, and eventually will
+      C++11 has become the official standard, and eventually will
       be supported by most C++ compilers.  It standardizes some common C++
       extensions that we use already, allows shorthands for some operations,
-      and has some safety improvements.
+      and has some performance and safety improvements.
     </PROS>
     <CONS>
       <p>
-        The C++0x standard is substantialy more complex than its predecessor
+        The C++11 standard is substantially more complex than its predecessor
         (1,300 pages versus 800 pages), and is
         unfamilar to many developers.  The long-term effects of some
         features on code readability and maintenance are unknown.  We cannot
@@ -2635,7 +2645,7 @@ Tashana Landray
         tools that may be of interest (gcc, icc, clang, Eclipse, etc.).
       </p>
       <p>
-        As with <a href="#Boost">Boost</a>, some C++0x extensions encourage
+        As with <a href="#Boost">Boost</a>, some C++11 extensions encourage
         coding practices that hamper readability&#8212;for example by removing
         checked redundancy (such as type names) that may be helpful to readers,
         or by encouraging template metaprogramming.  Other extensions
@@ -2645,9 +2655,12 @@ Tashana Landray
       </p>
     </CONS>
     <DECISION>
-      Use only C++0x libraries and language features that have been approved
+      Use only C++11 libraries and language features that have been approved
       for use.  Currently, no such features are approved.
       Features will be approved individually as appropriate.
+      Avoid writing code that is incompatible with C++11 (even though it
+      works in C++03).
+      
     </DECISION>
   </BODY>
   </STYLEPOINT>
@@ -3845,7 +3858,9 @@ Tashana Landray
       <CODE_SNIPPET>
         if (condition) {  // no spaces inside parentheses
           ...  // 2 space indent.
-        } else {  // The else goes on the same line as the closing brace.
+        } else if (...) {  // The else goes on the same line as the closing brace.
+          ...
+        } else {
           ...
         }
       </CODE_SNIPPET>
@@ -4069,7 +4084,7 @@ Tashana Landray
         the <code>&amp;&amp;</code> logical AND operators are at the
         end of the line.  This is more common in Google code, though
         wrapping all operators at the beginning of the line is also
-        allowed.  Feel free to insert extra parentheses judiciously,
+        allowed.  Feel free to insert extra parentheses judiciously
         because they can be very helpful in increasing readability
         when used appropriately.  Also note that you should always use the
         punctuation operators, such as <code>&amp;&amp;</code> and
@@ -4550,7 +4565,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.188
+Revision 3.199
 </p>
 
 

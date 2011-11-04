@@ -30,28 +30,33 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
 
               <SCRIPT language="javascript" type="text/javascript">
 
-                function ShowHideByName(bodyName, buttonName) {
-	          var bodyElements;
-                  var linkElement;
+                function GetElementsByName(name) {
+                  // Workaround a bug on old versions of opera.
                   if (document.getElementsByName) {
-                    bodyElements = document.getElementsByName(bodyName);
-                    linkElement = document.getElementsByName('link-' + buttonName)[0];
+                    return document.getElementsByName(name);
                   } else {
-                    bodyElements = [document.getElementById(bodyName)];
-                    linkElement = document.getElementById('link-' + buttonName);
+                    return [document.getElementById(name)];
                   }
+                }
+
+                /**
+                 * @param {string} namePrefix The prefix of the body name.
+                 * @param {function(boolean): boolean} getVisibility Computes the new
+                 *     visibility state, given the current one.
+                 */
+                function ChangeVisibility(namePrefix, getVisibility) {
+                  var bodyName = namePrefix + '<xsl:value-of select="$body_suffix"/>';
+                  var buttonName = namePrefix + '<xsl:value-of select="$button_suffix"/>';
+                  var bodyElements = GetElementsByName(bodyName);
+                  var linkElement = GetElementsByName('link-' + buttonName)[0];
                   if (bodyElements.length != 1) {
-                    alert("ShowHideByName() got the wrong number of bodyElements:  " + bodyElements.length);
+                    throw Error('ShowHideByName() got the wrong number of bodyElements:  ' + 
+                        bodyElements.length);
                   } else {
                     var bodyElement = bodyElements[0];
-                    var buttonElement;
-                    if (document.getElementsByName) {
-                      var buttonElements = document.getElementsByName(buttonName);
-                      buttonElement = buttonElements[0];
-                    } else {
-                      buttonElement = document.getElementById(buttonName);
-                    }
-                    if (bodyElement.style.display == "none" || bodyElement.style.display == "") {
+                    var buttonElement = GetElementsByName(buttonName)[0];
+                    var isVisible = bodyElement.style.display != "none";
+                    if (getVisibility(isVisible)) {
                       bodyElement.style.display = "inline";
                       linkElement.style.display = "block";
                       buttonElement.innerHTML = '<xsl:value-of select="$hide_button_text"/>';
@@ -63,14 +68,16 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
                   }
                 }
 
+                function ShowHideByName(namePrefix) {
+                  ChangeVisibility(namePrefix, function(old) { return !old; });
+                }
+
+                function ShowByName(namePrefix) {
+                  ChangeVisibility(namePrefix, function() { return true; });
+                }
+
                 function ShowHideAll() {
-                  var allButton;
-                  if (document.getElementsByName) {
-                    var allButtons = document.getElementsByName("show_hide_all_button");
-	            allButton = allButtons[0];
-                  } else {
-                    allButton = document.getElementById("show_hide_all_button");
-                  }
+                  var allButton = GetElementsByName("show_hide_all_button")[0];
                   if (allButton.innerHTML == '<xsl:value-of select="$hide_button_text"/>') {
                     allButton.innerHTML = '<xsl:value-of select="$show_button_text"/>';
                     SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '<xsl:value-of select="$show_button_text"/>');
@@ -96,27 +103,56 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
                 }
 
 
+                function EndsWith(str, suffix) {
+                  var l = str.length - suffix.length;
+                  return l >= 0 &amp;&amp; str.indexOf(suffix, l) == l;
+                }
+
+                function RefreshVisibilityFromHashParam() {
+                  var hashRegexp = new RegExp('#([^&amp;#]*)$');
+                  var hashMatch = hashRegexp.exec(window.location.href);
+                  var anchor = hashMatch &amp;&amp; GetElementsByName(hashMatch[1])[0];
+                  var node = anchor;
+                  var suffix = '<xsl:value-of select="$body_suffix"/>';
+                  while (node) {
+                    var id = node.id;
+                    var matched = id &amp;&amp; EndsWith(id, suffix);
+                    if (matched) {
+                      var len = id.length - suffix.length;
+                      ShowByName(matched.substring(0, len));
+                      if (anchor.scrollIntoView) {
+                        anchor.scrollIntoView();
+                      }
+                      
+                      return;
+                    }
+                    node = node.parentNode;
+                  }
+                }
+
+                window.onhashchange = RefreshVisibilityFromHashParam;
+
                 window.onload = function() {
                   // if the URL contains "?showall=y", expand the details of all children
-                  {
-                    var showHideAllRegex = new RegExp("[\\?&amp;](showall)=([^&amp;#]*)");
-                    var showHideAllValue = showHideAllRegex.exec(window.location.href);
-                    if (showHideAllValue != null) {
-                      if (showHideAllValue[2] == "y") {
-                        SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "inline", '<xsl:value-of select="$hide_button_text"/>');
-                      } else {
-                        SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '<xsl:value-of select="$show_button_text"/>');
-                      }
+                  var showHideAllRegex = new RegExp("[\\?&amp;](showall)=([^&amp;#]*)");
+                  var showHideAllValue = showHideAllRegex.exec(window.location.href);
+                  if (showHideAllValue != null) {
+                    if (showHideAllValue[2] == "y") {
+                      SetHiddenState(document.getElementsByTagName("body")[0].childNodes, 
+                          "inline", '<xsl:value-of select="$hide_button_text"/>');
+                    } else {
+                      SetHiddenState(document.getElementsByTagName("body")[0].childNodes, 
+                          "none", '<xsl:value-of select="$show_button_text"/>');
                     }
-                    var showOneRegex = new RegExp("[\\?&amp;](showone)=([^&amp;#]*)");
-                    var showOneValue = showOneRegex.exec(window.location.href);
-                    if (showOneValue != null) {
-                      var body_name = showOneValue[2] + '<xsl:value-of select="$body_suffix"/>';
-                      var button_name = showOneValue[2] + '<xsl:value-of select="$button_suffix"/>';
-                      ShowHideByName(body_name, button_name);
-                    }
-
                   }
+                  var showOneRegex = new RegExp("[\\?&amp;](showone)=([^&amp;#]*)");
+                  var showOneValue = showOneRegex.exec(window.location.href);
+                  if (showOneValue) {
+                    ShowHideByName(showOneValue[2]);
+                  }
+
+
+                  RefreshVisibilityFromHashParam();
                 }
               </SCRIPT>
           </HEAD>
@@ -214,9 +250,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
       </xsl:variable>
       <xsl:variable name="onclick_definition">
         <xsl:text>javascript:ShowHideByName('</xsl:text>
-        <xsl:value-of select="$stylepoint_name"/><xsl:value-of select="$body_suffix"/>
-        <xsl:text>','</xsl:text>
-        <xsl:value-of select="$buttonName"/>
+        <xsl:value-of select="$stylepoint_name"/>
         <xsl:text>')</xsl:text>
       </xsl:variable>
       <SPAN class="link_button" id="link-{$buttonName}" name="link-{$buttonName}">
