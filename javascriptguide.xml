@@ -3,7 +3,7 @@
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
     
-    Revision 2.27
+    Revision 2.28
   </p>
   
   <address>
@@ -345,7 +345,7 @@
         <p><code>eval()</code> makes for confusing semantics and is dangerous
           to use if the string being <code>eval()</code>'d contains user input.
           There's usually a better, more clear, safer way to write your code, so
-          its used is generally not permitted. However <code>eval</code> makes
+          its use is generally not permitted. However <code>eval</code> makes
           deserialization considerably easier than the non-<code>eval</code>
           alternatives, so its use is acceptable for this task (for example, to
           evaluate RPC responses).</p>
@@ -3194,7 +3194,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.27
+    Revision 2.28
   </p>
 
   
