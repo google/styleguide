@@ -136,7 +136,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.28
+    Revision 2.29
   </p>
   
   <address>
@@ -842,7 +842,7 @@ from sound.effects import echo
 
        <span class="external">  </span>def ___set_area(self, area):
          <span class="external">    </span>"""Indirect setter for 'area' property."""
-         <span class="external">    </span>self._SetArea(area)
+         <span class="external">    </span>self.__set_area(area)
 
        <span class="external">  </span>area = property(___get_area, ___set_area,
        <span class="external">  </span>                doc="""Gets or sets the area of the square.""")
@@ -2112,7 +2112,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.28
+Revision 2.29
 </p>
 
 
