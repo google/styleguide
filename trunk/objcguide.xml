@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 2.24
+Revision 2.36
 </p>
 
 
@@ -16,7 +16,7 @@ Revision 2.24
     Dave MacLachlan
   </address>
 </div>
- 
+
 <OVERVIEW>
 
 <CATEGORY title="Important Note">
@@ -102,7 +102,7 @@ Revision 2.24
     Code meant to be shared across different projects is a good candidate to
     be included in this repository.
   </p>
- 
+
   
 
   <p>
@@ -117,7 +117,7 @@ Revision 2.24
 </OVERVIEW>
 
 <CATEGORY title="Example">
- 
+
   <p>
     They say an example is worth a thousand words so let's start off with an
     example that should give you a feel for the style, spacing, naming, etc.
@@ -129,110 +129,111 @@ Revision 2.24
   </p>
 
 <CODE_SNIPPET>
-    //  GTMFoo.h
-    //  FooProject
+    //  Foo.h
+    //  AwesomeProject
     //
     //  Created by Greg Miller on 6/13/08.
     //  Copyright 2008 Google, Inc. All rights reserved.
     //
-   
+
     #import &lt;Foundation/Foundation.h&gt;
-   
+
     // A sample class demonstrating good Objective-C style. All interfaces,
     // categories, and protocols (read: all top-level declarations in a header)
     // MUST be commented. Comments must also be adjacent to the object they're
     // documenting.
     //
     // (no blank line between this comment and the interface)
-    @interface GTMFoo : NSObject {
+    @interface Foo : NSObject {
      @private
-      NSString *foo_;
       NSString *bar_;
+      NSString *bam_;
     }
-   
-    // Returns an autoreleased instance of GMFoo. See -initWithString: for details
-    // about the argument.
-    + (id)fooWithString:(NSString *)string;
-   
-    // Designated initializer. |string| will be copied and assigned to |foo_|.
-    - (id)initWithString:(NSString *)string;
-   
-    // Gets and sets the string for |foo_|.
-    - (NSString *)foo;
-    - (void)setFoo:(NSString *)newFoo;
-   
-    // Does some work on |blah| and returns YES if the work was completed
-    // successfuly, and NO otherwise.
-    - (BOOL)doWorkWithString:(NSString *)blah;
-   
+
+    // Returns an autoreleased instance of Foo. See -initWithBar: for details
+    // about |bar|.
+    + (id)fooWithBar:(NSString *)bar;
+
+    // Designated initializer. |bar| is a thing that represents a thing that
+    // does a thing.
+    - (id)initWithBar:(NSString *)bar;
+
+    // Gets and sets |bar_|.
+    - (NSString *)bar;
+    - (void)setBar:(NSString *)bar;
+
+    // Does some work with |blah| and returns YES if the work was completed
+    // successfully, and NO otherwise.
+    - (BOOL)doWorkWithBlah:(NSString *)blah;
+
     @end
   </CODE_SNIPPET>
- 
+
   <p>
     An example source file, demonstrating the correct commenting and spacing
     for the <code>@implementation</code> of an interface. It also includes the
     reference implementations for important methods like getters and setters,
     <code>init</code>, and <code>dealloc</code>.
   </p>
- 
+
   <CODE_SNIPPET>
     //
-    //  GTMFoo.m
-    //  FooProject
+    //  Foo.m
+    //  AwesomeProject
     //
     //  Created by Greg Miller on 6/13/08.
     //  Copyright 2008 Google, Inc. All rights reserved.
     //
-   
-    #import "GTMFoo.h"
-   
-   
-    @implementation GTMFoo
-   
-    + (id)fooWithString:(NSString *)string {
-      return [[[self alloc] initWithString:string] autorelease];
+
+    #import "Foo.h"
+
+
+    @implementation Foo
+
+    + (id)fooWithBar:(NSString *)bar {
+      return [[[self alloc] initWithBar:bar] autorelease];
     }
-   
+
     // Must always override super's designated initializer.
     - (id)init {
-      return [self initWithString:nil];
+      return [self initWithBar:nil];
     }
-   
-    - (id)initWithString:(NSString *)string {
+
+    - (id)initWithBar:(NSString *)bar {
       if ((self = [super init])) {
-        foo_ = [string copy];
-        bar_ = [[NSString alloc] initWithFormat:@"hi %d", 3];
+        bar_ = [bar copy];
+        bam_ = [[NSString alloc] initWithFormat:@"hi %d", 3];
       }
-      return self;  
+      return self;
     }
-   
+
     - (void)dealloc {
-      [foo_ release];
       [bar_ release];
+      [bam_ release];
       [super dealloc];
     }
-   
-    - (NSString *)foo {
-      return foo_;
+
+    - (NSString *)bar {
+      return bar_;
     }
-   
-    - (void)setFoo:(NSString *)newFoo {
-      [foo_ autorelease];
-      foo_ = [newFoo copy];  
+
+    - (void)setBar:(NSString *)bar {
+      [bar_ autorelease];
+      bar_ = [bar copy];
     }
-   
-    - (BOOL)doWorkWithString:(NSString *)blah {
+
+    - (BOOL)doWorkWithBlah:(NSString *)blah {
       // ...
       return NO;
     }
-   
+
     @end
   </CODE_SNIPPET>
 
   <p>
     Blank lines before and after <code>@interface</code>,
     <code>@implementation</code>, and <code>@end</code> are optional. If your
-    <code>@interface</code> declares instance variables, as most do, any blank
+    <code>@interface</code> declares instance variables, a blank
     line should come after the closing brace (<code>}</code>).
   <p>
   </p>
@@ -260,14 +261,19 @@ Revision 2.24
 
   <STYLEPOINT title="Line Length">
     <SUMMARY>
-      Each line of text in your code should be at most 80 characters long.
+      Each line of text in your code should try to be at most 80 characters
+      long.
     </SUMMARY>
     <BODY>
       <p>
-        Even though Objective-C tends to be a more verbose language than C++,
-        to aid in the interoperability with that guide, we have decided
-        to keep the limit at 80 columns as well. It's easier to live with
-        than you might expect.
+        Strive to keep your code within 80 columns. We realize that Objective C
+        is a verbose language and in some cases it may be more readable to
+        extend slightly beyond 80 columns, but this should definitely be the
+        exception and not commonplace.
+      </p>
+      <p>
+        If a reviewer asks that you reformat a line because they feel it can be
+        fit in 80 columns and still be readable, you should do so.
       </p>
       
       <p>
@@ -435,7 +441,7 @@ Revision 2.24
     <BODY>
       <p>
         This applies to class declarations, instance variables, and method
-        delcarations. For example:
+        declarations. For example:
       </p>
       <CODE_SNIPPET>
         @interface MyProtocoledClass : NSObject&lt;NSWindowDelegate&gt; {
@@ -444,6 +450,92 @@ Revision 2.24
         }
         - (void)setDelegate:(id&lt;MyFancyDelegate&gt;)aDelegate;
         @end
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Blocks">
+    <SUMMARY>
+      Blocks are preferred to the target-selector pattern when creating
+      callbacks, as it makes code easier to read. Code inside blocks should be
+      indented four spaces.
+    </SUMMARY>
+    <BODY>
+      <p>
+        There are several appropriate style rules, depending on how long the
+        block is:
+      </p>
+      <ul>
+        <li>If the block can fit on one line, no wrapping is necessary.</li>
+        <li>
+          If it has to wrap, the closing brace should line up with the first
+          character of the line on which the block is declared.
+        </li>
+        <li>Code within the block should be indented four spaces.</li>
+        <li>
+          If the block is large, e.g. more than 20 lines, it is recommended to
+          move it out-of-line into a local variable.
+        </li>
+        <li>
+          If the block takes no parameters, there are no spaces between the
+          characters <code>^{</code>. If the block takes parameters, there is no
+          space between the <code>^(</code> characters, but there is one space
+          between the <code>) {</code> characters.
+        </li>
+        <li>
+          Two space indents inside blocks are also allowed, but should only
+          be used when it's consistent with the rest of the project's code.
+        </li>
+      </ul>
+      <CODE_SNIPPET>
+        // The entire block fits on one line.
+        [operation setCompletionBlock:^{ [self onOperationDone]; }];
+
+        // The block can be put on a new line, indented four spaces, with the
+        // closing brace aligned with the first character of the line on which
+        // block was declared.
+        [operation setCompletionBlock:^{
+            [self.delegate newDataAvailable];
+        }];
+
+        // Using a block with a C API follows the same alignment and spacing
+        // rules as with Objective-C.
+        dispatch_async(fileIOQueue_, ^{
+            NSString* path = [self sessionFilePath];
+            if (path) {
+              // ...
+            }
+        });
+
+        // An example where the parameter wraps and the block declaration fits
+        // on the same line. Note the spacing of |^(SessionWindow *window) {|
+        // compared to |^{| above.
+        [[SessionService sharedService]
+            loadWindowWithCompletionBlock:^(SessionWindow *window) {
+                if (window) {
+                  [self windowDidLoad:window];
+                } else {
+                  [self errorLoadingWindow];
+                }
+            }];
+
+        // An example where the parameter wraps and the block declaration does
+        // not fit on the same line as the name.
+        [[SessionService sharedService]
+            loadWindowWithCompletionBlock:
+                ^(SessionWindow *window) {
+                    if (window) {
+                      [self windowDidLoad:window];
+                    } else {
+                      [self errorLoadingWindow];
+                    }
+                }];
+
+        // Large blocks can be declared out-of-line.
+        void (^largeBlock)(void) = ^{
+            // ...
+        };
+        [operationQueue_ addOperationWithBlock:largeBlock];
       </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
@@ -743,8 +835,9 @@ Revision 2.24
 
   <STYLEPOINT title="File Comments">
     <SUMMARY>
-      Start each file with a copyright notice, followed by a
-      description of the contents of the file.
+      Start each file with a basic description of the contents of the file,
+      followed by an author, and then followed by a copyright notice and/or
+      license boilerplate.
     </SUMMARY>
     <BODY>
       <SUBSECTION title="Legal Notice and Author Line">
@@ -753,10 +846,12 @@ Revision 2.24
         <p>
           Every file should contain the following items, in order:
           <ul>
+            <li>a basic description of the contents of the file</li>
+            <li>an author line</li>
             <li>a copyright statement (for example,
                 <code>Copyright 2008 Google Inc.</code>)</li>
-            <li>a license boilerplate.  Choose the appropriate boilerplate
-                for the license used by the project (for example,
+            <li>license boilerplate if neccessary. Choose the appropriate
+                boilerplate for the license used by the project (e.g.
                 Apache 2.0, BSD, LGPL, GPL)</li>
           </ul>
         </p>
@@ -838,42 +933,46 @@ Revision 2.24
     </SUMMARY>
     <BODY>
       <p>
-        Instance variable pointers to objects derived from NSObject are
-        presumed to be retained, and should be documented as <b>weak</b> if
-        they are not retained by the class. However, instance variables which
-        are labeled as IBOutlets are presumed to not be retained by the class,
-        and should be documented as <b>strong</b> if the class does retain
-        them.
+        Instance variables which are pointers to objects derived from NSObject
+        are presumed to be retained, and should be either commented as weak or
+        declared with the <b>__weak</b> lifetime qualifier when applicable.
+        Similarly, declared properties must specify a <b>weak</b> or
+        <b>assign</b> property attribute if they are not retained by the
+        class.  An exception is instance variables labeled as IBOutlets in Mac
+        software, which are presumed to not be retained.
       </p>
       <p>
         Where instance variables are pointers to CoreFoundation, C++, and
-        other non-Objective-C objects, they should always be documented in
-        comments as strong or weak. Be mindful that support for automatic C++
-        objects encapsulated in Objective-C objects is disabled by default, as
-        described <a href="http://chanson.livejournal.com/154253.html">here</a>.
+        other non-Objective-C objects, they should always be declared with
+        the __strong and __weak type modifiers to indicate which pointers are
+        and are not retained. CoreFoundation and other non-Objective-C object
+        pointers require explicit memory management, even when building for
+        automatic reference counting or garbage collection. When the __weak
+        type modifier is not allowed (e.g. C++ member variables when compiled
+        under clang), a comment should be used instead.
       </p>
       <p>
-        Examples of strong and weak documentation:
+        Be mindful that support for automatic C++ objects encapsulated in
+        Objective-C objects is disabled by default, as described <a href="http://chanson.livejournal.com/154253.html">here</a>.
+      </p>
+      <p>
+        Examples of strong and weak declarations:
         <CODE_SNIPPET>
           @interface MyDelegate : NSObject {
            @private
-            IBOutlet NSButton* okButton_;  // normal NSControl
-            IBOutlet NSMenu* myContextMenu_;  // manually-loaded menu (strong)
+            IBOutlet NSButton *okButton_;  // normal NSControl; implicitly weak on Mac only
 
             AnObjcObject* doohickey_;  // my doohickey
-            MyController* controller_;  // so we can send msgs back (weak, owns me)
+            __weak MyObjcParent *parent_;  // so we can send msgs back (owns me)
 
             // non-NSObject pointers...
-            CWackyCPPClass* wacky_;  // some cross-platform object (strong)
-            CFDictionaryRef* dict_;  // (strong)
+            __strong CWackyCPPClass *wacky_;  // some cross-platform object
+            __strong CFDictionaryRef *dict_;
           }
+          @property(strong, nonatomic) NSString *doohickey;
+          @property(weak, nonatomic) NSString *parent;
           @end
         </CODE_SNIPPET>
-        <dl>
-          <dt>strong</dt><dd>The object will be <code>retain</code>'d by this class</dd>
-          <dt>weak</dt><dd>The object will be <b>not</b> be <code>retain</code>'d by this class
-          (e.g. a delegate).</dd>
-        </dl>
       </p>
     </BODY>
   </STYLEPOINT>
@@ -1171,7 +1270,52 @@ Revision 2.24
     </BODY>
   </STYLEPOINT>
 
-  <STYLEPOINT title="dealloc should process instance variables in declaration                      order">
+  <STYLEPOINT title="Avoid Accessors During init and dealloc">
+    <SUMMARY>
+      Instance subclasses may be in an inconsistent state during
+      <code>init</code> and <code>dealloc</code> method execution, so code in
+      those methods should avoid invoking accessors.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Subclasses have not yet been initialized or have already deallocated
+        when <code>init</code> and <code>dealloc</code> methods execute, making
+        accessor methods potentially unreliable. Whenever practical, directly
+        assign to and release ivars in those methods rather than rely on
+        accessors.
+      </p>
+      <CODE_SNIPPET>
+        - (id)init {
+          self = [super init];
+          if (self) {
+            bar_ = [[NSMutableString alloc] init];  // good
+          }
+          return self;
+        }
+
+        - (void)dealloc {
+          [bar_ release];                           // good
+          [super dealloc];
+        }
+      </CODE_SNIPPET>
+      <BAD_CODE_SNIPPET>
+        - (id)init {
+          self = [super init];
+          if (self) {
+            self.bar = [NSMutableString string];  // avoid
+          }
+          return self;
+        }
+
+        - (void)dealloc {
+          self.bar = nil;                         // avoid
+          [super dealloc];
+        }
+      </BAD_CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Dealloc Instance Variables in Declaration                      Order">
     <SUMMARY>
       <code>dealloc</code> should process instance variables in the same order
       the <code>@interface</code> declares them, so it is easier for a reviewer
@@ -1452,60 +1596,6 @@ Revision 2.24
           <code>retain</code>.
         </p>
       </SUBSECTION>
-      <SUBSECTION title="Never synthesize CFType properties">
-        <p>
-          CFTypes should always have the <code>@dynamic</code> implementation
-          directive.
-        </p>
-        <p>
-          Since CFTypes can't have the <code>retain</code> property
-          attribute, the developer must handle retaining and releasing the
-          value themselves. In the rare case that you do actually want
-          assignment it is better to make that completely clear by actually
-          implementing the setter and getter and commenting why that is the
-          case.
-        </p>
-      </SUBSECTION>
-      <SUBSECTION title="List out all implementation directives">
-        <p>
-          Use implementation directives for all properties even if they are
-          <code>@dynamic</code> by default.
-        </p>
-        <p>
-          Even though <code>@dynamic</code> is default, explicitly list it out
-          with all of the other property implementation directives making it
-          clear how every property in a class is handled at a single glance.
-        </p>
-        <BAD_CODE_SNIPPET>
-          @interface MyClass : NSObject
-          @property(readonly) NSString *name;
-          @end
-
-          @implementation MyClass
-          .
-          .
-          .
-          - (NSString*)name {
-            return @"foo";
-          }
-          @end
-        </BAD_CODE_SNIPPET>
-        <CODE_SNIPPET>
-          @interface MyClass : NSObject
-          @property(readonly) NSString *name;
-          @end
-
-          @implementation MyClass
-          @dynamic name;
-          .
-          .
-          .
-          - (NSString*)name {
-            return @"foo";
-          }
-          @end
-        </CODE_SNIPPET>
-      </SUBSECTION>
       <SUBSECTION title="Atomicity">
         <p>
           Be aware of the overhead of properties. By default, all synthesized
@@ -1531,6 +1621,61 @@ Revision 2.24
           array.release;                           // not a property
         </BAD_CODE_SNIPPET>
       </SUBSECTION>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Interfaces Without Instance Variables">
+    <SUMMARY>
+      Omit the empty set of braces on interfaces that do not declare any
+      instance variables.
+    </SUMMARY>
+    <BODY>
+      <CODE_SNIPPET>
+        @interface MyClass : NSObject
+        // Does a lot of stuff
+        - (void)fooBarBam;
+        @end
+      </CODE_SNIPPET>
+      <BAD_CODE_SNIPPET>
+        @interface MyClass : NSObject {
+        }
+        // Does a lot of stuff
+        - (void)fooBarBam;
+        @end
+      </BAD_CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Automatically Synthesized Instance Variables">
+    <SUMMARY>
+      <p>
+        For code that will run on iOS only, use of automatically synthesized
+        instance variables is preferred.
+      </p>
+      <p>
+        When synthesizing the instance variable, use
+        <code>@synthesize var = var_;</code> as this prevents accidentally calling
+        <code>var = blah;</code> when <code>self.var = blah;</code> is intended.
+      </p>
+    </SUMMARY>
+    <BODY>
+      <CODE_SNIPPET>
+        // Header file
+        @interface Foo : NSObject
+        // A guy walks into a bar.
+        @property(nonatomic, copy) NSString *bar;
+        @end
+
+        // Implementation file
+        @interface Foo ()
+        @property(nonatomic, retain) NSArray *baz;
+        @end
+
+        @implementation Foo
+        @synthesize bar = bar_;
+        @synthesize baz = baz_;
+        @end
+      </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
 </CATEGORY>
@@ -1601,7 +1746,7 @@ Revision 2.24
 <HR/>
 
 <p align="right">
-Revision 2.24
+Revision 2.36
 </p>
 
 

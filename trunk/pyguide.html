@@ -6,28 +6,33 @@
 <LINK HREF="styleguide.css" type="text/css" rel="stylesheet">
 <SCRIPT language="javascript" type="text/javascript">
 
-                function ShowHideByName(bodyName, buttonName) {
-	          var bodyElements;
-                  var linkElement;
+                function GetElementsByName(name) {
+                  // Workaround a bug on old versions of opera.
                   if (document.getElementsByName) {
-                    bodyElements = document.getElementsByName(bodyName);
-                    linkElement = document.getElementsByName('link-' + buttonName)[0];
+                    return document.getElementsByName(name);
                   } else {
-                    bodyElements = [document.getElementById(bodyName)];
-                    linkElement = document.getElementById('link-' + buttonName);
+                    return [document.getElementById(name)];
                   }
+                }
+
+                /**
+                 * @param {string} namePrefix The prefix of the body name.
+                 * @param {function(boolean): boolean} getVisibility Computes the new
+                 *     visibility state, given the current one.
+                 */
+                function ChangeVisibility(namePrefix, getVisibility) {
+                  var bodyName = namePrefix + '__body';
+                  var buttonName = namePrefix + '__button';
+                  var bodyElements = GetElementsByName(bodyName);
+                  var linkElement = GetElementsByName('link-' + buttonName)[0];
                   if (bodyElements.length != 1) {
-                    alert("ShowHideByName() got the wrong number of bodyElements:  " + bodyElements.length);
+                    throw Error('ShowHideByName() got the wrong number of bodyElements:  ' + 
+                        bodyElements.length);
                   } else {
                     var bodyElement = bodyElements[0];
-                    var buttonElement;
-                    if (document.getElementsByName) {
-                      var buttonElements = document.getElementsByName(buttonName);
-                      buttonElement = buttonElements[0];
-                    } else {
-                      buttonElement = document.getElementById(buttonName);
-                    }
-                    if (bodyElement.style.display == "none" || bodyElement.style.display == "") {
+                    var buttonElement = GetElementsByName(buttonName)[0];
+                    var isVisible = bodyElement.style.display != "none";
+                    if (getVisibility(isVisible)) {
                       bodyElement.style.display = "inline";
                       linkElement.style.display = "block";
                       buttonElement.innerHTML = '▽';
@@ -39,14 +44,16 @@
                   }
                 }
 
+                function ShowHideByName(namePrefix) {
+                  ChangeVisibility(namePrefix, function(old) { return !old; });
+                }
+
+                function ShowByName(namePrefix) {
+                  ChangeVisibility(namePrefix, function() { return true; });
+                }
+
                 function ShowHideAll() {
-                  var allButton;
-                  if (document.getElementsByName) {
-                    var allButtons = document.getElementsByName("show_hide_all_button");
-	            allButton = allButtons[0];
-                  } else {
-                    allButton = document.getElementById("show_hide_all_button");
-                  }
+                  var allButton = GetElementsByName("show_hide_all_button")[0];
                   if (allButton.innerHTML == '▽') {
                     allButton.innerHTML = '▶';
                     SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '▶');
@@ -72,27 +79,56 @@
                 }
 
 
+                function EndsWith(str, suffix) {
+                  var l = str.length - suffix.length;
+                  return l >= 0 && str.indexOf(suffix, l) == l;
+                }
+
+                function RefreshVisibilityFromHashParam() {
+                  var hashRegexp = new RegExp('#([^&#]*)$');
+                  var hashMatch = hashRegexp.exec(window.location.href);
+                  var anchor = hashMatch && GetElementsByName(hashMatch[1])[0];
+                  var node = anchor;
+                  var suffix = '__body';
+                  while (node) {
+                    var id = node.id;
+                    var matched = id && EndsWith(id, suffix);
+                    if (matched) {
+                      var len = id.length - suffix.length;
+                      ShowByName(matched.substring(0, len));
+                      if (anchor.scrollIntoView) {
+                        anchor.scrollIntoView();
+                      }
+                      
+                      return;
+                    }
+                    node = node.parentNode;
+                  }
+                }
+
+                window.onhashchange = RefreshVisibilityFromHashParam;
+
                 window.onload = function() {
                   // if the URL contains "?showall=y", expand the details of all children
-                  {
-                    var showHideAllRegex = new RegExp("[\\?&](showall)=([^&#]*)");
-                    var showHideAllValue = showHideAllRegex.exec(window.location.href);
-                    if (showHideAllValue != null) {
-                      if (showHideAllValue[2] == "y") {
-                        SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "inline", '▽');
-                      } else {
-                        SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '▶');
-                      }
+                  var showHideAllRegex = new RegExp("[\\?&](showall)=([^&#]*)");
+                  var showHideAllValue = showHideAllRegex.exec(window.location.href);
+                  if (showHideAllValue != null) {
+                    if (showHideAllValue[2] == "y") {
+                      SetHiddenState(document.getElementsByTagName("body")[0].childNodes, 
+                          "inline", '▽');
+                    } else {
+                      SetHiddenState(document.getElementsByTagName("body")[0].childNodes, 
+                          "none", '▶');
                     }
-                    var showOneRegex = new RegExp("[\\?&](showone)=([^&#]*)");
-                    var showOneValue = showOneRegex.exec(window.location.href);
-                    if (showOneValue != null) {
-                      var body_name = showOneValue[2] + '__body';
-                      var button_name = showOneValue[2] + '__button';
-                      ShowHideByName(body_name, button_name);
-                    }
-
                   }
+                  var showOneRegex = new RegExp("[\\?&](showone)=([^&#]*)");
+                  var showOneValue = showOneRegex.exec(window.location.href);
+                  if (showOneValue) {
+                    ShowHideByName(showOneValue[2]);
+                  }
+
+
+                  RefreshVisibilityFromHashParam();
                 }
               </SCRIPT>
 </HEAD>
@@ -100,7 +136,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.20
+    Revision 2.28
   </p>
   
   <address>
@@ -144,7 +180,7 @@
 <H3><A name="Displaying_Hidden_Details_in_this_Guide" id="Displaying_Hidden_Details_in_this_Guide">Displaying Hidden Details in this Guide</A></H3>
 <SPAN class="link_button" id="link-Displaying_Hidden_Details_in_this_Guide__button" name="link-Displaying_Hidden_Details_in_this_Guide__button"><A href="?showone=Displaying_Hidden_Details_in_this_Guide#Displaying_Hidden_Details_in_this_Guide">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Displaying_Hidden_Details_in_this_Guide__body','Displaying_Hidden_Details_in_this_Guide__button')" name="Displaying_Hidden_Details_in_this_Guide__button" id="Displaying_Hidden_Details_in_this_Guide__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Displaying_Hidden_Details_in_this_Guide')" name="Displaying_Hidden_Details_in_this_Guide__button" id="Displaying_Hidden_Details_in_this_Guide__button">▶</SPAN>
       <DIV style="display:inline;" class="">
        This style guide contains many details that are initially
        hidden from view.  They are marked by the triangle icon, which you
@@ -183,7 +219,7 @@
 <H3><A name="pychecker" id="pychecker">pychecker</A></H3>
 <SPAN class="link_button" id="link-pychecker__button" name="link-pychecker__button"><A href="?showone=pychecker#pychecker">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('pychecker__body','pychecker__button')" name="pychecker__button" id="pychecker__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('pychecker')" name="pychecker__button" id="pychecker__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Run <code>pychecker</code> over your code.
       </DIV>
@@ -255,7 +291,7 @@
 <H3><A name="Imports" id="Imports">Imports</A></H3>
 <SPAN class="link_button" id="link-Imports__button" name="link-Imports__button"><A href="?showone=Imports#Imports">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports__body','Imports__button')" name="Imports__button" id="Imports__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports')" name="Imports__button" id="Imports__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use <code>import</code>s for packages and modules only.
       </DIV>
@@ -283,7 +319,7 @@
           prefix.
           <br>
           Use <code>from x import y as z</code> if two modules named
-          <code>z</code> are to be imported or if <code>y</code> is an
+          <code>y</code> are to be imported or if <code>y</code> is an
           inconveniently long name.
         </P>
         For example the module
@@ -305,7 +341,7 @@
 <H3><A name="Packages" id="Packages">Packages</A></H3>
 <SPAN class="link_button" id="link-Packages__button" name="link-Packages__button"><A href="?showone=Packages#Packages">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Packages__body','Packages__button')" name="Packages__button" id="Packages__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Packages')" name="Packages__button" id="Packages__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Import each module using the full pathname location of the module.
       </DIV>
@@ -340,7 +376,7 @@ from sound.effects import echo
 <H3><A name="Exceptions" id="Exceptions">Exceptions</A></H3>
 <SPAN class="link_button" id="link-Exceptions__button" name="link-Exceptions__button"><A href="?showone=Exceptions#Exceptions">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Exceptions__body','Exceptions__button')" name="Exceptions__button" id="Exceptions__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Exceptions')" name="Exceptions__button" id="Exceptions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Exceptions are allowed but must be used carefully.
       </DIV>
@@ -408,7 +444,7 @@ from sound.effects import echo
 <H3><A name="Global_variables" id="Global_variables">Global variables</A></H3>
 <SPAN class="link_button" id="link-Global_variables__button" name="link-Global_variables__button"><A href="?showone=Global_variables#Global_variables">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Global_variables__body','Global_variables__button')" name="Global_variables__button" id="Global_variables__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Global_variables')" name="Global_variables__button" id="Global_variables__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Avoid global variables.
       </DIV>
@@ -449,7 +485,7 @@ from sound.effects import echo
 <H3><A name="Nested/Local/Inner_Classes_and_Functions" id="Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></H3>
 <SPAN class="link_button" id="link-Nested/Local/Inner_Classes_and_Functions__button" name="link-Nested/Local/Inner_Classes_and_Functions__button"><A href="?showone=Nested/Local/Inner_Classes_and_Functions#Nested/Local/Inner_Classes_and_Functions">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Nested/Local/Inner_Classes_and_Functions__body','Nested/Local/Inner_Classes_and_Functions__button')" name="Nested/Local/Inner_Classes_and_Functions__button" id="Nested/Local/Inner_Classes_and_Functions__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Nested/Local/Inner_Classes_and_Functions')" name="Nested/Local/Inner_Classes_and_Functions__button" id="Nested/Local/Inner_Classes_and_Functions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Nested/local/inner classes and functions are fine.
       </DIV>
@@ -479,7 +515,7 @@ from sound.effects import echo
 <H3><A name="List_Comprehensions" id="List_Comprehensions">List Comprehensions</A></H3>
 <SPAN class="link_button" id="link-List_Comprehensions__button" name="link-List_Comprehensions__button"><A href="?showone=List_Comprehensions#List_Comprehensions">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('List_Comprehensions__body','List_Comprehensions__button')" name="List_Comprehensions__button" id="List_Comprehensions__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('List_Comprehensions')" name="List_Comprehensions__button" id="List_Comprehensions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Okay to use for simple cases.
       </DIV>
@@ -548,7 +584,7 @@ from sound.effects import echo
 <H3><A name="Default_Iterators_and_Operators" id="Default_Iterators_and_Operators">Default Iterators and Operators</A></H3>
 <SPAN class="link_button" id="link-Default_Iterators_and_Operators__button" name="link-Default_Iterators_and_Operators__button"><A href="?showone=Default_Iterators_and_Operators#Default_Iterators_and_Operators">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Iterators_and_Operators__body','Default_Iterators_and_Operators__button')" name="Default_Iterators_and_Operators__button" id="Default_Iterators_and_Operators__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Iterators_and_Operators')" name="Default_Iterators_and_Operators__button" id="Default_Iterators_and_Operators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use default iterators and operators for types that support them, 
         like lists, dictionaries, and files.
@@ -593,7 +629,7 @@ from sound.effects import echo
 <H3><A name="Generators" id="Generators">Generators</A></H3>
 <SPAN class="link_button" id="link-Generators__button" name="link-Generators__button"><A href="?showone=Generators#Generators">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Generators__body','Generators__button')" name="Generators__button" id="Generators__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Generators')" name="Generators__button" id="Generators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use generators as needed.
       </DIV>
@@ -626,7 +662,7 @@ from sound.effects import echo
 <H3><A name="Lambda_Functions" id="Lambda_Functions">Lambda Functions</A></H3>
 <SPAN class="link_button" id="link-Lambda_Functions__button" name="link-Lambda_Functions__button"><A href="?showone=Lambda_Functions#Lambda_Functions">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lambda_Functions__body','Lambda_Functions__button')" name="Lambda_Functions__button" id="Lambda_Functions__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lambda_Functions')" name="Lambda_Functions__button" id="Lambda_Functions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Okay for one-liners.
       </DIV>
@@ -666,7 +702,7 @@ from sound.effects import echo
 <H3><A name="Default_Argument_Values" id="Default_Argument_Values">Default Argument Values</A></H3>
 <SPAN class="link_button" id="link-Default_Argument_Values__button" name="link-Default_Argument_Values__button"><A href="?showone=Default_Argument_Values#Default_Argument_Values">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Argument_Values__body','Default_Argument_Values__button')" name="Default_Argument_Values__button" id="Default_Argument_Values__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Argument_Values')" name="Default_Argument_Values__button" id="Default_Argument_Values__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Okay in most cases.
       </DIV>
@@ -727,7 +763,7 @@ from sound.effects import echo
 <H3><A name="Properties" id="Properties">Properties</A></H3>
 <SPAN class="link_button" id="link-Properties__button" name="link-Properties__button"><A href="?showone=Properties#Properties">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Properties__body','Properties__button')" name="Properties__button" id="Properties__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Properties')" name="Properties__button" id="Properties__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use properties for accessing or setting data where you would 
         normally have used simple, lightweight accessor or setter methods. 
@@ -823,7 +859,7 @@ from sound.effects import echo
 <H3><A name="True/False_evaluations" id="True/False_evaluations">True/False evaluations</A></H3>
 <SPAN class="link_button" id="link-True/False_evaluations__button" name="link-True/False_evaluations__button"><A href="?showone=True/False_evaluations#True/False_evaluations">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('True/False_evaluations__body','True/False_evaluations__button')" name="True/False_evaluations__button" id="True/False_evaluations__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('True/False_evaluations')" name="True/False_evaluations__button" id="True/False_evaluations__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use the "implicit" false if at all possible.
       </DIV>
@@ -908,7 +944,7 @@ from sound.effects import echo
 <H3><A name="Deprecated_Language_Features" id="Deprecated_Language_Features">Deprecated Language Features</A></H3>
 <SPAN class="link_button" id="link-Deprecated_Language_Features__button" name="link-Deprecated_Language_Features__button"><A href="?showone=Deprecated_Language_Features#Deprecated_Language_Features">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Deprecated_Language_Features__body','Deprecated_Language_Features__button')" name="Deprecated_Language_Features__button" id="Deprecated_Language_Features__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Deprecated_Language_Features')" name="Deprecated_Language_Features__button" id="Deprecated_Language_Features__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use string methods instead of the <code>string</code> module
         where possible.  Use function call syntax instead
@@ -944,7 +980,7 @@ from sound.effects import echo
 <H3><A name="Lexical_Scoping" id="Lexical_Scoping">Lexical Scoping</A></H3>
 <SPAN class="link_button" id="link-Lexical_Scoping__button" name="link-Lexical_Scoping__button"><A href="?showone=Lexical_Scoping#Lexical_Scoping">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lexical_Scoping__body','Lexical_Scoping__button')" name="Lexical_Scoping__button" id="Lexical_Scoping__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lexical_Scoping')" name="Lexical_Scoping__button" id="Lexical_Scoping__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Okay to use.
       </DIV>
@@ -1010,7 +1046,7 @@ from sound.effects import echo
 <H3><A name="Function_and_Method_Decorators" id="Function_and_Method_Decorators">Function and Method Decorators</A></H3>
 <SPAN class="link_button" id="link-Function_and_Method_Decorators__button" name="link-Function_and_Method_Decorators__button"><A href="?showone=Function_and_Method_Decorators#Function_and_Method_Decorators">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Function_and_Method_Decorators__body','Function_and_Method_Decorators__button')" name="Function_and_Method_Decorators__button" id="Function_and_Method_Decorators__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Function_and_Method_Decorators')" name="Function_and_Method_Decorators__button" id="Function_and_Method_Decorators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use decorators judiciously when there is a clear advantage.
       </DIV>
@@ -1080,7 +1116,7 @@ from sound.effects import echo
 <H3><A name="Threading" id="Threading">Threading</A></H3>
 <SPAN class="link_button" id="link-Threading__button" name="link-Threading__button"><A href="?showone=Threading#Threading">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Threading__body','Threading__button')" name="Threading__button" id="Threading__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Threading')" name="Threading__button" id="Threading__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Do not rely on the atomicity of built-in types.
       </DIV>
@@ -1110,7 +1146,7 @@ from sound.effects import echo
 <H3><A name="Power_Features" id="Power_Features">Power Features</A></H3>
 <SPAN class="link_button" id="link-Power_Features__button" name="link-Power_Features__button"><A href="?showone=Power_Features#Power_Features">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Power_Features__body','Power_Features__button')" name="Power_Features__button" id="Power_Features__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Power_Features')" name="Power_Features__button" id="Power_Features__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Avoid these features.
       </DIV>
@@ -1148,7 +1184,7 @@ from sound.effects import echo
 <H3><A name="Semicolons" id="Semicolons">Semicolons</A></H3>
 <SPAN class="link_button" id="link-Semicolons__button" name="link-Semicolons__button"><A href="?showone=Semicolons#Semicolons">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Semicolons__body','Semicolons__button')" name="Semicolons__button" id="Semicolons__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Semicolons')" name="Semicolons__button" id="Semicolons__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Do not terminate your lines with semi-colons and do not use
         semi-colons to put two commands on the same line.
@@ -1160,7 +1196,7 @@ from sound.effects import echo
 <H3><A name="Line_length" id="Line_length">Line length</A></H3>
 <SPAN class="link_button" id="link-Line_length__button" name="link-Line_length__button"><A href="?showone=Line_length#Line_length">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Line_length__body','Line_length__button')" name="Line_length__button" id="Line_length__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Line_length')" name="Line_length__button" id="Line_length__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Maximum line length is <em>80 characters</em>.
       </DIV>
@@ -1169,6 +1205,10 @@ from sound.effects import echo
       Exception: lines importing modules may end up longer than 80 
       characters only if using Python 2.4 or 
       earlier.
+    </p>
+
+    <p>
+      Do not use backslash line continuation.
     </p>
 
     <p>
@@ -1209,7 +1249,7 @@ from sound.effects import echo
 <H3><A name="Parentheses" id="Parentheses">Parentheses</A></H3>
 <SPAN class="link_button" id="link-Parentheses__button" name="link-Parentheses__button"><A href="?showone=Parentheses#Parentheses">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Parentheses__body','Parentheses__button')" name="Parentheses__button" id="Parentheses__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Parentheses')" name="Parentheses__button" id="Parentheses__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use parentheses sparingly.
       </DIV>
@@ -1241,7 +1281,7 @@ from sound.effects import echo
 <H3><A name="Indentation" id="Indentation">Indentation</A></H3>
 <SPAN class="link_button" id="link-Indentation__button" name="link-Indentation__button"><A href="?showone=Indentation#Indentation">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Indentation__body','Indentation__button')" name="Indentation__button" id="Indentation__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Indentation')" name="Indentation__button" id="Indentation__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Indent your code blocks with <em>4 spaces</em>.
       </DIV>
@@ -1278,7 +1318,7 @@ from sound.effects import echo
 <H3><A name="Blank_Lines" id="Blank_Lines">Blank Lines</A></H3>
 <SPAN class="link_button" id="link-Blank_Lines__button" name="link-Blank_Lines__button"><A href="?showone=Blank_Lines#Blank_Lines">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Blank_Lines__body','Blank_Lines__button')" name="Blank_Lines__button" id="Blank_Lines__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Blank_Lines')" name="Blank_Lines__button" id="Blank_Lines__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Two blank lines between top-level definitions, one blank line 
         between method definitions.
@@ -1297,7 +1337,7 @@ from sound.effects import echo
 <H3><A name="Whitespace" id="Whitespace">Whitespace</A></H3>
 <SPAN class="link_button" id="link-Whitespace__button" name="link-Whitespace__button"><A href="?showone=Whitespace#Whitespace">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Whitespace__body','Whitespace__button')" name="Whitespace__button" id="Whitespace__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Whitespace')" name="Whitespace__button" id="Whitespace__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Follow standard typographic rules for the use of spaces around 
         punctuation.
@@ -1376,24 +1416,18 @@ from sound.effects import echo
 <H3><A name="Shebang_Line" id="Shebang_Line">Shebang Line</A></H3>
 <SPAN class="link_button" id="link-Shebang_Line__button" name="link-Shebang_Line__button"><A href="?showone=Shebang_Line#Shebang_Line">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Shebang_Line__body','Shebang_Line__button')" name="Shebang_Line__button" id="Shebang_Line__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Shebang_Line')" name="Shebang_Line__button" id="Shebang_Line__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        All <code>.py</code> files (except <code>__init__.py</code> package
-        files) should begin with a
-        
-        <code>#!/usr/bin/python&lt;version&gt;</code>
-        shebang line.
+        Most <code>.py</code> files do not need to start with a
+        <code>#!</code> line.  Start the main file of a  binary with
+        <code>#!/usr/bin/python</code>.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Shebang_Line__body" id="Shebang_Line__body" style="display: none">
         
         <p>
-          Always use the most specific version that you can to ensure
-          compatibility. For examples, if your program uses a language feature
-          that that first appeared in Python 2.4, use
-          <code>/usr/bin/python2.4</code> (or something newer) instead of
-          <code>/usr/bin/python2</code>. Otherwise, your program might not
-          behave the way you expect it to, because the interpreter uses an
-          older version of the language.
+          This line is used by the kernel to find the Python interpreter, but is
+          ignored by Python when importing modules.  It is only necessary on a
+          file that will be executed directly.
         </p>
       </DIV></DIV>
     </DIV>
@@ -1402,7 +1436,7 @@ from sound.effects import echo
 <H3><A name="Comments" id="Comments">Comments</A></H3>
 <SPAN class="link_button" id="link-Comments__button" name="link-Comments__button"><A href="?showone=Comments#Comments">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Comments__body','Comments__button')" name="Comments__button" id="Comments__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Comments')" name="Comments__button" id="Comments__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Be sure to use the right style for module, function, method and in-line
         comments.
@@ -1450,23 +1484,65 @@ from sound.effects import echo
 <SPAN class="stylepoint_subsection">Functions and Methods</SPAN>
 
     <p>
-      Any function or method which is not both obvious and very short
-      needs a doc string. Additionally, any externally accessible
-      function or method regardless of length or simplicity needs a
-      doc string. The doc string should include what the function does
-      and have detailed descriptions of the input and output.  It
-      should not, generally, describe how it does it unless it's some
-      complicated algorithm.  For tricky code block/inline comments
-      within the code are more appropriate.  The doc string should give
-      enough information to write a call to the function without
-      looking at a single line of the function's code. Args should be
-      individually documented, an explanation following after a colon,
-      and should use a uniform hanging indent of 2 or 4 spaces. The
-      doc string should specify the expected types where specific types
-      are required. A "Raises:" section should list all exceptions
-      that can be raised by the function. The doc string for generator
-      functions should use "Yields:" rather than "Returns:".
+      As used in this section "function" applies to methods, function, and
+      generators.
     </p>
+
+    <p>
+      A function must have a docstring, unless it meets all of the following
+      criteria:
+      <ul>
+        <li>not externally visible</li>
+        <li>very short</li>
+        <li>obvious</li>
+      </ul>
+    </p>
+
+    <p>
+      A docstring should give enough information to write a call to the function
+      without reading the function's code.  A docstring should describe the
+      function's calling syntax and its semantics, not its implementation.  For
+      tricky code, comments alongside the code are more appropriate than using
+      docstrings.
+    </p>
+
+    <p>
+      Certain aspects of a function should be documented in special sections,
+      listed below. Each section begins with a heading line, which ends with a
+      colon. Sections should be indented two spaces, except for the heading.
+    </p>
+
+    <dl>
+      <dt>Args:</dt>
+      <dd>
+        List each parameter by name. A description should follow the name, and
+        be separated by a colon and a space. If the description is too long to
+        fit on a single 80-character line, use a hanging indent of 2 or 4 spaces
+        (be consistent with the rest of the file).
+
+        <p>
+          The description should mention required type(s) and the meaning of
+          the argument.
+        </p>
+
+        <p>
+          If a function accepts *foo (variable length argument lists) and/or
+          **bar (arbitrary keyword arguments), they should be listed as *foo and
+          **bar.
+        </p>
+      </dd>
+
+      <dt>Returns: (or Yields: for generators)</dt>
+      <dd>
+        Describe the type and semantics of the return value. If the function
+        only returns None, this section is not required.
+      </dd>
+
+      <dt>Raises:</dt>
+      <dd>
+        List all exceptions that are relevant to the interface.
+      </dd>
+    </dl>
 
     <DIV class=""><PRE>
 <span class="external"></span>def fetch_bigtable_rows(big_table, keys, other_silly_variable=None):
@@ -1581,7 +1657,7 @@ from sound.effects import echo
 <H3><A name="Classes" id="Classes">Classes</A></H3>
 <SPAN class="link_button" id="link-Classes__button" name="link-Classes__button"><A href="?showone=Classes#Classes">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Classes__body','Classes__button')" name="Classes__button" id="Classes__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Classes')" name="Classes__button" id="Classes__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         If a class inherits from no other base classes, explicitly inherit
     from <code>object</code>.  This also applies to nested classes.
@@ -1627,7 +1703,7 @@ from sound.effects import echo
 <H3><A name="Strings" id="Strings">Strings</A></H3>
 <SPAN class="link_button" id="link-Strings__button" name="link-Strings__button"><A href="?showone=Strings#Strings">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Strings__body','Strings__button')" name="Strings__button" id="Strings__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Strings')" name="Strings__button" id="Strings__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Use the <code>%</code> operator for formatting strings,
         even when the parameters are all strings.  Use your best judgement
@@ -1681,40 +1757,47 @@ Don'<span class="external"></span>t do this.
 <H3><A name="TODO_Comments" id="TODO_Comments">TODO Comments</A></H3>
 <SPAN class="link_button" id="link-TODO_Comments__button" name="link-TODO_Comments__button"><A href="?showone=TODO_Comments#TODO_Comments">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('TODO_Comments__body','TODO_Comments__button')" name="TODO_Comments__button" id="TODO_Comments__button">▶</SPAN>
-    <DIV style="display:inline;" class="">
-      Use <code>TODO</code> comments for code that is temporary, a
-      short-term solution, or good-enough but not perfect.
-    </DIV>
-    <DIV class=""><DIV class="stylepoint_body" name="TODO_Comments__body" id="TODO_Comments__body" style="display: none">
-      <p>
-        <code>TODO</code>s should include the string <code>TODO</code> in
-        all caps, followed by your
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('TODO_Comments')" name="TODO_Comments__button" id="TODO_Comments__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        Use <code>TODO</code> comments for code that is temporary, a
+        short-term solution, or good-enough but not perfect.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="TODO_Comments__body" id="TODO_Comments__body" style="display: none">
+        <p>
+          <code>TODO</code>s should include the string <code>TODO</code> in
+          all caps, followed by the
+          
+          name, e-mail address, or other
+          identifier
+          of the person who can best provide context about the problem
+          referenced by the <code>TODO</code>,
+          in parentheses.  A colon is optional.  A comment explaining what there
+          is to do is required. The main purpose is to have
+          a consistent <code>TODO</code> format that can be searched to find the
+          person who can provide more details upon request.  A
+          <code>TODO</code> is not a commitment that the person referenced
+          will fix the problem.  Thus when you create a <code>TODO</code>, it is
+          almost always your
+          
+          name
+          that is given.
+        </p>
         
-        name, e-mail address, or other
-        identifier
-        in parentheses.  A colon is optional. A comment explaining what there
-        is to do is required. The main purpose is to have
-        a consistent <code>TODO</code> format searchable by the person
-        adding the comment (who can provide more details upon request).  A
-        <code>TODO</code> is not a commitment to provide the fix yourself.
-      </p>
-      
-      <DIV class=""><PRE># TODO(kl@gmail.com): Drop the use of "has_key".
-# TODO(Zeke) change this to use relations.</PRE></DIV>
-      <p>
-        If your <code>TODO</code> is of the form "At a future date do
-        something" make sure that you either include a very specific
-        date ("Fix by November 2009") or a very specific event
-        ("Remove this code when all clients can handle XML responses.").
-      </p>
-    </DIV></DIV>
-  </DIV>
+        <DIV class=""><PRE># TODO(kl@gmail.com): Use a "*" here for string repetition.
+# TODO(Zeke) Change this to use relations.</PRE></DIV>
+        <p>
+          If your <code>TODO</code> is of the form "At a future date do
+          something" make sure that you either include a very specific
+          date ("Fix by November 2009") or a very specific event
+          ("Remove this code when all clients can handle XML responses.").
+        </p>
+      </DIV></DIV>
+    </DIV>
     <DIV class="">
 <H3><A name="Imports_formatting" id="Imports_formatting">Imports formatting</A></H3>
 <SPAN class="link_button" id="link-Imports_formatting__button" name="link-Imports_formatting__button"><A href="?showone=Imports_formatting#Imports_formatting">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports_formatting__body','Imports_formatting__button')" name="Imports_formatting__button" id="Imports_formatting__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports_formatting')" name="Imports_formatting__button" id="Imports_formatting__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Imports should be on separate lines.
       </DIV>
@@ -1757,7 +1840,7 @@ Don'<span class="external"></span>t do this.
 <H3><A name="Statements" id="Statements">Statements</A></H3>
 <SPAN class="link_button" id="link-Statements__button" name="link-Statements__button"><A href="?showone=Statements#Statements">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Statements__body','Statements__button')" name="Statements__button" id="Statements__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Statements')" name="Statements__button" id="Statements__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Generally only one statement per line.
       </DIV>
@@ -1794,7 +1877,7 @@ Don'<span class="external"></span>t do this.
 <H3><A name="Access_Control" id="Access_Control">Access Control</A></H3>
 <SPAN class="link_button" id="link-Access_Control__button" name="link-Access_Control__button"><A href="?showone=Access_Control#Access_Control">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Access_Control__body','Access_Control__button')" name="Access_Control__button" id="Access_Control__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Access_Control')" name="Access_Control__button" id="Access_Control__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         If an accessor function would be trivial you should use public variables
         instead of accessor functions to avoid the extra cost of function 
@@ -1817,11 +1900,13 @@ Don'<span class="external"></span>t do this.
 <H3><A name="Naming" id="Naming">Naming</A></H3>
 <SPAN class="link_button" id="link-Naming__button" name="link-Naming__button"><A href="?showone=Naming#Naming">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Naming__body','Naming__button')" name="Naming__button" id="Naming__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Naming')" name="Naming__button" id="Naming__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        <code>module_name, package_name, ClassName, method_name, ExceptionName, 
-        function_name, GLOBAL_VAR_NAME, instance_var_name, 
-        function_parameter_name, local_var_name.</code>
+        <code>module_name, package_name, ClassName,
+        method_name, ExceptionName,
+        function_name, GLOBAL_CONSTANT_NAME,
+        global_var_name, instance_var_name, function_parameter_name,
+        local_var_name.</code>
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Naming__body" id="Naming__body" style="display: none">
     <P class="">
@@ -1958,7 +2043,7 @@ Don'<span class="external"></span>t do this.
 <H3><A name="Main" id="Main">Main</A></H3>
 <SPAN class="link_button" id="link-Main__button" name="link-Main__button"><A href="?showone=Main#Main">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Main__body','Main__button')" name="Main__button" id="Main__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Main')" name="Main__button" id="Main__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Even a file meant to be used as a script should be importable and a 
         mere import should not have the side effect of executing the script's 
@@ -2027,7 +2112,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.20
+Revision 2.28
 </p>
 
 
