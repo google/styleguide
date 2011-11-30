@@ -713,16 +713,18 @@ class FileInfo:
         prefix = os.path.commonprefix([root_dir, project_dir])
         return fullname[len(prefix) + 1:]
 
-      # Not SVN? Try to find a git or hg top level directory by searching up
-      # from the current path.
+      # Not SVN <= 1.6? Try to find a git, hg, or svn top level directory by
+      # searching up from the current path.
       root_dir = os.path.dirname(fullname)
       while (root_dir != os.path.dirname(root_dir) and
              not os.path.exists(os.path.join(root_dir, ".git")) and
-             not os.path.exists(os.path.join(root_dir, ".hg"))):
+             not os.path.exists(os.path.join(root_dir, ".hg")) and
+             not os.path.exists(os.path.join(root_dir, ".svn"))):
         root_dir = os.path.dirname(root_dir)
 
       if (os.path.exists(os.path.join(root_dir, ".git")) or
-          os.path.exists(os.path.join(root_dir, ".hg"))):
+          os.path.exists(os.path.join(root_dir, ".hg")) or
+          os.path.exists(os.path.join(root_dir, ".svn"))):
         prefix = os.path.commonprefix([root_dir, project_dir])
         return fullname[len(prefix) + 1:]
 
