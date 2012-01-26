@@ -1071,9 +1071,15 @@ def CheckForHeaderGuard(filename, lines, error):
       endif = line
       endif_linenum = linenum
 
-  if not ifndef or not define or ifndef != define:
+  if not ifndef:
     error(filename, 0, 'build/header_guard', 5,
           'No #ifndef header guard found, suggested CPP variable is: %s' %
+          cppvar)
+    return
+
+  if not define:
+    error(filename, 0, 'build/header_guard', 5,
+          'No #define header guard found, suggested CPP variable is: %s' %
           cppvar)
     return
 
@@ -1088,6 +1094,12 @@ def CheckForHeaderGuard(filename, lines, error):
                             error)
     error(filename, ifndef_linenum, 'build/header_guard', error_level,
           '#ifndef header guard has wrong style, please use: %s' % cppvar)
+
+  if define != ifndef:
+    error(filename, 0, 'build/header_guard', 5,
+          '#ifndef and #define don\'t match, suggested CPP variable is: %s' %
+          cppvar)
+    return
 
   if endif != ('#endif  // %s' % cppvar):
     error_level = 0

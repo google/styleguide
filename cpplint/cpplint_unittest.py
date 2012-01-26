@@ -2054,7 +2054,7 @@ class CpplintTest(CpplintTestBase):
     self.assertEquals(
         1,
         error_collector.ResultList().count(
-            'No #ifndef header guard found, suggested CPP variable is: %s'
+            'No #define header guard found, suggested CPP variable is: %s'
             '  [build/header_guard] [5]' % expected_guard),
         error_collector.ResultList())
 
@@ -2067,7 +2067,7 @@ class CpplintTest(CpplintTestBase):
     self.assertEquals(
         1,
         error_collector.ResultList().count(
-            'No #ifndef header guard found, suggested CPP variable is: %s'
+            '#ifndef and #define don\'t match, suggested CPP variable is: %s'
             '  [build/header_guard] [5]' % expected_guard),
         error_collector.ResultList())
 
