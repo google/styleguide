@@ -3054,7 +3054,7 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
   header_found = False
 
   # Use the absolute path so that matching works properly.
-  abs_filename = os.path.abspath(filename)
+  abs_filename = FileInfo(filename).FullName()
 
   # For Emacs's flymake.
   # If cpplint is invoked from Emacs's flymake, a temporary file is generated
