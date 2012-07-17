@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
 <GUIDE title="Google HTML/CSS Style Guide">
   <p class="revision">
     
