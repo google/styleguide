@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
 <GUIDE title="Google HTML/CSS Style Guide">
   <p class="revision">
     
-    Revision 2.1
+    Revision 2.2
   </p>
   
   <OVERVIEW>
@@ -13,12 +12,12 @@
           This style guide contains many details that are initially
           hidden from view. They are marked by the triangle icon, which you
           see here on your left. Click it now.
-          You should see &#8220;Hooray&#8221; appear below.
+          You should see “Hooray” appear below.
         </SUMMARY>
         <BODY>
           <p>
             Hooray! Now you know you can expand points to get more
-            details. Alternatively, there&#8217;s a &#8220;toggle all&#8221; at the
+            details. Alternatively, there’s a “toggle all” at the
             top of this document.
           </p>
         </BODY>
@@ -52,8 +51,8 @@
           files are not available over both protocols.
         </p>
         <p>
-          Omitting the protocol&#8212;which makes the URL
-          relative&#8212;prevents mixed content issues and results in
+          Omitting the protocol—which makes the URL
+          relative—prevents mixed content issues and results in
           minor file size savings.
         </p>
         <BAD_CODE_SNIPPET>
@@ -88,7 +87,7 @@
       </SUMMARY>
       <BODY>
         <p>
-          Don&#8217;t use tabs or mix tabs and spaces for indentation.
+          Don’t use tabs or mix tabs and spaces for indentation.
         </p>
         <CODE_SNIPPET>
           &lt;ul&gt;
@@ -109,7 +108,7 @@
       </SUMMARY>
       <BODY>
         <p>
-          All code has to be lowercase: this applies to element names,
+          All code has to be lowercase: This applies to element names,
           attributes, attribute values (unless
           text/<code>CDATA</code>), selectors, properties, and
           property values (with the exception of strings).
@@ -173,7 +172,7 @@
       </SUMMARY>
       <BODY>
         <p>
-          Use comments to explain code: what does it cover, what
+          Use comments to explain code: What does it cover, what
           purpose does it serve, why is respective solution used or
           preferred?
         </p>
@@ -181,7 +180,7 @@
           (This item is optional as it is not deemed a realistic
           expectation to always demand fully documented code. Mileage
           may vary heavily for HTML and CSS code and depends on the
-          project&#8217;s complexity.)
+          project’s complexity.)
         </p>
       </BODY>
     </STYLEPOINT>
@@ -230,10 +229,14 @@
           <code>&lt;!DOCTYPE html&gt;</code>.
         </p>
         <p>
-          (It is recommended to use HTML, as <code>text/html</code>. Do not use
+          (It’s recommended to use HTML, as <code>text/html</code>. Do not use
           XHTML. XHTML, as <a href="http://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a>,
           lacks both browser and infrastructure support and offers
           less room for optimization than HTML.)
+        </p>
+        <p>
+          Although fine with HTML, do not close void elements, i.e. write
+          <code>&lt;br&gt;</code>, not <code>&lt;br /&gt;</code>.
         </p>
       </BODY>
     </STYLEPOINT>
@@ -276,7 +279,7 @@
       </SUMMARY>
       <BODY>
         <p>
-          Use elements (sometimes incorrectly called &#8220;tags&#8221;) for what
+          Use elements (sometimes incorrectly called “tags”) for what
           they have been created for. For example, use heading
           elements for headings, <code>p</code> elements for
           paragraphs, <code>a</code> elements for anchors, etc.
@@ -310,7 +313,7 @@
         </p>
         <p>
           Providing alternative contents is important for
-          accessibility reasons: a blind user has few cues to tell
+          accessibility reasons: A blind user has few cues to tell
           what an image is about without <code>@alt</code>, and other
           users may have no way of understanding what video or audio
           contents are about either.
@@ -369,9 +372,9 @@
           &lt;link rel="stylesheet" href="grid.css" media="screen"&gt;
           &lt;link rel="stylesheet" href="print.css" media="print"&gt;
           &lt;h1 style="font-size: 1em;"&gt;HTML sucks&lt;/h1&gt;
-          &lt;p&gt;I&#8217;ve read about this on a few sites but now I&#8217;m sure:
+          &lt;p&gt;I’ve read about this on a few sites but now I’m sure:
             &lt;u&gt;HTML is stupid!!1&lt;/u&gt;
-          &lt;center&gt;I can&#8217;t believe there&#8217;s no way to control the styling of
+          &lt;center&gt;I can’t believe there’s no way to control the styling of
             my website without doing everything all over again!&lt;/center&gt;
         </BAD_CODE_SNIPPET>
         <CODE_SNIPPET>
@@ -380,10 +383,10 @@
           &lt;title&gt;My first CSS-only redesign&lt;/title&gt;
           &lt;link rel="stylesheet" href="default.css"&gt;
           &lt;h1&gt;My first CSS-only redesign&lt;/h1&gt;
-          &lt;p&gt;I&#8217;ve read about this on a few sites but today I&#8217;m actually
+          &lt;p&gt;I’ve read about this on a few sites but today I’m actually
             doing it: separating concerns and avoiding anything in the HTML of
             my website that is presentational.
-          &lt;p&gt;It&#8217;s awesome!
+          &lt;p&gt;It’s awesome!
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
@@ -402,7 +405,7 @@
         <p>
           The only exceptions apply to characters with special meaning
           in HTML (like <code>&lt;</code> and <code>&amp;</code>) as
-          well as control or &#8220;invisible&#8221; characters (like no-break
+          well as control or “invisible” characters (like no-break
           spaces).
         </p>
         <BAD_CODE_SNIPPET>
@@ -411,7 +414,7 @@
         </BAD_CODE_SNIPPET>
         <CODE_SNIPPET>
           &lt;!-- Recommended --&gt;
-          The currency symbol for the Euro is &#8220;&#8364;&#8221;.
+          The currency symbol for the Euro is “€”.
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
@@ -428,9 +431,9 @@
         </p>
         <p>
           (This approach may require a grace period to be established
-          as a wider guideline as it is significantly different
+          as a wider guideline as it’s significantly different
           from what web developers are typically taught. For
-          consistency and simplicity reasons it is best served
+          consistency and simplicity reasons it’s best served
           omitting all optional tags, not just a selection.)
         </p>
         <BAD_CODE_SNIPPET>
@@ -512,7 +515,7 @@
         </p>
         <p>
           (If you run into issues around whitespace between list items
-          it is acceptable to put all <code>li</code> elements in one
+          it’s acceptable to put all <code>li</code> elements in one
           line. A linter is encouraged to throw a warning instead of
           an error.)
         </p>
@@ -539,6 +542,25 @@
                 &lt;td&gt;$ 5.00
                 &lt;td&gt;$ 4.50
           &lt;/table&gt;
+        </CODE_SNIPPET>
+      </BODY>
+    </STYLEPOINT>
+    <STYLEPOINT title="HTML quotation marks">
+      <SUMMARY>
+        Use double quotation marks for attribute values where necessary.
+      </SUMMARY>
+      <BODY>
+        <p>
+          When quoting attribute values, use double (<code>""</code>) rather
+          than single quotation marks (<code>''</code>).
+        </p>
+        <BAD_CODE_SNIPPET>
+          &lt;!-- Not recommended --&gt;
+          &lt;a class='maia-button maia-button-secondary'&gt;Sign in&lt;/a&gt;
+        </BAD_CODE_SNIPPET>
+        <CODE_SNIPPET>
+          &lt;!-- Recommended --&gt;
+          &lt;a class="maia-button maia-button-secondary"&gt;Sign in&lt;/a&gt;
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
@@ -585,7 +607,7 @@
         <p>
           Generic names are simply a fallback for elements that have no
           particular or no meaning different from their siblings. They are
-          typically needed as &#8220;helpers.&#8221;
+          typically needed as “helpers.”
         </p>
         <p>
           Using functional or generic names reduces the probability of
@@ -700,7 +722,7 @@
     </STYLEPOINT>
     <STYLEPOINT title="0 and units">
       <SUMMARY>
-        Omit unit specification after &#8220;0&#8221; values.
+        Omit unit specification after “0” values.
       </SUMMARY>
       <BODY>
         <p>
@@ -715,7 +737,7 @@
     </STYLEPOINT>
     <STYLEPOINT title="Leading 0s">
       <SUMMARY>
-        Omit leading &#8220;0&#8221;s in values.
+        Omit leading “0”s in values.
       </SUMMARY>
       <BODY>
         <p>
@@ -724,20 +746,6 @@
         </p>
         <CODE_SNIPPET>
           font-size: .8em;
-        </CODE_SNIPPET>
-      </BODY>
-    </STYLEPOINT>
-    <STYLEPOINT title="Quotation marks in URI values">
-      <SUMMARY>
-        Omit quotation marks in URI values.
-      </SUMMARY>
-      <BODY>
-        <p>
-          Do not use quotation marks (<code>""</code>,
-          <code>''</code>) with <code>url()</code>.
-        </p>
-        <CODE_SNIPPET>
-          @import url(//www.google.com/css/go.css);
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
@@ -795,7 +803,7 @@
           in order to improve understanding and scannability.
         </p>
         <BAD_CODE_SNIPPET>
-          /* Not recommended: does not separate the words &#8220;demo&#8221; and &#8220;image&#8221; */
+          /* Not recommended: does not separate the words “demo” and “image” */
           .demoimage {}
 
           /* Not recommended: uses underscore instead of hyphen */
@@ -810,12 +818,12 @@
     </STYLEPOINT>
     <STYLEPOINT title="Hacks">
       <SUMMARY>
-        Avoid user agent detection as well as CSS &#8220;hacks&#8221;&#8212;try a different
+        Avoid user agent detection as well as CSS “hacks”—try a different
         approach first.
       </SUMMARY>
       <BODY>
         <p>
-          It is tempting to address styling differences over user
+          It’s tempting to address styling differences over user
           agent detection or special CSS filters, workarounds, and
           hacks. Both approaches should be considered last resort in
           order to achieve and maintain an efficient and manageable
@@ -823,7 +831,7 @@
           free pass will hurt projects in the long run as projects
           tend to take the way of least resistance. That is, allowing
           and making it easy to use detection and hacks means using
-          detection and hacks more frequently&#8212;and more frequently
+          detection and hacks more frequently—and more frequently
           is too frequently.
         </p>
         
@@ -909,7 +917,7 @@
     </STYLEPOINT>
     <STYLEPOINT title="Property name stops">
       <SUMMARY>
-        Use a space after a property name&#8217;s colon.
+        Use a space after a property name’s colon.
       </SUMMARY>
       <BODY>
         <p>
@@ -975,6 +983,35 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
+    <STYLEPOINT title="CSS quotation marks">
+      <SUMMARY>
+        Use single quotation marks for attribute selectors and property values
+        where necessary.
+      </SUMMARY>
+      <BODY>
+        <p>
+          When quoting attribute selectors and property values, use single
+          (<code>''</code>) rather than double (<code>""</code>) quotation
+          marks. Do not use quotation marks in URI values (<code>url()</code>).
+        </p>
+        <BAD_CODE_SNIPPET>
+          /* Not recommended */
+          @import url("//www.google.com/css/maia.css");
+
+          html {
+            font-family: "open sans", arial, sans-serif;
+          }
+        </BAD_CODE_SNIPPET>
+        <CODE_SNIPPET>
+          /* Recommended */
+          @import url(//www.google.com/css/maia.css);
+
+          html {
+            font-family: 'open sans', arial, sans-serif;
+          }
+        </CODE_SNIPPET>
+      </BODY>
+    </STYLEPOINT>
   </CATEGORY>
 
   <CATEGORY title="CSS Meta Rules">
@@ -985,7 +1022,7 @@
       </SUMMARY>
       <BODY>
         <p>
-          If possible, group style sheets sections together by using
+          If possible, group style sheet sections together by using
           comments. Separate sections with new lines.
         </p>
         <CODE_SNIPPET>
@@ -1010,7 +1047,7 @@
       <em>Be consistent.</em>
     </p>
     <p>
-      If you&#8217;re editing code, take a few minutes to look at the code
+      If you’re editing code, take a few minutes to look at the code
       around you and determine its style. If they use spaces around
       all their arithmetic operators, you should too. If their
       comments have little boxes of hash marks around them, make your
@@ -1018,8 +1055,8 @@
     </p>
     <p>
       The point of having style guidelines is to have a common vocabulary
-      of coding so people can concentrate on what you&#8217;re saying rather
-      than on how you&#8217;re saying it. We present global style rules here so
+      of coding so people can concentrate on what you’re saying rather
+      than on how you’re saying it. We present global style rules here so
       people know the vocabulary, but local style is also important. If
       code you add to a file looks drastically different from the existing
       code around it, it throws readers out of their rhythm when they go to
@@ -1028,7 +1065,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.1
+    Revision 2.2
   </p>
 
 </GUIDE>
