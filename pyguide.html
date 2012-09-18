@@ -136,7 +136,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.29
+    Revision 2.39
   </p>
   
   <address>
@@ -165,12 +165,12 @@
 <TR valign="top" class="">
 <TD><DIV class="toc_category"><A href="#Python_Language_Rules">Python Language Rules</A></DIV></TD>
 <TD><DIV class="toc_stylepoint">
-<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#pychecker">pychecker</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports">Imports</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">Packages</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Exceptions">Exceptions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables">Global variables</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#List_Comprehensions">List Comprehensions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Iterators_and_Operators">Default Iterators and Operators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Generators">Generators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lambda_Functions">Lambda Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Argument_Values">Default Argument Values</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Properties">Properties</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#True/False_evaluations">True/False evaluations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Deprecated_Language_Features">Deprecated Language Features</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lexical_Scoping">Lexical Scoping</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Function_and_Method_Decorators">Function and Method Decorators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Threading">Threading</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Power_Features">Power Features</A></SPAN> </DIV></TD>
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#pychecker">pychecker</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports">Imports</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">Packages</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Exceptions">Exceptions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables">Global variables</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#List_Comprehensions">List Comprehensions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Iterators_and_Operators">Default Iterators and Operators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Generators">Generators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lambda_Functions">Lambda Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Conditional_Expressions">Conditional Expressions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Argument_Values">Default Argument Values</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Properties">Properties</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#True/False_evaluations">True/False evaluations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Deprecated_Language_Features">Deprecated Language Features</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lexical_Scoping">Lexical Scoping</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Function_and_Method_Decorators">Function and Method Decorators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Threading">Threading</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Power_Features">Power Features</A></SPAN> </DIV></TD>
 </TR>
 <TR valign="top" class="">
 <TD><DIV class="toc_category"><A href="#Python_Style_Rules">Python Style Rules</A></DIV></TD>
 <TD><DIV class="toc_stylepoint">
-<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Semicolons">Semicolons</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Line_length">Line length</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Parentheses">Parentheses</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Indentation">Indentation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Blank_Lines">Blank Lines</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Whitespace">Whitespace</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Shebang_Line">Shebang Line</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Comments">Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Classes">Classes</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Strings">Strings</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#TODO_Comments">TODO Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports_formatting">Imports formatting</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Statements">Statements</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Access_Control">Access Control</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Naming">Naming</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Main">Main</A></SPAN> </DIV></TD>
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Semicolons">Semicolons</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Line_length">Line length</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Parentheses">Parentheses</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Indentation">Indentation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Blank_Lines">Blank Lines</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Whitespace">Whitespace</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Shebang_Line">Shebang Line</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Comments">Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Classes">Classes</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Strings">Strings</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Files_and_Sockets">Files and Sockets</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#TODO_Comments">TODO Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports_formatting">Imports formatting</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Statements">Statements</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Access_Control">Access Control</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Naming">Naming</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Main">Main</A></SPAN> </DIV></TD>
 </TR>
 </TABLE>
 </DIV>
@@ -223,7 +223,7 @@
       <DIV style="display:inline;" class="">
         Run <code>pychecker</code> over your code.
       </DIV>
-      <DIV class=""><DIV class="stylepoint_body" name="pychecker__body" id="pychecker__body" style="display: none"> 
+      <DIV class=""><DIV class="stylepoint_body" name="pychecker__body" id="pychecker__body" style="display: none">
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
         PyChecker is a tool for finding bugs in Python source code. It finds
@@ -243,7 +243,7 @@
         Suppress its warnings c) Improve it or d) Ignore it.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN> 
+<SPAN class="stylepoint_section">Decision:  </SPAN>
         Make sure you run <code>pychecker</code> on your code.
         </P>
         
@@ -254,7 +254,7 @@
         </p>
         <p>
           To suppress warnings, you can set a module-level variable named
-          <code>__pychecker__</code> to suppress appropriate warnings.  
+          <code>__pychecker__</code> to suppress appropriate warnings.
           For example:
         </p>
         <DIV class=""><PRE>
@@ -264,7 +264,7 @@
         for suppressions and revisit them.
         </p>
         <p>
-          You can get a list of pychecker warnings by doing 
+          You can get a list of pychecker warnings by doing
           <code>pychecker --help</code>.
         </p>
         <p>
@@ -276,7 +276,7 @@
         </p>
         <DIV class=""><PRE>
 <span class="external"></span>def foo(a, unused_b, unused_c, d=None, e=None):
-  <span class="external">  </span>(d, e) = (d, e)  # Silence pychecker
+  <span class="external">  </span>_ = d, e
   <span class="external">  </span>return a
 <span class="external"></span>
 </PRE></DIV>
@@ -406,11 +406,11 @@ from sound.effects import echo
       Exceptions must follow certain conditions:
         
         <ul>
-          <li>Raise exceptions like this: <code>raise MyException("Error
-            message")</code> or <code>raise MyException</code>.  Do not
-            use the two-argument form (<code>raise MyException, "Error
-            message"</code>) or deprecated string-based exceptions
-            (<code>raise "Error message"</code>).</li>
+          <li>Raise exceptions like this: <code>raise MyException('Error
+            message')</code> or <code>raise MyException</code>.  Do not
+            use the two-argument form (<code>raise MyException, 'Error
+            message'</code>) or deprecated string-based exceptions
+            (<code>raise 'Error message'</code>).</li>
           <li>Modules or packages should define their own domain-specific
             base exception class, which should inherit from the built-in
             Exception class.  The base exception for a module should be called
@@ -436,6 +436,14 @@ from sound.effects import echo
           <li>Use the <code>finally</code> clause to execute code whether
             or not an exception is raised in the <code>try</code> block.
             This is often useful for cleanup, i.e., closing a file.</li>
+          <li>When capturing an exception, use <code>as</code> rather than
+            a comma.  For example:
+            <DIV class=""><PRE>
+<span class="external"></span>try:
+  <span class="external">  </span>raise Error
+<span class="external"></span>except Error as error:
+  <span class="external">  </span>pass</PRE></DIV>
+</li>
         </ul>
         </P>
       </DIV></DIV>
@@ -547,15 +555,6 @@ from sound.effects import echo
       permitted.  Use loops instead when things get more complicated.
         </P>
 
-<DIV class=""><PRE class="badcode">No<span class="external"></span>:
-  <span class="external"></span>result = [(x, y) for x in range(10) for y in range(5) if x * y &gt; 10]
-
-  <span class="external"></span>return ((x, y, z)
-  <span class="external"></span>        for x in xrange(5)
-  <span class="external"></span>        for y in xrange(5)
-  <span class="external"></span>        if x != y
-  <span class="external"></span>        for z in xrange(5)
-  <span class="external"></span>        if y != z)</PRE></DIV>
 <DIV class=""><PRE>Ye<span class="external"></span>s:
   <span class="external"></span>result = []
   <span class="external"></span>for x in range(10):
@@ -578,6 +577,15 @@ from sound.effects import echo
 
   <span class="external"></span>eat(jelly_bean for jelly_bean in jelly_beans
   <span class="external"></span>    if jelly_bean.color == 'black')</PRE></DIV>
+<DIV class=""><PRE class="badcode">No<span class="external"></span>:
+  <span class="external"></span>result = [(x, y) for x in range(10) for y in range(5) if x * y &gt; 10]
+
+  <span class="external"></span>return ((x, y, z)
+  <span class="external"></span>        for x in xrange(5)
+  <span class="external"></span>        for y in xrange(5)
+  <span class="external"></span>        if x != y
+  <span class="external"></span>        for z in xrange(5)
+  <span class="external"></span>        if y != z)</PRE></DIV>
       </DIV></DIV>
     </DIV>
     <DIV class="">
@@ -586,7 +594,7 @@ from sound.effects import echo
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Iterators_and_Operators')" name="Default_Iterators_and_Operators__button" id="Default_Iterators_and_Operators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use default iterators and operators for types that support them, 
+        Use default iterators and operators for types that support them,
         like lists, dictionaries, and files.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Default_Iterators_and_Operators__body" id="Default_Iterators_and_Operators__body" style="display: none">
@@ -648,7 +656,7 @@ from sound.effects import echo
       function that creates an entire list of values at once.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN> 
+<SPAN class="stylepoint_section">Cons: </SPAN>
           None.
         </P>
         <P class="">
@@ -699,6 +707,37 @@ from sound.effects import echo
       </DIV></DIV>
     </DIV>
     <DIV class="">
+<H3><A name="Conditional_Expressions" id="Conditional_Expressions">Conditional Expressions</A></H3>
+<SPAN class="link_button" id="link-Conditional_Expressions__button" name="link-Conditional_Expressions__button"><A href="?showone=Conditional_Expressions#Conditional_Expressions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Conditional_Expressions')" name="Conditional_Expressions__button" id="Conditional_Expressions__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        Okay for one-liners.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Conditional_Expressions__body" id="Conditional_Expressions__body" style="display: none">
+        <P class="">
+<SPAN class="stylepoint_section">Definition:  </SPAN>
+      Conditional expressions are mechanisms that provide a shorter syntax
+      for if statements. For example:
+      <code>x = 1 if cond else 2</code>.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Pros:  </SPAN>
+      Shorter and more convenient than an if statement.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Cons: </SPAN>
+      May be harder to read than an if statement. The condition may be difficult
+      to locate if the expression is long.
+        </P>
+        <P class="">
+<SPAN class="stylepoint_section">Decision:  </SPAN>
+      Okay to use for one-liners. In other cases prefer to use a complete if
+      statement.
+        </P>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
 <H3><A name="Default_Argument_Values" id="Default_Argument_Values">Default Argument Values</A></H3>
 <SPAN class="link_button" id="link-Default_Argument_Values__button" name="link-Default_Argument_Values__button"><A href="?showone=Default_Argument_Values#Default_Argument_Values">
           link
@@ -726,7 +765,7 @@ from sound.effects import echo
       "faking" the overloading behavior.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN> 
+<SPAN class="stylepoint_section">Cons: </SPAN>
       Default arguments are evaluated once at module load
       time.  This may cause problems if the argument is a mutable
       object such as a list or a dictionary.  If the function modifies
@@ -765,8 +804,8 @@ from sound.effects import echo
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Properties')" name="Properties__button" id="Properties__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use properties for accessing or setting data where you would 
-        normally have used simple, lightweight accessor or setter methods. 
+        Use properties for accessing or setting data where you would
+        normally have used simple, lightweight accessor or setter methods.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Properties__body" id="Properties__body" style="display: none">
         <P class="">
@@ -797,7 +836,7 @@ from sound.effects import echo
 <SPAN class="stylepoint_section">Decision:  </SPAN> Use properties in new code to access or
       set data where you would normally have used simple, lightweight
       accessor or setter methods.  Read-only properties should be created
-      with the <code>@property</code> 
+      with the <code>@property</code>
       <a HREF="#Function_and_Method_Decorators">decorator</a>.
 
      <p><a id="properties-template-dp">
@@ -868,7 +907,7 @@ from sound.effects import echo
 <SPAN class="stylepoint_section">Definition:  </SPAN> Python evaluates certain values as <code>false</code>
       when in a boolean context. A quick "rule of thumb" is that all
       "empty" values are considered <code>false</code> so <code>0, None, [], {},
-      ""</code> all evaluate as <code>false</code> in a boolean context.
+      ''</code> all evaluate as <code>false</code> in a boolean context.
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Pros:  </SPAN> Conditions using Python booleans are easier to read
@@ -963,16 +1002,16 @@ from sound.effects import echo
           We do not use any Python version which does not support
           these features, so there is no reason not to use the new
           styles.
-<DIV class=""><PRE class="badcode">No:  <span class="external"></span>words = string.split(foo, ':')
-
-     <span class="external"></span>map(lambda x: x[1], filter(lambda x: x[2] == 5, my_list))
-
-     <span class="external"></span>apply(fn, args, kwargs)</PRE></DIV>
 <DIV class=""><PRE>Yes: <span class="external"></span>words = foo.split(':')
 
      <span class="external"></span>[x[1] for x in my_list if x[2] == 5]
 
      <span class="external"></span>fn(*args, **kwargs)</PRE></DIV>
+<DIV class=""><PRE class="badcode">No:  <span class="external"></span>words = string.split(foo, ':')
+
+     <span class="external"></span>map(lambda x: x[1], filter(lambda x: x[2] == 5, my_list))
+
+     <span class="external"></span>apply(fn, args, kwargs)</PRE></DIV>
         </P>
       </DIV></DIV>
     </DIV>
@@ -995,7 +1034,7 @@ from sound.effects import echo
       local variable, even if the use precedes the assignment.  If a
       global declaration occurs, the name is treated as a global
       variable.
-    
+
     <p>
       An example of the use of this feature is:
     </p>
@@ -1018,7 +1057,7 @@ from sound.effects import echo
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Cons: </SPAN>
-      Can lead to confusing bugs. Such as this example based on 
+      Can lead to confusing bugs. Such as this example based on
       <a HREF="http://www.python.org/dev/peps/pep-0227/">PEP-0227</a>:
 <DIV class=""><PRE class="badcode">
 <span class="external"></span>i = 4
@@ -1034,7 +1073,7 @@ from sound.effects import echo
       <p>
         So <code>foo([1, 2, 3])</code> will print <code>1 2 3 3</code>, not
         <code>1 2 3 4</code>.
-      </p> 
+      </p>
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Decision:  </SPAN>
@@ -1132,7 +1171,7 @@ from sound.effects import echo
         </p>
 
         <p>
-          Use the Queue module's <code>Queue</code> data type as the preferred 
+          Use the Queue module's <code>Queue</code> data type as the preferred
           way to
           communicate data between threads.  Otherwise, use the threading
           module and its locking primitives.  Learn about the proper use
@@ -1171,7 +1210,7 @@ from sound.effects import echo
       difficult than code that is longer but is straightforward.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN> 
+<SPAN class="stylepoint_section">Decision:  </SPAN>
           Avoid these features in 
           your code.
         </P>
@@ -1202,8 +1241,8 @@ from sound.effects import echo
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Line_length__body" id="Line_length__body" style="display: none">
     <p>
-      Exception: lines importing modules may end up longer than 80 
-      characters only if using Python 2.4 or 
+      Exception: lines importing modules may end up longer than 80
+      characters only if using Python 2.4 or
       earlier.
     </p>
 
@@ -1239,7 +1278,7 @@ from sound.effects import echo
 
     <p>
       Make note of the indentation of the elements in the line
-      continuation examples above; see the 
+      continuation examples above; see the
       <a HREF="#indentation">indentation</a>
       section for explanation.
     </p>
@@ -1255,8 +1294,8 @@ from sound.effects import echo
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Parentheses__body" id="Parentheses__body" style="display: none">
     <p>
-      Do not use them in return statements or conditional statements unless 
-      using parentheses for implied line continuation. (See above.)  
+      Do not use them in return statements or conditional statements unless
+      using parentheses for implied line continuation. (See above.)
       It is however fine to use parentheses around tuples.
     </p>
 
@@ -1320,7 +1359,7 @@ from sound.effects import echo
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Blank_Lines')" name="Blank_Lines__button" id="Blank_Lines__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Two blank lines between top-level definitions, one blank line 
+        Two blank lines between top-level definitions, one blank line
         between method definitions.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Blank_Lines__body" id="Blank_Lines__body" style="display: none">
@@ -1339,7 +1378,7 @@ from sound.effects import echo
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Whitespace')" name="Whitespace__button" id="Whitespace__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Follow standard typographic rules for the use of spaces around 
+        Follow standard typographic rules for the use of spaces around
         punctuation.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Whitespace__body" id="Whitespace__body" style="display: none">
@@ -1395,16 +1434,16 @@ from sound.effects import echo
   long_name = 2  # comment that should not be aligned
 
   dictionary = {
-      "foo": 1,
-      "long_name": 2,
+      'foo': 1,
+      'long_name': 2,
       }</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:
   foo       = 1000  # comment
   long_name = 2     # comment that should not be aligned
 
   dictionary = {
-      "foo"      : 1,
-      "long_name": 2,
+      'foo'      : 1,
+      'long_name': 2,
       }</PRE></DIV>
 
     
@@ -1469,15 +1508,9 @@ from sound.effects import echo
     
     
     <p>
-      Every file should contain the following items, in order:
-      <ul>
-        <li>a copyright statement (for example,
-          <code>Copyright 2008 Google Inc.</code>)</li>
-        <li>a license boilerplate.  Choose the appropriate boilerplate
-          for the license used by the project (for example, Apache 2.0, BSD, 
-          LGPL, GPL)</li>
-        <li>an author line to identify the original author of the file</li>
-      </ul>
+      Every file should contain license boilerplate.
+      Choose the appropriate boilerplate for the license used by the project
+      (for example, Apache 2.0, BSD, LGPL, GPL)
     </p>
     </P>
     <P class="">
@@ -1616,9 +1649,9 @@ from sound.effects import echo
 
     <p>
       The final place to have comments is in tricky parts of the
-      code. If you're going to have to explain it at the next 
-      <a HREF="http://en.wikipedia.org/wiki/Code_review">code review</a>, 
-      you should comment it now.  Complicated operations get a few lines of 
+      code. If you're going to have to explain it at the next
+      <a HREF="http://en.wikipedia.org/wiki/Code_review">code review</a>,
+      you should comment it now.  Complicated operations get a few lines of
       comments before the operations
       commence. Non-obvious ones get comments at the end of the line.
     </p>
@@ -1663,17 +1696,6 @@ from sound.effects import echo
     from <code>object</code>.  This also applies to nested classes.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Classes__body" id="Classes__body" style="display: none">
-    <DIV class=""><PRE class="badcode">No: <span class="external"></span>class SampleClass:
-      <span class="external">  </span>pass
-
-
-    <span class="external"></span>class OuterClass:
-
-      <span class="external">  </span>class InnerClass:
-        <span class="external">    </span>pass
-<span class="external"></span>
-</PRE></DIV>
-
     <DIV class=""><PRE>Yes: <span class="external"></span>class SampleClass(object):
        <span class="external">  </span>pass
 
@@ -1688,9 +1710,18 @@ from sound.effects import echo
        <span class="external">  </span>"""Explicitly inherits from another class already."""
 <span class="external"></span>
 </PRE></DIV>
+    <DIV class=""><PRE class="badcode">No: <span class="external"></span>class SampleClass:
+      <span class="external">  </span>pass
 
+
+    <span class="external"></span>class OuterClass:
+
+      <span class="external">  </span>class InnerClass:
+        <span class="external">    </span>pass
+<span class="external"></span>
+</PRE></DIV>
     <p>Inheriting from <code>object</code> is needed to make properties work
-    properly, and it will protect your code from one particular potential 
+    properly, and it will protect your code from one particular potential
     incompatibility with Python 3000.  It also defines
     special methods that implement the default semantics of objects including
     <code>__new__</code>, <code>__init__</code>, <code>__delattr__</code>,
@@ -1710,12 +1741,13 @@ from sound.effects import echo
         to decide between <code>+</code> and <code>%</code> though.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Strings__body" id="Strings__body" style="display: none">
-<DIV class=""><PRE class="badcode">No: <span class="external"></span>x = '%s%s' % (a, b)  # use + in this case
-    <span class="external"></span>x = imperative + ', ' + expletive + '!'
-    <span class="external"></span>x = 'name: ' + name + '; score: ' + str(n)</PRE></DIV>
+
 <DIV class=""><PRE>Yes: <span class="external"></span>x = a + b
      <span class="external"></span>x = '%s, %s!' % (imperative, expletive)
      <span class="external"></span>x = 'name: %s; score: %d' % (name, n)</PRE></DIV>
+<DIV class=""><PRE class="badcode">No: <span class="external"></span>x = '%s%s' % (a, b)  # use + in this case
+    <span class="external"></span>x = imperative + ', ' + expletive + '!'
+    <span class="external"></span>x = 'name: ' + name + '; score: ' + str(n)</PRE></DIV>
 
     <p>
       Avoid using the <code>+</code> and <code>+=</code> operators to
@@ -1726,15 +1758,15 @@ from sound.effects import echo
       substring to a <code>cStringIO.StringIO</code> buffer).
     </p>
 
-<DIV class=""><PRE class="badcode">No: <span class="external"></span>employee_table = '&lt;table&gt;'
-    <span class="external"></span>for last_name, first_name in employee_list:
-      <span class="external">  </span>employee_table += '&lt;tr&gt;&lt;td&gt;%s, %s&lt;/td&gt;&lt;/tr&gt;' % (last_name, first_name)
-    <span class="external"></span>employee_table += '&lt;/table&gt;'</PRE></DIV>
 <DIV class=""><PRE>Yes: <span class="external"></span>items = ['&lt;table&gt;']
      <span class="external"></span>for last_name, first_name in employee_list:
        <span class="external">  </span>items.append('&lt;tr&gt;&lt;td&gt;%s, %s&lt;/td&gt;&lt;/tr&gt;' % (last_name, first_name))
      <span class="external"></span>items.append('&lt;/table&gt;')
      <span class="external"></span>employee_table = ''.join(items)</PRE></DIV>
+<DIV class=""><PRE class="badcode">No: <span class="external"></span>employee_table = '&lt;table&gt;'
+    <span class="external"></span>for last_name, first_name in employee_list:
+      <span class="external">  </span>employee_table += '&lt;tr&gt;&lt;td&gt;%s, %s&lt;/td&gt;&lt;/tr&gt;' % (last_name, first_name)
+    <span class="external"></span>employee_table += '&lt;/table&gt;'</PRE></DIV>
 
     <p>
       Use <code>"""</code> for multi-line strings rather than
@@ -1743,14 +1775,88 @@ from sound.effects import echo
       not flow with the indentation of the rest of the program:
     </p>
 
-    <DIV class=""><PRE class="badcode">  No<span class="external"></span>:
+<DIV class=""><PRE>Ye<span class="external"></span>s:
+  <span class="external"></span>print ("This is much nicer.\n"
+  <span class="external"></span>       "Do it this way.\n")</PRE></DIV>
+<DIV class=""><PRE class="badcode">  No<span class="external"></span>:
     <span class="external"></span>print """This is pretty ugly.
 Don'<span class="external"></span>t do this.
 """<span class="external"></span>
 </PRE></DIV>
-<DIV class=""><PRE>Ye<span class="external"></span>s:
-  <span class="external"></span>print ("This is much nicer.\n"
-  <span class="external"></span>       "Do it this way.\n")</PRE></DIV>
+
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Files_and_Sockets" id="Files_and_Sockets">Files and Sockets</A></H3>
+<SPAN class="link_button" id="link-Files_and_Sockets__button" name="link-Files_and_Sockets__button"><A href="?showone=Files_and_Sockets#Files_and_Sockets">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Files_and_Sockets')" name="Files_and_Sockets__button" id="Files_and_Sockets__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        Explicitly close files and sockets when done with them.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Files_and_Sockets__body" id="Files_and_Sockets__body" style="display: none">
+        <p>
+          Leaving files, sockets or other file-like objects open unnecessarily
+          has many downsides, including:
+
+          <ul>
+            <li>They may consume limited system resources, such as file
+              descriptors.  Code that deals with many such objects may exhaust
+              those resources unnecessarily if they're not returned to the
+              system promptly after use.</li>
+            <li>Holding files open may prevent other actions being performed on
+              them, such as moves or deletion.</li>
+            <li>Files and sockets that are shared throughout a program may
+              inadvertantly be read from or written to after logically being
+              closed.  If they are actually closed, attempts to read or write
+              from them will throw exceptions, making the problem known
+              sooner.</li>
+          </ul>
+        </p>
+
+        <p>
+          Furthermore, while files and sockets are automatically closed when the
+          file object is destructed, tying the life-time of the file object to
+          the state of the file is poor practice, for several reasons:
+
+          <ul>
+            <li>There are no guarantees as to when the runtime will actually run
+              the file's destructor.  Different Python implementations use
+              different memory management techniques, such as delayed Garbage
+              Collection, which may increase the object's lifetime arbitrarily
+              and indefinitely.</li>
+            <li>Unexpected references to the file may keep it around longer than
+              intended (e.g. in tracebacks of exceptions, inside globals,
+              etc).</li>
+          </ul>
+        </p>
+
+        <p>
+          The preferred way to manage files is using the <a HREF="http://docs.python.org/reference/compound_stmts.html#the-with-statement">
+          "with" statement</a>:
+        </p>
+
+<DIV class=""><PRE>
+<span class="external"></span>with open("hello.txt") as hello_file:
+  <span class="external">  </span>for line in hello_file:
+    <span class="external">    </span>print line</PRE></DIV>
+
+        <p>
+          For file-like objects that do not support the "with" statement, use
+          contextlib.closing():
+        </p>
+
+<DIV class=""><PRE>
+<span class="external"></span>import contextlib
+
+<span class="external"></span>with contextlib.closing(urllib.urlopen("http://www.python.org/")) as front_page:
+  <span class="external">  </span>for line in front_page:
+    <span class="external">    </span>print line</PRE></DIV>
+
+        <p>
+          Legacy AppEngine code using Python 2.5 may enable the "with" statement
+          using "from __future__ import with_statement".
+        </p>
       </DIV></DIV>
     </DIV>
     <DIV class="">
@@ -1880,8 +1986,8 @@ Don'<span class="external"></span>t do this.
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Access_Control')" name="Access_Control__button" id="Access_Control__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         If an accessor function would be trivial you should use public variables
-        instead of accessor functions to avoid the extra cost of function 
-        calls in Python. When more functionality is added you can use 
+        instead of accessor functions to avoid the extra cost of function
+        calls in Python. When more functionality is added you can use
         <code>property</code> to keep the syntax consistent.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Access_Control__body" id="Access_Control__body" style="display: none">
@@ -1916,7 +2022,7 @@ Don'<span class="external"></span>t do this.
       <li>single character names except for counters or iterators</li>
       <li>dashes (<code>-</code>) in any package/module name</li>
       <li>
-<code>__double_leading_and_trailing_underscore__</code> names 
+<code>__double_leading_and_trailing_underscore__</code> names
         (reserved by Python)</li>
     </ul>
 
@@ -1936,14 +2042,14 @@ Don'<span class="external"></span>t do this.
         effectively serves to make the variable or method private to its class
         (using name mangling).</li>
       <li>
-        Place related classes and top-level functions together in a 
+        Place related classes and top-level functions together in a
         module. Unlike Java,
         there is no need to limit yourself to one class per module.</li>
       <li>
         Use CapWords for class names, but lower_with_under.py for module names.
         Although there are many existing modules named CapWords.py, this is now
-        discouraged because it's confusing when the module happens to be 
-        named after a class.  ("wait -- did I write 
+        discouraged because it's confusing when the module happens to be
+        named after a class.  ("wait -- did I write
         <code>import StringIO</code> or <code>from StringIO import
         StringIO</code>?")</li>
     </ul>
@@ -2045,9 +2151,9 @@ Don'<span class="external"></span>t do this.
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Main')" name="Main__button" id="Main__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Even a file meant to be used as a script should be importable and a 
-        mere import should not have the side effect of executing the script's 
-        main functionality. The main functionality should be in a main() 
+        Even a file meant to be used as a script should be importable and a
+        mere import should not have the side effect of executing the script's
+        main functionality. The main functionality should be in a main()
         function.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Main__body" id="Main__body" style="display: none">
@@ -2057,7 +2163,7 @@ Don'<span class="external"></span>t do this.
       require modules to be importable.  Your code should always check
       <code>if __name__ == '__main__'</code> before executing your
       main program so that the main program is not executed when the
-      module is imported.  
+      module is imported.
       
     </p>
 
@@ -2112,7 +2218,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.29
+Revision 2.39
 </p>
 
 
