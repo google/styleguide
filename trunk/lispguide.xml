@@ -1,0 +1,3215 @@
+<?xml version="1.0"?>
+<GUIDE title="Google Common Lisp Style Guide">
+
+<p align="right">
+
+Revision 1.8
+</p>
+
+
+<address>
+Robert Brown
+</address>
+
+
+<address>
+Fran&#231;ois-Ren&#233; Rideau
+</address>
+
+<address>
+   In memoriam Dan Weinreb
+</address>
+
+<OVERVIEW>
+<CATEGORY title="Important Note">
+  <STYLEPOINT title="Note: Displaying Hidden Details in this Guide">
+     <SUMMARY>
+       This style guide contains many details
+       that are initially hidden from view.
+       They are marked by the triangle icon, which you see here on your left.
+       Click it now. You should see "Hooray" appear below.
+     </SUMMARY>
+     <BODY>
+       <p>
+        Hooray!  Now you know you can expand points to get more details.
+        Alternatively, there's an "expand all" at the top of this document.
+       </p>
+     </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Background">
+  <p>
+    Common Lisp is a powerful multiparadigm programming language.
+    With great power comes great responsibility.
+    This guide recommends formatting and stylistic choices
+    designed to make your code easier for other people to understand.
+  </p>
+  
+  <p>
+    This guide is not a Common Lisp tutorial.
+    For basic information about the language, please consult
+    <a HREF="http://www.gigamonkeys.com/book/">Practical Common Lisp</a>.
+    For a language reference, please consult the
+    <a HREF="http://www.lispworks.com/documentation/HyperSpec/Front/index.htm">Common Lisp HyperSpec</a>.
+    For more detailed style guidance, take a look at Peter Norvig and Kent Pitman's
+    <a HREF="http://norvig.com/luv-slides.ps">style guide</a>.
+  </p>
+</CATEGORY>
+</OVERVIEW>
+<CATEGORY title="Meta-Guide">
+  <STYLEPOINT title="Must, Should, May, or Not">
+    <SUMMARY>
+      Each guideline's level of importance is indicated
+      by use of the following keywords and phrases, adapted from
+      <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.
+    </SUMMARY>
+    <BODY>
+      <table>
+        <tr>
+          <th valign="top">MUST</th>
+          <td>
+            <p>
+              This word, or the terms "REQUIRED" or "SHALL",
+              means that the guideline is an absolute requirement.
+              You must ask permission to violate a MUST.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <th valign="top">MUST NOT</th>
+          <td>
+            <p>
+              This phrase, or the phrase "SHALL NOT",
+              means that the guideline is an absolute prohibition.
+              You must ask permission to violate a MUST NOT.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <th valign="top">SHOULD</th>
+          <td>
+            <p>
+              This word, or the adjective "RECOMMENDED", means that
+              there may exist valid reasons in particular circumstances
+              to ignore the demands of the guideline, but
+              the full implications must be understood and carefully weighed
+              before choosing a different course.
+              You must ask forgiveness for violating a SHOULD.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <th valign="top">SHOULD NOT</th>
+          <td>
+            <p>
+              This phrase, or the phrase "NOT RECOMMENDED", means that
+              there may exist valid reasons in particular circumstances
+              to ignore the prohibitions of this guideline, but
+              the full implications should be understood and carefully weighed
+              before choosing a different course.
+              You must ask forgiveness for violating a SHOULD NOT.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <th valign="top">MAY</th>
+          <td>
+            <p>
+              This word, or the adjective "OPTIONAL",
+              means that an item is truly optional.
+            </p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        Unlike RFCs, we don't capitalize every instance of one of the above
+        keywords when it is used.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Permission and Forgiveness">
+    <SUMMARY>
+      There are cases where transgression of some of these rules
+      is useful or even necessary.
+      In some cases, you must seek permission or obtain forgiveness
+      from the proper people.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Permission comes from the OWNERS of your project.
+      </p>
+      <p>
+        Forgiveness is requested in a comment
+        near the point of guideline violation,
+        and is granted by your code reviewer.
+        The original comment should be signed by you, and
+        the reviewer should add a signed approval to the comment at review time.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Conventions">
+    <SUMMARY>
+      Some guidelines, such those about as comments and indentation,
+      are based purely on convention, rather than on clear technical merit.
+      However, conventions are important for readability,
+      thus most conventions are MUSTs.
+    </SUMMARY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Old Code">
+    <p>
+      A lot of our code was written before these guidelines existed.
+      You should fix violations as you encounter them
+      in the course of your normal coding.
+      You must not fix violations en masse
+      without warning other developers and coordinating with them,
+      so as not to make the merging of large branches
+      more difficult than it already is.
+    </p>
+  </STYLEPOINT>
+  <STYLEPOINT title="Future Topics">
+    <SUMMARY>
+      There are many topics for additional standardization
+      not covered by current version of this document,
+      but deferred to future versions.
+    </SUMMARY>
+    <BODY>
+      <ul>
+        <li>
+          File and directory structure
+        </li>
+        <li>
+          Packages and modularity
+        </li>
+        <li>
+          Threads and locking
+        </li>
+        <li>
+          How to add configurable components
+        </li>
+        <li>
+          CLOS style: initforms, slot and accessor names, etc.
+        </li>
+        <li>
+          Recommendations on max number of slots per class.
+        </li>
+        <li>
+          More concrete examples of good code:
+          <ul>
+            <li>
+              exceptions
+            </li>
+            <li>
+              transactions, with retry
+            </li>
+            <li>
+              XML
+            </li>
+            <li>
+              typing
+            </li>
+            <li>
+              encapsulation / abstraction
+            </li>
+            <li>
+              class and slot names
+            </li>
+            <li>
+              etc.
+            </li>
+          </ul>
+        </li>
+        <li>
+          When (not) to use conditional compilation:
+          <ul>
+            <li>
+              modifying the product
+            </li>
+            <li>
+              conditional debugging/console output/etc.
+            </li>
+            <li>
+              "temporarily" commenting-out blocks of code
+            </li>
+            <li>
+              etc.
+            </li>
+          </ul>
+        </li>
+        <li>
+          Use of <code>i&lt;</code> and friends
+          (premature optimization, bug introduction)
+        </li>
+      </ul>
+    </BODY>
+  </STYLEPOINT>
+  </CATEGORY>
+<CATEGORY title="General Guidelines">
+  <STYLEPOINT title="Principles">
+    <SUMMARY>
+      There are some basic principles for team software development
+      that every developer must keep in mind.
+      Whenever the detailed guidelines are inadequate, confusing or contradictory,
+      refer back to these principles for guidance:
+      <ul>
+        <li>
+          Every developer's code must be easy for another developer
+          to read, understand, and modify
+          &#8212; even if the first developer isn't around to explain it.
+          (This is the "hit by a truck" principle.)
+        </li>
+        <li>
+          Everybody's code should look the same.
+          Ideally, there should be no way to look at lines of code
+          and recognize it as "Fred's code" by its style.
+        </li>
+        <li>
+          Don't be "clever" &#8212;
+          do the simplest thing that could possibly work properly.
+        </li>
+        <li>
+          Be precise.
+        </li>
+        <li>
+          Be concise.
+        </li>
+        <li>
+          KISS &#8212; Keep It Simple, Stupid.
+        </li>
+        <li>
+          Use the smallest hammer for the job.
+        </li>
+        <li>
+          Use common sense.
+        </li>
+        <li>
+          Keep related code together.
+          Minimize the amount of jumping around
+          someone has to do to understand an area of code.
+        </li>
+      </ul>
+    </SUMMARY>
+    <BODY>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Priorities">
+    <SUMMARY>
+      <p>
+        When making decisions about how to write a given piece of
+        code, aim for the following -ilities in this priority order:
+      </p>
+      <ul>
+        <li>
+          Usability by the customer
+        </li>
+        <li>
+          Debuggability/Testability
+        </li>
+        <li>
+          Readability/Comprehensibility
+        </li>
+        <li>
+          Extensibility/Modifiability
+        </li>
+        <li>
+          Efficiency (of the Lisp code at runtime)
+        </li>
+      </ul>
+    </SUMMARY>
+    <BODY>
+      <p>
+        Most of these are obvious.
+      </p>
+      <p>
+        Usability by the customer means that the system has to do what the
+        customer requires; it has to handle the customer's transaction
+        volumes, uptime requirements; etc.
+      </p>
+      <p>
+        For the Lisp efficiency point,
+        given two options of equivalent complexity,
+        pick the one that performs better.
+        (This is often the same as the one that conses less,
+        i.e. allocates less storage from the heap.)
+      </p>
+      <p>
+        Given two options where one is more complex than the other,
+        pick the simpler option and revisit the decision only if
+        profiling shows it to be a performance bottleneck.
+      </p>
+      <p>
+        However, avoid premature optimization.
+        Don't add complexity to speed up something that runs rarely,
+        since in the long run, it matters less whether such code is fast.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Architecture">
+    <SUMMARY>
+      To build code that is robust and maintainable,
+      it matters a lot how the code is divided into components,
+      how these components communicate,
+      how changes propagate as they evolve,
+      and more importantly
+      how the programmers who develop these components communicate
+      as these components evolve.
+    </SUMMARY>
+    <BODY>
+      <p>
+        If your work affects other groups, might be reusable across groups,
+        adds new components, has an impact on other groups
+        (including QA or Ops), or otherwise isn't purely local,
+        you must write it up using at least a couple of paragraphs,
+        and get a design approval from the other parties involved
+        before starting to write code &#8212; or be ready to scratch what you have
+        when they object.
+      </p>
+      <p>
+        If you don't know or don't care about these issues,
+        ask someone who does.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Using Libraries">
+    <SUMMARY>
+      Often, the smallest hammer is to use an existing library.
+      Or one that doesn't exist yet.
+      In such cases, you are encouraged to use or develop such a library,
+      but you must take appropriate precautions.
+    </SUMMARY>
+    <BODY>
+      <ul>
+        <li>
+          You MUST NOT start a new library
+          unless you established that none is already available
+          that can be fixed or completed into becoming what you need.
+          That's a rule against the NIH syndrome ("Not Invented Here"),
+          which is particularly strong amongst Lisp hackers.
+        </li>
+        <li>
+          Whichever library, old or new, you pick, you MUST get permission
+          to incorporate third-party code into the code base.
+          You must discuss the use of such library
+          in the appropriate mailing-list,
+          and have your code reviewed by people knowledgeable in the domain
+          and/or the Lisp library ecosystem (if any).
+          Please be ready to argue why this particular solution makes sense
+          as compared to other available libraries.
+        </li>
+        <li>
+          Some libraries are distributed under licenses not compatible
+          with the software you're writing, and
+          must not be considered available for use.
+          Be aware of these issues, or consult with people who are.
+        </li>
+      </ul>
+      
+      <p>
+        Note that if you have a "clever" implementation trick,
+        and your trick really is clever,
+        then you must definitely not include it in business specific code;
+        but it may have its place in an open-source library used by the code.
+        If your idea is not general purpose enough to have any users
+        beyond your regular business users,
+        then it is definitely either not clever enough or way too clever,
+        and in either case does not belong in the code.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Open-Sourcing Code">
+    <SUMMARY>
+      <p>
+        If you write a general-purpose library,
+        or modify an existing open-source library,
+        you are encouraged to publish the result
+        separate from your main project and then
+        have your project import it like any other open-source library.
+      </p>
+      
+    </SUMMARY>
+    <BODY>
+      <p>
+        Use your judgement to distinguish
+        general-purpose versus business-specific code,
+        and open-source the general-purpose parts,
+        while keeping the business-specific parts a trade secret.
+      </p>
+      
+      <p>
+        Open-Sourcing code has many advantages,
+        including being able to leverage third parties for development,
+        letting the development of features be user-directed,
+        and keeping you honest with respect to code quality.
+        Whatever code you write, you will have to maintain anyway,
+        and make sure its quality is high enough to sustain use in production.
+        There should therefore be no additional burden to Open-Sourcing,
+        even of code that (at least initially)
+        is not directly usable by third parties.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Development Process">
+    <SUMMARY>
+      Development process is outside the scope of this document.
+      However, developers should remember at least these bits:
+      get reviewed, write tests, eliminate warnings, run tests, avoid mass-changes.
+    </SUMMARY>
+    <BODY>
+      <p>
+      </p>
+      <ul>
+        <li>
+          All code changes must be reviewed.
+          You should expect that your code will be reviewed by other hackers,
+          and that you will be assigned other hackers' code to review.
+          Part of the review criteria will be that code obeys
+          the coding standards in this document.
+        </li>
+        <li>
+          You must write and check-in tests for new code that you write and old bugs you fix.
+          There must be a unit test for every API function,
+          and any previously failing case.
+          Your work is not truly done until this activity is complete.
+          Estimating tasks must include the time it takes to produce such tests.
+        </li>
+        <li>
+          Your code must compile
+          without any compilation error or warning messages whatsoever.
+          If the compiler issues warnings that should be ignored,
+          muffle those warnings using the
+          <code>xcvb-driver:with-controlled-compiler-conditions</code> and
+          <code>xcvb-driver:*uninteresting-conditions*</code>
+          framework (also available as <code>asdf-condition-control</code>),
+          either around the entire project, or around individual files
+          (using asdf's <code>:around-compile</code> hooks).
+        </li>
+        <li>
+          You must run the "precheckin" tests successfully
+          before committing code.
+        </li>
+        <li>
+          We should/will/must incorporate code coverage
+          into our testing process.
+          Tests are not sufficient
+          if they do not cover all new and updated code;
+          code that for whatever reason cannot be included in coverage results
+          should be clearly marked as such including the reason.
+        </li>
+        <li>
+          Many people develop on branches.
+          You must get permission to undertake mass-changes
+          (e.g. mass reindentations)
+          so that we can coordinate in advance,
+          and give branch residents time to get back on the mainline
+        </li>
+      </ul>
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Formatting">
+  <STYLEPOINT title="Spelling">
+    <SUMMARY>
+      <p>
+        You must use correct spelling in your comments,
+        and most importantly in your identifiers.
+      </p>
+      <p>
+        When several correct spellings exist (including American vs English),
+        and there isn't a consensus amongst developers as which to use,
+        you should choose the shorter spelling.
+      </p>
+      <p>
+        You must avoid using abbreviations for words,
+        unless it's a word that is used very frequently,
+        in which case you must use
+        the <em>same</em> abbreviation <em>consistently</em>.
+      </p>
+    </SUMMARY>
+    <BODY>
+      <p>
+        If you're not sure, consult a dictionary,
+        Google for alternative spellings,
+        or ask a local grammar nazi.
+      </p>
+      <p>
+        Here are examples of choosing the correct spelling:
+      </p>
+      <ul>
+        <li>
+          Use "complimentary" in the sense of a meal or beverage
+          that is not paid for by the recipient, not "complementary".
+        </li>
+        <li>
+          Use "existent" and "nonexistent", not "existant".
+          Use "existence", not "existance".
+        </li>
+        <li>
+          Use "hierarchy" not "heirarchy".
+        </li>
+        <li>
+          Use "precede" not "preceed".
+        </li>
+        <li>
+          Use "weird", not "wierd".
+        </li>
+      </ul>
+      <p>
+        Here are examples of choosing the shorter spelling:
+      </p>
+      <ul>
+        <li>
+          Use "canceled", not "cancelled"
+        </li>
+        <li>
+          Use "queuing", not "queueing".
+        </li>
+        <li>
+          Use "signaled", not "signalled";
+        </li>
+        <li>
+          Use "traveled", not "travelled".
+        </li>
+        <li>
+          Use "aluminum", not "aluminium"
+        </li>
+        <li>
+          Use "oriented", not "orientated"
+        </li>
+        <li>
+          Use "color", not "colour"
+        </li>
+        <li>
+          Use "behavior", not "behaviour"
+        </li>
+      </ul>
+      <p>
+        Make appropriate exceptions for industry standard nomenclature/jargon,
+        including plain misspellings.
+        For instance:
+      </p>
+      <ul>
+        <li>
+          Use "referer", not "referrer", in the context of the HTTP protocol.
+        </li>
+      </ul>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Line length">
+    <SUMMARY>
+      You should format source code so that no line is longer than 100 characters.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Some line length restriction is better than none at all.
+        Google Java developers have adopted
+        a 100-column limitation on source code lines
+        and C++ developers limit themselves to 80 columns.
+        Common Lispers at ITA have long adopted the 100-column limit.
+        Allowing 100 columns seems better, since good style encourages
+        the use of descriptive variables and function names.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Indentation">
+    <SUMMARY>
+      <p>
+        Indent your code the way GNU Emacs does.
+      </p>
+      <p>
+        Indent carefully to make the code easier to understand.
+      </p>
+    </SUMMARY>
+    <BODY>
+      <p>
+        By default, GNU Emacs does an excellent job indenting Common Lisp code.
+        It can be taught how to indent new defining forms
+        and special rules for domain specific languages.
+        Each project may have some file to customize indentation; use it.
+      </p>
+      
+      
+      <p>
+        Use indentation to make complex function applications easier to read.
+        When an application does not fit on one line
+        or the function takes many arguments,
+        consider inserting newlines between the arguments
+        so that each one is on a separate line.
+        However, do not insert newlines in a way that makes it hard to tell
+        how many arguments the function takes
+        or where an argument form starts and ends.
+      </p>
+      <BAD_CODE_SNIPPET>
+        ;; Bad
+        (do-something first-argument second-argument (lambda (x)
+            (frob x)) fourth-argument last-argument)
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        ;; Better
+        (do-something first-argument
+                      second-argument
+                      #'(lambda (x) (frob x))
+                      fourth-argument
+                      last-argument)
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="File Header">
+    <SUMMARY>
+      <p>
+        You must include maintainership and other important information
+        at the top of each source file.
+      </p>
+      <p>
+        You should not include a copyright statement in source files.
+      </p>
+    </SUMMARY>
+    <BODY>
+      <p>
+        Every source file may begin with a one-line description of the file.
+      </p>
+      <p>
+        After that optional description,
+        every source file may prominently include a statement
+        about who originally wrote the code,
+        made major changes, and/or is the current owner/maintainer.
+        This makes it easier for hackers to locate
+        whom to ask questions about the code,
+        or to identify that no one is left to reply to such inquiries.
+        However, consider that the information
+        is not very helpful if it is not maintained;
+        unless it brings information
+        that cannot be easily extracted from source control,
+        it is better skipped.
+      </p>
+      <p>
+        After that optional statement, every file should follow with
+        a brief explanation of what the file contains.
+      </p>
+      <p>
+        After that explanation, every file should start the code itself with an
+        <code>(in-package :<em>package-name</em>)</code> form.
+      </p>
+      <p>
+        After that <code>in-package</code> form,
+        every file should follow with any file-specific
+        <code>(declaim (optimize ...))</code> declaration
+        that is not covered by an asdf <code>:around-compile</code> hook.
+      </p>
+      <CODE_SNIPPET>
+        ;;;; Author: brown (Robert Brown)
+
+        ;;;; Variable length encoding for integers and floating point numbers.
+
+        (in-package #:varint)
+        (declaim #.*optimize-default*)
+      </CODE_SNIPPET>
+      <p>
+        You should not include copyright information in individual source code files.
+        An exception is made for files meant to be disseminated as standalone.
+      </p>
+      <p>
+        Each project or library has a single file specifying its license.
+        Absence of a <tt>LICENSE</tt> or <tt>COPYING</tt> file
+        means the project is proprietary code.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Vertical white space">
+    <SUMMARY>
+      Vertical white space: one blank line between top-level forms.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You should include one blank line between top-level forms,
+        such as function definitions.
+        Exceptionally, blank lines can be omitted
+        between simple, closely related defining forms of the same kind,
+        such as a group of related type declarations or constant definitions.
+      </p>
+      <CODE_SNIPPET>
+        (defconstant +mix32+ #x12b9b0a1 "pi, an arbitrary number")
+        (defconstant +mix64+ #x2b992ddfa23249d6 "more digits of pi")
+
+        (defconstant +golden-ratio32+ #x9e3779b9 "the golden ratio")
+        (defconstant +golden-ratio64+ #xe08c1d668b756f82 "more digits of the golden ratio")
+
+        (defmacro incf32 (x y)
+          "like incf, but for integers modulo 2**32"
+          `(setf ,x (logand (+ ,x ,y) #xffffffff)))
+        (defmacro incf64 (x y)
+          "like incf, but for integers modulo 2**64"
+          `(setf ,x (logand (+ ,x ,y) #xffffffffffffffff)))
+      </CODE_SNIPPET>
+      <p>
+        Blank lines can be used to separate parts of a complicated function.
+        Generally, however, you should break a large function into smaller ones
+        instead of trying to make it more readable by adding vertical space.
+        If you can't, you should document with a <code>;;</code> comment
+        what each of the separated parts of the function does.
+      </p>
+      <p>
+        Every top-level form
+        should be fewer than 61 lines long,
+        including comments but excluding the documentation string.
+        This applies to each of the forms in an <code>eval-when</code>,
+        rather than to the <code>eval-when</code> itself.
+        Additionally, <code>defpackage</code> forms may be longer,
+        since they may include long lists of symbols.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Horizontal white space">
+    <SUMMARY>
+      Horizontal white space: none around parentheses. No tabs.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You must not include extra horizontal whitespace
+        before or after parentheses or around symbols.
+      </p>
+      <p>
+        You must not place right parentheses by themselves on a line.
+        A set of consecutive trailing parentheses must appear on the same line.
+      </p>
+      <BAD_CODE_SNIPPET>
+        ;; Very Bad
+        ( defun factorial ( limit )
+          ( let (( product 1 ))
+            ( loop for i from 1 upto limit
+                  do (setf product ( * product i ) ) )
+            product
+          )
+        )
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        ;; Better
+        (defun factorial (limit)
+          (let ((product 1))
+            (loop for i from 1 upto limit
+                  do (setf product (* product i)))
+            product))
+      </CODE_SNIPPET>
+      <p>
+        You should use only one space between forms.
+      </p>
+      <p>
+        You should not use spaces to vertically align forms
+        in the middle of consecutive lines.
+        An exception is made when the code possesses
+        an important yet otherwise not visible symmetry
+        that you want to emphasize.
+      </p>
+      <BAD_CODE_SNIPPET>
+        ;; Bad
+        (let* ((low    1)
+               (high   2)
+               (sum    (+ (* low low) (* high high))))
+          ...)
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        ;; Better
+        (let* ((low 1)
+               (high 2)
+               (sum (+ (* low low) (* high high))))
+          ...))
+      </CODE_SNIPPET>
+      <p>
+        You must align nested forms if they occur across more than one line.
+      </p>
+      <BAD_CODE_SNIPPET>
+        ;; Bad
+        (defun munge (a b c)
+        (* (+ a b)
+        c))
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        (defun munge (a b c)
+          (* (+ a b)
+             c))
+      </CODE_SNIPPET>
+      <p>
+        The convention is that the body of a binding form
+        is indented two spaces after the form.
+        Any binding data before the body is usually indented four spaces.
+        Arguments to a function call are aligned with the first argument;
+        if the first argument is on its own line,
+        it is aligned with the function name.
+      </p>
+      <CODE_SNIPPET>
+        (multiple-value-bind (a b c d)
+            (function-returning-four-values x y)
+          (declare (ignore c))
+          (something-using a)
+          (also-using b d))
+      </CODE_SNIPPET>
+      <p>
+        An exception to the rule against lonely parentheses
+        is made for an <code>eval-when</code> form around several definitions;
+        in this case, include a comment <code>; eval-when</code>
+        after the closing parenthesis.
+      </p>
+      <p>
+        You must set your editor to
+        avoid inserting tab characters in the files you edit.
+        Tabs cause confusion when editors disagree
+        on how many spaces they represent.
+        In Emacs, do <code>(setq-default indent-tabs-mode nil)</code>.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
+<CATEGORY title="Documentation">
+  <STYLEPOINT title="Document everything">
+    <SUMMARY>
+      You should use document strings to explain how code works.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You must comment anything complicated
+        so that the next developer can understand what's going on.
+        (Again, the "hit by a truck" principle.)
+      </p>
+      <p>
+        Unless some bit of code is painfully self-explanatory, document it.
+        Prefer documentation strings to comments
+        because the former can be displayed by programming tools, such as IDEs,
+        or by REPL queries such as <code>(describe 'foo)</code>;
+        they can also be extracted
+        to create web-based documentation or other reference works.
+      </p>
+      <p>
+        Supply a documentation string (also known as docstring) when defining
+        top-level functions, types, classes, and macros.
+        Generally, add a documentation string wherever the language allows.
+      </p>
+      <p>
+        For functions, the docstring should describe the function's contract:
+        what the function does,
+        what the arguments mean,
+        what values are returned,
+        what conditions the function can signal.
+        It should be expressed at the appropriate level of abstraction,
+        explaining the intended meaning rather than, say, just the syntax.
+        In documentation strings, capitalize the names of Lisp symbols,
+        such as function arguments.
+        For example, "The value of LENGTH should be an integer."
+      </p>
+      <CODE_SNIPPET>
+        (defun primep (n)
+          "Return T if N, an integer, is a prime number. Otherwise, return NIL."
+          (cond ((or (&lt; n 2))
+                 nil)
+                ((= n 2)
+                 t)
+                ((divisorp 2 n)
+                 nil)
+                (t
+                 (loop for i from 3 upto (sqrt n) by 2
+                       do (when (divisorp i n)
+                            (return-from primep nil)))
+                 t)))
+      </CODE_SNIPPET>
+      <CODE_SNIPPET>
+        (defgeneric table-clear (table)
+          (:documentation
+            "Like clrhash, empties the TABLE of all
+            associations, and returns the table itself."))
+      </CODE_SNIPPET>
+      <p>
+        A long docstring may usefully
+        begin with a short, single-sentence summary,
+        followed by the larger body of the docstring.
+      </p>
+      <p>
+        When the name of a type is used,
+        the symbol may be quoted by surrounding it with
+        a back quote at the beginning and a single quote at the end.
+        Emacs will highlight the type, and the highlighting serves
+        as a cue to the reader that <kbd>M-.</kbd>
+        will lead to the symbol's definition.
+      </p>
+      <CODE_SNIPPET>
+        (defun bag-tag-expected-itinerary (bag-tag)
+          "Return a list of `legacy-pnr-pax-segment' objects representing
+          the expected itinerary of the `bag-tag' object, BAG-TAG."
+          ...)
+      </CODE_SNIPPET>
+      <p>
+        Every method of a generic function should be independently documented
+        when the specialization affects what the method does,
+        beyond what is described in its generic function's docstring.
+      </p>
+      <p>
+        When you fix a bug,
+        consider whether what the fixed code does is obviously correct or not;
+        if not, you must add a comment explaining
+        the reason for the code in terms of fixing the bug.
+        Adding the bug number, if any, is also recommended.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Comment semicolons">
+    <SUMMARY>
+      You must use the appropriate number of semicolons to introduce comments.
+    </SUMMARY>
+    <BODY>
+      <ul>
+        <li>
+          File headers and important comments
+          that apply to large sections of code in a source file
+          should begin with four semicolons.
+        </li>
+        <li>
+          You should use three semicolons
+          to begin comments that apply to just
+          one top-level form or small group of top-level forms.
+        </li>
+        <li>
+          Inside a top-level form, you should use two semicolons
+          to begin a comment if it appears between lines.
+        </li>
+        <li>
+          You should use one semicolon if it is a parenthetical remark
+          and occurs at the end of a line.
+          You should use spaces to separate the comment
+          from the code it refers to so the comment stands out.
+          You should try to vertically align
+          consecutive related end-of-line comments.
+        </li>
+      </ul>
+      <CODE_SNIPPET>
+        ;;;; project-euler.lisp
+        ;;;; File-level comments or comments for large sections of code.
+
+        ;;; Problems are described in more detail here:  http://projecteuler.net/
+
+        ;;; Divisibility
+        ;;; Comments that describe a group of definitions.
+
+        (defun divisible-by (n d)
+          (zerop (mod n d)))
+
+        (defun proper-divisors (n)
+          ...)
+
+        (defun divisors (n)
+          (cons n (proper-divisors n)))
+
+        ;;; Prime numbers
+
+        (defun prime-p (n)
+          (cond ((or (&lt; n 2)) nil)
+                ((= n 2) t)     ; parenthetical remark here
+                                ; continuation of the remark
+                ((divisible-by n 2) nil)  ; different remark
+                ;; Comment that applies to a secion of code.
+                (t (loop for i from 3 upto (sqrt n) by 2
+                         do (when (divisible-by n i)
+                              (return-from prime-p nil)))
+                   t)))
+      </CODE_SNIPPET>
+      <p>
+        You should include a space between the semicolon and the text of the comment.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Grammar and punctuation">
+    <SUMMARY>
+      You should punctuate documentation correctly.
+    </SUMMARY>
+    <BODY>
+      <p>
+        When a comment is a full sentence,
+        you should capitalize the initial letter of the first word
+        and end the comment with a period.
+        In general, you should use correct punctuation.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Attention Required">
+    <SUMMARY>
+      You must follow the ITA convention of using <code>---</code>
+      for comments requiring special attention,
+      including unobvious tricks, TODO items, questions, breakage, danger.
+    </SUMMARY>
+    <BODY>
+      <ul>
+        <li>
+          <code>;--- </code> prefixes a cautionary comment,
+          e.g. explaining why the code in question is particularly
+          tricky, delicate, or non-obvious.
+        </li>
+        <li>
+          <code>;---??? </code> prefixes a serious question
+          which needs to be resolved soon,
+          by fixing either the code or its documentation.
+        </li>
+        <li>
+          <code>;---!!! </code> identifies code which is broken,
+          but which for some reason you cannot fix at this time.
+          You should not use this often for new code.
+        </li>
+        <li>
+          <code>;---*** </code> identifies active <em>DANGER</em>,
+          for instance where important functionality is stubbed out,
+          or a large design issue remains unresolved.
+          Anything so marked must be fixed
+          before code is rolled into production.
+        </li>
+      </ul>
+      <p>
+        You must sign and date
+        any of the above "requiring further attention" comments
+        (but not mere cautionary explanations).
+      </p>
+      <p>
+        This strategy ensures that grepping for <code>;---</code>
+        will always yield all the comments that require caution,
+        as well as whom to talk to about each one.
+      </p>
+      <p>
+        Only use <code>;---</code> on the first line of such a comment.
+        Other lines should use spaces to align vertically.
+        This way, grepping will also yield a count of the number of issues.
+      </p>
+      <p>
+        You should insert a space after this comment prefix.
+      </p>
+      <p>
+        You may use these with multiple-semicolon comments as well.
+      </p>
+      <p>
+        Some people like to use words like <code>FIXME</code> or <code>TODO</code>.
+        You may use these, but they must be preceded with <code>---</code>.
+      </p>
+      <p>
+        Use TODO comments when the code is known to be incomplete
+        and you want to indicate what work remains to be done.
+      </p>
+      <p>
+        The comments begin with <code>TODO</code> in all capital letters,
+        followed by your email address or other identifier in parentheses,
+        followed by a colon, a space, and
+        an explanation of what additional work is desirable or required.
+        The user name included in the comment is that
+        of a person who understands the deficiency.
+        A TODO comment is not a commitment to fix the problem.
+      </p>
+      <p>
+        When signing comments,
+        you should use your username (for code within the company)
+        or full email address (for code visible outside the company),
+        not just initials.
+        
+      </p>
+      <CODE_SNIPPET>
+        ;;--- TODO(george@gmail.com): Refactor to provide a better API.
+      </CODE_SNIPPET>
+      <p>
+        Be specific when indicating times or software releases
+        in a TODO comment:
+      </p>
+      <CODE_SNIPPET>
+        ;;--- TODO(brown): Remove this code after release 1.7 or before November, 2012.
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Domain-Specific Languages">
+    <SUMMARY>
+      You should document DSLs and
+      any terse program in a DSL.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You should design your Domain Specific Language
+        to be easy to read and understand by people familiar with the domain.
+      </p>
+      <p>
+        You must properly document all your Domain Specific Language.
+      </p>
+      <p>
+        Sometimes, your DSL is designed for terseness.
+        In that case, it is important to document what each program does,
+        if it's not painfully obvious from the context.
+      </p>
+      <p>
+        Notably, when you use regular expressions
+        (e.g. with the <code>CL-PPCRE</code> package),
+        you MUST ALWAYS put in a comment
+        (usually a two-semicolon comment on the previous line)
+        explaining, at least basically, what the regular expression does,
+        or what the purpose of using it is.
+        The comment need not spell out every bit of the syntax, but
+        it should be possible for someone to follow the logic of the code
+        without actually parsing the regular expression.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+
+</CATEGORY>
+
+<CATEGORY title="Naming">
+  <STYLEPOINT title="Symbol guidelines">
+    <SUMMARY>
+      You should use lower case.
+      You should not abbreviate.
+      You should follow punctuation conventions.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Use lower case for all symbols.
+        Consistently using lower case makes searching for symbol names easier
+        and is more readable.
+      </p>
+      <p>
+        Note that Common Lisp is case-converting,
+        and that the <code>symbol-name</code> of your symbols
+        will be upper case.
+        Because of this case-converting,
+        attempts to distinguish symbols by case are defeated,
+        and only result in confusion.
+        While it is possible to escape characters in symbols
+        to force lower case,
+        you should not use this capability
+        unless this is somehow necessary
+        to interoperate with third-party software.
+      </p>
+      <p>
+        Place hyphens between all the words in a symbol.
+        If you can't easily say an identifier out loud,
+        it is probably badly named.
+      </p>
+      <p>
+        You must not use <code>"/"</code> or <code>"."</code>
+        instead of <code>"-"</code>
+        unless you have a well-documented overarching reason to,
+        and permission from other hackers who review your proposal.
+      </p>
+      <p>
+        Generally, you should do not abbreviate words.
+        You must avoid using abbreviations for words,
+        unless it's a word that is used very frequently,
+        in which case you must use
+        the <em>same</em> abbreviation <em>consistently</em>.
+        Abbreviations may also be used sparingly to avoid overly-long symbol names;
+        it's easy to run into 100-column limit when there are very long names!
+        You must especially avoid inconsistent abbreviations in exported names.
+        For lexical variables of limited scope, abbreviations are fine.
+      </p>
+      <p>
+      </p>
+      <BAD_CODE_SNIPPET>
+        ;; Bad
+        (defvar *default-username* "Ann")
+        (defvar *max-widget-cnt* 200)
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        ;; Better
+        (defvar *default-user-name* "Ann")
+        (defvar *maximum-widget-count* 200)
+      </CODE_SNIPPET>
+      <p>
+        There are conventions in Common Lisp
+        for the use of punctuation in symbols.
+        You should not use punctuation in symbols outside these conventions.
+      </p>
+      <p>
+        Unless the scope of a variable is very small,
+        do not use overly short names like
+        <code>i</code> and <code>zq</code>.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Denote intent, not content">
+    <SUMMARY>
+      Name your variables according to their intent,
+      not their content.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You should name a variable according
+        to the high-level concept that it represents,
+        not according to the low-level implementation details
+        of how the concept is represented.
+      </p>
+      <p>
+        Thus, you should avoid embedding
+        data structure or aggregate type names,
+        such as <code>list</code>, <code>array</code>, or
+        <code>hash-table</code> inside variable names,
+        unless you're writing a generic algorithm that applies to
+        arbitrary lists, arrays, hash-tables, etc.
+        In that case it's perfectly OK to name a variable
+        <code>list</code> or <code>array</code>.
+      </p>
+      <p>
+        Indeed, you should be introducing new abstract data types
+        with <code>DEFCLASS</code> or <code>DEFTYPE</code>,
+        whenever a new kind of intent appears for objects in your protocols.
+        Functions that manipulate such objects generically may then
+        use variables the name of which reflect that abstract type.
+      </p>
+      <p>
+        For example, if a variable's value is always a row
+        (or is either a row or <code>NIL</code>),
+        it's good to call it <code>row</code> or <code>first-row</code>
+        or something like that.
+        It is alright is <code>row</code> has been
+        <code>DEFTYPE</code>'d to <code>STRING</code> &#8212;
+        precisely because you have abstracted the detail away,
+        and the remaining salient point is that it is a row.
+        You should not name the variable <code>STRING</code> in this context,
+        except possibly in low-level functions that specifically manipulate
+        the innards of rows to provide the suitable abstraction.
+      </p>
+      <p>
+        Be consistent.
+        If a variable is named <code>row</code> in one function,
+        and its value is being passed to a second function,
+        then call it <code>row</code> rather than, say, <code>value</code>
+        (this was a real case).
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Omit library prefixes">
+    <SUMMARY>
+      You should not include a library or package name as a symbol prefix
+      when naming entities from the library or package.
+    </SUMMARY>
+    <BODY>
+      <p>
+        When naming public symbols of a package,
+        you should not include as a prefix the package name.
+        Naming functions this way makes them awkward to use
+        from client package with package-qualified symbols.
+      </p>
+      <BAD_CODE_SNIPPET>
+        ;; Bad
+        (in-package #:varint)
+        (defun varint-length64 () ... )
+
+        (in-package #:client-code)
+        (defconst +padding+ (varint:varint-length64 +end-token+))
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        ;; Better
+        (in-package #:varint)
+        (defun length64 () ... )
+
+        (in-package #:client-code)
+        (defconst +padding+ (varint:length64 +end-token+))
+      </CODE_SNIPPET>
+      <p>
+        An exception to the above rule would be to include a prefix
+        for the names of variables that would otherwise be expected to clash
+        with variables in packages that use the current one.
+        For instance, <code>ASDF</code> exports a variable <code>*asdf-verbose*</code>
+        that controls the verbosity of asdf only and the entire Lisp programs.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Global variables and constants">
+    <SUMMARY>
+      Name globals according to convention.
+    </SUMMARY>
+    <BODY>
+      <p>
+        The names of global constants should start and end
+        with plus characters.
+      </p>
+      <p>
+        Global variable names should start and end with asterisks
+        (also known in this context as earmuffs).
+      </p>
+      <p>
+        In some projects, parameters that are not meant
+        to be usually modified or bound under normal circumstances
+        (but may be during experimentation or exceptional situations)
+        should start (but do not end) with a dollar sign.
+        If such a convention exists within your project,
+        you should follow it consistently.
+        Otherwise, you should avoid naming variables like this.
+      </p>
+      <p>
+        Common Lisp does not have global lexical variables,
+        so a naming convention is used to ensure that globals,
+        which are dynamically bound,
+        never have names that overlap with local variables.
+        It is possible to fake global lexical variables
+        with a differently named global variable
+        and a <code>DEFINE-SYMBOL-MACRO</code>.
+        You should not use this trick.
+      </p>
+      <CODE_SNIPPET>
+        (defconstant +hash-results+ #xbd49d10d10cbee50)
+
+        (defvar *maximum-search-depth* 100)
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Predicate names">
+    <SUMMARY>
+      Names of predicate functions end with a <code>"P"</code>.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Name boolean-valued functions with a trailing
+        <code>"P"</code> or <code>"-P"</code>,
+        to indicate they are predicates.
+        Generally, you should use
+        <code>"P"</code> when the rest of the function name is one word
+        and <code>"-P"</code> when it is more than one word.
+      </p>
+      <p>
+        For uniformity, you should follow the convention above,
+        and not one of the alternatives below.
+      </p>
+      <p>
+        Alternative rules used in some existing packages
+        is to always use <code>"-P"</code>,
+        or to always use <code>"?"</code>.
+        When you develop such a package,
+        you must be consistent with the rest of the package.
+        When you start a new package,
+        you should not use such an alternative rule
+        without a very good reason.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
+<CATEGORY title="Language usage guidelines">
+  <STYLEPOINT title="Mostly Functional Style">
+    <SUMMARY>
+      You should avoid side-effects when they are not necessary.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Lisp is best used as a "mostly functional" language.
+      </p>
+      <p>
+        Avoid modifying local variables, try rebinding instead.
+      </p>
+      <p>
+        Avoid creating objects and the SETFing their slots.
+        It's better to set the slots during initialization.
+      </p>
+      <p>
+        Make classes as immutable as possible, that is, avoid giving slots
+        setter functions if at all possible.
+      </p>
+      <p>
+        Using a mostly functional style makes it much easier
+        to write concurrent code that is thread-safe.
+        It also makes it easier to test the code.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Recursion">
+    <SUMMARY>
+      Favor iteration over recursion.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Common Lisp systems are not required to implement constant space
+        optimizations for recursive function calls from tail positions;
+        however, most serious implementations (including SBCL and CCL)
+        do implement proper tail calls.
+        Still, even compilers that implement proper tail call do it
+        only in restricted conditions:
+      </p>
+      <ul>
+        <li>
+          The <code>(DECLARE (OPTIMIZE ...))</code> settings
+          must favor <code>SPEED</code> enough and
+          not favor <code>DEBUG</code> too much,
+          for some compiler-dependent meanings of "enough" and "too much".
+          (For instance, in SBCL, you should avoid <code>(SPEED 0)</code>
+          and <code>(DEBUG 3)</code> to achieve tail call elimination.)
+        </li>
+        <li>
+          There should not be dynamic bindings around the call
+          (even though some Scheme compilers are able to properly treat
+          such dynamic bindings, called parameters in Scheme parlance).
+        </li>
+      </ul>
+      <p>
+        For compatibility with all compilers and
+        to avoid stack overflow when debugging,
+        you should use iteration or the built in mapping functions
+        rather than relying on proper tail calls.
+      </p>
+      <p>
+        If you do rely on proper tail calls,
+        you must prominently document the fact,
+        and take appropriate measures to ensure an appropriate compiler is used
+        with appropriate optimization settings.
+        For fully portable code, you may have to use trampolines instead.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Special variables">
+    <SUMMARY>
+      Use special variables sparingly.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Using Lisp "special" (dynamically bound) variables
+        as implicit arguments to functions should be used sparingly,
+        and only in cases where it won't surprise the person reading the code,
+        and where it offers significant benefits.
+      </p>
+      <p>
+        Good candidates for such special variables
+        are items for which "the current" can be naturally used as prefix,
+        such as "the current database connection" or
+        "the current business data source".
+        They are singletons as far as the rest of the code is concerned,
+        and often passing them as an explicit argument
+        does not add anything to the readability or maintainability
+        of the source code in question.
+      </p>
+      <p>
+        They can make it easier to write code that can be refactored.
+        If you have a request processing chain,
+        with a number of layers that all operate upon a "current" request,
+        passing the request object explicitly to every function
+        requires that every function in the chain have a request argument.
+        Factoring out code into new functions often requires
+        that these functions also have this argument,
+        which clutters the code with boilerplate.
+      </p>
+      <p>
+        Note that a Lisp special variable is not a global variable
+        in the sense of a global variable in, say, BASIC or C.
+        As special variables can be dynamically bound,
+        they are much more powerful than
+        global value cells that can be changed from everywhere.
+      </p>
+      <p>
+        You should treat special variables
+        as though they are per-thread variables.
+        That is, leave the special variable with no top-level binding at all,
+        and each thread of control
+        that needs the variable should bind it explicitly.
+        This will mean that any incorrect use of the variable
+        will result in an "unbound variable" error, and
+        each thread will see its own value for the variable.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Assignment">
+    <SUMMARY>
+      Be consistent in assignment forms.
+    </SUMMARY>
+    <BODY>
+      <p>
+        There are several styles for dealing with assignment and side-effects;
+        whichever a given package is using,
+        keep using the same consistently when hacking said package.
+        Pick a style that makes sense when starting a new package.
+      </p>
+      <p>
+        Regarding multiple assignment in a same form, there are two schools:
+        the first style groups as many assignments as possible into a single
+        <code>SETF</code> or <code>PSETF</code> form
+        thus minimizing the number of forms with side-effects;
+        the second style splits assignments into as many individual
+        <code>SETF</code> (or <code>SETQ</code>, see below) forms as possible,
+        to maximize the chances of locating forms that modify a kind of place
+        by grepping for <code>(setf (foo ...</code>.
+        A grep pattern must actually contain as many place-modifying forms
+        as you may use in your programs, which may make this rationale either
+        convincing or moot depending on the rest of the style of your code.
+        You should follow the convention used in the package you are hacking.
+        We recommend the first convention for new packages.
+      </p>
+      <p>
+        Regarding <code>SETF</code> and <code>SETQ</code>,
+        there are two schools:
+        this first regards <code>SETQ</code>
+        as an archaic implementation detail,
+        and avoids it entirely in favor of <code>SETF</code>;
+        the second regards <code>SETF</code>
+        as an additional layer of complexity,
+        and avoids it in favor of <code>SETQ</code> whenever possible
+        (i.e. whenever the assigned place is a variable or symbol-macro).
+        You should follow the convention used in the package you are hacking.
+        We recommend the first convention for new packages.
+      </p>
+      <p>
+        In the spirit of a mostly pure functional style,
+        which makes testing and maintenance easier,
+        we invite you to consider how to do things with the fewest assignments required.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Packages">
+    <SUMMARY>
+      Use packages appropriately.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Lisp packages are used to demarcate namespaces.
+        Usually, each system has its own namespace.
+        A package has a set of external symbols,
+        which are intended to be used from outside the package,
+        in order to allow other modules to use this module's facilities.
+      </p>
+      <p>
+        The internal symbols of a package
+        should never be referred to from other packages.
+        That is, you should never have to use
+        the double-colon <code>::</code> construct.
+        (e.g. <code>QUAKE::HIDDEN-FUNCTION</code>).
+        If you need to use double-colons to write real production code,
+        something is wrong and needs to be fixed.
+      </p>
+      <p>
+        As an exception,
+        unit tests may use the internals of the package being tested.
+        So when you refactor, look at the package's unit tests.
+      </p>
+      <p>
+        The <code>::</code> construct is also useful for very temporary hacks,
+        and at the REPL.
+        But if the symbol really is part of
+        the externally-visible definition of the package,
+        export it.
+      </p>
+      <p>
+        Each package is one of two types:
+      </p>
+      <ul>
+        <li>
+          Intended to be included
+          in the <code>:use</code> specification of other packages.
+          If package <code>A</code> "uses" package <code>B</code>,
+          then the external symbols of package <code>B</code>
+          can be referenced from within package <code>A</code>
+          without a package prefix.
+          We mainly use this for low-level modules
+          that provide widely-used facilities.
+        </li>
+        <li>
+          Not intended to be "used".
+          To reference a facility provided by package <code>B</code>,
+          code in package <code>A</code> must use an explicit package prefix,
+          e.g. <code>B:DO-THIS</code>.
+        </li>
+      </ul>
+      <p>
+        If you add a new package, it should always be of the second type,
+        unless you have a special reason and get permission.
+        Usually a package is designed to be one or the other,
+        by virtue of the names of the functions.
+        For example, if you have an abstraction called <code>FIFO</code>,
+        and it were in a package of the first type
+        you'd have functions named things like
+        <code>FIFO-ADD-TO</code> and <code>FIFO-CLEAR-ALL</code>.
+        If you used a package of the second type,
+        you'd have names like <code>ADD-TO</code> and <code>CLEAR-ALL</code>,
+        because the callers would be saying
+        <code>FIFO:ADD-TO</code> and <code>FIFO:CLEAR-ALL</code>.
+        (<code>FIFO:FIFO-CLEAR-ALL</code> is redundant and ugly.)
+      </p>
+      <p>
+        Another good thing about packages is that
+        your symbol names won't "collide" with the names of other packages,
+        except the ones your packages "uses".
+        So you have to stay away from symbols
+        that are part of the Lisp implementation (since you always "use" that)
+        and that are part of any other packages you "use",
+        but otherwise you are free to make up your own names,
+        even short ones, and not worry about some else
+        having used the same name.
+        You're isolated from each other.
+      </p>
+      <p>
+        Your package must not shadow (and thus effectively redefine)
+        symbols that are part of the Common Lisp language.
+        There are certain exceptions,
+        but they should be very well-justified and extremely rare:
+      </p>
+      <ul>
+        <li>
+          If you are explicitly replacing a Common Lisp symbol
+          by a safer or more featureful version.
+        </li>
+        <li>
+          If you are defining a package not meant to be "used",
+          and have a good reason to export a symbol
+          that clashes with Common Lisp,
+          such as <code>log:error</code> and <code>log:warn</code>
+          and so on.
+        </li>
+      </ul>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Assertions and Conditions">
+    <SUMMARY>
+      You must make proper usage of assertions and conditions.
+    </SUMMARY>
+    <BODY>
+      <ul>
+        <li>
+          <code>ASSERT</code> should be used ONLY to detect internal bugs.
+          Code should <code>ASSERT</code> invariants whose failure indicates
+          that the software is itself broken.
+          Incorrect input should be handled properly at runtime,
+          and must not cause an assertion violation.
+          The audience for an <code>ASSERT</code> failure is a developer.
+          Do not use the data-form and argument-form in <code>ASSERT</code>
+          to specify a condition to signal.
+          It's fine to use them to print out a message for debugging purposes
+          (and since it's only for debugging, there's no issue of
+          internationalization).
+        </li>
+        <li>
+          <code>CHECK-TYPE</code>,
+          <code>ETYPECASE</code> are also forms of assertion.
+          When one of these fails, that's a detected bug.
+          You should prefer to use <code>CHECK-TYPE</code>
+          over (DECLARE (TYPE ...))
+          for the inputs of functions.
+        </li>
+        <li>
+          Your code should use assertions and type checks liberally.
+          The sooner a bug is discovered, the better!
+          Only code in the critical path for performance
+          and internal helpers should eschew
+          explicit assertions and type checks.
+        </li>
+        <li>
+          Invalid input, such as files that are read
+          but do not conform to the expected format,
+          should not be treated as assertion violations.
+          Always check to make sure that input is valid,
+          and take appropriate action if it is not,
+          such as signalling a real error.
+        </li>
+        <li>
+          <code>ERROR</code> should be used
+          to detect problems with user data, requests, permissions, etc.,
+          or to report "unusual outcomes" to the caller.
+        </li>
+        <li>
+          <code>ERROR</code> should always be called
+          with an explicit condition type;
+          it should never simply be called with a string.
+          This enables internationalization.
+        </li>
+        <li>
+          Functions that report unusual outcomes
+          by signaling a condition should say so explicitly in their contracts
+          (their textual descriptions, in documentation and docstrings etc.).
+          When a function signals a condition
+          that is not specified by its contract, that's a bug.
+          The contract should specify the condition class(es) clearly.
+          The function may then signal any condition
+          that is a type-of any of those conditions.
+          That is, signaling instances of subclasses
+          of the documented condition classes is fine.
+        </li>
+        <li>
+          Complex bug-checks may need to use <code>ERROR</code>
+          instead of <code>ASSERT</code>.
+          
+        </li>
+        <li>
+          When writing a server, you must not call <code>WARN</code>.
+          Instead, you should use the appropriate logging framework.
+          
+        </li>
+        <li>
+          Code must not call <code>SIGNAL</code>.
+          Instead, use <code>ERROR</code> or <code>ASSERT</code>.
+        </li>
+        <li>
+          Code should not use <code>THROW</code> and <code>CATCH</code>;
+          instead use the <code>restart</code> facility.
+        </li>
+        <li>
+          Code should not generically handle all conditions,
+          e.g. type <code>T</code>, or use <code>IGNORE-ERRORS</code>.
+          Instead, let unknown conditions propagate to
+          the standard ultimate handler for processing.
+          
+        </li>
+        <li>
+          There are a few places where handling all conditions is appropriate,
+          but they are rare.
+          The problem is that handling all conditions can mask program bugs.
+          If you <em>do</em> need to handle "all conditions",
+          you MUST handle only <code>ERROR</code>, <em>not</em> <code>T</code>
+          and not <code>SERIOUS-CONDITION</code>.
+          (This is notably because CCL's process shutdown
+          depends on being able to signal <code>process-reset</code>
+          and have it handled by CCL's handler,
+          so we must not interpose our own handler.)
+        </li>
+        <li>
+          <code>(error (make-condition 'foo-error ...))</code>
+          is equivalent to <code>(error 'foo-error ...)</code> &#8212;
+          code must use the shorter form.
+        </li>
+        <li>
+          Code should not signal conditions from inside the cleanup form of
+          <code>UNWIND-PROTECT</code>
+          (unless they are always handled inside the cleanup form),
+          or otherwise do non-local exits from cleanup handers
+          outside of the handler e.g. <code>INVOKE-RESTART</code>.
+        </li>
+        <li>
+          Do not clean up by resignaling.
+          If you do that, and the condition is not handled,
+          the stack trace will halt at the point of the resignal,
+          hiding the rest.
+          And the rest is the part we really care about!
+          <BAD_CODE_SNIPPET>
+            ;; WRONG WAY
+            (handler-case
+              (catch 'ticket-at
+                (etd-process-blocks))
+              (error (c)
+                (reset-parser-values)
+                  (error c)))
+          </BAD_CODE_SNIPPET>
+          <CODE_SNIPPET>
+            ;; RIGHT WAY
+            (unwind-protect
+              (catch 'ticket-at
+                (etd-process-blocks))
+              (reset-parser-values))
+          </CODE_SNIPPET>
+        </li>
+      </ul>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Type Checking">
+    <SUMMARY>
+      If you know the type of something, you should make it explicit
+      in order to enable compile-time and run-time sanity-checking.
+    </SUMMARY>
+    <BODY>
+      
+      <p>
+        If your function is using a special variable as an implicit argument,
+        it's good to put in a <code>CHECK-TYPE</code> for the special variable,
+        for two reasons:
+        to clue in the person reading the code
+        that this variable is being used implicitly as an argument,
+        and also to help detect bugs.
+      </p>
+      
+      <p>
+        Using <code>(declare (type ...))</code>
+        is the least-desirable mechanism to use
+        because, as Scott McKay puts it:
+      </p>
+      <blockquote>
+        <p>
+          The fact is, <code>(declare (type ...))</code> does different things
+          depending on the compiler settings of speed, safety, etc.
+          In some compilers, when speed is greater than safety,
+          <code>(declare (type ...))</code> will tell the compiler
+          "please assume that these variables have these types"
+          <em>without</em> generating any type-checks.
+          That is, if some variable has the value <code>1432</code> in it,
+          and you declare it to be of type <code>string</code>,
+          the compiler might just go ahead and use it as though it's a string.
+        </p>
+        <p>
+          Moral: don't use <code>(declare (type ...))</code>
+          to declare the contract of any API functions,
+          it's not the right thing.
+          Sure, use it for "helper" functions, but not API functions.
+        </p>
+      </blockquote>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Macros">
+    <SUMMARY>
+      Use macros when appropriate, which should be sparingly and carefully.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You must never use a macro where a function will do.
+        That is, if the semantics of what you are writing
+        conforms to the semantics of a function,
+        then write it as a function rather than a macro.
+      </p>
+      <p>
+        You must not use a macro for performance reasons.
+        If profiling shows that you have a performance problem
+        with a specific function,
+        document the need and profiling-results appropriately,
+        and
+        <code>DECLAIM</code> to that function <code>INLINE</code>.
+      </p>
+      
+      <p>
+        You can also use "compiler-macros"
+        as a way to speed up function execution
+        by specifying a source-to-source transformation.
+        Beware that it interferes with tracing the optimized functions.
+      </p>
+      <p>
+        When you write a macro-defining macro
+        (a macro that generates macros),
+        comment it particularly clearly,
+        since these are hard for the uninitiated to understand.
+      </p>
+      <p>
+        Using Lisp macros properly requires taste.
+        Avoid writing complicated macros
+        unless the benefit clearly outweighs the cost.
+        It takes more effort for your fellow developers to learn your macro,
+        so you should only use a macro if the gain in expressiveness
+        is big enough to justify that cost.
+        As usual, feel free to consult your colleagues if you're not sure,
+        since without a lot of Lisp experience,
+        it can be hard to make this judgment.
+      </p>
+      <p>
+        You must not define new reader macros.
+      </p>
+      <p>
+        If your macro has a parameter that is a Lisp form
+        that will be evaluated when the expanded code is run,
+        you should name the parameter with the suffix <code>-form</code>.
+        This convention helps make it clearer to the macro's user
+        which parameters are Lisp forms to be evaluated, and which are not.
+      </p>
+      <p>
+        One way to write a macro is the so-called "call-with" style,
+        explained at length in
+        <a href="http://random-state.net/log/3390120648.html">http://random-state.net/log/3390120648.html</a>.
+        The idea is to keep the macro very simple,
+        generating a call to an auxiliary function,
+        which often takes a functional argument
+        consisting of code in the original macro call.
+        Advantages: during development,
+        you can modify the function instead of recompiling all macro call sites;
+        during debugging, you can see the function in the stack trace;
+        there is less generated code so smaller memory usage.
+        You should use this style unless
+        the macro body is simple, rarely subject to change,
+        <em>and</em> the macro is used in tight loops where performance matters.
+        Think about whether the extra stack frames are helpful or just clutter.
+      </p>
+      <p>
+        Any functions (closures) created by the macro should be named:
+        either use <code>FLET</code> or <code>NAMED-LAMBDA</code>.
+        Using <code>FLET</code> is also good
+        because you can declare the function to be of dynamic
+        extent (if it is &#8212; and usually it is).
+      </p>
+      <p>
+        If a macro call contains a form,
+        and the macro expansion includes more than one copy of that form,
+        the form can be evaluated more than once.
+        If someone uses the macro and calls it
+        with a form that has side effects or that takes a long time to compute,
+        the behavior will be undesirable
+        (unless you're intentionally writing
+        a control structure such as a loop).
+        A convenient way to avoid this problem
+        is to evaluate the form only once,
+        and bind a (generated) variable to the result.
+        There is a very useful macro called <code>ALEXANDRIA:ONCE-ONLY</code>
+        that generates code to do this.
+        See also <code>ALEXANDRIA:WITH-GENSYMS</code>,
+        to make some temporary variables in the generated code.
+      </p>
+      <p>
+        When you write a macro with a body,
+        such as a <code>WITH-xxx</code> macro,
+        even if there aren't any parameters,
+        you should leave space for them anyway.
+        For example, if you invent <code>WITH-LIGHTS-ON</code>,
+        do not make the call to it look like
+        <code>(defmacro with-lights-on (&amp;body b) ...)</code>.
+        Instead, do <code>(defmacro with-lights-on (() &amp;body b) ...)</code>.
+        That way, if parameters are needed in the future,
+        you can add them without necessarily having to change
+        all the uses of the macro.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Read-time evaluation">
+    <SUMMARY>
+      You should use <code>#.</code> sparingly,
+      and you must avoid read-time side-effects.
+    </SUMMARY>
+    <BODY>
+      <p>
+        The <code>#.</code> standard read-macro
+        will read one object, evaluate the object, and
+        have the reader return the resulting value.
+      </p>
+      <p>
+        It is mainly used as a quick way
+        to get something evaluated at compile time
+        (actually "read time" but it amounts to the same thing).
+        If you use this, the evaluation MUST NOT have any side effects
+        and MUST NOT depend on any variable global state.
+        The <code>#.</code> should be treated as a way
+        to force "constant-folding"
+        that a sufficiently-clever compiler
+        could have figure out all by itself,
+        when the compiler isn't sufficiently-clever
+        and the difference matters.
+        Consider using a <code>DEFCONSTANT</code> and its variants,
+        which would give the value a name explaining what it means.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="EVAL-WHEN">
+    <SUMMARY>
+      <code>EVAL-WHEN</code> is tricky. Be aware.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Lisp evaluation happens at several "times".
+        Be aware of them when writing macros.
+        <a href="http://fare.livejournal.com/146698.html">EVAL-WHEN considered harmful to your mental health</a>.
+      </p>
+      <p>
+        In summary of the article linked above,
+        unless you're doing truly advanced macrology,
+        the only valid combination in an <code>EVAL-WHEN</code>
+        is to include all of
+        <code>(eval-when (:compile-toplevel :load-toplevel :execute) ...)</code>
+      </p>
+      <p>
+        It is usually an error to omit the <code>:execute</code>,
+        for it prevents <code>LOAD</code>ing the source rather than the fasl.
+        It is usually an error to omit the <code>:load-toplevel</code>
+        (except to modify e.g. readtables and compile-time settings),
+        for it prevents <code>LOAD</code>ing future files
+        or interactively compiling code
+        that depend on the effects that happen at compile-time
+        unless the current file was <code>COMPILE-FILE</code>d
+        within the same Lisp session.
+      </p>
+      <p>
+        In some odd cases, you may want to evaluate things from within
+        the expansion of a <code>DEFTYPE</code>
+        or of a non-top-level <code>DEFMACRO</code>.
+        In these cases, you should use <code>ASDF-FINALIZERS</code>
+        and its <code>ASDF-FINALIZERS:EVAL-AT-TOPLEVEL</code> form.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="CLOS">
+    <SUMMARY>
+      Use CLOS appropriately.
+    </SUMMARY>
+    <BODY>
+      <p>
+        When a generic function is intended to be called from other
+        modules (other parts of the code), there should be an
+        explicit <code>DEFGENERIC</code> form,
+        with a <code>:DOCUMENTATION</code> string
+        explaining the generic contract of the function
+        (as opposed to its behavior for some specific class).
+        It's generally good to do explicit <code>DEFGENERIC</code> forms,
+        but for module entry points it is mandatory.
+      </p>
+      <p>
+        When the argument list of a generic function includes
+        <code>&amp;KEY</code>,
+        the <code>DEFGENERIC</code> should always explicitly list
+        all of the keyword arguments that are acceptable,
+        and explain what they mean.
+        (Common Lisp does not require this, but it is good form,
+        and it may avoid spurious warnings on SBCL.)
+      </p>
+      <p>
+        You should avoid <code>SLOT-VALUE</code> and <code>WITH-SLOTS</code>,
+        unless you absolutely intend to circumvent
+        any sort of method combination that might be in effect for the slot.
+        Rare exceptions include <code>INITIALIZE-INSTANCE</code>
+        and <code>PRINT-OBJECT</code> methods and
+        the initialization of Quake volatile slots
+        in <code>INITIALIZE-RECORD</code> methods.
+        Otherwise, you should use accessors,
+        <code>WITH-ACCESSORS</code>
+      </p>
+      
+      <p>
+        Accessor names generally follow a convention of
+        <code>&lt;protocol-name&gt;-&lt;slot-name&gt;</code>,
+        where an "protocol" in this case loosely indicates
+        a set of functions with well-defined behavior;
+        a class can implement all or part of an interface
+        by defining some methods for (generic) functions in the protocol,
+        including readers and writers.
+        No implication of a formal "protocol" concept is intended.
+      </p>
+      <p>
+        For example, if there were a "notional" protocol called
+        is <code>pnr</code> with accessors <code>pnr-segments</code>
+        and <code>pnr-passengers</code>, then
+        the classes <code>air-pnr</code>, <code>hotel-pnr</code> and
+        <code>car-pnr</code> could each reasonably implement
+        methods for <code>pnr-segments</code> and <code>pnr-passengers</code>
+        as accessors.
+      </p>
+      <p>
+        By default, an abstract base class name is used
+        as the notional protocol name, so accessor names default
+        to <code>&lt;class-name&gt;-&lt;slot-name&gt;</code>;
+        while such names are thus quite prevalent,
+        this form is neither required nor even preferred.
+        In general, it contributes to "symbol bloat",
+        and in many cases has led to a proliferation of "trampoline" methods.
+      </p>
+      <p>
+        Accessors named <code>&lt;slot-name&gt;-of</code> should not be used.
+      </p>
+      <p>
+        Explicit <code>DEFGENERIC</code> forms should be used when there are
+        (or it is anticipated that there will be)
+        more than one <code>DEFMETHOD</code> for that generic function.
+        The reason is that the documentation for the generic function
+        explains the abstract contract for the function,
+        as opposed to explaining what an individual method does for
+        some specific class(es).
+      </p>
+      <p>
+        You must not use generic functions where there is no "notional" protocol.
+        To put it more concretely,
+        if you have more than one generic function that specializes its Nth argument,
+        the specializing classes should all be descendants of a single class.
+        Generic functions must not be used for "overloading",
+        i.e. simply to use the same name for two entirely unrelated types.
+      </p>
+      <p>
+        More precisely, it's not really
+        whether they descend from a common superclass,
+        but whether they obey the same "protocol".
+        That is, the two classes should handle the same set of generic functions,
+        as if there were an explicit <code>DEFGENERIC</code> for each method.
+      </p>
+      <p>
+        Here's another way to put it.
+        Suppose you have two classes, A and B, and a generic function F.
+        There are two methods for F,
+        which dispatch on an argument being of types A and B.
+        Is it plausible that there might be a function call somewhere
+        in the program that calls F,
+        in which the argument might sometimes, at runtime,
+        be of class A and other times be of class B?
+        If not, you probably are overloading and
+        should not be using a single generic function.
+      </p>
+      <p>
+        We allow one exception to this rule:
+        it's OK to do overloading
+        if the corresponding argument "means" the same thing.
+        Typically one overloading allows an X object,
+        and the other allows the name of an X object,
+        which might be a symbol or something.
+      </p>
+      <p>
+        You must not use MOP "intercessory" operations.
+      </p>
+      <p>
+        If a class definition creates a method
+        as a <code>:READER</code>, <code>:WRITER</code>,
+        or <code>:ACCESSOR</code>,
+        do not redefine that method.
+        It's OK to add <code>:BEFORE</code>, <code>:AFTER</code>,
+        and <code>:AROUND</code> methods,
+        but don't override the primary method.
+      </p>
+      <p>
+        In methods with keyword arguments,
+        you must always use <code>&amp;KEY</code>,
+        even if the method does not care about the values of any keys,
+        and you should never use <code>&amp;ALLOW-OTHER-KEYS</code>.
+        As long as a keyword is accepted by any method of a generic function,
+        it's OK to use it in the generic function,
+        even if the other methods of the same generic function
+        don't mention it explicitly.
+        This is particularly important
+        for <code>INITIALIZE-INSTANCE</code> methods,
+        since if you did use <code>&amp;ALLOW-OTHER-KEYS</code>,
+        it would disable error checking for misspelled or wrong keywords
+        in <code>MAKE-INSTANCE</code> calls!
+      </p>
+      
+      <p>
+        A typical <code>PRINT-OBJECT</code> method might look like this:
+      </p>
+      <CODE_SNIPPET>
+        (defmethod print-object ((p person) stream)
+        (print-unprintable-object (p stream :type t :identity t)
+        (with-slots (first-name last-name) p
+        (safe-format stream "~a ~a" first-name last-name))))
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
+<CATEGORY title="Data Representation">
+  <STYLEPOINT title="NIL: empty-list, false and I Don't Know">
+    <SUMMARY>
+      Appropriately use or avoid to use <code>NIL</code>.
+    </SUMMARY>
+    <BODY>
+      <p>
+        <code>NIL</code> can have several different interpretations:
+      </p>
+      <ul>
+        <li>
+          "False."
+          In this case, use <code>NIL</code>.
+          You should test for false <code>NIL</code>
+          using the operator <code>NOT</code> or
+          using the predicate function <code>NULL</code>.
+        </li>
+        <li>
+          "Empty-list."
+          In this case, use <code>'()</code>.
+          (Be careful about quoting the empty-list when calling macros.)
+          You should use <code>ENDP</code> to test for the empty list
+          when the argument is known to be a proper list,
+          or with <code>NULL</code> otherwise.
+        </li>
+        <li>
+          A statement about some value being unspecified.
+          In this case, you may use <code>NIL</code>
+          if there is no risk of ambiguity anywhere in your code;
+          otherwise you should use an explicit, descriptive symbol.
+        </li>
+        <li>
+          A statement about some value being known not to exist.
+          In this case, you should use an explicit, descriptive symbol
+          instead of <code>NIL</code>.
+        </li>
+      </ul>
+      <p>
+        You must not introduce ambiguity in your data representations
+        that will cause headaches for whoever has to debug code.
+        If there is any risk of ambiguity,
+        you should use an explicit, descriptive symbol or keyword
+        for each case,
+        instead of using <code>NIL</code> for either.
+        If you do use <code>NIL</code>,
+        you must make sure that the distinction is well documented.
+      </p>
+      
+      <p>
+        When working with database classes, keep in mind that
+        <code>NIL</code> need not always map to <code>'NULL'</code>
+        (and vice-versa)!
+        The needs of the database may differ from the needs of the Lisp.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Do not abuse lists">
+    <SUMMARY>
+      You should select proper data representation.
+      You should not abuse the <code>LIST</code> data structure.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Common Lisp makes it especially easy to use
+        its builtin (single-linked) <code>LIST</code> data structure.
+        However, you should only use this data structure
+        where it is appropriate.
+      </p>
+      <p>
+        You must not use lists
+        when they are an inappropriate abstraction
+        for the data being manipulated.
+      </p>
+      <p>
+        You must only use lists
+        when their performance characteristics
+        is appropriate for the algorithm at hand
+        (i.e. sequential iteration over the entire contents).
+      </p>
+      <p>
+        An exception is when it is known in advance
+        that the size of the list will remain very short
+        (say, less than 16 elements),
+        especially so when manipulating source code at compile-time.
+      </p>
+      <p>
+        Another exception is for introducing literal constants
+        that will be transformed into more appropriate data structures
+        at compile-time or load-time.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Lists vs. structures vs. multiple values">
+    <SUMMARY>
+      You should use the appropriate representation for product types.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You should avoid using a list as anything
+        besides a container of elements of like type.
+        You must not use a list as method of passing
+        multiple separate values of different types
+        in and out of function calls.
+        Sometimes it is convenient to use a list
+        as a little ad hoc structure,
+        i.e. "the first element of the list is a FOO, and the second is a BAR",
+        but this should be used minimally
+        since it gets harder to remember the little convention.
+        You must only use a list that way
+        when destructuring the list of arguments from a function,
+        or creating a list of arguments
+        to which to <code>APPLY</code> a function.
+      </p>
+      <p>
+        The proper way to pass around an object
+        comprising several values of heterogeneous types
+        is to use a structure as defined by <code>DEFSTRUCT</code>
+        or <code>DEFCLASS</code>.
+      </p>
+      <p>
+        You should use multiple values only
+        when function returns a small number of values
+        that are meant to be destructured immediately by the caller,
+        rather than passed together as arguments to further functions.
+      </p>
+      <p>
+        You should not return a condition object
+        as one of a set of multiple values.
+        Instead, you should signal the condition to denote an unusual outcome.
+      </p>
+      <p>
+        You should signal a condition to denote an unusual outcome,
+        rather than relying on a special return type.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Lists vs. Pairs">
+    <SUMMARY>
+      Use the appropriate functions when manipulating lists.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Use <code>FIRST</code> to access the first element of a list,
+        <code>SECOND</code> to access the second element, etc.
+        Use <code>REST</code> to access the tail of a list.
+        Use <code>ENDP</code> to test for the end of the list.
+      </p>
+      <p>
+        Use <code>CAR</code> and <code>CDR</code>
+        when the cons cell is not being used to implement a proper list
+        and is instead being treated as a pair of more general objects.
+        Use <code>NULL</code> to test for <code>NIL</code> in this context.
+      </p>
+      <p>
+        The latter case should be rare outside of alists,
+        since you should be using structures and classes where they apply,
+        and data structure libraries when you want trees.
+      </p>
+      <p>
+        Exceptionally, you may use <code>CDADR</code> and other variants
+        on lists when manually destructuring them,
+        instead of using a combination of several list accessor functions.
+        In this context, using <code>CAR</code> and <code>CDR</code>
+        instead of <code>FIRST</code> and <code>REST</code> also makes sense.
+        However, mind in such cases that it might be more appropriate
+        to use higher-level constructs such as
+        <code>DESTRUCTURING-BIND</code> or <code>FARE-MATCHER:MATCH</code>.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Lists vs. Arrays">
+    <SUMMARY>
+      You should use arrays rather than lists where random access matters.
+    </SUMMARY>
+    <BODY>
+      <p>
+        <code>ELT</code> has <i>O(n)</i> behavior when used on lists.
+        If you are to use random element access on an object,
+        use arrays and <code>AREF</code> instead.
+      </p>
+      <p>
+        The exception is for code outside the critical path
+        where the list is known to be small anyway.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Lists vs. Sets">
+    <SUMMARY>
+      You should only use lists as sets for very small lists.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Using lists as representations of sets is a bad idea
+        unless you know the lists will be small,
+        for accessors are <i>O(n)</i> instead of <i>O(log n)</i>.
+        For arbitrary big sets, use balanced binary trees,
+        for instance using <code>lisp-interface-library</code>.
+      </p>
+      <p>
+        If you still use lists as sets,
+        you should not <code>UNION</code> lists just to search them.
+      </p>
+      <BAD_CODE_SNIPPET>
+        (member foo (union list-1 list-2)) ; Bad
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        (or (member foo list-1) (member foo list-2)) ; Better
+      </CODE_SNIPPET>
+      <p>
+        Indeed, <code>UNION</code> not only conses unnecessarily,
+        but it can be <i>O(n^2)</i> on some implementations,
+        and is rather slow even when it's <i>O(n)</i>.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="#'FUN vs. 'FUN">
+    <SUMMARY>
+      You should usually refer to a function as <code>#'FUN</code> rather than <code>'FUN</code>.
+    </SUMMARY>
+    <BODY>
+      <p>
+        The former refers to the function object, as is properly scoped.
+        The latter refers to the symbol, which when called
+        uses the global <code>FDEFINITION</code> of the symbol.
+      </p>
+      <p>
+        When using functions that take a functional argument
+        (e.g., <code>MAPCAR</code>, <code>APPLY</code>,
+        <code>:TEST</code> and <code>:KEY</code> arguments),
+        you should use the <code>#'</code> to quote the function,
+        not just single quote.
+      </p>
+      <p>
+        An exception is when you explicitly want dynamic linking,
+        because you anticipate that
+        the global function binding will be updated.
+      </p>
+      <p>
+        Another exception is when you explicitly want to access
+        a global function binding,
+        and avoid a possible shadowing lexical binding.
+        This shouldn't happen often, as it is usually a bad idea
+        to shadow a function when you will want to use the shadowed function;
+        just use a different name for the lexical function.
+      </p>
+      <p>
+        You must consistently use either <code>#'(lambda ...)</code>
+        or <code>(lambda ...)</code> without <code>#'</code> everywhere.
+        You should only use the former style if your code is intended as a library
+        with maximal compatibility to all Common Lisp implementations.
+        Unlike the case of <code>#'symbol</code> vs <code>'symbol</code>,
+        it is only a syntactic difference with no semantic impact,
+        except that the former works on Genera and the latter doesn't.
+      </p>
+      <p>
+        Note that if you start writing a new system
+        in a heavily functional style,
+        you may consider using <code>LAMBDA-READER</code>,
+        a system that lets you use the unicode character <code>&#955;</code>
+        instead of <code>LAMBDA</code>.
+        But you must not start using such a syntactic extension
+        in an existing system without getting permission from other developers.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Pathnames">
+    <SUMMARY>
+      Common Lisp pathnames are tricky. Be aware of pitfalls.
+    </SUMMARY>
+    <BODY>
+      <p>
+        It is surprisingly hard to properly deal with pathnames in Common Lisp.
+      </p>
+      <p>
+        First, be aware of the discrepancies between
+        the syntax of Common Lisp pathnames,
+        which depends on which implementation and operating system
+        you are using,
+        and the native syntax of pathnames on your operating system.
+        The Lisp syntax may involves quoting of special characters
+        such as <code>#\.</code> and <code>#\*</code>, etc.,
+        in addition to the quoting of
+        <code>#\\</code> and <code>#\"</code> within strings.
+        By contrast, your operating system's other
+        system programming languages
+        (shell, C, scripting languages)
+        may only have one layer of quoting, into strings.
+      </p>
+      <p>
+        Second, when using <code>MERGE-PATHNAMES</code>,
+        be wary of the treatment of the <code>HOST</code> component,
+        which matters a lot on non-Unix platforms.
+        You probably should instead be using
+        <code>ASDF-UTILS:MERGE-PATHNAMES*</code>.
+      </p>
+      <p>
+        Third, be aware that <code>DIRECTORY</code> is not portable
+        in how it handles wildcards, sub-directories, symlinks, etc.
+        There again, <code>ASDF-UTILS</code> provides several
+        common abstractions to deal with pathnames.
+      </p>
+      <p>
+        Finally, be aware that paths may change between
+        the time you build the Lisp image for your application,
+        and the time you run the application from its image.
+        You should be careful to reset your image
+        to forget irrelevant build-time paths and
+        reinitialize any search path from current environment variables.
+        <code>ASDF</code> for instance requires you to reset its paths
+        with <code>ASDF:CLEAR-CONFIGURATION</code>.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
+<CATEGORY title="Proper Forms">
+  <p>
+    You must follow the proper usage regarding
+    well-known functions, macros and special forms.
+  </p>
+  <STYLEPOINT title="Defining Constants">
+    <SUMMARY>
+      You must use proper defining forms for constant values.
+    </SUMMARY>
+    <BODY>
+      <p>
+        The Lisp system we primarily use, SBCL, is very picky and
+        signals a condition whenever a constant is redefined to a value not
+        <code>EQL</code> to its previous setting.
+        You must not use <code>DEFCONSTANT</code>
+        when defining variables that are not
+        numbers, characters, or symbols (including booleans and keywords).
+        Instead, consistently use whichever alternative
+        is recommended for your project.
+      </p>
+      <BAD_CODE_SNIPPET>
+        ;; Bad
+        (defconstant +google-url+ "http://www.google.com/")
+        (defconstant +valid-colors+ '(red green blue))
+      </BAD_CODE_SNIPPET>
+      
+      
+      
+      
+      <p>
+        Open-Source libraries may use
+        <code>ALEXANDRIA:DEFINE-CONSTANT</code>
+        for constants other than numbers, characters and symbols
+        (including booleans and keywords).
+        You may use the <code>:TEST</code> keyword argument
+        to specify an equality predicate.
+      </p>
+      <CODE_SNIPPET>
+        ;; Better, for Open-Source code:
+        (define-constant +google-url+ "http://www.google.com/" :test #'string=)
+        (define-constant +valid-colors+ '(red green blue))
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Defining Functions">
+    <SUMMARY>
+      You should make proper use of
+      <code>&amp;OPTIONAL</code>,
+      <code>&amp;KEY</code>,
+      and
+      <code>&amp;AUX</code> arguments.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You should avoid using <code>&amp;ALLOW-OTHER-KEYS</code>,
+        since it blurs the contract of a function.
+        Almost any real function (generic or not) allows a certain
+        fixed set of keywords, as far as its caller is concerned,
+        and those are part of its contract.
+        If you are implementing a method of a generic function,
+        and it does not need to know
+        the values of some of the keyword arguments,
+        it is acceptable to use <code>&amp;ALLOW-OTHER-KEYS</code>
+        rather than list all the keyword arguments explicitly
+        and use <code>(declare (ignore ...))</code> on them.
+        (Of course in such a case there should not be a &amp;REST.)
+        Note that the contract of a generic function belongs in
+        the <code>DEFGENERIC</code>, not in the <code>DEFMETHOD</code>
+        which is basically an "implementation detail" of the generic function
+        as far as the caller of the generic is concerned.
+      </p>
+      <p>
+        You should avoid using <code>&amp;AUX</code> arguments,
+        except in very short helper functions
+        where they allow you to eschew a <code>LET</code>.
+      </p>
+      <p>
+        You should avoid having both <code>&amp;OPTIONAL</code>
+        and <code>&amp;KEY</code> arguments,
+        unless it never makes sense to specify keyword arguments
+        when the optional arguments are not all specified.
+        You must not have non-<code>NIL</code> defaults
+        to your <code>&amp;OPTIONAL</code> arguments
+        when your function has both <code>&amp;OPTIONAL</code>
+        and <code>&amp;KEY</code> arguments.
+      </p>
+      <p>
+        You should avoid excessive nesting of binding forms inside a function.
+        If your function ends up with massive nesting,
+        you should probably break it up into several functions or macros.
+        If it is really a single conceptual unit,
+        consider using a macro such as <code>FARE-UTILS:NEST</code>
+        to at least reduce the amount of indentation required.
+        It is bad form to use <code>NEST</code> in typical short functions
+        with 4 or fewer levels of nesting,
+        but also bad form not to use it in the exceptional long functions
+        with 10 or more levels of nesting.
+        Use your judgment and consult your reviewers.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Conditional Expressions">
+    <SUMMARY>
+      Use the appropriate conditional form.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Use <code>WHEN</code> and <code>UNLESS</code>
+        when there is only one alternative.
+        Use <code>IF</code> when there are two alternatives
+        and <code>COND</code> when there are several.
+      </p>
+      <p>
+        However, don't use <code>PROGN</code> for an <code>IF</code> clause
+        &#8212; use <code>COND</code>, <code>WHEN</code>, or <code>UNLESS</code>.
+      </p>
+      <p>
+        Note that in Common Lisp,
+        <code>WHEN</code> and <code>UNLESS</code> return <code>NIL</code>
+        when the condition evaluates to <code>NIL</code>.
+        Nevertheless, you may use an <code>IF</code>
+        to explicitly return <code>NIL</code>
+        if you have a specific reason to insist on the return value.
+      </p>
+      <p>
+        You should only use <code>CASE</code> and <code>ECASE</code>
+        to compare integers, characters or symbols
+        (including booleans and keywords).
+        Indeed, <code>CASE</code> uses <code>EQL</code> for comparisons,
+        so strings and other numbers may not compare the way you expect.
+      </p>
+      <p>
+        You must not use gratuitous single quotes in <code>CASE</code> forms.
+        This is a common error:
+      </p>
+      <BAD_CODE_SNIPPET>
+        (case x
+          ('bar :bar)
+          ('quux :quux))
+      </BAD_CODE_SNIPPET>
+      <p>
+        <code>'BAR</code> there is <code>(QUOTE BAR)</code>,
+        meaning this leg of the case will be executed
+        if <code>X</code> is <code>QUOTE</code>...
+        and ditto for the second leg
+        (though <code>QUOTE</code> will be caught by the first clause).
+        This is unlikely to be what you really want.
+      </p>
+      <p>
+        In <code>CASE</code> forms,
+        you must use <code>otherwise</code> instead of <code>t</code>
+        when you mean "execute this clause if the others fail".
+        And you must use <code>((t) ...)</code>
+        when you mean "match the symbol T".
+      </p>
+      <p>
+        You should use <code>ECASE</code> and <code>ETYPECASE</code>
+        in preference to <code>CASE</code> and <code>TYPECASE</code>.
+        You should not use <code>CCASE</code> or <code>CTYPECASE</code> at all.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Identity, Equality and Comparisons">
+    <SUMMARY>
+      You should the appropriate predicates when comparing objects.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Lisp provides four general equality predicates:
+        <code>EQ</code>, <code>EQL</code>, <code>EQUAL</code>,
+        and <code>EQUALP</code>,
+        which subtly vary in semantics.
+        Additionally, Lisp provides the type-specific predicates
+        <code>=</code>, <code>CHAR=</code>, <code>CHAR-EQUAL</code>,
+        <code>STRING=</code>, and <code>STRING-EQUAL</code>.
+        Know the distinction!
+      </p>
+      <p>
+        You should use <code>EQL</code> to compare objects and symbols
+        for <em>identity</em>.
+      </p>
+      <p>
+        You must not use <code>EQ</code> to compare numbers or characters.
+        Two numbers or characters that are <code>EQL</code>
+        are not required by Common Lisp to be <code>EQ</code>.
+      </p>
+      <p>
+        When choosing between <code>EQ</code> and <code>EQL</code>,
+        you should use <code>EQL</code> unless you are writing
+        performance-critical low-level code.
+        <code>EQL</code> reduces the opportunity
+        for a class of embarrassing errors
+        (i.e. if characters are ever compared).
+        There may a tiny performance cost relative to <code>EQ</code>,
+        although under SBCL, it often compiles away entirely.
+      </p>
+      <p>
+        You should use <code>CHAR=</code>
+        for case-dependent character comparisons,
+        and <code>CHAR-EQUAL</code> for case-ignoring character comparisons.
+      </p>
+      <p>
+        You should use <code>STRING=</code>
+        for case-dependent string comparisons,
+        and <code>STRING-EQUAL</code> for case-ignoring string comparisons.
+      </p>
+      <p>
+        A common mistake when using <code>SEARCH</code> on strings
+        is to provide <code>STRING=</code> or <code>STRING-EQUAL</code>
+        as the <code>:TEST</code> function.
+        The <code>:TEST</code> function
+        is given two sequence elements to compare.
+        If the sequences are strings,
+        the <code>:TEST</code> function is called on two characters,
+        so the correct tests are <code>CHAR=</code> or <code>CHAR-EQUAL</code>.
+        If you use <code>STRING=</code> or <code>STRING-EQUAL</code>,
+        the result is what you expect,
+        but in some Lisp implementations it's much slower.
+        CCL (at least as of 8/2008)
+        creates a one-character string upon each comparison, for example,
+        which is very expensive.
+      </p>
+      <p>
+        Also, you should use <code>:START</code> and <code>:END</code> arguments
+        to <code>STRING=</code> or <code>STRING-EQUAL</code>
+        instead of using <code>SUBSEQ</code>;
+        e.g. <code>(string-equal (subseq s1 2 6) s2)</code> should instead be
+        <code>(string-equal s1 s2 :start1 2 :end1 6)</code>
+        This is preferable because it does not cons.
+      </p>
+      <p>
+        You should use <code>ZEROP</code>,
+        <code>PLUSP</code>, or <code>MINUSP</code>,
+        instead of comparing a value to <code>0</code> or <code>0.0</code>.
+      </p>
+      <p>
+        You must not use exact comparison on floating point numbers,
+        since the vague nature of floating point arithmetic
+        can produce little "errors" in numeric value.
+        You should compare absolute values to a threshhold.
+      </p>
+      <p>
+        You must use <code>=</code> to compare numbers,
+        unless it's really okay for <code>0</code>,
+        <code>0.0</code> and <code>-0.0</code> to compare unequal!
+        But then again, you must not usually use exact comparison
+        on floating point numbers.
+      </p>
+      <p>
+        Monetary amounts should be using decimal (rational) numbers
+        to avoid the complexities and rounding errors
+        of floating-point arithmetic.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Iteration">
+    <SUMMARY>
+      Use the appropriate form for iteration.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You should simpler forms such as
+        <code>DOLIST</code> or <code>DOTIMES</code>
+        instead of <code>LOOP</code>
+        in simple cases when you're not going to use any
+        of the <code>LOOP</code> facilities such as
+        bindings, collection or block return.
+      </p>
+      <p>
+        Use the <code>WITH</code> clause of <code>LOOP</code>
+        when it will avoid a level of nesting with <code>LET</code>.
+        You may use <code>LET</code> if it makes it clearer
+        to return one of bound variables after the <code>LOOP</code>,
+        rather than use a clumsy <code>FINALLY (RETURN ...)</code> form.
+      </p>
+      <p>
+        In the body of a <code>DOTIMES</code>,
+        do not set the iteration variable.
+        (CCL will issue a compiler warning if you do.)
+      </p>
+      <p>
+        Most systems use unadorned symbols in the current package
+        as <code>LOOP</code> keywords.
+        Other systems use actual <code>:keywords</code>
+        from the <code>KEYWORD</code> package
+        as <code>LOOP</code> keywords.
+        You must be consistent with the convention used in your system.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="I/O">
+    <SUMMARY>
+      Use the appropriate I/O functions.
+    </SUMMARY>
+    <BODY>
+      <p>
+        When writing a server,
+        code must not send output to the standard streams such as
+        <code>*STANDARD-OUTPUT*</code> or <code>*ERROR-OUTPUT*</code>.
+        Instead, code must use the proper logging framework
+        to output messages for debugging.
+        We are running as a server, so there is no console!
+      </p>
+      <p>
+        Code must not use <code>PRINT-OBJECT</code>
+        to communicate with a user &#8212;
+        <code>PRINT-OBJECT</code> is for debugging purposes only.
+        Modifying any <code>PRINT-OBJECT</code> method
+        must not break any public interfaces.
+      </p>
+      <p>
+        You should not use a sequence of <code>WRITE-XXX</code>
+        where a single <code>FORMAT</code> string could be used.
+        Using format allows you
+        to parameterize the format control string in the future
+        if the need arises.
+      </p>
+      <p>
+        You should use <code>WRITE-CHAR</code> to emit a character
+        rather than <code>WRITE-STRING</code>
+        to emit a single-character string.
+      </p>
+      <p>
+        You should not use <code>(format nil "~A" value)</code>;
+        you should use <code>PRINC-TO-STRING</code> instead.
+      </p>
+      <p>
+        You should use <code>~&lt;Newline&gt;</code>
+        or <code>~@&lt;Newline&gt;</code> in format strings
+        to keep them from wrapping in 100-column editor windows,
+        or to indent sections or clauses to make them more readable.
+      </p>
+      <p>
+        You should not use <code>STRING-UPCASE</code>
+        or <code>STRING-DOWNCASE</code>
+        on format control parameters;
+        instead, it should use <code>"~:@(~A~)"</code> or <code>"~(~A~)"</code>.
+      </p>
+      <p>
+        Be careful when using the <code>FORMAT</code> conditional directive.
+        The parameters are easy to forget.
+      </p>
+      <dl>
+        <dt>No parameters, e.g. <code>"~[Siamese~;Manx~;Persian~] Cat"</code></dt>
+        <dd>
+          Take one format argument, which should be an integer.
+          Use it to choose a clause. Clause numbers are zero-based.
+          If the number is out of range, just print nothing.
+          You can provide a default value
+          by putting a <code>":"</code> in front of the last <code>";"</code>.
+          E.g. in <code>"~[Siamese~;Manx~;Persian~:;Alley~] Cat"</code>,
+          an out-of-range arg prints <code>"Alley"</code>.
+        </dd>
+        <dt><code>:</code> parameter, e.g. <code>"~:[Siamese~;Manx~]"</code></dt>
+        <dd>
+          Take one format argument.  If it's <code>NIL</code>,
+          use the first clause, otherwise use the second clause.
+        </dd>
+        <dt><code>@</code> parameter, e.g. <code>"~@[Siamese ~a~]"</code></dt>
+        <dd>
+          If the next format argument is true,
+          use the choice, but do NOT take the argument.
+          If it's false, take one format argument and print nothing.
+          (Normally the clause uses the format argument.)
+        </dd>
+        <dt><code>#</code> parameter, e.g. <code>"~#[ none~; ~s~; ~s and ~s~]"</code></dt>
+        <dd>
+          Use the number of arguments to format
+          as the number to choose a clause.
+          The same as no parameters in all other ways.
+          Here's the full hairy example:
+          <code>"Items:~#[ none~; ~S~; ~S and ~S~:;~@{~#[~; and~] ~S~^ ,~}~]."</code>
+        </dd>
+      </dl>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="INTERN and UNINTERN">
+    <SUMMARY>
+      You must not use <code>INTERN</code> or <code>UNINTERN</code> at runtime.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You must not use <code>INTERN</code> it at runtime.
+        Not only does it cons,
+        it either creates a permanent symbol that won't be collected
+        or gives access to internal symbols.
+        This creates opportunities for memory leaks, denial of service attacks,
+        unauthorized access to internals, clashes with other symbols.
+      </p>
+      <p>
+        You must not <code>INTERN</code> a string
+        just to compare it to a keyword;
+        use <code>STRING=</code> or <code>STRING-EQUAL</code>.
+      </p>
+      <BAD_CODE_SNIPPET>
+        (member (intern str :keyword) $keys) ; BAD
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        (member str $keys :test #'string-equal) ; GOOD
+      </CODE_SNIPPET>
+      <p>
+        You must not use <code>UNINTERN</code> at runtime.
+        It can break code that relies on dynamic binding.
+        It makes things harder to debug.
+        You must not dynamically intern any new symbol,
+        and therefore you need not dynamically unintern anything.
+      </p>
+      <p>
+        You may of course use <code>INTERN</code> at compile-time,
+        in the implementation of some macros.
+        Even so, it is usually more appropriate
+        to use abstractions on top of it, such as
+        <code>ALEXANDRIA:SYMBOLICATE</code> or
+        <code>ALEXANDRIA:FORMAT-SYMBOL</code>
+        to create the symbols you need.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="EVAL">
+    <SUMMARY>
+      You should not use <code>EVAL</code>.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Places where it is actually appropriate to use <code>EVAL</code>
+        are so few and far between that you must get permission;
+        it's easily misused.
+      </p>
+      <p>
+        If your code manipulates symbols at runtime
+        and needs to get the value of a symbol,
+        use <code>SYMBOL-VALUE</code>, not <code>EVAL</code>.
+      </p>
+      <p>
+        Often, what you really need is to write a macro,
+        not to use <code>EVAL</code>.
+      </p>
+      <p>
+        Places where it is OK to use <code>EVAL</code> are:
+        testing frameworks and code that is ONLY used for testing;
+        the build infrastructure; and
+        inside macros when there isn't any reasonable way
+        to avoid using <code>EVAL</code> (there almost always is).
+        Other uses need to be checked.
+        We do have a few special cases where <code>EVAL</code> is allowed.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
+<CATEGORY title="Optimization">
+  <STYLEPOINT title="Avoid Allocation">
+    <SUMMARY>
+      You should avoid unnecessary allocation of memory.
+    </SUMMARY>
+    <BODY>
+      <p>
+        In a language with automatic storage management (such as Lisp or Java),
+        the colloquial phrase "memory leak" refers to situation
+        where storage that is not actually needed
+        nevertheless does not get deallocated,
+        because it is still reachable.
+      </p>
+      <p>
+        You should be careful that when you create objects,
+        you don't leave them reachable after they are no longer needed!
+      </p>
+      <p>
+        Here's a particular trap-for-the-unwary in Common Lisp.
+        If you make an array with a fill pointer, and put objects in it,
+        and then set the fill pointer back to zero,
+        those objects are still reachable as far as Lisp goes
+        (the Common Lisp spec says that it's still OK
+        to refer to the array entries past the end of the fill pointer).
+      </p>
+      <p>
+        Don't cons (i.e., allocate) unnecessarily.
+        Garbage collection is not magic.
+        Excessive allocation is usually a performance problem.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="DYNAMIC-EXTENT declarations">
+    <SUMMARY>
+      You should only use <code>DYNAMIC-EXTENT</code>
+      where it matters for performance,
+      and you can document why it is correct.
+    </SUMMARY>
+    <BODY>
+      <p>
+      </p>
+      <p>
+        The purpose of the <code>DYNAMIC-EXTENT</code> declaration
+        is to improve performance by reducing garbage collection
+        in cases where it appears to be obvious that an object's lifetime
+        is within the "dynamic extent" of a function.
+        That means the object is created at some point
+        after the function is called, and
+        the object is always inaccessible after the function exits by any means.
+      </p>
+      <p>
+        By declaring a variable or a local function <code>DYNAMIC-EXTENT</code>,
+        the programmer <em>asserts</em> to Lisp
+        that any object that is ever a value of that variable
+        or the closure that is the definition of the function
+        has a lifetime within the dynamic extent of the (innermost) function
+        that declares the variable.
+      </p>
+      <p>
+        The Lisp implementation is then free to use that information
+        to make the program faster.
+        Typically, Lisp implementations can take advantage of this knowledge
+        to stack-allocate:
+      </p>
+      <ul>
+        <li>
+          The lists created to store <code>&amp;REST</code> parameters.
+        </li>
+        <li>
+          Lists and vector allocated within a function.
+        </li>
+        <li>
+          Closures.
+        </li>
+      </ul>
+      <p>
+        If the assertion is wrong, i.e. if the programmer's claim is not true,
+        the results can be <em>catastrophic</em>:
+        Lisp can terminate any time after the function returns,
+        or it hang forever, or &#8212; worst of all &#8212;
+        produce incorrect results without any runtime error!
+      </p>
+      <p>
+        Even if the assertion is correct,
+        future changes to the function might introduce
+        a violation of the assertion.
+        This increases the danger.
+      </p>
+      <p>
+        In most cases, such objects are ephemeral.
+        Modern Lisp implementations use generational garbage collectors,
+        which are quite efficient under these circumstances.
+      </p>
+      <p>
+        Therefore, <code>DYNAMIC-EXTENT</code> declarations
+        should be used sparingly. You must only use them if:
+      </p>
+      <ol>
+        <li>
+          There is some good reason to think that the overall effect
+          on performance is noticeable, and
+        </li>
+        <li>
+          It is absolutely clear that the assertion is true.
+        </li>
+        <li>
+          It is quite unlikely that the code will be changed
+          in ways that cause the declaration not to be true anymore.
+        </li>
+      </ol>
+      <p>
+        Point (1) is a special case of
+        the principle of avoiding premature optimization.
+        An optimization like this only matters if such objects
+        are allocated at a very high rate, e.g. "inside an inner loop".
+      </p>
+      <p>
+        It's sometimes hard to know what the rate will be.
+        When writing a function or macro
+        that's part of a library of reusable code,
+        there's no a priori way to know how often the code will run.
+        Ideally, tools would be available to discover
+        the availability and suitability of using such an optimization
+        based on running simulations and test cases, but
+        in practice this isn't as easy as it ought to be.
+        It's a tradeoff.
+        If you're very, very sure that the assertion is true
+        (that the object is only used within the dynamic scope),
+        and it's not obvious how much time will be saved
+        and it's not easy to measure,
+        then it may be better to put in the declaration than to leave it out.
+        (Ideally it would be easier to make such measurements
+        than it actually is.)
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Unsafe Operations">
+    <SUMMARY>
+      You must only use faster unsafe operations
+      when there is a clear performance need
+      and you can document why it's correct.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Some systems define unsafe numerical comparators,
+        that are designed to be used with fixnums only,
+        and are faster in that case,
+        but incorrect in case of overflow, and
+        have undefined behavior when called with anything but a fixnum.
+        You must not use these functions without both
+        profiling results indicating the need for this optimization,
+        and careful documentation explaining why it is safe to use them.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="REDUCE vs APPLY">
+    <SUMMARY>
+      You should use <code>REDUCE</code>
+      instead of <code>APPLY</code> where appropriate.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You should use <code>REDUCE</code>
+        instead of <code>APPLY</code> and a consed-up list,
+        where the semantics of the first operator argument
+        otherwise guarantees the same semantics.
+        Of course, you must use <code>APPLY</code>
+        if it does what you want and <code>REDUCE</code> doesn't.
+      </p>
+      <p>
+        For instance, <code>(apply #'+ (mapcar #'acc frobs)</code>
+        should instead be <code>(reduce #'+ frobs :key #'acc)</code>
+      </p>
+      <p>
+        This is preferable because it does not do extra consing,
+        and does not risk going beyond <code>CALL-ARGUMENTS-LIMIT</code>
+        on implementations where that limit is small,
+        which could blow away the stack on long lists
+        (we want our code to not be gratuitously unportable).
+      </p>
+      <p>
+        However, you must be careful not to use <code>REDUCE</code>
+        in ways that needlessly increase
+        the complexity class of the computation.
+        For instance, <code>(REDUCE 'STRCAT ...)</code> is <i>O(n^2)</i>
+        when an appropriate implementation is only <i>O(n)</i>.
+        Moreover, <code>(REDUCE 'APPEND ...)</code>
+        is also <i>O(n^2)</i> unless you specify <code>:FROM-END T</code>.
+        In such cases, you must use proper abstractions
+        that cover those cases instead of calling <code>REDUCE</code>,
+        first defining them in a suitable library if needs be.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Avoid NCONC">
+    <SUMMARY>
+      You should not use <code>NCONC</code>;
+      you should use <code>APPEND</code> instead,
+      or better data structures.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You should almost never use <code>NCONC</code>.
+        You should use <code>APPEND</code>
+        when you don't depend on any side-effect.
+        You should use <code>ALEXANDRIA:APPENDF</code>
+        when you need to update a variable.
+        You should probably not depend on games
+        being played with the <code>CDR</code>
+        of the current cons cell;
+        and if you do, you must include a prominent
+        comment explaining the use of <code>NCONC</code>;
+        and you should probably reconsider your data representation.
+      </p>
+      <p>
+        By extension, you should avoid <code>MAPCAN</code>
+        or the <code>NCONC</code> feature of <code>LOOP</code>.
+        You should instead respectively use
+        <code>ALEXANDRIA:MAPPEND</code>
+        and the <code>APPEND</code> feature of <code>LOOP</code>
+        respectively.
+      </p>
+      <p>
+        <code>NCONC</code> is very seldom a good idea,
+        since its time complexity class is no better than <code>APPEND</code>,
+        its space complexity class also is no better than <code>APPEND</code>
+        in the common case where no one else is sharing the side-effected list,
+        and its bug complexity class is way higher than <code>APPEND</code>.
+      </p>
+      <p>
+        If the small performance hit due
+        to <code>APPEND</code> vs. <code>NCONC</code>
+        is a limiting factor in your program,
+        you have a big problem and are probably using the wrong data structure:
+        you should be using sequences with constant-time append
+        (see Okasaki's book, and add them to lisp-interface-library),
+        or more simply you should be accumulating data in a tree
+        that will get flattened once in linear time
+        after the accumulation phase is complete (see how ASDF does it).
+      </p>
+      <p>
+        You may only use <code>NCONC</code>, <code>MAPCAN</code>
+        or the <code>NCONC</code> feature of <code>LOOP</code>
+        in low-level functions where performance matters,
+        where the use of lists as a data structure has been vetted
+        because these lists are known to be short,
+        and when the function or expression the result of which are accumulated
+        explicitly promises in its contract that it only returns fresh lists.
+        Even then, the use of such primitives must be rare,
+        and accompanied by justifying documentation.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
+<HR/>
+
+<small>Credits:
+   Adam Worrall, Dan Pierson, Matt Marjanovic, Matt Reklaitis,
+   Paul Weiss, Scott McKay, Sundar Narasimhan,
+   and several other people contributed.
+   Special thanks to Steve Hain,
+   and to the previous editors,
+   in reverse chronological order Dan Weinreb and Jeremy Brown.
+</small>
+
+<p align="right">
+Revision 1.8
+</p>
+
+
+<address>
+Robert Brown
+</address>
+
+
+<address>
+Fran&#231;ois-Ren&#233; Rideau
+</address>
+
+
+
+</GUIDE>
