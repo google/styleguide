@@ -2,9 +2,10 @@
 <?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
 <GUIDE title="Google Common Lisp Style Guide">
 
+
 <p align="right">
 
-Revision 1.8
+Revision 1.10
 </p>
 
 
@@ -12,9 +13,8 @@ Revision 1.8
 Robert Brown
 </address>
 
-
 <address>
-Fran&#231;ois-Ren&#233; Rideau
+  <a HREF="mailto:tunes@google.com">Fran&#231;ois-Ren&#233; Rideau</a>
 </address>
 
 <address>
@@ -490,8 +490,7 @@ Fran&#231;ois-Ren&#233; Rideau
           before committing code.
         </li>
         <li>
-          We should/will/must incorporate code coverage
-          into our testing process.
+          You should incorporate code coverage into your testing process.
           Tests are not sufficient
           if they do not cover all new and updated code;
           code that for whatever reason cannot be included in coverage results
@@ -531,7 +530,7 @@ Fran&#231;ois-Ren&#233; Rideau
       <p>
         If you're not sure, consult a dictionary,
         Google for alternative spellings,
-        or ask a local grammar nazi.
+        or ask a local expert.
       </p>
       <p>
         Here are examples of choosing the correct spelling:
@@ -616,7 +615,7 @@ Fran&#231;ois-Ren&#233; Rideau
   <STYLEPOINT title="Indentation">
     <SUMMARY>
       <p>
-        Indent your code the way GNU Emacs does.
+        Indent your code the way a properly configured GNU Emacs does.
       </p>
       <p>
         Indent carefully to make the code easier to understand.
@@ -738,10 +737,10 @@ Fran&#231;ois-Ren&#233; Rideau
         (defconstant +golden-ratio64+ #xe08c1d668b756f82 "more digits of the golden ratio")
 
         (defmacro incf32 (x y)
-          "like incf, but for integers modulo 2**32"
+          "Like INCF, but for integers modulo 2**32"
           `(setf ,x (logand (+ ,x ,y) #xffffffff)))
         (defmacro incf64 (x y)
-          "like incf, but for integers modulo 2**64"
+          "Like INCF, but for integers modulo 2**64"
           `(setf ,x (logand (+ ,x ,y) #xffffffffffffffff)))
       </CODE_SNIPPET>
       <p>
@@ -1343,7 +1342,8 @@ Fran&#231;ois-Ren&#233; Rideau
         It is possible to fake global lexical variables
         with a differently named global variable
         and a <code>DEFINE-SYMBOL-MACRO</code>.
-        You should not use this trick.
+        You should not use this trick,
+        unless you first publish a library that abstracts it away.
       </p>
       <CODE_SNIPPET>
         (defconstant +hash-results+ #xbd49d10d10cbee50)
@@ -1358,7 +1358,7 @@ Fran&#231;ois-Ren&#233; Rideau
     </SUMMARY>
     <BODY>
       <p>
-        Name boolean-valued functions with a trailing
+        You should name boolean-valued functions with a trailing
         <code>"P"</code> or <code>"-P"</code>,
         to indicate they are predicates.
         Generally, you should use
@@ -1366,18 +1366,23 @@ Fran&#231;ois-Ren&#233; Rideau
         and <code>"-P"</code> when it is more than one word.
       </p>
       <p>
+        A rationale for this convention is given in
+        <a href="http://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node69.html">the CLtL2 chapter on predicates</a>.
+      </p>
+      <p>
         For uniformity, you should follow the convention above,
         and not one of the alternatives below.
       </p>
       <p>
-        Alternative rules used in some existing packages
-        is to always use <code>"-P"</code>,
-        or to always use <code>"?"</code>.
+        An alternative rule used in some existing packages
+        is to always use <code>"-P"</code>.
+        Another alternative rule used in some existing packages
+        is to always use <code>"?"</code>.
         When you develop such a package,
         you must be consistent with the rest of the package.
         When you start a new package,
         you should not use such an alternative rule
-        without a very good reason.
+        without a very good documented reason.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -1832,6 +1837,24 @@ Fran&#231;ois-Ren&#233; Rideau
           Sure, use it for "helper" functions, but not API functions.
         </p>
       </blockquote>
+      <p>
+        You should, however, use appropriate declarations
+        in internal low-level functions
+        where these declarations are used for optimization.
+        In addition to providing more speed in production,
+        declarations are more helpful than assertions
+        to find bugs at compile-time;
+        they can still help find dynamic errors
+        by setting optimization settings low while debugging.
+        You should not use such declarations
+        outside internal functions
+        where it is well-documented how unsafe it is
+        to use such functions with the wrong arguments;
+        and you must not call these functions in a way
+        that could possibly lead to their being passed wrong arguments.
+        Use <code>check-type</code> to sanitize any input being passed
+        to such function from uncontrolled sources.
+      </p>
     </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="Macros">
@@ -1966,8 +1989,22 @@ Fran&#231;ois-Ren&#233; Rideau
         could have figure out all by itself,
         when the compiler isn't sufficiently-clever
         and the difference matters.
-        Consider using a <code>DEFCONSTANT</code> and its variants,
-        which would give the value a name explaining what it means.
+      </p>
+      <p>
+        Whenever you are going to use <code>#.</code>,
+        you should consider using <code>DEFCONSTANT</code> and its variants,
+        possibly in an <code>EVAL-WHEN</code>,
+        to give the value a name explaining what it means.
+      </p>
+      <p>
+        You should use normal computations inside an <code>EVAL-WHEN</code>
+        rather than <code>#.</code> whenever they are enough for the job.
+      </p>
+      <p>
+        If you don't need the computation to happen at compile-time,
+        but only at some point before runtime,
+        you should use <code>LOAD-TIME-VALUE</code>
+        instead of read-time or compile-time computations.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -1990,12 +2027,12 @@ Fran&#231;ois-Ren&#233; Rideau
       </p>
       <p>
         It is usually an error to omit the <code>:execute</code>,
-        for it prevents <code>LOAD</code>ing the source rather than the fasl.
+        because it prevents <code>LOAD</code>ing the source rather than the fasl.
         It is usually an error to omit the <code>:load-toplevel</code>
         (except to modify e.g. readtables and compile-time settings),
-        for it prevents <code>LOAD</code>ing future files
+        because it prevents <code>LOAD</code>ing future files
         or interactively compiling code
-        that depend on the effects that happen at compile-time
+        that depends on the effects that happen at compile-time,
         unless the current file was <code>COMPILE-FILE</code>d
         within the same Lisp session.
       </p>
@@ -2038,8 +2075,8 @@ Fran&#231;ois-Ren&#233; Rideau
         any sort of method combination that might be in effect for the slot.
         Rare exceptions include <code>INITIALIZE-INSTANCE</code>
         and <code>PRINT-OBJECT</code> methods and
-        the initialization of Quake volatile slots
-        in <code>INITIALIZE-RECORD</code> methods.
+        accessing normally hidden slots in the low-level implementation of
+        methods that provide user-visible abstractions.
         Otherwise, you should use accessors,
         <code>WITH-ACCESSORS</code>
       </p>
@@ -2047,15 +2084,23 @@ Fran&#231;ois-Ren&#233; Rideau
       <p>
         Accessor names generally follow a convention of
         <code>&lt;protocol-name&gt;-&lt;slot-name&gt;</code>,
-        where an "protocol" in this case loosely indicates
-        a set of functions with well-defined behavior;
-        a class can implement all or part of an interface
-        by defining some methods for (generic) functions in the protocol,
-        including readers and writers.
-        No implication of a formal "protocol" concept is intended.
+        where a "protocol" in this case loosely indicates
+        a set of functions with well-defined behavior.
       </p>
       <p>
-        For example, if there were a "notional" protocol called
+        No implication of a formal "protocol" concept is necessarily intended,
+        much less first-class "protocol" objects.
+        However, there may indeed be an abstract CLOS class
+        or an
+        <a href="http://common-lisp.net/~frideau/lil-ilc2012/lil-ilc2012.html">Interface-Passing Style</a> interface
+        that embodies the protocol.
+        Further (sub)classes or (sub)interfaces may then implement
+        all or part of a protocol by defining
+        some methods for (generic) functions in the protocol,
+        including readers and writers.
+      </p>
+      <p>
+        For example, if there were a notional protocol called
         is <code>pnr</code> with accessors <code>pnr-segments</code>
         and <code>pnr-passengers</code>, then
         the classes <code>air-pnr</code>, <code>hotel-pnr</code> and
@@ -2085,7 +2130,7 @@ Fran&#231;ois-Ren&#233; Rideau
         some specific class(es).
       </p>
       <p>
-        You must not use generic functions where there is no "notional" protocol.
+        You must not use generic functions where there is no notional protocol.
         To put it more concretely,
         if you have more than one generic function that specializes its Nth argument,
         the specializing classes should all be descendants of a single class.
@@ -2324,7 +2369,7 @@ Fran&#231;ois-Ren&#233; Rideau
         instead of using a combination of several list accessor functions.
         In this context, using <code>CAR</code> and <code>CDR</code>
         instead of <code>FIRST</code> and <code>REST</code> also makes sense.
-        However, mind in such cases that it might be more appropriate
+        However, keep in mind that it might be more appropriate in such cases
         to use higher-level constructs such as
         <code>DESTRUCTURING-BIND</code> or <code>FARE-MATCHER:MATCH</code>.
       </p>
@@ -2518,6 +2563,28 @@ Fran&#231;ois-Ren&#233; Rideau
         (define-constant +google-url+ "http://www.google.com/" :test #'string=)
         (define-constant +valid-colors+ '(red green blue))
       </CODE_SNIPPET>
+      <p>
+        Note that with optimizing implementations, such as SBCL or CMUCL,
+        defining constants this way precludes any later redefinition
+        short of <code>UNINTERN</code>ing the symbol
+        and recompiling all its clients.
+        This may make it "interesting" to debug things at the REPL
+        or to deploy live code upgrades.
+        If there is a chance that your "constants" are not going to be constant
+        over the lifetime of your server processes
+        after taking into consideration scheduled and unscheduled code patches,
+        you should consider using
+        <code>DEFPARAMETER</code> or <code>DEFVAR</code> instead,
+        or possibly a variant of <code>DEFINE-CONSTANT</code>
+        that builds upon some future library implementing global lexicals
+        rather than <code>DEFCONSTANT</code>.
+        You may keep the <code>+plus+</code> convention in these cases
+        to document the intent of the parameter as a constant.
+      </p>
+      <p>
+        Also note that <code>LOAD-TIME-VALUE</code> may help you
+        avoid the need for defined constants.
+      </p>
     </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="Defining Functions">
@@ -2720,9 +2787,10 @@ Fran&#231;ois-Ren&#233; Rideau
       </p>
       <p>
         You must use <code>=</code> to compare numbers,
-        unless it's really okay for <code>0</code>,
-        <code>0.0</code> and <code>-0.0</code> to compare unequal!
-        But then again, you must not usually use exact comparison
+        unless you really mean for <code>0</code>,
+        <code>0.0</code> and <code>-0.0</code> to compare unequal,
+        in which case you should use <code>EQL</code>.
+        Then again, you must not usually use exact comparison
         on floating point numbers.
       </p>
       <p>
@@ -3036,7 +3104,7 @@ Fran&#231;ois-Ren&#233; Rideau
         </li>
         <li>
           It is quite unlikely that the code will be changed
-          in ways that cause the declaration not to be true anymore.
+          in ways that cause the declaration to become false.
         </li>
       </ol>
       <p>
@@ -3120,7 +3188,7 @@ Fran&#231;ois-Ren&#233; Rideau
         is also <i>O(n^2)</i> unless you specify <code>:FROM-END T</code>.
         In such cases, you must use proper abstractions
         that cover those cases instead of calling <code>REDUCE</code>,
-        first defining them in a suitable library if needs be.
+        first defining them in a suitable library if need be.
       </p>
       
     </BODY>
@@ -3198,7 +3266,7 @@ Fran&#231;ois-Ren&#233; Rideau
 </small>
 
 <p align="right">
-Revision 1.8
+Revision 1.10
 </p>
 
 
@@ -3206,9 +3274,8 @@ Revision 1.8
 Robert Brown
 </address>
 
-
 <address>
-Fran&#231;ois-Ren&#233; Rideau
+  <a HREF="mailto:tunes@google.com">Fran&#231;ois-Ren&#233; Rideau</a>
 </address>
 
 
