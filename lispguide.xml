@@ -5,14 +5,13 @@
 
 <p align="right">
 
-Revision 1.10
+Revision 1.11
 </p>
 
 
 <address>
 Robert Brown
 </address>
-
 <address>
   <a HREF="mailto:tunes@google.com">Fran&#231;ois-Ren&#233; Rideau</a>
 </address>
@@ -20,6 +19,11 @@ Robert Brown
 <address>
    In memoriam Dan Weinreb
 </address>
+
+<p align="center">
+<cite>Patterns mean "I have run out of language."</cite> &#8212; Rich Hickey
+</p>
+
 
 <OVERVIEW>
 <CATEGORY title="Important Note">
@@ -151,11 +155,32 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="Conventions">
     <SUMMARY>
-      Some guidelines, such those about as comments and indentation,
-      are based purely on convention, rather than on clear technical merit.
-      However, conventions are important for readability,
-      thus most conventions are MUSTs.
+      You MUST follow conventions. They are not optional.
     </SUMMARY>
+    <BODY>
+      <p>
+        Some of these guidelines are motivated by universal principles of good programming.
+        Some guidelines are motivated by technical peculiarities of Common Lisp.
+        Some guidelines where once motivated by a technical reason,
+        but the guideline remained after the reason subsided.
+        Some guidelines, such those about as comments and indentation,
+        are based purely on convention, rather than on clear technical merit.
+        Whatever the case may be, you must still follow these guidelines,
+        as well as other conventional guidelines
+        that have not been formalized in this document.
+        You MUST follow conventions, because they are important for readability.
+      </p>
+      <p>
+        Conventional guidelines <em>are</em> indoctrination.
+        Their purpose is to make you follow the mores of the community,
+        
+        so you can more effectively cooperate with existing members.
+        It is still useful to distinguish the parts that are technically motivated
+        from the parts that are mere conventions,
+        so you know when best to defy conventions for good effect,
+        and when not to fall into the pits that the conventions are there to help avoid.
+      </p>
+    </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="Old Code">
     <p>
@@ -603,13 +628,10 @@ Robert Brown
     <BODY>
       <p>
         Some line length restriction is better than none at all.
-        Google Java developers have adopted
-        a 100-column limitation on source code lines
-        and C++ developers limit themselves to 80 columns.
-        Common Lispers at ITA have long adopted the 100-column limit.
         Allowing 100 columns seems better, since good style encourages
         the use of descriptive variables and function names.
       </p>
+      
     </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="Indentation">
@@ -826,6 +848,7 @@ Robert Brown
         c))
       </BAD_CODE_SNIPPET>
       <CODE_SNIPPET>
+        ;; Better
         (defun munge (a b c)
           (* (+ a b)
              c))
@@ -899,7 +922,7 @@ Robert Brown
         For example, "The value of LENGTH should be an integer."
       </p>
       <CODE_SNIPPET>
-        (defun primep (n)
+        (defun small-prime-number-p (n)
           "Return T if N, an integer, is a prime number. Otherwise, return NIL."
           (cond ((or (&lt; n 2))
                  nil)
@@ -910,7 +933,7 @@ Robert Brown
                 (t
                  (loop for i from 3 upto (sqrt n) by 2
                        do (when (divisorp i n)
-                            (return-from primep nil)))
+                            (return-from small-prime-number-p nil)))
                  t)))
       </CODE_SNIPPET>
       <CODE_SNIPPET>
@@ -990,7 +1013,7 @@ Robert Brown
         ;;; Divisibility
         ;;; Comments that describe a group of definitions.
 
-        (defun divisible-by (n d)
+        (defun divisorp (d n)
           (zerop (mod n d)))
 
         (defun proper-divisors (n)
@@ -1001,15 +1024,18 @@ Robert Brown
 
         ;;; Prime numbers
 
-        (defun prime-p (n)
-          (cond ((or (&lt; n 2)) nil)
-                ((= n 2) t)     ; parenthetical remark here
-                                ; continuation of the remark
-                ((divisible-by n 2) nil)  ; different remark
-                ;; Comment that applies to a secion of code.
-                (t (loop for i from 3 upto (sqrt n) by 2
-                         do (when (divisible-by n i)
-                              (return-from prime-p nil)))
+        (defun small-prime-number-p (n)
+          (cond ((or (&lt; n 2))
+                 nil)
+                ((= n 2)   ; parenthetical remark here
+                 t)        ; continuation of the remark
+                ((divisible-by n 2)
+                 nil)  ; different remark
+                ;; Comment that applies to a section of code.
+                (t
+                 (loop for i from 3 upto (sqrt n) by 2
+                       do (when (divisorp i n)
+                       (return-from small-prime-number-p nil)))
                    t)))
       </CODE_SNIPPET>
       <p>
@@ -1032,7 +1058,7 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="Attention Required">
     <SUMMARY>
-      You must follow the ITA convention of using <code>---</code>
+      You must follow the convention of using <code>---</code>
       for comments requiring special attention,
       including unobvious tricks, TODO items, questions, breakage, danger.
     </SUMMARY>
@@ -1838,22 +1864,11 @@ Robert Brown
         </p>
       </blockquote>
       <p>
-        You should, however, use appropriate declarations
+        You should, of course, use appropriate declarations
         in internal low-level functions
         where these declarations are used for optimization.
-        In addition to providing more speed in production,
-        declarations are more helpful than assertions
-        to find bugs at compile-time;
-        they can still help find dynamic errors
-        by setting optimization settings low while debugging.
-        You should not use such declarations
-        outside internal functions
-        where it is well-documented how unsafe it is
-        to use such functions with the wrong arguments;
-        and you must not call these functions in a way
-        that could possibly lead to their being passed wrong arguments.
-        Use <code>check-type</code> to sanitize any input being passed
-        to such function from uncontrolled sources.
+        When you do, however, see our recommendations for
+        <a href="#Unsafe_Operations">Unsafe Operations</a>.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -1914,30 +1929,46 @@ Robert Brown
         One way to write a macro is the so-called "call-with" style,
         explained at length in
         <a href="http://random-state.net/log/3390120648.html">http://random-state.net/log/3390120648.html</a>.
-        The idea is to keep the macro very simple,
-        generating a call to an auxiliary function,
-        which often takes a functional argument
-        consisting of code in the original macro call.
-        Advantages: during development,
-        you can modify the function instead of recompiling all macro call sites;
-        during debugging, you can see the function in the stack trace;
-        there is less generated code so smaller memory usage.
-        You should use this style unless
-        the macro body is simple, rarely subject to change,
-        <em>and</em> the macro is used in tight loops where performance matters.
-        Think about whether the extra stack frames are helpful or just clutter.
+        The general principle is that the macro is strictly limited to processing the syntax,
+        and as much of the semantics as possible is kept in normal functions.
+        Therefore, a macro <code>WITH-<em>FOO</em></code> is often limited to
+        generating a call to an auxiliary function
+        <code>CALL-WITH-<em>FOO</em></code>
+        with arguments deduced from the macro arguments.
+        Macro <code>&amp;body</code> arguments are typically
+        wrapped into a lambda expression of which they become the body,
+        which is passed as one of the arguments of the auxiliary function.
+      </p>
+      <p>
+        The advantages are many.
+        By keeping semantics outside the macro,
+        the macro is made simpler, easier to get right, and less subject to change,
+        which makes it easier to develop and maintain.
+        The semantics is written in a simpler language &#8212; one without staging &#8212;
+        which also makes it easier to develop and maintain.
+        It becomes possible to debug and update the semantic function
+        without having to recompile all clients of the macro.
+        The semantic function appears in the stack trace
+        which also helps debug client functions.
+        The macro expansion is made shorter and
+        each expansion shares more code with other expansions,
+        which reduces memory pressure which in turn usually makes things faster.
+        You should use this style unless the macro is used
+        in tight loops where performance matters;
+        and even then, see our rules regarding optimization.
       </p>
       <p>
         Any functions (closures) created by the macro should be named:
         either use <code>FLET</code> or <code>NAMED-LAMBDA</code>.
         Using <code>FLET</code> is also good
         because you can declare the function to be of dynamic
-        extent (if it is &#8212; and usually it is).
+        extent (if it is &#8212; and often it is).
       </p>
       <p>
         If a macro call contains a form,
         and the macro expansion includes more than one copy of that form,
-        the form can be evaluated more than once.
+        the form can be evaluated more than once,
+        and code it contains macro-expanded and compiled more than once.
         If someone uses the macro and calls it
         with a form that has side effects or that takes a long time to compute,
         the behavior will be undesirable
@@ -1950,6 +1981,11 @@ Robert Brown
         that generates code to do this.
         See also <code>ALEXANDRIA:WITH-GENSYMS</code>,
         to make some temporary variables in the generated code.
+        Note that if you follow our <code>CALL-WITH-</code> style,
+        you typically expand the code only once, as either
+        an argument to the auxiliary function, or
+        the body of a lambda passed as argument to it;
+        you therefore avoid the above complexity.
       </p>
       <p>
         When you write a macro with a body,
@@ -2010,11 +2046,13 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="EVAL-WHEN">
     <SUMMARY>
-      <code>EVAL-WHEN</code> is tricky. Be aware.
+      When using <code>EVAL-WHEN</code>, you should almost always use all of
+      <code>(:compile-toplevel :load-toplevel :execute)</code>.
     </SUMMARY>
     <BODY>
       <p>
-        Lisp evaluation happens at several "times".
+        Lisp evaluation happens at several times,
+        some of them interleaved.
         Be aware of them when writing macros.
         <a href="http://fare.livejournal.com/146698.html">EVAL-WHEN considered harmful to your mental health</a>.
       </p>
@@ -2037,8 +2075,8 @@ Robert Brown
         within the same Lisp session.
       </p>
       <p>
-        In some odd cases, you may want to evaluate things from within
-        the expansion of a <code>DEFTYPE</code>
+        In some odd cases, you may want to evaluate top-level definitions
+        from within the expansion of a <code>DEFTYPE</code>
         or of a non-top-level <code>DEFMACRO</code>.
         In these cases, you should use <code>ASDF-FINALIZERS</code>
         and its <code>ASDF-FINALIZERS:EVAL-AT-TOPLEVEL</code> form.
@@ -2453,11 +2491,19 @@ Robert Brown
       <p>
         You must consistently use either <code>#'(lambda ...)</code>
         or <code>(lambda ...)</code> without <code>#'</code> everywhere.
-        You should only use the former style if your code is intended as a library
-        with maximal compatibility to all Common Lisp implementations.
         Unlike the case of <code>#'symbol</code> vs <code>'symbol</code>,
         it is only a syntactic difference with no semantic impact,
         except that the former works on Genera and the latter doesn't.
+        You must use the former style if your code is intended as a library
+        with maximal compatibility to all Common Lisp implementations;
+        otherwise, it is optional which style you use.
+        <code>#'</code> may be seen as a hint
+        that you're introducing a function in expression context;
+        but the <code>lambda</code> itself is usually sufficient hint,
+        and concision is good.
+        Choose wisely, but above all,
+        consistently with yourself and other developers,
+        within a same file, package, system, project, etc.
       </p>
       <p>
         Note that if you start writing a new system
@@ -2670,20 +2716,40 @@ Robert Brown
       </p>
       <p>
         You should only use <code>CASE</code> and <code>ECASE</code>
-        to compare integers, characters or symbols
+        to compare numbers, characters or symbols
         (including booleans and keywords).
         Indeed, <code>CASE</code> uses <code>EQL</code> for comparisons,
-        so strings and other numbers may not compare the way you expect.
+        so strings, pathnames and structures may not compare the way you expect,
+        and <code>1</code> will differ from <code>1.0</code>.
+      </p>
+      <p>
+        You should use <code>ECASE</code> and <code>ETYPECASE</code>
+        in preference to <code>CASE</code> and <code>TYPECASE</code>.
+        It is better to catch erroneous values early.
+      </p>
+      <p>
+        You should not use <code>CCASE</code> or <code>CTYPECASE</code> at all.
+        At least, you should not use them in server processes,
+        unless you have quite robust error handling infrastructure
+        and make sure not to leak sensitive data this way.
+        These are meant for interactive use,
+        and can cause interesting damage
+        if they cause data or control leak to attackers.
       </p>
       <p>
         You must not use gratuitous single quotes in <code>CASE</code> forms.
         This is a common error:
       </p>
       <BAD_CODE_SNIPPET>
-        (case x
-          ('bar :bar)
-          ('quux :quux))
+        (case x ; Bad: silently returns NIL on mismatch
+          ('bar :bar) ; Bad: catches QUOTE
+          ('baz :baz)) ; Bad: also would catch QUOTE
       </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        (ecase x ; Better: will error on mismatch
+          ((bar) :bar) ; Better: won't match QUOTE
+          ((baz) :baz)) ; Better: same reason
+      </CODE_SNIPPET>
       <p>
         <code>'BAR</code> there is <code>(QUOTE BAR)</code>,
         meaning this leg of the case will be executed
@@ -2696,14 +2762,26 @@ Robert Brown
         In <code>CASE</code> forms,
         you must use <code>otherwise</code> instead of <code>t</code>
         when you mean "execute this clause if the others fail".
-        And you must use <code>((t) ...)</code>
-        when you mean "match the symbol T".
+        You must use <code>((t) ...)</code>
+        when you mean "match the symbol T" rather than "match anything".
+        You must also use <code>((nil) ...)</code>
+        when you mean "match the symbol NIL" rather than "match nothing".
       </p>
       <p>
-        You should use <code>ECASE</code> and <code>ETYPECASE</code>
-        in preference to <code>CASE</code> and <code>TYPECASE</code>.
-        You should not use <code>CCASE</code> or <code>CTYPECASE</code> at all.
+        Therefore, if you want to map booleans <code>NIL</code> and <code>T</code>
+        to respective symbols <code>:BAR</code> and <code>:QUUX</code>,
+        you should avoid the former way and do it the latter way:
       </p>
+      <BAD_CODE_SNIPPET>
+        (ecase x ; Bad: has no actual error case!
+          (nil :bar)) ; Bad: matches nothing
+          (t :quux)) ; Bad: matches anything
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        (ecase x ; Better: will actually catch non-booleans
+          ((nil) :bar)) ; Better: matches NIL
+          ((t) :quux)) ; Better: matches T
+      </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="Identity, Equality and Comparisons">
@@ -2797,6 +2875,12 @@ Robert Brown
         Monetary amounts should be using decimal (rational) numbers
         to avoid the complexities and rounding errors
         of floating-point arithmetic.
+        Libraries such as
+        <a href="http://wukix.com/lisp-decimals">wu-decimal</a>
+        can help you;
+        if this library is not satisfactory, see above about
+        <a href="#Using_Libraries">Using Libraries</a> and
+        <a href="#Open-Sourcing_Code">Open-Sourcing Code</a>.
       </p>
       
     </BODY>
@@ -2941,10 +3025,10 @@ Robert Brown
         use <code>STRING=</code> or <code>STRING-EQUAL</code>.
       </p>
       <BAD_CODE_SNIPPET>
-        (member (intern str :keyword) $keys) ; BAD
+        (member (intern str :keyword) $keys) ; Bad
       </BAD_CODE_SNIPPET>
       <CODE_SNIPPET>
-        (member str $keys :test #'string-equal) ; GOOD
+        (member str $keys :test #'string-equal) ; Better
       </CODE_SNIPPET>
       <p>
         You must not use <code>UNINTERN</code> at runtime.
@@ -2972,7 +3056,7 @@ Robert Brown
     <BODY>
       <p>
         Places where it is actually appropriate to use <code>EVAL</code>
-        are so few and far between that you must get permission;
+        are so few and far between that you must consult with your reviewers;
         it's easily misused.
       </p>
       <p>
@@ -2989,7 +3073,15 @@ Robert Brown
         testing frameworks and code that is ONLY used for testing;
         the build infrastructure; and
         inside macros when there isn't any reasonable way
-        to avoid using <code>EVAL</code> (there almost always is).
+        to avoid using <code>EVAL</code>
+        (there almost always is, and where there isn't,
+        consider that unless you can <em>also</em> dump
+        code to reproduce the side-effects being evaluated
+        in the macro expansion,
+        you may actually have to use
+        <code>ASDF-FINALIZERS:EVAL-AT-TOPLEVEL</code>
+        so the side-effects are present when loading the fasl
+        without compiling).
         Other uses need to be checked.
         We do have a few special cases where <code>EVAL</code> is allowed.
       </p>
@@ -3141,16 +3233,68 @@ Robert Brown
     </SUMMARY>
     <BODY>
       <p>
-        Some systems define unsafe numerical comparators,
+        Common Lisp implementations often provide backdoors
+        to compute some operations faster in an unsafe way.
+        For instance, some libraries provide arithmetic operations
         that are designed to be used with fixnums only,
-        and are faster in that case,
-        but incorrect in case of overflow, and
-        have undefined behavior when called with anything but a fixnum.
-        You must not use these functions without both
-        profiling results indicating the need for this optimization,
-        and careful documentation explaining why it is safe to use them.
+        and yield the correct result faster if provided proper arguments.
+        The downside is that the result of such operations
+        is incorrect in case of overflow, and can
+        have undefined behavior when called with anything but fixnums.
       </p>
       
+      <p>
+        More generally, unsafe operations
+        will yield the correct result faster
+        than would the equivalent safe operation
+        if the arguments to satisfy some invariant such as
+        being of the correct type and small enough;
+        however if the arguments fail to satisfy the required invariants,
+        then the operation may have undefined behavior,
+        such as crashing the software, or,
+        which is sometimes worse, silently giving wrong answers.
+        Depending on whether the software is piloting an aircraft
+        or other life-critical device,
+        or whether it is accounting for large amounts money,
+        such undefined behavior can kill or bankrupt people.
+        Yet proper speed can sometimes make the difference between
+        software that's unusably slow and software that does its job;
+        between software that is a net loss
+        and software that can yield a profit.
+      </p>
+      <p>
+        You must not define or use unsafe operations without both
+        profiling results indicating the need for this optimization,
+        and careful documentation explaining why it is safe to use them.
+        Unsafe operations should be restricted to internal functions;
+        you should carefully documented how unsafe it is
+        to use these functions with the wrong arguments.
+        You should only use unsafe operations
+        inside functions internal to a package and
+        you should document the use of the declarations,
+        since calling the functions with arguments of the wrong type
+        can lead to undefined behavior.
+        Use <code>check-type</code> in functions exported from a package
+        to sanitize input arguments,
+        so that internal functions are never passed illegal values.
+      </p>
+      <p>
+        On some compilers,
+        new unsafe operations
+        can usually be defined by combining
+        type declarations with an <code>OPTIMIZE</code> declaration
+        that has sufficiently high <code>SPEED</code> and low <code>SAFETY</code>.
+        In addition to providing more speed for production code,
+        such declarations may more helpful
+        than <code>check-type</code> assertions
+        for finding bugs at compile-time,
+        on compilers that have type inference.
+        These compilers may interpret those declarations as assertions
+        if you switch to safer and slower optimize settings;
+        this is good to locate a dynamic error in your code during development,
+        but is not to be used for production code since
+        it defeats the purpose of declarations as a performance trick.
+      </p>
     </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="REDUCE vs APPLY">
@@ -3254,6 +3398,115 @@ Robert Brown
   </STYLEPOINT>
 </CATEGORY>
 
+<CATEGORY title="Pitfalls">
+  <STYLEPOINT title="SATISFIES">
+    <SUMMARY>
+      You must be careful when using a <code>SATISFIES</code> clause in a type specifier.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Most Common Lisp implementations can't optimize
+        based on a <code>SATISFIES</code> type,
+        but many of them offer simple optimizations
+        based on a type of the form
+        <code>(AND FOO (SATISFIES BAR-P))</code>
+        where the first term of the <code>AND</code> clause
+        describes the structure of the object
+        without any <code>SATISFIES</code>
+        and the second term is the <code>SATISFIES</code>.
+      </p>
+      <BAD_CODE_SNIPPET>
+        (deftype prime-number () (satisfies prime-number-p)) ; Bad
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        (deftype prime-number () (and integer (satisfies prime-number-p)) ; Better
+      </CODE_SNIPPET>
+      <p>
+        However, <code>AND</code> in the <code>DEFTYPE</code> language
+        isn't a left-to-right short-circuit operator
+        as in the expression language;
+        it is a symmetrical connector that allows for reordering subterms
+        and doesn't guarantee short-circuiting.
+        Therefore, in the above example,
+        you cannot rely on the test for <code>INTEGER</code>ness
+        to protect the function <code>PRIME-NUMBER-P</code>
+        from being supplied non-integer arguments
+        to test for being of instances of the type.
+        Implementations may, and some <em>will</em>,
+        invoke <code>SATISFIES</code>-specified function
+        at compile-time to test various relevant objects.
+      </p>
+      <p>
+        That is why any function specified in a <code>SATISFIES</code> clause
+        MUST accept objects of any type as argument to the function,
+        and MUST be defined within an <code>EVAL-WHEN</code>.
+      </p>
+      <BAD_CODE_SNIPPET>
+        (defun prime-number-p (n) ;; Doubly BAD!
+          (let ((m (abs n)))
+            (if (&lt;= m *prime-number-cutoff*)
+                (small-prime-number-p m)
+                (big-prime-number-p m))))
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        (eval-when (:compile-toplevel :load-toplevel :execute) ;; Better
+          (defun prime-number-p (n)
+            (when (integerp n) ;; Better
+              (let ((m (abs n)))
+                (if (&lt;= m *prime-number-cutoff*)
+                    (small-prime-number-p m)
+                    (big-prime-number-p m))))))
+      </CODE_SNIPPET>
+      <p>
+        In particular, the above means that the
+        <a href="http://www.lispworks.com/documentation/HyperSpec/Body/t_satisf.htm">example</a>
+        used in the Common Lisp Standard is erroneous:
+        <code>(and integer (satisfies evenp))</code>
+        is <em>not</em> a safe, conformant type specifier to use,
+        because <code>EVENP</code> will throw an error
+        rather than return <code>NIL</code>
+        when passed a non-integer as an argument.
+      </p>
+      <p>
+        Finally, there is a catch when your <code>DEFTYPE</code> code expands
+        to a <code>SATISFIES</code> with a dynamically generated function:
+      </p>
+      <ul>
+        <li>
+          You cannot control when implementations will or will not
+          expand a <code>DEFTYPE</code>.
+        </li>
+        <li>
+          The expansion itself cannot contain a function definition
+          or any code in the expression language.
+        </li>
+        <li>
+          You cannot control when the expansion is used,
+          it may happen in a different process
+          that didn't expand the definition.
+        </li>
+      </ul>
+      <p>
+        Therefore, you cannot merely create the function
+        as a side-effect of expansion
+        using <code>EVAL</code> at type-expansion time.
+        The solution is to use <code>EVAL-AT-TOPLEVEL</code>
+        from <code>ASDF-FINALIZERS</code>.
+        It will not only <code>EVAL</code> your function definition
+        at type-expansion time for immediate availability,
+        it will also save the form aside, for inclusion in a
+        <code>(FINAL-FORMS)</code> at the end of the file being compiled,
+        which <code>ASDF-FINALIZERS</code> ensures you include,
+        throwing an error if you omit it.
+        This way, the form is also available at load-time.
+      </p>
+      <p>
+        Common Lisp is hard to satisfy.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
 <HR/>
 
 <small>Credits:
@@ -3266,7 +3519,7 @@ Robert Brown
 </small>
 
 <p align="right">
-Revision 1.10
+Revision 1.11
 </p>
 
 
