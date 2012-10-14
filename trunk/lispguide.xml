@@ -5,7 +5,7 @@
 
 <p align="right">
 
-Revision 1.11
+Revision 1.12
 </p>
 
 
@@ -178,7 +178,7 @@ Robert Brown
         It is still useful to distinguish the parts that are technically motivated
         from the parts that are mere conventions,
         so you know when best to defy conventions for good effect,
-        and when not to fall into the pits that the conventions are there to help avoid.
+        and when not to fall into the pitfalls that the conventions are there to help avoid.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -261,10 +261,6 @@ Robert Brown
               etc.
             </li>
           </ul>
-        </li>
-        <li>
-          Use of <code>i&lt;</code> and friends
-          (premature optimization, bug introduction)
         </li>
       </ul>
     </BODY>
@@ -511,8 +507,14 @@ Robert Brown
           (using asdf's <code>:around-compile</code> hooks).
         </li>
         <li>
-          You must run the "precheckin" tests successfully
-          before committing code.
+          All code should be checked in an appropriate source control system,
+          in a way that allows for complete reproducibility of
+          build, test and execution of
+          the code that is, has been or may be deployed.
+        </li>
+        <li>
+          You must run the "precheckin" tests, and each component must pass
+          its unit tests successfully before you commit any code.
         </li>
         <li>
           You should incorporate code coverage into your testing process.
@@ -888,7 +890,7 @@ Robert Brown
 <CATEGORY title="Documentation">
   <STYLEPOINT title="Document everything">
     <SUMMARY>
-      You should use document strings to explain how code works.
+      You should use document strings to explain how to use your code.
     </SUMMARY>
     <BODY>
       <p>
@@ -1301,43 +1303,6 @@ Robert Brown
       </p>
     </BODY>
   </STYLEPOINT>
-  <STYLEPOINT title="Omit library prefixes">
-    <SUMMARY>
-      You should not include a library or package name as a symbol prefix
-      when naming entities from the library or package.
-    </SUMMARY>
-    <BODY>
-      <p>
-        When naming public symbols of a package,
-        you should not include as a prefix the package name.
-        Naming functions this way makes them awkward to use
-        from client package with package-qualified symbols.
-      </p>
-      <BAD_CODE_SNIPPET>
-        ;; Bad
-        (in-package #:varint)
-        (defun varint-length64 () ... )
-
-        (in-package #:client-code)
-        (defconst +padding+ (varint:varint-length64 +end-token+))
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        ;; Better
-        (in-package #:varint)
-        (defun length64 () ... )
-
-        (in-package #:client-code)
-        (defconst +padding+ (varint:length64 +end-token+))
-      </CODE_SNIPPET>
-      <p>
-        An exception to the above rule would be to include a prefix
-        for the names of variables that would otherwise be expected to clash
-        with variables in packages that use the current one.
-        For instance, <code>ASDF</code> exports a variable <code>*asdf-verbose*</code>
-        that controls the verbosity of asdf only and the entire Lisp programs.
-      </p>
-    </BODY>
-  </STYLEPOINT>
   <STYLEPOINT title="Global variables and constants">
     <SUMMARY>
       Name globals according to convention.
@@ -1412,172 +1377,46 @@ Robert Brown
       </p>
     </BODY>
   </STYLEPOINT>
-</CATEGORY>
+  <STYLEPOINT title="Omit library prefixes">
+    <SUMMARY>
+      You should not include a library or package name
+      as a prefix within the name of symbols.
+    </SUMMARY>
+    <BODY>
+      <p>
+        When naming a symbol (external or internal) in a package,
+        you should not include the package name
+        as a prefix within the name of the symbol.
+        Naming a symbol this way makes it awkward to use
+        from a client package accessing the symbol
+        by qualifying it with a package prefix,
+        where the package name then appears twice
+        (once as a package prefix,
+        another time as a prefix within the symbol name).
+      </p>
+      <BAD_CODE_SNIPPET>
+        ;; Bad
+        (in-package #:varint)
+        (defun varint-length64 () ... )
 
-<CATEGORY title="Language usage guidelines">
-  <STYLEPOINT title="Mostly Functional Style">
-    <SUMMARY>
-      You should avoid side-effects when they are not necessary.
-    </SUMMARY>
-    <BODY>
+        (in-package #:client-code)
+        (defconst +padding+ (varint:varint-length64 +end-token+))
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        ;; Better
+        (in-package #:varint)
+        (defun length64 () ... )
+
+        (in-package #:client-code)
+        (defconst +padding+ (varint:length64 +end-token+))
+      </CODE_SNIPPET>
       <p>
-        Lisp is best used as a "mostly functional" language.
-      </p>
-      <p>
-        Avoid modifying local variables, try rebinding instead.
-      </p>
-      <p>
-        Avoid creating objects and the SETFing their slots.
-        It's better to set the slots during initialization.
-      </p>
-      <p>
-        Make classes as immutable as possible, that is, avoid giving slots
-        setter functions if at all possible.
-      </p>
-      <p>
-        Using a mostly functional style makes it much easier
-        to write concurrent code that is thread-safe.
-        It also makes it easier to test the code.
-      </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Recursion">
-    <SUMMARY>
-      Favor iteration over recursion.
-    </SUMMARY>
-    <BODY>
-      <p>
-        Common Lisp systems are not required to implement constant space
-        optimizations for recursive function calls from tail positions;
-        however, most serious implementations (including SBCL and CCL)
-        do implement proper tail calls.
-        Still, even compilers that implement proper tail call do it
-        only in restricted conditions:
-      </p>
-      <ul>
-        <li>
-          The <code>(DECLARE (OPTIMIZE ...))</code> settings
-          must favor <code>SPEED</code> enough and
-          not favor <code>DEBUG</code> too much,
-          for some compiler-dependent meanings of "enough" and "too much".
-          (For instance, in SBCL, you should avoid <code>(SPEED 0)</code>
-          and <code>(DEBUG 3)</code> to achieve tail call elimination.)
-        </li>
-        <li>
-          There should not be dynamic bindings around the call
-          (even though some Scheme compilers are able to properly treat
-          such dynamic bindings, called parameters in Scheme parlance).
-        </li>
-      </ul>
-      <p>
-        For compatibility with all compilers and
-        to avoid stack overflow when debugging,
-        you should use iteration or the built in mapping functions
-        rather than relying on proper tail calls.
-      </p>
-      <p>
-        If you do rely on proper tail calls,
-        you must prominently document the fact,
-        and take appropriate measures to ensure an appropriate compiler is used
-        with appropriate optimization settings.
-        For fully portable code, you may have to use trampolines instead.
-      </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Special variables">
-    <SUMMARY>
-      Use special variables sparingly.
-    </SUMMARY>
-    <BODY>
-      <p>
-        Using Lisp "special" (dynamically bound) variables
-        as implicit arguments to functions should be used sparingly,
-        and only in cases where it won't surprise the person reading the code,
-        and where it offers significant benefits.
-      </p>
-      <p>
-        Good candidates for such special variables
-        are items for which "the current" can be naturally used as prefix,
-        such as "the current database connection" or
-        "the current business data source".
-        They are singletons as far as the rest of the code is concerned,
-        and often passing them as an explicit argument
-        does not add anything to the readability or maintainability
-        of the source code in question.
-      </p>
-      <p>
-        They can make it easier to write code that can be refactored.
-        If you have a request processing chain,
-        with a number of layers that all operate upon a "current" request,
-        passing the request object explicitly to every function
-        requires that every function in the chain have a request argument.
-        Factoring out code into new functions often requires
-        that these functions also have this argument,
-        which clutters the code with boilerplate.
-      </p>
-      <p>
-        Note that a Lisp special variable is not a global variable
-        in the sense of a global variable in, say, BASIC or C.
-        As special variables can be dynamically bound,
-        they are much more powerful than
-        global value cells that can be changed from everywhere.
-      </p>
-      <p>
-        You should treat special variables
-        as though they are per-thread variables.
-        That is, leave the special variable with no top-level binding at all,
-        and each thread of control
-        that needs the variable should bind it explicitly.
-        This will mean that any incorrect use of the variable
-        will result in an "unbound variable" error, and
-        each thread will see its own value for the variable.
-      </p>
-      
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Assignment">
-    <SUMMARY>
-      Be consistent in assignment forms.
-    </SUMMARY>
-    <BODY>
-      <p>
-        There are several styles for dealing with assignment and side-effects;
-        whichever a given package is using,
-        keep using the same consistently when hacking said package.
-        Pick a style that makes sense when starting a new package.
-      </p>
-      <p>
-        Regarding multiple assignment in a same form, there are two schools:
-        the first style groups as many assignments as possible into a single
-        <code>SETF</code> or <code>PSETF</code> form
-        thus minimizing the number of forms with side-effects;
-        the second style splits assignments into as many individual
-        <code>SETF</code> (or <code>SETQ</code>, see below) forms as possible,
-        to maximize the chances of locating forms that modify a kind of place
-        by grepping for <code>(setf (foo ...</code>.
-        A grep pattern must actually contain as many place-modifying forms
-        as you may use in your programs, which may make this rationale either
-        convincing or moot depending on the rest of the style of your code.
-        You should follow the convention used in the package you are hacking.
-        We recommend the first convention for new packages.
-      </p>
-      <p>
-        Regarding <code>SETF</code> and <code>SETQ</code>,
-        there are two schools:
-        this first regards <code>SETQ</code>
-        as an archaic implementation detail,
-        and avoids it entirely in favor of <code>SETF</code>;
-        the second regards <code>SETF</code>
-        as an additional layer of complexity,
-        and avoids it in favor of <code>SETQ</code> whenever possible
-        (i.e. whenever the assigned place is a variable or symbol-macro).
-        You should follow the convention used in the package you are hacking.
-        We recommend the first convention for new packages.
-      </p>
-      <p>
-        In the spirit of a mostly pure functional style,
-        which makes testing and maintenance easier,
-        we invite you to consider how to do things with the fewest assignments required.
+        An exception to the above rule would be to include a prefix
+        for the names of variables that would otherwise be expected to clash
+        with variables in packages that use the current one.
+        For instance, <code>ASDF</code> exports a variable <code>*ASDF-VERBOSE*</code>
+        that controls the verbosity of <code>ASDF</code> only,
+        rather than of the entire Lisp program.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -1605,7 +1444,8 @@ Robert Brown
       <p>
         As an exception,
         unit tests may use the internals of the package being tested.
-        So when you refactor, look at the package's unit tests.
+        So when you refactor, watch out for
+        internals used by the package's unit tests.
       </p>
       <p>
         The <code>::</code> construct is also useful for very temporary hacks,
@@ -1613,6 +1453,16 @@ Robert Brown
         But if the symbol really is part of
         the externally-visible definition of the package,
         export it.
+      </p>
+      <p>
+        You may find that some internal symbols represent concepts
+        you usually want to abstract away and hide under the hood,
+        yet at times are necessary to expose for various extensions.
+        For the former reason, you do not want to export them,
+        yet for the latter reason, you have to export them.
+        The solution is to have two different packages,
+        one for your normal users to use, and
+        another for the implementation and its extenders to use.
       </p>
       <p>
         Each package is one of two types:
@@ -1681,6 +1531,179 @@ Robert Brown
           and so on.
         </li>
       </ul>
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
+<CATEGORY title="Language usage guidelines">
+  <STYLEPOINT title="Mostly Functional Style">
+    <SUMMARY>
+      You should avoid side-effects when they are not necessary.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Lisp is best used as a "mostly functional" language.
+      </p>
+      <p>
+        Avoid modifying local variables, try rebinding instead.
+      </p>
+      <p>
+        Avoid creating objects and the SETFing their slots.
+        It's better to set the slots during initialization.
+      </p>
+      <p>
+        Make classes as immutable as possible, that is, avoid giving slots
+        setter functions if at all possible.
+      </p>
+      <p>
+        Using a mostly functional style makes it much easier
+        to write concurrent code that is thread-safe.
+        It also makes it easier to test the code.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Recursion">
+    <SUMMARY>
+      Favor iteration over recursion.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Common Lisp systems are not required to implement
+        function calls from tail positions without leaking stack space
+        &#8212; which is known as proper tail calls (PTC),
+        tail call elimination (TCE),
+        or tail call optimization (TCO).
+        This means that indefinite recursion through tail calls
+        may quickly blow out the stack,
+        which hampers functional programming.
+        Still, most serious implementations (including SBCL and CCL)
+        do implement proper tail calls, but with restrictions:
+      </p>
+      <ul>
+        <li>
+          The <code>(DECLARE (OPTIMIZE ...))</code> settings
+          must favor <code>SPEED</code> enough and
+          not favor <code>DEBUG</code> too much,
+          for some compiler-dependent meanings of "enough" and "too much".
+          (For instance, in SBCL, you should avoid <code>(SPEED 0)</code>
+          and <code>(DEBUG 3)</code> to achieve proper tail calls.)
+        </li>
+        <li>
+          There should not be dynamic bindings around the call
+          (even though some Scheme compilers are able to properly treat
+          such dynamic bindings, called parameters in Scheme parlance).
+        </li>
+      </ul>
+      <p>
+        For compatibility with all compilers and optimization settings,
+        and to avoid stack overflow when debugging,
+        you should prefer iteration or the built in mapping functions
+        to relying on proper tail calls.
+      </p>
+      <p>
+        If you do rely on proper tail calls,
+        you must prominently document the fact,
+        and take appropriate measures to ensure an appropriate compiler is used
+        with appropriate optimization settings.
+        For fully portable code, you may have to use trampolines instead.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Special variables">
+    <SUMMARY>
+      Use special variables sparingly.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Using Lisp "special" (dynamically bound) variables
+        as implicit arguments to functions should be used sparingly,
+        and only in cases where it won't surprise the person reading the code,
+        and where it offers significant benefits.
+      </p>
+      <p>
+        Good candidates for such special variables
+        are items for which "the current" can be naturally used as prefix,
+        such as "the current database connection" or
+        "the current business data source".
+        They are singletons as far as the rest of the code is concerned,
+        and often passing them as an explicit argument
+        does not add anything to the readability or maintainability
+        of the source code in question.
+      </p>
+      <p>
+        They can make it easier to write code that can be refactored.
+        If you have a request processing chain,
+        with a number of layers that all operate upon a "current" request,
+        passing the request object explicitly to every function
+        requires that every function in the chain have a request argument.
+        Factoring out code into new functions often requires
+        that these functions also have this argument,
+        which clutters the code with boilerplate.
+      </p>
+      <p>
+        Note that a Lisp special variable is not a global variable
+        in the sense of a global variable in, say, BASIC or C.
+        As special variables can be dynamically bound to a local value,
+        they are much more powerful than
+        global value cells where users all interfere with each other.
+      </p>
+      <p>
+        You should treat special variables
+        as though they are per-thread variables.
+        That is, leave the special variable with no top-level binding at all,
+        and each thread of control
+        that needs the variable should bind it explicitly.
+        This will mean that any incorrect use of the variable
+        will result in an "unbound variable" error, and
+        each thread will see its own value for the variable.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Assignment">
+    <SUMMARY>
+      Be consistent in assignment forms.
+    </SUMMARY>
+    <BODY>
+      <p>
+        There are several styles for dealing with assignment and side-effects;
+        whichever a given package is using,
+        keep using the same consistently when hacking said package.
+        Pick a style that makes sense when starting a new package.
+      </p>
+      <p>
+        Regarding multiple assignment in a same form, there are two schools:
+        the first style groups as many assignments as possible into a single
+        <code>SETF</code> or <code>PSETF</code> form
+        thus minimizing the number of forms with side-effects;
+        the second style splits assignments into as many individual
+        <code>SETF</code> (or <code>SETQ</code>, see below) forms as possible,
+        to maximize the chances of locating forms that modify a kind of place
+        by grepping for <code>(setf (foo ...</code>.
+        A grep pattern must actually contain as many place-modifying forms
+        as you may use in your programs, which may make this rationale either
+        convincing or moot depending on the rest of the style of your code.
+        You should follow the convention used in the package you are hacking.
+        We recommend the first convention for new packages.
+      </p>
+      <p>
+        Regarding <code>SETF</code> and <code>SETQ</code>,
+        there are two schools:
+        this first regards <code>SETQ</code>
+        as an archaic implementation detail,
+        and avoids it entirely in favor of <code>SETF</code>;
+        the second regards <code>SETF</code>
+        as an additional layer of complexity,
+        and avoids it in favor of <code>SETQ</code> whenever possible
+        (i.e. whenever the assigned place is a variable or symbol-macro).
+        You should follow the convention used in the package you are hacking.
+        We recommend the first convention for new packages.
+      </p>
+      <p>
+        In the spirit of a mostly pure functional style,
+        which makes testing and maintenance easier,
+        we invite you to consider how to do things with the fewest assignments required.
+      </p>
     </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="Assertions and Conditions">
@@ -1804,7 +1827,7 @@ Robert Brown
           hiding the rest.
           And the rest is the part we really care about!
           <BAD_CODE_SNIPPET>
-            ;; WRONG WAY
+            ;; Bad
             (handler-case
               (catch 'ticket-at
                 (etd-process-blocks))
@@ -1813,7 +1836,7 @@ Robert Brown
                   (error c)))
           </BAD_CODE_SNIPPET>
           <CODE_SNIPPET>
-            ;; RIGHT WAY
+            ;; Better
             (unwind-protect
               (catch 'ticket-at
                 (etd-process-blocks))
@@ -1869,217 +1892,6 @@ Robert Brown
         where these declarations are used for optimization.
         When you do, however, see our recommendations for
         <a href="#Unsafe_Operations">Unsafe Operations</a>.
-      </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Macros">
-    <SUMMARY>
-      Use macros when appropriate, which should be sparingly and carefully.
-    </SUMMARY>
-    <BODY>
-      <p>
-        You must never use a macro where a function will do.
-        That is, if the semantics of what you are writing
-        conforms to the semantics of a function,
-        then write it as a function rather than a macro.
-      </p>
-      <p>
-        You must not use a macro for performance reasons.
-        If profiling shows that you have a performance problem
-        with a specific function,
-        document the need and profiling-results appropriately,
-        and
-        <code>DECLAIM</code> to that function <code>INLINE</code>.
-      </p>
-      
-      <p>
-        You can also use "compiler-macros"
-        as a way to speed up function execution
-        by specifying a source-to-source transformation.
-        Beware that it interferes with tracing the optimized functions.
-      </p>
-      <p>
-        When you write a macro-defining macro
-        (a macro that generates macros),
-        comment it particularly clearly,
-        since these are hard for the uninitiated to understand.
-      </p>
-      <p>
-        Using Lisp macros properly requires taste.
-        Avoid writing complicated macros
-        unless the benefit clearly outweighs the cost.
-        It takes more effort for your fellow developers to learn your macro,
-        so you should only use a macro if the gain in expressiveness
-        is big enough to justify that cost.
-        As usual, feel free to consult your colleagues if you're not sure,
-        since without a lot of Lisp experience,
-        it can be hard to make this judgment.
-      </p>
-      <p>
-        You must not define new reader macros.
-      </p>
-      <p>
-        If your macro has a parameter that is a Lisp form
-        that will be evaluated when the expanded code is run,
-        you should name the parameter with the suffix <code>-form</code>.
-        This convention helps make it clearer to the macro's user
-        which parameters are Lisp forms to be evaluated, and which are not.
-      </p>
-      <p>
-        One way to write a macro is the so-called "call-with" style,
-        explained at length in
-        <a href="http://random-state.net/log/3390120648.html">http://random-state.net/log/3390120648.html</a>.
-        The general principle is that the macro is strictly limited to processing the syntax,
-        and as much of the semantics as possible is kept in normal functions.
-        Therefore, a macro <code>WITH-<em>FOO</em></code> is often limited to
-        generating a call to an auxiliary function
-        <code>CALL-WITH-<em>FOO</em></code>
-        with arguments deduced from the macro arguments.
-        Macro <code>&amp;body</code> arguments are typically
-        wrapped into a lambda expression of which they become the body,
-        which is passed as one of the arguments of the auxiliary function.
-      </p>
-      <p>
-        The advantages are many.
-        By keeping semantics outside the macro,
-        the macro is made simpler, easier to get right, and less subject to change,
-        which makes it easier to develop and maintain.
-        The semantics is written in a simpler language &#8212; one without staging &#8212;
-        which also makes it easier to develop and maintain.
-        It becomes possible to debug and update the semantic function
-        without having to recompile all clients of the macro.
-        The semantic function appears in the stack trace
-        which also helps debug client functions.
-        The macro expansion is made shorter and
-        each expansion shares more code with other expansions,
-        which reduces memory pressure which in turn usually makes things faster.
-        You should use this style unless the macro is used
-        in tight loops where performance matters;
-        and even then, see our rules regarding optimization.
-      </p>
-      <p>
-        Any functions (closures) created by the macro should be named:
-        either use <code>FLET</code> or <code>NAMED-LAMBDA</code>.
-        Using <code>FLET</code> is also good
-        because you can declare the function to be of dynamic
-        extent (if it is &#8212; and often it is).
-      </p>
-      <p>
-        If a macro call contains a form,
-        and the macro expansion includes more than one copy of that form,
-        the form can be evaluated more than once,
-        and code it contains macro-expanded and compiled more than once.
-        If someone uses the macro and calls it
-        with a form that has side effects or that takes a long time to compute,
-        the behavior will be undesirable
-        (unless you're intentionally writing
-        a control structure such as a loop).
-        A convenient way to avoid this problem
-        is to evaluate the form only once,
-        and bind a (generated) variable to the result.
-        There is a very useful macro called <code>ALEXANDRIA:ONCE-ONLY</code>
-        that generates code to do this.
-        See also <code>ALEXANDRIA:WITH-GENSYMS</code>,
-        to make some temporary variables in the generated code.
-        Note that if you follow our <code>CALL-WITH-</code> style,
-        you typically expand the code only once, as either
-        an argument to the auxiliary function, or
-        the body of a lambda passed as argument to it;
-        you therefore avoid the above complexity.
-      </p>
-      <p>
-        When you write a macro with a body,
-        such as a <code>WITH-xxx</code> macro,
-        even if there aren't any parameters,
-        you should leave space for them anyway.
-        For example, if you invent <code>WITH-LIGHTS-ON</code>,
-        do not make the call to it look like
-        <code>(defmacro with-lights-on (&amp;body b) ...)</code>.
-        Instead, do <code>(defmacro with-lights-on (() &amp;body b) ...)</code>.
-        That way, if parameters are needed in the future,
-        you can add them without necessarily having to change
-        all the uses of the macro.
-      </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Read-time evaluation">
-    <SUMMARY>
-      You should use <code>#.</code> sparingly,
-      and you must avoid read-time side-effects.
-    </SUMMARY>
-    <BODY>
-      <p>
-        The <code>#.</code> standard read-macro
-        will read one object, evaluate the object, and
-        have the reader return the resulting value.
-      </p>
-      <p>
-        It is mainly used as a quick way
-        to get something evaluated at compile time
-        (actually "read time" but it amounts to the same thing).
-        If you use this, the evaluation MUST NOT have any side effects
-        and MUST NOT depend on any variable global state.
-        The <code>#.</code> should be treated as a way
-        to force "constant-folding"
-        that a sufficiently-clever compiler
-        could have figure out all by itself,
-        when the compiler isn't sufficiently-clever
-        and the difference matters.
-      </p>
-      <p>
-        Whenever you are going to use <code>#.</code>,
-        you should consider using <code>DEFCONSTANT</code> and its variants,
-        possibly in an <code>EVAL-WHEN</code>,
-        to give the value a name explaining what it means.
-      </p>
-      <p>
-        You should use normal computations inside an <code>EVAL-WHEN</code>
-        rather than <code>#.</code> whenever they are enough for the job.
-      </p>
-      <p>
-        If you don't need the computation to happen at compile-time,
-        but only at some point before runtime,
-        you should use <code>LOAD-TIME-VALUE</code>
-        instead of read-time or compile-time computations.
-      </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="EVAL-WHEN">
-    <SUMMARY>
-      When using <code>EVAL-WHEN</code>, you should almost always use all of
-      <code>(:compile-toplevel :load-toplevel :execute)</code>.
-    </SUMMARY>
-    <BODY>
-      <p>
-        Lisp evaluation happens at several times,
-        some of them interleaved.
-        Be aware of them when writing macros.
-        <a href="http://fare.livejournal.com/146698.html">EVAL-WHEN considered harmful to your mental health</a>.
-      </p>
-      <p>
-        In summary of the article linked above,
-        unless you're doing truly advanced macrology,
-        the only valid combination in an <code>EVAL-WHEN</code>
-        is to include all of
-        <code>(eval-when (:compile-toplevel :load-toplevel :execute) ...)</code>
-      </p>
-      <p>
-        It is usually an error to omit the <code>:execute</code>,
-        because it prevents <code>LOAD</code>ing the source rather than the fasl.
-        It is usually an error to omit the <code>:load-toplevel</code>
-        (except to modify e.g. readtables and compile-time settings),
-        because it prevents <code>LOAD</code>ing future files
-        or interactively compiling code
-        that depends on the effects that happen at compile-time,
-        unless the current file was <code>COMPILE-FILE</code>d
-        within the same Lisp session.
-      </p>
-      <p>
-        In some odd cases, you may want to evaluate top-level definitions
-        from within the expansion of a <code>DEFTYPE</code>
-        or of a non-top-level <code>DEFMACRO</code>.
-        In these cases, you should use <code>ASDF-FINALIZERS</code>
-        and its <code>ASDF-FINALIZERS:EVAL-AT-TOPLEVEL</code> form.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -2243,6 +2055,403 @@ Robert Brown
   </STYLEPOINT>
 </CATEGORY>
 
+<CATEGORY title="Meta-language guidelines">
+  <STYLEPOINT title="Macros">
+    <SUMMARY>
+      Use macros when appropriate, which is often.
+      Define macros when appropriate, which is seldom.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Macros bring syntactic abstraction, which is a wonderful thing.
+        It helps make your code clearer, by describing your intent
+        without getting bogged in implementation details
+        (indeed abstracting those details away).
+        It helps make your code more concise and more readable,
+        by eliminating both redundancy and irrelevant details.
+        But it comes at a cost to the reader,
+        which is learning a new syntactic concept for each macro.
+        And so it should not be abused.
+      </p>
+      <p>
+        The general conclusion is that there shouldn't be
+        any recognizable <em>design pattern</em>
+        in a good Common Lisp program.
+        The one and only pattern is: <em>use the language</em>,
+        which includes defining and using syntactic abstractions.
+      </p>
+      <p>
+        Existing macros must be used
+        whenever they make code clearer
+        by conveying intent in a more concise way,
+        which is often.
+        When a macro is available in your project
+        that expresses the concept you're using,
+        you must not write the expansion rather than use the macro.
+      </p>
+      <p>
+        New macros should be defined as appropriate,
+        which should be seldom,
+        for common macros have already been provided
+        by the language and its various libraries,
+        and your program typically only needs few new ones
+        relative to its size.
+      </p>
+      <p>
+        You should follow the OAOOM rule of thumb
+        for deciding when to create a new abstraction,
+        whether syntactic or not:
+        if a particular pattern is used more than twice,
+        it should probably be abstracted away.
+        A more refined rule to decide when to use abstraction
+        should take into account
+        the benefit in term of number of uses and gain at each use,
+        to the costs in term of having to get used to reading the code.
+        For syntactic abstractions, costs and benefits to the reader
+        is usually more important than costs and benefits to the writer,
+        because good code is usually written once
+        and read many times by many people
+        (including the same programmer
+        who has to maintain the program after having forgotten it).
+        Yet the cost to the writer of the macro
+        should also be taken into account;
+        however, in doing so it should rather be compared
+        to the cost of the programmer writing other code instead
+        that may have higher benefits.
+      </p>
+      <p>
+        Using Lisp macros properly requires taste.
+        Avoid writing complicated macros
+        unless the benefit clearly outweighs the cost.
+        It takes more effort for your fellow developers to learn your macro,
+        so you should only use a macro if the gain in expressiveness
+        is big enough to justify that cost.
+        As usual, feel free to consult your colleagues if you're not sure,
+        since without a lot of Lisp experience,
+        it can be hard to make this judgment.
+      </p>
+      <p>
+        You must never use a macro where a function will do.
+        That is, if the semantics of what you are writing
+        conforms to the semantics of a function,
+        then you must write it as a function rather than a macro.
+      </p>
+      <p>
+        You must not transform a function into a macro for performance reasons.
+        If profiling shows that you have a performance problem
+        with a specific function <code>FOO</code>,
+        document the need and profiling-results appropriately,
+        and
+        <code>(declaim (inline foo))</code>.
+      </p>
+      
+      <p>
+        You can also use a compiler-macro
+        as a way to speed up function execution
+        by specifying a source-to-source transformation.
+        Beware that it interferes with tracing the optimized function.
+      </p>
+      <p>
+        When you write a macro-defining macro
+        (a macro that generates macros),
+        document and comment it particularly clearly,
+        since these are hard for the uninitiated to understand.
+      </p>
+      <p>
+        You must not install new reader macros
+        without a consensus among the developers of your system.
+        Reader macros must not leak out of the system that uses them
+        to clients of that system or other systems used in the same project.
+        You must software such as
+        <code>cl-syntax</code> or <code>named-readtables</code>
+        to control how reader macros are used.
+        This clients who desire it may use the same reader macros as you do.
+        In any case, your system must be usable
+        even to clients who do not use these reader macros.
+      </p>
+      <p>
+        If your macro has a parameter that is a Lisp form
+        that will be evaluated when the expanded code is run,
+        you should name the parameter with the suffix <code>-form</code>.
+        This convention helps make it clearer to the macro's user
+        which parameters are Lisp forms to be evaluated, and which are not.
+      </p>
+      <p>
+        You should follow the so-called <code>CALL-WITH</code> style when it applies.
+        This style is explained at length in
+        <a href="http://random-state.net/log/3390120648.html">http://random-state.net/log/3390120648.html</a>.
+        The general principle is that the macro is strictly limited to processing the syntax,
+        and as much of the semantics as possible is kept in normal functions.
+        Therefore, a macro <code>WITH-<em>FOO</em></code> is often limited to
+        generating a call to an auxiliary function
+        <code>CALL-WITH-<em>FOO</em></code>
+        with arguments deduced from the macro arguments.
+        Macro <code>&amp;body</code> arguments are typically
+        wrapped into a lambda expression of which they become the body,
+        which is passed as one of the arguments of the auxiliary function.
+      </p>
+      <p>
+        The separation of syntactic and semantic concerns
+        is a general principle of style that applies
+        beyond the case of <code>WITH-</code> macros.
+        Its advantages are many.
+        By keeping semantics outside the macro,
+        the macro is made simpler, easier to get right, and less subject to change,
+        which makes it easier to develop and maintain.
+        The semantics is written in a simpler language &#8212; one without staging &#8212;
+        which also makes it easier to develop and maintain.
+        It becomes possible to debug and update the semantic function
+        without having to recompile all clients of the macro.
+        The semantic function appears in the stack trace
+        which also helps debug client functions.
+        The macro expansion is made shorter and
+        each expansion shares more code with other expansions,
+        which reduces memory pressure which in turn usually makes things faster.
+        It also makes sense to write the semantic functions first,
+        and write the macros last as syntactic sugar on top.
+        You should use this style unless the macro is used
+        in tight loops where performance matters;
+        and even then, see our rules regarding optimization.
+      </p>
+      <p>
+        Any functions (closures) created by the macro should be named,
+        which can be done using <code>FLET</code>.
+        
+        This also allows you to declare the function to be of dynamic extent
+        (if it is &#8212; and often it is; yet see below regarding
+        <a href="#DYNAMIC-EXTENT">DYNAMIC-EXTENT</a>).
+      </p>
+      <p>
+        If a macro call contains a form,
+        and the macro expansion includes more than one copy of that form,
+        the form can be evaluated more than once,
+        and code it contains macro-expanded and compiled more than once.
+        If someone uses the macro and calls it
+        with a form that has side effects or that takes a long time to compute,
+        the behavior will be undesirable
+        (unless you're intentionally writing
+        a control structure such as a loop).
+        A convenient way to avoid this problem
+        is to evaluate the form only once,
+        and bind a (generated) variable to the result.
+        There is a very useful macro called <code>ALEXANDRIA:ONCE-ONLY</code>
+        that generates code to do this.
+        See also <code>ALEXANDRIA:WITH-GENSYMS</code>,
+        to make some temporary variables in the generated code.
+        Note that if you follow our <code>CALL-WITH-</code> style,
+        you typically expand the code only once, as either
+        an argument to the auxiliary function, or
+        the body of a lambda passed as argument to it;
+        you therefore avoid the above complexity.
+      </p>
+      <p>
+        When you write a macro with a body,
+        such as a <code>WITH-xxx</code> macro,
+        even if there aren't any parameters,
+        you should leave space for them anyway.
+        For example, if you invent <code>WITH-LIGHTS-ON</code>,
+        do not make the call to it look like
+        <code>(defmacro with-lights-on (&amp;body b) ...)</code>.
+        Instead, do <code>(defmacro with-lights-on (() &amp;body b) ...)</code>.
+        That way, if parameters are needed in the future,
+        you can add them without necessarily having to change
+        all the uses of the macro.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="EVAL-WHEN">
+    <SUMMARY>
+      When using <code>EVAL-WHEN</code>, you should almost always use all of
+      <code>(:compile-toplevel :load-toplevel :execute)</code>.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Lisp evaluation happens at several times,
+        some of them interleaved.
+        Be aware of them when writing macros.
+        <a href="http://fare.livejournal.com/146698.html">EVAL-WHEN considered harmful to your mental health</a>.
+      </p>
+      <p>
+        In summary of the article linked above,
+        unless you're doing truly advanced macrology,
+        the only valid combination in an <code>EVAL-WHEN</code>
+        is to include all of
+        <code>(eval-when (:compile-toplevel :load-toplevel :execute) ...)</code>
+      </p>
+      <p>
+        You must use
+        <code>(eval-when (:compile-toplevel :load-toplevel :execute) ...)</code>
+        whenever you define functions, types, classes, constants, variables, etc.,
+        that are going to be used in macros.
+      </p>
+      <p>
+        It is usually an error to omit the <code>:execute</code>,
+        because it prevents <code>LOAD</code>ing the source rather than the fasl.
+        It is usually an error to omit the <code>:load-toplevel</code>
+        (except to modify e.g. readtables and compile-time settings),
+        because it prevents <code>LOAD</code>ing future files
+        or interactively compiling code
+        that depends on the effects that happen at compile-time,
+        unless the current file was <code>COMPILE-FILE</code>d
+        within the same Lisp session.
+      </p>
+      <p>
+        Regarding variables, note that because macros may or may not
+        be expanded in the same process that runs the expanded code,
+        you must not depend on compile-time and runtime effects
+        being either visible or invisible at the other time.
+        There are still valid uses of variables in macros:
+      </p>
+      <ul>
+        <li>
+          Some variables may hold dictionaries
+          for some new kind of definition and other meta-data.
+          If such meta-data is to be visible at runtime and/or in other files,
+          you must make sure that the macro expands into code that
+          will register the definitions to those meta-data structures
+          at load-time,
+          in addition to effecting the registration at compile-time.
+          Typically, your top-level definitions expand
+          to code that does the registration.
+          if your code doesn't expand at the top-level,
+          you can sometimes use <code>LOAD-TIME-VALUE</code> for good effect.
+          In extreme cases, you may have to use
+          <code>ASDF-FINALIZERS:EVAL-AT-TOPLEVEL</code>.
+        </li>
+        <li>
+          Some variables may hold temporary data
+          that is only used at compile-time in the same file,
+          and can be cleaned up at the end of the file's compilation.
+          Predefined such variables would include <code>*readtable*</code>
+          or compiler-internal variables holding
+          the current optimization settings.
+          You can often manage existing and new such variables using
+          the <code>:AROUND-COMPILE</code> hooks of <code>ASDF</code>.
+        </li>
+      </ul>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="Read-time evaluation">
+    <SUMMARY>
+      You should use <code>#.</code> sparingly,
+      and you must avoid read-time side-effects.
+    </SUMMARY>
+    <BODY>
+      <p>
+        The <code>#.</code> standard read-macro
+        will read one object, evaluate the object, and
+        have the reader return the resulting value.
+      </p>
+      <p>
+        You must not use it where other idioms will do, such as
+        using <code>EVAL-WHEN</code> to evaluate side-effects at compile-time,
+        using a regular macro to return an expression computed at compile-time,
+        using <code>LOAD-TIME-VALUE</code> to compute it at load-time.
+      </p>
+      <p>
+        Read-time evaluation is often used as a quick way
+        to get something evaluated at compile time
+        (actually "read time" but it amounts to the same thing).
+        If you use this, the evaluation MUST NOT have any side effects
+        and MUST NOT depend on any variable global state.
+        The <code>#.</code> should be treated as a way
+        to force "constant-folding"
+        that a sufficiently-clever compiler
+        could have figure out all by itself,
+        when the compiler isn't sufficiently-clever
+        and the difference matters.
+      </p>
+      <p>
+        Another use of <code>#.</code> is to expand the equivalent of macros
+        in places that are neither expressions nor (quasi)quotations,
+        such as lambda-lists. However, if you find yourself using it a lot,
+        it might be time to instead define macros to replace your consumers
+        of lambda-lists with something that recognizes an extension.
+      </p>
+      <p>
+        Whenever you are going to use <code>#.</code>,
+        you should consider using <code>DEFCONSTANT</code> and its variants,
+        possibly in an <code>EVAL-WHEN</code>,
+        to give the value a name explaining what it means.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="EVAL">
+    <SUMMARY>
+      You must not use <code>EVAL</code> at runtime.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Places where it is actually appropriate to use <code>EVAL</code>
+        are so few and far between that you must consult with your reviewers;
+        it's easily misused.
+      </p>
+      <p>
+        If your code manipulates symbols at runtime
+        and needs to get the value of a symbol,
+        use <code>SYMBOL-VALUE</code>, not <code>EVAL</code>.
+      </p>
+      <p>
+        Often, what you really need is to write a macro,
+        not to use <code>EVAL</code>.
+      </p>
+      <p>
+        You may be tempted to use <code>EVAL</code> as a shortcut
+        to evaluating expressions in a safe subset of the language.
+        But it often requires more scrutiny to properly check and sanitize
+        all possible inputs to such use of <code>EVAL</code>
+        than to build a special-purpose evaluator.
+        You must not use <code>EVAL</code> in this way at runtime.
+      </p>
+      <p>
+        Places where it is OK to use <code>EVAL</code> are:
+      </p>
+      <ul>
+        <li>
+          Implementing an interactive development loop.
+        </li>
+        <li>
+          The build infrastructure.
+        </li>
+        <li>
+          Backdoors that are part of testing frameworks.
+          (You MUST NOT have such backdoors in production code.)
+        </li>
+        <li>
+          Macros that fold constants at compile-time.
+        </li>
+        <li>
+          Macros that register definitions to meta-data structures;
+          the registration form is sometimes evaluated at compile-time
+          as well as included in the macro-expansion,
+          so it is immediately available to other macros.
+        </li>
+      </ul>
+      <p>
+        Note that in the latter case,
+        if the macro isn't going to be used at the top-level,
+        it might not be possible to make these definitions available
+        as part of the expansion.
+        The same phenomenon may happen in a <code>DEFTYPE</code> expansion,
+        or in helper functions used by macros.
+        In these cases, you may actually have to use
+        <code>ASDF-FINALIZERS:EVAL-AT-TOPLEVEL</code> in your macro.
+        It will not only <code>EVAL</code> your definitions
+        at macro-expansion time for immediate availability,
+        it will also save the form aside, for inclusion in a
+        <code>(ASDF-FINALIZERS:FINAL-FORMS)</code>
+        that you need to include at the end of the file being compiled
+        (or before the form is needed).
+        This way, the side-effects are present when loading the fasl
+        without having compiled it as well as while compiling it;
+        in either case, the form is made available at load-time.
+        <code>ASDF-FINALIZERS</code> ensures that the form is present,
+        by throwing an error if you omit it.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+</CATEGORY>
+
 <CATEGORY title="Data Representation">
   <STYLEPOINT title="NIL: empty-list, false and I Don't Know">
     <SUMMARY>
@@ -2290,6 +2499,13 @@ Robert Brown
         If you do use <code>NIL</code>,
         you must make sure that the distinction is well documented.
       </p>
+      <p>
+        In many contexts,
+        instead of representing "I don't know" as a particular value,
+        you should instead use multiple values,
+        one for the value that is known if any,
+        and one to denote whether the value was known or found.
+      </p>
       
       <p>
         When working with database classes, keep in mind that
@@ -2301,37 +2517,62 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="Do not abuse lists">
     <SUMMARY>
-      You should select proper data representation.
-      You should not abuse the <code>LIST</code> data structure.
+      You must select proper data representation.
+      You must not abuse the <code>LIST</code> data structure.
     </SUMMARY>
     <BODY>
       <p>
-        Common Lisp makes it especially easy to use
-        its builtin (single-linked) <code>LIST</code> data structure.
-        However, you should only use this data structure
-        where it is appropriate.
+        Even though back in 1958, LISP was short for "LISt Processing",
+        its successor Common Lisp has been a modern programming language
+        with modern data structures since the 1980s.
+        You must use the proper data structures in your programs.
       </p>
       <p>
-        You must not use lists
-        when they are an inappropriate abstraction
-        for the data being manipulated.
+        You must not abuse the builtin (single-linked) <code>LIST</code>
+        data structure where it is not appropriate,
+        even though Common Lisp makes it especially easy to use it.
       </p>
       <p>
         You must only use lists
         when their performance characteristics
-        is appropriate for the algorithm at hand
-        (i.e. sequential iteration over the entire contents).
+        is appropriate for the algorithm at hand:
+        sequential iteration over the entire contents of the list.
       </p>
       <p>
-        An exception is when it is known in advance
+        An exception where it is appropriate to use lists
+        is when it is known in advance
         that the size of the list will remain very short
-        (say, less than 16 elements),
-        especially so when manipulating source code at compile-time.
+        (say, less than 16 elements).
       </p>
       <p>
-        Another exception is for introducing literal constants
+        List data structures are often (but not always)
+        appropriate for macros and functions used by macros at compile-time:
+        indeed, not only is source code passed as lists in Common Lisp,
+        but the macro-expansion and compilation processes
+        will typically walk over the entire source code, sequentially, once.
+        (Note that advanced macro systems don't directly use lists, but instead
+        use abstract syntax objects that track source code location and scope;
+        however there is no such advanced macro system
+        in Common Lisp at this time.)
+      </p>
+      <p>
+        Another exception where it is appropriate to use lists is
+        for introducing literal constants
         that will be transformed into more appropriate data structures
         at compile-time or load-time.
+        It is a good to have a function with a relatively short name
+        to build your program's data structures from such literals.
+      </p>
+      <p>
+        In the many cases when lists are not the appropriate data structure,
+        various libraries such as
+        <a href="http://cliki.net/cl-containers">cl-containers</a> or
+        <a href="http://cliki.net/lisp-interface-library">lisp-interface-library</a>
+        provide plenty of different data structures
+        that should fulfill all the basic needs of your programs.
+        If the existing libraries are not satisfactory, see above about
+        <a href="#Using_Libraries">Using Libraries</a> and
+        <a href="#Open-Sourcing_Code">Open-Sourcing Code</a>.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -2460,12 +2701,14 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="#'FUN vs. 'FUN">
     <SUMMARY>
-      You should usually refer to a function as <code>#'FUN</code> rather than <code>'FUN</code>.
+      You should usually refer to a function as <code>#'FOO</code> rather than <code>'FOO</code>.
     </SUMMARY>
     <BODY>
       <p>
-        The former refers to the function object, as is properly scoped.
-        The latter refers to the symbol, which when called
+        The former, which reads as <code>(FUNCTION FOO)</code>,
+        refers to the function object, and is properly scoped.
+        The latter, which reads as <code>(QUOTE FOO)</code>,
+        refers to the symbol, which when called
         uses the global <code>FDEFINITION</code> of the symbol.
       </p>
       <p>
@@ -2508,61 +2751,13 @@ Robert Brown
       <p>
         Note that if you start writing a new system
         in a heavily functional style,
-        you may consider using <code>LAMBDA-READER</code>,
+        you may consider using
+        <a href="http://cliki.net/lambda-reader">lambda-reader</a>,
         a system that lets you use the unicode character <code>&#955;</code>
         instead of <code>LAMBDA</code>.
         But you must not start using such a syntactic extension
         in an existing system without getting permission from other developers.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Pathnames">
-    <SUMMARY>
-      Common Lisp pathnames are tricky. Be aware of pitfalls.
-    </SUMMARY>
-    <BODY>
-      <p>
-        It is surprisingly hard to properly deal with pathnames in Common Lisp.
-      </p>
-      <p>
-        First, be aware of the discrepancies between
-        the syntax of Common Lisp pathnames,
-        which depends on which implementation and operating system
-        you are using,
-        and the native syntax of pathnames on your operating system.
-        The Lisp syntax may involves quoting of special characters
-        such as <code>#\.</code> and <code>#\*</code>, etc.,
-        in addition to the quoting of
-        <code>#\\</code> and <code>#\"</code> within strings.
-        By contrast, your operating system's other
-        system programming languages
-        (shell, C, scripting languages)
-        may only have one layer of quoting, into strings.
-      </p>
-      <p>
-        Second, when using <code>MERGE-PATHNAMES</code>,
-        be wary of the treatment of the <code>HOST</code> component,
-        which matters a lot on non-Unix platforms.
-        You probably should instead be using
-        <code>ASDF-UTILS:MERGE-PATHNAMES*</code>.
-      </p>
-      <p>
-        Third, be aware that <code>DIRECTORY</code> is not portable
-        in how it handles wildcards, sub-directories, symlinks, etc.
-        There again, <code>ASDF-UTILS</code> provides several
-        common abstractions to deal with pathnames.
-      </p>
-      <p>
-        Finally, be aware that paths may change between
-        the time you build the Lisp image for your application,
-        and the time you run the application from its image.
-        You should be careful to reset your image
-        to forget irrelevant build-time paths and
-        reinitialize any search path from current environment variables.
-        <code>ASDF</code> for instance requires you to reset its paths
-        with <code>ASDF:CLEAR-CONFIGURATION</code>.
-      </p>
-      
     </BODY>
   </STYLEPOINT>
 </CATEGORY>
@@ -2651,14 +2846,22 @@ Robert Brown
         If you are implementing a method of a generic function,
         and it does not need to know
         the values of some of the keyword arguments,
-        it is acceptable to use <code>&amp;ALLOW-OTHER-KEYS</code>
-        rather than list all the keyword arguments explicitly
-        and use <code>(declare (ignore ...))</code> on them.
-        (Of course in such a case there should not be a &amp;REST.)
+        you should explicitly <code>(DECLARE (IGNORE ...))</code>
+        all the arguments that you are not using.
+        You must not use <code>&amp;ALLOW-OTHER-KEYS</code>
+        unless you explicitly want to disable checking of allowed keys
+        for all methods when invoking the generic function on arguments
+        that match this particular method.
         Note that the contract of a generic function belongs in
         the <code>DEFGENERIC</code>, not in the <code>DEFMETHOD</code>
         which is basically an "implementation detail" of the generic function
         as far as the caller of the generic is concerned.
+      </p>
+      <p>
+        A case where <code>&amp;ALLOW-OTHER-KEYS</code> is appropriate
+        is when you write a wrapper function to other some other functions
+        that may vary (within the computation or during development),
+        and pass around a plist as a <code>&amp;REST</code> argument.
       </p>
       <p>
         You should avoid using <code>&amp;AUX</code> arguments,
@@ -2674,6 +2877,17 @@ Robert Brown
         to your <code>&amp;OPTIONAL</code> arguments
         when your function has both <code>&amp;OPTIONAL</code>
         and <code>&amp;KEY</code> arguments.
+      </p>
+      <p>
+        For maximum portability of a library, it is good form
+        that <code>DEFMETHOD</code> definitions should
+        <code>(DECLARE (IGNORABLE ...))</code>
+        all the required arguments that they are not using.
+        Indeed, some implementations will issue a warning
+        if you <code>(DECLARE (IGNORE ...))</code> those arguments,
+        whereas other implementations will issue a warning
+        if you fail to <code>(DECLARE (IGNORE ...))</code> them.
+        <code>(DECLARE (IGNORABLE ...))</code> works on all implementations.
       </p>
       <p>
         You should avoid excessive nesting of binding forms inside a function.
@@ -2713,6 +2927,15 @@ Robert Brown
         Nevertheless, you may use an <code>IF</code>
         to explicitly return <code>NIL</code>
         if you have a specific reason to insist on the return value.
+      </p>
+      <p>
+        You should prefer <code>AND</code> and <code>OR</code>
+        when it leads to more concise code than using
+        <code>IF</code>, <code>COND</code>,
+        <code>WHEN</code> or <code>UNLESS</code>,
+        and there are no side-effects involved.
+        You may also use an <code>ERROR</code>
+        as a side-effect in the final clause of an <code>OR</code>.
       </p>
       <p>
         You should only use <code>CASE</code> and <code>ECASE</code>
@@ -2814,9 +3037,12 @@ Robert Brown
         performance-critical low-level code.
         <code>EQL</code> reduces the opportunity
         for a class of embarrassing errors
-        (i.e. if characters are ever compared).
+        (i.e. if numbers or characters are ever compared).
         There may a tiny performance cost relative to <code>EQ</code>,
         although under SBCL, it often compiles away entirely.
+        <code>EQ</code> is equivalent to <code>EQL</code> and type declarations,
+        and use of it for optimization should be treated just like
+        any such <a href="#Unsafe_Operations">unsafe operations</a>.
       </p>
       <p>
         You should use <code>CHAR=</code>
@@ -2877,8 +3103,8 @@ Robert Brown
         of floating-point arithmetic.
         Libraries such as
         <a href="http://wukix.com/lisp-decimals">wu-decimal</a>
-        can help you;
-        if this library is not satisfactory, see above about
+        may help you;
+        once again, if this library is not satisfactory, see above about
         <a href="#Using_Libraries">Using Libraries</a> and
         <a href="#Open-Sourcing_Code">Open-Sourcing Code</a>.
       </p>
@@ -3049,44 +3275,6 @@ Robert Brown
       
     </BODY>
   </STYLEPOINT>
-  <STYLEPOINT title="EVAL">
-    <SUMMARY>
-      You should not use <code>EVAL</code>.
-    </SUMMARY>
-    <BODY>
-      <p>
-        Places where it is actually appropriate to use <code>EVAL</code>
-        are so few and far between that you must consult with your reviewers;
-        it's easily misused.
-      </p>
-      <p>
-        If your code manipulates symbols at runtime
-        and needs to get the value of a symbol,
-        use <code>SYMBOL-VALUE</code>, not <code>EVAL</code>.
-      </p>
-      <p>
-        Often, what you really need is to write a macro,
-        not to use <code>EVAL</code>.
-      </p>
-      <p>
-        Places where it is OK to use <code>EVAL</code> are:
-        testing frameworks and code that is ONLY used for testing;
-        the build infrastructure; and
-        inside macros when there isn't any reasonable way
-        to avoid using <code>EVAL</code>
-        (there almost always is, and where there isn't,
-        consider that unless you can <em>also</em> dump
-        code to reproduce the side-effects being evaluated
-        in the macro expansion,
-        you may actually have to use
-        <code>ASDF-FINALIZERS:EVAL-AT-TOPLEVEL</code>
-        so the side-effects are present when loading the fasl
-        without compiling).
-        Other uses need to be checked.
-        We do have a few special cases where <code>EVAL</code> is allowed.
-      </p>
-    </BODY>
-  </STYLEPOINT>
 </CATEGORY>
 
 <CATEGORY title="Optimization">
@@ -3121,7 +3309,79 @@ Robert Brown
       </p>
     </BODY>
   </STYLEPOINT>
-  <STYLEPOINT title="DYNAMIC-EXTENT declarations">
+  <STYLEPOINT title="Unsafe Operations">
+    <SUMMARY>
+      You must only use faster unsafe operations
+      when there is a clear performance need
+      and you can document why it's correct.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Common Lisp implementations often provide backdoors
+        to compute some operations faster in an unsafe way.
+        For instance, some libraries provide arithmetic operations
+        that are designed to be used with fixnums only,
+        and yield the correct result faster if provided proper arguments.
+        The downside is that the result of such operations
+        is incorrect in case of overflow, and can
+        have undefined behavior when called with anything but fixnums.
+      </p>
+      
+      <p>
+        More generally, unsafe operations
+        will yield the correct result faster
+        than would the equivalent safe operation
+        if the arguments to satisfy some invariant such as
+        being of the correct type and small enough;
+        however if the arguments fail to satisfy the required invariants,
+        then the operation may have undefined behavior,
+        such as crashing the software, or,
+        which is sometimes worse, silently giving wrong answers.
+        Depending on whether the software is piloting an aircraft
+        or other life-critical device,
+        or whether it is accounting for large amounts money,
+        such undefined behavior can kill or bankrupt people.
+        Yet proper speed can sometimes make the difference between
+        software that's unusably slow and software that does its job;
+        between software that is a net loss
+        and software that can yield a profit.
+      </p>
+      <p>
+        You must not define or use unsafe operations without both
+        profiling results indicating the need for this optimization,
+        and careful documentation explaining why it is safe to use them.
+        Unsafe operations should be restricted to internal functions;
+        you should carefully documented how unsafe it is
+        to use these functions with the wrong arguments.
+        You should only use unsafe operations
+        inside functions internal to a package and
+        you should document the use of the declarations,
+        since calling the functions with arguments of the wrong type
+        can lead to undefined behavior.
+        Use <code>check-type</code> in functions exported from a package
+        to sanitize input arguments,
+        so that internal functions are never passed illegal values.
+      </p>
+      <p>
+        On some compilers,
+        new unsafe operations
+        can usually be defined by combining
+        type declarations with an <code>OPTIMIZE</code> declaration
+        that has sufficiently high <code>SPEED</code> and low <code>SAFETY</code>.
+        In addition to providing more speed for production code,
+        such declarations may more helpful
+        than <code>check-type</code> assertions
+        for finding bugs at compile-time,
+        on compilers that have type inference.
+        These compilers may interpret those declarations as assertions
+        if you switch to safer and slower optimize settings;
+        this is good to locate a dynamic error in your code during development,
+        but is not to be used for production code since
+        it defeats the purpose of declarations as a performance trick.
+      </p>
+    </BODY>
+  </STYLEPOINT>
+  <STYLEPOINT title="DYNAMIC-EXTENT">
     <SUMMARY>
       You should only use <code>DYNAMIC-EXTENT</code>
       where it matters for performance,
@@ -3129,6 +3389,9 @@ Robert Brown
     </SUMMARY>
     <BODY>
       <p>
+        <code>DYNAMIC-EXTENT</code> declaration are
+        a particular case of
+        <a href="#Unsafe_Operations">unsafe operations</a>.
       </p>
       <p>
         The purpose of the <code>DYNAMIC-EXTENT</code> declaration
@@ -3222,78 +3485,6 @@ Robert Brown
         then it may be better to put in the declaration than to leave it out.
         (Ideally it would be easier to make such measurements
         than it actually is.)
-      </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Unsafe Operations">
-    <SUMMARY>
-      You must only use faster unsafe operations
-      when there is a clear performance need
-      and you can document why it's correct.
-    </SUMMARY>
-    <BODY>
-      <p>
-        Common Lisp implementations often provide backdoors
-        to compute some operations faster in an unsafe way.
-        For instance, some libraries provide arithmetic operations
-        that are designed to be used with fixnums only,
-        and yield the correct result faster if provided proper arguments.
-        The downside is that the result of such operations
-        is incorrect in case of overflow, and can
-        have undefined behavior when called with anything but fixnums.
-      </p>
-      
-      <p>
-        More generally, unsafe operations
-        will yield the correct result faster
-        than would the equivalent safe operation
-        if the arguments to satisfy some invariant such as
-        being of the correct type and small enough;
-        however if the arguments fail to satisfy the required invariants,
-        then the operation may have undefined behavior,
-        such as crashing the software, or,
-        which is sometimes worse, silently giving wrong answers.
-        Depending on whether the software is piloting an aircraft
-        or other life-critical device,
-        or whether it is accounting for large amounts money,
-        such undefined behavior can kill or bankrupt people.
-        Yet proper speed can sometimes make the difference between
-        software that's unusably slow and software that does its job;
-        between software that is a net loss
-        and software that can yield a profit.
-      </p>
-      <p>
-        You must not define or use unsafe operations without both
-        profiling results indicating the need for this optimization,
-        and careful documentation explaining why it is safe to use them.
-        Unsafe operations should be restricted to internal functions;
-        you should carefully documented how unsafe it is
-        to use these functions with the wrong arguments.
-        You should only use unsafe operations
-        inside functions internal to a package and
-        you should document the use of the declarations,
-        since calling the functions with arguments of the wrong type
-        can lead to undefined behavior.
-        Use <code>check-type</code> in functions exported from a package
-        to sanitize input arguments,
-        so that internal functions are never passed illegal values.
-      </p>
-      <p>
-        On some compilers,
-        new unsafe operations
-        can usually be defined by combining
-        type declarations with an <code>OPTIMIZE</code> declaration
-        that has sufficiently high <code>SPEED</code> and low <code>SAFETY</code>.
-        In addition to providing more speed for production code,
-        such declarations may more helpful
-        than <code>check-type</code> assertions
-        for finding bugs at compile-time,
-        on compilers that have type inference.
-        These compilers may interpret those declarations as assertions
-        if you switch to safer and slower optimize settings;
-        this is good to locate a dynamic error in your code during development,
-        but is not to be used for production code since
-        it defeats the purpose of declarations as a performance trick.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -3399,6 +3590,81 @@ Robert Brown
 </CATEGORY>
 
 <CATEGORY title="Pitfalls">
+  <STYLEPOINT title="Pathnames">
+    <SUMMARY>
+      Common Lisp pathnames are tricky. Be aware of pitfalls.
+    </SUMMARY>
+    <BODY>
+      <p>
+        It is surprisingly hard to properly deal with pathnames in Common Lisp.
+      </p>
+      <p>
+        First, be aware of the discrepancies between
+        the syntax of Common Lisp pathnames,
+        which depends on which implementation and operating system
+        you are using,
+        and the native syntax of pathnames on your operating system.
+        The Lisp syntax may involves quoting of special characters
+        such as <code>#\.</code> and <code>#\*</code>, etc.,
+        in addition to the quoting of
+        <code>#\\</code> and <code>#\"</code> within strings.
+        By contrast, your operating system's other
+        system programming languages
+        (shell, C, scripting languages)
+        may only have one layer of quoting, into strings.
+      </p>
+      <p>
+        Second, when using <code>MERGE-PATHNAMES</code>,
+        be wary of the treatment of the <code>HOST</code> component,
+        which matters a lot on non-Unix platforms
+        (and even on some Unix implementations).
+        You probably should be using
+        <code>ASDF-UTILS:MERGE-PATHNAMES*</code>
+        instead of <code>MERGE-PATHNAMES</code>,
+        especially if your expectations for relative pathnames
+        are informed by the way they work in Unix or Windows;
+        otherwise you might hit weird bugs whereby on some implementations,
+        merging a relative pathnames with an absolute pathname
+        results in overriding the absolute pathname's host
+        and replace it with the host from the value of
+        <code>*DEFAULT-PATHNAME-DEFAULTS*</code>
+        at the time the relative pathname was created.
+      </p>
+      <p>
+        Third, be aware that <code>DIRECTORY</code>
+        is not portable across implementations
+        in how it handles wildcards, sub-directories, symlinks, etc.
+        There again, <code>ASDF-UTILS</code> provides several
+        common abstractions to deal with pathnames.
+      </p>
+      <p>
+        <code>LOGICAL-PATHNAME</code>s are not a portable abstraction,
+        and should not be used in portable code.
+        Many implementations have bugs in them, when they are supported at all.
+        SBCL implements them very well,
+        but strictly enforces the limitations on characters
+        allowed by the standard.
+        Other implementations allow arbitrary characters in such pathnames,
+        but in doing so are not being conformant,
+        and are still incompatible with each other in many ways.
+        You should use other pathname abstractions,
+        such as <code>ASDF:SYSTEM-RELATIVE-PATHNAME</code> or
+        the underlying <code>ASDF-UTILS:COERCE-PATHNAME</code>.
+      </p>
+      
+      <p>
+        Finally, be aware that paths may change between
+        the time you build the Lisp image for your application,
+        and the time you run the application from its image.
+        You should be careful to reset your image
+        to forget irrelevant build-time paths and
+        reinitialize any search path from current environment variables.
+        <code>ASDF</code> for instance requires you to reset its paths
+        with <code>ASDF:CLEAR-CONFIGURATION</code>.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
   <STYLEPOINT title="SATISFIES">
     <SUMMARY>
       You must be careful when using a <code>SATISFIES</code> clause in a type specifier.
@@ -3442,16 +3708,16 @@ Robert Brown
         and MUST be defined within an <code>EVAL-WHEN</code>.
       </p>
       <BAD_CODE_SNIPPET>
-        (defun prime-number-p (n) ;; Doubly BAD!
+        (defun prime-number-p (n) ; Doubly bad!
           (let ((m (abs n)))
             (if (&lt;= m *prime-number-cutoff*)
                 (small-prime-number-p m)
                 (big-prime-number-p m))))
       </BAD_CODE_SNIPPET>
       <CODE_SNIPPET>
-        (eval-when (:compile-toplevel :load-toplevel :execute) ;; Better
+        (eval-when (:compile-toplevel :load-toplevel :execute) ; Better
           (defun prime-number-p (n)
-            (when (integerp n) ;; Better
+            (when (integerp n) ; Better
               (let ((m (abs n)))
                 (if (&lt;= m *prime-number-cutoff*)
                     (small-prime-number-p m)
@@ -3490,15 +3756,10 @@ Robert Brown
         Therefore, you cannot merely create the function
         as a side-effect of expansion
         using <code>EVAL</code> at type-expansion time.
-        The solution is to use <code>EVAL-AT-TOPLEVEL</code>
-        from <code>ASDF-FINALIZERS</code>.
-        It will not only <code>EVAL</code> your function definition
-        at type-expansion time for immediate availability,
-        it will also save the form aside, for inclusion in a
-        <code>(FINAL-FORMS)</code> at the end of the file being compiled,
-        which <code>ASDF-FINALIZERS</code> ensures you include,
-        throwing an error if you omit it.
-        This way, the form is also available at load-time.
+        The solution is to use
+        <code>ASDF-FINALIZERS:EVAL-AT-TOPLEVEL</code> instead.
+        See the very last point
+        in the discussion about <a href="#EVAL">EVAL</a>.
       </p>
       <p>
         Common Lisp is hard to satisfy.
@@ -3519,7 +3780,7 @@ Robert Brown
 </small>
 
 <p align="right">
-Revision 1.11
+Revision 1.12
 </p>
 
 
