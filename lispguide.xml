@@ -5,7 +5,7 @@
 
 <p align="right">
 
-Revision 1.12
+Revision 1.13
 </p>
 
 
@@ -46,8 +46,27 @@ Robert Brown
   <p>
     Common Lisp is a powerful multiparadigm programming language.
     With great power comes great responsibility.
+  </p>
+  <p>
     This guide recommends formatting and stylistic choices
     designed to make your code easier for other people to understand.
+    Its guidelines apply to all the Common Lisp code we write at Google,
+    including our internal applications as well as
+    free software libraries we maintain and publish.
+    If you contribute to this code base,
+    you must follow these guidelines before you submit your patch,
+    or your code will be fixed to follow the guidelines after you do.
+  </p>
+  <p>
+    If you're writing Common Lisp code outside Google,
+    we invite you to consider the guidelines we expound in this guide.
+    You may apply some or all of them to your own projects, at your leisure.
+    If you do, we hope that you will find some of them useful.
+    Even if you don't, we also welcome any remarks or constructive feedback
+    you may have on how to improve our guide, and
+    about what alternate styles are available.
+    Finally, we hope that our discussions will be thought-inspiring
+    to hackers who read them, especially so to newcomers to Common Lisp.
   </p>
   
   <p>
@@ -141,8 +160,9 @@ Robert Brown
     </SUMMARY>
     <BODY>
       <p>
-        Permission comes from the OWNERS of your project.
+        Permission comes from the owners of your project.
       </p>
+      
       <p>
         Forgiveness is requested in a comment
         near the point of guideline violation,
@@ -168,7 +188,16 @@ Robert Brown
         Whatever the case may be, you must still follow these guidelines,
         as well as other conventional guidelines
         that have not been formalized in this document.
-        You MUST follow conventions, because they are important for readability.
+      </p>
+      <p>
+        You MUST follow conventions.
+        They are important for readability.
+        When conventions are followed by default,
+        violations of the convention are a signal
+        that something notable is happening and deserves attention.
+        When conventions are systematically violated,
+        violations of the convention are a distracting noise
+        that needs to be ignored.
       </p>
       <p>
         Conventional guidelines <em>are</em> indoctrination.
@@ -451,7 +480,7 @@ Robert Brown
     </SUMMARY>
     <BODY>
       <p>
-        Use your judgement to distinguish
+        Use your judgment to distinguish
         general-purpose versus business-specific code,
         and open-source the general-purpose parts,
         while keeping the business-specific parts a trade secret.
@@ -630,8 +659,10 @@ Robert Brown
     <BODY>
       <p>
         Some line length restriction is better than none at all.
-        Allowing 100 columns seems better, since good style encourages
-        the use of descriptive variables and function names.
+        While old text terminals used to make 80 columns the standard,
+        these days, allowing 100 columns seems better,
+        since good style encourages the use of
+        descriptive variables and function names.
       </p>
       
     </BODY>
@@ -890,25 +921,31 @@ Robert Brown
 <CATEGORY title="Documentation">
   <STYLEPOINT title="Document everything">
     <SUMMARY>
-      You should use document strings to explain how to use your code.
+      You should use document strings on all visible functions
+      to explain how to use your code.
     </SUMMARY>
     <BODY>
       <p>
-        You must comment anything complicated
-        so that the next developer can understand what's going on.
-        (Again, the "hit by a truck" principle.)
+        Unless some bit of code is painfully self-explanatory,
+        document it with a documentation string (also known as docstring).
       </p>
       <p>
-        Unless some bit of code is painfully self-explanatory, document it.
-        Prefer documentation strings to comments
-        because the former can be displayed by programming tools, such as IDEs,
+        Documentation strings are destined to be read
+        by the programmers who use your code.
+        They can be extracted from functions, types, classes, variables and macros,
+        and displayed by programming tools, such as IDEs,
         or by REPL queries such as <code>(describe 'foo)</code>;
-        they can also be extracted
-        to create web-based documentation or other reference works.
+        web-based documentation or other reference works
+        can be created based on them.
+        Documentation strings are thus the perfect locus to document your API.
+        They should describe how to use the code
+        (including what pitfalls to avoid),
+        as opposed to how the code works (and where more work is needed),
+        which is what you'll put in comments.
       </p>
       <p>
-        Supply a documentation string (also known as docstring) when defining
-        top-level functions, types, classes, and macros.
+        Supply a documentation string when defining
+        top-level functions, types, classes, variables and macros.
         Generally, add a documentation string wherever the language allows.
       </p>
       <p>
@@ -934,9 +971,7 @@ Robert Brown
                  nil)
                 (t
                  (loop for i from 3 upto (sqrt n) by 2
-                       do (when (divisorp i n)
-                            (return-from small-prime-number-p nil)))
-                 t)))
+                       never (divisorp i n)))))
       </CODE_SNIPPET>
       <CODE_SNIPPET>
         (defgeneric table-clear (table)
@@ -982,6 +1017,28 @@ Robert Brown
       You must use the appropriate number of semicolons to introduce comments.
     </SUMMARY>
     <BODY>
+      <p>
+        Comments are explanations to the future maintainers of the code.
+        Even if you're the only person who will ever see and touch the code,
+        even if you're either immortal and never going to quit,
+        or unconcerned with what happens after you leave
+        (and have your code self-destruct in such an eventuality),
+        you may find it useful to comment your code.
+        Indeed, by the time you revisit your code,
+        weeks, months or years later,
+        you will find yourself a different person from the one who wrote it,
+        and you will be grateful to that previous self
+        for making the code readable.
+      </p>
+      <p>
+        You must comment anything complicated
+        so that the next developer can understand what's going on.
+        (Again, the "hit by a truck" principle.)
+      </p>
+      <p>
+        Also use comments as a way to guide those who read the code,
+        so they know what to find where.
+      </p>
       <ul>
         <li>
           File headers and important comments
@@ -1031,14 +1088,12 @@ Robert Brown
                  nil)
                 ((= n 2)   ; parenthetical remark here
                  t)        ; continuation of the remark
-                ((divisible-by n 2)
+                ((divisorp 2 n)
                  nil)  ; different remark
                 ;; Comment that applies to a section of code.
                 (t
                  (loop for i from 3 upto (sqrt n) by 2
-                       do (when (divisorp i n)
-                       (return-from small-prime-number-p nil)))
-                   t)))
+                       never (divisorp i n)))))
       </CODE_SNIPPET>
       <p>
         You should include a space between the semicolon and the text of the comment.
@@ -1564,7 +1619,7 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="Recursion">
     <SUMMARY>
-      Favor iteration over recursion.
+      You should favor iteration over recursion.
     </SUMMARY>
     <BODY>
       <p>
@@ -1621,6 +1676,27 @@ Robert Brown
         and where it offers significant benefits.
       </p>
       <p>
+        Indeed, each special variable constitutes state.
+        Developers have to mentally track the state of all relevant variables
+        when trying to understand what the code does and how it does it;
+        tests have to be written and run with all relevant combinations;
+        to isolate some activity, care has to be taken to locally bind
+        all relevant variables, including those of indirectly used modules.
+        They can hide precious information from being printed in a backtrace.
+        Not only is there overhead associated to each new variable,
+        but interactions between variables
+        can make the code exponentially more complex
+        as the number of such variables increases.
+        The benefits have to match the costs.
+      </p>
+      <p>
+        Note though that a Lisp special variable is not a global variable
+        in the sense of a global variable in, say, BASIC or C.
+        As special variables can be dynamically bound to a local value,
+        they are much more powerful than
+        global value cells where all users necessarily interfere with each other.
+      </p>
+      <p>
         Good candidates for such special variables
         are items for which "the current" can be naturally used as prefix,
         such as "the current database connection" or
@@ -1641,21 +1717,19 @@ Robert Brown
         which clutters the code with boilerplate.
       </p>
       <p>
-        Note that a Lisp special variable is not a global variable
-        in the sense of a global variable in, say, BASIC or C.
-        As special variables can be dynamically bound to a local value,
-        they are much more powerful than
-        global value cells where users all interfere with each other.
-      </p>
-      <p>
         You should treat special variables
         as though they are per-thread variables.
-        That is, leave the special variable with no top-level binding at all,
+        By default, you should leave a special variable
+        with no top-level binding at all,
         and each thread of control
         that needs the variable should bind it explicitly.
         This will mean that any incorrect use of the variable
         will result in an "unbound variable" error, and
         each thread will see its own value for the variable.
+        Variables with a default global value should usually be
+        locally bound at thread creation time.
+        You should use suitable infrastructure
+        to automate the appropriate declaration of such variables.
       </p>
       
     </BODY>
@@ -1817,7 +1891,7 @@ Robert Brown
           Code should not signal conditions from inside the cleanup form of
           <code>UNWIND-PROTECT</code>
           (unless they are always handled inside the cleanup form),
-          or otherwise do non-local exits from cleanup handers
+          or otherwise do non-local exits from cleanup handlers
           outside of the handler e.g. <code>INVOKE-RESTART</code>.
         </li>
         <li>
@@ -2015,7 +2089,15 @@ Robert Brown
         which might be a symbol or something.
       </p>
       <p>
-        You must not use MOP "intercessory" operations.
+        You must not use MOP "intercessory" operations at runtime.
+        You should not use MOP "intercessory" operations at compile-time.
+        At runtime, they are at worst a danger, at best a performance issue.
+        At compile-time, it is usually cleaner that
+        macros should things up the right way on the first pass,
+        without the need to modify things in a second pass.
+        MOP intercession is a great tool for interactive development,
+        and you may enjoy it while debugging;
+        but you should not use it in normal applications.
       </p>
       <p>
         If a class definition creates a method
@@ -2047,9 +2129,9 @@ Robert Brown
       </p>
       <CODE_SNIPPET>
         (defmethod print-object ((p person) stream)
-        (print-unprintable-object (p stream :type t :identity t)
-        (with-slots (first-name last-name) p
-        (safe-format stream "~a ~a" first-name last-name))))
+          (print-unprintable-object (p stream :type t :identity t)
+            (with-slots (first-name last-name) p
+              (safe-format stream "~a ~a" first-name last-name))))
       </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
@@ -2238,7 +2320,7 @@ Robert Brown
         that generates code to do this.
         See also <code>ALEXANDRIA:WITH-GENSYMS</code>,
         to make some temporary variables in the generated code.
-        Note that if you follow our <code>CALL-WITH-</code> style,
+        Note that if you follow our <code>CALL-WITH</code> style,
         you typically expand the code only once, as either
         an argument to the auxiliary function, or
         the body of a lambda passed as argument to it;
@@ -2450,12 +2532,55 @@ Robert Brown
       </p>
     </BODY>
   </STYLEPOINT>
+  <STYLEPOINT title="INTERN and UNINTERN">
+    <SUMMARY>
+      You must not use <code>INTERN</code> or <code>UNINTERN</code> at runtime.
+    </SUMMARY>
+    <BODY>
+      <p>
+        You must not use <code>INTERN</code> at runtime.
+        Not only does it cons,
+        it either creates a permanent symbol that won't be collected
+        or gives access to internal symbols.
+        This creates opportunities for memory leaks, denial of service attacks,
+        unauthorized access to internals, clashes with other symbols.
+      </p>
+      <p>
+        You must not <code>INTERN</code> a string
+        just to compare it to a keyword;
+        use <code>STRING=</code> or <code>STRING-EQUAL</code>.
+      </p>
+      <BAD_CODE_SNIPPET>
+        (member (intern str :keyword) $keys) ; Bad
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        (member str $keys :test #'string-equal) ; Better
+      </CODE_SNIPPET>
+      <p>
+        You must not use <code>UNINTERN</code> at runtime.
+        It can break code that relies on dynamic binding.
+        It makes things harder to debug.
+        You must not dynamically intern any new symbol,
+        and therefore you need not dynamically unintern anything.
+      </p>
+      <p>
+        You may of course use <code>INTERN</code> at compile-time,
+        in the implementation of some macros.
+        Even so, it is usually more appropriate
+        to use abstractions on top of it, such as
+        <code>ALEXANDRIA:SYMBOLICATE</code> or
+        <code>ALEXANDRIA:FORMAT-SYMBOL</code>
+        to create the symbols you need.
+      </p>
+      
+    </BODY>
+  </STYLEPOINT>
 </CATEGORY>
 
 <CATEGORY title="Data Representation">
   <STYLEPOINT title="NIL: empty-list, false and I Don't Know">
     <SUMMARY>
-      Appropriately use or avoid to use <code>NIL</code>.
+      Appropriately use or avoid using <code>NIL</code>.
     </SUMMARY>
     <BODY>
       <p>
@@ -2699,67 +2824,6 @@ Robert Brown
       </p>
     </BODY>
   </STYLEPOINT>
-  <STYLEPOINT title="#'FUN vs. 'FUN">
-    <SUMMARY>
-      You should usually refer to a function as <code>#'FOO</code> rather than <code>'FOO</code>.
-    </SUMMARY>
-    <BODY>
-      <p>
-        The former, which reads as <code>(FUNCTION FOO)</code>,
-        refers to the function object, and is properly scoped.
-        The latter, which reads as <code>(QUOTE FOO)</code>,
-        refers to the symbol, which when called
-        uses the global <code>FDEFINITION</code> of the symbol.
-      </p>
-      <p>
-        When using functions that take a functional argument
-        (e.g., <code>MAPCAR</code>, <code>APPLY</code>,
-        <code>:TEST</code> and <code>:KEY</code> arguments),
-        you should use the <code>#'</code> to quote the function,
-        not just single quote.
-      </p>
-      <p>
-        An exception is when you explicitly want dynamic linking,
-        because you anticipate that
-        the global function binding will be updated.
-      </p>
-      <p>
-        Another exception is when you explicitly want to access
-        a global function binding,
-        and avoid a possible shadowing lexical binding.
-        This shouldn't happen often, as it is usually a bad idea
-        to shadow a function when you will want to use the shadowed function;
-        just use a different name for the lexical function.
-      </p>
-      <p>
-        You must consistently use either <code>#'(lambda ...)</code>
-        or <code>(lambda ...)</code> without <code>#'</code> everywhere.
-        Unlike the case of <code>#'symbol</code> vs <code>'symbol</code>,
-        it is only a syntactic difference with no semantic impact,
-        except that the former works on Genera and the latter doesn't.
-        You must use the former style if your code is intended as a library
-        with maximal compatibility to all Common Lisp implementations;
-        otherwise, it is optional which style you use.
-        <code>#'</code> may be seen as a hint
-        that you're introducing a function in expression context;
-        but the <code>lambda</code> itself is usually sufficient hint,
-        and concision is good.
-        Choose wisely, but above all,
-        consistently with yourself and other developers,
-        within a same file, package, system, project, etc.
-      </p>
-      <p>
-        Note that if you start writing a new system
-        in a heavily functional style,
-        you may consider using
-        <a href="http://cliki.net/lambda-reader">lambda-reader</a>,
-        a system that lets you use the unicode character <code>&#955;</code>
-        instead of <code>LAMBDA</code>.
-        But you must not start using such a syntactic extension
-        in an existing system without getting permission from other developers.
-      </p>
-    </BODY>
-  </STYLEPOINT>
 </CATEGORY>
 
 <CATEGORY title="Proper Forms">
@@ -2923,10 +2987,20 @@ Robert Brown
       <p>
         Note that in Common Lisp,
         <code>WHEN</code> and <code>UNLESS</code> return <code>NIL</code>
-        when the condition evaluates to <code>NIL</code>.
+        when the condition is not met.
+        You may take advantage of it.
         Nevertheless, you may use an <code>IF</code>
         to explicitly return <code>NIL</code>
         if you have a specific reason to insist on the return value.
+      </p>
+      <p>
+        You should include a fall-through clause <code>(t nil)</code>
+        as the last in your <cond>COND</cond>,
+        or <code>(otherwise nil)</code> as the last in your <cond>CASE</cond>
+        when the value returned by the conditional matters
+        and such a case is going to be used.
+        You should omit the fall-through clause
+        when the conditional is used for side-effects.
       </p>
       <p>
         You should prefer <code>AND</code> and <code>OR</code>
@@ -3230,49 +3304,6 @@ Robert Brown
           <code>"Items:~#[ none~; ~S~; ~S and ~S~:;~@{~#[~; and~] ~S~^ ,~}~]."</code>
         </dd>
       </dl>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="INTERN and UNINTERN">
-    <SUMMARY>
-      You must not use <code>INTERN</code> or <code>UNINTERN</code> at runtime.
-    </SUMMARY>
-    <BODY>
-      <p>
-        You must not use <code>INTERN</code> it at runtime.
-        Not only does it cons,
-        it either creates a permanent symbol that won't be collected
-        or gives access to internal symbols.
-        This creates opportunities for memory leaks, denial of service attacks,
-        unauthorized access to internals, clashes with other symbols.
-      </p>
-      <p>
-        You must not <code>INTERN</code> a string
-        just to compare it to a keyword;
-        use <code>STRING=</code> or <code>STRING-EQUAL</code>.
-      </p>
-      <BAD_CODE_SNIPPET>
-        (member (intern str :keyword) $keys) ; Bad
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        (member str $keys :test #'string-equal) ; Better
-      </CODE_SNIPPET>
-      <p>
-        You must not use <code>UNINTERN</code> at runtime.
-        It can break code that relies on dynamic binding.
-        It makes things harder to debug.
-        You must not dynamically intern any new symbol,
-        and therefore you need not dynamically unintern anything.
-      </p>
-      <p>
-        You may of course use <code>INTERN</code> at compile-time,
-        in the implementation of some macros.
-        Even so, it is usually more appropriate
-        to use abstractions on top of it, such as
-        <code>ALEXANDRIA:SYMBOLICATE</code> or
-        <code>ALEXANDRIA:FORMAT-SYMBOL</code>
-        to create the symbols you need.
-      </p>
-      
     </BODY>
   </STYLEPOINT>
 </CATEGORY>
@@ -3590,6 +3621,67 @@ Robert Brown
 </CATEGORY>
 
 <CATEGORY title="Pitfalls">
+  <STYLEPOINT title="#'FUN vs. 'FUN">
+    <SUMMARY>
+      You should usually refer to a function as <code>#'FOO</code> rather than <code>'FOO</code>.
+    </SUMMARY>
+    <BODY>
+      <p>
+        The former, which reads as <code>(FUNCTION FOO)</code>,
+        refers to the function object, and is properly scoped.
+        The latter, which reads as <code>(QUOTE FOO)</code>,
+        refers to the symbol, which when called
+        uses the global <code>FDEFINITION</code> of the symbol.
+      </p>
+      <p>
+        When using functions that take a functional argument
+        (e.g., <code>MAPCAR</code>, <code>APPLY</code>,
+        <code>:TEST</code> and <code>:KEY</code> arguments),
+        you should use the <code>#'</code> to quote the function,
+        not just single quote.
+      </p>
+      <p>
+        An exception is when you explicitly want dynamic linking,
+        because you anticipate that
+        the global function binding will be updated.
+      </p>
+      <p>
+        Another exception is when you explicitly want to access
+        a global function binding,
+        and avoid a possible shadowing lexical binding.
+        This shouldn't happen often, as it is usually a bad idea
+        to shadow a function when you will want to use the shadowed function;
+        just use a different name for the lexical function.
+      </p>
+      <p>
+        You must consistently use either <code>#'(lambda ...)</code>
+        or <code>(lambda ...)</code> without <code>#'</code> everywhere.
+        Unlike the case of <code>#'symbol</code> vs <code>'symbol</code>,
+        it is only a syntactic difference with no semantic impact,
+        except that the former works on Genera and the latter doesn't.
+        You must use the former style if your code is intended as a library
+        with maximal compatibility to all Common Lisp implementations;
+        otherwise, it is optional which style you use.
+        <code>#'</code> may be seen as a hint
+        that you're introducing a function in expression context;
+        but the <code>lambda</code> itself is usually sufficient hint,
+        and concision is good.
+        Choose wisely, but above all,
+        consistently with yourself and other developers,
+        within a same file, package, system, project, etc.
+      </p>
+      <p>
+        Note that if you start writing a new system
+        in a heavily functional style,
+        you may consider using
+        <a href="http://cliki.net/lambda-reader">lambda-reader</a>,
+        a system that lets you use the unicode character <code>&#955;</code>
+        instead of <code>LAMBDA</code>.
+        But you must not start using such a syntactic extension
+        in an existing system without getting permission from other developers.
+      </p>
+    </BODY>
+  </STYLEPOINT>
   <STYLEPOINT title="Pathnames">
     <SUMMARY>
       Common Lisp pathnames are tricky. Be aware of pitfalls.
@@ -3780,7 +3872,7 @@ Robert Brown
 </small>
 
 <p align="right">
-Revision 1.12
+Revision 1.13
 </p>
 
 
