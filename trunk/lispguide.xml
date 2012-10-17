@@ -5,7 +5,7 @@
 
 <p align="right">
 
-Revision 1.13
+Revision 1.15
 </p>
 
 
@@ -60,13 +60,13 @@ Robert Brown
   <p>
     If you're writing Common Lisp code outside Google,
     we invite you to consider the guidelines we expound in this guide.
-    You may apply some or all of them to your own projects, at your leisure.
-    If you do, we hope that you will find some of them useful.
-    Even if you don't, we also welcome any remarks or constructive feedback
+    You may apply some or all of them to your own projects, at your leisure:
+    we hope you find them as useful as we do.
+    Even if you don't, we welcome remarks and constructive feedback
     you may have on how to improve our guide, and
-    about what alternate styles are available.
-    Finally, we hope that our discussions will be thought-inspiring
-    to hackers who read them, especially so to newcomers to Common Lisp.
+    what alternate styles work are successful for you.
+    Finally, we hope that our guide will inspire useful thoughts
+    in hackers who read it, especially so newcomers to Common Lisp.
   </p>
   
   <p>
@@ -2093,10 +2093,12 @@ Robert Brown
         You should not use MOP "intercessory" operations at compile-time.
         At runtime, they are at worst a danger, at best a performance issue.
         At compile-time, it is usually cleaner that
-        macros should things up the right way on the first pass,
-        without the need to modify things in a second pass.
+        macros should set things up the right way in one pass
+        than have to require a second pass of fixups through intercession;
+        but sometimes, fixups are necessary to resolve forward references,
+        and intercession is allowed then.
         MOP intercession is a great tool for interactive development,
-        and you may enjoy it while debugging;
+        and you may enjoy it while developping and debugging;
         but you should not use it in normal applications.
       </p>
       <p>
@@ -2992,13 +2994,11 @@ Robert Brown
         Nevertheless, you may use an <code>IF</code>
         to explicitly return <code>NIL</code>
         if you have a specific reason to insist on the return value.
-      </p>
-      <p>
-        You should include a fall-through clause <code>(t nil)</code>
+        You may similarly include a fall-through clause <code>(t nil)</code>
         as the last in your <cond>COND</cond>,
-        or <code>(otherwise nil)</code> as the last in your <cond>CASE</cond>
-        when the value returned by the conditional matters
-        and such a case is going to be used.
+        or <code>(otherwise nil)</code> as the last in your <cond>CASE</cond>,
+        to insist on the fact that the value returned by the conditional matters
+        and that such a case is going to be used.
         You should omit the fall-through clause
         when the conditional is used for side-effects.
       </p>
@@ -3500,6 +3500,20 @@ Robert Brown
         are allocated at a very high rate, e.g. "inside an inner loop".
       </p>
       <p>
+        Note that is relatively easy to ascertain that
+        a function will not escape the dynamic extent of the current call frame
+        by analyzing where the function is called and
+        what other functions it is passed to;
+        therefore, you should somewhat wary of declaring a function
+        <code>DYNAMIC-EXTENT</code>, but not a high-stress declaration.
+        On the other hand, it is much harder to ascertain that
+        none of the objects ever bound or assigned to that variable
+        will escape the dynamic extent of the current call frame,
+        nor will in any future modification of a function.
+        Therefore, you should be extremely wary
+        of declaring a variable <code>DYNAMIC-EXTENT</code>.
+      </p>
+      <p>
         It's sometimes hard to know what the rate will be.
         When writing a function or macro
         that's part of a library of reusable code,
@@ -3872,7 +3886,7 @@ Robert Brown
 </small>
 
 <p align="right">
-Revision 1.13
+Revision 1.15
 </p>
 
 
