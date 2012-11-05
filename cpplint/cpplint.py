@@ -52,6 +52,10 @@ import string
 import sys
 import unicodedata
 
+# The allowed extensions for file names
+# This is set by --extensions flag.
+_valid_extensions = set(['c', 'cc', 'cpp', 'cxx', 'c++', 'h', 'hpp', 'hxx',
+    'h++'])
 
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
@@ -71,8 +75,9 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
   suppresses errors of all categories on that line.
 
   The files passed in will be linted; at least one file must be provided.
-  Default linted extensions are .cc, .cpp, .cu, .cuh and .h.  Change the
-  extensions with the --extensions flag.
+  Default linted extensions are %s.
+  Other file types will be ignored.
+  Change the extensions with the --extensions flag.
 
   Flags:
 
@@ -168,7 +173,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
     build/include_alpha as well as excludes all .cc from being
     processed by linter, in the current directory (where the .cfg
     file is located) and all sub-directories.
-"""
+""" % (list(_valid_extensions))
 
 # We categorize each error message we print.  Here are the categories.
 # We want an explicit list so we can list them all in cpplint --filter=.
@@ -496,10 +501,6 @@ _root = None
 # The allowed line length of files.
 # This is set by --linelength flag.
 _line_length = 80
-
-# The allowed extensions for file names
-# This is set by --extensions flag.
-_valid_extensions = set(['cc', 'h', 'cpp', 'cu', 'cuh'])
 
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of error-suppressions.
@@ -1058,7 +1059,7 @@ class FileInfo(object):
 
   def IsSource(self):
     """File has a source file extension."""
-    return self.Extension()[1:] in ('c', 'cc', 'cpp', 'cxx')
+    return self.Extension()[1:] in _valid_extensions
 
 
 def _ShouldPrintError(category, confidence, linenum):
