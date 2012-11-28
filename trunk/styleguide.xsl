@@ -119,11 +119,11 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
                     var matched = id &amp;&amp; EndsWith(id, suffix);
                     if (matched) {
                       var len = id.length - suffix.length;
-                      ShowByName(matched.substring(0, len));
+                      ShowByName(id.substring(0, len));
                       if (anchor.scrollIntoView) {
                         anchor.scrollIntoView();
                       }
-                      
+
                       return;
                     }
                     node = node.parentNode;

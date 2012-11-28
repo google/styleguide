@@ -3,7 +3,7 @@
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
     
-    Revision 2.28
+    Revision 2.64
   </p>
   
   <address>
@@ -44,6 +44,8 @@
       
       
       
+      
+      
     </CATEGORY>
   </OVERVIEW>
   <CATEGORY title="JavaScript Language Rules">
@@ -69,37 +71,90 @@
 
     <STYLEPOINT title="Constants">
       <SUMMARY>
-        &gt;Use <code>NAMES_LIKE_THIS</code> for constants.
-        Use <code>@const</code> where appropriate.
-        Never use the <code>const</code> keyword.
+        <ul>
+          <li>Use <code>NAMES_LIKE_THIS</code> for constant <em>values</em>.</li>
+          <li>Use <code>@const</code> to indicate a constant (non-overwritable)
+            <em>pointer</em> (a variable or property).</li>
+          <li>Never use the
+            <a href="https://developer.mozilla.org/en/JavaScript/Reference/Statements/const">
+              <code>const</code> keyword</a>
+            as it not supported in Internet Explorer.</li>
+        </ul>
       </SUMMARY>
       <BODY>
         <DECISION>
-          <p>For simple primitive value constants, the naming convention is
-            enough.</p>
-          <CODE_SNIPPET>
-            /**
-             * The number of seconds in a minute.
-             * @type {number}
-             */
-            goog.example.SECONDS_IN_A_MINUTE = 60;
-          </CODE_SNIPPET>
-          <p>For non-primitives, use the <code>@const</code> annotation.</p>
-          <CODE_SNIPPET>
-            /**
-             * The number of seconds in each of the given units.
-             * @type {Object.&lt;number&gt;}
-             * @const
-             */
-            goog.example.SECONDS_TABLE = {
-              minute: 60,
-              hour: 60 * 60
-              day: 60 * 60 * 24
-            }
-          </CODE_SNIPPET>
-          <p>This allows the compiler to enforce constant-ness.</p>
-          <p>As for the <code>const</code> keyword, Internet Explorer doesn't
-            parse it, so don't use it.</p>
+          <SUBSECTION title="Constant values">
+
+          <p>If a value is intended to be <em>constant</em>
+             and <em>immutable</em>, it should be given a name
+             in <code>CONSTANT_VALUE_CASE</code>.
+             <code>ALL_CAPS</code> additionally implies <code>@const</code>
+             (that the value is not overwritable).
+           </p>
+
+           <p>Primitive types (<code>number</code>, <code>string</code>,
+             <code>boolean</code>) are constant values.</p>
+
+           <p><code>Objects</code>'
+             immutabilty is more subjective &#8212; objects should be
+             considered immutable only if they do not demonstrate obeserverable
+             state change.  This is not enforced by the compiler.</p>
+
+           
+           </SUBSECTION>
+
+          <SUBSECTION title="Constant pointers (variables and properties)">
+            <p>The <code>@const</code> annotation on a variable or property
+              implies that it is not overwritable.  This is enforced by the
+              compiler at build time.  This behavior is consistent with the
+              <a href="https://developer.mozilla.org/en/JavaScript/Reference/Statements/const">
+                <code>const</code> keyword</a> (which we do not use due to the
+              lack of support in Internet Explorer).</p>
+
+            <p>A <code>@const</code> annotation on a method additionally
+              implies that the method should not be overriden in subclasses.</p>
+          </SUBSECTION>
+
+          <SUBSECTION title="Examples">
+
+            <p>Note that <code>@const</code> does not necessarily imply
+              <code>CONSTANT_VALUES_CASE</code>.
+
+              However, <code>CONSTANT_VALUES_CASE</code>
+              <em>does</em> imply <code>@const</code>.
+            </p>
+
+            <CODE_SNIPPET>
+              /**
+               * Request timeout in milliseconds.
+               * @type {number}
+               */
+              goog.example.TIMEOUT_IN_MILLISECONDS = 60;
+            </CODE_SNIPPET>
+
+            <p>The number of seconds in a minute never changes.  It is a
+              constant value.  <code>ALL_CAPS</code>
+              also implies <code>@const</code>, so the constant cannot be
+              overwritten.
+            </p>
+
+            <p>The open source compiler will allow the symbol it to be
+              overwritten because the constant is
+              <em>not</em> marked as <code>@const</code>.</p>
+
+            <CODE_SNIPPET>
+              /**
+               * Map of URL to response string.
+               * @const
+               */
+              MyClass.fetchedUrlCache_ = new goog.structs.Map();
+            </CODE_SNIPPET>
+
+            <p>In this case, the pointer can never be overwritten, but
+              value is highly mutable and <b>not</b> constant (and thus in
+              <code>camelCase</code>, not <code>ALL_CAPS</code>).</p>
+        </SUBSECTION>
+
         </DECISION>
       </BODY>
     </STYLEPOINT>
@@ -162,6 +217,20 @@
             if the next token is an infix or bracket operator.</p>
           <p>This has really surprised people, so make sure your assignments end
             with semicolons.</p>
+        </SUBSECTION>
+        <SUBSECTION title="Clarification: Semicolons and functions">
+          <p>Semicolons should be included at the end of function expressions,
+            but not at the end of function declarations. The distinction is
+            best illustrated with an example:</p>
+          <CODE_SNIPPET>
+            var foo = function() {
+              return true;
+            };  // semicolon here.
+
+            function foo() {
+              return true;
+            }  // no semicolon here.
+          </CODE_SNIPPET>
         </SUBSECTION>
       </BODY>
     </STYLEPOINT>
@@ -289,16 +358,58 @@
       </BODY>
     </STYLEPOINT>
 
-    <STYLEPOINT title="Method definitions">
-      <SUMMARY><code>Foo.prototype.bar = function() { ... };</code></SUMMARY>
+    <STYLEPOINT title="Method and property definitions">
+      <SUMMARY><code>/** @constructor */
+        function SomeConstructor() {
+          this.someProperty = 1;
+        }
+        Foo.prototype.someMethod = function() { ... };</code></SUMMARY>
       <BODY>
-        <p>While there are several methods for attaching methods and
-          properties to a constructor, the preferred style is:</p>
+        <p>While there are several ways to attach methods and properties to an
+          object created via "new", the preferred style for methods
+          is:</p>
         <CODE_SNIPPET>
           Foo.prototype.bar = function() {
             /* ... */
           };
         </CODE_SNIPPET>
+        <p>The preferred style for other properties is to initialize the field
+          in the constructor:</p>
+        <CODE_SNIPPET>
+          /** @constructor */
+          function Foo() {
+            this.bar = value;
+          }
+        </CODE_SNIPPET>
+        <SUBSECTION title="Why?">
+          <p>Current JavaScript engines optimize based on the "shape"
+            of an object, <a href="https://developers.google.com/v8/design#prop_access">
+            adding a property to an object (including overriding
+            a value set on the prototype) changes the shape and can degrade
+            performance.</a></p>
+        </SUBSECTION>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="delete">
+      <SUMMARY>Prefer <code>this.foo = null</code>.</SUMMARY>
+      <BODY>
+        <CODE_SNIPPET>
+          Foo.prototype.dispose = function() {
+            this.property_ = null;
+          };
+        </CODE_SNIPPET>
+        <p>Instead of:</p>
+        <BAD_CODE_SNIPPET>
+          Foo.prototype.dispose = function() {
+            delete this.property_;
+          };
+        </BAD_CODE_SNIPPET>
+        <p>In modern JavaScript engines, changing the number of properties on an
+          object is much slower than reassigning the values. The delete keyword
+          should be avoided except when it is necessary to remove a property
+          from an object's iterated list of keys, or to change the result of
+          <code>if (key in obj)</code>.</p>
       </BODY>
     </STYLEPOINT>
 
@@ -604,10 +715,16 @@
   <CATEGORY title="JavaScript Style Rules">
     <STYLEPOINT title="Naming">
       <SUMMARY>
-        <p>In general, use <code>functionNamesLikeThis</code>,
-          <code>variableNamesLikeThis</code>, <code>ClassNamesLikeThis</code>,
-          <code>EnumNamesLikeThis</code>, <code>methodNamesLikeThis</code>,
-          and <code>SYMBOLIC_CONSTANTS_LIKE_THIS</code>.</p>
+        <p>In general, use
+          <code>functionNamesLikeThis</code>,
+          <code>variableNamesLikeThis</code>,
+          <code>ClassNamesLikeThis</code>,
+          <code>EnumNamesLikeThis</code>,
+          <code>methodNamesLikeThis</code>,
+          <code>CONSTANT_VALUES_LIKE_THIS</code>,
+          <code>foo.namespaceNamesLikeThis.bar</code>, and
+          <code>filenameslikethis.js</code>.
+        </p>
       </SUMMARY>
       <BODY>
         <SUBSECTION title="Properties and methods">
@@ -622,8 +739,12 @@
           <p>For more information on <em>private</em> and <em>protected</em>,
             read the section on
             <a href="#Visibility__private_and_protected_fields_">
-              visibility
-            </a>.</p>
+              visibility</a>.
+            </p>
+
+
+
+
         </SUBSECTION>
 
         <SUBSECTION title="Method and function parameter">
@@ -719,7 +840,7 @@
               /**
                * WRONG -- Do NOT do this.
                * @constructor
-               * @extend {foo.hats.RoundHat}
+               * @extends {foo.hats.RoundHat}
                */
               foo.hats.BowlerHat = function() {
               };
@@ -736,7 +857,7 @@
 
               /**
                * @constructor
-               * @extend {foo.hats.RoundHat}
+               * @extends {foo.hats.RoundHat}
                */
               googleyhats.BowlerHat = function() {
                 ...
@@ -1005,6 +1126,55 @@
                 });
           </CODE_SNIPPET>
         </SUBSECTION>
+        <SUBSECTION title="Aliasing with goog.scope">
+          <p>
+            <a href="https://docs.google.com/document/pub?id=1ETFAuh2kaXMVL-vafUYhaWlhl6b5D9TOvboVg7Zl68Y"><code>goog.scope</code></a>
+            may be used to shorten references to
+            namespaced symbols in programs using
+            <a href="http://code.google.com/closure/library/">the Closure
+              Library</a>.</p>
+          <p>Only one <code>goog.scope</code> invocation may be added per
+            file.  Always place it in the global scope.</p>
+          <p>The opening <code>goog.scope(function() {</code> invocation
+            must be preceded by exactly one blank line and follow any
+            <code>goog.provide</code> statements, <code>goog.require</code>
+            statements, or top-level comments.  The invocation must be closed on
+            the last line in the file.  Append <code>// goog.scope</code> to the
+            closing statement of the scope. Separate the comment from the
+            semicolon by two spaces.</p>
+          <p>Similar to C++ namespaces, do not indent under goog.scope
+            declarations. Instead, continue from the 0 column.</p>
+          <p>Only alias names that will not be re-assigned to another object
+            (e.g., most constructors, enums, and namespaces). Do not do
+            this:</p>
+
+          <BAD_CODE_SNIPPET>
+            goog.scope(function() {
+            var Button = goog.ui.Button;
+
+            Button = function() { ... };
+            ...
+          </BAD_CODE_SNIPPET>
+
+          <p>Names must be the same as the last property of the global that they
+            are aliasing.</p>
+
+          <CODE_SNIPPET>
+            goog.provide('my.module');
+
+            goog.require('goog.dom');
+            goog.require('goog.ui.Button');
+
+            goog.scope(function() {
+            var Button = goog.ui.Button;
+            var dom = goog.dom;
+            var module = my.module;
+
+            module.button = new Button(dom.$('my-button'));
+            ...
+            });  // goog.scope
+          </CODE_SNIPPET>
+        </SUBSECTION>
         <SUBSECTION title="More Indentation">
           <p>In fact, except for
             <a href="#Array_and_Object_literals">
@@ -1069,6 +1239,12 @@
                     moreComplicatedB :
                     moreComplicatedC;
           </CODE_SNIPPET>
+          <p>This includes the dot operator.</p>
+          <CODE_SNIPPET>
+            var x = foo.bar().
+                doSomething().
+                doSomethingElse();
+          </CODE_SNIPPET>
         </SUBSECTION>
       </BODY>
     </STYLEPOINT>
@@ -1081,7 +1257,8 @@
         <p>Never use parentheses for unary operators such as
           <code>delete</code>, <code>typeof</code> and <code>void</code> or
           after keywords such as <code>return</code>, <code>throw</code> as
-          well as others (<code>case</code>, in or <code>new</code>).</p>
+          well as others (<code>case</code>, <code>in</code> or
+          <code>new</code>).</p>
       </BODY>
     </STYLEPOINT>
 
@@ -1153,20 +1330,25 @@
           // File 1.
 
           /** @constructor */
-            AA_PublicClass = function() {
+          AA_PublicClass = function() {
+            /** @private */
+            this.privateProp_ = 2;
+
+            /** @protected */
+            this.protectedProp = 4;
           };
 
           /** @private */
           AA_PublicClass.staticPrivateProp_ = 1;
 
-          /** @private */
-          AA_PublicClass.prototype.privateProp_ = 2;
-
           /** @protected */
           AA_PublicClass.staticProtectedProp = 31;
 
+          /** @private */
+          AA_PublicClass.prototype.privateMethod_ = function() {};
+
           /** @protected */
-          AA_PublicClass.prototype.protectedProp = 4;
+          AA_PublicClass.prototype.protectedMethod = function() {};
 
           // File 2.
 
@@ -1210,18 +1392,17 @@
     <STYLEPOINT title="JavaScript Types">
       <SUMMARY>Encouraged and enforced by the compiler.</SUMMARY>
       <BODY>
+        <a name="JsTypes"/>
         <p>When documenting a type in JSDoc, be as specific and accurate as
-          possible. The types we support are
+          possible. The types we support are based on the
           <a href="http://wiki.ecmascript.org/doku.php?id=spec:spec">
-            JS2
-          </a>
-          style types and JS1.x types.</p>
+            EcmaScript 4 spec</a>.</p>
         <SUBSECTION title="The JavaScript Type Language">
-          <p>The JS2 proposal contained a language for specifying JavaScript
+          <p>The ES4 proposal contained a language for specifying JavaScript
             types. We use this language in JsDoc to express the types of
             function parameters and return values.</p>
 
-          <p>As the JS2 proposal has evolved, this language has changed. The
+          <p>As the ES4 proposal has evolved, this language has changed. The
             compiler still supports old syntaxes for types, but those syntaxes
             are deprecated.</p>
 
@@ -1229,7 +1410,7 @@
           <table border="1" style="border-collapse:collapse" cellpadding="4">
             <thead>
               <tr>
-                <th>Operator Name</th>
+                <th>Syntax Name</th>
                 <th>Syntax</th>
                 <th>Description</th>
                 <th>Deprecated Syntaxes</th>
@@ -1237,12 +1418,60 @@
             </thead>
             <tbody>
               <tr>
-                <td>Type Name</td>
+                <td>Primitive Type</td>
                 <td>
-                  <code>{boolean}</code>, <code>{Window}</code>,
-                  <code>{goog.ui.Menu}</code>
+                  There are 5 primitive types in JavaScript:
+                  <code>{null}</code>,
+                  <code>{undefined}</code>,
+                  <code>{boolean}</code>,
+                  <code>{number}</code>, and
+                  <code>{string}</code>.
                 </td>
                 <td>Simply the name of a type.</td>
+                <td/>
+              </tr>
+
+              <tr>
+                <td>Instance Type</td>
+                <td>
+                  <code>{Object}</code><br/>
+                  An instance of Object or null.<p/>
+                  <code>{Function}</code><br/>
+                  An instance of Function or null.<p/>
+                  <code>{EventTarget}</code><br/>
+                  An instance of a constructor that implements the EventTarget
+                  interface, or null.
+                </td>
+                <td>An instance of a constructor or interface function.<p/>
+
+                Constructor functions are functions defined with the
+                <code>@constructor</code> JSDoc tag.
+                Interface functions are functions defined with the
+                <code>@interface</code> JSDoc tag.<p/>
+
+                By default, instance types will accept null. This is the only
+		type syntax that makes the type nullable. Other type syntaxes
+		in this table will not accept null.
+                </td>
+                <td/>
+              </tr>
+
+              <tr>
+                <td>Enum Type</td>
+                <td>
+                  <code>{goog.events.EventType}</code><br/>
+                  One of the properties of the object literal initializer
+                  of <code>goog.events.EventType</code>.
+                </td>
+                <td>An enum must be initialized as an object literal, or as
+                an alias of another enum, annotated with the <code>@enum</code>
+                JSDoc tag. The properties of this literal are the instances
+                of the enum. The syntax of the enum is defined
+                <a href="#enums">below</a>.<p/>
+
+                Note that this is one of the few things in our type system
+                that were not in the ES4 spec.
+                </td>
                 <td/>
               </tr>
 
@@ -1254,7 +1483,7 @@
                   <br/>An object in which the keys are strings and the values
                   are numbers.
                 </td>
-                <td>Patameterizes a type, by applying a set of type arguments
+                <td>Parameterizes a type, by applying a set of type arguments
                   to that type. The idea is analogous to generics in Java.
                 </td>
                 <td/>
@@ -1265,11 +1494,44 @@
                 <td>
                   <code>{(number|boolean)}</code><br/>A number or a boolean.
                 </td>
-                <td>Indicates that a value might have type A OR type B.</td>
+                <td>Indicates that a value might have type A OR type B.<p/>
+
+                  The parentheses may be omitted at the top-level
+                  expression, but the parentheses should be included in
+                  sub-expressions to avoid ambiguity.<br/>
+                  <code>{number|boolean}</code><br/>
+                  <code>{function(): (number|boolean)}</code>
+                </td>
                 <td>
-                  <code>{(number,boolean)}</code>,
-                  <code>{number|boolean}</code>,
+                  <code>{(number,boolean)}</code>,<br/>
                   <code>{(number||boolean)}</code>
+                </td>
+              </tr>
+
+              <tr>
+                <td>Nullable type</td>
+                <td>
+                  <code>{?number}</code><br/> A number or null.
+                </td>
+                <td>Shorthand for the union of the null type with any
+                other type. This is just syntactic sugar.
+                </td>
+                <td>
+                  <code>{number?}</code>
+                </td>
+              </tr>
+
+              <tr>
+                <td>Non-nullable type</td>
+                <td>
+                  <code>{!Object}</code><br/> An Object, but never the
+                  <code>null</code> value.
+                </td>
+                <td>Filters null out of nullable types. Most often used
+                with instance types, which are nullable by default.
+                </td>
+                <td>
+                  <code>{Object!}</code>
                 </td>
               </tr>
 
@@ -1290,35 +1552,6 @@
                   <code>Array.&lt;{length}&gt;</code>.</p>
                 </td>
                 <td/>
-              </tr>
-
-              <tr>
-                <td>Nullable type</td>
-                <td>
-                  <code>{?number}</code><br/> A number or NULL.
-                </td>
-                <td>Indicates that a value is type A or <code>null</code>.
-                  By default, all object types are nullable.
-                  NOTE: Function types are not nullable.
-                </td>
-                <td>
-                  <code>{number?}</code>
-                </td>
-              </tr>
-
-              <tr>
-                <td>Non-nullable type</td>
-                <td>
-                  <code>{!Object}</code><br/> An Object, but never the
-                  <code>null</code> value.
-                </td>
-                <td>Indicates that a value is type A and not null. By default,
-                  all value types (boolean, number, string, and undefined) are
-                  not nullable.
-                </td>
-                <td>
-                  <code>{Object!}</code>
-                </td>
               </tr>
 
               <tr>
@@ -1393,7 +1626,7 @@
               </tr>
 
               <tr>
-                <td>Function <a href="optional">optional arguments</a></td>
+                <td>Function <a href="#optional">optional arguments</a></td>
                 <td>
                   <code>{function(?string=, number=)}</code><br/>
                   A function that takes one optional, nullable string and one
@@ -1407,7 +1640,7 @@
               <tr>
                 <td>
                   <a name="optional-arg-annotation"/>
-                  Function <a href="optional">optional arguments</a>
+                  Function <a href="#optional">optional arguments</a>
                   (in <code>@param</code> annotations)
                 </td>
                 <td>
@@ -1660,7 +1893,7 @@
                 <td>
                   An Object in which the keys are numbers and the values
                   are strings.  <p/>Note that in JavaScript, the keys are always
-                  implicitly coverted to strings, so
+                  implicitly converted to strings, so
                   <code>obj['1'] == obj[1]</code>.
                   So the key wil always be a string in for...in loops. But the
                   compiler will verify the type if the key when indexing into
@@ -1741,12 +1974,16 @@
                   <CODE_SNIPPET>
                     /** @enum {string} */
                     project.MyEnum = {
+                      /** The color blue. */
                       BLUE: '#0000dd',
+                      /** The color red. */
                       RED: '#dd0000'
                     };
                   </CODE_SNIPPET>
                 </td>
-                <td><a href="#enums">Enumeration</a></td>
+                <td><a name="enums">Enumeration</a><p/>
+                  JSDoc comments on enum values are optional.
+                </td>
               </tr>
 
               <tr>
@@ -1786,12 +2023,10 @@
           <p>In cases where type-checking doesn't accurately infer the type of
             an expression, it is possible to add a type cast comment by adding a
             type annotation comment and enclosing the expression in
-            parentheses. The parentheses are required, and may surround the type
-            annotation comment as well.</p>
+            parentheses. The parentheses are required.</p>
 
           <CODE_SNIPPET>
             /** @type {number} */ (x)
-            (/** @type {number} */ x)
           </CODE_SNIPPET>
         </SUBSECTION>
 
@@ -1802,10 +2037,8 @@
             nullable, and undefined function parameters and class
             properties.</p>
 
-          <p>Object types (also known as reference types) are nullable by
-            default.  NOTE: Function types are not nullable by default. An
-            object is defined as anything except a string, number, boolean,
-            undefined, or null.  For example, the following declaration</p>
+          <p>Instances of classes and interfaces are nullable by default.
+          For example, the following declaration</p>
 
           <CODE_SNIPPET>
             /**
@@ -1970,7 +2203,8 @@
 
         <p>All files, classes, methods and properties should be documented with
           <a href="http://code.google.com/p/jsdoc-toolkit/">JSDoc</a>
-          comments.</p>
+          comments with the appropriate <a href="#JSDoc_Tag_Reference">tags</a>
+          and <a href="#JsTypes">types</a>.</p>
 
         <p>Inline comments should be of the <code>//</code> variety.</p>
 
@@ -2074,19 +2308,16 @@
         <SUBSECTION title="Top/File-Level Comments">
           <p>
             
+            A <a href="copyright.html">copyright notice</a> and author information are optional.
             The top level comment is designed
             to orient readers unfamiliar with the code to what is in this file.
-            It should provide a description of the file's contents, its
-            author(s), and any dependencies or compatibility information. As an
-            example:</p>
+            It should provide a description of the file's contents and any
+            dependencies or compatibility information. As an example:</p>
 
           <CODE_SNIPPET>
-            // Copyright 2009 Google Inc. All Rights Reserved.
-
             /**
              * @fileoverview Description of file, its uses and information
              * about its dependencies.
-             * @author user@google.com (Firstname Lastname)
              */
           </CODE_SNIPPET>
 
@@ -2094,8 +2325,9 @@
         </SUBSECTION>
 
         <SUBSECTION title="Class Comments">
-          <p>Classes must be documented with a description, and appropriate
-            <a href="#constructor-tag">type tags</a>.
+          <p>Classes must be documented with a description and a
+            <a href="#constructor-tag">type tag that
+              identifies the constructor</a>.
           </p>
 
           <CODE_SNIPPET>
@@ -2114,9 +2346,10 @@
         </SUBSECTION>
 
         <SUBSECTION title="Method and Function Comments">
-          <p>A description must be provided along with parameters. Method
-             descriptions should start with a sentence written in the third
-             person declarative voice.</p>
+          <p>Parameter and return types should be documented. The method
+             description may be omitted if it is obvious from the parameter
+             or return type descriptions. Method descriptions should start
+             with a sentence written in the third person declarative voice.</p>
           <CODE_SNIPPET>
             /**
              * Operates on an instance of MyClass and returns something.
@@ -2128,22 +2361,23 @@
               // ...
             }
           </CODE_SNIPPET>
-
-          <p>For simple getters that take no parameters and have no
-            side effects, the description can be omitted.</p>
         </SUBSECTION>
 
         <SUBSECTION title="Property Comments">
           <CODE_SNIPPET>
-            /**
-             * Maximum number of things per pane.
-             * @type {number}
-             */
-            project.MyClass.prototype.someProperty = 4;
+            /** @constructor */
+            project.MyClass = function() {
+              /**
+               * Maximum number of things per pane.
+               * @type {number}
+               */
+              this.someProperty = 4;
+            }
           </CODE_SNIPPET>
         </SUBSECTION>
 
         <SUBSECTION title="JSDoc Tag Reference">
+          <a name="JSDoc_Tag_Reference"/>
           <p/>
           <table border="1" style="border-collapse:collapse" cellpadding="4">
             <thead>
@@ -2217,21 +2451,37 @@
                     mynamespace.MY_BEER = 'stout';
 
                     /** @const */ MyClass.MY_BEER = 'stout';
+
+                    /**
+                     * Initializes the request.
+                     * @const
+                     */
+                    mynamespace.Request.prototype.initialize = function() {
+                      // This method cannot be overriden in a subclass.
+                    }
                   </CODE_SNIPPET>
                 </td>
                 <td>
-                  <p>Marks a variable as read-only and suitable for inlining.
-                    Generates warnings if it is rewritten.</p>
-                  <p>Constants should also be ALL_CAPS, but the annotation
-                    should help eliminate reliance on the naming convention.
-                    Although @final is listed at jsdoc.org and is supported as
-                    equivalent to @const in the compiler, it is discouraged.
-                    @const is consistent with JS1.5's const keyword. Note that
-                    changes to properties of const objects are not currently
-                    prohibited by the compiler (inconsistent with C++ const
-                    semantics). The type declaration can be omitted if it can be
-                    clearly inferred. If present, it must be on its own line. An
-                    additional comment about the variable is optional.</p>
+                  <p>Marks a variable (or property) as read-only and suitable
+                  for inlining.</p>
+
+                  <p>A <code>@const</code> variable is a immutable pointer to
+                  a value.  If a variable or property marked as
+                  <code>@const</code> is overwritten, JSCompiler will give
+                  warnings.</p>
+
+                  <p>The type declaration of a constant value can be omitted
+                    if it can be clearly inferred. An additional comment about
+                    the variable is optional.</p>
+
+                  <p>When <code>@const</code> is applied to a method, it
+                    implies the method is not only not overwritable, but also
+                    that the method is <em>finalized</em> &#8212;
+                    not overridable in subclasses.</p>
+
+                  <p>For more on <code>@const</code>, see the
+                    <a href="#Constants">Constants</a> section.</p>
+
                 </td>
               </tr>
 
@@ -2304,6 +2554,34 @@
               </tr>
 
               <tr>
+                <td><a name="tag-dict">@dict</a></td>
+                <td>
+                  <code>@dict Description</code>
+                  <p><i>For example:</i></p>
+                  <CODE_SNIPPET>
+                    /**
+                     * @constructor
+                     * @dict
+                     */
+                    function Foo(x) {
+                      this['x'] = x;
+                    }
+                    var obj = new Foo(123);
+                    var num = obj.x;  // warning
+
+                    (/** @dict */ { x: 1 }).x = 123;  // warning
+                  </CODE_SNIPPET>
+                </td>
+                <td>
+                  When a constructor (<code>Foo</code> in the example) is
+                  annotated with <code>@dict</code>, you can only use the
+                  bracket notation to access the properties of <code>Foo</code>
+                  objects.
+                  The annotation can also be used directly on object literals.
+                </td>
+              </tr>
+
+              <tr>
                 <td><a name="tag-enum">@enum</a></td>
                 <td>
                   <code>@enum {Type}</code>
@@ -2354,6 +2632,32 @@
               </tr>
 
               <tr>
+                <td><a name="tag-expose">@expose</a></td>
+                <td>
+                  <code>@expose</code>
+                  <p><i>For example:</i></p>
+                  <CODE_SNIPPET>
+                    /** @expose */
+                    MyClass.prototype.exposedProperty = 3;
+                  </CODE_SNIPPET>
+                </td>
+                <td>
+                  <p>
+                    Declares an exposed property. Exposed properties
+                    will not be removed, or renamed, or collapsed,
+                    or optimized in any way by the compiler. No properties
+                    with the same name will be able to be optimized either.
+                  </p>
+
+                  <p>
+                    <code>@expose</code> should never be used in library code,
+                    because it will prevent that property from ever getting
+                    removed.
+                  </p>
+                </td>
+              </tr>
+
+              <tr>
                 <td><a name="tag-extends">@extends</a></td>
                 <td>
                   <code>
@@ -2373,8 +2677,9 @@
                   </CODE_SNIPPET>
                 </td>
                 <td>
-                  Used with @constructor to indicate that a class inherits from
-                  another class. Curly braces around the type are optional.
+                  Used with <code>@constructor</code> to indicate that a class
+                  inherits from another class. Curly braces around the type are
+                  optional.
                 </td>
               </tr>
 
@@ -2446,8 +2751,9 @@
                   </CODE_SNIPPET>
                 </td>
                 <td>
-                  Used with @constructor to indicate that a class implements an
-                  interface. Curly braces around the type are optional.
+                  Used with <code>@constructor</code> to indicate that a class
+                  implements an interface. Curly braces around the type are
+                  optional.
                 </td>
               </tr>
 
@@ -2464,13 +2770,13 @@
                   </CODE_SNIPPET>
                 </td>
                 <td>
-                  <p style="font-weight:bold">Deprecated. Use @override
-                  instead.</p>
+                  <p style="font-weight:bold">Deprecated. Use
+                    <code>@override</code> instead.</p>
 
                   Indicates that a method or property of a subclass
                   intentionally hides a method or property of the superclass,
                   and has exactly the same documentation. Notice that
-                  @inheritDoc implies @override.
+                  <code>@inheritDoc</code> implies <code>@override</code>
                 </td>
               </tr>
 
@@ -2546,11 +2852,12 @@
                   </CODE_SNIPPET>
                 </td>
                 <td>
-                  Anything marked by @license or @preserve will be retained by
-                  the compiler and output at the top of the compiled code for
-                  that file. This annotation allows important notices (such as
-                  legal licenses or copyright text) to survive compilation
-                  unchanged. Line breaks are preserved.
+                  Anything marked by <code>@license</code> or
+                  <code>@preserve</code> will be retained by the compiler and
+                  output at the top of the compiled code for that file. This
+                  annotation allows important notices (such as legal licenses or
+                  copyright text) to survive compilation unchanged. Line breaks
+                  are preserved.
                 </td>
               </tr>
 
@@ -2646,7 +2953,8 @@
                   Used with method, function and constructor calls to document
                   the arguments of a function.<p/>
 
-                  Type names must be enclosed in curly braces. If the type
+                  <a href="#JsTypes">Type</a>
+                  names must be enclosed in curly braces. If the type
                   is omitted, the compiler will not type-check the parameter.
                 </td>
               </tr>
@@ -2721,7 +3029,8 @@
                   component is visible, false otherwise". If there is no return
                   value, do not use an <code>@return</code> tag.<p/>
 
-                  Type names must be enclosed in curly braces. If the type
+                  <a href="#JsTypes">Type</a>
+                  names must be enclosed in curly braces. If the type
                   is omitted, the compiler will not type-check the return value.
                 </td>
               </tr>
@@ -2741,6 +3050,39 @@
                   </CODE_SNIPPET>
                 </td>
                 <td>Reference a lookup to another class function or method.</td>
+              </tr>
+
+              <tr>
+                <td><a name="tag-struct">@struct</a></td>
+                <td>
+                  <code>@struct Description</code>
+                  <p><i>For example:</i></p>
+                  <CODE_SNIPPET>
+                    /**
+                     * @constructor
+                     * @struct
+                     */
+                    function Foo(x) {
+                      this.x = x;
+                    }
+                    var obj = new Foo(123);
+                    var num = obj['x'];  // warning
+                    obj.y = "asdf";  // warning
+
+                    Foo.prototype = /** @struct */ {
+                      method1: function() {}
+                    };
+                    Foo.prototype.method2 = function() {};  // warning
+                  </CODE_SNIPPET>
+                </td>
+                <td>
+                  When a constructor (<code>Foo</code> in the example) is
+                  annotated with <code>@struct</code>, you can only use the dot
+                  notation to access the properties of <code>Foo</code> objects.
+                  Also, you cannot add new properties to <code>Foo</code>
+                  objects after they have been created.
+                  The annotation can also be used directly on object literals.
+                </td>
               </tr>
 
               <tr>
@@ -2772,7 +3114,7 @@
                   <p><i>For example:</i></p>
                   <CODE_SNIPPET>
                     /**
-                     * @suppress {deprecation}
+                     * @suppress {deprecated}
                      */
                     function f() {
                       deprecatedVersionOfF();
@@ -2782,6 +3124,7 @@
                 <td>
                   Suppresses warnings from tools. Warning categories are
                   separated by <code>|</code>.
+                  
                 </td>
               </tr>
 
@@ -2852,7 +3195,8 @@
                   </CODE_SNIPPET>
                 </td>
                 <td>
-                  Identifies the type of a variable, property, or expression.
+                  Identifies the <a href="#JsTypes">type</a>
+                  of a variable, property, or expression.
                   Curly braces are not required around most types, but some
                   projects mandate them for all types, for consistency.
                 </td>
@@ -2920,25 +3264,48 @@
       </BODY>
     </STYLEPOINT>
 
-    <STYLEPOINT title="Inner Classes and Enums">
+    <STYLEPOINT title="Providing Dependencies With goog.provide">
       <SUMMARY>
-        Should be defined in the same file as the top level class.
+        Only provide top-level symbols.
       </SUMMARY>
       <BODY>
-        Inner classes and enums defined on another class should be defined in
-        the same file as the top level class. <code>goog.provide</code>
-        statements are only necessary for the top level class.
+        <p>
+          All members defined on a class should be in the same file. So, only
+          top-level classes should be provided in a file that contains multiple
+          members defined on the same class (e.g. enums, inner classes, etc).
+        </p>
+        <p>Do this:</p>
+        <CODE_SNIPPET>
+          goog.provide('namespace.MyClass');
+        </CODE_SNIPPET>
+        <p>Not this:</p>
+        <BAD_CODE_SNIPPET>
+          goog.provide('namespace.MyClass');
+          goog.provide('namespace.MyClass.Enum');
+          goog.provide('namespace.MyClass.InnerClass');
+          goog.provide('namespace.MyClass.TypeDef');
+          goog.provide('namespace.MyClass.CONSTANT');
+          goog.provide('namespace.MyClass.staticMethod');
+        </BAD_CODE_SNIPPET>
+        <p>
+          Members on namespaces may also be provided:
+        </p>
+        <CODE_SNIPPET>
+          goog.provide('foo.bar');
+          goog.provide('foo.bar.method');
+          goog.provide('foo.bar.CONSTANT');
+        </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
 
     <STYLEPOINT title="Compiling">
-      <SUMMARY>Encouraged</SUMMARY>
+      <SUMMARY>Required</SUMMARY>
       <BODY>
         
 
         <p>Use of JS compilers such as the
           <a href="http://code.google.com/closure/compiler/">Closure Compiler</a>
-          is encouraged.</p>
+          is required for all customer-facing code.</p>
 
         
 
@@ -3096,40 +3463,6 @@
           </BAD_CODE_SNIPPET>
         </SUBSECTION>
 
-        <SUBSECTION title="Use join() to Build Strings">
-          <p>It is common to see this:</p>
-          <BAD_CODE_SNIPPET>
-            function listHtml(items) {
-              var html = '&lt;div class="foo"&gt;';
-              for (var i = 0; i &lt; items.length; ++i) {
-                if (i &gt; 0) {
-                  html += ', ';
-                }
-                html += itemHtml(items[i]);
-              }
-              html += '&lt;/div&gt;';
-              return html;
-            }
-          </BAD_CODE_SNIPPET>
-
-          <p>but this is slow in Internet Explorer, so it is better to do
-            this:</p>
-          <CODE_SNIPPET>
-            function listHtml(items) {
-              var html = [];
-              for (var i = 0; i &lt; items.length; ++i) {
-                html[i] = itemHtml(items[i]);
-              }
-              return '&lt;div class="foo"&gt;' + html.join(', ') + '&lt;/div&gt;';
-            }
-          </CODE_SNIPPET>
-
-          <p>You can also use an array as a stringbuilder, and convert it into
-            a string with <code>myArray.join('')</code>.  Note that since
-            assigning values to an array is faster than using
-            <code>push()</code> you should use assignment where possible.</p>
-        </SUBSECTION>
-
         <SUBSECTION title="Iterating over Node Lists">
           <p>Node lists are often implemented as node iterators with a filter.
             This means that getting a property like length is O(n), and
@@ -3194,7 +3527,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.28
+    Revision 2.64
   </p>
 
   

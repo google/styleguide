@@ -95,11 +95,11 @@
                     var matched = id && EndsWith(id, suffix);
                     if (matched) {
                       var len = id.length - suffix.length;
-                      ShowByName(matched.substring(0, len));
+                      ShowByName(id.substring(0, len));
                       if (anchor.scrollIntoView) {
                         anchor.scrollIntoView();
                       }
-                      
+
                       return;
                     }
                     node = node.parentNode;
@@ -136,7 +136,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.39
+    Revision 2.45
   </p>
   
   <address>
@@ -424,8 +424,9 @@ from sound.effects import echo
             unless you are re-raising the exception or in the outermost
             block in your thread (and printing an error message).  Python
             is very tolerant in this regard and <code>except:</code> will
-            really catch everything including Python syntax errors.  It is
-            easy to hide real bugs using <code>except:</code>.</li>
+            really catch everything including misspelled names, sys.exit()
+            calls, Ctrl+C interrupts, unittest failures and all kinds of
+            other exceptions that you simply don't want to catch.</li>
           <li>Minimize the amount of code in a
             <code>try</code>/<code>except</code> block.  The larger the
             body of the <code>try</code>, the more likely that an
@@ -988,8 +989,10 @@ from sound.effects import echo
         Use string methods instead of the <code>string</code> module
         where possible.  Use function call syntax instead
         of <code>apply</code>.  Use list comprehensions
-        and <code>for</code> loops instead of <code>filter</code>,
-        <code>map</code>, and <code>reduce</code>.
+        and <code>for</code> loops instead of <code>filter</code> and
+        <code>map</code> when the function argument would have been an
+        inlined lambda anyway.  Use <code>for</code> loops instead of
+        <code>reduce</code>.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Deprecated_Language_Features__body" id="Deprecated_Language_Features__body" style="display: none">
         <P class="">
@@ -1005,6 +1008,8 @@ from sound.effects import echo
 <DIV class=""><PRE>Yes: <span class="external"></span>words = foo.split(':')
 
      <span class="external"></span>[x[1] for x in my_list if x[2] == 5]
+
+     <span class="external"></span>map(math.sqrt, data)    # Ok. No inlined lambda expression.
 
      <span class="external"></span>fn(*args, **kwargs)</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:  <span class="external"></span>words = string.split(foo, ':')
@@ -1279,7 +1284,7 @@ from sound.effects import echo
     <p>
       Make note of the indentation of the elements in the line
       continuation examples above; see the
-      <a HREF="#indentation">indentation</a>
+      <a HREF="#Indentation">indentation</a>
       section for explanation.
     </p>
       </DIV></DIV>
@@ -1458,7 +1463,7 @@ from sound.effects import echo
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Shebang_Line')" name="Shebang_Line__button" id="Shebang_Line__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Most <code>.py</code> files do not need to start with a
-        <code>#!</code> line.  Start the main file of a  binary with
+        <code>#!</code> line.  Start the main file of a  program with
         <code>#!/usr/bin/python</code>.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Shebang_Line__body" id="Shebang_Line__body" style="display: none">
@@ -2218,7 +2223,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.39
+Revision 2.45
 </p>
 
 
