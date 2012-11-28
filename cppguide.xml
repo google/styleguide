@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.199
+Revision 3.231
 </p>
 
 
@@ -145,80 +145,71 @@ Tashana Landray
     </BODY>
   </STYLEPOINT>
 
-  <STYLEPOINT title="Header File Dependencies">
+  <STYLEPOINT title="Forward Declarations">
     <SUMMARY>
-        Don't use an <code>#include</code> when a forward declaration
-        would suffice.
+        You may forward declare ordinary classes in order to avoid
+        unnecessary <code>#include</code>s.
     </SUMMARY>
     <BODY>
-      <p>
-        When you include a header file you introduce a dependency that
-        will cause your code to be recompiled whenever the header file
-        changes. If your header file includes other header files, any
-        change to those files will cause any code that includes your
-        header to be recompiled.  Therefore, we prefer to minimize
-        includes, particularly includes of header files in other
-        header files.
-      </p>
-      <p>
-        You can significantly reduce the number of header files you
-        need to include in your own header files by using forward
-        declarations.  For example, if your header file uses the
-        <code>File</code> class in ways that do not require access to
-        the declaration of the <code>File</code> class, your header
-        file can just forward declare <code>class File;</code> instead
-        of having to <code>#include "file/base/file.h"</code>.
-      </p>
-      <p>
-        How can we use a class <code>Foo</code> in a header file
-        without access to its definition?
-      </p>
-      <ul>
-        <li> We can declare data members of type <code>Foo*</code> or
-             <code>Foo&amp;</code>.
-             </li>
-        <li> We can declare (but not define) functions with arguments,
-             and/or return values, of type <code>Foo</code>.  (One
-             exception is if an argument <code>Foo</code>
-             or <code>const Foo&amp;</code> has a
-             non-<code>explicit</code>, one-argument constructor,
-             
-             in which case we need the full definition to support
-             automatic type conversion.)
-             </li>
-        <li> We can declare static data members of type
-             <code>Foo</code>.  This is because static data members
-             are defined outside the class definition.
-             </li>
-      </ul>
-      <p>
-        On the other hand, you must include the header file for
-        <code>Foo</code> if your class subclasses <code>Foo</code> or
-        has a data member of type <code>Foo</code>.
-      </p>
-      <p>
-        Sometimes it makes sense to have pointer (or better,
-        <code>scoped_ptr</code>)
-        members instead of object members. However, this complicates code
-        readability and imposes a performance penalty, so avoid doing
-        this transformation if the only purpose is to minimize includes
-        in header files.
-      </p>
-      <p>
-        Of course, <code>.cc</code> files typically do require the
-        definitions of the classes they use, and usually have to
-        include several header files.
-      </p>
-      <SUBSECTION title="Note:">
-        If you use a symbol <code>Foo</code> in your source file, you
-        should bring in a definition for <code>Foo</code> yourself,
-        either via an #include or via a forward declaration.  Do not
-        depend on the symbol being brought in transitively via headers
-        not directly included.  One exception is if <code>Foo</code>
-        is used in <code>myfile.cc</code>, it's ok to #include (or
-        forward-declare) <code>Foo</code> in <code>myfile.h</code>,
-        instead of <code>myfile.cc</code>.
-      </SUBSECTION>
+      <DEFINITION>
+          A "forward declaration" is a declaration of a class, function,
+          or template without an associated definition. <code>#include</code>
+          lines can often be replaced with forward declarations of whatever
+          symbols are actually used by the client code.
+      </DEFINITION>
+      <PROS>
+        <ul>
+          <li>Unnecessary <code>#include</code>s force the compiler to open
+          more files and process more input.</li>
+          <li>They can also force your code to be recompiled more often, due
+          to changes in the header.</li>
+        </ul>
+      </PROS>
+      <CONS>
+        <ul>
+          <li>It can be difficult to determine the correct form of a
+          forward declaration in the presence of features like templates,
+          typedefs, default parameters, and using declarations.</li>
+          <li>It can be difficult to determine whether a forward declaration
+          or a full <code>#include</code> is needed for a given piece of code,
+          particularly when implicit conversion operations are involved. In
+          extreme cases, replacing an <code>#include</code> with a forward
+          declaration can silently change the meaning of code.</li>
+          <li>Forward declaring multiple symbols from a header can be more
+          verbose than simply <code>#include</code>ing the header.</li>
+          <li>Forward declarations of functions and templates can prevent
+          the header owners from making otherwise-compatible changes to
+          their APIs; for example, widening a parameter type, or adding
+          a template parameter with a default value.</li>
+          <li>Forward declaring symbols from namespace <code>std::</code>
+          usually yields undefined behavior.</li>
+          <li>Structuring code to enable forward declarations (e.g.
+          using pointer members instead of object members) can make the
+          code slower and more complex.</li>
+          <li>The practical efficiency benefits of forward declarations are
+          unproven.</li>
+        </ul>
+      </CONS>
+      <DECISION>
+        <ul>
+          <li>When using a function declared in a header file, always
+          <code>#include</code> that header.</li>
+          <li>When using a class template, prefer to <code>#include</code> its
+          header file.</li>
+          <li>When using an ordinary class, relying on a forward declaration
+          is OK, but be wary of situations where a forward declaration may
+          be insufficient or incorrect; when in doubt, just
+          <code>#include</code> the appropriate header.</li>
+          <li>Do not replace data members with pointers just to avoid an
+          <code>#include</code>.</li>
+        </ul>
+        Always <code>#include</code> the file that actually provides the
+        declarations/definitions you need; do not rely on the symbol being
+        brought in transitively via headers not directly included. One
+        exception is that <code>myfile.cc</code> may rely on
+        <code>#include</code>s and forward declarations from its corresponding
+        header file <code>myfile.h</code>.
+      </DECISION>
     </BODY>
   </STYLEPOINT>
 
@@ -367,7 +358,7 @@ Tashana Landray
       </CODE_SNIPPET>
       <p>
         In <code><var>dir/foo</var>.cc</code> or <code><var>dir/foo_test</var>.cc</code>,
-	whose main purpose is to implement or test the stuff in
+        whose main purpose is to implement or test the stuff in
         <code><var>dir2/foo2</var>.h</code>, order your includes as
         follows:
       </p>
@@ -382,7 +373,7 @@ Tashana Landray
              <code>.h</code> files.</li>
       </ol>
       <p>
-        With the preferred ordering, if <code><var>dir/foo2</var>.h</code>
+        With the preferred ordering, if <code><var>dir2/foo2</var>.h</code>
         omits any necessary includes, the build of
         <code><var>dir/foo</var>.cc</code> or
         <code><var>dir/foo</var>_test.cc</code> will break.
@@ -399,8 +390,9 @@ Tashana Landray
       </p>
       
       <p>
-        Within each section it is nice to order the includes
-        alphabetically.
+        Within each section the includes should be ordered alphabetically.
+        Note that older code might not conform to this rule and should be
+        fixed when convenient.
       </p>
       <p>
         For example, the includes in
@@ -461,7 +453,7 @@ Tashana Landray
           (also hierarchical) name axis provided by classes.
         </p>
         <p>
-          Use of unnamed spaces in header files can easily cause
+          Use of unnamed namespaces in header files can easily cause
           violations of the C++ One Definition Rule (ODR).
         </p>
       </CONS>
@@ -840,9 +832,8 @@ Tashana Landray
 
   <STYLEPOINT title="Doing Work in Constructors">
     <SUMMARY>
-      In general, constructors should merely set member variables to their
-      initial values.  Any complex initialization should go in an explicit
-      <code>Init()</code> method.
+      Avoid doing complex initialization in constructors (in particular,
+      initialization that can fail or that requires virtual method calls).
     </SUMMARY>
     <BODY>
       <DEFINITION>
@@ -882,10 +873,9 @@ Tashana Landray
         </ul>
       </CONS>
       <DECISION>
-        If your object requires non-trivial initialization, consider
-        having an explicit <code>Init()</code> method.  In particular,
-        constructors should not call virtual functions, attempt to raise
-        errors, access potentially uninitialized global variables, etc.
+        Constructors should never call virtual functions or attempt to raise
+        non-fatal failures. If your object requires non-trivial
+        initialization, consider using  a factory function or <code>Init()</code> method.
       </DECISION>
     </BODY>
   </STYLEPOINT>
@@ -1551,7 +1541,7 @@ Tashana Landray
         Defining a parameter as reference avoids ugly code like
         <code>(*pval)++</code>.  Necessary for some applications like
         copy constructors.  Makes it clear, unlike with pointers, that
-        <code>NULL</code> is not a possible value.
+        a null pointer is not a possible value.
       </PROS>
       <CONS>
         References can be confusing, as they have value syntax but
@@ -1577,10 +1567,10 @@ Tashana Landray
          However, there are some instances where using <code>const T*</code>
          is preferable to <code>const T&amp;</code> for input parameters. For
          example:
-
-         You want to pass in NULL.
-
-         The function saves a pointer or reference to the input.
+         <ul>
+           <li>You want to pass in a null pointer.</li>
+           <li>The function saves a pointer or reference to the input.</li>
+         </ul>
          
 
          Remember that most of the time input parameters are going to be
@@ -1643,35 +1633,47 @@ Tashana Landray
 
   <STYLEPOINT title="Default Arguments">
     <SUMMARY>
-      We do not allow default function parameters, except in
-      a few uncommon situations explained below.
+      We do not allow default function parameters, except in limited
+      situations as explained below.  Simulate them with function
+      overloading instead, if appropriate.
     </SUMMARY>
     <BODY>
       <PROS>
-        Often you have a function that uses lots of default values,
-        but occasionally you want to override the defaults.  Default
+        Often you have a function that uses default values, but
+        occasionally you want to override the defaults.  Default
         parameters allow an easy way to do this without having to
-        define many functions for the rare exceptions.
+        define many functions for the rare exceptions.  Compared to
+        overloading the function, default arguments have a cleaner
+        syntax, with less boilerplate and a clearer distinction
+        between 'required' and 'optional' arguments.
       </PROS>
       <CONS>
-        People often figure out how to use an
-        API by looking at existing code that uses it.
-        Default parameters are more difficult to maintain because
-        copy-and-paste from previous code may not reveal all the
-        parameters.  Copy-and-pasting of code segments can cause major
-        problems when the default arguments are not appropriate for
-        the new code.
+        Function pointers are confusing in the presence of default
+        arguments, since the function signature often doesn't match
+        the call signature.  Adding a default argument to an existing
+        function changes its type, which can cause problems with code
+        taking its address.  Adding function overloads avoids these
+        problems.  In addition, default parameters may result in
+        bulkier code since they are replicated at every call-site --
+        as opposed to overloaded functions, where "the default"
+        appears only in the function definition.
       </CONS>
       <DECISION>
         <p>
-          Except as described below, we require all arguments to be
-          explicitly specified, to force programmers to consider the API
-          and the values they are passing for each argument rather than
-          silently accepting defaults they may not be aware of.
+          While the cons above are not that onerous, they still
+          outweigh the (small) benefits of default arguments over
+          function overloading.  So except as described below, we
+          require all arguments to be explicitly specified.
         </p>
         <p>
-          One specific exception is when default arguments are used to
-          simulate variable-length argument lists.
+          One specific exception is when the function is a static
+          function (or in an unnamed namespace) in a .cc file.  In
+          this case, the cons don't apply since the function's use is
+          so localized.
+        </p>
+        <p>
+          Another specific exception is when default arguments are
+          used to simulate variable-length argument lists.
         </p>
         <CODE_SNIPPET>
           // Support up to 4 params by using a default empty AlphaNum.
@@ -1851,57 +1853,107 @@ Tashana Landray
 
   <STYLEPOINT title="Run-Time Type Information (RTTI)">
     <SUMMARY>
-      We do not use Run Time Type Information (RTTI).
+      Avoid using Run Time Type Information (RTTI).
     </SUMMARY>
     <BODY>
       <DEFINITION>
         RTTI allows a programmer to query the C++ class of an
-        object at run time.
+        object at run time.  This is done by use of <code>typeid</code> or
+        <code>dynamic_cast</code>.
       </DEFINITION>
+      <CONS>
+        <p>
+         Querying the type of an object at run-time frequently means a
+         design problem.  Needing to know the type of an
+         object at runtime is often an indication that
+         the design of your class hierarchy is flawed.
+        </p>
+        <p>
+         Undisciplined use of RTTI makes code hard to maintain.  It can
+         lead to type-based decision trees or switch statements scattered
+         throughout the code, all of which must be examined when making
+         further changes.
+        </p>
+      </CONS>
       <PROS>
         <p>
-          It is useful in some unittests. For example, it is useful in
-          tests of factory classes where the test has to verify that a
-          newly created object has the expected dynamic type.
+          The standard alternatives to RTTI (described below) require
+          modification or redesign of the class hierarchy in question.
+          Sometimes such modifications are infeasible or undesirable,
+          particularly in widely-used or mature code.
         </p>
         <p>
-          In rare circumstances, it is useful even outside of
-          tests.
+          RTTI can be useful in some unit tests. For example, it is useful in
+          tests of factory classes where the test has to verify that a
+          newly created object has the expected dynamic type.  It is also
+          useful in managing the relationship between objects and their mocks.
         </p>
+        <p>
+          RTTI is useful when considering multiple abstract objects.  Consider
+          <CODE_SNIPPET>
+            bool Base::Equal(Base* other) = 0;
+            bool Derived::Equal(Base* other) {
+              Derived* that = dynamic_cast&lt;Derived*&gt;(other);
+              if (that == NULL)
+                return false;
+              ...
+            }
+          </CODE_SNIPPET>
+        </p>
+
       </PROS>
-      <CONS>
-        A query of type during run-time typically means a
-        design problem.  If you need to know the type of an
-        object at runtime, that is often an indication that
-        you should reconsider the design of your class.
-      </CONS>
       <DECISION>
         <p>
-          Do not use RTTI, except in unittests.  If you find yourself
-          in need of writing code that behaves differently based on
-          the class of an object, consider one of the alternatives to
-          querying the type.
+          RTTI has legitimate uses but is prone to abuse, so you must
+          be careful when using it.  You may use it freely
+          in unittests, but avoid it when possible in other code.
+          In particular, think twice before using RTTI in new code.
+          If you find yourself needing to write code that behaves differently
+          based on the class of an object, consider one of the following
+          alternatives to querying the type:
+        <ul>
+          <li>
+            Virtual methods are the preferred way of executing different
+            code paths depending on a specific subclass type.  This puts
+            the work within the object itself.
+          </li>
+          <li>
+            If the work belongs outside the object and instead in some
+            processing code, consider a double-dispatch solution, such
+            as the Visitor design pattern.  This allows a facility
+            outside the object itself to determine the type of class
+            using the built-in type system.
+          </li>
+        </ul>
         </p>
         <p>
-          Virtual methods are the preferred way of executing different
-          code paths depending on a specific subclass type.  This puts
-          the work within the object itself.
-        </p>
-        <p>
-          If the work belongs outside the object and instead in some
-          processing code, consider a double-dispatch solution, such
-          as the Visitor design pattern.  This allows a facility
-          outside the object itself to determine the type of class
-          using the built-in type system.
-        </p>
-        <p>
-          If you think you truly cannot use those ideas,
+          When the logic of a program guarantees that a given instance
+          of a base class is in fact an instance of a particular derived class,
+          then a <code>dynamic_cast</code> may be used freely on the object.
           
-          you may use RTTI.  But think twice
-          about it.  :-)  Then think twice again.
+          Usually one can use a
+          <code>static_cast</code> as an alternative in such situations.
+        </p>
+        <p>
+          Decision trees based on type are a strong indication that your
+          code is on the wrong track.
+          <BAD_CODE_SNIPPET>
+            if (typeid(*data) == typeid(D1)) {
+              ...
+            } else if (typeid(*data) == typeid(D2)) {
+              ...
+            } else if (typeid(*data) == typeid(D3)) {
+            ...
+          </BAD_CODE_SNIPPET>
+          Code such as this usually breaks when additional subclasses are
+          added to the class hierarchy.  Moreover, when properties of a subclass
+          change, it is difficult to find and modify all the affected code segments.
+        </p>
+        <p>
           Do not hand-implement an RTTI-like workaround. The arguments
           against RTTI apply just as much to workarounds like class
-          hierarchies with type tags.
+          hierarchies with type tags.  Moreover, workarounds disguise your
+          true intent.
         </p>
       </DECISION>
     </BODY>
@@ -1952,12 +2004,10 @@ Tashana Landray
                doing and you understand the aliasing issues.
                
                </li>
-          <li> Do not use <code>dynamic_cast</code> except in test code.
-               If you need to know type information at runtime in this way
-               outside of a unittest, you probably have a <A HREF="#Run-Time_Type_Information__RTTI_">design
-               flaw</A>.
-               </li>
         </ul>
+        <p> See the <a href="#Run-Time_Type_Information__RTTI_">RTTI section</a>
+            for guidance on the use of <code>dynamic_cast</code>.
+            </p>
       </DECISION>
     </BODY>
   </STYLEPOINT>
@@ -2108,8 +2158,7 @@ Tashana Landray
 
   <STYLEPOINT title="Use of const">
     <SUMMARY>
-      We strongly recommend that you use <code>const</code> whenever
-      it makes sense to do so.
+      Use <code>const</code> whenever it makes sense.
     </SUMMARY>
     <BODY>
       <DEFINITION>
@@ -2164,13 +2213,6 @@ Tashana Landray
                </li>
         </ul>
         <p>
-          However, do not go crazy with <code>const</code>.  Something like
-          <code>const int * const * const x;</code> is likely
-          overkill, even if it accurately describes how const x is.
-          Focus on what's really useful to know: in this case,
-          <code>const int** x</code> is probably sufficient.
-        </p>
-        <p>
           The <code>mutable</code> keyword is allowed but is unsafe
           when used with threads, so thread safety should be carefully
           considered first.
@@ -2183,9 +2225,11 @@ Tashana Landray
           readable because it's more consistent: it keeps the rule
           that <code>const</code> always follows the object it's
           describing.  However, this consistency argument doesn't
-          apply in this case, because the "don't go crazy" dictum
-          eliminates most of the uses you'd have to be consistent with.
-          
+          apply in codebases with few deeply-nested pointer
+          expressions since most <code>const</code> expressions have
+          only one <code>const</code>, and it applies to the
+          underlying value.  In such cases, there's no consistency to
+          maintain.
           Putting the <code>const</code> first is arguably more readable,
           since it follows English in putting the "adjective"
           (<code>const</code>) before the "noun" (<code>int</code>).
@@ -2494,10 +2538,11 @@ Tashana Landray
     </BODY>
   </STYLEPOINT>
 
-  <STYLEPOINT title="0 and NULL">
+  <STYLEPOINT title="0 and nullptr/NULL">
   <SUMMARY>
     Use <code>0</code> for integers, <code>0.0</code> for reals,
-    <code>NULL</code> for pointers, and <code>'\0'</code> for chars.
+    <code>nullptr</code> (or <code>NULL</code>) for pointers,
+    and <code>'\0'</code> for chars.
   </SUMMARY>
   <BODY>
     <p>
@@ -2505,13 +2550,17 @@ Tashana Landray
       This is not controversial.
     </p>
     <p>
+    
+    
       For pointers (address values), there is a choice between <code>0</code>
-      and <code>NULL</code>.  Bjarne Stroustrup prefers an unadorned
-      <code>0</code>.  We prefer <code>NULL</code> because it looks like a
-      pointer.  In fact, some C++ compilers, such as gcc 4.1.0, provide special
-      definitions of <code>NULL</code> which enable them to give useful
-      warnings, particularly in situations where <code>sizeof(NULL)</code>
-      is not equal to <code>sizeof(0)</code>.
+      and <code>NULL</code> (and, for C++11, <code>nullptr</code>).
+      For projects that allow C++11 features, use <code>nullptr</code>.
+      For C++03 projects, we prefer <code>NULL</code> because it looks like a
+      pointer.  In fact, some C++ compilers provide special definitions of
+      <code>NULL</code> which enable them to give useful warnings,
+      particularly in situations where <code>sizeof(NULL)</code> is not equal
+      to <code>sizeof(0)</code>.
+    
     </p>
     <p>
       Use <code>'\0'</code> for chars.
@@ -2542,6 +2591,102 @@ Tashana Landray
         memset(&amp;data, 0, sizeof(Struct));
       </BAD_CODE_SNIPPET>
     </p>
+  </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="auto">
+  <SUMMARY>
+    Use <code>auto</code> to avoid type names that are just clutter.
+    Continue to use manifest type declarations when it helps readability,
+    and never use <code>auto</code> for anything but local variables.
+    
+  </SUMMARY>
+  <BODY>
+    <DEFINITION>
+      In C++11, a variable whose type is given as <code>auto</code> will be given
+      a type that matches that of the expression used to initialize
+      it. You can use <code>auto</code> either to initialize a
+      variable by copying, or to bind a reference.
+        <CODE_SNIPPET>
+          vector&lt;string&gt; v;
+          ...
+          auto s1 = v[0];  // Makes a copy of v[0].
+          const auto&amp; s2 = v[0];  // s2 is a reference to v[0].
+        </CODE_SNIPPET>
+    </DEFINITION>
+    <PROS>
+      <p>
+        C++ type names can sometimes be long and cumbersome,
+        especially when they involve templates or namespaces. In a statement like
+        <CODE_SNIPPET>
+          sparse_hash_map&lt;string, int&gt;::iterator iter = m.find(val);
+        </CODE_SNIPPET>
+        the return type is hard to read, and obscures the primary
+        purpose of the statement. Changing it to
+        <CODE_SNIPPET>
+          auto iter = m.find(val);
+        </CODE_SNIPPET>
+        makes it more readable.
+      </p>
+      <p>
+        Without <code>auto</code> we are sometimes forced to write a
+        type name twice in the same expression, adding no value
+        for the reader, as in
+        <CODE_SNIPPET>
+          diagnostics::ErrorStatus* status = new diagnostics::ErrorStatus("xyz");
+        </CODE_SNIPPET>
+      </p>
+      <p>
+        Using <code>auto</code> makes it easier to use intermediate
+        variables when appropriate, by reducing the burden of writing
+        their types explicitly.
+      </p>
+    </PROS>
+    <CONS>
+      <p>Sometimes code is clearer when types are manifest, especially when
+        a variable's initialization depends on things that were declared
+        far away. In an expression like
+        <CODE_SNIPPET>
+          auto i = x.Lookup(key);
+        </CODE_SNIPPET>
+        it may not be obvious what <code>i</code>'s type is, if <code>x</code>
+        was declared hundreds of lines earlier.
+      </p>
+
+      <p>Programmers have to understand the difference between <code>auto</code>
+        and <code>const auto&amp;</code> or they'll get copies when
+        they didn't mean to.
+      </p>
+
+      <p>The interaction between <code>auto</code> and C++11
+        brace-initialization can be confusing. (C++11 brace-initialization
+        isn't an approved feature, but this may become relevant when and
+        if it is permitted.) The declarations
+        <CODE_SNIPPET>
+          auto x(3);  // Note: parentheses.
+          auto y{3};  // Note: curly braces.
+        </CODE_SNIPPET>
+        mean different things &#8212; <code>x</code> is
+        an <code>int</code>, while <code>y</code> is
+        an <code>initializer_list</code>. The same applies to other
+        normally-invisible proxy types.
+        
+      </p>
+
+      <p>If an <code>auto</code> variable is used as part of an
+        interface, e.g. as a constant in a header, then a programmer
+        might change its type while only intending to change its
+        value, leading to a more radical API change than intended.</p>
+    </CONS>
+    <DECISION>
+      <p><code>auto</code> is permitted, for local variables only.
+        Do not use <code>auto</code> for file-scope or namespace-scope
+        variables, or for class members.</p>
+      <p>The <code>auto</code> keyword is also used in an unrelated
+        C++11 feature: it's part of the syntax for a new kind of
+        function declaration with a trailing return type. Function
+        declarations with trailing return types are not permitted.</p>
+    </DECISION>
   </BODY>
   </STYLEPOINT>
 
@@ -2615,11 +2760,15 @@ Tashana Landray
   </BODY>
   </STYLEPOINT>
 
+  
+
   <STYLEPOINT title="C++11">
   <SUMMARY>
     Use only approved libraries and language extensions from C++11 (formerly
     known as C++0x).
-    Currently, none are approved.
+    
+    Consider portability to other environments before
+    using C++11 features in your project.
   </SUMMARY>
   <BODY>
     <DEFINITION>
@@ -2639,7 +2788,7 @@ Tashana Landray
       <p>
         The C++11 standard is substantially more complex than its predecessor
         (1,300 pages versus 800 pages), and is
-        unfamilar to many developers.  The long-term effects of some
+        unfamiliar to many developers.  The long-term effects of some
         features on code readability and maintenance are unknown.  We cannot
         predict when its various features will be implemented uniformly by
         tools that may be of interest (gcc, icc, clang, Eclipse, etc.).
@@ -2656,8 +2805,33 @@ Tashana Landray
     </CONS>
     <DECISION>
       Use only C++11 libraries and language features that have been approved
-      for use.  Currently, no such features are approved.
-      Features will be approved individually as appropriate.
+      for use.
+      Currently only the following C++11 features are approved:
+      <ul>
+        <li><code>auto</code> (for local variables only).</li>
+        <li>Use of <code>&gt;&gt;</code> with no intervening space to
+          close multiple levels of template arguments, as in
+          <code>set&lt;list&lt;string&gt;&gt;</code>,
+          where C++03 required a space as in
+          <code>set&lt;list&lt;string&gt; &gt;</code>.
+        </li>
+        <li>Range-based
+          <code>for</code> loops.</li>
+        <li>Use of the <code>LL</code> and <code>ULL</code> suffixes on
+          numeric literals to guarantee that their type is at least 64 bits
+          wide.</li>
+        <li>Variadic macros (but note
+          that use of macros is discouraged).</li>
+        <li>All of the new STL algorithms in the
+          <a href="http://en.cppreference.com/w/cpp/algorithm">&lt;algorithm&gt;</a>
+          and <a href="http://en.cppreference.com/w/cpp/numeric">&lt;numeric&gt;</a>
+          headers, except for the versions of
+          <code>min</code>, <code>max</code>, and <code>minmax</code>
+          whose signatures contain initializer lists.</li>
+        <li>Use of local types as template parameters.</li>
+        <li><code>nullptr</code> and <code>nullptr_t</code>.</li>
+      </ul>
+      Other features will be approved individually as appropriate.
       Avoid writing code that is incompatible with C++11 (even though it
       works in C++03).
       
@@ -3097,8 +3271,6 @@ Tashana Landray
     one may be you!
   </p>
 
-  
-
   <STYLEPOINT title="Comment Style">
     <SUMMARY>
       Use either the <code>//</code> or <code>/* */</code> syntax, as long
@@ -3115,40 +3287,26 @@ Tashana Landray
 
   <STYLEPOINT title="File Comments">
     <SUMMARY>
-      Start each file with a copyright notice, followed by a
-      description of the contents of the file.
+      Start each file with license boilerplate,
+      followed by a description of its contents.
     </SUMMARY>
     <BODY>
       <SUBSECTION title="Legal Notice and Author Line">
         
-        
         <p>
-          Every file should contain the following items, in order:
-          <ul>
-            <li>a copyright statement (for example,
-                <code>Copyright 2008 Google Inc.</code>)</li>
-            <li>a license boilerplate.  Choose the appropriate boilerplate
-                for the license used by the project (for example,
-                Apache 2.0, BSD, LGPL, GPL)</li>
-            <li>an author line to identify the original author of the
-                file</li>
-          </ul>
+          Every file should contain license boilerplate.
+          Choose the appropriate boilerplate for the license used by the project
+          (for example, Apache 2.0, BSD, LGPL, GPL).
         </p>
         <p>
-          If you make significant changes to a file that someone else
-          originally wrote, add yourself to the author line. This can
-          be very helpful when another
-          
-          contributor
-          has questions about the file and needs to know whom to contact
-          about it.
+          If you make significant changes to a file with an author line,
+          consider deleting the author line.
         </p>
       </SUBSECTION>
 
       <SUBSECTION title="File Contents">
         <p>
-          Every file should have a comment at the top, below the copyright
-          notice and author line, that describes the contents of the file.
+          Every file should have a comment at the top describing its contents.
         </p>
         <p>
           Generally a <code>.h</code> file will describe the classes
@@ -3234,7 +3392,7 @@ Tashana Landray
           <li> If the function allocates memory that the caller
                must free.
                </li>
-          <li> Whether any of the arguments can be <code>NULL</code>.
+          <li> Whether any of the arguments can be a null pointer.
                </li>
           <li> If there are any performance implications of how a
                function is used.
@@ -3318,7 +3476,7 @@ Tashana Landray
           Each class data member (also called an instance variable or
           member variable) should have a comment describing what it is
           used for.  If the variable can take sentinel values with
-          special meanings, such as <code>NULL</code> or -1, document this.
+          special meanings, such as a null pointer or -1, document this.
           For example:
         </p>
         <CODE_SNIPPET>
@@ -3396,9 +3554,9 @@ Tashana Landray
           }
         </CODE_SNIPPET>
       </SUBSECTION>
-      <SUBSECTION title="NULL, true/false, 1, 2, 3...">
+      <SUBSECTION title="nullptr/NULL, true/false, 1, 2, 3...">
         <p>
-          When you pass in <code>NULL</code>, boolean, or literal integer
+          When you pass in a null pointer, boolean, or literal integer
           values to functions, you should consider adding a comment about
           what they are, or make your code self-documenting by using
           constants. For example, compare:
@@ -3455,13 +3613,11 @@ Tashana Landray
     </SUMMARY>
     <BODY>
       <p>
-        Comments should usually be written as complete
-        sentences with proper capitalization and periods at the end.
-        Shorter comments, such as comments at the end of a line of
-        code, can sometimes be less formal, but you should be
-        consistent with your style.  Complete sentences are more
-        readable, and they provide some assurance that the comment is
-        complete and not an unfinished thought.
+        Comments should be as readable as narrative text, with proper
+        capitalization and punctuation. In many cases, complete sentences are
+        more readable than sentence fragments. Shorter comments, such as
+        comments at the end of a line of code, can sometimes be less formal, but
+        you should be consistent with your style.
       </p>
       <p>
         Although it can be frustrating to have a code reviewer point
@@ -3739,23 +3895,6 @@ Tashana Landray
         <li> Wrapped parameters have a 4 space indent.
              </li>
       </ul>
-      <p>
-        If your function is <code>const</code>, the <code>const</code>
-        keyword should be on the same line as the last parameter:
-      </p>
-      <CODE_SNIPPET>
-        // Everything in this function signature fits on a single line
-        ReturnType FunctionName(Type par) const {
-          ...
-        }
-
-        // This function signature requires multiple lines, but
-        // the const keyword is on the line with the last parameter.
-        ReturnType ReallyLongFunctionName(Type par1,
-                                          Type par2) const {
-          ...
-        }
-      </CODE_SNIPPET>
       <p>
         If some parameters are unused, comment out the variable name in the
         function definition:
@@ -4349,6 +4488,9 @@ Tashana Landray
         for ( ; i &lt; 5 ; ++i) {  // For loops always have a space after the
           ...                   // semicolon, and may have a space before the
                                 // semicolon.
+        for (auto x : counts) {  // Range-based for loops always have a
+          ...                    // space before and after the colon.
+        }
         switch (i) {
           case 1:         // No space before colon in a switch case.
             ...
@@ -4375,7 +4517,8 @@ Tashana Landray
                                     // &lt;, or between &gt;( in a cast.
         vector&lt;char *&gt; x;           // Spaces between type and pointer are
                                     // okay, but be consistent.
-        set&lt;list&lt;string&gt; &gt; x;       // C++ requires a space in &gt; &gt;.
+        set&lt;list&lt;string&gt;&gt; x;        // Permitted in C++11 code.
+        set&lt;list&lt;string&gt; &gt; x;       // C++03 required a space in &gt; &gt;.
         set&lt; list&lt;string&gt; &gt; x;      // You may optionally use
                                     // symmetric spacing in &lt; &lt;.
         </CODE_SNIPPET>
@@ -4565,7 +4708,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.199
+Revision 3.231
 </p>
 
 
