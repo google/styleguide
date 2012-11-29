@@ -5,7 +5,7 @@
 
 <p align="right">
 
-Revision 1.16
+Revision 1.17
 </p>
 
 
@@ -1147,6 +1147,9 @@ Robert Brown
         You must sign and date
         any of the above "requiring further attention" comments
         (but not mere cautionary explanations).
+        You must use the
+        <a HREF="http://www.w3.org/TR/NOTE-datetime">YYYY-MM-DD</a>
+        format for dates to make automated processing of such dates easier.
       </p>
       <p>
         This strategy ensures that grepping for <code>;---</code>
@@ -3637,13 +3640,13 @@ Robert Brown
 <CATEGORY title="Pitfalls">
   <STYLEPOINT title="#'FUN vs. 'FUN">
     <SUMMARY>
-      You should usually refer to a function as <code>#'FOO</code> rather than <code>'FOO</code>.
+      You should usually refer to a function as <code>#'FUN</code> rather than <code>'FUN</code>.
     </SUMMARY>
     <BODY>
       <p>
-        The former, which reads as <code>(FUNCTION FOO)</code>,
-        refers to the function object, and is properly scoped.
-        The latter, which reads as <code>(QUOTE FOO)</code>,
+        The former, which reads as <code>(FUNCTION FUN)</code>,
+        refers to the function object, and is lexically scoped.
+        The latter, which reads as <code>(QUOTE FUN)</code>,
         refers to the symbol, which when called
         uses the global <code>FDEFINITION</code> of the symbol.
       </p>
@@ -3651,7 +3654,7 @@ Robert Brown
         When using functions that take a functional argument
         (e.g., <code>MAPCAR</code>, <code>APPLY</code>,
         <code>:TEST</code> and <code>:KEY</code> arguments),
-        you should use the <code>#'</code> to quote the function,
+        you should use the <code>#'</code> to refer to the function,
         not just single quote.
       </p>
       <p>
@@ -3887,7 +3890,7 @@ Robert Brown
 </small>
 
 <p align="right">
-Revision 1.16
+Revision 1.17
 </p>
 
 
