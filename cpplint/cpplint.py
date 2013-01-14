@@ -53,12 +53,8 @@
 #  - Check for 0 in char context (should be '\0')
 #  - Check for camel-case method name conventions for methods
 #    that are not simple inline getters and setters
-#  - Check that base classes have virtual destructors
-#    put "  // namespace" after } that closes a namespace, with
-#    namespace's name after 'namespace' if it is named.
 #  - Do not indent namespace contents
 #  - Avoid inlining non-trivial constructors in header files
-#    include base/basictypes.h if DISALLOW_EVIL_CONSTRUCTORS is used
 #  - Check for old-school (void) cast for call-sites of functions
 #    ignored return value
 #  - Check gUnit usage of anonymous namespace
@@ -80,6 +76,7 @@ same line, but it is far from perfect (in either direction).
 """
 
 import codecs
+import copy
 import getopt
 import math  # for log
 import os
@@ -161,6 +158,7 @@ _ERROR_CATEGORIES = [
   'build/printf_format',
   'build/storage_class',
   'legal/copyright',
+  'readability/alt_tokens',
   'readability/braces',
   'readability/casting',
   'readability/check',
@@ -169,6 +167,7 @@ _ERROR_CATEGORIES = [
   'readability/function',
   'readability/multiline_comment',
   'readability/multiline_string',
+  'readability/namespace',
   'readability/nolint',
   'readability/streams',
   'readability/todo',
@@ -189,13 +188,14 @@ _ERROR_CATEGORIES = [
   'runtime/sizeof',
   'runtime/string',
   'runtime/threadsafe_fn',
-  'runtime/virtual',
   'whitespace/blank_line',
   'whitespace/braces',
   'whitespace/comma',
   'whitespace/comments',
+  'whitespace/empty_loop_body',
   'whitespace/end_of_line',
   'whitespace/ending_newline',
+  'whitespace/forcolon',
   'whitespace/indent',
   'whitespace/labels',
   'whitespace/line_length',
@@ -278,6 +278,34 @@ for op, inv_replacement in [('==', 'NE'), ('!=', 'EQ'),
   _CHECK_REPLACEMENT['EXPECT_FALSE_M'][op] = 'EXPECT_%s_M' % inv_replacement
   _CHECK_REPLACEMENT['ASSERT_FALSE_M'][op] = 'ASSERT_%s_M' % inv_replacement
 
+# Alternative tokens and their replacements.  For full list, see section 2.5
+# Alternative tokens [lex.digraph] in the C++ standard.
+#
+# Digraphs (such as '%:') are not included here since it's a mess to
+# match those on a word boundary.
+_ALT_TOKEN_REPLACEMENT = {
+    'and': '&&',
+    'bitor': '|',
+    'or': '||',
+    'xor': '^',
+    'compl': '~',
+    'bitand': '&',
+    'and_eq': '&=',
+    'or_eq': '|=',
+    'xor_eq': '^=',
+    'not': '!',
+    'not_eq': '!='
+    }
+
+# Compile regular expression that matches all the above keywords.  The "[ =()]"
+# bit is meant to avoid matching these keywords outside of boolean expressions.
+#
+# False positives include C-style multi-line comments (http://go/nsiut )
+# and multi-line strings (http://go/beujw ), but those have always been
+# troublesome for cpplint.
+_ALT_TOKEN_REPLACEMENT_PATTERN = re.compile(
+    r'[ =()](' + ('|'.join(_ALT_TOKEN_REPLACEMENT.keys())) + r')(?=[ (]|$)')
+
 
 # These constants define types of headers for use with
 # _IncludeState.CheckNextIncludeOrder().
@@ -286,6 +314,17 @@ _CPP_SYS_HEADER = 2
 _LIKELY_MY_HEADER = 3
 _POSSIBLE_MY_HEADER = 4
 _OTHER_HEADER = 5
+
+# These constants define the current inline assembly state
+_NO_ASM = 0       # Outside of inline assembly block
+_INSIDE_ASM = 1   # Inside inline assembly block
+_END_ASM = 2      # Last line of inline assembly block
+_BLOCK_ASM = 3    # The whole block is an inline assembly block
+
+# Match start of assembly blocks
+_MATCH_ASM = re.compile(r'^\s*(?:asm|_asm|__asm|__asm__)'
+                        r'(?:\s+(volatile|__volatile__))?'
+                        r'\s*[{(]')
 
 
 _regexp_compile_cache = {}
@@ -925,7 +964,7 @@ class CleansedLines(object):
 
   1) elided member contains lines without strings and comments,
   2) lines member contains lines without comments, and
-  3) raw member contains all the lines without processing.
+  3) raw_lines member contains all the lines without processing.
   All these three members are of <type 'list'>, and of the same length.
   """
 
@@ -965,6 +1004,29 @@ class CleansedLines(object):
     return elided
 
 
+def FindEndOfExpressionInLine(line, startpos, depth, startchar, endchar):
+  """Find the position just after the matching endchar.
+
+  Args:
+    line: a CleansedLines line.
+    startpos: start searching at this position.
+    depth: nesting level at startpos.
+    startchar: expression opening character.
+    endchar: expression closing character.
+
+  Returns:
+    Index just after endchar.
+  """
+  for i in xrange(startpos, len(line)):
+    if line[i] == startchar:
+      depth += 1
+    elif line[i] == endchar:
+      depth -= 1
+      if depth == 0:
+        return i + 1
+  return -1
+
+
 def CloseExpression(clean_lines, linenum, pos):
   """If input points to ( or { or [, finds the position that closes it.
 
@@ -991,18 +1053,23 @@ def CloseExpression(clean_lines, linenum, pos):
   if startchar == '[': endchar = ']'
   if startchar == '{': endchar = '}'
 
-  num_open = line.count(startchar) - line.count(endchar)
-  while linenum < clean_lines.NumLines() and num_open > 0:
+  # Check first line
+  end_pos = FindEndOfExpressionInLine(line, pos, 0, startchar, endchar)
+  if end_pos > -1:
+    return (line, linenum, end_pos)
+  tail = line[pos:]
+  num_open = tail.count(startchar) - tail.count(endchar)
+  while linenum < clean_lines.NumLines() - 1:
     linenum += 1
     line = clean_lines.elided[linenum]
-    num_open += line.count(startchar) - line.count(endchar)
-  # OK, now find the endchar that actually got us back to even
-  endpos = len(line)
-  while num_open >= 0:
-    endpos = line.rfind(')', 0, endpos)
-    num_open -= 1                 # chopped off another )
-  return (line, linenum, endpos + 1)
+    delta = line.count(startchar) - line.count(endchar)
+    if num_open + delta <= 0:
+      return (line, linenum,
+              FindEndOfExpressionInLine(line, 0, num_open, startchar, endchar))
+    num_open += delta
 
+  # Did not find endchar before end of file, give up
+  return (line, clean_lines.NumLines(), -1)
 
 def CheckForCopyright(filename, lines, error):
   """Logs an error if no Copyright message appears at the top of the file."""
@@ -1032,6 +1099,7 @@ def GetHeaderGuardCPPVariable(filename):
   # Restores original filename in case that cpplint is invoked from Emacs's
   # flymake.
   filename = re.sub(r'_flymake\.h$', '.h', filename)
+  filename = re.sub(r'/\.flymake/([^/]*)$', r'/\1', filename)
 
   fileinfo = FileInfo(filename)
   return re.sub(r'[-./\s]', '_', fileinfo.RepositoryName()).upper() + '_'
@@ -1259,17 +1327,55 @@ def CheckInvalidIncrement(filename, clean_lines, linenum, error):
           'Changing pointer instead of value (or unused value of operator*).')
 
 
-class _ClassInfo(object):
+class _BlockInfo(object):
+  """Stores information about a generic block of code."""
+
+  def __init__(self, seen_open_brace):
+    self.seen_open_brace = seen_open_brace
+    self.open_parentheses = 0
+    self.inline_asm = _NO_ASM
+
+  def CheckBegin(self, filename, clean_lines, linenum, error):
+    """Run checks that applies to text up to the opening brace.
+
+    This is mostly for checking the text after the class identifier
+    and the "{", usually where the base class is specified.  For other
+    blocks, there isn't much to check, so we always pass.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      linenum: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+    pass
+
+  def CheckEnd(self, filename, clean_lines, linenum, error):
+    """Run checks that applies to text after the closing brace.
+
+    This is mostly used for checking end of namespace comments.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      linenum: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+    pass
+
+
+class _ClassInfo(_BlockInfo):
   """Stores information about a class."""
 
-  def __init__(self, name, clean_lines, linenum):
+  def __init__(self, name, class_or_struct, clean_lines, linenum):
+    _BlockInfo.__init__(self, False)
     self.name = name
-    self.linenum = linenum
-    self.seen_open_brace = False
+    self.starting_linenum = linenum
     self.is_derived = False
-    self.virtual_method_linenumber = None
-    self.has_virtual_destructor = False
-    self.brace_depth = 0
+    if class_or_struct == 'struct':
+      self.access = 'public'
+    else:
+      self.access = 'private'
 
     # Try to find the end of the class.  This will be confused by things like:
     #   class A {
@@ -1279,26 +1385,324 @@ class _ClassInfo(object):
     self.last_line = 0
     depth = 0
     for i in range(linenum, clean_lines.NumLines()):
-      line = clean_lines.lines[i]
+      line = clean_lines.elided[i]
       depth += line.count('{') - line.count('}')
       if not depth:
         self.last_line = i
         break
 
+  def CheckBegin(self, filename, clean_lines, linenum, error):
+    # Look for a bare ':'
+    if Search('(^|[^:]):($|[^:])', clean_lines.elided[linenum]):
+      self.is_derived = True
 
-class _ClassState(object):
-  """Holds the current state of the parse relating to class declarations.
 
-  It maintains a stack of _ClassInfos representing the parser's guess
-  as to the current nesting of class declarations. The innermost class
-  is at the top (back) of the stack. Typically, the stack will either
-  be empty or have exactly one entry.
-  """
+class _NamespaceInfo(_BlockInfo):
+  """Stores information about a namespace."""
+
+  def __init__(self, name, linenum):
+    _BlockInfo.__init__(self, False)
+    self.name = name or ''
+    self.starting_linenum = linenum
+
+  def CheckEnd(self, filename, clean_lines, linenum, error):
+    """Check end of namespace comments."""
+    line = clean_lines.raw_lines[linenum]
+
+    # Check how many lines is enclosed in this namespace.  Don't issue
+    # warning for missing namespace comments if there aren't enough
+    # lines.  However, do apply checks if there is already an end of
+    # namespace comment and it's incorrect.
+    #
+    # TODO(unknown): We always want to check end of namespace comments
+    # if a namespace is large, but sometimes we also want to apply the
+    # check if a short namespace contained nontrivial things (something
+    # other than forward declarations).  There is currently no logic on
+    # deciding what these nontrivial things are, so this check is
+    # triggered by namespace size only, which works most of the time.
+    if (linenum - self.starting_linenum < 10
+        and not Match(r'};*\s*(//|/\*).*\bnamespace\b', line)):
+      return
+
+    # Look for matching comment at end of namespace.
+    #
+    # Note that we accept C style "/* */" comments for terminating
+    # namespaces, so that code that terminate namespaces inside
+    # preprocessor macros can be cpplint clean.  Example: http://go/nxpiz
+    #
+    # We also accept stuff like "// end of namespace <name>." with the
+    # period at the end.
+    #
+    # Besides these, we don't accept anything else, otherwise we might
+    # get false negatives when existing comment is a substring of the
+    # expected namespace.  Example: http://go/ldkdc, http://cl/23548205
+    if self.name:
+      # Named namespace
+      if not Match((r'};*\s*(//|/\*).*\bnamespace\s+' + re.escape(self.name) +
+                    r'[\*/\.\\\s]*$'),
+                   line):
+        error(filename, linenum, 'readability/namespace', 5,
+              'Namespace should be terminated with "// namespace %s"' %
+              self.name)
+    else:
+      # Anonymous namespace
+      if not Match(r'};*\s*(//|/\*).*\bnamespace[\*/\.\\\s]*$', line):
+        error(filename, linenum, 'readability/namespace', 5,
+              'Namespace should be terminated with "// namespace"')
+
+
+class _PreprocessorInfo(object):
+  """Stores checkpoints of nesting stacks when #if/#else is seen."""
+
+  def __init__(self, stack_before_if):
+    # The entire nesting stack before #if
+    self.stack_before_if = stack_before_if
+
+    # The entire nesting stack up to #else
+    self.stack_before_else = []
+
+    # Whether we have already seen #else or #elif
+    self.seen_else = False
+
+
+class _NestingState(object):
+  """Holds states related to parsing braces."""
 
   def __init__(self):
-    self.classinfo_stack = []
+    # Stack for tracking all braces.  An object is pushed whenever we
+    # see a "{", and popped when we see a "}".  Only 3 types of
+    # objects are possible:
+    # - _ClassInfo: a class or struct.
+    # - _NamespaceInfo: a namespace.
+    # - _BlockInfo: some other type of block.
+    self.stack = []
 
-  def CheckFinished(self, filename, error):
+    # Stack of _PreprocessorInfo objects.
+    self.pp_stack = []
+
+  def SeenOpenBrace(self):
+    """Check if we have seen the opening brace for the innermost block.
+
+    Returns:
+      True if we have seen the opening brace, False if the innermost
+      block is still expecting an opening brace.
+    """
+    return (not self.stack) or self.stack[-1].seen_open_brace
+
+  def InNamespaceBody(self):
+    """Check if we are currently one level inside a namespace body.
+
+    Returns:
+      True if top of the stack is a namespace block, False otherwise.
+    """
+    return self.stack and isinstance(self.stack[-1], _NamespaceInfo)
+
+  def UpdatePreprocessor(self, line):
+    """Update preprocessor stack.
+
+    We need to handle preprocessors due to classes like this:
+      #ifdef SWIG
+      struct ResultDetailsPageElementExtensionPoint {
+      #else
+      struct ResultDetailsPageElementExtensionPoint : public Extension {
+      #endif
+    (see http://go/qwddn for original example)
+
+    We make the following assumptions (good enough for most files):
+    - Preprocessor condition evaluates to true from #if up to first
+      #else/#elif/#endif.
+
+    - Preprocessor condition evaluates to false from #else/#elif up
+      to #endif.  We still perform lint checks on these lines, but
+      these do not affect nesting stack.
+
+    Args:
+      line: current line to check.
+    """
+    if Match(r'^\s*#\s*(if|ifdef|ifndef)\b', line):
+      # Beginning of #if block, save the nesting stack here.  The saved
+      # stack will allow us to restore the parsing state in the #else case.
+      self.pp_stack.append(_PreprocessorInfo(copy.deepcopy(self.stack)))
+    elif Match(r'^\s*#\s*(else|elif)\b', line):
+      # Beginning of #else block
+      if self.pp_stack:
+        if not self.pp_stack[-1].seen_else:
+          # This is the first #else or #elif block.  Remember the
+          # whole nesting stack up to this point.  This is what we
+          # keep after the #endif.
+          self.pp_stack[-1].seen_else = True
+          self.pp_stack[-1].stack_before_else = copy.deepcopy(self.stack)
+
+        # Restore the stack to how it was before the #if
+        self.stack = copy.deepcopy(self.pp_stack[-1].stack_before_if)
+      else:
+        # TODO(unknown): unexpected #else, issue warning?
+        pass
+    elif Match(r'^\s*#\s*endif\b', line):
+      # End of #if or #else blocks.
+      if self.pp_stack:
+        # If we saw an #else, we will need to restore the nesting
+        # stack to its former state before the #else, otherwise we
+        # will just continue from where we left off.
+        if self.pp_stack[-1].seen_else:
+          # Here we can just use a shallow copy since we are the last
+          # reference to it.
+          self.stack = self.pp_stack[-1].stack_before_else
+        # Drop the corresponding #if
+        self.pp_stack.pop()
+      else:
+        # TODO(unknown): unexpected #endif, issue warning?
+        pass
+
+  def Update(self, filename, clean_lines, linenum, error):
+    """Update nesting state with current line.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      linenum: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+    line = clean_lines.elided[linenum]
+
+    # Update pp_stack first
+    self.UpdatePreprocessor(line)
+
+    # Count parentheses.  This is to avoid adding struct arguments to
+    # the nesting stack.
+    if self.stack:
+      inner_block = self.stack[-1]
+      depth_change = line.count('(') - line.count(')')
+      inner_block.open_parentheses += depth_change
+
+      # Also check if we are starting or ending an inline assembly block.
+      if inner_block.inline_asm in (_NO_ASM, _END_ASM):
+        if (depth_change != 0 and
+            inner_block.open_parentheses == 1 and
+            _MATCH_ASM.match(line)):
+          # Enter assembly block
+          inner_block.inline_asm = _INSIDE_ASM
+        else:
+          # Not entering assembly block.  If previous line was _END_ASM,
+          # we will now shift to _NO_ASM state.
+          inner_block.inline_asm = _NO_ASM
+      elif (inner_block.inline_asm == _INSIDE_ASM and
+            inner_block.open_parentheses == 0):
+        # Exit assembly block
+        inner_block.inline_asm = _END_ASM
+
+    # Consume namespace declaration at the beginning of the line.  Do
+    # this in a loop so that we catch same line declarations like this:
+    #   namespace proto2 { namespace bridge { class MessageSet; } }
+    while True:
+      # Match start of namespace.  The "\b\s*" below catches namespace
+      # declarations even if it weren't followed by a whitespace, this
+      # is so that we don't confuse our namespace checker.  The
+      # missing spaces will be flagged by CheckSpacing.
+      namespace_decl_match = Match(r'^\s*namespace\b\s*([:\w]+)?(.*)$', line)
+      if not namespace_decl_match:
+        break
+
+      new_namespace = _NamespaceInfo(namespace_decl_match.group(1), linenum)
+      self.stack.append(new_namespace)
+
+      line = namespace_decl_match.group(2)
+      if line.find('{') != -1:
+        new_namespace.seen_open_brace = True
+        line = line[line.find('{') + 1:]
+
+    # Look for a class declaration in whatever is left of the line
+    # after parsing namespaces.  The regexp accounts for decorated classes
+    # such as in:
+    #   class LOCKABLE API Object {
+    #   };
+    #
+    # Templates with class arguments may confuse the parser, for example:
+    #   template <class T
+    #             class Comparator = less<T>,
+    #             class Vector = vector<T> >
+    #   class HeapQueue {
+    #
+    # Because this parser has no nesting state about templates, by the
+    # time it saw "class Comparator", it may think that it's a new class.
+    # Nested templates have a similar problem:
+    #   template <
+    #       typename ExportedType,
+    #       typename TupleType,
+    #       template <typename, typename> class ImplTemplate>
+    #
+    # To avoid these cases, we ignore classes that are followed by '=' or '>'
+    class_decl_match = Match(
+        r'\s*(template\s*<[\w\s<>,:]*>\s*)?'
+        '(class|struct)\s+([A-Z_]+\s+)*(\w+(?:::\w+)*)'
+        '(([^=>]|<[^<>]*>)*)$', line)
+    if (class_decl_match and
+        (not self.stack or self.stack[-1].open_parentheses == 0)):
+      self.stack.append(_ClassInfo(
+          class_decl_match.group(4), class_decl_match.group(2),
+          clean_lines, linenum))
+      line = class_decl_match.group(5)
+
+    # If we have not yet seen the opening brace for the innermost block,
+    # run checks here.
+    if not self.SeenOpenBrace():
+      self.stack[-1].CheckBegin(filename, clean_lines, linenum, error)
+
+    # Update access control if we are inside a class/struct
+    if self.stack and isinstance(self.stack[-1], _ClassInfo):
+      access_match = Match(r'\s*(public|private|protected)\s*:', line)
+      if access_match:
+        self.stack[-1].access = access_match.group(1)
+
+    # Consume braces or semicolons from what's left of the line
+    while True:
+      # Match first brace, semicolon, or closed parenthesis.
+      matched = Match(r'^[^{;)}]*([{;)}])(.*)$', line)
+      if not matched:
+        break
+
+      token = matched.group(1)
+      if token == '{':
+        # If namespace or class hasn't seen a opening brace yet, mark
+        # namespace/class head as complete.  Push a new block onto the
+        # stack otherwise.
+        if not self.SeenOpenBrace():
+          self.stack[-1].seen_open_brace = True
+        else:
+          self.stack.append(_BlockInfo(True))
+          if _MATCH_ASM.match(line):
+            self.stack[-1].inline_asm = _BLOCK_ASM
+      elif token == ';' or token == ')':
+        # If we haven't seen an opening brace yet, but we already saw
+        # a semicolon, this is probably a forward declaration.  Pop
+        # the stack for these.
+        #
+        # Similarly, if we haven't seen an opening brace yet, but we
+        # already saw a closing parenthesis, then these are probably
+        # function arguments with extra "class" or "struct" keywords.
+        # Also pop these stack for these.
+        if not self.SeenOpenBrace():
+          self.stack.pop()
+      else:  # token == '}'
+        # Perform end of block checks and pop the stack.
+        if self.stack:
+          self.stack[-1].CheckEnd(filename, clean_lines, linenum, error)
+          self.stack.pop()
+      line = matched.group(2)
+
+  def InnermostClass(self):
+    """Get class info on the top of the stack.
+
+    Returns:
+      A _ClassInfo object if we are inside a class, or None otherwise.
+    """
+    for i in range(len(self.stack), 0, -1):
+      classinfo = self.stack[i - 1]
+      if isinstance(classinfo, _ClassInfo):
+        return classinfo
+    return None
+
+  def CheckClassFinished(self, filename, error):
     """Checks that all classes have been completely parsed.
 
     Call this when all lines in a file have been processed.
@@ -1306,17 +1710,18 @@ class _ClassState(object):
       filename: The name of the current file.
       error: The function to call with any errors found.
     """
-    if self.classinfo_stack:
-      # Note: This test can result in false positives if #ifdef constructs
-      # get in the way of brace matching. See the testBuildClass test in
-      # cpplint_unittest.py for an example of this.
-      error(filename, self.classinfo_stack[0].linenum, 'build/class', 5,
-            'Failed to find complete declaration of class %s' %
-            self.classinfo_stack[0].name)
+    # Note: This test can result in false positives if #ifdef constructs
+    # get in the way of brace matching. See the testBuildClass test in
+    # cpplint_unittest.py for an example of this.
+    for obj in self.stack:
+      if isinstance(obj, _ClassInfo):
+        error(filename, obj.starting_linenum, 'build/class', 5,
+              'Failed to find complete declaration of class %s' %
+              obj.name)
 
 
 def CheckForNonStandardConstructs(filename, clean_lines, linenum,
-                                  class_state, error):
+                                  nesting_state, error):
   """Logs an error if we see certain non-ANSI constructs ignored by gcc-2.
 
   Complain about several constructs which gcc-2 accepts, but which are
@@ -1329,8 +1734,6 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
   - text after #endif is not allowed.
   - invalid inner-style forward declaration.
   - >? and <? operators, and their >?= and <?= cousins.
-  - classes with virtual methods need virtual destructors (compiler warning
-    available, but not turned on yet.)
 
   Additionally, check for constructor/destructor style violations and reference
   members, as it is very convenient to do so while checking for
@@ -1340,8 +1743,8 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
     filename: The name of the current file.
     clean_lines: A CleansedLines instance containing the file.
     linenum: The number of the line to check.
-    class_state: A _ClassState instance which maintains information about
-                 the current stack of nested class declarations being parsed.
+    nesting_state: A _NestingState instance which maintains information about
+                   the current stack of nested blocks being parsed.
     error: A callable to which errors are reported, which takes 4 arguments:
            filename, line number, error level, and message
   """
@@ -1370,7 +1773,7 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
   if Search(r'\b(const|volatile|void|char|short|int|long'
             r'|float|double|signed|unsigned'
             r'|schar|u?int8|u?int16|u?int32|u?int64)'
-            r'\s+(auto|register|static|extern|typedef)\b',
+            r'\s+(register|static|extern|typedef)\b',
             line):
     error(filename, linenum, 'build/storage_class', 5,
           'Storage class (static, extern, typedef, etc) should be first.')
@@ -1400,44 +1803,12 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
           'const string& members are dangerous. It is much better to use '
           'alternatives, such as pointers or simple constants.')
 
-  # Track class entry and exit, and attempt to find cases within the
-  # class declaration that don't meet the C++ style
-  # guidelines. Tracking is very dependent on the code matching Google
-  # style guidelines, but it seems to perform well enough in testing
-  # to be a worthwhile addition to the checks.
-  classinfo_stack = class_state.classinfo_stack
-  # Look for a class declaration. The regexp accounts for decorated classes
-  # such as in:
-  # class LOCKABLE API Object {
-  # };
-  class_decl_match = Match(
-      r'\s*(template\s*<[\w\s<>,:]*>\s*)?'
-      '(class|struct)\s+([A-Z_]+\s+)*(\w+(::\w+)*)', line)
-  if class_decl_match:
-    classinfo_stack.append(_ClassInfo(
-        class_decl_match.group(4), clean_lines, linenum))
-
-  # Everything else in this function uses the top of the stack if it's
-  # not empty.
-  if not classinfo_stack:
+  # Everything else in this function operates on class declarations.
+  # Return early if the top of the nesting stack is not a class, or if
+  # the class head is not completed yet.
+  classinfo = nesting_state.InnermostClass()
+  if not classinfo or not classinfo.seen_open_brace:
     return
-
-  classinfo = classinfo_stack[-1]
-
-  # If the opening brace hasn't been seen look for it and also
-  # parent class declarations.
-  if not classinfo.seen_open_brace:
-    # If the line has a ';' in it, assume it's a forward declaration or
-    # a single-line class declaration, which we won't process.
-    if line.find(';') != -1:
-      classinfo_stack.pop()
-      return
-    classinfo.seen_open_brace = (line.find('{') != -1)
-    # Look for a bare ':'
-    if Search('(^|[^:]):($|[^:])', line):
-      classinfo.is_derived = True
-    if not classinfo.seen_open_brace:
-      return  # Everything else in this function is for after open brace
 
   # The class may have been declared with namespace or classname qualifiers.
   # The constructor and destructor will not have those qualifiers.
@@ -1454,35 +1825,6 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
                 args.group(1).strip())):
     error(filename, linenum, 'runtime/explicit', 5,
           'Single-argument constructors should be marked explicit.')
-
-  # Look for methods declared virtual.
-  if Search(r'\bvirtual\b', line):
-    classinfo.virtual_method_linenumber = linenum
-    # Only look for a destructor declaration on the same line. It would
-    # be extremely unlikely for the destructor declaration to occupy
-    # more than one line.
-    if Search(r'~%s\s*\(' % base_classname, line):
-      classinfo.has_virtual_destructor = True
-
-  # Look for class end.
-  brace_depth = classinfo.brace_depth
-  brace_depth = brace_depth + line.count('{') - line.count('}')
-  if brace_depth <= 0:
-    classinfo = classinfo_stack.pop()
-    # Try to detect missing virtual destructor declarations.
-    # For now, only warn if a non-derived class with virtual methods lacks
-    # a virtual destructor. This is to make it less likely that people will
-    # declare derived virtual destructors without declaring the base
-    # destructor virtual.
-    if ((classinfo.virtual_method_linenumber is not None) and
-        (not classinfo.has_virtual_destructor) and
-        (not classinfo.is_derived)):  # Only warn for base classes
-      error(filename, classinfo.linenum, 'runtime/virtual', 4,
-            'The class %s probably needs a virtual destructor due to '
-            'having virtual method(s), one declared at line %d.'
-            % (classinfo.name, classinfo.virtual_method_linenumber))
-  else:
-    classinfo.brace_depth = brace_depth
 
 
 def CheckSpacingForFunctionCall(filename, line, linenum, error):
@@ -1535,7 +1877,8 @@ def CheckSpacingForFunctionCall(filename, line, linenum, error):
       error(filename, linenum, 'whitespace/parens', 2,
             'Extra space after (')
     if (Search(r'\w\s+\(', fncall) and
-        not Search(r'#\s*define|typedef', fncall)):
+        not Search(r'#\s*define|typedef', fncall) and
+        not Search(r'\w\s+\((\w+::)?\*\w+\)\(', fncall)):
       error(filename, linenum, 'whitespace/parens', 4,
             'Extra space before ( in function call')
     # If the ) is followed only by a newline or a { + newline, assume it's
@@ -1668,8 +2011,165 @@ def CheckComment(comment, filename, linenum, error):
       error(filename, linenum, 'whitespace/todo', 2,
             'TODO(my_username) should be followed by a space')
 
+def CheckAccess(filename, clean_lines, linenum, nesting_state, error):
+  """Checks for improper use of DISALLOW* macros.
 
-def CheckSpacing(filename, clean_lines, linenum, error):
+  Args:
+    filename: The name of the current file.
+    clean_lines: A CleansedLines instance containing the file.
+    linenum: The number of the line to check.
+    nesting_state: A _NestingState instance which maintains information about
+                   the current stack of nested blocks being parsed.
+    error: The function to call with any errors found.
+  """
+  line = clean_lines.elided[linenum]  # get rid of comments and strings
+
+  matched = Match((r'\s*(DISALLOW_COPY_AND_ASSIGN|'
+                   r'DISALLOW_EVIL_CONSTRUCTORS|'
+                   r'DISALLOW_IMPLICIT_CONSTRUCTORS)'), line)
+  if not matched:
+    return
+  if nesting_state.stack and isinstance(nesting_state.stack[-1], _ClassInfo):
+    if nesting_state.stack[-1].access != 'private':
+      error(filename, linenum, 'readability/constructors', 3,
+            '%s must be in the private: section' % matched.group(1))
+
+  else:
+    # Found DISALLOW* macro outside a class declaration, or perhaps it
+    # was used inside a function when it should have been part of the
+    # class declaration.  We could issue a warning here, but it
+    # probably resulted in a compiler error already.
+    pass
+
+
+def FindNextMatchingAngleBracket(clean_lines, linenum, init_suffix):
+  """Find the corresponding > to close a template.
+
+  Args:
+    clean_lines: A CleansedLines instance containing the file.
+    linenum: Current line number.
+    init_suffix: Remainder of the current line after the initial <.
+
+  Returns:
+    True if a matching bracket exists.
+  """
+  line = init_suffix
+  nesting_stack = ['<']
+  while True:
+    # Find the next operator that can tell us whether < is used as an
+    # opening bracket or as a less-than operator.  We only want to
+    # warn on the latter case.
+    #
+    # We could also check all other operators and terminate the search
+    # early, e.g. if we got something like this "a<b+c", the "<" is
+    # most likely a less-than operator, but then we will get false
+    # positives for default arguments (e.g. http://go/prccd) and
+    # other template expressions (e.g. http://go/oxcjq).
+    match = Search(r'^[^<>(),;\[\]]*([<>(),;\[\]])(.*)$', line)
+    if match:
+      # Found an operator, update nesting stack
+      operator = match.group(1)
+      line = match.group(2)
+
+      if nesting_stack[-1] == '<':
+        # Expecting closing angle bracket
+        if operator in ('<', '(', '['):
+          nesting_stack.append(operator)
+        elif operator == '>':
+          nesting_stack.pop()
+          if not nesting_stack:
+            # Found matching angle bracket
+            return True
+        elif operator == ',':
+          # Got a comma after a bracket, this is most likely a template
+          # argument.  We have not seen a closing angle bracket yet, but
+          # it's probably a few lines later if we look for it, so just
+          # return early here.
+          return True
+        else:
+          # Got some other operator.
+          return False
+
+      else:
+        # Expecting closing parenthesis or closing bracket
+        if operator in ('<', '(', '['):
+          nesting_stack.append(operator)
+        elif operator in (')', ']'):
+          # We don't bother checking for matching () or [].  If we got
+          # something like (] or [), it would have been a syntax error.
+          nesting_stack.pop()
+
+    else:
+      # Scan the next line
+      linenum += 1
+      if linenum >= len(clean_lines.elided):
+        break
+      line = clean_lines.elided[linenum]
+
+  # Exhausted all remaining lines and still no matching angle bracket.
+  # Most likely the input was incomplete, otherwise we should have
+  # seen a semicolon and returned early.
+  return True
+
+
+def FindPreviousMatchingAngleBracket(clean_lines, linenum, init_prefix):
+  """Find the corresponding < that started a template.
+
+  Args:
+    clean_lines: A CleansedLines instance containing the file.
+    linenum: Current line number.
+    init_prefix: Part of the current line before the initial >.
+
+  Returns:
+    True if a matching bracket exists.
+  """
+  line = init_prefix
+  nesting_stack = ['>']
+  while True:
+    # Find the previous operator
+    match = Search(r'^(.*)([<>(),;\[\]])[^<>(),;\[\]]*$', line)
+    if match:
+      # Found an operator, update nesting stack
+      operator = match.group(2)
+      line = match.group(1)
+
+      if nesting_stack[-1] == '>':
+        # Expecting opening angle bracket
+        if operator in ('>', ')', ']'):
+          nesting_stack.append(operator)
+        elif operator == '<':
+          nesting_stack.pop()
+          if not nesting_stack:
+            # Found matching angle bracket
+            return True
+        elif operator == ',':
+          # Got a comma before a bracket, this is most likely a
+          # template argument.  The opening angle bracket is probably
+          # there if we look for it, so just return early here.
+          return True
+        else:
+          # Got some other operator.
+          return False
+
+      else:
+        # Expecting opening parenthesis or opening bracket
+        if operator in ('>', ')', ']'):
+          nesting_stack.append(operator)
+        elif operator in ('(', '['):
+          nesting_stack.pop()
+
+    else:
+      # Scan the previous line
+      linenum -= 1
+      if linenum < 0:
+        break
+      line = clean_lines.elided[linenum]
+
+  # Exhausted all earlier lines and still no matching angle bracket.
+  return False
+
+
+def CheckSpacing(filename, clean_lines, linenum, nesting_state, error):
   """Checks for the correctness of various spacing issues in the code.
 
   Things we check for: spaces around operators, spaces after
@@ -1682,6 +2182,8 @@ def CheckSpacing(filename, clean_lines, linenum, error):
     filename: The name of the current file.
     clean_lines: A CleansedLines instance containing the file.
     linenum: The number of the line to check.
+    nesting_state: A _NestingState instance which maintains information about
+                   the current stack of nested blocks being parsed.
     error: The function to call with any errors found.
   """
 
@@ -1691,7 +2193,16 @@ def CheckSpacing(filename, clean_lines, linenum, error):
   # Before nixing comments, check if the line is blank for no good
   # reason.  This includes the first line after a block is opened, and
   # blank lines at the end of a function (ie, right before a line like '}'
-  if IsBlankLine(line):
+  #
+  # Skip all the blank line checks if we are immediately inside a
+  # namespace body.  In other words, don't issue blank line warnings
+  # for this block:
+  #   namespace {
+  #
+  #   }
+  #
+  # A warning about missing end of namespace comments will be issued instead.
+  if IsBlankLine(line) and not nesting_state.InNamespaceBody():
     elided = clean_lines.elided
     prev_line = elided[linenum - 1]
     prevbrace = prev_line.rfind('{')
@@ -1699,8 +2210,7 @@ def CheckSpacing(filename, clean_lines, linenum, error):
     #                both start with alnums and are indented the same amount.
     #                This ignores whitespace at the start of a namespace block
     #                because those are not usually indented.
-    if (prevbrace != -1 and prev_line[prevbrace:].find('}') == -1
-        and prev_line[:prevbrace].find('namespace') == -1):
+    if prevbrace != -1 and prev_line[prevbrace:].find('}') == -1:
       # OK, we have a blank line at the start of a code block.  Before we
       # complain, we check if it is an exception to the rule: The previous
       # non-empty line has the parameters of a function header that are indented
@@ -1732,12 +2242,7 @@ def CheckSpacing(filename, clean_lines, linenum, error):
       if not exception:
         error(filename, linenum, 'whitespace/blank_line', 2,
               'Blank line at the start of a code block.  Is this needed?')
-    # This doesn't ignore whitespace at the end of a namespace block
-    # because that is too hard without pairing open/close braces;
-    # however, a special exception is made for namespace closing
-    # brackets which have a comment containing "namespace".
-    #
-    # Also, ignore blank lines at the end of a block in a long if-else
+    # Ignore blank lines at the end of a block in a long if-else
     # chain, like this:
     #   if (condition1) {
     #     // Something followed by a blank line
@@ -1749,7 +2254,6 @@ def CheckSpacing(filename, clean_lines, linenum, error):
       next_line = raw[linenum + 1]
       if (next_line
           and Match(r'\s*}', next_line)
-          and next_line.find('namespace') == -1
           and next_line.find('} else ') == -1):
         error(filename, linenum, 'whitespace/blank_line', 3,
               'Blank line at the end of a code block.  Is this needed?')
@@ -1810,26 +2314,59 @@ def CheckSpacing(filename, clean_lines, linenum, error):
   # though, so we punt on this one for now.  TODO.
 
   # You should always have whitespace around binary operators.
-  # Alas, we can't test < or > because they're legitimately used sans spaces
-  # (a->b, vector<int> a).  The only time we can tell is a < with no >, and
-  # only if it's not template params list spilling into the next line.
+  #
+  # Check <= and >= first to avoid false positives with < and >, then
+  # check non-include lines for spacing around < and >.
   match = Search(r'[^<>=!\s](==|!=|<=|>=)[^<>=!\s]', line)
-  if not match:
-    # Note that while it seems that the '<[^<]*' term in the following
-    # regexp could be simplified to '<.*', which would indeed match
-    # the same class of strings, the [^<] means that searching for the
-    # regexp takes linear rather than quadratic time.
-    if not Search(r'<[^<]*,\s*$', line):  # template params spill
-      match = Search(r'[^<>=!\s](<)[^<>=!\s]([^>]|->)*$', line)
   if match:
     error(filename, linenum, 'whitespace/operators', 3,
           'Missing spaces around %s' % match.group(1))
-  # We allow no-spaces around << and >> when used like this: 10<<20, but
+  # We allow no-spaces around << when used like this: 10<<20, but
   # not otherwise (particularly, not when used as streams)
-  match = Search(r'[^0-9\s](<<|>>)[^0-9\s]', line)
+  match = Search(r'(\S)(?:L|UL|ULL|l|ul|ull)?<<(\S)', line)
+  if match and not (match.group(1).isdigit() and match.group(2).isdigit()):
+    error(filename, linenum, 'whitespace/operators', 3,
+          'Missing spaces around <<')
+  elif not Match(r'#.*include', line):
+    # Avoid false positives on ->
+    reduced_line = line.replace('->', '')
+
+    # Look for < that is not surrounded by spaces.  This is only
+    # triggered if both sides are missing spaces, even though
+    # technically should should flag if at least one side is missing a
+    # space.  This is done to avoid some false positives with shifts.
+    match = Search(r'[^\s<]<([^\s=<].*)', reduced_line)
+    if (match and
+        not FindNextMatchingAngleBracket(clean_lines, linenum, match.group(1))):
+      error(filename, linenum, 'whitespace/operators', 3,
+            'Missing spaces around <')
+
+    # Look for > that is not surrounded by spaces.  Similar to the
+    # above, we only trigger if both sides are missing spaces to avoid
+    # false positives with shifts.
+    match = Search(r'^(.*[^\s>])>[^\s=>]', reduced_line)
+    if (match and
+        not FindPreviousMatchingAngleBracket(clean_lines, linenum,
+                                             match.group(1))):
+      error(filename, linenum, 'whitespace/operators', 3,
+            'Missing spaces around >')
+
+  # We allow no-spaces around >> for almost anything.  This is because
+  # C++11 allows ">>" to close nested templates, which accounts for
+  # most cases when ">>" is not followed by a space.
+  #
+  # We still warn on ">>" followed by alpha character, because that is
+  # likely due to ">>" being used for right shifts, e.g.:
+  #   value >> alpha
+  #
+  # When ">>" is used to close templates, the alphanumeric letter that
+  # follows would be part of an identifier, and there should still be
+  # a space separating the template type and the identifier.
+  #   type<type<type>> alpha
+  match = Search(r'>>[a-zA-Z_]', line)
   if match:
     error(filename, linenum, 'whitespace/operators', 3,
-          'Missing spaces around %s' % match.group(1))
+          'Missing spaces around >>')
 
   # There shouldn't be space around unary operators
   match = Search(r'(!\s|~\s|[\s]--[\s;]|[\s]\+\+[\s;])', line)
@@ -1903,16 +2440,23 @@ def CheckSpacing(filename, clean_lines, linenum, error):
   # the semicolon there.
   if Search(r':\s*;\s*$', line):
     error(filename, linenum, 'whitespace/semicolon', 5,
-          'Semicolon defining empty statement. Use { } instead.')
+          'Semicolon defining empty statement. Use {} instead.')
   elif Search(r'^\s*;\s*$', line):
     error(filename, linenum, 'whitespace/semicolon', 5,
           'Line contains only semicolon. If this should be an empty statement, '
-          'use { } instead.')
+          'use {} instead.')
   elif (Search(r'\s+;\s*$', line) and
         not Search(r'\bfor\b', line)):
     error(filename, linenum, 'whitespace/semicolon', 5,
           'Extra space before last semicolon. If this should be an empty '
-          'statement, use { } instead.')
+          'statement, use {} instead.')
+
+  # In range-based for, we wanted spaces before and after the colon, but
+  # not around "::" tokens that might appear.
+  if (Search('for *\(.*[^:]:[^: ]', line) or
+      Search('for *\(.*[^: ]:[^:]', line)):
+    error(filename, linenum, 'whitespace/forcolon', 2,
+          'Missing space around colon in range-based for loop')
 
 
 def CheckSectionSpacing(filename, clean_lines, class_info, linenum, error):
@@ -1938,8 +2482,8 @@ def CheckSectionSpacing(filename, clean_lines, class_info, linenum, error):
   #
   # If we didn't find the end of the class, last_line would be zero,
   # and the check will be skipped by the first condition.
-  if (class_info.last_line - class_info.linenum <= 24 or
-      linenum <= class_info.linenum):
+  if (class_info.last_line - class_info.starting_linenum <= 24 or
+      linenum <= class_info.starting_linenum):
     return
 
   matched = Match(r'\s*(public|protected|private):', clean_lines.lines[linenum])
@@ -1950,15 +2494,18 @@ def CheckSectionSpacing(filename, clean_lines, class_info, linenum, error):
     #  - We are at the beginning of the class.
     #  - We are forward-declaring an inner class that is semantically
     #    private, but needed to be public for implementation reasons.
+    # Also ignores cases where the previous line ends with a backslash as can be
+    # common when defining classes in C macros.
     prev_line = clean_lines.lines[linenum - 1]
     if (not IsBlankLine(prev_line) and
-        not Search(r'\b(class|struct)\b', prev_line)):
+        not Search(r'\b(class|struct)\b', prev_line) and
+        not Search(r'\\$', prev_line)):
       # Try a bit harder to find the beginning of the class.  This is to
       # account for multi-line base-specifier lists, e.g.:
       #   class Derived
       #       : public Base {
-      end_class_head = class_info.linenum
-      for i in range(class_info.linenum, linenum):
+      end_class_head = class_info.starting_linenum
+      for i in range(class_info.starting_linenum, linenum):
         if Search(r'\{\s*$', clean_lines.lines[i]):
           end_class_head = i
           break
@@ -2008,9 +2555,11 @@ def CheckBraces(filename, clean_lines, linenum, error):
     # which is commonly used to control the lifetime of
     # stack-allocated variables.  We don't detect this perfectly: we
     # just don't complain if the last non-whitespace character on the
-    # previous non-blank line is ';', ':', '{', or '}'.
+    # previous non-blank line is ';', ':', '{', or '}', or if the previous
+    # line starts a preprocessor block.
     prevline = GetPreviousNonBlankLine(clean_lines, linenum)[0]
-    if not Search(r'[;:}{]\s*$', prevline):
+    if (not Search(r'[;:}{]\s*$', prevline) and
+        not Match(r'\s*#', prevline)):
       error(filename, linenum, 'whitespace/braces', 4,
             '{ should almost always be at the end of the previous line')
 
@@ -2062,6 +2611,33 @@ def CheckBraces(filename, clean_lines, linenum, error):
       not Search(r'struct|class|enum|\s*=\s*{', line)):
     error(filename, linenum, 'readability/braces', 4,
           "You don't need a ; after a }")
+
+
+def CheckEmptyLoopBody(filename, clean_lines, linenum, error):
+  """Loop for empty loop body with only a single semicolon.
+
+  Args:
+    filename: The name of the current file.
+    clean_lines: A CleansedLines instance containing the file.
+    linenum: The number of the line to check.
+    error: The function to call with any errors found.
+  """
+
+  # Search for loop keywords at the beginning of the line.  Because only
+  # whitespaces are allowed before the keywords, this will also ignore most
+  # do-while-loops, since those lines should start with closing brace.
+  line = clean_lines.elided[linenum]
+  if Match(r'\s*(for|while)\s*\(', line):
+    # Find the end of the conditional expression
+    (end_line, end_linenum, end_pos) = CloseExpression(
+        clean_lines, linenum, line.find('('))
+
+    # Output warning if what follows the condition expression is a semicolon.
+    # No warning for all other cases, including whitespace or newline, since we
+    # have a separate check for semicolons preceded by whitespace.
+    if end_pos >= 0 and Match(r';', end_line[end_pos:]):
+      error(filename, end_linenum, 'whitespace/empty_loop_body', 5,
+            'Empty loop bodies should use {} or continue')
 
 
 def ReplaceableCheck(operator, macro, line):
@@ -2132,6 +2708,38 @@ def CheckCheck(filename, clean_lines, linenum, error):
       break
 
 
+def CheckAltTokens(filename, clean_lines, linenum, error):
+  """Check alternative keywords being used in boolean expressions.
+
+  Args:
+    filename: The name of the current file.
+    clean_lines: A CleansedLines instance containing the file.
+    linenum: The number of the line to check.
+    error: The function to call with any errors found.
+  """
+  line = clean_lines.elided[linenum]
+
+  # Avoid preprocessor lines
+  if Match(r'^\s*#', line):
+    return
+
+  # Last ditch effort to avoid multi-line comments.  This will not help
+  # if the comment started before the current line or ended after the
+  # current line, but it catches most of the false positives.  At least,
+  # it provides a way to workaround this warning for people who use
+  # multi-line comments in preprocessor macros.
+  #
+  # TODO(unknown): remove this once cpplint has better support for
+  # multi-line comments.
+  if line.find('/*') >= 0 or line.find('*/') >= 0:
+    return
+
+  for match in _ALT_TOKEN_REPLACEMENT_PATTERN.finditer(line):
+    error(filename, linenum, 'readability/alt_tokens', 2,
+          'Use operator %s instead of %s' % (
+              _ALT_TOKEN_REPLACEMENT[match.group(1)], match.group(1)))
+
+
 def GetLineWidth(line):
   """Determines the width of the line in column positions.
 
@@ -2154,7 +2762,7 @@ def GetLineWidth(line):
     return len(line)
 
 
-def CheckStyle(filename, clean_lines, linenum, file_extension, class_state,
+def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
                error):
   """Checks rules from the 'C++ style rules' section of cppguide.html.
 
@@ -2167,6 +2775,8 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, class_state,
     clean_lines: A CleansedLines instance containing the file.
     linenum: The number of the line to check.
     file_extension: The extension (without the dot) of the filename.
+    nesting_state: A _NestingState instance which maintains information about
+                   the current stack of nested blocks being parsed.
     error: The function to call with any errors found.
   """
 
@@ -2248,16 +2858,19 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, class_state,
       not ((cleansed_line.find('case ') != -1 or
             cleansed_line.find('default:') != -1) and
            cleansed_line.find('break;') != -1)):
-    error(filename, linenum, 'whitespace/newline', 4,
+    error(filename, linenum, 'whitespace/newline', 0,
           'More than one command on the same line')
 
   # Some more style checks
   CheckBraces(filename, clean_lines, linenum, error)
-  CheckSpacing(filename, clean_lines, linenum, error)
+  CheckEmptyLoopBody(filename, clean_lines, linenum, error)
+  CheckAccess(filename, clean_lines, linenum, nesting_state, error)
+  CheckSpacing(filename, clean_lines, linenum, nesting_state, error)
   CheckCheck(filename, clean_lines, linenum, error)
-  if class_state and class_state.classinfo_stack:
-    CheckSectionSpacing(filename, clean_lines,
-                        class_state.classinfo_stack[-1], linenum, error)
+  CheckAltTokens(filename, clean_lines, linenum, error)
+  classinfo = nesting_state.InnermostClass()
+  if classinfo:
+    CheckSectionSpacing(filename, clean_lines, classinfo, linenum, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')
@@ -2554,9 +3167,11 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
                      fnline))):
 
     # We allow non-const references in a few standard places, like functions
-    # called "swap()" or iostream operators like "<<" or ">>".
+    # called "swap()" or iostream operators like "<<" or ">>". We also filter
+    # out for loops, which lint otherwise mistakenly thinks are functions.
     if not Search(
-        r'(swap|Swap|operator[<>][<>])\s*\(\s*(?:[\w:]|<.*>)+\s*&',
+        r'(for|swap|Swap|operator[<>][<>])\s*\(\s*'
+        r'(?:(?:typename\s*)?[\w:]|<.*>)+\s*&',
         fnline):
       error(filename, linenum, 'runtime/references', 2,
             'Is this a non-const reference? '
@@ -2578,10 +3193,19 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
     if (match.group(1) is None and  # If new operator, then this isn't a cast
         not (Match(r'^\s*MOCK_(CONST_)?METHOD\d+(_T)?\(', line) or
              Match(r'^\s*MockCallback<.*>', line))):
-      error(filename, linenum, 'readability/casting', 4,
-            'Using deprecated casting style.  '
-            'Use static_cast<%s>(...) instead' %
-            match.group(2))
+      # Try a bit harder to catch gmock lines: the only place where
+      # something looks like an old-style cast is where we declare the
+      # return type of the mocked method, and the only time when we
+      # are missing context is if MOCK_METHOD was split across
+      # multiple lines (for example http://go/hrfhr ), so we only need
+      # to check the previous line for MOCK_METHOD.
+      if (linenum == 0 or
+          not Match(r'^\s*MOCK_(CONST_)?METHOD\d+(_T)?\(\S+,\s*$',
+                    clean_lines.elided[linenum - 1])):
+        error(filename, linenum, 'readability/casting', 4,
+              'Using deprecated casting style.  '
+              'Use static_cast<%s>(...) instead' %
+              match.group(2))
 
   CheckCStyleCast(filename, linenum, line, clean_lines.raw_lines[linenum],
                   'static_cast',
@@ -2703,7 +3327,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
   printf_args = _GetTextInside(line, r'(?i)\b(string)?printf\s*\(')
   if printf_args:
     match = Match(r'([\w.\->()]+)$', printf_args)
-    if match:
+    if match and match.group(1) != '__VA_ARGS__':
       function_name = re.search(r'\b((?:string)?printf)\s*\(',
                                 line, re.I).group(1)
       error(filename, linenum, 'runtime/printf', 4,
@@ -2823,6 +3447,11 @@ def CheckCStyleCast(filename, linenum, line, raw_line, cast_type, pattern,
     error(filename, linenum, 'runtime/sizeof', 1,
           'Using sizeof(type).  Use sizeof(varname) instead if possible')
     return True
+
+  # operator++(int) and operator--(int)
+  if (line[0:match.start(1) - 1].endswith(' operator++') or
+      line[0:match.start(1) - 1].endswith(' operator--')):
+    return False
 
   remainder = line[match.end(0):]
 
@@ -3112,13 +3741,13 @@ def CheckMakePairUsesDeduction(filename, clean_lines, linenum, error):
   if match:
     error(filename, linenum, 'build/explicit_make_pair',
           4,  # 4 = high confidence
-          'Omit template arguments from make_pair OR use pair directly OR'
-          ' if appropriate, construct a pair directly')
+          'For C++11-compatibility, omit template arguments from make_pair'
+          ' OR use pair directly OR if appropriate, construct a pair directly')
 
 
-def ProcessLine(filename, file_extension,
-                clean_lines, line, include_state, function_state,
-                class_state, error, extra_check_functions=[]):
+def ProcessLine(filename, file_extension, clean_lines, line,
+                include_state, function_state, nesting_state, error,
+                extra_check_functions=[]):
   """Processes a single line in the file.
 
   Args:
@@ -3129,8 +3758,8 @@ def ProcessLine(filename, file_extension,
     line: Number of line being processed.
     include_state: An _IncludeState instance in which the headers are inserted.
     function_state: A _FunctionState instance which counts function lines, etc.
-    class_state: A _ClassState instance which maintains information about
-                 the current stack of nested class declarations being parsed.
+    nesting_state: A _NestingState instance which maintains information about
+                   the current stack of nested blocks being parsed.
     error: A callable to which errors are reported, which takes 4 arguments:
            filename, line number, error level, and message
     extra_check_functions: An array of additional check functions that will be
@@ -3139,13 +3768,16 @@ def ProcessLine(filename, file_extension,
   """
   raw_lines = clean_lines.raw_lines
   ParseNolintSuppressions(filename, raw_lines[line], line, error)
+  nesting_state.Update(filename, clean_lines, line, error)
+  if nesting_state.stack and nesting_state.stack[-1].inline_asm != _NO_ASM:
+    return
   CheckForFunctionLengths(filename, clean_lines, line, function_state, error)
   CheckForMultilineCommentsAndStrings(filename, clean_lines, line, error)
-  CheckStyle(filename, clean_lines, line, file_extension, class_state, error)
+  CheckStyle(filename, clean_lines, line, file_extension, nesting_state, error)
   CheckLanguage(filename, clean_lines, line, file_extension, include_state,
                 error)
   CheckForNonStandardConstructs(filename, clean_lines, line,
-                                class_state, error)
+                                nesting_state, error)
   CheckPosixThreading(filename, clean_lines, line, error)
   CheckInvalidIncrement(filename, clean_lines, line, error)
   CheckMakePairUsesDeduction(filename, clean_lines, line, error)
@@ -3172,7 +3804,7 @@ def ProcessFileData(filename, file_extension, lines, error,
 
   include_state = _IncludeState()
   function_state = _FunctionState()
-  class_state = _ClassState()
+  nesting_state = _NestingState()
 
   ResetNolintSuppressions()
 
@@ -3185,9 +3817,9 @@ def ProcessFileData(filename, file_extension, lines, error,
   clean_lines = CleansedLines(lines)
   for line in xrange(clean_lines.NumLines()):
     ProcessLine(filename, file_extension, clean_lines, line,
-                include_state, function_state, class_state, error,
+                include_state, function_state, nesting_state, error,
                 extra_check_functions)
-  class_state.CheckFinished(filename, error)
+  nesting_state.CheckClassFinished(filename, error)
 
   CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error)
 
