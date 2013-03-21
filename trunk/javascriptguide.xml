@@ -3,14 +3,14 @@
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
     
-    Revision 2.64
+    Revision 2.72
   </p>
   
   <address>
     Aaron Whyte<br/>
     Bob Jervis<br/>
     Dan Pupius<br/>
-    Eric Arvidsson<br/>
+    Erik Arvidsson<br/>
     Fritz Schneider<br/>
     Robby Walker<br/>
   </address>
@@ -96,7 +96,7 @@
              <code>boolean</code>) are constant values.</p>
 
            <p><code>Objects</code>'
-             immutabilty is more subjective &#8212; objects should be
+             immutabilty is more subjective — objects should be
              considered immutable only if they do not demonstrate obeserverable
              state change.  This is not enforced by the compiler.</p>
 
@@ -729,11 +729,10 @@
       <BODY>
         <SUBSECTION title="Properties and methods">
           <ul>
-            <li><em>Private</em> properties, variables, and methods (in files
-              or classes) should be named with a trailing
-              underscore.
+            <li><em>Private</em> properties and methods should be named with a
+              trailing underscore.
               </li>
-            <li><em>Protected</em> properties, variables, and methods should be
+            <li><em>Protected</em> properties and methods should be
               named without a trailing underscore (like public ones).</li>
           </ul>
           <p>For more information on <em>private</em> and <em>protected</em>,
@@ -892,7 +891,8 @@
                 staticHelper(new MyClass());
               };
             </CODE_SNIPPET>
-            <p>Do not alias namespaces.</p>
+            <p>Do not create local aliases of namespaces. Namespaces should only
+              be aliased using <a href="#goog-scope">goog.scope</a>.</p>
             <BAD_CODE_SNIPPET>
               myapp.main = function() {
                 var namespace = some.long.namespace;
@@ -999,7 +999,7 @@
             var obj = {a: 1, b: 2, c: 3};  // No space after { or before }.
           </CODE_SNIPPET>
           <p>Multiline array initializers and object initializers are indented
-            2 spaces, just like blocks.</p>
+            2 spaces, with the braces on their own line, just like blocks.</p>
           <CODE_SNIPPET>
             // Object initializer.
             var inset = {
@@ -1127,6 +1127,7 @@
           </CODE_SNIPPET>
         </SUBSECTION>
         <SUBSECTION title="Aliasing with goog.scope">
+          <a name="goog-scope"/>
           <p>
             <a href="https://docs.google.com/document/pub?id=1ETFAuh2kaXMVL-vafUYhaWlhl6b5D9TOvboVg7Zl68Y"><code>goog.scope</code></a>
             may be used to shorten references to
@@ -2204,7 +2205,10 @@
         <p>All files, classes, methods and properties should be documented with
           <a href="http://code.google.com/p/jsdoc-toolkit/">JSDoc</a>
           comments with the appropriate <a href="#JSDoc_Tag_Reference">tags</a>
-          and <a href="#JsTypes">types</a>.</p>
+          and <a href="#JsTypes">types</a>. Textual descriptions for methods,
+          method parameters and method return values should be included
+          unless obvious from the method or parameter name.
+        </p>
 
         <p>Inline comments should be of the <code>//</code> variety.</p>
 
@@ -2438,15 +2442,15 @@
               <tr>
                 <td><a name="tag-const">@const</a></td>
                 <td>
-                  <code>@const</code>
+                  <code>@const</code><br/>
+                  <code>@const {type}</code>
                   <p><i>For example:</i></p>
                   <CODE_SNIPPET>
                     /** @const */ var MY_BEER = 'stout';
 
                     /**
                      * My namespace's favorite kind of beer.
-                     * @const
-                     * @type {string}
+                     * @const {string}
                      */
                     mynamespace.MY_BEER = 'stout';
 
@@ -2476,7 +2480,7 @@
 
                   <p>When <code>@const</code> is applied to a method, it
                     implies the method is not only not overwritable, but also
-                    that the method is <em>finalized</em> &#8212;
+                    that the method is <em>finalized</em> —
                     not overridable in subclasses.</p>
 
                   <p>For more on <code>@const</code>, see the
@@ -2861,6 +2865,10 @@
                 </td>
               </tr>
 
+              
+
+              
+
               <tr>
                 <td><a name="tag-noalias">@noalias</a></td>
                 <td>
@@ -2962,13 +2970,13 @@
               <tr>
                 <td><a name="tag-private">@private</a></td>
                 <td>
-                  <code>@private</code>
+                  <code>@private</code><br/>
+                  <code>@private {type}</code>
                   <p><i>For example:</i></p>
                   <CODE_SNIPPET>
                     /**
                      * Handlers that are listening to this logger.
-                     * @type Array.&lt;Function&gt;
-                     * @private
+                     * @private {!Array.&lt;Function&gt;}
                      */
                     this.handlers_ = [];
                   </CODE_SNIPPET>
@@ -2985,7 +2993,8 @@
               <tr>
                 <td><a name="tag-protected">@protected</a></td>
                 <td>
-                  <code>@protected</code>
+                  <code>@protected</code><br/>
+                  <code>@protected {type}</code>
                   <p><i>For example:</i></p>
                   <CODE_SNIPPET>
                     /**
@@ -3222,6 +3231,9 @@
                   <a href="#Typedefs">complex type</a>.
                 </td>
               </tr>
+
+              
+
             </tbody>
           </table>
 
@@ -3527,7 +3539,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.64
+    Revision 2.72
   </p>
 
   

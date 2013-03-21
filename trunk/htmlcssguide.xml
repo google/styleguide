@@ -3,22 +3,22 @@
 <GUIDE title="Google HTML/CSS Style Guide">
   <p class="revision">
     
-    Revision 2.19
+    Revision 2.21
   </p>
   
   <OVERVIEW>
     <CATEGORY title="Important Note">
-      <STYLEPOINT title="Displaying Hidden Details in this Guide">
+      <STYLEPOINT title="Displaying Hidden Details in This Guide">
         <SUMMARY>
           This style guide contains many details that are initially
           hidden from view. They are marked by the triangle icon, which you
           see here on your left. Click it now.
-          You should see &#8220;Hooray&#8221; appear below.
+          You should see “Hooray” appear below.
         </SUMMARY>
         <BODY>
           <p>
             Hooray! Now you know you can expand points to get more
-            details. Alternatively, there&#8217;s a &#8220;toggle all&#8221; at the
+            details. Alternatively, there’s a “toggle all” at the
             top of this document.
           </p>
         </BODY>
@@ -52,8 +52,8 @@
           files are not available over both protocols.
         </p>
         <p>
-          Omitting the protocol&#8212;which makes the URL
-          relative&#8212;prevents mixed content issues and results in
+          Omitting the protocol—which makes the URL
+          relative—prevents mixed content issues and results in
           minor file size savings.
         </p>
         <BAD_CODE_SNIPPET>
@@ -88,7 +88,7 @@
       </SUMMARY>
       <BODY>
         <p>
-          Don&#8217;t use tabs or mix tabs and spaces for indentation.
+          Don’t use tabs or mix tabs and spaces for indentation.
         </p>
         <CODE_SNIPPET>
           &lt;ul&gt;
@@ -109,9 +109,9 @@
       </SUMMARY>
       <BODY>
         <p>
-          All code has to be lowercase: This applies to element names,
+          All code has to be lowercase: This applies to HTML element names,
           attributes, attribute values (unless
-          text/<code>CDATA</code>), selectors, properties, and
+          <code>text/CDATA</code>), CSS selectors, properties, and
           property values (with the exception of strings).
         </p>
         <BAD_CODE_SNIPPET>
@@ -122,9 +122,17 @@
           &lt;!-- Recommended --&gt;
           &lt;img src="google.png" alt="Google"&gt;
         </CODE_SNIPPET>
+        <BAD_CODE_SNIPPET>
+          /* Not recommended */
+          color: #E5E5E5;
+        </BAD_CODE_SNIPPET>
+        <CODE_SNIPPET>
+          /* Recommended */
+          color: #e5e5e5;
+        </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Trailing whitespace">
+    <STYLEPOINT title="Trailing Whitespace">
       <SUMMARY>
         Remove trailing white spaces.
       </SUMMARY>
@@ -181,11 +189,11 @@
           (This item is optional as it is not deemed a realistic
           expectation to always demand fully documented code. Mileage
           may vary heavily for HTML and CSS code and depends on the
-          project&#8217;s complexity.)
+          project’s complexity.)
         </p>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Action items">
+    <STYLEPOINT title="Action Items">
       <SUMMARY>
         Mark todos and action items with <code>TODO</code>.
       </SUMMARY>
@@ -220,7 +228,7 @@
   </CATEGORY>
 
   <CATEGORY title="HTML Style Rules">
-    <STYLEPOINT title="Document type">
+    <STYLEPOINT title="Document Type">
       <SUMMARY>
         Use HTML5.
       </SUMMARY>
@@ -230,7 +238,7 @@
           <code>&lt;!DOCTYPE html&gt;</code>.
         </p>
         <p>
-          (It&#8217;s recommended to use HTML, as <code>text/html</code>. Do not use
+          (It’s recommended to use HTML, as <code>text/html</code>. Do not use
           XHTML. XHTML, as <a href="http://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a>,
           lacks both browser and infrastructure support and offers
           less room for optimization than HTML.)
@@ -241,7 +249,7 @@
         </p>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="HTML validity">
+    <STYLEPOINT title="HTML Validity">
       <SUMMARY>
         Use valid HTML where possible.
       </SUMMARY>
@@ -252,8 +260,7 @@
         </p>
         
         <p>
-          Use tools such as the
-          <a href="http://validator.w3.org/nu/">W3C
+          Use tools such as the <a href="http://validator.w3.org/nu/">W3C
           HTML validator</a> to test.
         </p>
         <p>
@@ -281,7 +288,7 @@
       </SUMMARY>
       <BODY>
         <p>
-          Use elements (sometimes incorrectly called &#8220;tags&#8221;) for what
+          Use elements (sometimes incorrectly called “tags”) for what
           they have been created for. For example, use heading
           elements for headings, <code>p</code> elements for
           paragraphs, <code>a</code> elements for anchors, etc.
@@ -301,7 +308,7 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Multimedia fallback">
+    <STYLEPOINT title="Multimedia Fallback">
       <SUMMARY>
         Provide alternative contents for multimedia.
       </SUMMARY>
@@ -338,7 +345,7 @@
       </BODY>
     </STYLEPOINT>
 
-    <STYLEPOINT title="Separation of concerns">
+    <STYLEPOINT title="Separation of Concerns">
       <SUMMARY>
         Separate structure from presentation from behavior.
       </SUMMARY>
@@ -374,9 +381,9 @@
           &lt;link rel="stylesheet" href="grid.css" media="screen"&gt;
           &lt;link rel="stylesheet" href="print.css" media="print"&gt;
           &lt;h1 style="font-size: 1em;"&gt;HTML sucks&lt;/h1&gt;
-          &lt;p&gt;I&#8217;ve read about this on a few sites but now I&#8217;m sure:
+          &lt;p&gt;I’ve read about this on a few sites but now I’m sure:
             &lt;u&gt;HTML is stupid!!1&lt;/u&gt;
-          &lt;center&gt;I can&#8217;t believe there&#8217;s no way to control the styling of
+          &lt;center&gt;I can’t believe there’s no way to control the styling of
             my website without doing everything all over again!&lt;/center&gt;
         </BAD_CODE_SNIPPET>
         <CODE_SNIPPET>
@@ -385,14 +392,14 @@
           &lt;title&gt;My first CSS-only redesign&lt;/title&gt;
           &lt;link rel="stylesheet" href="default.css"&gt;
           &lt;h1&gt;My first CSS-only redesign&lt;/h1&gt;
-          &lt;p&gt;I&#8217;ve read about this on a few sites but today I&#8217;m actually
+          &lt;p&gt;I’ve read about this on a few sites but today I’m actually
             doing it: separating concerns and avoiding anything in the HTML of
             my website that is presentational.
-          &lt;p&gt;It&#8217;s awesome!
+          &lt;p&gt;It’s awesome!
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Entity references">
+    <STYLEPOINT title="Entity References">
       <SUMMARY>
         Do not use entity references.
       </SUMMARY>
@@ -407,7 +414,7 @@
         <p>
           The only exceptions apply to characters with special meaning
           in HTML (like <code>&lt;</code> and <code>&amp;</code>) as
-          well as control or &#8220;invisible&#8221; characters (like no-break
+          well as control or “invisible” characters (like no-break
           spaces).
         </p>
         <BAD_CODE_SNIPPET>
@@ -416,11 +423,11 @@
         </BAD_CODE_SNIPPET>
         <CODE_SNIPPET>
           &lt;!-- Recommended --&gt;
-          The currency symbol for the Euro is &#8220;&#8364;&#8221;.
+          The currency symbol for the Euro is “€”.
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Optional tags">
+    <STYLEPOINT title="Optional Tags">
       <SUMMARY>
         Omit optional tags (optional).
       </SUMMARY>
@@ -433,9 +440,9 @@
         </p>
         <p>
           (This approach may require a grace period to be established
-          as a wider guideline as it&#8217;s significantly different
+          as a wider guideline as it’s significantly different
           from what web developers are typically taught. For
-          consistency and simplicity reasons it&#8217;s best served
+          consistency and simplicity reasons it’s best served
           omitting all optional tags, not just a selection.)
         </p>
         <BAD_CODE_SNIPPET>
@@ -458,7 +465,7 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="type attributes">
+    <STYLEPOINT title="type Attributes">
       <SUMMARY>
         Omit <code>type</code> attributes for style sheets and scripts.
       </SUMMARY>
@@ -499,7 +506,7 @@
   </CATEGORY>
 
   <CATEGORY title="HTML Formatting Rules">
-    <STYLEPOINT title="General formatting">
+    <STYLEPOINT title="General Formatting">
       <SUMMARY>
         Use a new line for every block, list, or table element, and
         indent every such child element.
@@ -517,7 +524,7 @@
         </p>
         <p>
           (If you run into issues around whitespace between list items
-          it&#8217;s acceptable to put all <code>li</code> elements in one
+          it’s acceptable to put all <code>li</code> elements in one
           line. A linter is encouraged to throw a warning instead of
           an error.)
         </p>
@@ -547,7 +554,7 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="HTML quotation marks">
+    <STYLEPOINT title="HTML Quotation Marks">
       <SUMMARY>
         When quoting attributes values, use double quotation marks.
       </SUMMARY>
@@ -569,7 +576,7 @@
   </CATEGORY>
 
   <CATEGORY title="CSS Style Rules">
-    <STYLEPOINT title="CSS validity">
+    <STYLEPOINT title="CSS Validity">
       <SUMMARY>
         Use valid CSS where possible.
       </SUMMARY>
@@ -580,8 +587,7 @@
         </p>
         
         <p>
-          Use tools such as the
-          <a href="http://jigsaw.w3.org/css-validator/">W3C
+          Use tools such as the <a href="http://jigsaw.w3.org/css-validator/">W3C
           CSS validator</a> to test.
         </p>
         <p>
@@ -591,7 +597,7 @@
         </p>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="ID and class naming">
+    <STYLEPOINT title="ID and Class Naming">
       <SUMMARY>
         Use meaningful or generic ID and class names.
       </SUMMARY>
@@ -609,7 +615,7 @@
         <p>
           Generic names are simply a fallback for elements that have no
           particular or no meaning different from their siblings. They are
-          typically needed as &#8220;helpers.&#8221;
+          typically needed as “helpers.”
         </p>
         <p>
           Using functional or generic names reduces the probability of
@@ -635,7 +641,7 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="ID and class name style">
+    <STYLEPOINT title="ID and Class Name Style">
       <SUMMARY>
         Use ID and class names that are as short as possible but as long as
         necessary.
@@ -662,7 +668,7 @@
       </BODY>
     </STYLEPOINT>
 
-    <STYLEPOINT title="Type selectors">
+    <STYLEPOINT title="Type Selectors">
       <SUMMARY>
         Avoid qualifying ID and class names with type selectors.
       </SUMMARY>
@@ -671,8 +677,7 @@
           use element names in conjunction with IDs or classes.
         </p>
         <p>
-          Avoiding unnecessary ancestor selectors is useful for
-          <a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">performance
+          Avoiding unnecessary ancestor selectors is useful for <a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">performance
           reasons</a>.
         </p>
         <BAD_CODE_SNIPPET>
@@ -687,14 +692,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Shorthand properties">
+    <STYLEPOINT title="Shorthand Properties">
       <SUMMARY>
         Use shorthand properties where possible.
       </SUMMARY>
       <BODY>
         <p>
-          CSS offers a variety of
-          <a href="http://www.w3.org/TR/CSS21/about.html#shorthand">shorthand</a>
+          CSS offers a variety of <a href="http://www.w3.org/TR/CSS21/about.html#shorthand">shorthand</a>
           properties (like <code>font</code>)
           that should be used whenever possible, even in cases where
           only one value is explicitly set.
@@ -722,9 +726,9 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="0 and units">
+    <STYLEPOINT title="0 and Units">
       <SUMMARY>
-        Omit unit specification after &#8220;0&#8221; values.
+        Omit unit specification after “0” values.
       </SUMMARY>
       <BODY>
         <p>
@@ -739,7 +743,7 @@
     </STYLEPOINT>
     <STYLEPOINT title="Leading 0s">
       <SUMMARY>
-        Omit leading &#8220;0&#8221;s in values.
+        Omit leading “0”s in values.
       </SUMMARY>
       <BODY>
         <p>
@@ -751,7 +755,7 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Hexadecimal notation">
+    <STYLEPOINT title="Hexadecimal Notation">
       <SUMMARY>
         Use 3 character hexadecimal notation where possible.
       </SUMMARY>
@@ -794,7 +798,7 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="ID and class name delimiters">
+    <STYLEPOINT title="ID and Class Name Delimiters">
       <SUMMARY>
         Separate words in ID and class names by a hyphen.
       </SUMMARY>
@@ -805,7 +809,7 @@
           in order to improve understanding and scannability.
         </p>
         <BAD_CODE_SNIPPET>
-          /* Not recommended: does not separate the words &#8220;demo&#8221; and &#8220;image&#8221; */
+          /* Not recommended: does not separate the words “demo” and “image” */
           .demoimage {}
 
           /* Not recommended: uses underscore instead of hyphen */
@@ -820,12 +824,12 @@
     </STYLEPOINT>
     <STYLEPOINT title="Hacks">
       <SUMMARY>
-        Avoid user agent detection as well as CSS &#8220;hacks&#8221;&#8212;try a different
+        Avoid user agent detection as well as CSS “hacks”—try a different
         approach first.
       </SUMMARY>
       <BODY>
         <p>
-          It&#8217;s tempting to address styling differences over user
+          It’s tempting to address styling differences over user
           agent detection or special CSS filters, workarounds, and
           hacks. Both approaches should be considered last resort in
           order to achieve and maintain an efficient and manageable
@@ -833,7 +837,7 @@
           free pass will hurt projects in the long run as projects
           tend to take the way of least resistance. That is, allowing
           and making it easy to use detection and hacks means using
-          detection and hacks more frequently&#8212;and more frequently
+          detection and hacks more frequently—and more frequently
           is too frequently.
         </p>
         
@@ -843,7 +847,7 @@
   </CATEGORY>
 
   <CATEGORY title="CSS Formatting Rules">
-    <STYLEPOINT title="Declaration order">
+    <STYLEPOINT title="Declaration Order">
       <SUMMARY>
         Alphabetize declarations.
       </SUMMARY>
@@ -870,7 +874,7 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Block content indentation">
+    <STYLEPOINT title="Block Content Indentation">
       <SUMMARY>
         Indent all block content.
       </SUMMARY>
@@ -892,7 +896,7 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Declaration stops">
+    <STYLEPOINT title="Declaration Stops">
       <SUMMARY>
         Use a semicolon after every declaration.
       </SUMMARY>
@@ -917,9 +921,9 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Property name stops">
+    <STYLEPOINT title="Property Name Stops">
       <SUMMARY>
-        Use a space after a property name&#8217;s colon.
+        Use a space after a property name’s colon.
       </SUMMARY>
       <BODY>
         <p>
@@ -940,7 +944,41 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Selector and declaration separation">
+    <STYLEPOINT title="Declaration Block Separation">
+      <SUMMARY>
+        Use a space between the last selector and the declaration block.
+      </SUMMARY>
+      <BODY>
+        <p>
+          Always use a single space between the last selector and the opening
+          brace that begins the <a href="http://www.w3.org/TR/CSS21/syndata.html#rule-sets">declaration
+          block</a>.
+        </p>
+        <p>
+          The opening brace should be on the same line as the last selector in a
+          given rule.
+        </p>
+        <BAD_CODE_SNIPPET>
+          /* Not recommended: missing space */
+          #video{
+            margin-top: 1em;
+          }
+
+          /* Not recommended: unnecessary line break */
+          #video
+          {
+            margin-top: 1em;
+          }
+        </BAD_CODE_SNIPPET>
+        <CODE_SNIPPET>
+          /* Recommended */
+          #video {
+            margin-top: 1em;
+          }
+        </CODE_SNIPPET>
+      </BODY>
+    </STYLEPOINT>
+    <STYLEPOINT title="Selector and Declaration Separation">
       <SUMMARY>
         Separate selectors and declarations by new lines.
       </SUMMARY>
@@ -965,13 +1003,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Rule separation">
+    <STYLEPOINT title="Rule Separation">
       <SUMMARY>
         Separate rules by new lines.
       </SUMMARY>
       <BODY>
         <p>
-          Always put a line between rules.
+          Always put a blank line (two line breaks) between rules.
         </p>
         <CODE_SNIPPET>
           html {
@@ -985,7 +1023,7 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="CSS quotation marks">
+    <STYLEPOINT title="CSS Quotation Marks">
       <SUMMARY>
         Use single quotation marks for attribute selectors and property values.
       </SUMMARY>
@@ -997,7 +1035,7 @@
         </p>
         <p>
           Exception: If you do need to use the <code>@charset</code> rule,
-          use double quotation marks&#8212;<a href="http://www.w3.org/TR/CSS21/syndata.html#charset">single
+          use double quotation marks—<a href="http://www.w3.org/TR/CSS21/syndata.html#charset">single
           quotation marks are not permitted</a>.
         </p>
         <BAD_CODE_SNIPPET>
@@ -1022,7 +1060,7 @@
 
   <CATEGORY title="CSS Meta Rules">
     
-    <STYLEPOINT title="Section comments">
+    <STYLEPOINT title="Section Comments">
       <SUMMARY>
         Group sections by a section comment (optional).
       </SUMMARY>
@@ -1053,7 +1091,7 @@
       <em>Be consistent.</em>
     </p>
     <p>
-      If you&#8217;re editing code, take a few minutes to look at the code
+      If you’re editing code, take a few minutes to look at the code
       around you and determine its style. If they use spaces around
       all their arithmetic operators, you should too. If their
       comments have little boxes of hash marks around them, make your
@@ -1061,8 +1099,8 @@
     </p>
     <p>
       The point of having style guidelines is to have a common vocabulary
-      of coding so people can concentrate on what you&#8217;re saying rather
-      than on how you&#8217;re saying it. We present global style rules here so
+      of coding so people can concentrate on what you’re saying rather
+      than on how you’re saying it. We present global style rules here so
       people know the vocabulary, but local style is also important. If
       code you add to a file looks drastically different from the existing
       code around it, it throws readers out of their rhythm when they go to
@@ -1071,7 +1109,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.19
+    Revision 2.21
   </p>
 
 </GUIDE>

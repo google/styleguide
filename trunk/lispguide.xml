@@ -5,7 +5,7 @@
 
 <p align="right">
 
-Revision 1.17
+Revision 1.18
 </p>
 
 
@@ -13,7 +13,7 @@ Revision 1.17
 Robert Brown
 </address>
 <address>
-  <a HREF="mailto:tunes@google.com">Fran&#231;ois-Ren&#233; Rideau</a>
+  <a HREF="mailto:tunes@google.com">François-René Rideau</a>
 </address>
 
 <address>
@@ -21,7 +21,7 @@ Robert Brown
 </address>
 
 <p align="center">
-<cite>Patterns mean "I have run out of language."</cite> &#8212; Rich Hickey
+<cite>Patterns mean "I have run out of language."</cite> — Rich Hickey
 </p>
 
 
@@ -305,7 +305,7 @@ Robert Brown
         <li>
           Every developer's code must be easy for another developer
           to read, understand, and modify
-          &#8212; even if the first developer isn't around to explain it.
+          — even if the first developer isn't around to explain it.
           (This is the "hit by a truck" principle.)
         </li>
         <li>
@@ -314,7 +314,7 @@ Robert Brown
           and recognize it as "Fred's code" by its style.
         </li>
         <li>
-          Don't be "clever" &#8212;
+          Don't be "clever" —
           do the simplest thing that could possibly work properly.
         </li>
         <li>
@@ -324,7 +324,7 @@ Robert Brown
           Be concise.
         </li>
         <li>
-          KISS &#8212; Keep It Simple, Stupid.
+          KISS — Keep It Simple, Stupid.
         </li>
         <li>
           Use the smallest hammer for the job.
@@ -411,7 +411,7 @@ Robert Brown
         (including QA or Ops), or otherwise isn't purely local,
         you must write it up using at least a couple of paragraphs,
         and get a design approval from the other parties involved
-        before starting to write code &#8212; or be ready to scratch what you have
+        before starting to write code — or be ready to scratch what you have
         when they object.
       </p>
       <p>
@@ -1344,7 +1344,7 @@ Robert Brown
         it's good to call it <code>row</code> or <code>first-row</code>
         or something like that.
         It is alright is <code>row</code> has been
-        <code>DEFTYPE</code>'d to <code>STRING</code> &#8212;
+        <code>DEFTYPE</code>'d to <code>STRING</code> —
         precisely because you have abstracted the detail away,
         and the remaining salient point is that it is a row.
         You should not name the variable <code>STRING</code> in this context,
@@ -1627,7 +1627,7 @@ Robert Brown
       <p>
         Common Lisp systems are not required to implement
         function calls from tail positions without leaking stack space
-        &#8212; which is known as proper tail calls (PTC),
+        — which is known as proper tail calls (PTC),
         tail call elimination (TCE),
         or tail call optimization (TCO).
         This means that indefinite recursion through tail calls
@@ -1886,7 +1886,7 @@ Robert Brown
         </li>
         <li>
           <code>(error (make-condition 'foo-error ...))</code>
-          is equivalent to <code>(error 'foo-error ...)</code> &#8212;
+          is equivalent to <code>(error 'foo-error ...)</code> —
           code must use the shorter form.
         </li>
         <li>
@@ -2241,7 +2241,7 @@ Robert Brown
         When you write a macro-defining macro
         (a macro that generates macros),
         document and comment it particularly clearly,
-        since these are hard for the uninitiated to understand.
+        since these are harder to understand.
       </p>
       <p>
         You must not install new reader macros
@@ -2284,7 +2284,7 @@ Robert Brown
         By keeping semantics outside the macro,
         the macro is made simpler, easier to get right, and less subject to change,
         which makes it easier to develop and maintain.
-        The semantics is written in a simpler language &#8212; one without staging &#8212;
+        The semantics is written in a simpler language — one without staging —
         which also makes it easier to develop and maintain.
         It becomes possible to debug and update the semantic function
         without having to recompile all clients of the macro.
@@ -2304,7 +2304,7 @@ Robert Brown
         which can be done using <code>FLET</code>.
         
         This also allows you to declare the function to be of dynamic extent
-        (if it is &#8212; and often it is; yet see below regarding
+        (if it is — and often it is; yet see below regarding
         <a href="#DYNAMIC-EXTENT">DYNAMIC-EXTENT</a>).
       </p>
       <p>
@@ -2986,7 +2986,7 @@ Robert Brown
       </p>
       <p>
         However, don't use <code>PROGN</code> for an <code>IF</code> clause
-        &#8212; use <code>COND</code>, <code>WHEN</code>, or <code>UNLESS</code>.
+        — use <code>COND</code>, <code>WHEN</code>, or <code>UNLESS</code>.
       </p>
       <p>
         Note that in Common Lisp,
@@ -3237,7 +3237,7 @@ Robert Brown
       </p>
       <p>
         Code must not use <code>PRINT-OBJECT</code>
-        to communicate with a user &#8212;
+        to communicate with a user —
         <code>PRINT-OBJECT</code> is for debugging purposes only.
         Modifying any <code>PRINT-OBJECT</code> method
         must not break any public interfaces.
@@ -3464,7 +3464,7 @@ Robert Brown
         If the assertion is wrong, i.e. if the programmer's claim is not true,
         the results can be <em>catastrophic</em>:
         Lisp can terminate any time after the function returns,
-        or it hang forever, or &#8212; worst of all &#8212;
+        or it hang forever, or — worst of all —
         produce incorrect results without any runtime error!
       </p>
       <p>
@@ -3693,7 +3693,7 @@ Robert Brown
         in a heavily functional style,
         you may consider using
         <a href="http://cliki.net/lambda-reader">lambda-reader</a>,
-        a system that lets you use the unicode character <code>&#955;</code>
+        a system that lets you use the unicode character <code>λ</code>
         instead of <code>LAMBDA</code>.
         But you must not start using such a syntactic extension
         in an existing system without getting permission from other developers.
@@ -3890,7 +3890,7 @@ Robert Brown
 </small>
 
 <p align="right">
-Revision 1.17
+Revision 1.18
 </p>
 
 
@@ -3899,7 +3899,7 @@ Robert Brown
 </address>
 
 <address>
-  <a HREF="mailto:tunes@google.com">Fran&#231;ois-Ren&#233; Rideau</a>
+  <a HREF="mailto:tunes@google.com">François-René Rideau</a>
 </address>
 
 

@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 2.48
+Revision 2.52
 </p>
 
 
@@ -564,7 +564,7 @@ Revision 2.48
   <STYLEPOINT title="File Names">
     <SUMMARY>
       File names should reflect the name of the class implementation that
-      they contain&#8212;including case. Follow the convention that your
+      they contain—including case. Follow the convention that your
       
       project
       uses.
@@ -700,6 +700,18 @@ Revision 2.48
         There should be a single space between the class name and the opening
         parenthesis of the category.
       </p>
+      <CODE_SNIPPET>
+        // Extending a framework class:
+        @interface NSString (GTMStringParsingAdditions)
+        - (NSString *)gtm_foobarString;
+        @end
+
+        // Making your methods and properties private:
+        @interface FoobarViewController ()
+        @property(nonatomic, retain) NSView *dongleView;
+        - (void)performLayout;
+        @end
+      </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
 
@@ -805,7 +817,7 @@ Revision 2.48
     When writing your comments, write for your audience: the next
     
     contributor
-    who will need to understand your code.  Be generous&#8212;the next
+    who will need to understand your code.  Be generous—the next
     one may be you!
   </p>
   <p>
@@ -1061,7 +1073,7 @@ Revision 2.48
     <BODY>
       <p>
         Unlike C++, Objective-C doesn't have a way to differentiate between
-        public and private methods&#8212;everything is public. As a result,
+        public and private methods—everything is public. As a result,
         avoid placing methods in the public API unless they are actually
         expected to be used by a consumer of the class. This helps reduce the
         likelihood they'll be called when you're not expecting it. This includes
@@ -1681,6 +1693,11 @@ Revision 2.48
         the default. Properties, on the other hand, should always specify the
         <code>strong</code> keyword rather than relying on the compiler default.
       </p>
+      <p>
+        Files that are compiled using ARC need to have preprocessor directives
+        to prevent compilation without ARC. See the code snippet below for
+        details.
+      </p>
     </SUMMARY>
     <BODY>
       <p>
@@ -1695,9 +1712,8 @@ Revision 2.48
           #import "Foo.h"
 
           @implementation Foo {
-           @private
-            Bar * __weak _bar;
-            Baz * __unsafe_unretained _baz;
+            Bar* __weak _bar;
+            Baz* __unsafe_unretained _baz;
           }
           // ...
           @end
@@ -1822,7 +1838,7 @@ Revision 2.48
 <HR/>
 
 <p align="right">
-Revision 2.48
+Revision 2.52
 </p>
 
 
