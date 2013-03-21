@@ -136,7 +136,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.45
+    Revision 2.48
   </p>
   
   <address>
@@ -1246,9 +1246,11 @@ from sound.effects import echo
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Line_length__body" id="Line_length__body" style="display: none">
     <p>
-      Exception: lines importing modules may end up longer than 80
-      characters only if using Python 2.4 or
-      earlier.
+      Exceptions:
+      <ul>
+        <li>Long import statements.</li>
+        <li>URLs in comments.</li>
+      </ul>
     </p>
 
     <p>
@@ -1258,7 +1260,7 @@ from sound.effects import echo
     <p>
       Make use of Python's
       
-      <a HREF="http://www.python.org/doc/ref/implicit-joining.html">implicit
+      <a HREF="http://docs.python.org/reference/lexical_analysis.html#implicit-line-joining">implicit
       line joining inside parentheses, brackets and braces</a>.
       If necessary, you can add an extra pair of parentheses around an
       expression.
@@ -1280,6 +1282,17 @@ from sound.effects import echo
     <DIV class=""><PRE>
 <span class="external"></span>x = ('This will build a very long long '
 <span class="external"></span>     'long long long long long long string')</PRE></DIV>
+
+    <p>
+      Within comments, put long URLs on their own line if necessary.
+    </p>
+
+    <DIV class=""><PRE>Yes:  <span class="external"></span># See details at
+      <span class="external"></span># http://www.example.com/us/developer/documentation/api/content/v2.0/csv_file_name_extension_full_specification.html</PRE></DIV>
+
+    <DIV class=""><PRE class="badcode">No:  <span class="external"></span># See details at
+     <span class="external"></span># http://www.example.com/us/developer/documentation/api/content/\
+     <span class="external"></span># v2.0/csv_file_name_extension_full_specification.html</PRE></DIV>
 
     <p>
       Make note of the indentation of the elements in the line
@@ -2223,7 +2236,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.45
+Revision 2.48
 </p>
 
 

@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.231
+Revision 3.245
 </p>
 
 
@@ -364,7 +364,7 @@ Tashana Landray
       </p>
       <ol>
         <li> <code><var>dir2/foo2</var>.h</code> (preferred location
-          &#8212; see details below).</li>
+          — see details below).</li>
         <li> C system files.</li>
         <li> C++ system files.</li>
         <li> Other libraries' <code>.h</code> files.</li>
@@ -779,6 +779,8 @@ Tashana Landray
       Static or global variables of class type are forbidden: they cause
       hard-to-find bugs due to indeterminate order of construction and
       destruction.
+      However, such variables are allowed if they are <code>constexpr</code>:
+      they have no dynamic initialization or destruction.
     </SUMMARY>
     <BODY>
       <p>
@@ -1560,7 +1562,8 @@ Tashana Landray
           arguments are values or <code>const</code> references while
           output arguments are pointers.  Input parameters may be
           <code>const</code> pointers, but we never allow
-          non-<code>const</code> reference parameters.
+          non-<code>const</code> reference parameters
+          except when required by convention, e.g., <code>swap()</code>.
         </p>
         <p>
 
@@ -2159,6 +2162,8 @@ Tashana Landray
   <STYLEPOINT title="Use of const">
     <SUMMARY>
       Use <code>const</code> whenever it makes sense.
+      With C++11,
+      <code>constexpr</code> is a better choice for some uses of const.
     </SUMMARY>
     <BODY>
       <DEFINITION>
@@ -2243,6 +2248,51 @@ Tashana Landray
     </BODY>
   </STYLEPOINT>
 
+  <STYLEPOINT title="Use of constexpr">
+    <SUMMARY>
+      In C++11, use <code>constexpr</code>
+      to define true constants or to ensure constant initialization.
+    </SUMMARY>
+    <BODY>
+      <DEFINITION>
+        Some variables can be declared <code>constexpr</code>
+        to indicate the variables are true constants,
+        i.e. fixed at compilation/link time.
+        Some functions and constructors can be declared <code>constexpr</code>
+        which enables them to be used
+        in defining a <code>constexpr</code> variable.
+      </DEFINITION>
+      <PROS>
+        Use of <code>constexpr</code> enables
+        definition of constants with floating-point expressions
+        rather than just literals;
+        definition of constants of user-defined types; and
+        definition of constants with function calls.
+      </PROS>
+      <CONS>
+        Prematurely marking something as constexpr
+        may cause migration problems if later on it has to be downgraded.
+
+        Current restrictions on what is allowed
+        in constexpr functions and constructors
+        may invite obscure workarounds in these definitions.
+      </CONS>
+      <DECISION>
+        <p>
+          <code>constexpr</code> definitions enable a more robust
+          specification of the constant parts of an interface.
+          Use <code>constexpr</code> to specify true constants
+          and the functions that support their definitions.
+          Avoid complexifying function definitions to enable
+          their use with <code>constexpr</code>.
+          Do not use <code>constexpr</code> to force inlining.
+        </p>
+        
+        
+      </DECISION>
+    </BODY>
+  </STYLEPOINT>
+
   <STYLEPOINT title="Integer Types">
     <SUMMARY>
       Of the built-in C++ integer types, the only one used
@@ -2251,7 +2301,12 @@ Tashana Landray
       size, use
       
       a precise-width integer type from
-      <code>&lt;stdint.h&gt;</code>, such as <code>int16_t</code>.
+      <code>&lt;stdint.h&gt;</code>, such as <code>int16_t</code>. If
+      your variable represents a value that could ever be greater than or
+      equal to 2^31 (2GiB), use a 64-bit type such as <code>int64_t</code>.
+      Keep in mind that even if your value won't ever be too large for an
+      <code>int</code>, it may be used in intermediate calculations which may
+      require a larger type. When in doubt, choose a larger type.
     </SUMMARY>
     <BODY>
       <DEFINITION>
@@ -2301,14 +2356,24 @@ Tashana Landray
         <p>
           You should not use the unsigned integer types such as
           <code>uint32_t</code>,
-          unless the quantity you are representing is really a bit pattern
-          rather than a number, or unless you need defined
-          twos-complement overflow. In particular, do not use unsigned
-          types to say a number will never be negative.  Instead, use
+          unless there is a valid reason such as representing a bit pattern
+          rather than a number, or you need defined overflow modulo 2^N.
+          In particular, do not use unsigned types to say a number will never
+          be negative.  Instead, use
           
           assertions for this.
         </p>
         
+        <p>
+          If your code is a container that returns a size, be sure to use
+          a type that will accommodate any possible usage of your container.
+          When in doubt, use a larger type rather than a smaller type.
+        </p>
+        <p>
+          Use care when converting integer types. Integer conversions and
+          promotions can cause non-intuitive behavior.
+          
+        </p>
       </DECISION>
 
       <SUBSECTION title="On Unsigned Integers">
@@ -2571,16 +2636,21 @@ Tashana Landray
 
   <STYLEPOINT title="sizeof">
   <SUMMARY>
-    Use <code>sizeof(<var>varname</var>)</code> instead of
-    <code>sizeof(<var>type</var>)</code> whenever possible.
+    Prefer <code>sizeof(<var>varname</var>)</code> to
+    <code>sizeof(<var>type</var>)</code>.
   </SUMMARY>
   <BODY>
     <p>
-      Use <code>sizeof(<var>varname</var>)</code> because it will update
-      appropriately if the type of the variable changes.
-      <code>sizeof(<var>type</var>)</code> may make sense in some cases,
-      but should generally be avoided because it can fall out of sync if
-      the variable's type changes.
+      Use <code>sizeof(<var>varname</var>)</code>
+      when you take the size of a particular variable.
+      <code>sizeof(<var>varname</var>)</code> will update
+      appropriately if someone changes the variable type
+      either now or later.
+      You may use <code>sizeof(<var>type</var>)</code>
+      for code unrelated to any particular variable,
+      such as code that manages an external or internal
+      data format where a variable of an appropriate C++ type
+      is not convenient.
     </p>
     <p>
       <CODE_SNIPPET>
@@ -2590,6 +2660,12 @@ Tashana Landray
       <BAD_CODE_SNIPPET>
         memset(&amp;data, 0, sizeof(Struct));
       </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        if (raw_size &lt; sizeof(int)) {
+          LOG(ERROR) &lt;&lt; "compressed record not big enough for count: " &lt;&lt; raw_size;
+          return false;
+        }
+      </CODE_SNIPPET>
     </p>
   </BODY>
   </STYLEPOINT>
@@ -2666,7 +2742,7 @@ Tashana Landray
           auto x(3);  // Note: parentheses.
           auto y{3};  // Note: curly braces.
         </CODE_SNIPPET>
-        mean different things &#8212; <code>x</code> is
+        mean different things — <code>x</code> is
         an <code>int</code>, while <code>y</code> is
         an <code>initializer_list</code>. The same applies to other
         normally-invisible proxy types.
@@ -2752,6 +2828,13 @@ Tashana Landray
                <code>boost/iterator/iterator_adaptor.hpp</code>,
                <code>boost/iterator/iterator_facade.hpp</code>, and
                <code>boost/function_output_iterator.hpp</code></li>
+          <li> The part of
+               <a href="http://www.boost.org/libs/polygon/">
+               Polygon</a> that deals with Voronoi diagram construction and
+               doesn't depend on the rest of Polygon:
+               <code>boost/polygon/voronoi_builder.hpp</code>,
+               <code>boost/polygon/voronoi_diagram.hpp</code>, and
+               <code>boost/polygon/voronoi_geometry_type.hpp</code></li>
         </ul>
         We are actively considering adding other Boost features to the list, so
         this rule may be relaxed in the future.
@@ -2795,7 +2878,7 @@ Tashana Landray
       </p>
       <p>
         As with <a href="#Boost">Boost</a>, some C++11 extensions encourage
-        coding practices that hamper readability&#8212;for example by removing
+        coding practices that hamper readability—for example by removing
         checked redundancy (such as type names) that may be helpful to readers,
         or by encouraging template metaprogramming.  Other extensions
         duplicate functionality available through existing
@@ -2809,6 +2892,8 @@ Tashana Landray
       Currently only the following C++11 features are approved:
       <ul>
         <li><code>auto</code> (for local variables only).</li>
+        <li>
+          <code>constexpr</code> (for ensuring constants).</li>
         <li>Use of <code>&gt;&gt;</code> with no intervening space to
           close multiple levels of template arguments, as in
           <code>set&lt;list&lt;string&gt;&gt;</code>,
@@ -2830,6 +2915,9 @@ Tashana Landray
           whose signatures contain initializer lists.</li>
         <li>Use of local types as template parameters.</li>
         <li><code>nullptr</code> and <code>nullptr_t</code>.</li>
+        <li><code>static_assert</code>.</li>
+        <li>Everything in <a href="http://en.cppreference.com/w/cpp/header/tuple">&lt;tuple&gt;</a>.
+            </li>
       </ul>
       Other features will be approved individually as appropriate.
       Avoid writing code that is incompatible with C++11 (even though it
@@ -2995,8 +3083,8 @@ Tashana Landray
     </SUMMARY>
     <BODY>
       <p>
-        The names of all types &#8212; classes, structs, typedefs, and enums
-        &#8212; have the same naming convention.  Type names should start
+        The names of all types — classes, structs, typedefs, and enums
+        — have the same naming convention.  Type names should start
         with a capital letter and have a capital letter for each new
         word.  No underscores.  For example:
       </p>
@@ -3267,7 +3355,7 @@ Tashana Landray
     When writing your comments, write for your audience: the next
     
     contributor
-    who will need to understand your code.  Be generous &#8212; the next
+    who will need to understand your code.  Be generous — the next
     one may be you!
   </p>
 
@@ -3802,7 +3890,7 @@ Tashana Landray
         an encoding understood by most tools able
         to handle more than just ASCII.
         Hex encoding is also OK, and encouraged where it enhances
-        readability &#8212; for example, <code>"\xEF\xBB\xBF"</code> is the
+        readability — for example, <code>"\xEF\xBB\xBF"</code> is the
         Unicode zero-width no-break space character, which would be
         invisible if included in the source as straight UTF-8.
       </p>
@@ -3956,22 +4044,26 @@ Tashana Landray
                                   argument4);
       </CODE_SNIPPET>
       <p>
-        If the function signature is so long that it cannot fit within
-        the maximum <a href="#Line_Length">line length</a>, you may
-        place all arguments on subsequent lines:
+        Arguments may optionally all be placed on subsequent lines, with one
+        line per argument:
       </p>
       <CODE_SNIPPET>
         if (...) {
           ...
           ...
           if (...) {
-            DoSomethingThatRequiresALongFunctionName(
-                very_long_argument1,  // 4 space indent
+            DoSomething(
+                argument1,  // 4 space indent
                 argument2,
                 argument3,
                 argument4);
           }
       </CODE_SNIPPET>
+      <p>
+        In particular, this should be done if the function signature is so long
+        that it cannot fit within the maximum <a href="#Line_Length">line
+        length</a>.
+      </p>
     </BODY>
   </STYLEPOINT>
 
@@ -4097,8 +4189,9 @@ Tashana Landray
 
   <STYLEPOINT title="Loops and Switch Statements">
     <SUMMARY>
-      Switch statements may use braces for blocks.  Empty loop bodies should use
-      <code>{}</code> or <code>continue</code>.
+      Switch statements may use braces for blocks. Annotate non-trivial
+      fall-through between cases. Empty loop bodies should use <code>{}</code>
+      or <code>continue</code>.
     </SUMMARY>
     <BODY>
       <p>
@@ -4130,6 +4223,8 @@ Tashana Landray
           }
         }
       </CODE_SNIPPET>
+      
+      
       <p>
         Empty loop bodies should use <code>{}</code> or
         <code>continue</code>, but not a single semicolon.
@@ -4708,7 +4803,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.231
+Revision 3.245
 </p>
 
 
