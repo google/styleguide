@@ -37,14 +37,14 @@
 (defun google-c-lineup-expression-plus-4 (langelem)
   "Indents to the beginning of the current C expression plus 4 spaces.
 
-This implements title \"Function Declarations and Definitions\" of the Google
-C++ Style Guide for the case where the previous line ends with an open
-parenthese.
+This implements title \"Function Declarations and Definitions\"
+of the Google C++ Style Guide for the case where the previous
+line ends with an open parenthese.
 
-\"Current C expression\", as per the Google Style Guide and as clarified by
-subsequent discussions,
-means the whole expression regardless of the number of nested parentheses, but
-excluding non-expression material such as \"if(\" and \"for(\" control
+\"Current C expression\", as per the Google Style Guide and as
+clarified by subsequent discussions, means the whole expression
+regardless of the number of nested parentheses, but excluding
+non-expression material such as \"if(\" and \"for(\" control
 structures.
 
 Suitable for inclusion in `c-offsets-alist'."
@@ -53,12 +53,17 @@ Suitable for inclusion in `c-offsets-alist'."
     ;; Go to beginning of *previous* line:
     (c-backward-syntactic-ws)
     (back-to-indentation)
-    ;; We are making a reasonable assumption that if there is a control
-    ;; structure to indent past, it has to be at the beginning of the line.
-    (if (looking-at "\\(\\(if\\|for\\|while\\)\\s *(\\)")
-        (goto-char (match-end 1)))
+    (cond
+     ;; We are making a reasonable assumption that if there is a control
+     ;; structure to indent past, it has to be at the beginning of the line.
+     ((looking-at "\\(\\(if\\|for\\|while\\)\\s *(\\)")
+      (goto-char (match-end 1)))
+     ;; For constructor initializer lists, the reference point for line-up is
+     ;; the token after the initial colon.
+     ((looking-at ":\\s *")
+      (goto-char (match-end 0))))
     (vector (+ 4 (current-column)))))
-        
+
 (defconst google-c-style
   `((c-recognize-knr-p . nil)
     (c-enable-xemacs-performance-kludge-p . t) ; speed up indentation in XEmacs
@@ -69,6 +74,8 @@ Suitable for inclusion in `c-offsets-alist'."
                                (defun-close before after)
                                (class-open after)
                                (class-close before after)
+                               (inexpr-class-open after)
+                               (inexpr-class-close before)
                                (namespace-open after)
                                (inline-open after)
                                (inline-close before after)
@@ -87,8 +94,9 @@ Suitable for inclusion in `c-offsets-alist'."
      . (c-semi&comma-no-newlines-for-oneline-inliners
         c-semi&comma-inside-parenlist
         c-semi&comma-no-newlines-before-nonblanks))
-    (c-indent-comments-syntactically-p . nil)
+    (c-indent-comments-syntactically-p . t)
     (comment-column . 40)
+    (c-indent-comment-alist . ((other . (space . 2))))
     (c-cleanup-list . (brace-else-brace
                        brace-elseif-brace
                        brace-catch-brace
@@ -119,7 +127,7 @@ Suitable for inclusion in `c-offsets-alist'."
                         (statement-case-intro . +) ; case w/o {
                         (access-label . /)
                         (innamespace . 0))))
-  "Google C/C++ Programming Style")
+  "Google C/C++ Programming Style.")
 
 (defun google-set-c-style ()
   "Set the current buffer's c-style to Google C/C++ Programming
