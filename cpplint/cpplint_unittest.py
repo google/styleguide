@@ -2588,6 +2588,29 @@ class CpplintTest(CpplintTestBase):
               '  [build/header_guard] [5]' % expected_guard),
           error_collector.ResultList())
 
+  def testBuildHeaderGuardWithRoot(self):
+    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             'cpplint_test_header.h')
+    file_info = cpplint.FileInfo(file_path)
+    if file_info.FullName() == file_info.RepositoryName():
+      # When FileInfo cannot deduce the root directory of the repository,
+      # FileInfo.RepositoryName returns the same value as FileInfo.FullName.
+      # This can happen when this source file was obtained without .svn or
+      # .git directory. (e.g. using 'svn export' or 'git archive').
+      # Skip this test in such a case because --root flag makes sense only
+      # when the root directory of the repository is properly deduced.
+      return
+
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+    cpplint._root = 'cpplint'
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+    # --root flag is ignored if an non-existent directory is specified.
+    cpplint._root = 'NON_EXISTENT_DIR'
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
   def testBuildInclude(self):
     # Test that include statements have slashes in them.
     self.TestLint('#include "foo.h"',
