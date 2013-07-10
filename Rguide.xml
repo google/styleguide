@@ -1,0 +1,447 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="styleguide.css"/>
+    <title>Google's R Style Guide</title>
+  </head>
+
+  <body>
+
+    <h1>Google's R Style Guide</h1>
+
+    <p>
+      R is a high-level programming language used primarily for
+      statistical computing and graphics.  The goal of the R
+      Programming Style Guide is to make our R code easier to read,
+      share, and verify. The rules below were designed in
+      collaboration with the entire R user community at Google.
+      
+    </p>
+
+    
+
+    
+
+
+    <h2>Summary: R Style Rules</h2>
+
+    <ol>
+      <li><a href="#filenames">File Names</a>: end in <code>.R</code></li>
+      <li><a href="#identifiers">Identifiers</a>: <code>variable.name</code>
+        (or <code>variableName</code>),
+        <code>FunctionName</code>, <code>kConstantName</code></li>
+      <li><a href="#linelength">Line Length</a>: maximum 80 characters</li>
+      <li><a href="#indentation">Indentation</a>: two spaces, no tabs</li>
+      <li><a href="#spacing">Spacing</a></li>
+      <li><a href="#curlybraces">Curly Braces</a>: first on same line, last on
+        own line</li>
+      <li><a href="#else">else</a>: Surround else with braces </li>
+      <li><a href="#assignment">Assignment</a>: use <code>&lt;-</code>, not
+        <code>=</code></li>
+      <li><a href="#semicolons">Semicolons</a>: don't use them</li>
+      <li><a href="#generallayout"> General Layout and Ordering</a></li>
+      <li><a href="#comments"> Commenting Guidelines</a>: all comments begin
+        with <code>#</code> followed by a space; inline comments need two
+        spaces before the <code>#</code></li>
+      <li><a href="#functiondefinition">Function Definitions and Calls</a></li>
+      <li><a href="#functiondocumentation"> Function Documentation</a></li>
+      <li><a href="#examplefunction"> Example Function</a></li>
+      <li><a href="#todo"> TODO Style</a>: <code>TODO(username)</code></li>
+    </ol>
+
+    <h2>Summary: R Language Rules</h2>
+    <ol>
+      <li><a href="#attach"> <code>attach</code></a>: avoid using it</li>
+      <li><a href="#functionlanguage"> Functions</a>:
+        errors should be raised using <code>stop()</code></li>
+      <li><a href="#object"> Objects and Methods</a>: avoid S4 objects and
+        methods when possible; never mix S3 and S4 </li>
+    </ol>
+
+    <h3>Notation and Naming</h3>
+
+    <h4 id="filenames">File Names</h4>
+          <p>
+            File names should end in <code>.R</code> and, of course, be
+            meaningful.
+            <br/> GOOD: <code>predict_ad_revenue.R</code>
+            <br/> BAD: <code><span style="color:red">foo.R</span></code>
+          </p>
+
+          <h4 id="identifiers">Identifiers</h4>
+          <p>
+            Don't use underscores ( <code>_</code> ) or hyphens
+            ( <code>-</code> ) in identifiers.
+            Identifiers should be named according to the following conventions.
+            The preferred form for variable names is all lower case
+            letters and words separated with dots
+            (<code>variable.name</code>), but <code>variableName</code>
+            is also accepted;
+            function names have initial capital letters and no dots
+            (<code>FunctionName</code>);
+            constants are named like functions but with an initial
+            <code>k</code>.
+          </p>
+          <ul>
+            <li><code>variable.name</code> is preferred, <code>variableName</code> is accepted
+              <br/> GOOD: <code>avg.clicks</code>
+              <br/> OK: <code>avgClicks</code>
+              <br/> BAD: <code><span style="color:red">avg_Clicks</span></code>
+            </li>
+            <li><code>FunctionName </code>
+              <br/> GOOD: <code>CalculateAvgClicks</code>
+              <br/> BAD: <code><span style="color:red">calculate_avg_clicks
+                </span></code>,
+                <code><span style="color:red">calculateAvgClicks</span></code>
+              <br/> Make function names verbs.
+              <br/><em>Exception: When creating a classed object, the function
+                name (constructor) and class should match  (e.g., lm).</em></li>
+            <li><code>kConstantName </code></li>
+          </ul>
+
+
+      <h3>Syntax</h3>
+
+      <h4 id="linelength">Line Length</h4>
+<p>
+  The maximum line length is 80 characters.
+</p>
+
+          <h4 id="indentation">Indentation</h4>
+          <p>
+            When indenting your code, use two spaces.  Never use tabs or mix
+            tabs and spaces.
+            <br/><em>Exception: When a line break occurs inside parentheses,
+              align the wrapped line with the first character inside the
+              parenthesis.</em>
+          </p>
+
+        <h4 id="spacing">Spacing</h4>
+          <p>
+            Place spaces around all binary operators (<code>=</code>,
+            <code>+</code>, <code>-</code>, <code>&lt;-</code>, etc.).
+            <br/><em> Exception:  Spaces around <code>=</code>'s are
+            optional when passing parameters in a function call.</em>
+          </p>
+          <p>
+            Do not place a space before a comma, but always place one after a
+            comma.
+            <br/><br/> GOOD:
+          </p>
+<pre>tab.prior &lt;- table(df[df$days.from.opt &lt; 0, "campaign.id"])
+total &lt;- sum(x[, 1])
+total &lt;- sum(x[1, ])</pre>
+          <p>
+            BAD:
+          </p>
+<pre><span style="color:red">tab.prior &lt;- table(df[df$days.from.opt&lt;0, "campaign.id"])  # Needs spaces around '&lt;'
+tab.prior &lt;- table(df[df$days.from.opt &lt; 0,"campaign.id"])  # Needs a space after the comma
+tab.prior&lt;- table(df[df$days.from.opt &lt; 0, "campaign.id"])  # Needs a space before &lt;-
+tab.prior&lt;-table(df[df$days.from.opt &lt; 0, "campaign.id"])  # Needs spaces around &lt;-
+total &lt;- sum(x[,1])  # Needs a space after the comma
+total &lt;- sum(x[ ,1])  # Needs a space after the comma, not before</span>
+</pre>
+          <p>
+            Place a space before left parenthesis, except in a function call.
+          </p>
+          <p>
+            GOOD:
+            <br/><code>if (debug)</code>
+          </p>
+          <p>
+            BAD:
+            <br/><code><span style="color:red">if(debug)</span></code>
+          </p>
+          <p>
+            Extra spacing (i.e., more than one space in a row) is okay if it
+            improves alignment of equals signs or arrows (<code>&lt;-</code>).
+          </p>
+<pre>plot(x    = x.coord,
+     y    = data.mat[, MakeColName(metric, ptiles[1], "roiOpt")],
+     ylim = ylim,
+     xlab = "dates",
+     ylab = metric,
+     main = (paste(metric, " for 3 samples ", sep = "")))
+</pre>
+          <p>
+            Do not place spaces around code in parentheses or square brackets.
+            <br/><em> Exception:  Always place a space after a comma.</em>
+          </p>
+          <p>
+            GOOD:</p><pre>if (debug)
+x[1, ]</pre>
+          <p>
+            BAD:</p><pre><span style="color:red">if ( debug )  # No spaces around debug
+x[1,]  # Needs a space after the comma </span></pre>
+
+          <h4 id="curlybraces">Curly Braces</h4>
+    <p>
+            An opening curly brace should never go on its own line; a closing
+            curly brace should always go on its own line.  You may omit curly
+            braces when a block consists of a single statement; however, you
+            must <em>consistently</em> either use or not use curly braces for
+            single statement blocks.
+          </p>
+          <pre>
+if (is.null(ylim)) {
+  ylim &lt;- c(0, 0.06)
+}</pre>
+          <p>
+            xor (but not both)
+          </p>
+          <pre>
+if (is.null(ylim))
+  ylim &lt;- c(0, 0.06)</pre>
+          <p>
+            Always begin the body of a block on a new line.
+          </p>
+          <p>
+            BAD:
+            <br/><code><span style="color:red"> if (is.null(ylim))
+              ylim &lt;- c(0, 0.06)</span></code>
+            <br/><code><span style="color:red"> if (is.null(ylim))
+              {ylim &lt;- c(0, 0.06)} </span></code>
+          </p>
+
+          <h4 id="else">Surround else with braces</h4>
+    <p>
+            An <code>else</code> statement should always be surrounded on the
+            same line by curly braces.</p>
+          <pre>
+if (condition) {
+  one or more lines
+} else {
+  one or more lines
+}
+</pre>
+          <p>
+            BAD:<br/>
+          </p>
+          <pre style="color:red">
+if (condition) {
+  one or more lines
+}
+else {
+  one or more lines
+}
+</pre>
+          <p>
+            BAD:<br/>
+          </p>
+          <pre style="color:red">
+if (condition)
+  one line
+else
+  one line
+</pre>
+
+        <h4 id="assignment">Assignment</h4>
+          <p>
+            Use <code>&lt;-</code>, not <code>=</code>, for assignment.
+          </p>
+          <p>
+            GOOD:
+            <br/><code> x &lt;- 5 </code>
+          </p>
+          <p>
+            BAD:
+            <br/><code><span style="color:red"> x = 5</span></code>
+          </p>
+        <h4 id="semicolons">Semicolons</h4>
+          <p>
+            Do not terminate your lines with semicolons or use semicolons to
+            put more than one command on the same line. (Semicolons are not
+            necessary, and are omitted for consistency with other Google style
+            guides.)
+          </p>
+
+
+    <h3> Organization </h3>
+        <h4 id="generallayout">General Layout and Ordering</h4>
+          <p>
+            If everyone uses the same general ordering, we'll be able to
+            read and understand each other's scripts faster and more easily.
+          </p>
+          <ol>
+            <li>Copyright statement comment </li>
+            <li>Author comment</li>
+            <li>File description comment, including purpose of
+              program, inputs, and outputs</li>
+            <li><code>source()</code> and <code>library()</code> statements</li>
+            <li>Function definitions</li>
+            <li>Executed statements, if applicable (e.g.,
+              <code> print</code>, <code>plot</code>)</li>
+          </ol>
+          <p>
+            Unit tests should go in a separate file named
+            <code>originalfilename_test.R</code>.
+          </p>
+        <h4 id="comments">Commenting Guidelines</h4>
+          <p>
+            Comment your code. Entire commented lines should begin with
+            <code>#</code> and one space.
+          </p>
+          <p>
+            Short comments can be placed after code preceded by two spaces,
+            <code>#</code>, and then one space.
+          </p>
+<pre># Create histogram of frequency of campaigns by pct budget spent.
+hist(df$pct.spent,
+     breaks = "scott",  # method for choosing number of buckets
+     main   = "Histogram: fraction budget spent by campaignid",
+     xlab   = "Fraction of budget spent",
+     ylab   = "Frequency (count of campaignids)")
+</pre>
+        <h4 id="functiondefinition">Function Definitions and
+          Calls</h4>
+          <p>
+            Function definitions should first list arguments without default
+            values, followed by those with default values.
+          </p>
+          <p>
+            In both function definitions and function calls, multiple
+            arguments per line are allowed; line breaks are only allowed
+            between assignments.
+            <br/>GOOD:
+          </p>
+<pre>PredictCTR &lt;- function(query, property, num.days,
+                       show.plot = TRUE)
+</pre>
+           BAD:
+<pre><span style="color:red">PredictCTR &lt;- function(query, property, num.days, show.plot =
+                       TRUE)
+</span></pre>
+          <p> Ideally, unit tests should serve as sample function calls (for
+            shared library routines).
+          </p>
+        <h4 id="functiondocumentation">Function Documentation</h4>
+          <p> Functions should contain a comments section immediately below
+            the function definition line. These comments should consist of a
+            one-sentence description of the function; a list of the function's
+            arguments, denoted by <code>Args:</code>, with a description of
+            each (including the data type); and a description of the return
+            value, denoted by <code>Returns:</code>. The comments should be
+            descriptive enough that a caller can use the function without
+            reading any of the function's code.
+          </p>
+
+        <h4 id="examplefunction">Example Function</h4>
+<pre>
+CalculateSampleCovariance &lt;- function(x, y, verbose = TRUE) {
+  # Computes the sample covariance between two vectors.
+  #
+  # Args:
+  #   x: One of two vectors whose sample covariance is to be calculated.
+  #   y: The other vector. x and y must have the same length, greater than one,
+  #      with no missing values.
+  #   verbose: If TRUE, prints sample covariance; if not, not. Default is TRUE.
+  #
+  # Returns:
+  #   The sample covariance between x and y.
+  n &lt;- length(x)
+  # Error handling
+  if (n &lt;= 1 || n != length(y)) {
+    stop("Arguments x and y have different lengths: ",
+         length(x), " and ", length(y), ".")
+  }
+  if (TRUE %in% is.na(x) || TRUE %in% is.na(y)) {
+    stop(" Arguments x and y must not have missing values.")
+  }
+  covariance &lt;- var(x, y)
+  if (verbose)
+    cat("Covariance = ", round(covariance, 4), ".\n", sep = "")
+  return(covariance)
+}
+</pre>
+
+<h4 id="todo">TODO Style</h4>
+
+<p>
+  Use a consistent style for TODOs throughout your code.
+  <br/><code>TODO(username): Explicit description of action to
+    be taken</code>
+</p>
+
+
+      <h3> Language </h3>
+
+        <h4 id="attach">Attach</h4>
+        <p> The possibilities for creating errors when using
+          <code>attach</code> are numerous. Avoid it.</p>
+        <h4 id="functionlanguage">Functions</h4>
+        <p> Errors should be raised using <code>stop()</code>.</p>
+        <h4 id="object">Objects and Methods</h4>
+          <p> The S language has two object systems, S3 and S4, both of which
+          are available in R.  S3 methods are more interactive and flexible,
+          whereas S4 methods are more formal and rigorous. (For an illustration
+          of the two systems, see Thomas Lumley's
+          "Programmer's Niche: A Simple
+          Class, in S3 and S4" in R News 4/1, 2004, pgs. 33 - 36:
+          <a href="http://cran.r-project.org/doc/Rnews/Rnews_2004-1.pdf">
+          http://cran.r-project.org/doc/Rnews/Rnews_2004-1.pdf</a>.)
+          </p>
+          <p>Use S3 objects and methods unless there is a strong reason to use
+            S4 objects or methods. A primary justification for an S4 object
+            would be to use objects directly in C++ code. A primary
+            justification for an S4 generic/method would be to dispatch on two
+            arguments.
+          </p>
+          <p>Avoid mixing S3 and S4: S4 methods ignore S3 inheritance and
+            vice-versa.
+          </p>
+
+
+     <h3>Exceptions</h3>
+
+<p>
+  The coding conventions described above should be followed, unless
+  there is good reason to do otherwise.  Exceptions include legacy
+  code and modifying third-party code.
+</p>
+
+
+<h3>Parting Words</h3>
+
+<p>
+  Use common sense and BE CONSISTENT.
+</p>
+     <p>
+     If you are editing code, take a few minutes to look at the code around
+     you and determine its style. If others use spaces around their
+     <code>if </code>
+     clauses, you should, too. If their comments have little boxes of stars
+     around them, make your comments have little boxes of stars around them,
+     too.
+     </p>
+     <p>
+     The point of having style guidelines is to have a common vocabulary of
+     coding so people can concentrate on <em>what</em> you are saying,
+     rather than on <em>how</em> you are saying it. We present global style
+     rules here so people
+     know the vocabulary. But local style is also important. If code you add
+     to a file looks drastically different from the existing code around it,
+     the discontinuity will throw readers out of their rhythm when they go to
+     read it. Try to avoid this.
+     </p>
+     
+     <p>
+     OK, enough writing about writing code; the code itself is much more
+     interesting. Have fun!
+     </p>
+
+
+     <h3>References</h3>
+
+     <p>
+     <a href="http://www.maths.lth.se/help/R/RCC/">
+     http://www.maths.lth.se/help/R/RCC/</a> - R Coding Conventions
+     </p>
+     <p>
+     <a href="http://ess.r-project.org/">http://ess.r-project.org/</a> - For
+     emacs users. This runs R in your emacs and has an emacs mode.
+     </p>
+
+  </body>
+
+</html>
