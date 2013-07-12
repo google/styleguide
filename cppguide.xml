@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 3.245
+Revision 3.260
 </p>
 
 
@@ -737,6 +737,14 @@ Tashana Landray
       <CODE_SNIPPET>
         int j = g();  // Good -- declaration has initialization.
       </CODE_SNIPPET>
+      <BAD_CODE_SNIPPET>
+        vector&lt;int&gt; v;
+        v.push_back(1);  // Prefer initializing using brace initialization.
+        v.push_back(2);
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        vector&lt;int&gt; v = {1, 2};  // Good -- v starts initialized.
+      </CODE_SNIPPET>
       <p>
         Note that gcc implements <code>for (int i = 0; i
         &lt; 10; ++i)</code> correctly (the scope of <code>i</code> is
@@ -779,8 +787,6 @@ Tashana Landray
       Static or global variables of class type are forbidden: they cause
       hard-to-find bugs due to indeterminate order of construction and
       destruction.
-      However, such variables are allowed if they are <code>constexpr</code>:
-      they have no dynamic initialization or destruction.
     </SUMMARY>
     <BODY>
       <p>
@@ -966,6 +972,12 @@ Tashana Landray
           transparent wrappers around other classes are also
           exceptions.
           Such exceptions should be clearly marked with comments.
+        </p>
+        <p>
+          Finally, constructors that take only an initializer_list may be
+          non-explicit. This is to permit construction of your type using the
+          assigment form for brace init lists (i.e. <code>MyType m = {1, 2}
+          </code>).
         </p>
       </DECISION>
     </BODY>
@@ -1453,8 +1465,9 @@ Tashana Landray
   <STYLEPOINT title="Smart Pointers">
     
     <SUMMARY>
-      If you actually need pointer semantics, <code>scoped_ptr</code>
-      is great.  You should only use <code>std::tr1::shared_ptr</code>
+      If you actually need pointer semantics, <code>unique_ptr</code>
+      is great, and <code>scoped_ptr</code> is fine if you need to support
+      older versions of C++.  You should only use <code>shared_ptr</code>
       with a non-const referent when it is truly necessary to share ownership
       of an object (e.g. inside an STL container). You should never use
       <code>auto_ptr</code>.
@@ -1481,11 +1494,15 @@ Tashana Landray
       </CONS>
       <DECISION>
         <dl>
+          <dt><code>unique_ptr</code></dt>
+          <dd>See <a href="#unique_ptr">below</a>.</dd>
           <dt><code>scoped_ptr</code></dt>
-          <dd>Straightforward and risk-free. Use wherever appropriate.</dd>
+          <dd>Prefer <code>unique_ptr</code> unless C++03 compatibility is
+          required.</dd>
           <dt><code>auto_ptr</code></dt>
-          <dd>Confusing and bug-prone ownership-transfer semantics. Do not use.
-            </dd>
+          <dd>Confusing and bug-prone ownership-transfer semantics. Use
+          <code>unique_ptr</code> instead, if possible.</dd>
+          
           <dt><code>shared_ptr</code></dt>
           <dd>
           Safe with const referents (i.e. <code>shared_ptr&lt;const
@@ -2162,8 +2179,6 @@ Tashana Landray
   <STYLEPOINT title="Use of const">
     <SUMMARY>
       Use <code>const</code> whenever it makes sense.
-      With C++11,
-      <code>constexpr</code> is a better choice for some uses of const.
     </SUMMARY>
     <BODY>
       <DEFINITION>
@@ -2245,51 +2260,6 @@ Tashana Landray
           you!
         </p>
       </SUBSECTION>
-    </BODY>
-  </STYLEPOINT>
-
-  <STYLEPOINT title="Use of constexpr">
-    <SUMMARY>
-      In C++11, use <code>constexpr</code>
-      to define true constants or to ensure constant initialization.
-    </SUMMARY>
-    <BODY>
-      <DEFINITION>
-        Some variables can be declared <code>constexpr</code>
-        to indicate the variables are true constants,
-        i.e. fixed at compilation/link time.
-        Some functions and constructors can be declared <code>constexpr</code>
-        which enables them to be used
-        in defining a <code>constexpr</code> variable.
-      </DEFINITION>
-      <PROS>
-        Use of <code>constexpr</code> enables
-        definition of constants with floating-point expressions
-        rather than just literals;
-        definition of constants of user-defined types; and
-        definition of constants with function calls.
-      </PROS>
-      <CONS>
-        Prematurely marking something as constexpr
-        may cause migration problems if later on it has to be downgraded.
-
-        Current restrictions on what is allowed
-        in constexpr functions and constructors
-        may invite obscure workarounds in these definitions.
-      </CONS>
-      <DECISION>
-        <p>
-          <code>constexpr</code> definitions enable a more robust
-          specification of the constant parts of an interface.
-          Use <code>constexpr</code> to specify true constants
-          and the functions that support their definitions.
-          Avoid complexifying function definitions to enable
-          their use with <code>constexpr</code>.
-          Do not use <code>constexpr</code> to force inlining.
-        </p>
-        
-        
-      </DECISION>
     </BODY>
   </STYLEPOINT>
 
@@ -2735,9 +2705,7 @@ Tashana Landray
       </p>
 
       <p>The interaction between <code>auto</code> and C++11
-        brace-initialization can be confusing. (C++11 brace-initialization
-        isn't an approved feature, but this may become relevant when and
-        if it is permitted.) The declarations
+        brace-initialization can be confusing. The declarations
         <CODE_SNIPPET>
           auto x(3);  // Note: parentheses.
           auto y{3};  // Note: curly braces.
@@ -2757,12 +2725,95 @@ Tashana Landray
     <DECISION>
       <p><code>auto</code> is permitted, for local variables only.
         Do not use <code>auto</code> for file-scope or namespace-scope
-        variables, or for class members.</p>
+        variables, or for class members. Never assign a braced initializer list
+        to an <code>auto</code>-typed variable.</p>
       <p>The <code>auto</code> keyword is also used in an unrelated
         C++11 feature: it's part of the syntax for a new kind of
         function declaration with a trailing return type. Function
         declarations with trailing return types are not permitted.</p>
     </DECISION>
+  </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Brace Initialization">
+  <SUMMARY>
+    You may use brace initialization. 
+  </SUMMARY>
+  <BODY>
+    <p>In C++03, aggregate types (arrays and structs with no constructor) could
+    be initialized using braces.
+      <CODE_SNIPPET>
+        struct Point { int x; int y; };
+        Point p = {1, 2};
+      </CODE_SNIPPET></p>
+
+    <p>In C++11, this syntax has been expanded for use with all other datatypes.
+    The brace initialization form is called <i>braced-init-list</i>. Here are
+    a few examples of its use.
+      <CODE_SNIPPET>
+        // Vector takes lists of elements.
+        vector&lt;string&gt; v{"foo", "bar"};
+
+        // The same, except this form cannot be used if the initializer_list
+        // constructor is explicit. You may choose to use either form.
+        vector&lt;string&gt; v = {"foo", "bar"};
+
+        // Maps take lists of pairs. Nested braced-init-lists work.
+        map&lt;int, string&gt; m = {{1, "one"}, {2, "2"}};
+
+        // braced-init-lists can be implicitly converted to return types.
+        vector&lt;int&gt; test_function() {
+          return {1, 2, 3};
+        }
+
+        // Iterate over a braced-init-list.
+        for (int i : {-1, -2, -3}) {}
+
+        // Call a function using a braced-init-list.
+        void test_function2(vector&lt;int&gt; v) {}
+        test_function2({1, 2, 3});
+      </CODE_SNIPPET></p>
+
+    <p>User data types can also define constructors that take
+    <code>initializer_list</code>, which is automatically created from
+    <i>braced-init-list</i>:
+      <CODE_SNIPPET>
+        class MyType {
+         public:
+          // initializer_list is a reference to the underlying init list,
+          // so it can be passed by value.
+          MyType(initializer_list&lt;int&gt; init_list) {
+            for (int element : init_list) {}
+          }
+        };
+        MyType m{2, 3, 5, 7};
+      </CODE_SNIPPET></p>
+
+    <p>Finally, brace initialization can also call ordinary constructors of
+    data types that do not have <code>initializer_list</code> constructors.
+      <CODE_SNIPPET>
+        double d{1.23};
+        // Calls ordinary constructor as long as MyOtherType has no
+        // initializer_list constructor.
+        class MyOtherType {
+         public:
+          explicit MyOtherType(string);
+          MyOtherType(int, string);
+        };
+        MyOtherType m = {1, "b"};
+        // If the constructor is explicit, you can't use the "= {}" form.
+        MyOtherType m{"b"};
+      </CODE_SNIPPET></p>
+
+    <p>Never assign a <i>braced-init-list</i> to an auto local variable. In the
+    single element case, what this means can be confusing.
+      <BAD_CODE_SNIPPET>
+        auto d = {1.23};        // d is an initializer_list&lt;double&gt;
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        auto d = double{1.23};  // Good -- d is a double, not an initializer_list.
+      </CODE_SNIPPET>
+    </p>
   </BODY>
   </STYLEPOINT>
 
@@ -2801,15 +2852,6 @@ Tashana Landray
           <li> <a href="http://www.boost.org/libs/utility/compressed_pair.htm">
                Compressed Pair</a> from <code>boost/compressed_pair.hpp</code>
                </li>
-          <li> <a href="http://www.boost.org/libs/ptr_container/">
-               Pointer Container</a> from <code>boost/ptr_container</code> except
-               serialization and wrappers for containers not in the C++03
-               standard (<code>ptr_circular_buffer.hpp</code> and
-               <code>ptr_unordered*</code>)
-               </li>
-          <li> <a href="http://www.boost.org/libs/array/">
-               Array</a> from <code>boost/array.hpp</code>
-               </li>
           <li> <a href="http://www.boost.org/libs/graph/">
                The Boost Graph Library (BGL)</a> from <code>boost/graph</code>,
                except serialization (<code>adj_list_serialize.hpp</code>) and
@@ -2835,10 +2877,29 @@ Tashana Landray
                <code>boost/polygon/voronoi_builder.hpp</code>,
                <code>boost/polygon/voronoi_diagram.hpp</code>, and
                <code>boost/polygon/voronoi_geometry_type.hpp</code></li>
+          <li> <a href="http://www.boost.org/libs/bimap/">
+               Bimap</a> from <code>boost/bimap</code>
+               </li>
         </ul>
         We are actively considering adding other Boost features to the list, so
-        this rule may be relaxed in the future.
+        this list may be expanded in the future.
       </div>
+      <p>
+      The following libraries are permitted, but their use is discouraged
+      because they've been superseded by standard libraries in C++11:
+      <ul>
+	<li> <a href="http://www.boost.org/libs/array/">
+	     Array</a> from <code>boost/array.hpp</code>: use
+	     <a href="http://en.cppreference.com/w/cpp/container/array">
+             <code>std::array</code></a> instead.
+             </li>
+	<li> <a href="http://www.boost.org/libs/ptr_container/">
+	     Pointer Container</a> from <code>boost/ptr_container</code>:
+	     use containers of <a href="http://en.cppreference.com/w/cpp/memory/unique_ptr">
+             <code>std::unique_ptr</code></a> instead.
+             </li>
+      </ul>
+      </p>
     </DECISION>
   </BODY>
   </STYLEPOINT>
@@ -2910,14 +2971,21 @@ Tashana Landray
         <li>All of the new STL algorithms in the
           <a href="http://en.cppreference.com/w/cpp/algorithm">&lt;algorithm&gt;</a>
           and <a href="http://en.cppreference.com/w/cpp/numeric">&lt;numeric&gt;</a>
-          headers, except for the versions of
-          <code>min</code>, <code>max</code>, and <code>minmax</code>
-          whose signatures contain initializer lists.</li>
+          headers.</li>
         <li>Use of local types as template parameters.</li>
         <li><code>nullptr</code> and <code>nullptr_t</code>.</li>
         <li><code>static_assert</code>.</li>
+        <li>Everything in <a href="http://en.cppreference.com/w/cpp/header/array">&lt;array&gt;</a>.</li>
         <li>Everything in <a href="http://en.cppreference.com/w/cpp/header/tuple">&lt;tuple&gt;</a>.
             </li>
+        <li>Variadic templates.</li>
+        <li>Alias templates (the new <code>using</code> syntax) may be used.
+          Don't use an alias declaration where a typedef will work.</li>
+        <li><code>unique_ptr</code>, with restrictions (see
+          <a href="#unique_ptr">below</a>).</li>
+        <li>Brace initialization syntax. See
+          <a href="#Brace_Initialization">the full section</a> for more
+          detail.</li>
       </ul>
       Other features will be approved individually as appropriate.
       Avoid writing code that is incompatible with C++11 (even though it
@@ -2925,6 +2993,59 @@ Tashana Landray
       
     </DECISION>
   </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="unique_ptr">
+    <SUMMARY>
+      Use <code>unique_ptr</code> freely within classes and functions,
+      but do not use it to transfer ownership outside of a single .cc/.h
+      pair.
+    </SUMMARY>
+    <BODY>
+      <DEFINITION>
+        <code>unique_ptr</code> is a "smart" pointer type which expresses
+        exclusive ownership of the underlying object. It provides "move
+        semantics", which enables it to be stored in containers and used
+        as a function parameter or return value, even though it cannot be
+        copied (to preserve the unique-ownership property).
+      </DEFINITION>
+      <PROS>
+        <ul>
+          <li>It fully automates memory management of singly-owned pointers,
+          virtually eliminating the risk of leaking the underlying memory.</li>
+          <li>It provides a single, universal abstraction for singly-owned
+          pointers, replacing close to a dozen overlapping partial solutions
+          in common use at Google.</li>
+          <li>It can be passed into and returned from functions, providing
+          a self-documenting and compiler-enforced way to transfer ownership
+          between scopes.</li>
+          <li>Its performance is essentially identical to a plain pointer.</li>
+        </ul>
+      </PROS>
+      <CONS>
+        <ul>
+          <li>It cannot be used in code that requires C++03 compatibility.</li>
+          <li>Move semantics implicitly rely on rvalue references,
+          a new C++11 feature which is unfamiliar to many Googlers.</li>
+          <li>Google code currently uses a completely different set of
+          conventions for ownership transfer. Mixing <code>unique_ptr</code>
+          with the existing conventions could add complexity and create
+          confusion.</li>
+          <li>Best practices for using <code>unique_ptr</code> within Google
+          have not yet been established.</li>
+        </ul>
+      </CONS>
+      <DECISION>
+        <p>Use of <code>unique_ptr</code> as a class member or local variable
+        is encouraged, as is storing <code>unique_ptr</code> in containers
+        that support it. However, for the time being it is forbidden to use
+        <code>unique_ptr</code> as a function parameter or return value,
+        except for functions that are local to a single .cc/.h pair.</p>
+        <p>Note that the <code>std::move()</code> function, which is often
+        used to pass <code>unique_ptr</code> into function calls, remains
+        forbidden.</p>
+      </DECISION>
+    </BODY>
   </STYLEPOINT>
 
 </CATEGORY>
@@ -2950,72 +3071,30 @@ Tashana Landray
   <STYLEPOINT title="General Naming Rules">
     <SUMMARY>
       Function names, variable names, and filenames should be
-      descriptive; eschew abbreviation.  Types and variables should be
-      nouns, while functions should be "command" verbs.
+      descriptive; eschew abbreviation.
     </SUMMARY>
     <BODY>
-      <SUBSECTION title="How to Name">
-        <p>
-          Give as descriptive a name as possible, within reason. Do
-          not worry about saving horizontal space as it is far more
-          important to make your code immediately understandable by a
-          new reader. Examples of well-chosen names:
-        </p>
-        <CODE_SNIPPET>
-          int num_errors;                  // Good.
-          int num_completed_connections;   // Good.
-        </CODE_SNIPPET>
-        <p>
-          Poorly-chosen names use ambiguous abbreviations or arbitrary
-          characters that do not convey meaning:
-        </p>
-        <BAD_CODE_SNIPPET>
-          int n;                           // Bad - meaningless.
-          int nerr;                        // Bad - ambiguous abbreviation.
-          int n_comp_conns;                // Bad - ambiguous abbreviation.
-        </BAD_CODE_SNIPPET>
-        <p>
-          Type and variable names should typically be nouns: e.g.,
-          <code>FileOpener</code>,
-          
-          <code>num_errors</code>.
-        </p>
-        <p>
-          Function names should typically be imperative (that is they
-          should be commands): e.g., <code>OpenFile()</code>,
-          <code>set_num_errors()</code>.  There is an exception for
-          accessors, which, described more completely in <a HREF="#Function_Names">Function Names</a>, should be named
-          the same as the variable they access.
-        </p>
-      </SUBSECTION>
-
-      <SUBSECTION title="Abbreviations">
-        <p>
-          Do not use abbreviations unless they are extremely well
-          known outside your project. For example:
-        </p>
-        <CODE_SNIPPET>
-          // Good
-          // These show proper names with no abbreviations.
-          int num_dns_connections;  // Most people know what "DNS" stands for.
-          int price_count_reader;   // OK, price count. Makes sense.
-        </CODE_SNIPPET>
-        <BAD_CODE_SNIPPET>
-          // Bad!
-          // Abbreviations can be confusing or ambiguous outside a small group.
-          int wgc_connections;  // Only your group knows what this stands for.
-          int pc_reader;        // Lots of things can be abbreviated "pc".
-        </BAD_CODE_SNIPPET>
-        <p>
-          Never abbreviate by leaving out letters:
-        </p>
-        <CODE_SNIPPET>
-          int error_count;  // Good.
-        </CODE_SNIPPET>
-        <BAD_CODE_SNIPPET>
-          int error_cnt;    // Bad.
-        </BAD_CODE_SNIPPET>
-      </SUBSECTION>
+      <p>
+        Give as descriptive a name as possible, within reason. Do
+        not worry about saving horizontal space as it is far more
+        important to make your code immediately understandable by a
+        new reader. Do not use abbreviations that are ambiguous or
+        unfamiliar to readers outside your project, and do not
+        abbreviate by deleting letters within a word.
+      </p>
+      <CODE_SNIPPET>
+        int price_count_reader;    // No abbreviation.
+        int num_errors;            // "num" is a widespread convention.
+        int num_dns_connections;   // Most people know what "DNS" stands for.
+      </CODE_SNIPPET>
+      <BAD_CODE_SNIPPET>
+        int n;                     // Meaningless.
+        int nerr;                  // Ambiguous abbreviation.
+        int n_comp_conns;          // Ambiguous abbreviation.
+        int wgc_connections;       // Only your group knows what this stands for.
+        int pc_reader;             // Lots of things can be abbreviated "pc".
+        int cstmr_id;              // Deletes internal letters.
+      </BAD_CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
 
@@ -3532,9 +3611,9 @@ Tashana Landray
 
       <SUBSECTION title="Function Definitions">
         <p>
-          Each function definition should have a comment describing
-          what the function does if there's anything tricky about how it does
-          its job.  For example, in the definition comment you might
+          If there is anything tricky about how a function does its
+          job, the function definition should have an explanatory
+          comment. For example, in the definition comment you might
           describe any coding tricks you use, give an overview of the
           steps you go through, or explain why you chose to implement
           the function in the way you did rather than using a viable
@@ -3640,6 +3719,7 @@ Tashana Landray
             // thus the comment lines up with the following comments and code.
             DoSomethingElse();  // Two spaces before line comments normally.
           }
+          DoSomething(); /* For trailing block comments, one space is fine. */
         </CODE_SNIPPET>
       </SUBSECTION>
       <SUBSECTION title="nullptr/NULL, true/false, 1, 2, 3...">
@@ -4067,6 +4147,49 @@ Tashana Landray
     </BODY>
   </STYLEPOINT>
 
+  <STYLEPOINT title="Braced Initializer Lists">
+    <SUMMARY>
+      On one line if it fits, otherwise wrap at the open brace.
+    </SUMMARY>
+    <BODY>
+      <p>
+        Put everything on one line where possible. If everything can't fit
+        on one line, the open brace should be the last character on its line,
+        and the close brace should be the first character on its line.
+      </p>
+      <CODE_SNIPPET>
+        // Examples of braced init list on a single line.
+        return {foo, bar};
+        functioncall({foo, bar});
+        pair&lt;int, int&gt; p{foo, bar};
+
+        // When you have to wrap.
+        MyType m = {
+          superlongvariablename1,
+          superlongvariablename2,
+          {short, interior, list},
+          {
+            interiorwrappinglist,
+            interiorwrappinglist2
+          }
+        };
+
+        // Wrapping inside a function call.
+        function({
+                   wrapped, long,
+                   list, here
+                 });
+
+        // If the variable names are really long.
+        function(
+            {
+              wrapped,
+              list
+            });
+      </CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
+
   <STYLEPOINT title="Conditionals">
     <SUMMARY>
       Prefer no spaces inside parentheses.  The <code>else</code>
@@ -4354,18 +4477,39 @@ Tashana Landray
 
   <STYLEPOINT title="Variable and Array Initialization">
     <SUMMARY>
-      Your choice of <code>=</code> or <code>()</code>.
+      Your choice of <code>=</code>, <code>()</code>, or <code>{}</code>.
     </SUMMARY>
     <BODY>
       <p>
-        You may choose between <code>=</code> and <code>()</code>; the
-        following are all correct:
+        You may choose between <code>=</code>, <code>()</code>, and
+        <code>{}</code>; the following are all correct:
       </p>
       <CODE_SNIPPET>
         int x = 3;
         int x(3);
-        string name("Some Name");
+        int x{3};
         string name = "Some Name";
+        string name("Some Name");
+        string name{"Some Name"};
+      </CODE_SNIPPET>
+      <p>
+        Be careful when using the <code>{}</code> on a type that takes an
+        <code>initializer_list</code> in one of its constructors. The
+        <code>{}</code> syntax prefers the <code>initializer_list</code>
+        constructor whenever possible. To get the non-
+        <code>initializer_list</code> constructor, use <code>()</code>.
+      </p>
+      <CODE_SNIPPET>
+        vector&lt;int&gt; v(100, 1);  // A vector of 100 1s.
+        vector&lt;int&gt; v{100, 1};  // A vector of 100, 1.
+      </CODE_SNIPPET>
+      <p>
+        Also, the brace form prevents narrowing of integral types. This can
+        prevent some types of programming errors.
+      </p>
+      <CODE_SNIPPET>
+        int pi(3.14);  // OK -- pi == 3.
+        int pi{3.14};  // Compile error: narrowing conversion.
       </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
@@ -4547,7 +4691,7 @@ Tashana Landray
         void f(bool b) {  // Open braces should always have a space before them.
           ...
         int i = 0;  // Semicolons usually have no space before them.
-        int x[] = { 0 };  // Spaces inside braces for array initialization are
+        int x[] = { 0 };  // Spaces inside braces for braced-init-list are
         int x[] = {0};    // optional.  If you use them, put them on both sides!
         // Spaces around the colon in inheritance and initializer lists.
         class Foo : public Bar {
@@ -4803,7 +4947,7 @@ Tashana Landray
 <HR/>
 
 <p align="right">
-Revision 3.245
+Revision 3.260
 </p>
 
 

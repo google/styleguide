@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 2.52
+Revision 2.56
 </p>
 
 
@@ -109,8 +109,8 @@ Revision 2.52
     Note that this guide is not an Objective-C tutorial. We assume that the
     reader is familiar with the language. If you are new to Objective-C or
     need a refresher, please read
-    <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/index.html">
-      The Objective-C Programming Language
+    <a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html">
+      Programming with Objective-C
     </a>.
   </p>
 </CATEGORY>
@@ -366,6 +366,10 @@ Revision 2.52
             evenLongerKeyword:arg3
                         error:arg4];
       </CODE_SNIPPET>
+      <p>
+        Invocations containing inlined <a href="#Blocks">blocks</a> may have
+        their segments left-aligned at a four space indent.
+      </p>
     </BODY>
   </STYLEPOINT>
 
@@ -468,6 +472,11 @@ Revision 2.52
           between the <code>) {</code> characters.
         </li>
         <li>
+          Invocations containing inlined blocks may have their segments
+          left-aligned at a four-space indent. This helps when invocations
+          contain multiple inlined blocks.
+        </li>
+        <li>
           Two space indents inside blocks are also allowed, but should only
           be used when it's consistent with the rest of the project's code.
         </li>
@@ -521,10 +530,102 @@ Revision 2.52
             // ...
         };
         [_operationQueue addOperationWithBlock:largeBlock];
+
+        // An example with multiple inlined blocks in one invocation.
+        [myObject doSomethingWith:arg1
+            firstBlock:^(Foo *a) {
+                // ...
+            }
+            secondBlock:^(Bar *b) {
+                // ...
+            }];
       </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
 
+  <STYLEPOINT title="Container Literals">
+    <SUMMARY>
+      For projects using Xcode 4.4 or later and clang, the use of container
+      (array and dictionary) literals is encouraged. If split across multiple
+      lines, the contents should be indented two spaces.
+    </SUMMARY>
+    <BODY>
+      <p>
+        If the collection fits on one line, put a single space after the opening
+        and before the closing brackets.
+      </p>
+      <CODE_SNIPPET>
+        NSArray* array = @[ [foo description], @"Another String", [bar description] ];
+
+        NSDictionary* dict = @{ NSForegroundColorAttributeName : [NSColor redColor] };
+      </CODE_SNIPPET>
+      <p>
+        Not:
+      </p>
+      <BAD_CODE_SNIPPET>
+        NSArray* array = @[[foo description], [bar description]];
+
+        NSDictionary* dict = @{NSForegroundColorAttributeName: [NSColor redColor]};
+      </BAD_CODE_SNIPPET>
+
+      <p>
+        If the collection spans more than a single line, place the opening
+        bracket on the same line as the declaration, indent the body by two
+        spaces, and place the closing bracket on a new line that is indented to
+        the same level as the opening bracket.
+      </p>
+      <CODE_SNIPPET>
+        NSArray* array = @[
+          @"This",
+          @"is",
+          @"an",
+          @"array"
+        ];
+
+        NSDictionary* dictionary = @{
+          NSFontAttributeName : [NSFont fontWithName:@"Helvetica-Bold" size:12],
+          NSForegroundColorAttributeName : fontColor
+        };
+      </CODE_SNIPPET>
+
+      <p>
+        For dictionary literals, there should be one space before the colon and
+        at least one space after it (to optionally align the values).
+      </p>
+      <CODE_SNIPPET>
+        NSDictionary* option1 = @{
+          NSFontAttributeName : [NSFont fontWithName:@"Helvetica-Bold" size:12],
+          NSForegroundColorAttributeName : fontColor
+        };
+
+        NSDictionary* option2 = @{
+          NSFontAttributeName :            [NSFont fontWithName:@"Arial" size:12],
+          NSForegroundColorAttributeName : fontColor
+        };
+      </CODE_SNIPPET>
+      <p>
+        The following are all incorrect:
+      </p>
+      <BAD_CODE_SNIPPET>
+        // There should be a space before the colon.
+        NSDictionary* wrong = @{
+          AKey:       @"b",
+          BLongerKey: @"c",
+        };
+
+        // The items should each be on a new line, or the entire expression
+        // should fit on one line.
+        NSDictionary* alsoWrong= @{ AKey : @"a",
+                                    BLongerKey : @"b" };
+
+        // There should be no variable space before the colon, only after.
+        NSDictionary* stillWrong = @{
+          AKey       : @"b",
+          BLongerKey : @"c",
+        };
+      </BAD_CODE_SNIPPET>
+    </BODY>
+  </STYLEPOINT>
 </CATEGORY>
 
 <CATEGORY title="Naming">
@@ -794,8 +895,20 @@ Revision 2.52
         <p>
           Constant names (#defines, enums, const local variables, etc.) should
           start with a lowercase <var>k</var> and then use mixed case to
-          delimit words, i.e. <var>kInvalidHandle</var>,
-          <var>kWritePerm</var>.
+          delimit words.  For example:
+        </p>
+        <CODE_SNIPPET>
+          const int kNumberOfFiles = 12;
+          NSString *const kUserKey = @"kUserKey";
+          enum DisplayTinge {
+            kDisplayTingeGreen = 1,
+            kDisplayTingeBlue = 2
+          };
+        </CODE_SNIPPET>
+        <p>
+          Because Objective-C does not provide namespacing, constants with global
+          scope should have an appropriate prefix to minimize the chance of name
+          collision, typically like <var>kClassNameFoo</var>.
         </p>
       </SUBSECTION>
     </BODY>
@@ -1838,7 +1951,7 @@ Revision 2.52
 <HR/>
 
 <p align="right">
-Revision 2.52
+Revision 2.56
 </p>
 
 

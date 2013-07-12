@@ -136,7 +136,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.48
+    Revision 2.54
   </p>
   
   <address>
@@ -775,7 +775,7 @@ from sound.effects import echo
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Decision:  </SPAN>
-      Okay to use with the following caveats:
+      Okay to use with the following caveat:
       <p>
         Do not use mutable objects as default values in the function or method
         definition.
@@ -785,17 +785,6 @@ from sound.effects import echo
          <span class="external">    </span>b = []</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:  <span class="external"></span>def foo(a, b=[]):
        <span class="external">  </span>...</PRE></DIV>
-    <p>
-      Calling code must use named values for arguments with a default value.
-      This helps document the code somewhat and helps prevent and detect
-      interface breakage when more arguments are added.
-    </p>
-<DIV class=""><PRE>
-<span class="external"></span>def foo(a, b=1):
-  <span class="external">  </span>...</PRE></DIV>
-<DIV class=""><PRE>Yes: <span class="external"></span>foo(1)
-     <span class="external"></span>foo(1, b=2)</PRE></DIV>
-<DIV class=""><PRE class="badcode">No:  <span class="external"></span>foo(1, 2)</PRE></DIV>
         </P>
       </DIV></DIV>
     </DIV>
@@ -1250,6 +1239,7 @@ from sound.effects import echo
       <ul>
         <li>Long import statements.</li>
         <li>URLs in comments.</li>
+        
       </ul>
     </p>
 
@@ -1454,7 +1444,7 @@ from sound.effects import echo
   dictionary = {
       'foo': 1,
       'long_name': 2,
-      }</PRE></DIV>
+  }</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:
   foo       = 1000  # comment
   long_name = 2     # comment that should not be aligned
@@ -1462,7 +1452,7 @@ from sound.effects import echo
   dictionary = {
       'foo'      : 1,
       'long_name': 2,
-      }</PRE></DIV>
+  }</PRE></DIV>
 
     
       </DIV></DIV>
@@ -1476,8 +1466,11 @@ from sound.effects import echo
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Shebang_Line')" name="Shebang_Line__button" id="Shebang_Line__button">▶</SPAN>
       <DIV style="display:inline;" class="">
         Most <code>.py</code> files do not need to start with a
-        <code>#!</code> line.  Start the main file of a  program with
-        <code>#!/usr/bin/python</code>.
+        <code>#!</code> line.  Start the main file of a
+         program with
+        <code>#!/usr/bin/python</code> with an optional single digit
+        <code>2</code> or <code>3</code> suffix per
+        <a href="http://www.python.org/dev/peps/pep-0394/">PEP-394</a>.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Shebang_Line__body" id="Shebang_Line__body" style="display: none">
         
@@ -1754,26 +1747,30 @@ from sound.effects import echo
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Strings')" name="Strings__button" id="Strings__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use the <code>%</code> operator for formatting strings,
-        even when the parameters are all strings.  Use your best judgement
-        to decide between <code>+</code> and <code>%</code> though.
+        Use the <code>format</code> method or the <code>%</code> operator for
+        formatting strings, even when the parameters are all strings. Use your
+        best judgement to decide between <code>+</code> and <code>%</code>
+        (or <code>format</code>) though.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Strings__body" id="Strings__body" style="display: none">
 
 <DIV class=""><PRE>Yes: <span class="external"></span>x = a + b
      <span class="external"></span>x = '%s, %s!' % (imperative, expletive)
-     <span class="external"></span>x = 'name: %s; score: %d' % (name, n)</PRE></DIV>
+     <span class="external"></span>x = '{}, {}!'.format(imperative, expletive)
+     <span class="external"></span>x = 'name: %s; score: %d' % (name, n)
+     <span class="external"></span>x = 'name: {}; score: {}'.format(name, n)</PRE></DIV>
 <DIV class=""><PRE class="badcode">No: <span class="external"></span>x = '%s%s' % (a, b)  # use + in this case
+    <span class="external"></span>x = '{}{}'.format(a, b)  # use + in this case
     <span class="external"></span>x = imperative + ', ' + expletive + '!'
     <span class="external"></span>x = 'name: ' + name + '; score: ' + str(n)</PRE></DIV>
 
     <p>
       Avoid using the <code>+</code> and <code>+=</code> operators to
-      accumulate a string within a loop.  Since strings are immutable, this
+      accumulate a string within a loop. Since strings are immutable, this
       creates unnecessary temporary objects and results in quadratic rather
-      than linear running time.  Instead, add each substring to a list and
-      <code>''.join</code> the list after the loop terminates (or, write each
-      substring to a <code>cStringIO.StringIO</code> buffer).
+      than linear running time. Instead, add each substring to a list
+      and <code>''.join</code> the list after the loop terminates (or, write
+      each substring to a <code>io.BytesIO</code> buffer).
     </p>
 
 <DIV class=""><PRE>Yes: <span class="external"></span>items = ['&lt;table&gt;']
@@ -2236,7 +2233,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.48
+Revision 2.54
 </p>
 
 

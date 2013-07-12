@@ -3,7 +3,7 @@
 <GUIDE title="Google HTML/CSS Style Guide">
   <p class="revision">
     
-    Revision 2.21
+    Revision 2.23
   </p>
   
   <OVERVIEW>
@@ -1086,6 +1086,8 @@
     </STYLEPOINT>
   </CATEGORY>
 
+  
+
   <PARTING_WORDS>
     <p>
       <em>Be consistent.</em>
@@ -1109,7 +1111,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.21
+    Revision 2.23
   </p>
 
 </GUIDE>

@@ -3,7 +3,7 @@
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
     
-    Revision 2.72
+    Revision 2.82
   </p>
   
   <address>
@@ -96,8 +96,8 @@
              <code>boolean</code>) are constant values.</p>
 
            <p><code>Objects</code>'
-             immutabilty is more subjective — objects should be
-             considered immutable only if they do not demonstrate obeserverable
+             immutability is more subjective — objects should be
+             considered immutable only if they do not demonstrate observable
              state change.  This is not enforced by the compiler.</p>
 
            
@@ -112,7 +112,8 @@
               lack of support in Internet Explorer).</p>
 
             <p>A <code>@const</code> annotation on a method additionally
-              implies that the method should not be overriden in subclasses.</p>
+              implies that the method should not be overridden in subclasses.
+            </p>
           </SUBSECTION>
 
           <SUBSECTION title="Examples">
@@ -209,12 +210,12 @@
           </ol>
         </SUBSECTION>
         <SUBSECTION title="Why?">
-          <p>JavaScript requires statements to end with a semicolon,
-            except when it thinks it can safely infer their existence. In each
-            of these examples, a function declaration or object or array literal
-            is used inside a statement. The closing brackets are not enough to
-            signal the end of the statement. Javascript never ends a statement
-            if the next token is an infix or bracket operator.</p>
+          <p>JavaScript requires statements to end with a semicolon, except when
+            it thinks it can safely infer their existence. In each of these
+            examples, a function declaration or object or array literal is used
+            inside a statement. The closing brackets are not enough to signal
+            the end of the statement. Javascript never ends a statement if the
+            next token is an infix or bracket operator.</p>
           <p>This has really surprised people, so make sure your assignments end
             with semicolons.</p>
         </SUBSECTION>
@@ -1147,7 +1148,7 @@
             declarations. Instead, continue from the 0 column.</p>
           <p>Only alias names that will not be re-assigned to another object
             (e.g., most constructors, enums, and namespaces). Do not do
-            this:</p>
+            this (see below for how to alias a constructor):</p>
 
           <BAD_CODE_SNIPPET>
             goog.scope(function() {
@@ -1161,7 +1162,7 @@
             are aliasing.</p>
 
           <CODE_SNIPPET>
-            goog.provide('my.module');
+            goog.provide('my.module.SomeType');
 
             goog.require('goog.dom');
             goog.require('goog.ui.Button');
@@ -1169,9 +1170,16 @@
             goog.scope(function() {
             var Button = goog.ui.Button;
             var dom = goog.dom;
-            var module = my.module;
 
-            module.button = new Button(dom.$('my-button'));
+            // Alias new types <b>after</b> the constructor declaration.
+            my.module.SomeType = function() { ... };
+            var SomeType = my.module.SomeType;
+
+            // Declare methods on the prototype as usual:
+            SomeType.prototype.findButton = function() {
+              // Button as aliased above.
+              this.button = new Button(dom.getElement('my-button'));
+            };
             ...
             });  // goog.scope
           </CODE_SNIPPET>
@@ -1224,10 +1232,12 @@
           </CODE_SNIPPET>
         </SUBSECTION>
         <SUBSECTION title="Binary and Ternary Operators">
-          <p>Always put the operator on the preceding line, so that you don't
-            have to think about implicit semi-colon insertion issues. Otherwise,
+          <p>Always put the operator on the preceding line. Otherwise,
             line breaks and indentation follow the same rules as in other
-            Google style guides.</p>
+            Google style guides. This operator placement was initially agreed
+            upon out of concerns about automatic semicolon insertion. In fact,
+            semicolon insertion cannot happen before a binary operator, but new
+            code should stick to this style for consistency.</p>
           <CODE_SNIPPET>
             var x = a ? b : c;  // All on one line if it will fit.
 
@@ -1325,7 +1335,7 @@
         <p>Note that these semantics differ from those of C++ and Java, in that
           they grant private and protected access to all code in the same file,
           not just in the same class or class hierarchy. Also, unlike in C++,
-          private properties cannot be overriden by a subclass.
+          private properties cannot be overridden by a subclass.
         </p>
         <CODE_SNIPPET>
           // File 1.
@@ -1892,12 +1902,12 @@
                   </CODE_SNIPPET>
                 </td>
                 <td>
-                  An Object in which the keys are numbers and the values
-                  are strings.  <p/>Note that in JavaScript, the keys are always
+                  An Object in which the keys are numbers and the values are
+                  strings.  <p/>Note that in JavaScript, the keys are always
                   implicitly converted to strings, so
                   <code>obj['1'] == obj[1]</code>.
-                  So the key wil always be a string in for...in loops. But the
-                  compiler will verify the type if the key when indexing into
+                  So the key will always be a string in for...in loops. But the
+                  compiler will verify the type of the key when indexing into
                   the object.
                 </td>
               </tr>
@@ -2205,15 +2215,16 @@
         <p>All files, classes, methods and properties should be documented with
           <a href="http://code.google.com/p/jsdoc-toolkit/">JSDoc</a>
           comments with the appropriate <a href="#JSDoc_Tag_Reference">tags</a>
-          and <a href="#JsTypes">types</a>. Textual descriptions for methods,
-          method parameters and method return values should be included
-          unless obvious from the method or parameter name.
+          and <a href="#JsTypes">types</a>. Textual descriptions for properties,
+          methods, method parameters and method return values should be included
+          unless obvious from the property, method, or parameter name.
         </p>
 
         <p>Inline comments should be of the <code>//</code> variety.</p>
 
-        <p>Avoid sentence fragments. Start sentences with a properly
-        capitalized word, and end them with punctuation.</p>
+        <p>Complete sentences are recommended but not required.
+        Complete sentences should use appropriate capitalization
+        and punctuation.</p>
 
         <SUBSECTION title="Comment Syntax">
           <p>The JSDoc syntax is based on
@@ -2288,7 +2299,7 @@
           <p>It'll come out like this:</p>
 
           <BAD_CODE_SNIPPET>
-          Computes weight based on three factors: items sent items received items received
+          Computes weight based on three factors: items sent items received last timestamp
           </BAD_CODE_SNIPPET>
 
           <p>Instead, do this:</p>
@@ -2313,10 +2324,13 @@
           <p>
             
             A <a href="copyright.html">copyright notice</a> and author information are optional.
-            The top level comment is designed
-            to orient readers unfamiliar with the code to what is in this file.
-            It should provide a description of the file's contents and any
-            dependencies or compatibility information. As an example:</p>
+            File overviews are generally recommended whenever a file consists of
+            more than a single class definition. The top level comment is
+            designed to orient readers unfamiliar with the code to what is in
+            this file.  If present, it should provide a description of the
+            file's contents and any dependencies or compatibility information.
+            As an example:
+          </p>
 
           <CODE_SNIPPET>
             /**
@@ -2359,7 +2373,7 @@
              * Operates on an instance of MyClass and returns something.
              * @param {project.MyClass} obj Instance of MyClass which leads to a long
              *     comment that needs to be wrapped to two lines.
-             * @return {boolean} Whether something occured.
+             * @return {boolean} Whether something occurred.
              */
             function PR_someMethod(obj) {
               // ...
@@ -2461,7 +2475,7 @@
                      * @const
                      */
                     mynamespace.Request.prototype.initialize = function() {
-                      // This method cannot be overriden in a subclass.
+                      // This method cannot be overridden in a subclass.
                     }
                   </CODE_SNIPPET>
                 </td>
@@ -2806,7 +2820,9 @@
                     Polygon.prototype.getSides = function() {};
                   </CODE_SNIPPET>
                 </td>
-                <td>Used to indicate that the function defines an inteface.</td>
+                <td>
+                  Used to indicate that the function defines an interface.
+                </td>
               </tr>
 
               <tr>
@@ -3204,10 +3220,10 @@
                   </CODE_SNIPPET>
                 </td>
                 <td>
-                  Identifies the <a href="#JsTypes">type</a>
-                  of a variable, property, or expression.
-                  Curly braces are not required around most types, but some
-                  projects mandate them for all types, for consistency.
+                  Identifies the <a href="#JsTypes">type</a> of a variable,
+                  property, or expression. Curly braces are not required around
+                  most types, but some projects mandate them for all types, for
+                  consistency.
                 </td>
               </tr>
 
@@ -3236,6 +3252,8 @@
 
             </tbody>
           </table>
+
+          
 
           <p>
             You may also see other types of JSDoc annotations in third-party
@@ -3539,7 +3557,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.72
+    Revision 2.82
   </p>
 
   
