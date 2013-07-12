@@ -257,8 +257,9 @@ _CPP_HEADERS = frozenset([
     'numeric', 'ostream', 'ostream.h', 'parsestream.h', 'pfstream.h',
     'PlotFile.h', 'procbuf.h', 'pthread_alloc.h', 'rope', 'rope.h',
     'ropeimpl.h', 'SFile.h', 'slist', 'slist.h', 'stack.h', 'stdexcept',
-    'stdiostream.h', 'streambuf.h', 'stream.h', 'strfile.h', 'string',
-    'strstream', 'strstream.h', 'tempbuf.h', 'tree.h', 'typeinfo', 'valarray',
+    'stdiostream.h', 'streambuf', 'streambuf.h', 'stream.h', 'strfile.h',
+    'string', 'strstream', 'strstream.h', 'tempbuf.h', 'tree.h', 'typeinfo',
+    'valarray',
     ])
 
 
