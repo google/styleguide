@@ -5,7 +5,7 @@
 
 <p align="right">
 
-Revision 1.20
+Revision 1.22
 </p>
 
 
@@ -180,7 +180,7 @@ Robert Brown
       <p>
         Some of these guidelines are motivated by universal principles of good programming.
         Some guidelines are motivated by technical peculiarities of Common Lisp.
-        Some guidelines where once motivated by a technical reason,
+        Some guidelines were once motivated by a technical reason,
         but the guideline remained after the reason subsided.
         Some guidelines, such those about as comments and indentation,
         are based purely on convention, rather than on clear technical merit.
@@ -211,15 +211,22 @@ Robert Brown
     </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="Old Code">
-    <p>
-      A lot of our code was written before these guidelines existed.
-      You should fix violations as you encounter them
-      in the course of your normal coding.
-      You must not fix violations en masse
-      without warning other developers and coordinating with them,
-      so as not to make the merging of large branches
-      more difficult than it already is.
-    </p>
+    <SUMMARY>
+      Fix old code as you go.
+    </SUMMARY>
+    <BODY>
+      <p>
+        A lot of our code was written before these guidelines existed.
+        You should fix violations as you encounter them
+        in the course of your normal coding.
+      </p>
+      <p>
+        You must not fix violations en masse
+        without warning other developers and coordinating with them,
+        so as not to make the merging of large branches
+        more difficult than it already is.
+      </p>
+    </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="Future Topics">
     <SUMMARY>
@@ -514,11 +521,11 @@ Robert Brown
           without any compilation error or warning messages whatsoever.
           If the compiler issues warnings that should be ignored,
           muffle those warnings using the
-          <code>xcvb-driver:with-controlled-compiler-conditions</code> and
-          <code>xcvb-driver:*uninteresting-conditions*</code>
-          framework (also available as <code>asdf-condition-control</code>),
+          <code>UIOP:WITH-MUFFLED-COMPILER-CONDITIONS</code> and
+          <code>UIOP:*UNINTERESTING-COMPILER-CONDITIONS*</code>
+          framework (part of <code>UIOP</code>, part of <code>ASDF 3</code>),
           either around the entire project, or around individual files
-          (using asdf's <code>:around-compile</code> hooks).
+          (using <code>ASDF</code>'s <code>:around-compile</code> hooks).
         </li>
         <li>
           All code should be checked in an appropriate source control system,
@@ -549,7 +556,7 @@ Robert Brown
   </STYLEPOINT>
 </CATEGORY>
 <CATEGORY title="Formatting">
-  <STYLEPOINT title="Spelling">
+  <STYLEPOINT title="Spelling and Abbreviations">
     <SUMMARY>
       <p>
         You must use correct spelling in your comments,
@@ -717,7 +724,7 @@ Robert Brown
         After that <code>in-package</code> form,
         every file should follow with any file-specific
         <code>(declaim (optimize ...))</code> declaration
-        that is not covered by an asdf <code>:around-compile</code> hook.
+        that is not covered by an <code>ASDF</code> <code>:around-compile</code> hook.
       </p>
       <CODE_SNIPPET>
         ;;;; Author: brown (Robert Brown)
@@ -1169,7 +1176,7 @@ Robert Brown
   <STYLEPOINT title="Symbol guidelines">
     <SUMMARY>
       You should use lower case.
-      You should follow the rules for <a href="#Spelling">Spelling and Abbreviations</a>
+      You should follow the rules for <a href="#Spelling_and_Abbreviations">Spelling and Abbreviations</a>
       You should follow punctuation conventions.
     </SUMMARY>
     <BODY>
@@ -1202,9 +1209,9 @@ Robert Brown
         unless you have a well-documented overarching reason to,
         and permission from other hackers who review your proposal.
       </p>
-        See the section on <a href="#Spelling">Spelling and Abbreviations</a>
-        for guidelines on using abbreviations.
       <p>
+        See the section on <a href="#Spelling_and_Abbreviations">Spelling and Abbreviations</a>
+        for guidelines on using abbreviations.
       </p>
       <BAD_CODE_SNIPPET>
         ;; Bad
@@ -2415,7 +2422,7 @@ Robert Brown
       </p>
       <ul>
         <li>
-          Implementing an interactive development loop.
+          The implementation of an interactive development tool.
         </li>
         <li>
           The build infrastructure.
@@ -3282,7 +3289,7 @@ Robert Brown
         More generally, unsafe operations
         will yield the correct result faster
         than would the equivalent safe operation
-        if the arguments to satisfy some invariant such as
+        if the arguments satisfy some invariant such as
         being of the correct type and small enough;
         however if the arguments fail to satisfy the required invariants,
         then the operation may have undefined behavior,
@@ -3293,8 +3300,8 @@ Robert Brown
         or whether it is accounting for large amounts money,
         such undefined behavior can kill or bankrupt people.
         Yet proper speed can sometimes make the difference between
-        software that's unusably slow and software that does its job;
-        between software that is a net loss
+        software that's unusably slow and software that does its job,
+        or between software that is a net loss
         and software that can yield a profit.
       </p>
       <p>
@@ -3330,6 +3337,7 @@ Robert Brown
         but is not to be used for production code since
         it defeats the purpose of declarations as a performance trick.
       </p>
+      
     </BODY>
   </STYLEPOINT>
   <STYLEPOINT title="DYNAMIC-EXTENT">
@@ -3486,9 +3494,12 @@ Robert Brown
         when an appropriate implementation is only <i>O(n)</i>.
         Moreover, <code>(REDUCE 'APPEND ...)</code>
         is also <i>O(n^2)</i> unless you specify <code>:FROM-END T</code>.
-        In such cases, you must use proper abstractions
-        that cover those cases instead of calling <code>REDUCE</code>,
-        first defining them in a suitable library if need be.
+        In such cases, you MUST NOT use <code>REDUCE</code>,
+        but instead you MUST use proper abstractions
+        from a suitable library (that you may have to contribute to)
+        that properly handles those cases
+        without burdening users with implementation details.
+        See for instance <code>UIOP:REDUCE/STRCAT</code>.
       </p>
       
     </BODY>
@@ -3620,11 +3631,17 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="Pathnames">
     <SUMMARY>
-      Common Lisp pathnames are tricky. Be aware of pitfalls.
+      Common Lisp pathnames are tricky. Be aware of pitfalls. Use <code>UIOP</code>.
     </SUMMARY>
     <BODY>
       <p>
         It is surprisingly hard to properly deal with pathnames in Common Lisp.
+      </p>
+      <p>
+        <code>ASDF 3</code> comes with a portability library <code>UIOP</code>
+	that makes it <em>much</em> easier to deal with pathnames
+	portably — and correctly — in Common Lisp.
+	You should use it when appropriate.
       </p>
       <p>
         First, be aware of the discrepancies between
@@ -3647,7 +3664,7 @@ Robert Brown
         which matters a lot on non-Unix platforms
         (and even on some Unix implementations).
         You probably should be using
-        <code>ASDF-UTILS:MERGE-PATHNAMES*</code>
+        <code>UIOP:MERGE-PATHNAMES*</code>
         instead of <code>MERGE-PATHNAMES</code>,
         especially if your expectations for relative pathnames
         are informed by the way they work in Unix or Windows;
@@ -3662,7 +3679,7 @@ Robert Brown
         Third, be aware that <code>DIRECTORY</code>
         is not portable across implementations
         in how it handles wildcards, sub-directories, symlinks, etc.
-        There again, <code>ASDF-UTILS</code> provides several
+        There again, <code>UIOP</code> provides several
         common abstractions to deal with pathnames.
       </p>
       <p>
@@ -3671,13 +3688,14 @@ Robert Brown
         Many implementations have bugs in them, when they are supported at all.
         SBCL implements them very well,
         but strictly enforces the limitations on characters
-        allowed by the standard.
+        allowed by the standard, which restricts their applicability.
         Other implementations allow arbitrary characters in such pathnames,
         but in doing so are not being conformant,
         and are still incompatible with each other in many ways.
         You should use other pathname abstractions,
         such as <code>ASDF:SYSTEM-RELATIVE-PATHNAME</code> or
-        the underlying <code>ASDF-UTILS:COERCE-PATHNAME</code>.
+        the underlying <code>UIOP:SUBPATHNAME</code> and
+	<code>UIOP:PARSE-UNIX-NAMESTRING</code>.
       </p>
       
       <p>
@@ -3689,6 +3707,9 @@ Robert Brown
         reinitialize any search path from current environment variables.
         <code>ASDF</code> for instance requires you to reset its paths
         with <code>ASDF:CLEAR-CONFIGURATION</code>.
+	<code>UIOP</code> provides hooks
+	to call functions before an image is dumped,
+	from which to reset or <code>makunbound</code> relevant variables.
       </p>
       
     </BODY>
@@ -3808,7 +3829,7 @@ Robert Brown
 </small>
 
 <p align="right">
-Revision 1.20
+Revision 1.22
 </p>
 
 
