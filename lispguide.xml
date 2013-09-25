@@ -5,7 +5,7 @@
 
 <p align="right">
 
-Revision 1.22
+Revision 1.23
 </p>
 
 
@@ -74,7 +74,8 @@ Robert Brown
     <a HREF="http://www.gigamonkeys.com/book/">Practical Common Lisp</a>.
     For a language reference, please consult the
     <a HREF="http://www.lispworks.com/documentation/HyperSpec/Front/index.htm">Common Lisp HyperSpec</a>.
-    For more detailed style guidance, take a look at Peter Norvig and Kent Pitman's
+    For more detailed style guidance, take (with a pinch of salt)
+    a look at Peter Norvig and Kent Pitman's
     <a HREF="http://norvig.com/luv-slides.ps">style guide</a>.
   </p>
 </CATEGORY>
@@ -2707,7 +2708,7 @@ Robert Brown
         instead of <code>FIRST</code> and <code>REST</code> also makes sense.
         However, keep in mind that it might be more appropriate in such cases
         to use higher-level constructs such as
-        <code>DESTRUCTURING-BIND</code> or <code>FARE-MATCHER:MATCH</code>.
+        <code>DESTRUCTURING-BIND</code> or <code>OPTIMA:MATCH</code>.
       </p>
     </BODY>
   </STYLEPOINT>
@@ -3348,12 +3349,12 @@ Robert Brown
     </SUMMARY>
     <BODY>
       <p>
-        <code>DYNAMIC-EXTENT</code> declaration are
+        <code>DYNAMIC-EXTENT</code> declarations are
         a particular case of
         <a href="#Unsafe_Operations">unsafe operations</a>.
       </p>
       <p>
-        The purpose of the <code>DYNAMIC-EXTENT</code> declaration
+        The purpose of a <code>DYNAMIC-EXTENT</code> declaration
         is to improve performance by reducing garbage collection
         in cases where it appears to be obvious that an object's lifetime
         is within the "dynamic extent" of a function.
@@ -3380,7 +3381,7 @@ Robert Brown
           The lists created to store <code>&amp;REST</code> parameters.
         </li>
         <li>
-          Lists and vector allocated within a function.
+          Lists, vectors and structures allocated within a function.
         </li>
         <li>
           Closures.
@@ -3390,8 +3391,8 @@ Robert Brown
         If the assertion is wrong, i.e. if the programmer's claim is not true,
         the results can be <em>catastrophic</em>:
         Lisp can terminate any time after the function returns,
-        or it hang forever, or — worst of all —
-        produce incorrect results without any runtime error!
+        or it can hang forever, or — worst of all —
+        it can produce incorrect results without any runtime error!
       </p>
       <p>
         Even if the assertion is correct,
@@ -3433,18 +3434,19 @@ Robert Brown
         by analyzing where the function is called and
         what other functions it is passed to;
         therefore, you should somewhat wary of declaring a function
-        <code>DYNAMIC-EXTENT</code>, but not a high-stress declaration.
+        <code>DYNAMIC-EXTENT</code>, but this is not a high-stress declaration.
         On the other hand, it is much harder to ascertain that
         none of the objects ever bound or assigned to that variable
+        and none of their sub-objects
         will escape the dynamic extent of the current call frame,
-        nor will in any future modification of a function.
+        and that they still won't in any future modification of a function.
         Therefore, you should be extremely wary
         of declaring a variable <code>DYNAMIC-EXTENT</code>.
       </p>
       <p>
-        It's sometimes hard to know what the rate will be.
+        It's usually hard to predict the effect of such optimization on performance.
         When writing a function or macro
-        that's part of a library of reusable code,
+        that is part of a library of reusable code,
         there's no a priori way to know how often the code will run.
         Ideally, tools would be available to discover
         the availability and suitability of using such an optimization
@@ -3452,7 +3454,8 @@ Robert Brown
         in practice this isn't as easy as it ought to be.
         It's a tradeoff.
         If you're very, very sure that the assertion is true
-        (that the object is only used within the dynamic scope),
+        (that any object bound to the variable and any of its sub-objects
+        are only used within the dynamic extent of the specified scope),
         and it's not obvious how much time will be saved
         and it's not easy to measure,
         then it may be better to put in the declaration than to leave it out.
@@ -3474,11 +3477,16 @@ Robert Brown
         otherwise guarantees the same semantics.
         Of course, you must use <code>APPLY</code>
         if it does what you want and <code>REDUCE</code> doesn't.
+        For instance:
       </p>
-      <p>
-        For instance, <code>(apply #'+ (mapcar #'acc frobs)</code>
-        should instead be <code>(reduce #'+ frobs :key #'acc)</code>
-      </p>
+      <BAD_CODE_SNIPPET>
+        ;; Bad
+        (apply #'+ (mapcar #'acc frobs))
+      </BAD_CODE_SNIPPET>
+      <CODE_SNIPPET>
+        ;; Better
+        (reduce #'+ frobs :key #'acc :initial-value 0)
+      </CODE_SNIPPET>
       <p>
         This is preferable because it does not do extra consing,
         and does not risk going beyond <code>CALL-ARGUMENTS-LIMIT</code>
@@ -3495,7 +3503,9 @@ Robert Brown
         Moreover, <code>(REDUCE 'APPEND ...)</code>
         is also <i>O(n^2)</i> unless you specify <code>:FROM-END T</code>.
         In such cases, you MUST NOT use <code>REDUCE</code>,
-        but instead you MUST use proper abstractions
+        and you MUST NOT use <code>(APPLY 'STRCAT ...)</code>
+        or <code>(APPLY 'APPEND ...)</code> either.
+        Instead you MUST use proper abstractions
         from a suitable library (that you may have to contribute to)
         that properly handles those cases
         without burdening users with implementation details.
@@ -3508,7 +3518,7 @@ Robert Brown
     <SUMMARY>
       You should not use <code>NCONC</code>;
       you should use <code>APPEND</code> instead,
-      or better data structures.
+      or better, better data structures.
     </SUMMARY>
     <BODY>
       <p>
@@ -3548,7 +3558,7 @@ Robert Brown
         (see Okasaki's book, and add them to lisp-interface-library),
         or more simply you should be accumulating data in a tree
         that will get flattened once in linear time
-        after the accumulation phase is complete (see how ASDF does it).
+        after the accumulation phase is complete.
       </p>
       <p>
         You may only use <code>NCONC</code>, <code>MAPCAN</code>
@@ -3639,9 +3649,9 @@ Robert Brown
       </p>
       <p>
         <code>ASDF 3</code> comes with a portability library <code>UIOP</code>
-	that makes it <em>much</em> easier to deal with pathnames
-	portably — and correctly — in Common Lisp.
-	You should use it when appropriate.
+        that makes it <em>much</em> easier to deal with pathnames
+        portably — and correctly — in Common Lisp.
+        You should use it when appropriate.
       </p>
       <p>
         First, be aware of the discrepancies between
@@ -3695,7 +3705,7 @@ Robert Brown
         You should use other pathname abstractions,
         such as <code>ASDF:SYSTEM-RELATIVE-PATHNAME</code> or
         the underlying <code>UIOP:SUBPATHNAME</code> and
-	<code>UIOP:PARSE-UNIX-NAMESTRING</code>.
+        <code>UIOP:PARSE-UNIX-NAMESTRING</code>.
       </p>
       
       <p>
@@ -3707,9 +3717,9 @@ Robert Brown
         reinitialize any search path from current environment variables.
         <code>ASDF</code> for instance requires you to reset its paths
         with <code>ASDF:CLEAR-CONFIGURATION</code>.
-	<code>UIOP</code> provides hooks
-	to call functions before an image is dumped,
-	from which to reset or <code>makunbound</code> relevant variables.
+        <code>UIOP</code> provides hooks
+        to call functions before an image is dumped,
+        from which to reset or <code>makunbound</code> relevant variables.
       </p>
       
     </BODY>
@@ -3754,7 +3764,8 @@ Robert Brown
       <p>
         That is why any function specified in a <code>SATISFIES</code> clause
         MUST accept objects of any type as argument to the function,
-        and MUST be defined within an <code>EVAL-WHEN</code>.
+        and MUST be defined within an <code>EVAL-WHEN</code>
+        (as well as any variable it uses or function it calls):
       </p>
       <BAD_CODE_SNIPPET>
         (defun prime-number-p (n) ; Doubly bad!
@@ -3829,7 +3840,7 @@ Robert Brown
 </small>
 
 <p align="right">
-Revision 1.22
+Revision 1.23
 </p>
 
 

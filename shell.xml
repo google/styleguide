@@ -4,7 +4,7 @@
 
 <p align="right">
 
-Revision 1.25
+Revision 1.26
 </p>
 
 
@@ -390,6 +390,73 @@ Revision 1.25
           done
         </CODE_SNIPPET>
       </p>
+    </BODY>
+  </STYLEPOINT>
+
+  <STYLEPOINT title="Case statement">
+    <SUMMARY>
+      <ul>
+        <li>
+          Indent alternatives by 2 spaces.
+        </li>
+        <li>
+          A one-line alternative needs a space after the close parenthesis of
+          the pattern and before the <code>;;</code>.
+        </li>
+        <li>
+          Long or multi-command alternatives should be split over multiple
+          lines with the pattern, actions, and <code>;;</code> on separate
+          lines.
+        </li>
+      </ul>
+    </SUMMARY>
+    <BODY>
+      <p>
+        The matching expressions are indented one level from the 'case' and
+        'esac'.  Multiline actions are indented another level.  In general,
+        there is no need to quote match expressions.  Pattern expressions
+        should not be preceded by an open parenthesis.  Avoid the
+        <code>;&amp;</code> and <code>;;&amp;</code> notations.
+      </p>
+      <CODE_SNIPPET>
+        case "${expression}" in
+          a)
+            variable="..."
+            some_command "${variable}" "${other_expr}" ...
+            ;;
+          absolute)
+            actions="relative"
+            another_command "${actions}" "${other_expr}" ...
+            ;;
+          *)
+            error "Unexpected expression '${expression}'"
+            ;;
+        esac
+      </CODE_SNIPPET>
+      <p>
+        Simple commands may be put on the same line as the pattern <i>and</i>
+        <code>;;</code> as long as the expression remains readable.  This is
+        often appropriate for single-letter option processing.  When the
+        actions don't fit on a single line, put the pattern on a line on its
+        own, then the actions, then <code>;;</code> also on a line of its own.
+        When on the same line as the actions, use a space after the close
+        parenthesis of the pattern and another before the <code>;;</code>.
+        </p>
+      <CODE_SNIPPET>
+        verbose='false'
+        aflag=''
+        bflag=''
+        files=''
+        while getopts 'abf:v' flag; do
+          case "${flag}" in
+            a) aflag='true' ;;
+            b) bflag='true' ;;
+            f) files="${OPTARG}" ;;
+            v) verbose='true' ;;
+            *) error "Unexpected option ${flag}" ;;
+          esac
+        done
+      </CODE_SNIPPET>
     </BODY>
   </STYLEPOINT>
 
@@ -856,9 +923,7 @@ Revision 1.25
         VERBOSE='false'
         while getopts 'v' flag; do
           case "${flag}" in
-            'v')
-              VERBOSE='true'
-              ;;
+            v) VERBOSE='true' ;;
           esac
         done
         readonly VERBOSE
@@ -1081,7 +1146,7 @@ Revision 1.25
 </CATEGORY>
 
 <p align="right">
-Revision 1.25
+Revision 1.26
 </p>
 
 </GUIDE>

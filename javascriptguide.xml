@@ -3,7 +3,7 @@
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
     
-    Revision 2.82
+    Revision 2.93
   </p>
   
   <address>
@@ -78,7 +78,7 @@
           <li>Never use the
             <a href="https://developer.mozilla.org/en/JavaScript/Reference/Statements/const">
               <code>const</code> keyword</a>
-            as it not supported in Internet Explorer.</li>
+            as it's not supported in Internet Explorer.</li>
         </ul>
       </SUMMARY>
       <BODY>
@@ -112,8 +112,13 @@
               lack of support in Internet Explorer).</p>
 
             <p>A <code>@const</code> annotation on a method additionally
-              implies that the method should not be overridden in subclasses.
+              implies that the method cannot not be overridden in subclasses.
             </p>
+
+            <p>A <code>@const</code> annotation on a constructor implies the
+              class cannot be subclassed (akin to <code>final</code> in Java).
+            </p>
+
           </SUBSECTION>
 
           <SUBSECTION title="Examples">
@@ -139,7 +144,7 @@
               overwritten.
             </p>
 
-            <p>The open source compiler will allow the symbol it to be
+            <p>The open source compiler will allow the symbol to be
               overwritten because the constant is
               <em>not</em> marked as <code>@const</code>.</p>
 
@@ -149,6 +154,15 @@
                * @const
                */
               MyClass.fetchedUrlCache_ = new goog.structs.Map();
+            </CODE_SNIPPET>
+
+            <CODE_SNIPPET>
+              /**
+               * Class that cannot be subclassed.
+               * @const
+               * @constructor
+               */
+              sloth.MyFinalClass = function() {};
             </CODE_SNIPPET>
 
             <p>In this case, the pointer can never be overwritten, but
@@ -187,7 +201,7 @@
 
           // 2.  Trying to do one thing on Internet Explorer and another on Firefox.
           // I know you'd never write code like this, but throw me a bone.
-          [normalVersion, ffVersion][isIE]();
+          [ffVersion, ieVersion][isIE]();
 
 
           var THINGS_TO_EAT = [apples, oysters, sprayOnCheese]  // No semicolon here.
@@ -202,11 +216,12 @@
               "called" resulting in an error.</li>
             <li>You will most likely get a 'no such property in undefined'
               error at runtime as it tries to call
-              <code>x[ffVersion][isIE]()</code>.</li>
-            <li><code>die</code> is called unless
-              <code>resultOfOperation()</code> is <code>NaN</code> and
-            <code>THINGS_TO_EAT</code> gets assigned the result of
-            <code>die()</code>.</li>
+              <code>x[ffVersion, ieVersion][isIE]()</code>.</li>
+            <li><code>die</code> is always called since the array minus 1 is
+              <code>NaN</code> which is never equal to anything (not even if
+              <code>resultOfOperation()</code> returns <code>NaN</code>) and
+              <code>THINGS_TO_EAT</code> gets assigned the result of
+              <code>die()</code>.</li>
           </ol>
         </SUBSECTION>
         <SUBSECTION title="Why?">
@@ -265,7 +280,7 @@
           Expression to define a function within a block:</p>
         <CODE_SNIPPET>
            if (x) {
-             var foo = function() {}
+             var foo = function() {};
            }
         </CODE_SNIPPET>
       </BODY>
@@ -343,8 +358,7 @@
           <a href="http://code.google.com/closure/library/">
             the Closure Library
           </a>
-           or something similar.
-          
+          or a similar library function.
         </p>
         <CODE_SNIPPET>
           function D() {
@@ -420,8 +434,7 @@
         <p>The ability to create closures is perhaps the most useful and often
           overlooked feature of JS. Here is
           <a href="http://jibbering.com/faq/faq_notes/closures.html">
-            a good description of how closures work
-          </a>.</p>
+            a good description of how closures work</a>.</p>
         <p>One thing to keep in mind, however, is that a closure keeps a pointer
           to its enclosing scope. As a result, attaching a closure to a DOM
           element can create a circular reference and thus, a memory leak. For
@@ -443,7 +456,7 @@
           }
 
           function bar(a, b) {
-            return function() { /* uses a and b */ }
+            return function() { /* uses a and b */ };
           }
         </CODE_SNIPPET>
       </BODY>
@@ -451,53 +464,43 @@
 
     <STYLEPOINT title="eval()">
       <SUMMARY>
-        Only for deserialization (e.g. evaluating RPC responses)
+        Only for code loaders and REPL (Read–eval–print loop)
       </SUMMARY>
       <BODY>
         <p><code>eval()</code> makes for confusing semantics and is dangerous
           to use if the string being <code>eval()</code>'d contains user input.
-          There's usually a better, more clear, safer way to write your code, so
-          its use is generally not permitted. However <code>eval</code> makes
-          deserialization considerably easier than the non-<code>eval</code>
-          alternatives, so its use is acceptable for this task (for example, to
-          evaluate RPC responses).</p>
-        <p>Deserialization is the process of transforming a series of bytes into
-          an in-memory data structure. For example, you might write objects out
-          to a file as:</p>
+          There's usually a better, clearer, and safer way to write your code,
+          so its use is generally not permitted.</p>
+
+        <p>For RPC you can always use JSON and read the result using
+          <code>JSON.parse()</code> instead of <code>eval()</code>.</p>
+
+        <p>Let's assume we have a server that returns something like this:</p>
+
         <CODE_SNIPPET>
-          users = [
-            {
-              name: 'Eric',
-              id: 37824,
-              email: 'jellyvore@myway.com'
-            },
-            {
-              name: 'xtof',
-              id: 31337,
-              email: 'b4d455h4x0r@google.com'
-            },
-            ...
-          ];
-        </CODE_SNIPPET>
-        <p>Reading these data back into memory is as simple as
-          <code>eval</code>ing the string representation of the file.</p>
-        <p>Similarly, <code>eval()</code> can simplify decoding RPC return
-          values. For example, you might use an <code>XMLHttpRequest</code>
-          to make an RPC, and in its response the server can return
-          JavaScript:</p>
-        <CODE_SNIPPET>
-          var userOnline = false;
-          var user = 'nusrat';
-          var xmlhttp = new XMLHttpRequest();
-          xmlhttp.open('GET', 'http://chat.google.com/isUserOnline?user=' + user, false);
-          xmlhttp.send('');
-          // Server returns:
-          // userOnline = true;
-          if (xmlhttp.status == 200) {
-            eval(xmlhttp.responseText);
+          {
+            "name": "Alice",
+            "id": 31502,
+            "email": "looking_glass@example.com"
           }
-          // userOnline is now true.
         </CODE_SNIPPET>
+
+        <BAD_CODE_SNIPPET>
+          var userInfo = eval(feed);
+          var email = userInfo['email'];
+        </BAD_CODE_SNIPPET>
+
+        <p>If the feed was modified to include malicious JavaScript code, then
+          if we use <code>eval</code> then that code will be executed.</p>
+
+        <CODE_SNIPPET>
+          var userInfo = JSON.parse(feed);
+          var email = userInfo['email'];
+        </CODE_SNIPPET>
+
+        <p>With <code>JSON.parse</code>, invalid JSON (including all executable
+          JavaScript) will cause an exception to be thrown.</p>
+
       </BODY>
     </STYLEPOINT>
 
@@ -768,7 +771,6 @@
                * WRONG -- Do NOT do this.
                */
               var foo = { get next() { return this.nextId++; } };
-              };
             </BAD_CODE_SNIPPET>
         </SUBSECTION>
 
@@ -1080,8 +1082,8 @@
               // ...
             }
 
-            // Parenthesis-aligned, one argument per line.  Visually groups and
-            // emphasizes each individual argument.
+            // Parenthesis-aligned, one argument per line.  Emphasizes each
+            // individual argument.
             function bar(veryDescriptiveArgumentNumberOne,
                          veryDescriptiveArgumentTwo,
                          tableModelEventHandlerProxy,
@@ -1184,13 +1186,14 @@
             });  // goog.scope
           </CODE_SNIPPET>
         </SUBSECTION>
-        <SUBSECTION title="More Indentation">
-          <p>In fact, except for
-            <a href="#Array_and_Object_literals">
-              array and object initializers
-            </a>, and passing anonymous functions, all wrapped lines
-            should be indented either left-aligned to the expression above, or
-            indented four spaces, not indented two spaces.</p>
+        <SUBSECTION title="Indenting wrapped lines">
+          <p>Except for <a href="#Array_and_Object_literals">array literals,
+            object literals</a>, and anonymous functions, all wrapped lines
+            should be indented either left-aligned to a sibling expression
+            above, or four spaces (not two spaces) deeper than a parent
+            expression (where "sibling" and "parent" refer to parenthesis
+            nesting level).
+          </p>
 
           <CODE_SNIPPET>
             someWonderfulHtml = '<div class="' + getClassesForWonderfulHtml()'">' +
@@ -1202,8 +1205,13 @@
             thisIsAVeryLongVariableName =
                 hereIsAnEvenLongerOtherFunctionNameThatWillNotFitOnPrevLine();
 
-            thisIsAVeryLongVariableName = 'expressionPartOne' + someMethodThatIsLong() +
-                thisIsAnEvenLongerOtherFunctionNameThatCannotBeIndentedMore();
+            thisIsAVeryLongVariableName = siblingOne + siblingTwo + siblingThree +
+                siblingFour + siblingFive + siblingSix + siblingSeven +
+                moreSiblingExpressions + allAtTheSameIndentationLevel;
+
+            thisIsAVeryLongVariableName = operandOne + operandTwo + operandThree +
+                operandFour + operandFive * (
+                    aNestedChildExpression + shouldBeIndentedMore);
 
             someValue = this.foo(
                 shortArg,
@@ -2208,8 +2216,7 @@
         <p>
           We follow the
           <a href="cppguide.xml#Comments">
-            C++ style for comments
-          </a> in spirit.
+            C++ style for comments</a> in spirit.
         </p>
 
         <p>All files, classes, methods and properties should be documented with
@@ -2229,9 +2236,8 @@
         <SUBSECTION title="Comment Syntax">
           <p>The JSDoc syntax is based on
           <a href="http://www.oracle.com/technetwork/java/javase/documentation/index-137868.html">
-          JavaDoc
-          </a>. Many tools extract metadata from JSDoc comments to perform
-          code validation and optimizations. These comments must be
+          JavaDoc</a>. Many tools extract metadata from JSDoc comments to
+          perform code validation and optimizations. These comments must be
           well-formed.</p>
 
           <CODE_SNIPPET>
@@ -2260,7 +2266,8 @@
             };
           </CODE_SNIPPET>
 
-          <p>You should not indent the <code>@fileoverview</code> command.</p>
+          <p>You should not indent the <code>@fileoverview</code> command. You do not have to
+            indent the <code>@desc</code> command.</p>
 
           <p>Even though it is not preferred, it is also acceptable to line up
              the description.</p>
@@ -2476,14 +2483,14 @@
                      */
                     mynamespace.Request.prototype.initialize = function() {
                       // This method cannot be overridden in a subclass.
-                    }
+                    };
                   </CODE_SNIPPET>
                 </td>
                 <td>
                   <p>Marks a variable (or property) as read-only and suitable
                   for inlining.</p>
 
-                  <p>A <code>@const</code> variable is a immutable pointer to
+                  <p>A <code>@const</code> variable is an immutable pointer to
                   a value.  If a variable or property marked as
                   <code>@const</code> is overwritten, JSCompiler will give
                   warnings.</p>
@@ -2532,7 +2539,10 @@
                     /** @define {boolean} */
                     var TR_FLAGS_ENABLE_DEBUG = true;
 
-                    /** @define {boolean} */
+                    /**
+                     * @define {boolean} Whether we know at compile-time that
+                     *     the browser is IE.
+                     */
                     goog.userAgent.ASSUME_IE = false;
                   </CODE_SNIPPET>
                 </td>
@@ -2903,6 +2913,27 @@
               </tr>
 
               <tr>
+                <td><a name="tag-nocompile">@nocompile</a></td>
+                <td>
+                  <code>@nocompile</code>
+                  <p><i>For example:</i></p>
+                  <CODE_SNIPPET>
+                    /** @nocompile */
+
+                    // JavaScript code
+                  </CODE_SNIPPET>
+                </td>
+                <td>
+                  Used at the top of a file to tell the compiler to parse this
+                  file but not compile it.
+                  Code that is not meant for compilation and should be omitted
+                  from compilation tests (such as bootstrap code) uses this
+                  annotation.
+                  Use sparingly.
+                </td>
+              </tr>
+
+              <tr>
                 <td><a name="tag-nosideeffects">@nosideeffects</a></td>
                 <td>
                   <code>@nosideeffects</code>
@@ -2911,7 +2942,7 @@
                     /** @nosideeffects */
                     function noSideEffectsFn1() {
                       // ...
-                    };
+                    }
 
                     /** @nosideeffects */
                     var noSideEffectsFn2 = function() {
@@ -2943,7 +2974,7 @@
                      * @return {string} Human-readable representation of project.SubClass.
                      * @override
                      */
-                    project.SubClass.prototype.toString() {
+                    project.SubClass.prototype.toString = function() {
                       // ...
                     };
                   </CODE_SNIPPET>
@@ -3000,9 +3031,7 @@
                 <td>
                   Used in conjunction with a trailing underscore on the method
                   or property name to indicate that the member is
-                  <a href="#Visibility__private_and_protected_fields_">private</a>.
-                  Trailing underscores may eventually be deprecated as tools are
-                  updated to enforce <code>@private</code>.
+                  <a href="#Visibility__private_and_protected_fields_">private</a> and final.
                 </td>
               </tr>
 
@@ -3014,8 +3043,7 @@
                   <p><i>For example:</i></p>
                   <CODE_SNIPPET>
                     /**
-                     * Sets the component's root element to the given element.  Considered
-                     * protected and final.
+                     * Sets the component's root element to the given element.
                      * @param {Element} element Root element for the component.
                      * @protected
                      */
@@ -3029,6 +3057,30 @@
                   <a href="#Visibility__private_and_protected_fields_">protected</a>.
                   Should be used in conjunction with names with no trailing
                   underscore.
+                </td>
+              </tr>
+
+              <tr>
+                <td><a name="tag-public">@public</a></td>
+                <td>
+                  <code>@public</code><br/>
+                  <code>@public {type}</code>
+                  <p><i>For example:</i></p>
+                  <CODE_SNIPPET>
+                    /**
+                     * Whether to cancel the event in internal capture/bubble processing.
+                     * @public {boolean}
+                     * @suppress {visiblity} Referencing this outside this package is strongly
+                     * discouraged.
+                     */
+                     goog.events.Event.prototype.propagationStopped_ = false;
+                  </CODE_SNIPPET>
+                </td>
+                <td>
+                  Used to indicate that the member or property is public. Variables and
+                  properties are public by default, so this annotation is rarely necessary.
+                  Should only be used in legacy code that cannot be easily changed to
+                  override the visibility of members that were named as private variables.
                 </td>
               </tr>
 
@@ -3136,6 +3188,9 @@
                   <code>
                     @suppress {warning1|warning2}
                   </code>
+                  <code>
+                    @suppress {warning1,warning2}
+                  </code>
                   <p><i>For example:</i></p>
                   <CODE_SNIPPET>
                     /**
@@ -3148,7 +3203,7 @@
                 </td>
                 <td>
                   Suppresses warnings from tools. Warning categories are
-                  separated by <code>|</code>.
+                  separated by <code>|</code> or <code>,</code>.
                   
                 </td>
               </tr>
@@ -3166,7 +3221,7 @@
                      * @template T
                      */
                     goog.bind = function(fn, thisObj, var_args) {
-                    ...
+                       ...
                     };
                   </CODE_SNIPPET>
                 </td>
@@ -3413,7 +3468,7 @@
         <SUBSECTION title="Conditional (Ternary) Operator (?:)">
           <p>Instead of this:</p>
           <CODE_SNIPPET>
-            if (val != 0) {
+            if (val) {
               return foo();
             } else {
               return bar();
@@ -3557,7 +3612,7 @@
   </PARTING_WORDS>
 
   <p align="right">
-    Revision 2.82
+    Revision 2.93
   </p>
 
   
