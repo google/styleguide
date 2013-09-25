@@ -136,7 +136,7 @@
 <H1>Google Python Style Guide</H1>
   <p align="right">
 
-    Revision 2.54
+    Revision 2.59
   </p>
   
   <address>
@@ -165,7 +165,7 @@
 <TR valign="top" class="">
 <TD><DIV class="toc_category"><A href="#Python_Language_Rules">Python Language Rules</A></DIV></TD>
 <TD><DIV class="toc_stylepoint">
-<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#pychecker">pychecker</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports">Imports</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">Packages</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Exceptions">Exceptions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables">Global variables</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#List_Comprehensions">List Comprehensions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Iterators_and_Operators">Default Iterators and Operators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Generators">Generators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lambda_Functions">Lambda Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Conditional_Expressions">Conditional Expressions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Argument_Values">Default Argument Values</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Properties">Properties</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#True/False_evaluations">True/False evaluations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Deprecated_Language_Features">Deprecated Language Features</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lexical_Scoping">Lexical Scoping</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Function_and_Method_Decorators">Function and Method Decorators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Threading">Threading</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Power_Features">Power Features</A></SPAN> </DIV></TD>
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lint">Lint</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports">Imports</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">Packages</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Exceptions">Exceptions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables">Global variables</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#List_Comprehensions">List Comprehensions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Iterators_and_Operators">Default Iterators and Operators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Generators">Generators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lambda_Functions">Lambda Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Conditional_Expressions">Conditional Expressions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Argument_Values">Default Argument Values</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Properties">Properties</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#True/False_evaluations">True/False evaluations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Deprecated_Language_Features">Deprecated Language Features</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lexical_Scoping">Lexical Scoping</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Function_and_Method_Decorators">Function and Method Decorators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Threading">Threading</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Power_Features">Power Features</A></SPAN> </DIV></TD>
 </TR>
 <TR valign="top" class="">
 <TD><DIV class="toc_category"><A href="#Python_Style_Rules">Python Style Rules</A></DIV></TD>
@@ -214,58 +214,77 @@
   
   <DIV class="">
 <H2 name="Python_Language_Rules" id="Python_Language_Rules">Python Language Rules</H2>
-     
-    <DIV class="">
-<H3><A name="pychecker" id="pychecker">pychecker</A></H3>
-<SPAN class="link_button" id="link-pychecker__button" name="link-pychecker__button"><A href="?showone=pychecker#pychecker">
+     <DIV class="">
+<H3><A name="Lint" id="Lint">Lint</A></H3>
+<SPAN class="link_button" id="link-Lint__button" name="link-Lint__button"><A href="?showone=Lint#Lint">
           link
-        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('pychecker')" name="pychecker__button" id="pychecker__button">▶</SPAN>
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lint')" name="Lint__button" id="Lint__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Run <code>pychecker</code> over your code.
+        Run <code>pylint</code> over your code.
       </DIV>
-      <DIV class=""><DIV class="stylepoint_body" name="pychecker__body" id="pychecker__body" style="display: none">
+      <DIV class=""><DIV class="stylepoint_body" name="Lint__body" id="Lint__body" style="display: none">
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
-        PyChecker is a tool for finding bugs in Python source code. It finds
+        pylint
+        is a tool for finding bugs and style problems in Python source
+        code. It finds
         problems that are typically caught by a compiler for less dynamic
-        languages like C and C++. It is similar to lint. Because of the
+        languages like C and C++.
+        
+        Because of the
         dynamic nature of Python, some warnings may be incorrect; however,
         spurious warnings should be fairly infrequent.
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Pros:  </SPAN>
-        Catches easy-to-miss errors like typos, use-vars-before-assignment, etc.
+        Catches easy-to-miss errors like typos, using-vars-before-assignment, etc.
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Cons: </SPAN>
-        <code>pychecker</code> isn't perfect.  To take
-        advantage of it, we'll need to sometimes: a) Write around it b)
-        Suppress its warnings c) Improve it or d) Ignore it.
+        <code>pylint</code>
+        isn't perfect.  To take advantage of it, we'll need to sometimes:
+        a) Write around it b) Suppress its warnings or c) Improve it.
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Decision:  </SPAN>
-        Make sure you run <code>pychecker</code> on your code.
+        Make sure you run <code>pylint</code> on your code.
+        Suppress warnings if they are inappropriate so that other issues are
+        not hidden.
         </P>
         
         <p>
-          For information on how to run <code>pychecker</code>, see the
-          <a HREF="http://pychecker.sourceforge.net">pychecker
-         homepage</a>
+          To suppress warnings, you can set a line-level comment:
         </p>
-        <p>
-          To suppress warnings, you can set a module-level variable named
-          <code>__pychecker__</code> to suppress appropriate warnings.
-          For example:
-        </p>
+        
         <DIV class=""><PRE>
-<span class="external"></span>__pychecker__ = 'no-callinit no-classattr'</PRE></DIV>
+<span class="external"></span>dict = 'something awful'  # Bad Idea... pylint: disable=redefined-builtin</PRE></DIV>
         <p>
-        Suppressing in this way has the advantage that we can easily search
-        for suppressions and revisit them.
+          pylint
+          warnings are each identified by a alphanumeric code
+          (<code>C0112</code>) and a symbolic name
+          (<code>empty-docstring</code>).  Prefer the symbolic
+          names in new code or when updating existing code.
+          
         </p>
         <p>
-          You can get a list of pychecker warnings by doing
-          <code>pychecker --help</code>.
+          If the reason for the suppression is not clear from the symbolic name,
+          add an explanation.
+        </p>
+        <p>
+          Suppressing in this way has the advantage that we can easily search
+          for suppressions and revisit them.
+        </p>
+        <p>
+          You can get a list of
+          pylint
+          warnings by doing
+          <code>pylint --list-msgs</code>.
+          To get more information on a particular message, use
+          <code>pylint --help-msg=C6409</code>.
+        </p>
+        <p>
+          Prefer <code>pylint: disable</code> to the deprecated older form
+          <code>pylint: disable-msg</code>.
         </p>
         <p>
         Unused argument warnings can be suppressed by using `_' as the
@@ -280,11 +299,6 @@
   <span class="external">  </span>return a
 <span class="external"></span>
 </PRE></DIV>
-        <p>
-        Ideally, pychecker would be extended to ensure that such `unused
-        declarations' were true.
-        </p>
-        
       </DIV></DIV>
     </DIV>
     <DIV class="">
@@ -358,7 +372,6 @@
         <P class="">
 <SPAN class="stylepoint_section">Decision:  </SPAN>
           All new code should import each module by its full package name.
-          
         </P>
       <p>
         Imports should be as follows:
@@ -784,6 +797,10 @@ from sound.effects import echo
        <span class="external">  </span>if b is None:
          <span class="external">    </span>b = []</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:  <span class="external"></span>def foo(a, b=[]):
+       <span class="external">  </span>...
+No:  <span class="external"></span>def foo(a, b=time.time()):  # The time the module was loaded???
+       <span class="external">  </span>...
+No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has not yet been parsed...
        <span class="external">  </span>...</PRE></DIV>
         </P>
       </DIV></DIV>
@@ -1134,7 +1151,7 @@ from sound.effects import echo
       Avoid external dependencies in the decorator itself (e.g. don't rely on
       files, sockets, database connections, etc.), since they might not be
       available when the decorator runs (at import time, perhaps from
-      <code>pychecker</code> or other tools).  A decorator that is
+      <code>pydoc</code> or other tools).  A decorator that is
       called with valid parameters should (as much as possible) be guaranteed
       to succeed in all cases.
     </p>
@@ -1347,10 +1364,24 @@ from sound.effects import echo
        foo = long_function_name(var_one, var_two,
                                 var_three, var_four)
 
+       # Aligned with opening delimiter in a dictionary
+       foo = {
+           long_dictionary_key: value1 +
+                                value2,
+           ...
+       }
+
        # 4-space hanging indent; nothing on first line
        foo = long_function_name(
            var_one, var_two, var_three,
-           var_four)</PRE></DIV>
+           var_four)
+
+       # 4-space hanging indent in a dictionary
+       foo = {
+           long_dictionary_key:
+               long_dictionary_value,
+           ...
+       }</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:    <span class="external"></span># Stuff on first line forbidden
        <span class="external"></span>foo = long_function_name(var_one, var_two,
        <span class="external"></span>    var_three, var_four)
@@ -1358,7 +1389,14 @@ from sound.effects import echo
        <span class="external"></span># 2-space hanging indent forbidden
        <span class="external"></span>foo = long_function_name(
        <span class="external"></span>  var_one, var_two, var_three,
-       <span class="external"></span>  var_four)</PRE></DIV>
+       <span class="external"></span>  var_four)
+
+       <span class="external"></span># No hanging indent in a dictionary
+       <span class="external"></span>foo = {
+       <span class="external"></span>    long_dictionary_key:
+           <span class="external">    </span>long_dictionary_value,
+           <span class="external">    </span>...
+       <span class="external"></span>}</PRE></DIV>
       </DIV></DIV>
     </DIV>
     <DIV class="">
@@ -1502,9 +1540,10 @@ from sound.effects import echo
       module, class or function.  These strings can be extracted
       automatically through the <code>__doc__</code> member of the
       object and are used by <code>pydoc</code>.  (Try running
-      <code>pydoc</code> on your module to see how it looks.)  Our
-      convention for doc strings is to use the three double-quote
-      format for strings.  A doc string should be organized as a
+      <code>pydoc</code> on your module to see how it looks.)  We
+      always use the three double-quote <code>"""</code> format for doc strings
+      (per <a href="http://www.python.org/dev/peps/pep-0257/">PEP 257</a>).
+      A doc string should be organized as a
       summary line (one physical line) terminated by a period,
       question mark, or exclamation point, followed by a blank line,
       followed by the rest of the doc string starting at the same
@@ -1784,8 +1823,29 @@ from sound.effects import echo
     <span class="external"></span>employee_table += '&lt;/table&gt;'</PRE></DIV>
 
     <p>
-      Use <code>"""</code> for multi-line strings rather than
-      <code>'''</code>.  Note, however, that it is often cleaner to
+      Be consistent with your choice of string quote character within a file.
+      Pick <code>'</code> or <code>"</code> and stick with it.
+      It is okay to use the other quote character on a string to avoid the
+      need to <code>\</code> escape within the string.
+      GPyLint enforces this.
+    </p>
+
+<DIV class=""><PRE>Ye<span class="external"></span>s:
+  <span class="external"></span>Python('Why are you hiding your eyes?')
+  <span class="external"></span>Gollum("I'm scared of lint errors.")
+  <span class="external"></span>Narrator('"Good!" thought a happy Python reviewer.')</PRE></DIV>
+<DIV class=""><PRE class="badcode">No<span class="external"></span>:
+  <span class="external"></span>Python("Why are you hiding your eyes?")
+  <span class="external"></span>Gollum('The lint. It burns. It burns us.')
+  <span class="external"></span>Gollum("Always the great lint. Watching. Watching.")</PRE></DIV>
+
+    <p>
+      Prefer <code>"""</code> for multi-line strings rather than
+      <code>'''</code>. Projects may choose to use <code>'''</code> for
+      all non-docstring multi-line strings if and only if they also use
+      <code>'</code> for regular strings.
+      Doc strings must use <code>"""</code> regardless.
+      Note that it is often cleaner to
       use implicit line joining since multi-line strings do
       not flow with the indentation of the rest of the program:
     </p>
@@ -2174,7 +2234,7 @@ Don'<span class="external"></span>t do this.
       <DIV class=""><DIV class="stylepoint_body" name="Main__body" id="Main__body" style="display: none">
     <p>
       In Python,
-      <code>pychecker</code>, <code>pydoc</code>, and unit tests
+      <code>pydoc</code> as well as unit tests
       require modules to be importable.  Your code should always check
       <code>if __name__ == '__main__'</code> before executing your
       main program so that the main program is not executed when the
@@ -2201,7 +2261,7 @@ Don'<span class="external"></span>t do this.
       All code at the top level will be executed when the module is
       imported.  Be careful not to call functions, create objects, or
       perform other operations that should not be executed when the
-      file is being <code>pycheck</code>ed or <code>pydoc</code>ed.
+      file is being <code>pydoc</code>ed.
     </p>
       </DIV></DIV>
     </DIV>
@@ -2233,7 +2293,7 @@ Don'<span class="external"></span>t do this.
 
 
 <p align="right">
-Revision 2.54
+Revision 2.59
 </p>
 
 
@@ -2241,9 +2301,11 @@ Revision 2.54
   Amit Patel<br>
   Antoine Picard<br>
   Eugene Jhong<br>
+  Gregory P. Smith<br>
   Jeremy Hylton<br>
   Matt Smart<br>
   Mike Shields<br>
+  Shane Liebling<br>
 </address>
 </BODY>
 </HTML>
