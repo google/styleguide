@@ -402,27 +402,28 @@ class CpplintTest(CpplintTestBase):
     # These shouldn't be recognized casts.
     self.TestLint('u a = (u)NULL;', '')
     self.TestLint('uint a = (uint)NULL;', '')
+    self.TestLint('typedef MockCallback<int(int)> CallbackType;', '')
+    self.TestLint('scoped_ptr< MockCallback<int(int)> > callback_value;', '')
 
   # Test taking address of casts (runtime/casting)
   def testRuntimeCasting(self):
-    self.TestLint(
-        'int* x = &static_cast<int*>(foo);',
-        'Are you taking an address of a cast?  '
-        'This is dangerous: could be a temp var.  '
-        'Take the address before doing the cast, rather than after'
-        '  [runtime/casting] [4]')
-
-    self.TestLint(
-        'int* x = &reinterpret_cast<int *>(foo);',
-        'Are you taking an address of a cast?  '
-        'This is dangerous: could be a temp var.  '
-        'Take the address before doing the cast, rather than after'
-        '  [runtime/casting] [4]')
+    error_msg = ('Are you taking an address of a cast?  '
+                 'This is dangerous: could be a temp var.  '
+                 'Take the address before doing the cast, rather than after'
+                 '  [runtime/casting] [4]')
+    self.TestLint('int* x = &static_cast<int*>(foo);', error_msg)
+    self.TestLint('int* x = &reinterpret_cast<int *>(foo);', error_msg)
+    self.TestLint('int* x = &(int*)foo;',
+                  ['Using C-style cast.  Use reinterpret_cast<int*>(...) '
+                   'instead  [readability/casting] [4]',
+                   error_msg])
 
     # It's OK to cast an address.
-    self.TestLint(
-        'int* x = reinterpret_cast<int *>(&foo);',
-        '')
+    self.TestLint('int* x = reinterpret_cast<int *>(&foo);', '')
+
+    # Function pointers returning references should not be confused
+    # with taking address of old-style casts.
+    self.TestLint('auto x = implicit_cast<string &(*)(int)>(&foo);', '')
 
   def testRuntimeSelfinit(self):
     self.TestLint(
@@ -441,13 +442,9 @@ class CpplintTest(CpplintTestBase):
     message = ('All parameters should be named in a function'
                '  [readability/function] [3]')
     self.TestLint('virtual void A(int*) const;', message)
-    self.TestLint('virtual void B(void (*fn)(int*));', message)
-    self.TestLint('virtual void C(int*);', message)
-    self.TestLint('void *(*f)(void *) = x;', message)
+    self.TestLint('virtual void B(int*);', message)
     self.TestLint('void Method(char*) {', message)
     self.TestLint('void Method(char*);', message)
-    self.TestLint('void Method(char* /*x*/);', message)
-    self.TestLint('typedef void (*Method)(int32);', message)
     self.TestLint('static void operator delete[](void*) throw();', message)
 
     self.TestLint('virtual void D(int* p);', '')
@@ -464,9 +461,9 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('X operator--(int);', '')
     self.TestLint('X operator--(int /*unused*/) {', '')
 
-    # This one should technically warn, but doesn't because the function
-    # pointer is confusing.
-    self.TestLint('virtual void E(void (*fn)(int* p));', '')
+    self.TestLint('void (*func)(void*);', '')
+    self.TestLint('void Func((*func)(void*)) {}', '')
+    self.TestLint('template <void Func(void*)> void func();', '')
 
   # Test deprecated casts such as int(d)
   def testDeprecatedCast(self):
@@ -504,6 +501,38 @@ class CpplintTest(CpplintTestBase):
     self.TestLint(
         'new   int64(123);  // "new" operator on basic type, weird spacing',
         '')
+    self.TestLint(
+        'std::function<int(bool)>  // C++11 function wrapper',
+        '')
+
+    # Return types for function pointers tend to look like casts.
+    self.TestLint(
+        'typedef bool(FunctionPointer)();',
+        '')
+    self.TestLint(
+        'typedef bool(FunctionPointer)(int param);',
+        '')
+    self.TestLint(
+        'typedef bool(MyClass::*MemberFunctionPointer)();',
+        '')
+    self.TestLint(
+        'typedef bool(MyClass::* MemberFunctionPointer)();',
+        '')
+    self.TestLint(
+        'typedef bool(MyClass::*MemberFunctionPointer)() const;',
+        '')
+    self.TestLint(
+        'void Function(bool(FunctionPointerArg)());',
+        '')
+    self.TestLint(
+        'void Function(bool(FunctionPointerArg)()) {}',
+        '')
+    self.TestLint(
+        'typedef set<int64, bool(*)(int64, int64)> SortedIdSet',
+        '')
+    self.TestLint(
+        'bool TraverseNode(T *Node, bool(VisitorBase:: *traverse) (T *t)) {}',
+        '')
 
   # The second parameter to a gMock method definition is a function signature
   # that often looks like a bad cast but should not picked up by lint.
@@ -521,8 +550,14 @@ class CpplintTest(CpplintTestBase):
     error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('mock.cc', 'cc',
                             ['MOCK_METHOD1(method1,',
-                             '             bool(int))',  # false positive
-                             'MOCK_METHOD1(method2, int(bool));',
+                             '             bool(int));',
+                             'MOCK_METHOD1(',
+                             '    method2,',
+                             '    bool(int));',
+                             'MOCK_CONST_METHOD2(',
+                             '    method3, bool(int,',
+                             '                  int));',
+                             'MOCK_METHOD1(method4, int(bool));',
                              'const int kConstant = int(42);'],  # true positive
                             error_collector)
     self.assertEquals(
@@ -1457,6 +1492,16 @@ class CpplintTest(CpplintTestBase):
                    'Consider using CHECK_GT instead of CHECK(a > b)'
                    '  [readability/check] [2]'])
 
+    self.TestLint('CHECK(x ^ (y < 42))', '')
+    self.TestLint('CHECK((x > 42) ^ (x < 54))', '')
+    self.TestLint('CHECK(a && b < 42)', '')
+    self.TestLint('CHECK(42 < a && a < b)', '')
+    self.TestLint('SOFT_CHECK(x > 42)', '')
+
+    self.TestLint('CHECK(x->y == 42)',
+                  'Consider using CHECK_EQ instead of CHECK(a == b)'
+                  '  [readability/check] [2]')
+
     self.TestLint(
         '  EXPECT_TRUE(42 < x)  // Random comment.',
         'Consider using EXPECT_LT instead of EXPECT_TRUE(a < b)'
@@ -1609,6 +1654,26 @@ class CpplintTest(CpplintTestBase):
         error_collector)
     self.assertEquals('', error_collector.Results())
 
+    # Multi-line references
+    cpplint.ProcessFileData(
+        'foo.cc', 'cc',
+        ['// Copyright 2008 Your Company. All Rights Reserved.',
+         'void Func(const Outer::',
+         '              Inner& const_x,',
+         '          const Outer',
+         '              ::Inner& const_y,',
+         '          Outer::',
+         '              Inner& nonconst_x,',
+         '          Outer',
+         '              ::Inner& nonconst_y) {',
+         '}',
+         ''],
+        error_collector)
+    self.assertEquals(
+        [operand_error_message % 'Outer::Inner& nonconst_x',
+         operand_error_message % 'Outer::Inner& nonconst_y'],
+        error_collector.Results())
+
   def testBraceAtBeginOfLine(self):
     self.TestLint('{',
                   '{ should almost always be at the end of the previous line'
@@ -1624,6 +1689,12 @@ class CpplintTest(CpplintTestBase):
                              '{',  # no warning
                              '  MutexLock l(&mu);',
                              '}',
+                             'MyType m = {',
+                             '  {value1, value2},',
+                             '  {',  # no warning
+                             '    loooong_value1, looooong_value2',
+                             '  }',
+                             '};',
                              '#if PREPROCESSOR',
                              '{',  # no warning
                              '  MutexLock l(&mu);',
@@ -1652,6 +1723,8 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('if (foo) {', '')
     self.TestLint('for (foo; bar; baz) {', '')
     self.TestLint('for (;;) {', '')
+    # Space should be allowed in placement new operators.
+    self.TestLint('Something* p = new (place) Something();', '')
     # Test that there is no warning when increment statement is empty.
     self.TestLint('for (foo; baz;) {', '')
     self.TestLint('for (foo;bar;baz) {', 'Missing space after ;'
@@ -1788,10 +1861,13 @@ class CpplintTest(CpplintTestBase):
                   '  [whitespace/semicolon] [5]')
     self.TestLint('for (int i = 0; ;', '')
 
-  def testEmptyLoopBody(self):
+  def testEmptyBlockBody(self):
     self.TestLint('while (true);',
                   'Empty loop bodies should use {} or continue'
                   '  [whitespace/empty_loop_body] [5]')
+    self.TestLint('if (true);',
+                  'Empty conditional bodies should use {}'
+                  '  [whitespace/empty_conditional_body] [5]')
     self.TestLint('while (true)', '')
     self.TestLint('while (true) continue;', '')
     self.TestLint('for (;;);',
@@ -2259,6 +2335,8 @@ class CpplintTest(CpplintTestBase):
                    'Missing space after ,  [whitespace/comma] [3]'])
     self.TestLint('f(a, /* name */ b);', '')
     self.TestLint('f(a, /* name */b);', '')
+    self.TestLint('f(1, /* empty macro arg */, 2)', '')
+    self.TestLint('f(1,, 2)', '')
 
   def testIndent(self):
     self.TestLint('static int noindent;', '')
@@ -2833,7 +2911,7 @@ class CpplintTest(CpplintTestBase):
       other_decl_specs = [random.choice(qualifiers), random.choice(signs),
                           random.choice(types)]
       # remove None
-      other_decl_specs = filter(lambda x: x is not None, other_decl_specs)
+      other_decl_specs = [x for x in other_decl_specs if x is not None]
 
       # shuffle
       random.shuffle(other_decl_specs)
