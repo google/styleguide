@@ -200,8 +200,6 @@ _ERROR_CATEGORIES = [
   'runtime/printf',
   'runtime/printf_format',
   'runtime/references',
-  'runtime/rtti',
-  'runtime/sizeof',
   'runtime/string',
   'runtime/threadsafe_fn',
   'whitespace/blank_line',
@@ -213,7 +211,6 @@ _ERROR_CATEGORIES = [
   'whitespace/ending_newline',
   'whitespace/forcolon',
   'whitespace/indent',
-  'whitespace/labels',
   'whitespace/line_length',
   'whitespace/newline',
   'whitespace/operators',
@@ -233,35 +230,142 @@ _DEFAULT_FILTERS = ['-build/include_alpha']
 # decided those were OK, as long as they were in UTF-8 and didn't represent
 # hard-coded international strings, which belong in a separate i18n file.
 
-# Headers that we consider STL headers.
-_STL_HEADERS = frozenset([
-    'algobase.h', 'algorithm', 'alloc.h', 'bitset', 'deque', 'exception',
-    'function.h', 'functional', 'hash_map', 'hash_map.h', 'hash_set',
-    'hash_set.h', 'iterator', 'list', 'list.h', 'map', 'memory', 'new',
-    'pair.h', 'pthread_alloc', 'queue', 'set', 'set.h', 'sstream', 'stack',
-    'stl_alloc.h', 'stl_relops.h', 'type_traits.h',
-    'utility', 'vector', 'vector.h',
-    ])
 
-
-# Non-STL C++ system headers.
+# C++ headers
 _CPP_HEADERS = frozenset([
-    'algo.h', 'builtinbuf.h', 'bvector.h', 'cassert', 'cctype',
-    'cerrno', 'cfloat', 'ciso646', 'climits', 'clocale', 'cmath',
-    'complex', 'complex.h', 'csetjmp', 'csignal', 'cstdarg', 'cstddef',
-    'cstdio', 'cstdlib', 'cstring', 'ctime', 'cwchar', 'cwctype',
-    'defalloc.h', 'deque.h', 'editbuf.h', 'exception', 'fstream',
-    'fstream.h', 'hashtable.h', 'heap.h', 'indstream.h', 'iomanip',
-    'iomanip.h', 'ios', 'iosfwd', 'iostream', 'iostream.h', 'istream',
-    'istream.h', 'iterator.h', 'limits', 'map.h', 'multimap.h', 'multiset.h',
-    'numeric', 'ostream', 'ostream.h', 'parsestream.h', 'pfstream.h',
-    'PlotFile.h', 'procbuf.h', 'pthread_alloc.h', 'rope', 'rope.h',
-    'ropeimpl.h', 'SFile.h', 'slist', 'slist.h', 'stack.h', 'stdexcept',
-    'stdiostream.h', 'streambuf', 'streambuf.h', 'stream.h', 'strfile.h',
-    'string', 'strstream', 'strstream.h', 'tempbuf.h', 'tree.h', 'typeinfo',
+    # Legacy
+    'algobase.h',
+    'algo.h',
+    'alloc.h',
+    'builtinbuf.h',
+    'bvector.h',
+    'complex.h',
+    'defalloc.h',
+    'deque.h',
+    'editbuf.h',
+    'fstream.h',
+    'function.h',
+    'hash_map',
+    'hash_map.h',
+    'hash_set',
+    'hash_set.h',
+    'hashtable.h',
+    'heap.h',
+    'indstream.h',
+    'iomanip.h',
+    'iostream.h',
+    'istream.h',
+    'iterator.h',
+    'list.h',
+    'map.h',
+    'multimap.h',
+    'multiset.h',
+    'ostream.h',
+    'pair.h',
+    'parsestream.h',
+    'pfstream.h',
+    'procbuf.h',
+    'pthread_alloc',
+    'pthread_alloc.h',
+    'rope',
+    'rope.h',
+    'ropeimpl.h',
+    'set.h',
+    'slist',
+    'slist.h',
+    'stack.h',
+    'stdiostream.h',
+    'stl_alloc.h',
+    'stl_relops.h',
+    'streambuf.h',
+    'stream.h',
+    'strfile.h',
+    'strstream.h',
+    'tempbuf.h',
+    'tree.h',
+    'type_traits.h',
+    'vector.h',
+    # 17.6.1.2 C++ library headers
+    'algorithm',
+    'array',
+    'atomic',
+    'bitset',
+    'chrono',
+    'codecvt',
+    'complex',
+    'condition_variable',
+    'deque',
+    'exception',
+    'forward_list',
+    'fstream',
+    'functional',
+    'future',
+    'initializer_list',
+    'iomanip',
+    'ios',
+    'iosfwd',
+    'iostream',
+    'istream',
+    'iterator',
+    'limits',
+    'list',
+    'locale',
+    'map',
+    'memory',
+    'mutex',
+    'new',
+    'numeric',
+    'ostream',
+    'queue',
+    'random',
+    'ratio',
+    'regex',
+    'set',
+    'sstream',
+    'stack',
+    'stdexcept',
+    'streambuf',
+    'string',
+    'strstream',
+    'system_error',
+    'thread',
+    'tuple',
+    'typeindex',
+    'typeinfo',
+    'type_traits',
+    'unordered_map',
+    'unordered_set',
+    'utility',
     'valarray',
+    'vector',
+    # 17.6.1.2 C++ headers for C library facilities
+    'cassert',
+    'ccomplex',
+    'cctype',
+    'cerrno',
+    'cfenv',
+    'cfloat',
+    'cinttypes',
+    'ciso646',
+    'climits',
+    'clocale',
+    'cmath',
+    'csetjmp',
+    'csignal',
+    'cstdalign',
+    'cstdarg',
+    'cstdbool',
+    'cstddef',
+    'cstdint',
+    'cstdio',
+    'cstdlib',
+    'cstring',
+    'ctgmath',
+    'ctime',
+    'cuchar',
+    'cwchar',
+    'cwctype',
     ])
-
 
 # Assertion macros.  These are defined in base/logging.h and
 # testing/base/gunit.h.  Note that the _M versions need to come first
@@ -416,6 +520,24 @@ def Match(pattern, s):
   return _regexp_compile_cache[pattern].match(s)
 
 
+def ReplaceAll(pattern, rep, s):
+  """Replaces instances of pattern in a string with a replacement.
+
+  The compiled regex is kept in a cache shared by Match and Search.
+
+  Args:
+    pattern: regex pattern
+    rep: replacement text
+    s: search string
+
+  Returns:
+    string with replacements made (or original string if no replacements)
+  """
+  if pattern not in _regexp_compile_cache:
+    _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
+  return _regexp_compile_cache[pattern].sub(rep, s)
+
+
 def Search(pattern, s):
   """Searches the string for the pattern, caching the compiled regexp."""
   if not pattern in _regexp_compile_cache:
@@ -464,6 +586,9 @@ class _IncludeState(dict):
     # The path of last found header.
     self._last_header = ''
 
+  def SetLastHeader(self, header_path):
+    self._last_header = header_path
+
   def CanonicalizeAlphabeticalOrder(self, header_path):
     """Returns a path canonicalized for alphabetical comparison.
 
@@ -479,19 +604,25 @@ class _IncludeState(dict):
     """
     return header_path.replace('-inl.h', '.h').replace('-', '_').lower()
 
-  def IsInAlphabeticalOrder(self, header_path):
+  def IsInAlphabeticalOrder(self, clean_lines, linenum, header_path):
     """Check if a header is in alphabetical order with the previous header.
 
     Args:
-      header_path: Header to be checked.
+      clean_lines: A CleansedLines instance containing the file.
+      linenum: The number of the line to check.
+      header_path: Canonicalized header to be checked.
 
     Returns:
       Returns true if the header is in alphabetical order.
     """
-    canonical_header = self.CanonicalizeAlphabeticalOrder(header_path)
-    if self._last_header > canonical_header:
+    # If previous section is different from current section, _last_header will
+    # be reset to empty string, so it's always less than current header.
+    #
+    # If previous line was a blank line, assume that the headers are
+    # intentionally sorted the way they are.
+    if (self._last_header > header_path and
+        not Match(r'^\s*$', clean_lines.elided[linenum - 1])):
       return False
-    self._last_header = canonical_header
     return True
 
   def CheckNextIncludeOrder(self, header_type):
@@ -1401,8 +1532,18 @@ class _ClassInfo(_BlockInfo):
     self.is_derived = False
     if class_or_struct == 'struct':
       self.access = 'public'
+      self.is_struct = True
     else:
       self.access = 'private'
+      self.is_struct = False
+
+    # Remember initial indentation level for this class.  Using raw_lines here
+    # instead of elided to account for leading comments like http://go/abjhm
+    initial_indent = Match(r'^( *)\S', clean_lines.raw_lines[linenum])
+    if initial_indent:
+      self.class_indent = len(initial_indent.group(1))
+    else:
+      self.class_indent = 0
 
     # Try to find the end of the class.  This will be confused by things like:
     #   class A {
@@ -1422,6 +1563,19 @@ class _ClassInfo(_BlockInfo):
     # Look for a bare ':'
     if Search('(^|[^:]):($|[^:])', clean_lines.elided[linenum]):
       self.is_derived = True
+
+  def CheckEnd(self, filename, clean_lines, linenum, error):
+    # Check that closing brace is aligned with beginning of the class.
+    # Only do this if the closing brace is indented by only whitespaces.
+    # This means we will not check single-line class definitions.
+    indent = Match(r'^( *)\}', clean_lines.elided[linenum])
+    if indent and len(indent.group(1)) != self.class_indent:
+      if self.is_struct:
+        parent = 'struct ' + self.name
+      else:
+        parent = 'class ' + self.name
+      error(filename, linenum, 'whitespace/indent', 3,
+            'Closing brace should be aligned with beginning of %s' % parent)
 
 
 class _NamespaceInfo(_BlockInfo):
@@ -1661,8 +1815,8 @@ class _NestingState(object):
     # To avoid these cases, we ignore classes that are followed by '=' or '>'
     class_decl_match = Match(
         r'\s*(template\s*<[\w\s<>,:]*>\s*)?'
-        '(class|struct)\s+([A-Z_]+\s+)*(\w+(?:::\w+)*)'
-        '(([^=>]|<[^<>]*>)*)$', line)
+        r'(class|struct)\s+([A-Z_]+\s+)*(\w+(?:::\w+)*)'
+        r'(([^=>]|<[^<>]*>|<[^<>]*<[^<>]*>\s*>)*)$', line)
     if (class_decl_match and
         (not self.stack or self.stack[-1].open_parentheses == 0)):
       self.stack.append(_ClassInfo(
@@ -1677,9 +1831,30 @@ class _NestingState(object):
 
     # Update access control if we are inside a class/struct
     if self.stack and isinstance(self.stack[-1], _ClassInfo):
-      access_match = Match(r'\s*(public|private|protected)\s*:', line)
+      classinfo = self.stack[-1]
+      access_match = Match(
+          r'^(.*)\b(public|private|protected|signals)(\s+(?:slots\s*)?)?'
+          r':(?:[^:]|$)',
+          line)
       if access_match:
-        self.stack[-1].access = access_match.group(1)
+        classinfo.access = access_match.group(2)
+
+        # Check that access keywords are indented +1 space.  Skip this
+        # check if the keywords are not preceded by whitespaces, examples:
+        # http://go/cfudb + http://go/vxnkk
+        indent = access_match.group(1)
+        if (len(indent) != classinfo.class_indent + 1 and
+            Match(r'^\s*$', indent)):
+          if classinfo.is_struct:
+            parent = 'struct ' + classinfo.name
+          else:
+            parent = 'class ' + classinfo.name
+          slots = ''
+          if access_match.group(3):
+            slots = access_match.group(3)
+          error(filename, linenum, 'whitespace/indent', 3,
+                '%s%s: should be indented +1 space inside %s' % (
+                    access_match.group(2), slots, parent))
 
     # Consume braces or semicolons from what's left of the line
     while True:
@@ -1848,8 +2023,8 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
                line)
   if (args and
       args.group(1) != 'void' and
-      not Match(r'(const\s+)?%s\s*(?:<\w+>\s*)?&' % re.escape(base_classname),
-                args.group(1).strip())):
+      not Match(r'(const\s+)?%s(\s+const)?\s*(?:<\w+>\s*)?&'
+                % re.escape(base_classname), args.group(1).strip())):
     error(filename, linenum, 'runtime/explicit', 5,
           'Single-argument constructors should be marked explicit.')
 
@@ -1892,7 +2067,7 @@ def CheckSpacingForFunctionCall(filename, line, linenum, error):
   # Note that we assume the contents of [] to be short enough that
   # they'll never need to wrap.
   if (  # Ignore control structures.
-      not Search(r'\b(if|for|while|switch|return|delete)\b', fncall) and
+      not Search(r'\b(if|for|while|switch|return|delete|catch)\b', fncall) and
       # Ignore pointers/references to functions.
       not Search(r' \([^)]+\)\([^)]*(\)|,$)', fncall) and
       # Ignore pointers/references to arrays.
@@ -2635,7 +2810,7 @@ def CheckBraces(filename, clean_lines, linenum, error):
       break
   if (Search(r'{.*}\s*;', line) and
       line.count('{') == line.count('}') and
-      not Search(r'struct|class|enum|\s*=\s*{', line)):
+      not Search(r'struct|union|class|enum|\s*=\s*{', line)):
     error(filename, linenum, 'readability/braces', 4,
           "You don't need a ; after a }")
 
@@ -2833,21 +3008,12 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
   if line and line[-1].isspace():
     error(filename, linenum, 'whitespace/end_of_line', 4,
           'Line ends in whitespace.  Consider deleting these extra spaces.')
-  # There are certain situations we allow one space, notably for labels
+  # There are certain situations we allow one space, notably for section labels
   elif ((initial_spaces == 1 or initial_spaces == 3) and
         not Match(r'\s*\w+\s*:\s*$', cleansed_line)):
     error(filename, linenum, 'whitespace/indent', 3,
           'Weird number of spaces at line-start.  '
           'Are you using a 2-space indent?')
-  # Labels should always be indented at least one space.
-  elif not initial_spaces and line[:2] != '//' and Search(r'[^:]:\s*$',
-                                                          line):
-    error(filename, linenum, 'whitespace/labels', 4,
-          'Labels should always be indented at least one space.  '
-          'If this is a member-initializer list in a constructor or '
-          'the base class list in a class definition, the colon should '
-          'be on the following line.')
-
 
   # Check if the line is a header guard.
   is_header_guard = False
@@ -2980,8 +3146,7 @@ def _ClassifyInclude(fileinfo, include, is_system):
   """
   # This is a list of all standard c++ header files, except
   # those already checked for above.
-  is_stl_h = include in _STL_HEADERS
-  is_cpp_h = is_stl_h or include in _CPP_HEADERS
+  is_cpp_h = include in _CPP_HEADERS
 
   if is_system:
     if is_cpp_h:
@@ -3069,9 +3234,12 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
         error(filename, linenum, 'build/include_order', 4,
               '%s. Should be: %s.h, c system, c++ system, other.' %
               (error_message, fileinfo.BaseName()))
-      if not include_state.IsInAlphabeticalOrder(include):
+      canonical_include = include_state.CanonicalizeAlphabeticalOrder(include)
+      if not include_state.IsInAlphabeticalOrder(
+          clean_lines, linenum, canonical_include):
         error(filename, linenum, 'build/include_alpha', 4,
               'Include "%s" not in alphabetical order' % include)
+      include_state.SetLastHeader(canonical_include)
 
   # Look for any of the stream classes that are part of standard C++.
   match = _RE_PATTERN_INCLUDE.match(line)
@@ -3140,8 +3308,24 @@ def _GetTextInside(text, start_pattern):
   return text[start_position:position - 1]
 
 
-def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
-                  error):
+# Patterns for matching call-by-reference parameters.
+_RE_PATTERN_IDENT = r'[_a-zA-Z]\w*'  # =~ [[:alpha:]][[:alnum:]]*
+_RE_PATTERN_TYPE = (
+    r'(?:const\s+)?(?:typename\s+|class\s+|struct\s+|union\s+|enum\s+)?'
+    r'[\w:]*\w(?:\s*<[\w:*, ]*>(?:::\w+)?)?')
+# A call-by-reference parameter ends with '& identifier'.
+_RE_PATTERN_REF_PARAM = re.compile(
+    r'(' + _RE_PATTERN_TYPE + r'(?:\s*(?:\bconst\b|[*]))*\s*'
+    r'&\s*' + _RE_PATTERN_IDENT + r')\s*(?:=[^,()]+)?[,)]')
+# A call-by-const-reference parameter either ends with 'const& identifier'
+# or looks like 'const type& identifier' when 'type' is atomic.
+_RE_PATTERN_CONST_REF_PARAM = (
+    r'(?:.*\s*\bconst\s*&\s*' + _RE_PATTERN_IDENT +
+    r'|const\s+' + _RE_PATTERN_TYPE + r'\s*&\s*' + _RE_PATTERN_IDENT + r')')
+
+
+def CheckLanguage(filename, clean_lines, linenum, file_extension,
+                  include_state, nesting_state, error):
   """Checks rules from the 'C++ language rules' section of cppguide.html.
 
   Some of these rules are hard to test (function overloading, using
@@ -3153,6 +3337,8 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
     linenum: The number of the line to check.
     file_extension: The extension (without the dot) of the filename.
     include_state: An _IncludeState instance in which the headers are inserted.
+    nesting_state: A _NestingState instance which maintains information about
+                   the current stack of nested blocks being parsed.
     error: The function to call with any errors found.
   """
   # If the line is empty or consists of entirely a comment, no need to
@@ -3179,30 +3365,56 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
 
   # TODO(unknown): figure out if they're using default arguments in fn proto.
 
-  # Check for non-const references in functions.  This is tricky because &
-  # is also used to take the address of something.  We allow <> for templates,
-  # (ignoring whatever is between the braces) and : for classes.
-  # These are complicated re's.  They try to capture the following:
-  # paren (for fn-prototype start), typename, &, varname.  For the const
-  # version, we're willing for const to be before typename or after
-  # Don't check the implementation on same line.
-  fnline = line.split('{', 1)[0]
-  if (len(re.findall(r'\([^()]*\b(?:[\w:]|<[^()]*>)+(\s?&|&\s?)\w+', fnline)) >
-      len(re.findall(r'\([^()]*\bconst\s+(?:typename\s+)?(?:struct\s+)?'
-                     r'(?:[\w:]|<[^()]*>)+(\s?&|&\s?)\w+', fnline)) +
-      len(re.findall(r'\([^()]*\b(?:[\w:]|<[^()]*>)+\s+const(\s?&|&\s?)[\w]+',
-                     fnline))):
+  # Check for non-const references in function parameters.  A single '&' may
+  # found in the following places:
+  #   inside expression: binary & for bitwise AND
+  #   inside expression: unary & for taking the address of something
+  #   inside declarators: reference parameter
+  # We will exclude the first two cases by checking that we are not inside a
+  # function body, including one that was just introduced by a trailing '{'.
+  # TODO(unknown): Doesn't account for preprocessor directives.
+  # TODO(unknown): Doesn't account for 'catch(Exception& e)' [rare].
+  # TODO(unknown): Doesn't account for line breaks within declarators.
+  check_params = False
+  if not nesting_state.stack:
+    check_params = True  # top level
+  elif (isinstance(nesting_state.stack[-1], _ClassInfo) or
+        isinstance(nesting_state.stack[-1], _NamespaceInfo)):
+    check_params = True  # within class or namespace
+  elif Match(r'.*{\s*$', line):
+    if (len(nesting_state.stack) == 1 or
+        isinstance(nesting_state.stack[-2], _ClassInfo) or
+        isinstance(nesting_state.stack[-2], _NamespaceInfo)):
+      check_params = True  # just opened global/class/namespace block
+  # We allow non-const references in a few standard places, like functions
+  # called "swap()" or iostream operators like "<<" or ">>".  Do not check
+  # those function parameters.
+  #
+  # We also accept & in static_assert, which looks like a function but
+  # it's actually a declaration expression.
+  whitelisted_functions = (r'(?:[sS]wap(?:<\w:+>)?|'
+                           r'operator\s*[<>][<>]|'
+                           r'static_assert|COMPILE_ASSERT'
+                           r')\s*\(')
+  if Search(whitelisted_functions, line):
+    check_params = False
+  elif not Search(r'\S+\([^)]*$', line):
+    # Don't see a whitelisted function on this line.  Actually we
+    # didn't see any function name on this line, so this is likely a
+    # multi-line parameter list.  Try a bit harder to catch this case.
+    for i in xrange(2):
+      if (linenum > i and
+          Search(whitelisted_functions, clean_lines.elided[linenum - i - 1])):
+        check_params = False
+        break
 
-    # We allow non-const references in a few standard places, like functions
-    # called "swap()" or iostream operators like "<<" or ">>". We also filter
-    # out for loops, which lint otherwise mistakenly thinks are functions.
-    if not Search(
-        r'(for|swap|Swap|operator[<>][<>])\s*\(\s*'
-        r'(?:(?:typename\s*)?[\w:]|<.*>)+\s*&',
-        fnline):
-      error(filename, linenum, 'runtime/references', 2,
-            'Is this a non-const reference? '
-            'If so, make const or use a pointer.')
+  if check_params:
+    decls = ReplaceAll(r'{[^}]*}', ' ', line)  # exclude function body
+    for parameter in re.findall(_RE_PATTERN_REF_PARAM, decls):
+      if not Match(_RE_PATTERN_CONST_REF_PARAM, parameter):
+        error(filename, linenum, 'runtime/references', 2,
+              'Is this a non-const reference? '
+              'If so, make const or use a pointer: ' + parameter)
 
   # Check to see if they're using an conversion function cast.
   # I just try to capture the most common basic types, though there are more.
@@ -3276,13 +3488,6 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
           '"%schar %s[]".' %
           (match.group(1), match.group(2)))
 
-  # Check that we're not using RTTI outside of testing code.
-  if Search(r'\bdynamic_cast<', line) and not _IsTestFilename(filename):
-    error(filename, linenum, 'runtime/rtti', 5,
-          'Do not use dynamic_cast<>.  If you need to cast within a class '
-          "hierarchy, use static_cast<> to upcast.  Google doesn't support "
-          'RTTI.')
-
   if Search(r'\b([A-Za-z0-9_]*_)\(\1\)', line):
     error(filename, linenum, 'runtime/init', 4,
           'You seem to be initializing a member variable with itself.')
@@ -3323,10 +3528,6 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension, include_state,
   if match:
     error(filename, linenum, 'runtime/printf', 4,
           'Almost always, snprintf is better than %s' % match.group(1))
-
-  if Search(r'\bsscanf\b', line):
-    error(filename, linenum, 'runtime/printf', 1,
-          'sscanf can be ok, but is slow and can overflow buffers.')
 
   # Check if some verboten operator overloading is going on
   # TODO(unknown): catch out-of-line unary operator&:
@@ -3448,8 +3649,6 @@ def CheckCStyleCast(filename, linenum, line, raw_line, cast_type, pattern,
                     error):
   """Checks for a C-style cast by looking for the pattern.
 
-  This also handles sizeof(type) warnings, due to similarity of content.
-
   Args:
     filename: The name of the current file.
     linenum: The number of the line to check.
@@ -3468,12 +3667,10 @@ def CheckCStyleCast(filename, linenum, line, raw_line, cast_type, pattern,
   if not match:
     return False
 
-  # e.g., sizeof(int)
+  # Exclude lines with sizeof, since sizeof looks like a cast.
   sizeof_match = Match(r'.*sizeof\s*$', line[0:match.start(1) - 1])
   if sizeof_match:
-    error(filename, linenum, 'runtime/sizeof', 1,
-          'Using sizeof(type).  Use sizeof(varname) instead if possible')
-    return True
+    return False
 
   # operator++(int) and operator--(int)
   if (line[0:match.start(1) - 1].endswith(' operator++') or
@@ -3802,7 +3999,7 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckForMultilineCommentsAndStrings(filename, clean_lines, line, error)
   CheckStyle(filename, clean_lines, line, file_extension, nesting_state, error)
   CheckLanguage(filename, clean_lines, line, file_extension, include_state,
-                error)
+                nesting_state, error)
   CheckForNonStandardConstructs(filename, clean_lines, line,
                                 nesting_state, error)
   CheckPosixThreading(filename, clean_lines, line, error)
