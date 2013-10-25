@@ -28,40 +28,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Here are some issues that I've had people identify in my code during reviews,
-# that I think are possible to flag automatically in a lint tool.  If these were
-# caught by lint, it would save time both for myself and that of my reviewers.
-# Most likely, some of these are beyond the scope of the current lint framework,
-# but I think it is valuable to retain these wish-list items even if they cannot
-# be immediately implemented.
-#
-#  Suggestions
-#  -----------
-#  - Check for no 'explicit' for multi-arg ctor
-#  - Check for boolean assign RHS in parens
-#  - Check for ctor initializer-list colon position and spacing
-#  - Check that if there's a ctor, there should be a dtor
-#  - Check accessors that return non-pointer member variables are
-#    declared const
-#  - Check accessors that return non-const pointer member vars are
-#    *not* declared const
-#  - Check for using public includes for testing
-#  - Check for spaces between brackets in one-line inline method
-#  - Check for no assert()
-#  - Check for spaces surrounding operators
-#  - Check for 0 in pointer context (should be NULL)
-#  - Check for 0 in char context (should be '\0')
-#  - Check for camel-case method name conventions for methods
-#    that are not simple inline getters and setters
-#  - Do not indent namespace contents
-#  - Avoid inlining non-trivial constructors in header files
-#  - Check for old-school (void) cast for call-sites of functions
-#    ignored return value
-#  - Check gUnit usage of anonymous namespace
-#  - Check for class declaration order (typedefs, consts, enums,
-#    ctor(s?), dtor, friend declarations, methods, member vars)
-#
-
 """Does google-lint on c++ files.
 
 The goal of this script is to identify places in the code that *may*
@@ -202,14 +168,15 @@ _ERROR_CATEGORIES = [
   'runtime/references',
   'runtime/string',
   'runtime/threadsafe_fn',
-  'whitespace/blank_line',
-  'whitespace/braces',
-  'whitespace/comma',
-  'whitespace/comments',
-  'whitespace/empty_loop_body',
-  'whitespace/end_of_line',
-  'whitespace/ending_newline',
-  'whitespace/forcolon',
+    'whitespace/blank_line',
+    'whitespace/braces',
+    'whitespace/comma',
+    'whitespace/comments',
+    'whitespace/empty_conditional_body',
+    'whitespace/empty_loop_body',
+    'whitespace/end_of_line',
+    'whitespace/ending_newline',
+    'whitespace/forcolon',
   'whitespace/indent',
   'whitespace/line_length',
   'whitespace/newline',
@@ -421,9 +388,8 @@ _ALT_TOKEN_REPLACEMENT = {
 # Compile regular expression that matches all the above keywords.  The "[ =()]"
 # bit is meant to avoid matching these keywords outside of boolean expressions.
 #
-# False positives include C-style multi-line comments (http://go/nsiut )
-# and multi-line strings (http://go/beujw ), but those have always been
-# troublesome for cpplint.
+# False positives include C-style multi-line comments and multi-line strings
+# but those have always been troublesome for cpplint.
 _ALT_TOKEN_REPLACEMENT_PATTERN = re.compile(
     r'[ =()](' + ('|'.join(_ALT_TOKEN_REPLACEMENT.keys())) + r')(?=[ (]|$)')
 
@@ -515,7 +481,7 @@ def Match(pattern, s):
   # The regexp compilation caching is inlined in both Match and Search for
   # performance reasons; factoring it out into a separate function turns out
   # to be noticeably expensive.
-  if not pattern in _regexp_compile_cache:
+  if pattern not in _regexp_compile_cache:
     _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
   return _regexp_compile_cache[pattern].match(s)
 
@@ -540,7 +506,7 @@ def ReplaceAll(pattern, rep, s):
 
 def Search(pattern, s):
   """Searches the string for the pattern, caching the compiled regexp."""
-  if not pattern in _regexp_compile_cache:
+  if pattern not in _regexp_compile_cache:
     _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
   return _regexp_compile_cache[pattern].search(s)
 
@@ -1424,7 +1390,6 @@ threading_list = (
     ('gmtime(', 'gmtime_r('),
     ('localtime(', 'localtime_r('),
     ('rand(', 'rand_r('),
-    ('readdir(', 'readdir_r('),
     ('strtok(', 'strtok_r('),
     ('ttyname(', 'ttyname_r('),
     )
@@ -1538,7 +1503,7 @@ class _ClassInfo(_BlockInfo):
       self.is_struct = False
 
     # Remember initial indentation level for this class.  Using raw_lines here
-    # instead of elided to account for leading comments like http://go/abjhm
+    # instead of elided to account for leading comments.
     initial_indent = Match(r'^( *)\S', clean_lines.raw_lines[linenum])
     if initial_indent:
       self.class_indent = len(initial_indent.group(1))
@@ -1609,14 +1574,14 @@ class _NamespaceInfo(_BlockInfo):
     #
     # Note that we accept C style "/* */" comments for terminating
     # namespaces, so that code that terminate namespaces inside
-    # preprocessor macros can be cpplint clean.  Example: http://go/nxpiz
+    # preprocessor macros can be cpplint clean.
     #
     # We also accept stuff like "// end of namespace <name>." with the
     # period at the end.
     #
     # Besides these, we don't accept anything else, otherwise we might
     # get false negatives when existing comment is a substring of the
-    # expected namespace.  Example: http://go/ldkdc, http://cl/23548205
+    # expected namespace.
     if self.name:
       # Named namespace
       if not Match((r'};*\s*(//|/\*).*\bnamespace\s+' + re.escape(self.name) +
@@ -1687,7 +1652,6 @@ class _NestingState(object):
       #else
       struct ResultDetailsPageElementExtensionPoint : public Extension {
       #endif
-    (see http://go/qwddn for original example)
 
     We make the following assumptions (good enough for most files):
     - Preprocessor condition evaluates to true from #if up to first
@@ -1840,8 +1804,7 @@ class _NestingState(object):
         classinfo.access = access_match.group(2)
 
         # Check that access keywords are indented +1 space.  Skip this
-        # check if the keywords are not preceded by whitespaces, examples:
-        # http://go/cfudb + http://go/vxnkk
+        # check if the keywords are not preceded by whitespaces.
         indent = access_match.group(1)
         if (len(indent) != classinfo.class_indent + 1 and
             Match(r'^\s*$', indent)):
@@ -2067,7 +2030,8 @@ def CheckSpacingForFunctionCall(filename, line, linenum, error):
   # Note that we assume the contents of [] to be short enough that
   # they'll never need to wrap.
   if (  # Ignore control structures.
-      not Search(r'\b(if|for|while|switch|return|delete|catch)\b', fncall) and
+      not Search(r'\b(if|for|while|switch|return|new|delete|catch)\b',
+                 fncall) and
       # Ignore pointers/references to functions.
       not Search(r' \([^)]+\)\([^)]*(\)|,$)', fncall) and
       # Ignore pointers/references to arrays.
@@ -2265,8 +2229,7 @@ def FindNextMatchingAngleBracket(clean_lines, linenum, init_suffix):
     # We could also check all other operators and terminate the search
     # early, e.g. if we got something like this "a<b+c", the "<" is
     # most likely a less-than operator, but then we will get false
-    # positives for default arguments (e.g. http://go/prccd) and
-    # other template expressions (e.g. http://go/oxcjq).
+    # positives for default arguments and other template expressions.
     match = Search(r'^[^<>(),;\[\]]*([<>(),;\[\]])(.*)$', line)
     if match:
       # Found an operator, update nesting stack
@@ -2597,13 +2560,17 @@ def CheckSpacing(filename, clean_lines, linenum, nesting_state, error):
               not match.group(2) and Search(r'\bfor\s*\(.*; \)', line)):
         error(filename, linenum, 'whitespace/parens', 5,
               'Mismatching spaces inside () in %s' % match.group(1))
-    if not len(match.group(2)) in [0, 1]:
+    if len(match.group(2)) not in [0, 1]:
       error(filename, linenum, 'whitespace/parens', 5,
             'Should have zero or one spaces inside ( and ) in %s' %
             match.group(1))
 
   # You should always have a space after a comma (either as fn arg or operator)
-  if Search(r',[^\s]', line):
+  #
+  # This does not apply when the non-space character following the
+  # comma is another comma, since the only time when that happens is
+  # for empty macro arguments.
+  if Search(r',[^,\s]', line):
     error(filename, linenum, 'whitespace/comma', 3,
           'Missing space after ,')
 
@@ -2757,10 +2724,10 @@ def CheckBraces(filename, clean_lines, linenum, error):
     # which is commonly used to control the lifetime of
     # stack-allocated variables.  We don't detect this perfectly: we
     # just don't complain if the last non-whitespace character on the
-    # previous non-blank line is ';', ':', '{', or '}', or if the previous
-    # line starts a preprocessor block.
+    # previous non-blank line is ',', ';', ':', '{', or '}', or if the
+    # previous line starts a preprocessor block.
     prevline = GetPreviousNonBlankLine(clean_lines, linenum)[0]
-    if (not Search(r'[;:}{]\s*$', prevline) and
+    if (not Search(r'[,;:}{]\s*$', prevline) and
         not Match(r'\s*#', prevline)):
       error(filename, linenum, 'whitespace/braces', 4,
             '{ should almost always be at the end of the previous line')
@@ -2815,8 +2782,8 @@ def CheckBraces(filename, clean_lines, linenum, error):
           "You don't need a ; after a }")
 
 
-def CheckEmptyLoopBody(filename, clean_lines, linenum, error):
-  """Loop for empty loop body with only a single semicolon.
+def CheckEmptyBlockBody(filename, clean_lines, linenum, error):
+  """Look for empty loop/conditional body with only a single semicolon.
 
   Args:
     filename: The name of the current file.
@@ -2828,8 +2795,12 @@ def CheckEmptyLoopBody(filename, clean_lines, linenum, error):
   # Search for loop keywords at the beginning of the line.  Because only
   # whitespaces are allowed before the keywords, this will also ignore most
   # do-while-loops, since those lines should start with closing brace.
+  #
+  # We also check "if" blocks here, since an empty conditional block
+  # is likely an error.
   line = clean_lines.elided[linenum]
-  if Match(r'\s*(for|while)\s*\(', line):
+  matched = Match(r'\s*(for|while|if)\s*\(', line)
+  if matched:
     # Find the end of the conditional expression
     (end_line, end_linenum, end_pos) = CloseExpression(
         clean_lines, linenum, line.find('('))
@@ -2838,43 +2809,12 @@ def CheckEmptyLoopBody(filename, clean_lines, linenum, error):
     # No warning for all other cases, including whitespace or newline, since we
     # have a separate check for semicolons preceded by whitespace.
     if end_pos >= 0 and Match(r';', end_line[end_pos:]):
-      error(filename, end_linenum, 'whitespace/empty_loop_body', 5,
-            'Empty loop bodies should use {} or continue')
-
-
-def ReplaceableCheck(operator, macro, line):
-  """Determine whether a basic CHECK can be replaced with a more specific one.
-
-  For example suggest using CHECK_EQ instead of CHECK(a == b) and
-  similarly for CHECK_GE, CHECK_GT, CHECK_LE, CHECK_LT, CHECK_NE.
-
-  Args:
-    operator: The C++ operator used in the CHECK.
-    macro: The CHECK or EXPECT macro being called.
-    line: The current source line.
-
-  Returns:
-    True if the CHECK can be replaced with a more specific one.
-  """
-
-  # This matches decimal and hex integers, strings, and chars (in that order).
-  match_constant = r'([-+]?(\d+|0[xX][0-9a-fA-F]+)[lLuU]{0,3}|".*"|\'.*\')'
-
-  # Expression to match two sides of the operator with something that
-  # looks like a literal, since CHECK(x == iterator) won't compile.
-  # This means we can't catch all the cases where a more specific
-  # CHECK is possible, but it's less annoying than dealing with
-  # extraneous warnings.
-  match_this = (r'\s*' + macro + r'\((\s*' +
-                match_constant + r'\s*' + operator + r'[^<>].*|'
-                r'.*[^<>]' + operator + r'\s*' + match_constant +
-                r'\s*\))')
-
-  # Don't complain about CHECK(x == NULL) or similar because
-  # CHECK_EQ(x, NULL) won't compile (requires a cast).
-  # Also, don't complain about more complex boolean expressions
-  # involving && or || such as CHECK(a == b || c == d).
-  return Match(match_this, line) and not Search(r'NULL|&&|\|\|', line)
+      if matched.group(1) == 'if':
+        error(filename, end_linenum, 'whitespace/empty_conditional_body', 5,
+              'Empty conditional bodies should use {}')
+      else:
+        error(filename, end_linenum, 'whitespace/empty_loop_body', 5,
+              'Empty loop bodies should use {} or continue')
 
 
 def CheckCheck(filename, clean_lines, linenum, error):
@@ -2888,26 +2828,120 @@ def CheckCheck(filename, clean_lines, linenum, error):
   """
 
   # Decide the set of replacement macros that should be suggested
-  raw_lines = clean_lines.raw_lines
-  current_macro = ''
+  lines = clean_lines.elided
+  check_macro = None
+  start_pos = -1
   for macro in _CHECK_MACROS:
-    if raw_lines[linenum].find(macro) >= 0:
-      current_macro = macro
+    i = lines[linenum].find(macro)
+    if i >= 0:
+      check_macro = macro
+
+      # Find opening parenthesis.  Do a regular expression match here
+      # to make sure that we are matching the expected CHECK macro, as
+      # opposed to some other macro that happens to contain the CHECK
+      # substring.
+      matched = Match(r'^(.*\b' + check_macro + r'\s*)\(', lines[linenum])
+      if not matched:
+        continue
+      start_pos = len(matched.group(1))
       break
-  if not current_macro:
+  if not check_macro or start_pos < 0:
     # Don't waste time here if line doesn't contain 'CHECK' or 'EXPECT'
     return
 
-  line = clean_lines.elided[linenum]        # get rid of comments and strings
+  # Find end of the boolean expression by matching parentheses
+  (last_line, end_line, end_pos) = CloseExpression(
+      clean_lines, linenum, start_pos)
+  if end_pos < 0:
+    return
+  if linenum == end_line:
+    expression = lines[linenum][start_pos + 1:end_pos - 1]
+  else:
+    expression = lines[linenum][start_pos + 1:]
+    for i in xrange(linenum + 1, end_line):
+      expression += lines[i]
+    expression += last_line[0:end_pos - 1]
 
-  # Encourage replacing plain CHECKs with CHECK_EQ/CHECK_NE/etc.
-  for operator in ['==', '!=', '>=', '>', '<=', '<']:
-    if ReplaceableCheck(operator, current_macro, line):
-      error(filename, linenum, 'readability/check', 2,
-            'Consider using %s instead of %s(a %s b)' % (
-                _CHECK_REPLACEMENT[current_macro][operator],
-                current_macro, operator))
-      break
+  # Parse expression so that we can take parentheses into account.
+  # This avoids false positives for inputs like "CHECK((a < 4) == b)",
+  # which is not replaceable by CHECK_LE.
+  lhs = ''
+  rhs = ''
+  operator = None
+  while expression:
+    matched = Match(r'^\s*(<<|<<=|>>|>>=|->\*|->|&&|\|\||'
+                    r'==|!=|>=|>|<=|<|\()(.*)$', expression)
+    if matched:
+      token = matched.group(1)
+      if token == '(':
+        # Parenthesized operand
+        expression = matched.group(2)
+        end = FindEndOfExpressionInLine(expression, 0, 1, '(', ')')
+        if end < 0:
+          return  # Unmatched parenthesis
+        lhs += '(' + expression[0:end]
+        expression = expression[end:]
+      elif token in ('&&', '||'):
+        # Logical and/or operators.  This means the expression
+        # contains more than one term, for example:
+        #   CHECK(42 < a && a < b);
+        #
+        # These are not replaceable with CHECK_LE, so bail out early.
+        return
+      elif token in ('<<', '<<=', '>>', '>>=', '->*', '->'):
+        # Non-relational operator
+        lhs += token
+        expression = matched.group(2)
+      else:
+        # Relational operator
+        operator = token
+        rhs = matched.group(2)
+        break
+    else:
+      # Unparenthesized operand.  Instead of appending to lhs one character
+      # at a time, we do another regular expression match to consume several
+      # characters at once if possible.  Trivial benchmark shows that this
+      # is more efficient when the operands are longer than a single
+      # character, which is generally the case.
+      matched = Match(r'^([^-=!<>()&|]+)(.*)$', expression)
+      if not matched:
+        matched = Match(r'^(\s*\S)(.*)$', expression)
+        if not matched:
+          break
+      lhs += matched.group(1)
+      expression = matched.group(2)
+
+  # Only apply checks if we got all parts of the boolean expression
+  if not (lhs and operator and rhs):
+    return
+
+  # Check that rhs do not contain logical operators.  We already know
+  # that lhs is fine since the loop above parses out && and ||.
+  if rhs.find('&&') > -1 or rhs.find('||') > -1:
+    return
+
+  # At least one of the operands must be a constant literal.  This is
+  # to avoid suggesting replacements for unprintable things like
+  # CHECK(variable != iterator)
+  #
+  # The following pattern matches decimal, hex integers, strings, and
+  # characters (in that order).
+  lhs = lhs.strip()
+  rhs = rhs.strip()
+  match_constant = r'^([-+]?(\d+|0[xX][0-9a-fA-F]+)[lLuU]{0,3}|".*"|\'.*\')$'
+  if Match(match_constant, lhs) or Match(match_constant, rhs):
+    # Note: since we know both lhs and rhs, we can provide a more
+    # descriptive error message like:
+    #   Consider using CHECK_EQ(x, 42) instead of CHECK(x == 42)
+    # Instead of:
+    #   Consider using CHECK_EQ instead of CHECK(a == b)
+    #
+    # We are still keeping the less descriptive message because if lhs
+    # or rhs gets long, the error message might become unreadable.
+    error(filename, linenum, 'readability/check', 2,
+          'Consider using %s instead of %s(a %s b)' % (
+              _CHECK_REPLACEMENT[check_macro][operator],
+              check_macro, operator))
 
 
 def CheckAltTokens(filename, clean_lines, linenum, error):
@@ -3056,7 +3090,7 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
 
   # Some more style checks
   CheckBraces(filename, clean_lines, linenum, error)
-  CheckEmptyLoopBody(filename, clean_lines, linenum, error)
+  CheckEmptyBlockBody(filename, clean_lines, linenum, error)
   CheckAccess(filename, clean_lines, linenum, nesting_state, error)
   CheckSpacing(filename, clean_lines, linenum, nesting_state, error)
   CheckCheck(filename, clean_lines, linenum, error)
@@ -3352,69 +3386,10 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
     CheckIncludeLine(filename, clean_lines, linenum, include_state, error)
     return
 
-  # Create an extended_line, which is the concatenation of the current and
-  # next lines, for more effective checking of code that may span more than one
-  # line.
-  if linenum + 1 < clean_lines.NumLines():
-    extended_line = line + clean_lines.elided[linenum + 1]
-  else:
-    extended_line = line
-
   # Make Windows paths like Unix.
   fullname = os.path.abspath(filename).replace('\\', '/')
 
   # TODO(unknown): figure out if they're using default arguments in fn proto.
-
-  # Check for non-const references in function parameters.  A single '&' may
-  # found in the following places:
-  #   inside expression: binary & for bitwise AND
-  #   inside expression: unary & for taking the address of something
-  #   inside declarators: reference parameter
-  # We will exclude the first two cases by checking that we are not inside a
-  # function body, including one that was just introduced by a trailing '{'.
-  # TODO(unknown): Doesn't account for preprocessor directives.
-  # TODO(unknown): Doesn't account for 'catch(Exception& e)' [rare].
-  # TODO(unknown): Doesn't account for line breaks within declarators.
-  check_params = False
-  if not nesting_state.stack:
-    check_params = True  # top level
-  elif (isinstance(nesting_state.stack[-1], _ClassInfo) or
-        isinstance(nesting_state.stack[-1], _NamespaceInfo)):
-    check_params = True  # within class or namespace
-  elif Match(r'.*{\s*$', line):
-    if (len(nesting_state.stack) == 1 or
-        isinstance(nesting_state.stack[-2], _ClassInfo) or
-        isinstance(nesting_state.stack[-2], _NamespaceInfo)):
-      check_params = True  # just opened global/class/namespace block
-  # We allow non-const references in a few standard places, like functions
-  # called "swap()" or iostream operators like "<<" or ">>".  Do not check
-  # those function parameters.
-  #
-  # We also accept & in static_assert, which looks like a function but
-  # it's actually a declaration expression.
-  whitelisted_functions = (r'(?:[sS]wap(?:<\w:+>)?|'
-                           r'operator\s*[<>][<>]|'
-                           r'static_assert|COMPILE_ASSERT'
-                           r')\s*\(')
-  if Search(whitelisted_functions, line):
-    check_params = False
-  elif not Search(r'\S+\([^)]*$', line):
-    # Don't see a whitelisted function on this line.  Actually we
-    # didn't see any function name on this line, so this is likely a
-    # multi-line parameter list.  Try a bit harder to catch this case.
-    for i in xrange(2):
-      if (linenum > i and
-          Search(whitelisted_functions, clean_lines.elided[linenum - i - 1])):
-        check_params = False
-        break
-
-  if check_params:
-    decls = ReplaceAll(r'{[^}]*}', ' ', line)  # exclude function body
-    for parameter in re.findall(_RE_PATTERN_REF_PARAM, decls):
-      if not Match(_RE_PATTERN_CONST_REF_PARAM, parameter):
-        error(filename, linenum, 'runtime/references', 2,
-              'Is this a non-const reference? '
-              'If so, make const or use a pointer: ' + parameter)
 
   # Check to see if they're using an conversion function cast.
   # I just try to capture the most common basic types, though there are more.
@@ -3422,29 +3397,48 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   # probably a member operator declaration or default constructor.
   match = Search(
       r'(\bnew\s+)?\b'  # Grab 'new' operator, if it's there
-      r'(int|float|double|bool|char|int32|uint32|int64|uint64)\([^)]', line)
+      r'(int|float|double|bool|char|int32|uint32|int64|uint64)'
+      r'(\([^)].*)', line)
   if match:
+    matched_new = match.group(1)
+    matched_type = match.group(2)
+    matched_funcptr = match.group(3)
+
     # gMock methods are defined using some variant of MOCK_METHODx(name, type)
     # where type may be float(), int(string), etc.  Without context they are
     # virtually indistinguishable from int(x) casts. Likewise, gMock's
     # MockCallback takes a template parameter of the form return_type(arg_type),
     # which looks much like the cast we're trying to detect.
-    if (match.group(1) is None and  # If new operator, then this isn't a cast
+    #
+    # std::function<> wrapper has a similar problem.
+    #
+    # Return types for function pointers also look like casts if they
+    # don't have an extra space.
+    if (matched_new is None and  # If new operator, then this isn't a cast
         not (Match(r'^\s*MOCK_(CONST_)?METHOD\d+(_T)?\(', line) or
-             Match(r'^\s*MockCallback<.*>', line))):
+             Search(r'\bMockCallback<.*>', line) or
+             Search(r'\bstd::function<.*>', line)) and
+        not (matched_funcptr and
+             Match(r'\((?:[^() ]+::\s*\*\s*)?[^() ]+\)\s*\(',
+                   matched_funcptr))):
       # Try a bit harder to catch gmock lines: the only place where
       # something looks like an old-style cast is where we declare the
       # return type of the mocked method, and the only time when we
       # are missing context is if MOCK_METHOD was split across
-      # multiple lines (for example http://go/hrfhr ), so we only need
-      # to check the previous line for MOCK_METHOD.
-      if (linenum == 0 or
-          not Match(r'^\s*MOCK_(CONST_)?METHOD\d+(_T)?\(\S+,\s*$',
-                    clean_lines.elided[linenum - 1])):
+      # multiple lines.  The missing MOCK_METHOD is usually one or two
+      # lines back, so scan back one or two lines.
+      #
+      # It's not possible for gmock macros to appear in the first 2
+      # lines, since the class head + section name takes up 2 lines.
+      if (linenum < 2 or
+          not (Match(r'^\s*MOCK_(?:CONST_)?METHOD\d+(?:_T)?\((?:\S+,)?\s*$',
+                     clean_lines.elided[linenum - 1]) or
+               Match(r'^\s*MOCK_(?:CONST_)?METHOD\d+(?:_T)?\(\s*$',
+                     clean_lines.elided[linenum - 2]))):
         error(filename, linenum, 'readability/casting', 4,
               'Using deprecated casting style.  '
               'Use static_cast<%s>(...) instead' %
-              match.group(2))
+              matched_type)
 
   CheckCStyleCast(filename, linenum, line, clean_lines.raw_lines[linenum],
                   'static_cast',
@@ -3465,12 +3459,22 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   # In addition, we look for people taking the address of a cast.  This
   # is dangerous -- casts can assign to temporaries, so the pointer doesn't
   # point where you think.
-  if Search(
-      r'(&\([^)]+\)[\w(])|(&(static|dynamic|reinterpret)_cast\b)', line):
+  match = Search(
+      r'(?:&\(([^)]+)\)[\w(])|'
+      r'(?:&(static|dynamic|down|reinterpret)_cast\b)', line)
+  if match and match.group(1) != '*':
     error(filename, linenum, 'runtime/casting', 4,
           ('Are you taking an address of a cast?  '
            'This is dangerous: could be a temp var.  '
            'Take the address before doing the cast, rather than after'))
+
+  # Create an extended_line, which is the concatenation of the current and
+  # next lines, for more effective checking of code that may span more than one
+  # line.
+  if linenum + 1 < clean_lines.NumLines():
+    extended_line = line + clean_lines.elided[linenum + 1]
+  else:
+    extended_line = line
 
   # Check for people declaring static/global STL strings at the top level.
   # This is dangerous because the C++ language does not guarantee that
@@ -3644,6 +3648,97 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
           'http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
           ' for more information.')
 
+def CheckForNonConstReference(filename, clean_lines, linenum,
+                              nesting_state, error):
+  """Check for non-const references.
+
+  Separate from CheckLanguage since it scans backwards from current
+  line, instead of scanning forward.
+
+  Args:
+    filename: The name of the current file.
+    clean_lines: A CleansedLines instance containing the file.
+    linenum: The number of the line to check.
+    nesting_state: A _NestingState instance which maintains information about
+                   the current stack of nested blocks being parsed.
+    error: The function to call with any errors found.
+  """
+  # Do nothing if there is no '&' on current line.
+  line = clean_lines.elided[linenum]
+  if '&' not in line:
+    return
+
+  # Long type names may be broken across multiple lines, with the
+  # newline before or after the scope resolution operator.  If we
+  # detected a type split across two lines, join the previous line to
+  # current line so that we can match const references accordingly.
+  #
+  # Note that this only scans back one line, since scanning back
+  # arbitrary number of lines would be expensive.  If you have a type
+  # that spans more than 2 lines, please use a typedef.
+  if linenum > 1:
+    previous = None
+    if Match(r'\s*::(?:\w|::)+\s*&\s*\S', line):
+      # previous_line\n + ::current_line
+      previous = Search(r'\b((?:const\s*)?(?:\w|::)+\w)\s*$',
+                        clean_lines.elided[linenum - 1])
+    elif Match(r'\s*[a-zA-Z_](\w|::)+\s*&\s*\S', line):
+      # previous_line::\n + current_line
+      previous = Search(r'\b((?:const\s*)?(?:\w|::)+::)\s*$',
+                        clean_lines.elided[linenum - 1])
+    if previous:
+      line = previous.group(1) + line.lstrip()
+
+  # Check for non-const references in function parameters.  A single '&' may
+  # found in the following places:
+  #   inside expression: binary & for bitwise AND
+  #   inside expression: unary & for taking the address of something
+  #   inside declarators: reference parameter
+  # We will exclude the first two cases by checking that we are not inside a
+  # function body, including one that was just introduced by a trailing '{'.
+  # TODO(unknwon): Doesn't account for preprocessor directives.
+  # TODO(unknown): Doesn't account for 'catch(Exception& e)' [rare].
+  check_params = False
+  if not nesting_state.stack:
+    check_params = True  # top level
+  elif (isinstance(nesting_state.stack[-1], _ClassInfo) or
+        isinstance(nesting_state.stack[-1], _NamespaceInfo)):
+    check_params = True  # within class or namespace
+  elif Match(r'.*{\s*$', line):
+    if (len(nesting_state.stack) == 1 or
+        isinstance(nesting_state.stack[-2], _ClassInfo) or
+        isinstance(nesting_state.stack[-2], _NamespaceInfo)):
+      check_params = True  # just opened global/class/namespace block
+  # We allow non-const references in a few standard places, like functions
+  # called "swap()" or iostream operators like "<<" or ">>".  Do not check
+  # those function parameters.
+  #
+  # We also accept & in static_assert, which looks like a function but
+  # it's actually a declaration expression.
+  whitelisted_functions = (r'(?:[sS]wap(?:<\w:+>)?|'
+                           r'operator\s*[<>][<>]|'
+                           r'static_assert|COMPILE_ASSERT'
+                           r')\s*\(')
+  if Search(whitelisted_functions, line):
+    check_params = False
+  elif not Search(r'\S+\([^)]*$', line):
+    # Don't see a whitelisted function on this line.  Actually we
+    # didn't see any function name on this line, so this is likely a
+    # multi-line parameter list.  Try a bit harder to catch this case.
+    for i in xrange(2):
+      if (linenum > i and
+          Search(whitelisted_functions, clean_lines.elided[linenum - i - 1])):
+        check_params = False
+        break
+
+  if check_params:
+    decls = ReplaceAll(r'{[^}]*}', ' ', line)  # exclude function body
+    for parameter in re.findall(_RE_PATTERN_REF_PARAM, decls):
+      if not Match(_RE_PATTERN_CONST_REF_PARAM, parameter):
+        error(filename, linenum, 'runtime/references', 2,
+              'Is this a non-const reference? '
+              'If so, make const or use a pointer: ' + parameter)
+
 
 def CheckCStyleCast(filename, linenum, line, raw_line, cast_type, pattern,
                     error):
@@ -3677,28 +3772,58 @@ def CheckCStyleCast(filename, linenum, line, raw_line, cast_type, pattern,
       line[0:match.start(1) - 1].endswith(' operator--')):
     return False
 
-  remainder = line[match.end(0):]
-
-  # The close paren is for function pointers as arguments to a function.
-  # eg, void foo(void (*bar)(int));
-  # The semicolon check is a more basic function check; also possibly a
-  # function pointer typedef.
-  # eg, void foo(int); or void foo(int) const;
-  # The equals check is for function pointer assignment.
-  # eg, void *(*foo)(int) = ...
-  # The > is for MockCallback<...> ...
+  # A single unnamed argument for a function tends to look like old
+  # style cast.  If we see those, don't issue warnings for deprecated
+  # casts, instead issue warnings for unnamed arguments where
+  # appropriate.
   #
-  # Right now, this will only catch cases where there's a single argument, and
-  # it's unnamed.  It should probably be expanded to check for multiple
-  # arguments with some unnamed.
-  function_match = Match(r'\s*(\)|=|(const)?\s*(;|\{|throw\(\)|>))', remainder)
-  if function_match:
-    if (not function_match.group(3) or
-        function_match.group(3) == ';' or
-        ('MockCallback<' not in raw_line and
-         '/*' not in raw_line)):
-      error(filename, linenum, 'readability/function', 3,
-            'All parameters should be named in a function')
+  # These are things that we want warnings for, since the style guide
+  # explicitly require all parameters to be named:
+  #   Function(int);
+  #   Function(int) {
+  #   ConstMember(int) const;
+  #   ConstMember(int) const {
+  #   ExceptionMember(int) throw (...);
+  #   ExceptionMember(int) throw (...) {
+  #   PureVirtual(int) = 0;
+  #
+  # These are functions of some sort, where the compiler would be fine
+  # if they had named parameters, but people often omit those
+  # identifiers to reduce clutter:
+  #   (FunctionPointer)(int);
+  #   (FunctionPointer)(int) = value;
+  #   Function((function_pointer_arg)(int))
+  #   <TemplateArgument(int)>;
+  #   <(FunctionPointerTemplateArgument)(int)>;
+  remainder = line[match.end(0):]
+  if Match(r'^\s*(?:;|const\b|throw\b|=|>|\{|\))', remainder):
+    # Looks like an unnamed parameter.
+
+    # Don't warn on any kind of template arguments.
+    if Match(r'^\s*>', remainder):
+      return False
+
+    # Don't warn on assignments to function pointers, but keep warnings for
+    # unnamed parameters to pure virtual functions.  Note that this pattern
+    # will also pass on assignments of "0" to function pointers, but the
+    # preferred values for those would be "nullptr" or "NULL".
+    matched_zero = Match(r'^\s=\s*(\S+)\s*;', remainder)
+    if matched_zero and matched_zero.group(1) != '0':
+      return False
+
+    # Don't warn on function pointer declarations.  For this we need
+    # to check what came before the "(type)" string.
+    if Match(r'.*\)\s*$', line[0:match.start(0)]):
+      return False
+
+    # Don't warn if the parameter is named with block comments, e.g.:
+    #  Function(int /*unused_param*/);
+    if '/*' in raw_line:
+      return False
+
+    # Passed all filters, issue warning here.
+    error(filename, linenum, 'readability/function', 3,
+          'All parameters should be named in a function')
     return True
 
   # At this point, all that should be left is actual casts.
@@ -4000,6 +4125,7 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckStyle(filename, clean_lines, line, file_extension, nesting_state, error)
   CheckLanguage(filename, clean_lines, line, file_extension, include_state,
                 nesting_state, error)
+  CheckForNonConstReference(filename, clean_lines, line, nesting_state, error)
   CheckForNonStandardConstructs(filename, clean_lines, line,
                                 nesting_state, error)
   CheckPosixThreading(filename, clean_lines, line, error)
@@ -4171,7 +4297,7 @@ def ParseArguments(args):
     if opt == '--help':
       PrintUsage(None)
     elif opt == '--output':
-      if not val in ('emacs', 'vs7', 'eclipse'):
+      if val not in ('emacs', 'vs7', 'eclipse'):
         PrintUsage('The only allowed output formats are emacs, vs7 and eclipse.')
       output_format = val
     elif opt == '--verbose':
