@@ -2627,10 +2627,15 @@ def CheckSpacing(filename, clean_lines, linenum, nesting_state, error):
         # //----------------------------------------------------------
         # or are an empty C++ style Doxygen comment, like:
         # ///
+        # or C++ style Doxygen comments placed after the variable:
+        # ///<  Header comment
+        # //!<  Header comment
         # or they begin with multiple slashes followed by a space:
         # //////// Header comment
         match = (Search(r'[=/-]{4,}\s*$', line[commentend:]) or
                  Search(r'^/$', line[commentend:]) or
+                 Search(r'^!< ', line[commentend:]) or
+                 Search(r'^/< ', line[commentend:]) or
                  Search(r'^/+ ', line[commentend:]))
         if not match:
           error(filename, linenum, 'whitespace/comments', 4,

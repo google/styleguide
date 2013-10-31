@@ -2202,8 +2202,18 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('//////', '')
     self.TestLint('////// x', '')
     self.TestLint('/// x', '')
+    self.TestLint('///< x', '') # After-member Doxygen comment
+    self.TestLint('//!< x', '') # After-member Doxygen comment
     self.TestLint('///', '') # Empty Doxygen comment
     self.TestLint('////x', 'Should have a space between // and comment'
+                  '  [whitespace/comments] [4]')
+    self.TestLint('//!<x', 'Should have a space between // and comment'
+                  '  [whitespace/comments] [4]')
+    self.TestLint('///<x', 'Should have a space between // and comment'
+                  '  [whitespace/comments] [4]')
+    self.TestLint('//!<', 'Should have a space between // and comment'
+                  '  [whitespace/comments] [4]')
+    self.TestLint('///<', 'Should have a space between // and comment'
                   '  [whitespace/comments] [4]')
 
   # Test a line preceded by empty or comment lines.  There was a bug
