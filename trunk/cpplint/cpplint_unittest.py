@@ -2620,6 +2620,7 @@ class CpplintTest(CpplintTestBase):
     old_output_format = cpplint._cpplint_state.output_format
     old_verbose_level = cpplint._cpplint_state.verbose_level
     old_filters = cpplint._cpplint_state.filters
+    old_line_length = cpplint._line_length
     try:
       # Don't print usage during the tests, or filter categories
       cpplint._USAGE = ''
@@ -2668,12 +2669,39 @@ class CpplintTest(CpplintTestBase):
 
       self.assertEquals(['foo.cc', 'foo.h'],
                         cpplint.ParseArguments(['foo.cc', 'foo.h']))
+
+      self.assertEqual(['foo.h'],
+                       cpplint.ParseArguments(['--linelength=120', 'foo.h']))
+      self.assertEqual(120, cpplint._line_length)
     finally:
       cpplint._USAGE = old_usage
       cpplint._ERROR_CATEGORIES = old_error_categories
       cpplint._cpplint_state.output_format = old_output_format
       cpplint._cpplint_state.verbose_level = old_verbose_level
       cpplint._cpplint_state.filters = old_filters
+      cpplint._line_length = old_line_length
+
+  def testLineLength(self):
+    old_line_length = cpplint._line_length
+    try:
+      cpplint._line_length = 80
+      self.TestLint(
+          '// %s' % ('H' * 77),
+          '')
+      self.TestLint(
+          '// %s' % ('H' * 78),
+          'Lines should be <= 80 characters long'
+          '  [whitespace/line_length] [2]')
+      cpplint._line_length = 120
+      self.TestLint(
+          '// %s' % ('H' * 117),
+          '')
+      self.TestLint(
+          '// %s' % ('H' * 118),
+          'Lines should be <= 120 characters long'
+          '  [whitespace/line_length] [2]')
+    finally:
+      cpplint._line_length = old_line_length
 
   def testFilter(self):
     old_filters = cpplint._cpplint_state.filters
