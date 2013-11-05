@@ -1562,6 +1562,8 @@ class CpplintTest(CpplintTestBase):
                    'Consider using CHECK_GT instead of CHECK(a > b)'
                    '  [readability/check] [2]'])
 
+    self.TestLint('using some::namespace::operator<<;', '')
+    self.TestLint('using some::namespace::operator>>;', '')
     self.TestLint('CHECK(x ^ (y < 42))', '')
     self.TestLint('CHECK((x > 42) ^ (x < 54))', '')
     self.TestLint('CHECK(a && b < 42)', '')
