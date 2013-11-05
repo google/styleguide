@@ -55,7 +55,8 @@ import unicodedata
 
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
-                   [--counting=total|toplevel|detailed]
+                   [--counting=total|toplevel|detailed] [--root=subdir]
+                   [--linelength=digits]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -118,6 +119,13 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
         No flag => CHROME_BROWSER_UI_BROWSER_H_
         --root=chrome => BROWSER_UI_BROWSER_H_
         --root=chrome/browser => UI_BROWSER_H_
+
+    linelength=digits
+      This is the allowed line length for the project. The default value is
+      80 characters.
+
+      Examples:
+        --linelength=120
 """
 
 # We categorize each error message we print.  Here are the categories.
@@ -427,6 +435,10 @@ _error_suppressions = {}
 # The root directory used for deriving header guard CPP variable.
 # This is set by --root flag.
 _root = None
+
+# The allowed line length of files.
+# This is set by --linelength flag.
+_line_length = 80
 
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of error-suppressions.
@@ -3392,12 +3404,14 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
       not Match(r'^\s*//.*http(s?)://\S*$', line) and
       not Match(r'^// \$Id:.*#[0-9]+ \$$', line)):
     line_width = GetLineWidth(line)
-    if line_width > 100:
+    extended_length = int((_line_length * 1.25))
+    if line_width > extended_length:
       error(filename, linenum, 'whitespace/line_length', 4,
-            'Lines should very rarely be longer than 100 characters')
-    elif line_width > 80:
+            'Lines should very rarely be longer than %i characters' %
+            extended_length)
+    elif line_width > _line_length:
       error(filename, linenum, 'whitespace/line_length', 2,
-            'Lines should be <= 80 characters long')
+            'Lines should be <= %i characters long' % _line_length)
 
   if (cleansed_line.count(';') > 1 and
       # for loops are allowed two ;'s (and may run over two lines).
@@ -4649,7 +4663,8 @@ def ParseArguments(args):
     (opts, filenames) = getopt.getopt(args, '', ['help', 'output=', 'verbose=',
                                                  'counting=',
                                                  'filter=',
-                                                 'root='])
+                                                 'root=',
+                                                 'linelength='])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
@@ -4678,6 +4693,12 @@ def ParseArguments(args):
     elif opt == '--root':
       global _root
       _root = val
+    elif opt == '--linelength':
+      global _line_length
+      try:
+          _line_length = int(val)
+      except ValueError:
+          PrintUsage('Line length must be digits.')
 
   if not filenames:
     PrintUsage('No files were specified.')
