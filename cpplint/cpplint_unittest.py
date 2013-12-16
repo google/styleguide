@@ -2623,6 +2623,7 @@ class CpplintTest(CpplintTestBase):
     old_verbose_level = cpplint._cpplint_state.verbose_level
     old_filters = cpplint._cpplint_state.filters
     old_line_length = cpplint._line_length
+    old_valid_extensions = cpplint._valid_extensions
     try:
       # Don't print usage during the tests, or filter categories
       cpplint._USAGE = ''
@@ -2675,6 +2676,10 @@ class CpplintTest(CpplintTestBase):
       self.assertEqual(['foo.h'],
                        cpplint.ParseArguments(['--linelength=120', 'foo.h']))
       self.assertEqual(120, cpplint._line_length)
+
+      self.assertEqual(['foo.h'],
+                       cpplint.ParseArguments(['--extensions=hpp,cpp,cpp', 'foo.h']))
+      self.assertEqual(set(['hpp', 'cpp']), cpplint._valid_extensions)
     finally:
       cpplint._USAGE = old_usage
       cpplint._ERROR_CATEGORIES = old_error_categories
@@ -2682,6 +2687,7 @@ class CpplintTest(CpplintTestBase):
       cpplint._cpplint_state.verbose_level = old_verbose_level
       cpplint._cpplint_state.filters = old_filters
       cpplint._line_length = old_line_length
+      cpplint._valid_extensions = old_valid_extensions
 
   def testLineLength(self):
     old_line_length = cpplint._line_length
