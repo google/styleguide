@@ -71,7 +71,8 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
   suppresses errors of all categories on that line.
 
   The files passed in will be linted; at least one file must be provided.
-  Linted extensions are .cc, .cpp, and .h.  Other file types will be ignored.
+  Default linted extensions are .cc, .cpp, .cu, .cuh and .h.  Change the
+  extensions with the --extensions flag.
 
   Flags:
 
@@ -126,6 +127,12 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
       Examples:
         --linelength=120
+
+    extensions=extension,extension,...
+      The allowed file extensions that cpplint will check
+
+      Examples:
+        --extensions=hpp,cpp
 """
 
 # We categorize each error message we print.  Here are the categories.
@@ -439,6 +446,10 @@ _root = None
 # The allowed line length of files.
 # This is set by --linelength flag.
 _line_length = 80
+
+# The allowed extensions for file names
+# This is set by --extensions flag.
+_valid_extensions = set(['cc', 'h', 'cpp', 'cu', 'cuh'])
 
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of error-suppressions.
@@ -4612,10 +4623,9 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
 
   # When reading from stdin, the extension is unknown, so no cpplint tests
   # should rely on the extension.
-  valid_extensions = ['cc', 'h', 'cpp', 'cu', 'cuh']
-  if filename != '-' and file_extension not in valid_extensions:
+  if filename != '-' and file_extension not in _valid_extensions:
     sys.stderr.write('Ignoring %s; not a valid file name '
-                     '(.cc, .h, .cpp, .cu, .cuh)\n' % filename)
+                     '(%s)\n' % (filename, ', '.join(_valid_extensions)))
   else:
     ProcessFileData(filename, file_extension, lines, Error,
                     extra_check_functions)
@@ -4667,7 +4677,8 @@ def ParseArguments(args):
                                                  'counting=',
                                                  'filter=',
                                                  'root=',
-                                                 'linelength='])
+                                                 'linelength=',
+                                                 'extensions='])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
@@ -4702,6 +4713,12 @@ def ParseArguments(args):
           _line_length = int(val)
       except ValueError:
           PrintUsage('Line length must be digits.')
+    elif opt == '--extensions':
+      global _valid_extensions
+      try:
+          _valid_extensions = set(val.split(','))
+      except ValueError:
+          PrintUsage('Extensions must be comma seperated list.')
 
   if not filenames:
     PrintUsage('No files were specified.')
