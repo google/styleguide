@@ -10,12 +10,13 @@
 </head>
 <body>
   <h1>Google Java Style</h1>
-  <div class="change">Last changed: December 17, 2013</div>
+  <div class="change">Last changed: December 19, 2013</div>
 <table border="0">
 <tr>
 <td>
 <dl>
-<dt>
+<br>
+<dt class="toc1">
 <a href="#s1-introduction">1 Introduction</a>
 </dt>
 <dd>
@@ -24,7 +25,8 @@
 <dd>
 <a href="#s1.2-guide-notes">1.2 Guide notes</a>
 </dd>
-<dt>
+<br>
+<dt class="toc1">
 <a href="#s2-source-file-basics">2 Source file basics</a>
 </dt>
 <dd>
@@ -36,7 +38,17 @@
 <dd>
 <a href="#s2.3-special-characters">2.3 Special characters</a>
 </dd>
-<dt>
+<dd class="toc3">
+<a href="#s2.3.1-whitespace-characters">2.3.1 Whitespace characters</a>
+</dd>
+<dd class="toc3">
+<a href="#s2.3.2-special-escape-sequences">2.3.2 Special escape sequences</a>
+</dd>
+<dd class="toc3">
+<a href="#s2.3.3-non-ascii-characters">2.3.3 Non-ASCII characters</a>
+</dd>
+<br>
+<dt class="toc1">
 <a href="#s3-source-file-structure">3 Source file structure</a>
 </dt>
 <dd>
@@ -48,17 +60,42 @@
 <dd>
 <a href="#s3.3-import-statements">3.3 Import statements</a>
 </dd>
+<dd class="toc3">
+<a href="#s3.3.1-wildcard-imports">3.3.1 No wildcard imports</a>
+</dd>
+<dd class="toc3">
+<a href="#s3.3.2-import-line-wrapping">3.3.2 No line-wrapping</a>
+</dd>
+<dd class="toc3">
+<a href="#s3.3.3-import-ordering-and-spacing">3.3.3 Ordering and spacing</a>
+</dd>
 <dd>
 <a href="#s3.4-class-declaration">3.4 Class declaration</a>
+</dd>
+<dd class="toc3">
+<a href="#s3.4.1-one-top-level-class">3.4.1 Exactly one top-level class declaration</a>
+</dd>
+<dd class="toc3">
+<a href="#s3.4.2-class-member-ordering">3.4.2 Class member ordering</a>
 </dd>
 </dl>
 </td><td>
 <dl>
-<dt>
+<br>
+<dt class="toc1">
 <a href="#s4-formatting">4 Formatting</a>
 </dt>
 <dd>
 <a href="#s4.1-braces">4.1 Braces</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.1.1-braces-always-used">4.1.1 Braces are used where optional</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.1.2-blocks-k-r-style">4.1.2 Nonempty blocks: K &amp; R style</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.1.3-braces-empty-blocks">4.1.3 Empty blocks: may be concise</a>
 </dd>
 <dd>
 <a href="#s4.2-block-indentation">4.2 Block indentation: +2 spaces</a>
@@ -72,8 +109,23 @@
 <dd>
 <a href="#s4.5-line-wrapping">4.5 Line-wrapping</a>
 </dd>
+<dd class="toc3">
+<a href="#s4.5.1-line-wrapping-where-to-break">4.5.1 Where to break</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.5.2-line-wrapping-indent">4.5.2 Indent continuation lines at least +4 spaces</a>
+</dd>
 <dd>
 <a href="#s4.6-whitespace">4.6 Whitespace</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.6.1-vertical-whitespace">4.6.1 Vertical Whitespace</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.6.2-horizontal-whitespace">4.6.2 Horizontal whitespace</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.6.3-horizontal-alignment">4.6.3 Horizontal alignment: never required</a>
 </dd>
 <dd>
 <a href="#s4.7-grouping-parentheses">4.7 Grouping parentheses: recommended</a>
@@ -81,7 +133,32 @@
 <dd>
 <a href="#s4.8-specific-constructs">4.8 Specific constructs</a>
 </dd>
-<dt>
+<dd class="toc3">
+<a href="#s4.8.1-enum-classes">4.8.1 Enum classes</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.8.2-variable-declarations">4.8.2 Variable declarations</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.8.3-arrays">4.8.3 Arrays</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.8.4-switch">4.8.4 Switch statements</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.8.5-annotations">4.8.5 Annotations</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.8.6-comments">4.8.6 Comments</a>
+</dd>
+<dd class="toc3">
+<a href="#s4.8.7-modifiers">4.8.7 Modifiers</a>
+</dd>
+</dl>
+</td><td>
+<dl>
+<br>
+<dt class="toc1">
 <a href="#s5-naming">5 Naming</a>
 </dt>
 <dd>
@@ -90,13 +167,35 @@
 <dd>
 <a href="#s5.2-specific-identifier-names">5.2 Rules by identifier type</a>
 </dd>
+<dd class="toc3">
+<a href="#s5.2.1-package-names">5.2.1 Package names</a>
+</dd>
+<dd class="toc3">
+<a href="#s5.2.2-class-names">5.2.2 Class names</a>
+</dd>
+<dd class="toc3">
+<a href="#s5.2.3-method-names">5.2.3 Method names</a>
+</dd>
+<dd class="toc3">
+<a href="#s5.2.4-constant-names">5.2.4 Constant names</a>
+</dd>
+<dd class="toc3">
+<a href="#s5.2.5-non-constant-field-names">5.2.5 Non-constant field names</a>
+</dd>
+<dd class="toc3">
+<a href="#s5.2.6-parameter-names">5.2.6 Parameter names</a>
+</dd>
+<dd class="toc3">
+<a href="#s5.2.7-local-variable-names">5.2.7 Local variable names</a>
+</dd>
+<dd class="toc3">
+<a href="#s5.2.8-type-variable-names">5.2.8 Type variable names</a>
+</dd>
 <dd>
 <a href="#s5.3-camel-case">5.3 Camel case: defined</a>
 </dd>
-</dl>
-</td><td>
-<dl>
-<dt>
+<br>
+<dt class="toc1">
 <a href="#s6-programming-practices">6 Programming Practices</a>
 </dt>
 <dd>
@@ -111,17 +210,36 @@
 <dd>
 <a href="#s6.4-finalizers">6.4 Finalizers: not used</a>
 </dd>
-<dt>
+<br>
+<dt class="toc1">
 <a href="#s7-javadoc">7 Javadoc</a>
 </dt>
 <dd>
 <a href="#s7.1-javadoc-formatting">7.1 Formatting</a>
+</dd>
+<dd class="toc3">
+<a href="#s7.1.1-javadoc-multi-line">7.1.1 General form</a>
+</dd>
+<dd class="toc3">
+<a href="#s7.1.2-javadoc-paragraphs">7.1.2 Paragraphs</a>
+</dd>
+<dd class="toc3">
+<a href="#s7.1.3-javadoc-at-clauses">7.1.3 At-clauses</a>
 </dd>
 <dd>
 <a href="#s7.2-summary-fragment">7.2 The summary fragment</a>
 </dd>
 <dd>
 <a href="#s7.3-javadoc-where-required">7.3 Where Javadoc is used</a>
+</dd>
+<dd class="toc3">
+<a href="#s7.3.1-javadoc-exception-self-explanatory">7.3.1 Exception: self-explanatory methods</a>
+</dd>
+<dd class="toc3">
+<a href="#s7.3.2-javadoc-exception-overrides">7.3.2 Exception: overrides</a>
+</dd>
+<dd class="toc3">
+<a href="#s7.3.3-javadoc-optional">7.3.3 Optional javadoc</a>
 </dd>
 </dl>
 </td>
@@ -660,6 +778,6 @@ means!</p><a name="s7.3.2-javadoc-exception-overrides"/>
 needed</em>. Whenever an implementation comment would be used to define the overall purpose or
 behavior of a class, method or field, that comment is written as Javadoc instead. (It's more
 uniform, and more tool-friendly.)</p></div></div>  <hr/>
-  <div class="change">Last changed: December 17, 2013</div>
+  <div class="change">Last changed: December 19, 2013</div>
 </body>
 </html>

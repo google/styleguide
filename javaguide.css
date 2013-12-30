@@ -203,6 +203,10 @@ dd {
   margin-left:1.5em;
 }
 
+dd.toc3 {
+  margin-left:3em;
+}
+
 hr {
   height:0;
   border:0;
