@@ -10,7 +10,7 @@
 </head>
 <body>
   <h1>Google Java Style</h1>
-  <div class="change">Last changed: December 19, 2013</div>
+  <div class="change">Last changed: February 03, 2014</div>
 <table border="0">
 <tr>
 <td>
@@ -154,6 +154,9 @@
 <dd class="toc3">
 <a href="#s4.8.7-modifiers">4.8.7 Modifiers</a>
 </dd>
+<dd class="toc3">
+<a href="#s4.8.8-numeric-literals">4.8.8 Numeric Literals</a>
+</dd>
 </dl>
 </td><td>
 <dl>
@@ -266,7 +269,7 @@ code. Optional formatting choices made in examples should not be enforced as rul
     <a name="s2.1-file-name"/>
     <h3>2.1 File name&nbsp;<a href="#s2.1-file-name"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <p>The source file name consists of the case-sensitive name of the top-level class it contains,
-plus the <code>.java</code> extension (aside from <code>package-info.java</code> files).</p><a name="s2.2-file-encoding"/>
+plus the <code>.java</code> extension.</p><a name="s2.2-file-encoding"/>
     <h3>2.2 File encoding: UTF-8&nbsp;<a href="#s2.2-file-encoding"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <p>Source files are encoded in <strong>UTF-8</strong>.</p><a name="s2.3-special-characters"/>
     <h3>2.3 Special characters&nbsp;<a href="#s2.3-special-characters"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
@@ -325,8 +328,7 @@ ASCII sort order; the presence of semicolons warps the result.)</p><a name="s3.4
     <h3>3.4 Class declaration&nbsp;<a href="#s3.4-class-declaration"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <a name="oneclassperfile"/><a name="s3.4.1-one-top-level-class"/>
     <h4>3.4.1 Exactly one top-level class declaration&nbsp;<a href="#s3.4.1-one-top-level-class"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
-    <p>Each top-level class resides in a source file of its own.</p><p class="exception"><b>Exception:</b>&nbsp; of course, no such class appears in <code>package-info.java</code>
-files.</p><a name="s3.4.2-class-member-ordering"/>
+    <p>Each top-level class resides in a source file of its own.</p><a name="s3.4.2-class-member-ordering"/>
     <h4>3.4.2 Class member ordering&nbsp;<a href="#s3.4.2-class-member-ordering"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>The ordering of the members of a class can have a great effect on learnability, but there is
 no single correct recipe for how to do it. Different classes may order their members
@@ -494,8 +496,8 @@ private enum Suit { CLUBS, HEARTS, SPADES, DIAMONDS }
     <h4>4.8.2 Variable declarations&nbsp;<a href="#s4.8.2-variable-declarations"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <a name="s4.8.2.1-variables-per-declaration"/>
     <h5>4.8.2.1 One variable per declaration&nbsp;<a href="#s4.8.2.1-variables-per-declaration"><img height="21" width="21" src="javaguidelink.png"/></a></h5>
-    <p>Combined declarations such as <code class="prettyprint lang-java badcode">int a, b;</code> are
-<strong>not</strong> used.</p><a name="s4.8.2.2-variables-limited-scope"/>
+    <p>Every variable declaration (field or local) declares only one variable: declarations such as
+<code class="prettyprint lang-java badcode">int a, b;</code> are not used.</p><a name="s4.8.2.2-variables-limited-scope"/>
     <h5>4.8.2.2 Declared when needed, initialized as soon as
 possible&nbsp;<a href="#s4.8.2.2-variables-limited-scope"><img height="21" width="21" src="javaguidelink.png"/></a></h5>
     <p>Local variables are <strong>not</strong> habitually declared at the start of their containing
@@ -593,7 +595,11 @@ re-wrap the lines when necessary (paragraph-style). Most formatters don't re-wra
 recommended by the Java Language Specification:
 </p><pre>
 public protected private abstract static final transient volatile synchronized native strictfp
-</pre><a name="naming"/><a name="s5-naming"/>
+</pre><a name="s4.8.8-numeric-literals"/>
+    <h4>4.8.8 Numeric Literals&nbsp;<a href="#s4.8.8-numeric-literals"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
+    <p><code>long</code>-valued integer literals use an uppercase <code>L</code> suffix, never
+lowercase (to avoid confusion with the digit <code>1</code>). For example, <code>3000000000L</code>
+rather than <code class="badcode">3000000000l</code>.</p><a name="naming"/><a name="s5-naming"/>
     <h2>5 Naming&nbsp;<a href="#s5-naming"><img height="21" width="21" src="javaguidelink.png"/></a></h2>
     <a name="s5.1-identifier-names"/>
     <h3>5.1 Rules common to all identifiers&nbsp;<a href="#s5.1-identifier-names"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
@@ -607,16 +613,23 @@ suffixes, like those seen in the examples <code class="prettyprint lang-java bad
     <a name="s5.2.1-package-names"/>
     <h4>5.2.1 Package names&nbsp;<a href="#s5.2.1-package-names"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>Package names are all lowercase, with consecutive words simply concatenated together (no
-underscores).</p><a name="s5.2.2-class-names"/>
+underscores). For example, <code>com.example.deepspace</code>, not
+<code class="badcode">com.example.deepSpace</code> or
+<code class="badcode">com.example.deep_space</code>.</p><a name="s5.2.2-class-names"/>
     <h4>5.2.2 Class names&nbsp;<a href="#s5.2.2-class-names"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
-    <p>Class names are written in <a href="#s5.3-camel-case">UpperCamelCase</a>.</p><p>Class names are typically nouns or noun phrases. Interface names may sometimes be adjectives or
-adjective phrases instead. There are no specific rules or even well-established conventions for
-naming annotation types.</p><p><em>Test</em> classes are named starting with the name of the class they are testing, and ending
+    <p>Class names are written in <a href="#s5.3-camel-case">UpperCamelCase</a>.</p><p>Class names are typically nouns or noun phrases. For example,
+<code class="prettyprint lang-java">Character</code> or
+<code class="prettyprint lang-java">ImmutableList</code>. Interface names may also be nouns or
+noun phrases (for example, <code class="prettyprint lang-java">List</code>), but may sometimes be
+adjectives or adjective phrases instead (for example,
+<code class="prettyprint lang-java">Readable</code>).</p><p>There are no specific rules or even well-established conventions for naming annotation types.</p><p><em>Test</em> classes are named starting with the name of the class they are testing, and ending
 with <code class="prettyprint lang-java">Test</code>. For example,
 <code class="prettyprint lang-java">HashTest</code> or
 <code class="prettyprint lang-java">HashIntegrationTest</code>.</p><a name="s5.2.3-method-names"/>
     <h4>5.2.3 Method names&nbsp;<a href="#s5.2.3-method-names"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
-    <p>Method names are written in <a href="#s5.3-camel-case">lowerCamelCase</a>.</p><p>Method names are typically verbs or verb phrases.</p><p>Underscores may appear in JUnit <em>test</em> method names to separate logical components of the
+    <p>Method names are written in <a href="#s5.3-camel-case">lowerCamelCase</a>.</p><p>Method names are typically verbs or verb phrases. For example,
+<code class="prettyprint lang-java">sendMessage</code> or
+<code class="prettyprint lang-java">stop</code>.</p><p>Underscores may appear in JUnit <em>test</em> method names to separate logical components of the
 name. One typical pattern is <code>test<i>&lt;MethodUnderTest&gt;</i>_<i>&lt;state&gt;</i></code>,
 for example <code class="prettyprint lang-java">testPop_emptyStack</code>. There is no One Correct
 Way to name test methods.</p><a name="constants"/><a name="s5.2.4-constant-names"/>
@@ -644,7 +657,9 @@ static final String[] nonEmptyArray = {"these", "can", "change"};
 </pre><p>These names are typically nouns or noun phrases.</p><a name="s5.2.5-non-constant-field-names"/>
     <h4>5.2.5 Non-constant field names&nbsp;<a href="#s5.2.5-non-constant-field-names"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>Non-constant field names (static or otherwise) are written
-in <a href="#s5.3-camel-case">lowerCamelCase</a>.</p><p>These names are typically nouns or noun phrases.</p><a name="s5.2.6-parameter-names"/>
+in <a href="#s5.3-camel-case">lowerCamelCase</a>.</p><p>These names are typically nouns or noun phrases.  For example,
+<code class="prettyprint lang-java">computedValues</code> or
+<code class="prettyprint lang-java">index</code>.</p><a name="s5.2.6-parameter-names"/>
     <h4>5.2.6 Parameter names&nbsp;<a href="#s5.2.6-parameter-names"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>Parameter names are written in <a href="#s5.3-camel-case">lowerCamelCase</a>.</p><p>One-character parameter names should be avoided.</p><a name="s5.2.7-local-variable-names"/>
     <h4>5.2.7 Local variable names&nbsp;<a href="#s5.2.7-local-variable-names"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
@@ -679,8 +694,10 @@ predictability, Google Style specifies the following (nearly) deterministic sche
     <h2>6 Programming Practices&nbsp;<a href="#s6-programming-practices"><img height="21" width="21" src="javaguidelink.png"/></a></h2>
     <a name="s6.1-override-annotation"/>
     <h3>6.1 @Override: always used&nbsp;<a href="#s6.1-override-annotation"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
-    <p>The <code class="prettyprint lang-java">@Override</code> annotation is used in any context in
-which it is legal.</p><a name="caughtexceptions"/><a name="s6.2-caught-exceptions"/>
+    <p>A method is marked with the <code class="prettyprint lang-java">@Override</code> annotation
+whenever it is legal.  This includes a class method overriding a superclass method, a class method
+implementing an interface method, and an interface method respecifying a superinterface
+method.</p><a name="caughtexceptions"/><a name="s6.2-caught-exceptions"/>
     <h3>6.2 Caught exceptions: not ignored&nbsp;<a href="#s6.2-caught-exceptions"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <p>Except as noted below, it is very rarely correct to do nothing in response to a caught
 exception. (Typical responses are to log it, or if it is considered "impossible", rethrow it as an
@@ -720,7 +737,7 @@ Item 7, "Avoid Finalizers," very carefully, and <em>then</em> don't do it.</p><a
     <h3>7.1 Formatting&nbsp;<a href="#s7.1-javadoc-formatting"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <a name="s7.1.1-javadoc-multi-line"/>
     <h4>7.1.1 General form&nbsp;<a href="#s7.1.1-javadoc-multi-line"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
-    <p>The <em>basic</em> formatting of Javadoc blocks is as seen in this general example:</p><pre class="prettyprint lang-java">
+    <p>The <em>basic</em> formatting of Javadoc blocks is as seen in this example:</p><pre class="prettyprint lang-java">
 /**
  * Multiple lines of Javadoc text are written here,
  * wrapped normally...
@@ -728,7 +745,7 @@ Item 7, "Avoid Finalizers," very carefully, and <em>then</em> don't do it.</p><a
 public int method(String p1) { ... }
 </pre><p>... or in this single-line example:</p><pre class="prettyprint lang-java">
 /** An especially short bit of Javadoc. */
-</pre><p>The general form is always acceptable. The single-line form may be substituted when there are no
+</pre><p>The basic form is always acceptable. The single-line form may be substituted when there are no
 at-clauses present, and the entirety of the Javadoc block (including comment markers) can fit on a
 single line.</p><a name="s7.1.2-javadoc-paragraphs"/>
     <h4>7.1.2 Paragraphs&nbsp;<a href="#s7.1.2-javadoc-paragraphs"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
@@ -778,6 +795,6 @@ means!</p><a name="s7.3.2-javadoc-exception-overrides"/>
 needed</em>. Whenever an implementation comment would be used to define the overall purpose or
 behavior of a class, method or field, that comment is written as Javadoc instead. (It's more
 uniform, and more tool-friendly.)</p></div></div>  <hr/>
-  <div class="change">Last changed: December 19, 2013</div>
+  <div class="change">Last changed: February 03, 2014</div>
 </body>
 </html>
