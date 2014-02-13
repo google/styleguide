@@ -120,15 +120,11 @@ goog.provide('hello.versions.Versions');
     Using a property of my.submoduleA prevents Closure presubmit failures complaining that the file is
     required but never used. Using the .name property avoids duplicating strings.</p>
 
-<h3 id="externs">Use the provided Angular externs file</h3>
-<p>
-    <a href="https://cs.corp.google.com/#piper///depot/google3/third_party/javascript/angular/v1_2/BUILD">//third_party/javascript/angular/v1_2:externs</a>
-</p>
+<h3 id="externs">Use a common externs file</h3>
 
 <p>This maximally allows the JS compiler to enforce type safety in the presence of externally
     provided types from Angular, and means you don't have to worry about Angular vars being obfuscated
-    in a confusing way. If you come across any issues with the externs file, please alert the Angular
-    users group and create a CL if you would to address the problem.</p>
+    in a confusing way. </p>
 
 <p>Note to readers outside Google: the current externs file is located in an internal-to-Google
     directory, but an example can be found on github <a href="https://github.com/angular/angular.js/pull/4722">
