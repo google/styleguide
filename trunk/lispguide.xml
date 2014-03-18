@@ -5,7 +5,7 @@
 
 <p align="right">
 
-Revision 1.23
+Revision 1.28
 </p>
 
 
@@ -666,15 +666,34 @@ Robert Brown
         Indent your code the way a properly configured GNU Emacs does.
       </p>
       <p>
+        Maintain a consistent indentation style throughout a project.
+      </p>
+      <p>
         Indent carefully to make the code easier to understand.
       </p>
     </SUMMARY>
     <BODY>
       <p>
-        By default, GNU Emacs does an excellent job indenting Common Lisp code.
-        It can be taught how to indent new defining forms
-        and special rules for domain specific languages.
-        Each project may have some file to customize indentation; use it.
+        Common Lisp indentation in Emacs is provided by the cl-indent library.
+        The latest version of cl-indent is packaged with
+        <a HREF="http://www.common-lisp.net/project/slime/">SLIME</a>
+        (under contrib/slime-cl-indent.el). After installing SLIME, set up Emacs
+        to load SLIME automatically using
+        <a HREF="http://www.common-lisp.net/project/slime/doc/html/Loading-Contribs.html">these instructions</a>, adding slime-indentation to the list of
+        contrib libraries to be loaded in the call to slime-setup.
+     </p>
+     <p>
+        Ideally, use the default indentation settings provided by
+        slime-indentation. If necessary, customize indentation parameters to
+        maintain a consistent indentation style throughout an existing project.
+        Parameters can be customized using the :variables setting in
+        define-common-lisp-style. Indentation of specific forms can be
+        customized using the :indentation setting of define-common-lisp-style.
+        This is particularly useful when creating forms that behave like macros
+        or special operators that are indented differently than standard
+        function calls (e.g. defun, labels, or let). Add a
+        <a HREF="http://www.gnu.org/software/emacs/manual/html_node/emacs/Hooks.html">hook</a> to 'lisp-mode-hook that calls common-lisp-set-style to set
+        the appropriate style automatically.
       </p>
       
       
@@ -728,27 +747,25 @@ Robert Brown
         that is not covered by an <code>ASDF</code> <code>:around-compile</code> hook.
       </p>
       <CODE_SNIPPET>
-        ;;;; Author: brown (Robert Brown)
-
         ;;;; Variable length encoding for integers and floating point numbers.
 
         (in-package #:varint)
         (declaim #.*optimize-default*)
       </CODE_SNIPPET>
       <p>
-        You should not include authorship information at the top of a file,
-        that information is available from version control and
-        <code>OWNERS</code>.
+        You should not include authorship information at the top of a file:
+        better information is available from version control,
+        and such a mention will only cause confusion and grief.
+        Indeed, whoever was the main author at the time such a mention was included
+        might not be who eventually made the most significant contributions to the file,
+        and even less who is responsible for the file at the moment.
+        
       </p>
       <p>
         You should not include copyright information in individual source code files.
         An exception is made for files meant to be disseminated as standalone.
       </p>
-      <p>
-        Each project or library has a single file specifying its license.
-        Absence of a <tt>LICENSE</tt> or <tt>COPYING</tt> file
-        means the project is proprietary code.
-      </p>
+      
       
     </BODY>
   </STYLEPOINT>
@@ -1109,12 +1126,19 @@ Robert Brown
       </p>
       <p>
         The comments begin with <code>TODO</code> in all capital letters,
-        followed by your email address or other identifier in parentheses,
-        followed by a colon, a space, and
-        an explanation of what additional work is desirable or required.
-        The user name included in the comment is that
-        of a person who understands the deficiency.
-        A TODO comment is not a commitment to fix the problem.
+        followed by the
+        
+        name, e-mail address, or other identifier
+        of the person 
+        with the best context about the problem referenced by the <code>TODO</code>.
+        The main purpose is to have a consistent <code>TODO</code> that
+        can be searched to find out how to get more details upon
+        request. A <code>TODO</code> is not a commitment that the
+        person referenced will fix the problem. Thus when you create
+        a <code>TODO</code>,
+        it is almost always your 
+        name
+        that is given.
       </p>
       <p>
         When signing comments,
@@ -1128,10 +1152,13 @@ Robert Brown
       </CODE_SNIPPET>
       <p>
         Be specific when indicating times or software releases
-        in a TODO comment:
+        in a TODO comment and use
+        <a HREF="http://www.w3.org/TR/NOTE-datetime">YYYY-MM-DD</a>
+        format for dates to make automated processing of such dates easier,
+        e.g., 2038-01-20 for the end of the 32-bit signed <code>time_t</code>.
       </p>
       <CODE_SNIPPET>
-        ;;--- TODO(brown): Remove this code after release 1.7 or before November, 2012.
+        ;;--- TODO(brown): Remove this code after release 1.7 or before 2012-11-30.
       </CODE_SNIPPET>
       <p>
         For code that uses unobvious forms to accomplish a task, you must include a comment
@@ -3674,7 +3701,7 @@ Robert Brown
         which matters a lot on non-Unix platforms
         (and even on some Unix implementations).
         You probably should be using
-        <code>UIOP:MERGE-PATHNAMES*</code>
+        <code>UIOP:MERGE-PATHNAMES*</code> or <code>UIOP:SUBPATHNAME</code>
         instead of <code>MERGE-PATHNAMES</code>,
         especially if your expectations for relative pathnames
         are informed by the way they work in Unix or Windows;
@@ -3690,7 +3717,10 @@ Robert Brown
         is not portable across implementations
         in how it handles wildcards, sub-directories, symlinks, etc.
         There again, <code>UIOP</code> provides several
-        common abstractions to deal with pathnames.
+        common abstractions to deal with pathnames,
+        but only does so good a job.
+        For a complete portable solution, use IOLib —
+        though its Windows support lags behind.
       </p>
       <p>
         <code>LOGICAL-PATHNAME</code>s are not a portable abstraction,
@@ -3716,7 +3746,7 @@ Robert Brown
         to forget irrelevant build-time paths and
         reinitialize any search path from current environment variables.
         <code>ASDF</code> for instance requires you to reset its paths
-        with <code>ASDF:CLEAR-CONFIGURATION</code>.
+        with <code>UIOP:CLEAR-CONFIGURATION</code>.
         <code>UIOP</code> provides hooks
         to call functions before an image is dumped,
         from which to reset or <code>makunbound</code> relevant variables.
@@ -3840,7 +3870,7 @@ Robert Brown
 </small>
 
 <p align="right">
-Revision 1.23
+Revision 1.28
 </p>
 
 
