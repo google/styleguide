@@ -2,7 +2,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" type="text/css" href="javaguide.css"/>
-  <script src="http://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"
+  <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"
           type="text/javascript"></script>
   <link href="http://www.google.com/favicon.ico"
         type="image/x-icon" rel="shortcut icon" />
@@ -10,7 +10,7 @@
 </head>
 <body>
   <h1>Google Java Style</h1>
-  <div class="change">Last changed: February 03, 2014</div>
+  <div class="change">Last changed: March 21, 2014</div>
 <table border="0">
 <tr>
 <td>
@@ -241,14 +241,11 @@
 <dd class="toc3">
 <a href="#s7.3.2-javadoc-exception-overrides">7.3.2 Exception: overrides</a>
 </dd>
-<dd class="toc3">
-<a href="#s7.3.3-javadoc-optional">7.3.3 Optional javadoc</a>
-</dd>
 </dl>
 </td>
 </tr>
 </table>
-<div><div id="with-header-links"><a name="s1-introduction"/>
+<div><a name="s1-introduction"/>
     <h2>1 Introduction&nbsp;<a href="#s1-introduction"><img height="21" width="21" src="javaguidelink.png"/></a></h2>
     <p>This document serves as the <strong>complete</strong> definition of Google's coding standards for
 source code in the Java™ Programming Language. A Java source file is described as being <em>in
@@ -289,18 +286,18 @@ anywhere in a source file. This implies that:</p><ol><li>All other whitespace ch
 <code class="prettyprint lang-java">\'</code> and
 <code class="prettyprint lang-java">\\</code>), that sequence
 is used rather than the corresponding octal
-(e.g. <code class="prettyprint lang-java badcode">\012</code>) or Unicode
-(e.g. <code class="prettyprint lang-java badcode">\u000a</code>) escape.</p><a name="s2.3.3-non-ascii-characters"/>
+(e.g. <code class="badcode">\012</code>) or Unicode
+(e.g. <code class="badcode">\u000a</code>) escape.</p><a name="s2.3.3-non-ascii-characters"/>
     <h4>2.3.3 Non-ASCII characters&nbsp;<a href="#s2.3.3-non-ascii-characters"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>For the remaining non-ASCII characters, either the actual Unicode character
 (e.g. <code class="prettyprint lang-java">∞</code>) or the equivalent Unicode escape
 (e.g. <code class="prettyprint lang-java">\u221e</code>) is used, depending only on which
-makes the code <strong>easier to read and understand</strong>.</p><p class="tip"><b>Tip:</b>&nbsp;in the Unicode escape case, and occasionally even when actual Unicode characters
-are used, an explanatory comment can be very helpful.</p><p>Examples:</p><table><tr><th>Example</th><th>Discussion</th></tr><tr><td><code class="prettyprint lang-java">String unitAbbrev = "μs";</code></td><td>Best: perfectly clear even without a comment.</td></tr><tr><td><code class="prettyprint lang-java">String unitAbbrev = "\u03bcs"; // "μs"</code></td><td>Allowed, but there's no reason to do this.</td></tr><tr><td><code class="prettyprint lang-java">String unitAbbrev = "\u03bcs";
-      // Greek letter mu, "s"</code></td><td>Allowed, but awkward and prone to mistakes.</td></tr><tr><td><code class="prettyprint lang-java badcode">String unitAbbrev = "\u03bcs";</code></td><td>Poor: the reader has no idea what this is.</td></tr><tr><td><code class="prettyprint lang-java">return '\ufeff' + content;
-       // byte order mark</code></td><td>Good: use escapes for non-printable characters, and comment if necessary.</td></tr></table><p class="tip"><b>Tip:</b>&nbsp; Never make your code less readable simply out of fear that some programs might
-not handle non-ASCII characters properly. If that should happen, those programs
-are <strong>broken</strong> and they must be <strong>fixed</strong>.</p><a name="filestructure"/><a name="s3-source-file-structure"/>
+makes the code <strong>easier to read and understand</strong>.</p><p class="tip"><strong>Tip:</strong> In the Unicode escape case, and occasionally even when actual
+Unicode characters are used, an explanatory comment can be very helpful.</p><p>Examples:</p><table><tr><th>Example</th><th>Discussion</th></tr><tr><td><code class="prettyprint lang-java">String unitAbbrev = "μs";</code></td><td>Best: perfectly clear even without a comment.</td></tr><tr><td><code class="prettyprint lang-java">String unitAbbrev = "\u03bcs"; // "μs"</code></td><td>Allowed, but there's no reason to do this.</td></tr><tr><td><code class="prettyprint lang-java">String unitAbbrev = "\u03bcs";
+      // Greek letter mu, "s"</code></td><td>Allowed, but awkward and prone to mistakes.</td></tr><tr><td><code class="badcode">String unitAbbrev = "\u03bcs";</code></td><td>Poor: the reader has no idea what this is.</td></tr><tr><td><code class="prettyprint lang-java">return '\ufeff' + content;
+       // byte order mark</code></td><td>Good: use escapes for non-printable characters, and comment if necessary.</td></tr></table><p class="tip"><strong>Tip:</strong> Never make your code less readable simply out of fear that
+some programs might not handle non-ASCII characters properly. If that should happen, those
+programs are <strong>broken</strong> and they must be <strong>fixed</strong>.</p><a name="filestructure"/><a name="s3-source-file-structure"/>
     <h2>3 Source file structure&nbsp;<a href="#s3-source-file-structure"><img height="21" width="21" src="javaguidelink.png"/></a></h2>
     <div><p>A source file consists of, <strong>in order</strong>:</p><ol><li>License or copyright information, if present</li><li>Package statement</li><li>Import statements</li><li>Exactly one top-level class</li></ol></div><p><strong>Exactly one blank line</strong> separates each section that is present.</p><a name="s3.1-copyright-statement"/>
     <h3>3.1 License or copyright information, if present&nbsp;<a href="#s3.1-copyright-statement"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
@@ -340,8 +337,8 @@ added" ordering, which is not a logical ordering.</p><a name="overloads"/><a nam
     <p>When a class has multiple constructors, or multiple methods with the same name, these appear
 sequentially, with no intervening members.</p><a name="s4-formatting"/>
     <h2>4 Formatting&nbsp;<a href="#s4-formatting"><img height="21" width="21" src="javaguidelink.png"/></a></h2>
-    <p class="terminology"><b>Terminology Note:</b>&nbsp;<em>block-like construct</em> refers to the body of a class, method or
-constructor. Note that, by Section 4.8.3.1 on
+    <p class="terminology"><strong>Terminology Note:</strong> <em>block-like construct</em> refers to
+the body of a class, method or constructor. Note that, by Section 4.8.3.1 on
 <a href="#s4.8.3.1-array-initializers">array initializers</a>, any array initializer
 <em>may</em> optionally be treated as if it were a block-like construct.</p><a name="braces"/><a name="s4.1-braces"/>
     <h3>4.1 Braces&nbsp;<a href="#s4.1-braces"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
@@ -402,11 +399,12 @@ Section 4.5, <a href="#s4.5-line-wrapping">Line-wrapping</a>.
   3.2 <a href="#s3.2-package-statement">Package statement</a> and
   3.3 <a href="#s3.3-import-statements">Import statements</a>).</li><li>Command lines in a comment that may be cut-and-pasted into a shell.</li></ol><a name="s4.5-line-wrapping"/>
     <h3>4.5 Line-wrapping&nbsp;<a href="#s4.5-line-wrapping"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
-    <p class="terminology"><b>Terminology Note:</b>&nbsp;When code that might otherwise legally occupy a single line is divided into
-multiple lines, typically to avoid overflowing the column limit, this activity is called
+    <p class="terminology"><strong>Terminology Note:</strong> When code that might otherwise legally
+occupy a single line is divided into multiple lines, typically to avoid overflowing the column
+limit, this activity is called
 <em>line-wrapping</em>.</p><p>There is no comprehensive, deterministic formula showing <em>exactly</em> how to line-wrap in
-every situation. Very often there are several valid ways to line-wrap the same piece of code.</p><p class="tip"><b>Tip:</b>&nbsp;extracting a method or local variable may solve the problem without the need to
-line-wrap.</p><a name="s4.5.1-line-wrapping-where-to-break"/>
+every situation. Very often there are several valid ways to line-wrap the same piece of code.</p><p class="tip"><strong>Tip:</strong> Extracting a method or local variable may solve the problem
+without the need to line-wrap.</p><a name="s4.5.1-line-wrapping-where-to-break"/>
     <h4>4.5.1 Where to break&nbsp;<a href="#s4.5.1-line-wrapping-where-to-break"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>The prime directive of line-wrapping is: prefer to break at a
 <strong>higher syntactic level</strong>. Also:</p><ol><li>When a line is broken at a <em>non-assignment</em> operator the break comes <em>before</em>
@@ -434,9 +432,9 @@ previous lines.</p><a name="s4.6-whitespace"/>
     <h4>4.6.1 Vertical Whitespace&nbsp;<a href="#s4.6.1-vertical-whitespace"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>A single blank line appears:</p><ol><li><em>Between</em> consecutive members (or initializers) of a class: fields, constructors,
   methods, nested classes, static initializers, instance initializers.
-  <ul><li><span class="exception"><b>Exception:</b>&nbsp;a blank line between two consecutive fields (having no other code
-    between them) is optional. Such blank lines are used as needed to create <em>logical
-    groupings</em> of fields.</span></li></ul></li><li>Within method bodies, as needed to create <em>logical groupings</em> of statements.</li><li><em>Optionally</em> before the first member or after the last member of the class (neither
+  <ul><li><span class="exception"><strong>Exception:</strong> A blank line between two consecutive
+    fields (having no other code between them) is optional. Such blank lines are used as needed to
+    create <em>logical groupings</em> of fields.</span></li></ul></li><li>Within method bodies, as needed to create <em>logical groupings</em> of statements.</li><li><em>Optionally</em> before the first member or after the last member of the class (neither
   encouraged nor discouraged).</li><li>As required by other sections of this document (such as Section 3.3,
   <a href="#s3.3-import-statements">Import statements</a>).</li></ol><p><em>Multiple</em> consecutive blank lines are permitted, but never required (or encouraged).</p><a name="s4.6.2-horizontal-whitespace"/>
     <h4>4.6.2 Horizontal whitespace&nbsp;<a href="#s4.6.2-horizontal-whitespace"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
@@ -462,25 +460,25 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
   begins an end-of-line comment. Here, multiple spaces are allowed, but not required.</li><li>Between the type and variable of a declaration:
   <code class="prettyprint lang-java">List&lt;String&gt; list</code></li><li><em>Optional</em> just inside both braces of an array initializer
   <ul><li><code class="prettyprint lang-java">new int[] {5, 6}</code> and
-    <code class="prettyprint lang-java">new int[] { 5, 6 }</code> are both valid</li></ul></li></ol><p class="note"><b>Note:</b>&nbsp;this rule never requires or forbids additional space at the start or end of a
-line, only <em>interior</em> space.</p><a name="s4.6.3-horizontal-alignment"/>
+    <code class="prettyprint lang-java">new int[] { 5, 6 }</code> are both valid</li></ul></li></ol><p class="note"><strong>Note:</strong> This rule never requires or forbids additional space at the
+start or end of a line, only <em>interior</em> space.</p><a name="s4.6.3-horizontal-alignment"/>
     <h4>4.6.3 Horizontal alignment: never required&nbsp;<a href="#s4.6.3-horizontal-alignment"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
-    <p class="terminology"><b>Terminology Note:</b>&nbsp;Horizontal alignment is the practice of adding a variable number of
-additional spaces in your code with the goal of making certain tokens appear directly below certain
-other tokens on previous lines.</p><p>This practice is permitted, but is <strong>never required</strong> by Google Style. It is not
+    <p class="terminology"><strong>Terminology Note:</strong> <em>Horizontal alignment</em> is the
+practice of adding a variable number of additional spaces in your code with the goal of making
+certain tokens appear directly below certain other tokens on previous lines.</p><p>This practice is permitted, but is <strong>never required</strong> by Google Style. It is not
 even required to <em>maintain</em> horizontal alignment in places where it was already used.</p><p>Here is an example without alignment, then using alignment:</p><pre class="prettyprint lang-java">
 private int x; // this is fine
 private Color color; // this too
 
 private int   x;      // permitted, but future edits
 private Color color;  // may leave it unaligned
-</pre><p class="tip"><b>Tip:</b>&nbsp;Alignment can aid readability, but it creates problems for future maintenance.
-Consider a future change that needs to touch just one line. This change may leave the
-formerly-pleasing formatting mangled, and that is <strong>allowed</strong>. More often it prompts
-the coder (perhaps you) to adjust whitespace on nearby lines as well, possibly triggering a
-cascading series of reformattings. That one-line change now has a "blast radius." This can at worst
-result in pointless busywork, but at best it still corrupts version history information, slows down
-reviewers and exacerbates merge conflicts.</p><a name="parentheses"/><a name="s4.7-grouping-parentheses"/>
+</pre><p class="tip"><strong>Tip:</strong> Alignment can aid readability, but it creates problems for
+future maintenance.  Consider a future change that needs to touch just one line. This change may
+leave the formerly-pleasing formatting mangled, and that is <strong>allowed</strong>. More often
+it prompts the coder (perhaps you) to adjust whitespace on nearby lines as well, possibly
+triggering a cascading series of reformattings. That one-line change now has a "blast radius."
+This can at worst result in pointless busywork, but at best it still corrupts version history
+information, slows down reviewers and exacerbates merge conflicts.</p><a name="parentheses"/><a name="s4.7-grouping-parentheses"/>
     <h3>4.7 Grouping parentheses: recommended&nbsp;<a href="#s4.7-grouping-parentheses"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <p>Optional grouping parentheses are omitted only when author and reviewer agree that there is no
 reasonable chance the code will be misinterpreted without them, nor would they have made the code
@@ -490,14 +488,15 @@ operator precedence table memorized.</p><a name="s4.8-specific-constructs"/>
     <a name="s4.8.1-enum-classes"/>
     <h4>4.8.1 Enum classes&nbsp;<a href="#s4.8.1-enum-classes"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>After each comma that follows an enum constant, a line-break is optional.</p><p>An enum class with no methods and no documentation on its constants may optionally be formatted
-as if it were an array initializer:</p><pre class="prettyprint lang-java">
+as if it were an array initializer (see Section 4.8.3.1 on
+<a href="#s4.8.3.1-array-initializers">array initializers</a>).</p><pre class="prettyprint lang-java">
 private enum Suit { CLUBS, HEARTS, SPADES, DIAMONDS }
 </pre><p>Since enum classes <em>are classes</em>, all other rules for formatting classes apply.</p><a name="localvariables"/><a name="s4.8.2-variable-declarations"/>
     <h4>4.8.2 Variable declarations&nbsp;<a href="#s4.8.2-variable-declarations"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <a name="s4.8.2.1-variables-per-declaration"/>
     <h5>4.8.2.1 One variable per declaration&nbsp;<a href="#s4.8.2.1-variables-per-declaration"><img height="21" width="21" src="javaguidelink.png"/></a></h5>
     <p>Every variable declaration (field or local) declares only one variable: declarations such as
-<code class="prettyprint lang-java badcode">int a, b;</code> are not used.</p><a name="s4.8.2.2-variables-limited-scope"/>
+<code class="badcode">int a, b;</code> are not used.</p><a name="s4.8.2.2-variables-limited-scope"/>
     <h5>4.8.2.2 Declared when needed, initialized as soon as
 possible&nbsp;<a href="#s4.8.2.2-variables-limited-scope"><img height="21" width="21" src="javaguidelink.png"/></a></h5>
     <p>Local variables are <strong>not</strong> habitually declared at the start of their containing
@@ -523,11 +522,11 @@ new int[] {             3,
     <h5>4.8.3.2 No C-style array declarations&nbsp;<a href="#s4.8.3.2-array-declarations"><img height="21" width="21" src="javaguidelink.png"/></a></h5>
     <p>The square brackets form a part of the <em>type</em>, not the variable:
 <code class="prettyprint lang-java">String[] args</code>, not
-<code class="prettyprint lang-java badcode">String args[]</code>.</p><a name="s4.8.4-switch"/>
+<code class="badcode">String args[]</code>.</p><a name="s4.8.4-switch"/>
     <h4>4.8.4 Switch statements&nbsp;<a href="#s4.8.4-switch"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
-    <p class="terminology"><b>Terminology Note:</b>&nbsp;Inside the braces of a <em>switch block</em> are one or more
-<em>statement groups</em>. Each statement group consists of one or more <em>switch labels</em>
-(either <code class="prettyprint lang-java">case FOO:</code> or
+    <p class="terminology"><strong>Terminology Note:</strong> Inside the braces of a
+<em>switch block</em> are one or more <em>statement groups</em>. Each statement group consists of
+one or more <em>switch labels</em> (either <code class="prettyprint lang-java">case FOO:</code> or
 <code class="prettyprint lang-java">default:</code>), followed by one or more statements.</p><a name="s4.8.4.1-switch-indentation"/>
     <h5>4.8.4.1 Indentation&nbsp;<a href="#s4.8.4.1-switch-indentation"><img height="21" width="21" src="javaguidelink.png"/></a></h5>
     <p>As with any other block, the contents of a switch block are indented +2.</p><p>After a switch label, a newline appears, and the indentation level is increased +2, exactly as
@@ -566,8 +565,8 @@ increased. Example:</p><pre class="prettyprint lang-java">
 @Override
 @Nullable
 public String getNameIfPresent() { ... }
-</pre><p class="exception"><b>Exception:</b>&nbsp;a <em>single</em> parameterless annotation <em>may</em> instead appear
-together with the first line of the signature, for example:</p><pre class="prettyprint lang-java">
+</pre><p class="exception"><strong>Exception:</strong> A <em>single</em> parameterless annotation
+<em>may</em> instead appear together with the first line of the signature, for example:</p><pre class="prettyprint lang-java">
 @Override public int hashCode() { ... }
 </pre><p>Annotations applying to a field also appear immediately after the documentation block, but in
 this case, <em>multiple</em> annotations (possibly parameterized) may be listed on the same line;
@@ -586,7 +585,7 @@ for example:</p><pre class="prettyprint lang-java">
  * This is          // And so           /* Or you can
  * okay.            // is this.          * even do this. */
  */
-</pre><p>Comments are not enclosed in boxes drawn with asterisks or other characters.</p><p class="tip"><b>Tip:</b>&nbsp;When writing multi-line comments, use the
+</pre><p>Comments are not enclosed in boxes drawn with asterisks or other characters.</p><p class="tip"><strong>Tip:</strong> When writing multi-line comments, use the
 <code class="prettyprint lang-java">/* ... */</code> style if you want automatic code formatters to
 re-wrap the lines when necessary (paragraph-style). Most formatters don't re-wrap lines in
 <code class="prettyprint lang-java">// ...</code> style comment blocks.</p><a name="modifiers"/><a name="s4.8.7-modifiers"/>
@@ -605,10 +604,9 @@ rather than <code class="badcode">3000000000l</code>.</p><a name="naming"/><a na
     <h3>5.1 Rules common to all identifiers&nbsp;<a href="#s5.1-identifier-names"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <p>Identifiers use only ASCII letters and digits, and in two cases noted below, underscores. Thus
 each valid identifier name is matched by the regular expression <code>\w+</code> .</p><p> In Google Style special prefixes or
-suffixes, like those seen in the examples <code class="prettyprint lang-java badcode">name_</code>,
-<code class="prettyprint lang-java badcode">mName</code>,
-<code class="prettyprint lang-java badcode">s_name</code> and
-<code class="prettyprint lang-java badcode">kName</code>, are <strong>not</strong> used.</p><a name="s5.2-specific-identifier-names"/>
+suffixes, like those seen in the examples <code class="badcode">name_</code>,
+<code class="badcode">mName</code>, <code class="badcode">s_name</code> and
+<code class="badcode">kName</code>, are <strong>not</strong> used.</p><a name="s5.2-specific-identifier-names"/>
     <h3>5.2 Rules by identifier type&nbsp;<a href="#s5.2-specific-identifier-names"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <a name="s5.2.1-package-names"/>
     <h4>5.2.1 Package names&nbsp;<a href="#s5.2.1-package-names"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
@@ -687,8 +685,8 @@ predictability, Google Style specifies the following (nearly) deterministic sche
     that a word such as "iOS" is not really in camel case <em>per se</em>; it defies <em>any</em>
     convention, so this recommendation does not apply.</li></ul></li><li>Now lowercase <em>everything</em> (including acronyms), then uppercase only the first
   character of:
-  <ul><li>... each word, to yield <em>upper camel case</em>, or</li><li>... each word except the first, to yield <em>lower camel case</em></li></ul></li><li>Finally, join all the words into a single identifier.</li></ol><p>Note that the casing of the original words is almost entirely disregarded. Examples:</p><table><tr><th>Prose form</th><th>Correct</th><th>Incorrect</th></tr><tr><td>"XML HTTP request"</td><td><code class="prettyprint lang-java">XmlHttpRequest</code></td><td><code class="prettyprint lang-java badcode">XMLHTTPRequest</code></td></tr><tr><td>"new customer ID"</td><td><code class="prettyprint lang-java">newCustomerId</code></td><td><code class="prettyprint lang-java badcode">newCustomerID</code></td></tr><tr><td>"inner stopwatch"</td><td><code class="prettyprint lang-java">innerStopwatch</code></td><td><code class="prettyprint lang-java badcode">innerStopWatch</code></td></tr><tr><td>"supports IPv6 on iOS?"</td><td><code class="prettyprint lang-java">supportsIpv6OnIos</code></td><td><code class="prettyprint lang-java badcode">supportsIPv6OnIOS</code></td></tr><tr><td>"YouTube importer"</td><td><code class="prettyprint lang-java">YouTubeImporter</code><br/><code class="prettyprint lang-java">YoutubeImporter</code>*</td><td/></tr></table><p>*Acceptable, but not recommended.</p><p class="note"><b>Note:</b>&nbsp;Some words are ambiguously hyphenated in the English language: for example
-"nonempty" and "non-empty" are both correct, so the method names
+  <ul><li>... each word, to yield <em>upper camel case</em>, or</li><li>... each word except the first, to yield <em>lower camel case</em></li></ul></li><li>Finally, join all the words into a single identifier.</li></ol><p>Note that the casing of the original words is almost entirely disregarded. Examples:</p><table><tr><th>Prose form</th><th>Correct</th><th>Incorrect</th></tr><tr><td>"XML HTTP request"</td><td><code class="prettyprint lang-java">XmlHttpRequest</code></td><td><code class="badcode">XMLHTTPRequest</code></td></tr><tr><td>"new customer ID"</td><td><code class="prettyprint lang-java">newCustomerId</code></td><td><code class="badcode">newCustomerID</code></td></tr><tr><td>"inner stopwatch"</td><td><code class="prettyprint lang-java">innerStopwatch</code></td><td><code class="badcode">innerStopWatch</code></td></tr><tr><td>"supports IPv6 on iOS?"</td><td><code class="prettyprint lang-java">supportsIpv6OnIos</code></td><td><code class="badcode">supportsIPv6OnIOS</code></td></tr><tr><td>"YouTube importer"</td><td><code class="prettyprint lang-java">YouTubeImporter</code><br/><code class="prettyprint lang-java">YoutubeImporter</code>*</td><td/></tr></table><p>*Acceptable, but not recommended.</p><p class="note"><strong>Note:</strong> Some words are ambiguously hyphenated in the English
+language: for example "nonempty" and "non-empty" are both correct, so the method names
 <code class="prettyprint lang-java">checkNonempty</code> and
 <code class="prettyprint lang-java">checkNonEmpty</code> are likewise both correct.</p><a name="s6-programming-practices"/>
     <h2>6 Programming Practices&nbsp;<a href="#s6-programming-practices"><img height="21" width="21" src="javaguidelink.png"/></a></h2>
@@ -697,7 +695,8 @@ predictability, Google Style specifies the following (nearly) deterministic sche
     <p>A method is marked with the <code class="prettyprint lang-java">@Override</code> annotation
 whenever it is legal.  This includes a class method overriding a superclass method, a class method
 implementing an interface method, and an interface method respecifying a superinterface
-method.</p><a name="caughtexceptions"/><a name="s6.2-caught-exceptions"/>
+method.</p><p class="exception"><strong>Exception:</strong><code class="prettyprint lang-java">@Override</code> may be omitted when the parent method is
+<code class="prettyprint lang-java">@Deprecated</code>.</p><a name="caughtexceptions"/><a name="s6.2-caught-exceptions"/>
     <h3>6.2 Caught exceptions: not ignored&nbsp;<a href="#s6.2-caught-exceptions"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <p>Except as noted below, it is very rarely correct to do nothing in response to a caught
 exception. (Typical responses are to log it, or if it is considered "impossible", rethrow it as an
@@ -710,10 +709,10 @@ try {
   // it's not numeric; that's fine, just continue
 }
 return handleTextResponse(response);
-</pre><p class="exception"><b>Exception:</b>&nbsp;in tests, a caught exception may be ignored without comment <em>if</em> it is
-named <code class="prettyprint lang-java">expected</code>. The following is a very common idiom
-for ensuring that the method under test <em>does</em> throw an exception of the expected type, so
-a comment is unnecessary here.</p><pre class="prettyprint lang-java">
+</pre><p class="exception"><strong>Exception:</strong> In tests, a caught exception may be ignored
+without comment <em>if</em> it is named <code class="prettyprint lang-java">expected</code>. The
+following is a very common idiom for ensuring that the method under test <em>does</em> throw an
+exception of the expected type, so a comment is unnecessary here.</p><pre class="prettyprint lang-java">
 try {
   emptyStack.pop();
   fail();
@@ -729,7 +728,7 @@ Foo.aStaticMethod(); // good
 <span class="badcode">somethingThatYieldsAFoo().aStaticMethod();</span> // very bad
 </pre><a name="finalizers"/><a name="s6.4-finalizers"/>
     <h3>6.4 Finalizers: not used&nbsp;<a href="#s6.4-finalizers"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
-    <p>It is <strong>extremely rare</strong> to override <code class="prettyprint lang-java">Object.finalize</code>.</p><p class="tip"><b>Tip:</b>&nbsp;Don't do it. If you absolutely must, first read and understand
+    <p>It is <strong>extremely rare</strong> to override <code class="prettyprint lang-java">Object.finalize</code>.</p><p class="tip"><strong>Tip:</strong> Don't do it. If you absolutely must, first read and understand
 <a href="http://books.google.com/books?isbn=8131726592"><em>Effective Java</em></a>
 Item 7, "Avoid Finalizers," very carefully, and <em>then</em> don't do it.</p><a name="javadoc"/><a name="s7-javadoc"/>
     <h2>7 Javadoc&nbsp;<a href="#s7-javadoc"><img height="21" width="21" src="javaguidelink.png"/></a></h2>
@@ -766,35 +765,29 @@ class and method indexes.</p><p>This is a fragment—a noun phrase or verb phras
 <strong>not</strong> begin with <code class="badcode">A {@code Foo} is a...</code>, or
 <code class="badcode">This method returns...</code>, nor does it form a complete imperative sentence
 like <code class="badcode">Save the record.</code>. However, the fragment is capitalized and
-punctuated as if it were a complete sentence.</p><p class="tip"><b>Tip:</b>&nbsp;A common mistake is to write simple Javadoc in the form
-<code class="prettyprint lang-java badcode">/** @return the customer ID */</code>. This is
-incorrect, and should be changed to
-<code class="prettyprint lang-java">/** Returns the customer ID. */</code>.</p><a name="s7.3-javadoc-where-required"/>
+punctuated as if it were a complete sentence.</p><p class="tip"><strong>Tip:</strong> A common mistake is to write simple Javadoc in the form
+<code class="badcode">/** @return the customer ID */</code>. This is incorrect, and should be
+changed to <code class="prettyprint lang-java">/** Returns the customer ID. */</code>.</p><a name="s7.3.3-javadoc-optional"/><a name="s7.3-javadoc-where-required"/>
     <h3>7.3 Where Javadoc is used&nbsp;<a href="#s7.3-javadoc-where-required"><img height="21" width="21" src="javaguidelink.png"/></a></h3>
     <p>At the <em>minimum</em>, Javadoc is present for every
 <code class="prettyprint lang-java">public</code> class, and every
 <code class="prettyprint lang-java">public</code> or
 <code class="prettyprint lang-java">protected</code> member of such a class, with a few exceptions
-noted below.</p><a name="s7.3.1-javadoc-exception-self-explanatory"/>
+noted below.</p><p>Other classes and members still have Javadoc <em>as needed</em>.  Whenever an implementation
+comment would be used to define the overall purpose or behavior of a class, method or field, that
+comment is written as Javadoc instead. (It's more uniform, and more tool-friendly.)</p><a name="s7.3.1-javadoc-exception-self-explanatory"/>
     <h4>7.3.1 Exception: self-explanatory methods&nbsp;<a href="#s7.3.1-javadoc-exception-self-explanatory"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>Javadoc is optional for "simple, obvious" methods like
 <code class="prettyprint lang-java">getFoo</code>, in cases where there <em>really and truly</em> is
-nothing else worthwhile to say but "Returns the foo".</p><p>The test methods of a unit test class are perhaps the most common example of this exemption.
-These methods can <em>usually</em> be named descriptively enough that no additional documentation is
-needed.</p><p class="tip"><b>Tip:</b>&nbsp;<strong>Important:</strong> it is not appropriate to cite this exception to justify
+nothing else worthwhile to say but "Returns the foo".</p><p class="note"><strong>Important:</strong> it is not appropriate to cite this exception to justify
 omitting relevant information that a typical reader might need to know. For example, for a method
 named <code class="prettyprint lang-java">getCanonicalName</code>, don't omit its documentation
-(with the rationale that it would say only <code class="prettyprint lang-java badcode">/** Returns
-the canonical name. */</code>) if a typical reader may have no idea what the term "canonical name"
-means!</p><a name="s7.3.2-javadoc-exception-overrides"/>
+(with the rationale that it would say only
+<code class="badcode">/** Returns the canonical name. */</code>) if a typical reader may have no idea
+what the term "canonical name" means!</p><a name="s7.3.2-javadoc-exception-overrides"/>
     <h4>7.3.2 Exception: overrides&nbsp;<a href="#s7.3.2-javadoc-exception-overrides"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
     <p>Javadoc is not always present on a method that overrides a supertype method.
-</p><a name="s7.3.3-javadoc-optional"/>
-    <h4>7.3.3 Optional javadoc&nbsp;<a href="#s7.3.3-javadoc-optional"><img height="21" width="21" src="javaguidelink.png"/></a></h4>
-    <p>Classes and members that are not visible outside their package still have Javadoc <em>as
-needed</em>. Whenever an implementation comment would be used to define the overall purpose or
-behavior of a class, method or field, that comment is written as Javadoc instead. (It's more
-uniform, and more tool-friendly.)</p></div></div>  <hr/>
-  <div class="change">Last changed: February 03, 2014</div>
+</p></div>  <hr/>
+  <div class="change">Last changed: March 21, 2014</div>
 </body>
 </html>
