@@ -128,6 +128,10 @@ body {
   margin-bottom:1em;
 }
 
+em {
+  font-style: italic
+}
+
 h1,
 h2,
 h3,
@@ -402,7 +406,7 @@ ul.nolist {
 code,
 kbd,
 pre {
-  color:#007000;
+  color:#009900;
 }
 
 kbd {
@@ -426,10 +430,10 @@ pre.prettyprint {
 }
 
 code.bad, code.badcode {
-  background-color:#fcc;
+  color: magenta;
 }
 pre.bad, pre.badcode {
-  background-color:#fcc;
+  background-color:#ffe6d8;
   border-top:1px inset #a03;
   border-left:1px inset #a03;
 }
