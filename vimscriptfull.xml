@@ -1,0 +1,1534 @@
+<?xml version = '1.0'?>
+<?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
+<GUIDE title="Google Vimscript Guide">
+  <p class="revision">
+
+    Revision 1.1
+  </p>
+
+  
+  <address>
+    Nate Soares<br/>
+    Joshua Hoak<br/>
+    David Barnett<br/>
+  </address>
+
+  <OVERVIEW>
+    <CATEGORY title="Background">
+      <p>
+        This is the in-depth vimscript guide. If you're just a casual user
+        looking to write a plugin, the
+        <a href="vimscriptguide.html">abbreviated style guide</a> is for you.
+      </p>
+      <p>
+        This rather rotund guide dives into justifications and clarifications.
+        It provides an idealized set of rules that are rather too draconian to
+        push on casual scripters.
+      </p>
+      
+      <p>
+        It's for users who want to know why certain decisions were made in the
+        abbreviated guide and who want to learn a thing or two about using
+        vimscript safely.
+      </p>
+      <p>
+        Fair warning: Vimscript is a maddening abyss. When you gaze into it, it
+        gazes also into you. Proceed with caution.
+      </p>
+    </CATEGORY>
+  </OVERVIEW>
+
+  <CATEGORY title="Portability">
+    <p>
+      Vim is highly configurable. Users can change many of the default
+      settings, including the case sensitivity, the regular expression rules,
+      the substitution rules, and more. In order for your vimscript to work
+      for all users, follow these guidelines:
+    </p>
+    <ul>
+      <li>
+        Always prefix regular expressions with one of <code>\m</code>,
+        <code>\v</code>, <code>\M</code>, or <code>\V</code> (prefer
+        tersity)
+        <ul>
+          <li>
+            Users can change the global "magic level" of regular expressions.
+            This changes how atoms are parsed in regular expressions,
+            including <code>.</code>, <code>*</code>, and <code>{</code>.
+          </li>
+          <li>
+            Even if your regular expression does not contain characters which
+            are affected by the <code>magic</code> setting you must prefix it
+            with one of the magic control atoms. This future-proofs your
+            regular expression against other devs modifying it and forgetting
+            to add the control atom.
+          </li>
+          <li>
+            If you have no opinion about what type of regular expression to
+            use, prefer the one which makes your regular expression most
+            concise.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Avoid using <code>:s[ubstitute]</code> in scripts.
+        <ul>
+          <li>
+            <code>:substitute</code> moves the cursor.
+          </li>
+          <li>
+            <code>:substitute</code> outputs an error message when the match
+            does not exist.
+          </li>
+          <li>
+            The meaning of the <code>g</code> flag depends upon the
+            <code>gdefault</code> setting. If you do use
+            <code>:substitute</code> you must save <code>gdefault</code>, set
+            it to <code>0</code> or <code>1</code>, perform the substitution,
+            and then restore it.
+          </li>
+          <li>
+            Script authors who want a safe way to replace text in the buffer
+            are encouraged to use <code>maktaba#buffer#Replace</code>.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Always use case-explicit operators for strings (<code>=~#</code> and
+        <code>=~?</code>, never <code>=~</code>).
+        <ul>
+          <li>
+            This also applies to <code>!~ == != &gt; &gt;= &lt;</code> and
+            <code>&lt;=</code>
+          </li>
+          <li>
+            This only applies for strings. <code>==</code> and
+            <code>&gt;=</code> are fine for numbers, but <code>==#</code> and
+            <code>&gt;=#</code> must be used for strings.
+          </li>
+          <li>
+            The behavior of <code>=~</code> and friends is dependant upon the
+            <code>ignorecase</code> setting.
+          </li>
+          <li>
+            You may break this rule when you explicitly want to obey the
+            user's <code>ignorecase</code> setting. Be prepared to justify
+            your reasoning.
+          </li>
+        </ul>
+      </li>
+      <li>
+        When using regular expressions as arguments to functions, prepend them
+        with <code>\c</code> or <code>\C</code>.
+        <ul>
+          <li>
+            This forces case to be either explicitly matched or ignored.
+          </li>
+          <li>
+            This is recommended, but not required, when comparing regexes with
+            operators that specify case sensitivity (<code>=~#</code>, etc.).
+          </li>
+          <li>
+            This rule applies when your regexes are matching syntax, external
+            APIs, external messages, and most other cases.
+          </li>
+          <li>
+            It does not apply when matching text in the buffer. When matching
+            text in the buffer you should honor the <code>ignorecase</code>
+            setting.
+          </li>
+          <li>
+            You may also ignore this rule any time that you explicitly want to
+            honor the <code>ignorecase</code> setting. Be prepared to justify
+            your reasoning.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Always use <code>normal!</code> instead of <code>normal</code>.
+        <ul>
+          <li>
+            If you forgo the <code>!</code> the command will use the user's
+            key mappings and you have literally no idea what your macro will
+            do.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Always use the <code>noremap</code> family of commands.
+        <ul>
+          <li>
+            Your plugins generally shouldn't introduce mappings, but if they
+            do, the <code>map</code> command respects the users existing
+            mappings and could do anything.
+          </li>
+        </ul>
+      </li>
+      <li>
+        When using <code>catch</code>, match the error code rather than the
+        error text.
+        <ul>
+          <li>
+            The error text may be locale-dependant.
+          </li>
+          <li>
+            See <code>:help error-messages</code>.
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p>
+      In general, guard all commands and functions against user settings.
+    </p>
+    
+  </CATEGORY>
+  <CATEGORY title="Language Guide">
+    <ul>
+      
+      
+      <li>
+        Line continuations: <strong>Yes</strong>
+        <ul>
+          
+          <li>
+            Plugins that support vi compatibility mode must save and restore
+            compatibility options as described in the
+            <strong>Errata section</strong> so line continuations work properly.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Exceptions: <strong>Yes, with caution</strong>
+        <ul>
+          <li>
+            Always use an error code in thrown exception messages.
+          </li>
+          <li>
+            Prefer the <code>maktaba#error</code> codes found in
+            <code>maktaba</code>.
+          </li>
+          <li>
+            Fall back to the vim error codes. See
+            <code>:help error-messages</code>.
+          </li>
+          <li>
+            Generate custom error messages using
+            <code>maktaba#error#Message</code>.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Global Variables: <strong>As configuration only</strong>
+        <ul>
+          <li>
+            See the plugin guide.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Messaging: <strong>As little as possible.</strong>
+        <ul>
+          <li>
+            Loud scripts are annoying.
+          </li>
+          <li>
+            Message the user when an error has occured.
+          </li>
+          <li>
+            Message the user when an operation which takes a long time has
+            begun work.
+          </li>
+          <li>
+            Avoid messaging otherwise.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Type checking:
+        <strong>Use strict and explicit checks where possible.</strong>
+        <ul>
+          <li>
+            Vimscript has unsafe, unintuitive behavior when dealing with some
+            types. For instance, <code>0 == 'foo'</code> evaluates to true.
+          </li>
+          <li>
+            Use strict comparison operators where possible. When comparing
+            against a string literal, use the <code>is#</code> operator.
+            Otherwise, prefer <code>maktaba#value#IsEqual</code> or check
+            <code>type()</code> explicitly.
+          </li>
+          <li>
+            Check variable types explicitly before using them. Use functions
+            from <code>maktaba#ensure</code>, or check
+            <code>maktaba#value</code> or <code>type()</code> and throw your own
+            errors.
+          </li>
+          <li>
+            Use <code>:unlet</code> for variables that may change types,
+            particularly those assigned inside loops.
+          </li>
+        </ul>
+      </li>
+      <li>
+        FuncRefs: <strong>No in most cases.</strong>
+        <ul>
+          <li>
+            FuncRefs have inconsistently enforced naming restrictions.
+            (Functions can have names that FuncRefs can not.)
+          </li>
+          <li>
+            FuncRefs have inconsistent ability to be reassigned (in Vim
+            7.2 and before you must unlet a FuncRef before assigning it).
+          </li>
+          <li>
+            In most instances where a FuncRef is needed a string works
+            just as well: just pass the string that you would use to make
+            the FuncRef.
+          </li>
+          <li>
+            Consider using <code>maktaba#function</code> instead to create and
+            manipulate handles to functions.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Python: <strong>Sparingly</strong>
+        <ul>
+          
+          <li>
+            Hurts code reuse since python code embedded in python plugins is
+            awkward to share between plugins.
+          </li>
+          <li>
+            Using python introduces python language version dependencies, which
+            are likely to get stale.
+          </li>
+          <li>
+            Exception: It's reasonable to use python for plugin functionality
+            that needs to do work in the background, as vimscript can not do
+            this.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Ruby: <strong>No</strong>
+        <ul>
+          <li>
+            We can not assume ruby interoperability.
+          </li>
+          <li>
+            You shouldn't depend upon the version of the ruby language that the
+            user has installed.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Lua: <strong>No</strong>
+        <ul>
+          <li>
+            For the same reasons an Ruby.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Dict Functions: <strong>Encouraged</strong>
+        <ul>
+          <li>
+            Vimscript can attach functions to dictionaries. Such functions
+            have access to the <code>self</code> parameter which access
+            the dict state.
+          </li>
+          <li>
+            Use these where you would use a class in python.
+          </li>
+          <li>
+            Do not over-use this feature; it is not necessary for helper
+            functions or API functions, only for encapsulated objects.
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p>
+      All other language features are fair game.
+    </p>
+  </CATEGORY>
+  <CATEGORY title="Structure">
+    <ul>
+      <li>
+        Provided functionality should be packed into modular plugins.
+        <ul>
+          <li>
+            Every function in your plugin should be specific to your
+            plugin.
+          </li>
+          <li>
+            General utility functions should be abstracted into library plugins.
+          </li>
+          <li>
+            Manage dependencies with <code>maktaba</code>.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <code>plugin-names-like-this</code>
+        <ul>
+          <li>
+            Plugin names should be descriptive and concise.
+          </li>
+          
+          
+        </ul>
+      </li>
+      <li>
+        Each plugin must consist of one directory (or code repository), sharing
+        a name with the plugin (with a "vim-" prefix or ".vim" suffix if
+        desired).
+      </li>
+      <li>
+        Plugin metadata should be declared in the addon-info.json format (see
+        the <a href="http://goo.gl/CUXJZC">VAM documentation</a> for details).
+      </li>
+      <li>
+        Functions should go in the <code>autoload/</code> subdirectory of
+        your plugin.
+        <ul>
+          <li>
+            This allows them to be late-loaded, which speeds up startup
+            time.
+          </li>
+          <li>
+            This helps vim enforce namespacing conventions.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Each file in the <code>plugin/</code> or <code>instant/</code> directory
+        should begin with the boilerplate
+        <CODE_SNIPPET>
+          let [s:plugin, s:enter] = maktaba#plugin#Enter(expand('&lt;sfile&gt;:p'))
+          if !s:enter
+            finish
+          endif
+        </CODE_SNIPPET>
+        (This prevents re-entry and allows users to selectively disable
+        functionality.)
+      </li>
+      <li>
+        User configuration should be via plugin flags defined in
+        <code>instant/flags.vim</code>.
+        <ul>
+          <li>
+            Define flags with
+            <code>call s:plugin.Flag('FLAGNAME', DEFAULT_VALUE)</code>.
+          </li>
+          <li>
+            Users can configure these flags using the <code>:Glaive</code>
+            command (see <a href="https://github.com/google/glaive">glaive</a>).
+          </li>
+        </ul>
+      </li>
+      <li>
+        Commands, autocommands, mappings, and settings changes should
+        occur either in the <code>plugin/</code> or the
+        <code>ftplugin/</code> subdirectories.
+        <ul>
+          <li>
+            All commands should be defined in <code>plugin/commands.vim</code>
+            or <code>ftplugin/</code> files.
+          </li>
+          <li>
+            Autocommands should be defined in <code>plugin/autocmds.vim</code>,
+            inside an augroup.
+          </li>
+          <li>
+            Mappings should be defined in <code>plugin/mappings.vim</code> and
+            will be disabled unless explicitly enabled by users.
+          </li>
+          <li>
+            If the plugin configures any standard vim settings, those should be
+            configured in <code>plugin/settings.vim</code> or
+            <code>instant/settings.vim</code>.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Avoid using the <code>after/</code> subdirectory.
+        <ul>
+          <li>
+            <code>after/</code> should be reserved for the user.
+          </li>
+          <li>
+            It is difficult for the user to add their own overrides when
+            plugins use <code>after/</code>.
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <STYLEPOINT title="Libraries vs. Functionality">
+      <SUMMARY>
+        Separate library-providing plugins from command-providing plugins.
+      </SUMMARY>
+      <BODY>
+        <p>
+          Many plugins provide either user functionality (commands,
+          autocommands, etc) or an API (of autoloaded functions) but not both.
+          This separation is encouraged, as it allows other plugins to pull in a
+          library without also pulling in commands, setting changes, and other
+          plugin functionality that affects the end user.
+        </p>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Configuration">
+      <SUMMARY>
+        Don't clobber user settings. Provide as much configurability as
+        possible: that's what Vim's all about.
+      </SUMMARY>
+      <BODY>
+        <ul>
+          <li>
+            Use maktaba flags for plugin configuration. Users can configure them
+            using the <code>:Glaive</code> command.
+            
+          </li>
+          <li>
+            Check if configuration variables exist before setting them.
+            <CODE_SNIPPET>
+              if !exists('g:myplugin_option')
+                let g:myplugin_option = 1
+              endif
+            </CODE_SNIPPET>
+          </li>
+        </ul>
+      </BODY>
+    </STYLEPOINT>
+  </CATEGORY>
+  <CATEGORY title="Style Guide">
+    <p>
+      Follow google-wide style conventions. Mimic google python style when
+      in doubt.
+    </p>
+
+    
+
+    <STYLEPOINT title="Documentation">
+      <SUMMARY>
+        Use <a href="https://github.com/google/vimdoc">vimdoc</a>.
+      </SUMMARY>
+      <BODY>
+        <p>
+          Provide help files generated by
+          <a href="https://github.com/google/vimdoc">vimdoc</a>. Write
+          documentation in .vim files in conformance with the vimdoc standards
+          and include fields like "description" and "author" in the
+          addon-info.json file (see the
+          <a href="http://goo.gl/CUXJZC">VAM documentation</a>).
+        </p>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Whitespace">
+      <SUMMARY>
+        Follow google-wide conventions.
+      </SUMMARY>
+      <BODY>
+        <ul>
+          <li>
+            Use two spaces for indents.
+          </li>
+          <li>
+            Do not use tabs.
+          </li>
+          <li>
+            Use spaces around operators except for arguments to commands.
+            <ul>
+              <li>
+                Using spaces around operators for commands is often invalid
+                syntax. This is inconsistently enforced by vimscript. To be
+                safe, always omit whitespace around arguments to commands.
+              </li>
+              <li>
+                <CODE_SNIPPET>
+                  let s:variable = "concatenated " . "strings"
+                  command -range=% MyCommand
+                </CODE_SNIPPET>
+                <BAD_CODE_SNIPPET>
+                  let s:variable="concatenated "."strings"
+                  command -range = % MyCommand
+                </BAD_CODE_SNIPPET>
+              </li>
+            </ul>
+          </li>
+          <li>
+            Do not introduce trailing whitespace.
+            <ul>
+              <li>
+                You need not go out of your way to remove it.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Restrict lines to 80 columns wide.
+          </li>
+          <li>
+            Indent continued lines by two tabs (four spaces).
+          </li>
+          <li>
+            Do not waste whitespace aligning common segments of similar
+            commands. It is both difficult and expensive to maintain.
+            <ul>
+              <li>
+                <CODE_SNIPPET>
+                  command -bang MyCommand call myplugin#foo()
+                  command MyCommand2 call myplugin#bar()
+                </CODE_SNIPPET>
+                <BAD_CODE_SNIPPET>
+                  command -bang MyCommand  call myplugin#foo()
+                  command       MyCommand2 call myplugin#bar()
+                </BAD_CODE_SNIPPET>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <SUBSECTION title="Line Continuations">
+          <ul start="7">
+            <li>
+              Prefer line continuations on semantic boundaries.
+              <ul>
+                <li>
+                  <CODE_SNIPPET>
+                    command SomeLongCommand
+                        \ call some#function()
+                  </CODE_SNIPPET>
+                  <BAD_CODE_SNIPPET>
+                    command SomeLongCommand call
+                        \ some#function()
+                  </BAD_CODE_SNIPPET>
+                </li>
+                <li>
+                  Use your best judgement.
+                </li>
+              </ul>
+            </li>
+            <li>
+              Place one space after the backslash denoting a line continuation.
+              <ul>
+                <li>
+                  When continuing a multi-line command a pipe can be substituted
+                  for this space as necessary, as follows:
+                  <CODE_SNIPPET>
+                    autocommand BufEnter &lt;buffer&gt;
+                        \ if !empty(s:var)
+                        \|  call some#function()
+                        \|else
+                        \|  call some#function(s:var)
+                        \|endif
+                  </CODE_SNIPPET>
+                </li>
+              </ul>
+            </li>
+            <li>
+              Do not continue multi-line commands when you can avoid it. Prefer
+              function calls.
+            </li>
+          </ul>
+        </SUBSECTION>
+        <SUBSECTION title="Comments">
+          <ul>
+            <li>
+              Place a space after the <code>"</code> before the comment text.
+              <ul>
+                <li>
+                  <CODE_SNIPPET>
+                    " I am a line comment.
+                    call call(s:my_function)
+                  </CODE_SNIPPET>
+                </li>
+              </ul>
+            </li>
+            <li>
+              Do not use inline comments.
+              <ul>
+                <li>
+                  Some commands treat them as comments and others as unclosed
+                  quotes.  There are many edge cases. It's difficult to get
+                  right and difficult to maintain.
+                </li>
+                <li>
+                  Where you would use an inline comment, put a line comment on
+                  the line above.
+                </li>
+              </ul>
+            </li>
+            <li>
+              When leaving blank lines in comments, include the quote in the
+              blank line.
+              <ul>
+                <li>
+                  <CODE_SNIPPET>
+                    " I am one continuous
+                    "
+                    " comment block
+                  </CODE_SNIPPET>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </SUBSECTION>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Variables">
+      <SUMMARY>
+        <p>
+          <code>plugin-names-like-this</code>,
+          <code>FunctionNamesLikeThis</code>,
+          <code>CommandNamesLikeThis</code>,
+          <code>augroup_names_like_this</code>,
+          <code>variable_names_like_this</code>.
+        </p>
+        <p>
+          Prefix all variables with their scope.
+        </p>
+      </SUMMARY>
+      <BODY>
+        <ul>
+          <li>
+            <code>variable_names_like_this</code>
+            <ul>
+              <li>
+                FuncRef variables count as functions and should be named like
+                functions.
+              </li>
+              <li>
+                This (pathological) convention is enforced by vim itself.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Prefix global variables with <code>g:</code>
+            <ul>
+              <li>
+                Vimscript allows you to create global variables without
+                prefixing them.
+              </li>
+              <li>
+                It is very bad practice to introduce non-prefixed global
+                variables into scope.
+              </li>
+              <li>
+                Global variables should only be used for plugin configuration.
+              </li>
+              <li>
+                This does not apply to functions defined in
+                <code>autoload</code> directories.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Prefix script-local variables with <code>s:</code>
+            <ul>
+              <li>
+                This prevents namespace collisions between plugins.
+              </li>
+              <li>
+                This also applies to script-local functions.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Prefix function arguments with <code>a:</code>
+            <ul>
+              <li>
+                This is enforced by vim itself.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Prefix function-local variables with <code>l:</code>
+            <ul>
+              <li>
+                This is not enforced by vimscript but is good practice.
+              </li>
+              <li>
+                It helps you remember that all other variables must be
+                prefixed with scope.
+              </li>
+              <li>
+                <code>l:</code> disambiguates between function-local and
+                vim-predefined variables. For example, <code>count</code>
+                refers to
+                <code>v:count</code>, not <code>l:count</code>.
+              </li>
+              <li>
+                It future proofs your scripts against the introduction of new
+                vim-predefined variables.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Prefix pre-defined vim variables with <code>v:</code>
+            <ul>
+              <li>
+                This is not enforced by vimscript but is good practice.
+              </li>
+              <li>
+                It provides context as to where the (undeclared) variable is
+                coming from.
+              </li>
+              <li>
+                It reminds you that the variable can not be assigned to.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Prefix buffer-local variables with <code>b:</code>
+            <ul>
+              <li>
+                This is useful for plugins that keep per-buffer state.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Strings">
+      <SUMMARY>
+        Prefer single quotes.
+      </SUMMARY>
+      <BODY>
+        <p>
+          Prefer single quoted strings. Specifically, in order of precedence:
+        </p>
+        <ul>
+          <li>
+            Always use single quotes for regular expressions.
+            <ul>
+              <li>
+                <code>'\s*'</code> is not the same as <code>"\s*"</code>
+              </li>
+              <li>
+                Single quotes will prevent the need for excessive backslashes.
+              </li>
+              <li>
+                Double single quotes escape to one single quote in single
+                quoted strings: <code>'example ('')'</code> represents the
+                string
+                <code>example (')</code>
+              </li>
+            </ul>
+          </li>
+          <li>
+            If your string requires escape characters (<code>\n</code>,
+            <code>\t</code>, etc.) use double quotes.
+            <ul>
+              <li>
+                Escapes can not be expressed in single quoted strings.
+              </li>
+              <li>
+                Remember that <code>'\n'</code> in a regex does not represent a
+                newline, but rather "\n". You only need to use double quotes
+                when you want to embed the represented character itself (e.g. a
+                newline) in the string.
+              </li>
+            </ul>
+          </li>
+          <li>
+            If your string contains no escapes nor single quotes, use single
+            quoted strings.
+            <ul>
+              <li>
+                Most strings in vimscript are regexes, so this provides maximum
+                consistency.
+              </li>
+            </ul>
+          </li>
+          <li>
+            If your non-regex string contains single quotes but no double
+            quotes, use double quotes.
+            <ul>
+              <li>
+                Don't bother escaping strings if you don't have to.
+              </li>
+              <li>
+                This is similar to the python string rules.
+              </li>
+            </ul>
+          </li>
+          <li>
+            If your string contains both single and double quotes, use whichever
+            quoting style requires less escaping.
+            <ul>
+              <li>
+                Break ties in favor of single quotes.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Settings">
+      <SUMMARY>
+        Prefer long names. Set settings locally.
+      </SUMMARY>
+      <BODY>
+        <ul start="6">
+          <li>
+            Prefer long names of built in settings (i.e. <code>tabstop</code>
+            over
+            <code>ts</code>).
+          </li>
+          <li>
+            Set local settings unless you explicitly want to set global
+            settings.
+            <ul>
+              <li>
+                Use <code>setlocal</code> and <code>&amp;l:</code> instead of
+                <code>set</code> and <code>&amp;</code>.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </BODY>
+    </STYLEPOINT>
+  </CATEGORY>
+  <CATEGORY title="Usage Guide">
+    <p>
+      Vim plugins should provide any or all of the following:
+      <strong>Commands,</strong> <strong>Autocommands,</strong>
+      <strong>Functions,</strong> <strong>Statusline Flags, and</strong>
+      <strong>Mappings.</strong>
+    </p>
+
+    <STYLEPOINT title="Commands">
+      <SUMMARY>
+        <ul>
+          <li>Define in <code>plugin/commands.vim</code>.</li>
+          <li>CommandNamesLikeThis.</li>
+          <li>Prefer semantic names to a unified prefix.</li>
+          <li>Do not use <code>[!]</code></li>
+          <li>Extract logic into functions.</li>
+        </ul>
+      </SUMMARY>
+      <BODY>
+        <ul>
+          <li>
+            <code>CommandNamesLikeThis</code>
+          </li>
+          <li>
+            Commands should be defined in one block with no whitespace between
+            them.
+            <ul>
+              <li>
+                Name commands semantically at the expense of a common prefix.
+              </li>
+              <li>
+                <BAD_CODE_SNIPPET>
+                  command WhitespaceFixTrailing
+                  command WhitespaceFixIndentation
+                </BAD_CODE_SNIPPET>
+                <CODE_SNIPPET>
+                  command FixTrailingWhitespace
+                  command FixIndentation
+                </CODE_SNIPPET>
+              </li>
+            </ul>
+          </li>
+          <li>
+            Use <code>command</code> without a bang.
+            <ul>
+              <li>
+                This notifies users to command name conflicts immediately at
+                startup.
+              </li>
+              <li>
+                Command name collisions are an error and should not fail
+                silently.
+              </li>
+              <li>
+                Plugins are guarded against re-entry, so a single vim session
+                should never attempt to re-define defined commands.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Do not put logic in commands.
+            <ul>
+              <li>
+                Delegate to functions instead.
+              </li>
+              <li>
+                Pass non-argument command parameters (<code>&lt;bang&gt;</code>,
+                <code>&lt;register&gt;</code>, etc.) before argument parameters
+                (<code>&lt;f-args&gt;</code>, etc.).
+              </li>
+              <li>
+                Otherwise variable-length argument functions are difficult to
+                implement.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Do not autoload commands.
+            <ul>
+              <li>
+                Autoloaded commands will not be available until after a function
+                in the same file is called.
+              </li>
+              <li>
+                Commands intended to be used in the .vimrc should be defined in
+                a <code>instant/commands.vim</code> file in plugins using
+                maktaba, or explicitly installed via an autoload function in
+                non-maktaba plugins.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <SUBSECTION title="Conventions">
+          <ul>
+            <li>
+              Pass <code>&lt;bang&gt;</code> to functions with
+              <code>'&lt;bang&gt;' == '!'</code>.
+              <ul>
+                <li>
+                  The function should receive a boolean parameter, not a string.
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </SUBSECTION>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Autocommands">
+      <SUMMARY>
+        <ul>
+          <li>Define in <code>plugin/autocmds.vim</code>.</li>
+          <li>Use augroups.</li>
+          <li>augroup_names_like_this.</li>
+          <li>Clear the augroup first.</li>
+          <li>Extract logic into functions.</li>
+        </ul>
+      </SUMMARY>
+      <BODY>
+        <ul>
+          <li>
+            All autocommands should be defined in the
+            <code>plugin/autocmds.vim</code> file.
+            <ul>
+              <li>
+                This allows users to disable your autocommands with
+                <code>Glaive myplugin !plugin[autocmds]</code>.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Declare all autocommands in an <code>augroup</code> block.
+            <ul>
+              <li>
+                This allows your autocommands to be cleared with
+                <code>autocmd!</code>.
+              </li>
+              <li>
+                If your plugin only has one <code>augroup</code>, the
+                <code>augroup</code> name should be the same as your plugin
+                name, with underscores in place of any hyphens.
+              </li>
+              <li>
+                Otherwise <code>augroup</code> names should start with your
+                plugin name followed by an underscore.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Do not put logic in autocommands.
+            <ul>
+              <li>
+                Delegate to functions instead.
+              </li>
+            </ul>
+          </li>
+          <li>
+            When creating a new <code>augroup</code>, clear it with
+            <code>autocmd!</code>
+            <ul>
+              <li>
+                This allows your plugins to be re-enterable.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Functions">
+      <SUMMARY>
+        <ul>
+          <li>FunctionNamesLikeThis.</li>
+          <li>Autoload all functions.</li>
+          <li>Prefix script-local functions with <code>s:</code></li>
+          <li>Use <code>[!]</code>.</li>
+          <li>Use <code>[abort]</code>.</li>
+        </ul>
+      </SUMMARY>
+      <BODY>
+        <ul>
+          <li>
+            <code>FunctionNamesLikeThis</code>
+          </li>
+          <li>
+            Prefix all script-local functions with <code>s:</code>
+          </li>
+          <li>
+            Do not provide global functions. Use autoloaded functions instead.
+          </li>
+          <li>
+            Place two blank lines between top-level functions.
+          </li>
+          <li>
+            Declare all functions with <code>abort</code>.
+            <ul>
+              <li>
+                If you do not do this, the function's behavior depends upon
+                whether it is called within a <code>try..endtry</code> block
+                somewhere on the stack.
+              </li>
+              <li>
+                The <code>abort</code> keyword forces the function to act
+                consistently.
+              </li>
+              <li>
+                Without it, the function may (or may not) attempt to continue
+                execution after an error occurs.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Use <code>function!</code> with a bang.
+            <ul>
+              <li>
+                This allows developers to re-source their scripts and have the
+                functions reloaded without complaint.
+              </li>
+              <li>
+                Function names should never collide because functions should
+                always be either script-local or defined in an
+                <code>autoload</code> directory.
+              </li>
+              <li>
+                Failing to use a bang in any function in an autoload file will
+                lead to cryptic errors if vim tries to re-source the file
+                (e.g., if you refer to an nonexistent autoload function).
+              </li>
+            </ul>
+          </li>
+          <li>
+            Use <code>...</code> for optional arguments, not for lists of
+            arguments.
+            <ul>
+              <li>
+                Vimscript functions take at most 20 arguments.
+              </li>
+              <li>
+                Lists have no such length restriction.
+              </li>
+              <li>
+                Your function is likely to break when given too many arguments
+                if you use <code>...</code> for a list of arguments.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Throw exceptions rather than printing errors.
+            <ul>
+              <li>
+                Printed errors can not be caught.
+              </li>
+              <li>
+                Top-level functions expecting errors may catch them and print
+                error messages, but even those should throw their own errors
+                when they choke.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Mappings">
+      <SUMMARY>
+        <ul>
+          <li>
+            Provide opt-in key mappings in <code>plugin/mappings.vim</code>.
+          </li>
+          <li>
+            <code>&lt;Plug&gt;</code> mappings can be defined in
+            <code>plugin/plugs.vim</code> (unlike mappings.vim, plugs.vim is
+            opt-out).
+          </li>
+        </ul>
+      </SUMMARY>
+      <BODY>
+        <ul>
+          <li>
+            Define key mappings in <code>plugin/mappings.vim</code>, using
+            <code>maktaba#plugin#MapPrefix</code> to get a prefix.
+            <ul>
+              <li>
+                Mappings defined in the special <code>plugin/mappings.vim</code>
+                file will be disabled by default (by the standard
+                <code>maktaba#plugin#Enter()</code> boilerplate).
+              </li>
+              <li>
+                Users can enable key mappings with
+                <code>Glaive myplugin plugin[mappings]</code>.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Make all mappings with <code>&lt;unique&gt;</code>.
+            <ul>
+              <li>
+                This will inform the user when they have a mapping conflict
+                instead of silently clobbering their existing mappings.
+              </li>
+            </ul>
+          </li>
+          <li>
+            You may provide pseudo-mappings using <code>&lt;Plug&gt;</code> and
+            your plugin's name in <code>plugin/plugs.vim</code> (separate from
+            standard key mappings).
+            <ul>
+              <li>
+                <code>&lt;Plug&gt;</code> is a sequence which can not be typed.
+              </li>
+              <li>
+                You can do something like
+                <code>noremap &lt;Plug&gt;namespace#MappingName
+                  some_key_sequence</code>
+                and then users can do
+                <code>noremap &lt;leader&gt;x
+                  &lt;Plug&gt;namespace#MappingName</code>
+                to take advantage of your pseudo-mapping.
+              </li>
+              <li>
+                Pseudo-mappings should <strong>not</strong> be in
+                <code>plugin/mappings.vim</code> or they will be disabled by
+                default.
+              </li>
+              <li>
+                Such pseudo-mappings should be named <code>&lt;Plug&gt;</code>
+                followed by your plugin name, a pound sign, and a unique mapping
+                name (CamelCased like a function).
+              </li>
+            </ul>
+          </li>
+          <li>
+            Always use the <code>noremap</code> family of commands. Never use
+            the <code>map</code> family.
+            <ul>
+              <li>
+                <code>map</code> depends upon the user's existing mappings, and
+                could do anything.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Only use <code>noremap</code> for commands that both make a motion
+            and take a range.
+            <ul>
+              <li>
+                <code>noremap</code> makes mappings in normal, visual, and
+                operator-pending modes.
+              </li>
+              <li>
+                If you don't want all these use <code>nnoremap</code>
+                <code>onoremap</code> or <code>vnoremap</code> explicitly.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Always use <code>&lt;SID&gt;</code> in place of <code>s:</code> when
+            accessing script locals in mappings.
+            <ul>
+              <li>
+                Using <code>s:</code> will often fail as the mapping attempts to
+                type a literal s and colon.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </BODY>
+    </STYLEPOINT>
+  </CATEGORY>
+  <CATEGORY title="Conventions">
+    <STYLEPOINT title="Dependency Checking">
+      <SUMMARY>
+        Declare dependencies in addon-info.json and use <code>maktaba</code>.
+      </SUMMARY>
+      <BODY>
+        <p>
+          Declaring dependencies in addon-info.json allows conformant plugin
+          managers (like VAM) to ensure dependencies are installed. See the
+          <a href="http://goo.gl/CUXJZC">VAM documentation</a> for details.
+        </p>
+        <p>
+          Calling <code>maktaba#library#Require</code> from dependent code at
+          runtime ensures that dependencies have been installed and that they
+          don't include unsafe non-library files.
+        </p>
+      </BODY>
+    </STYLEPOINT>
+
+    <STYLEPOINT title="Statusline Flags">
+      <SUMMARY>
+        Use <code>&lt;plugin-name&gt;#status#Status()</code> or its
+        finer-grained variants to provide statusline flags.
+      </SUMMARY>
+      <BODY>
+        <p>
+          Following is a convention for exposing statusline flags to the user. A
+          plugin should never modify the user's statusline except for when that
+          is the only purpose of the plugin (powerline, etc.).
+        </p>
+        <ul>
+          <li>
+            Provide the
+            <code class="green">Info</code>,
+            <code class="yellow">Alert</code>,
+            <code class="orange">Warning</code>, and
+            <code class="red">Error</code> functions under the
+            <code>&lt;plugin-name&gt;#status</code> namespace.
+          </li>
+          <li>
+            <code class="green">Info</code> should provide information about the
+            state of the buffer.
+            <ul>
+              <li>
+                Example: The current git branch.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <code class="yellow">Alert</code> should provide a quiet reminder
+            that the buffer is non-standard.
+            <ul>
+              <li>
+                Example: The readonly setting is on.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <code class="orange">Warning</code> should provide a warning about
+            the current state of the buffer.
+            <ul>
+              <li>
+                Example: The file has been edited elsewhere.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <code class="red">Error</code> should bring to attention a loud
+            issue with the buffer.
+            <ul>
+              <li>
+                Example: The file does not pass the syntax checker.
+              </li>
+            </ul>
+          </li>
+          <li>
+            By following these conventions, users can easily build up their own
+            statusline customizing the verbosity and colors to their tastes.
+          </li>
+          <li>
+            All functions should take no arguments and should return either
+            empty strings or strings enclosed by square brackets, e.g.
+            <code>[Google]</code>. For example:
+            <ul>
+              <li>
+                A trailing whitespace plugin might return <code>[$]</code> if
+                the file contains trailing whitespace
+              </li>
+              <li>
+                A prose writing plugin might return <code>[write]</code> if vim
+                is in writing mode.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Consider providing the
+            <code>&lt;plugin-name&gt;#status#Status</code> function.
+            <ul>
+              <li>
+                It should return the first non-empty of <code>Error</code>,
+                <code>Warning</code>, <code>Alert</code>, or <code>Info</code>.
+              </li>
+              <li>
+                This is useful for users who want only the most relevant flag
+                and do not have a colored statusline.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </BODY>
+    </STYLEPOINT>
+  </CATEGORY>
+  <CATEGORY title="Forbidden Commands">
+    <p>
+      These are commands which can only be used by a limited number of
+      plugins, and should not in general be used by yours.
+    </p>
+    <ul>
+      <li>
+        Do not use <code>:match :2match</code> or <code>:3match</code>
+        <ul>
+          <li>
+            These are reserved for the user and for vim itself.
+          </li>
+          <li>
+            Use <code>addmatch()</code> to create a matchlevel unique to your
+            plugin.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Do not use <code>echoerr</code>.
+        <ul>
+          <li>
+            <code>echoerr</code> does not print the red error message that you
+            might think it does.
+          </li>
+          <li>
+            <code>echoerr</code> prints an error message as well as context
+            about the code where <code>echoerr</code> was called.
+          </li>
+          <li>
+            <code>echoerr</code> is best suited for debugging.
+          </li>
+          <li>
+            Use <code>echohl</code> in tandem with <code>echomsg</code>  if
+            you want the red error bar.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Use <code>echomsg</code> instead of <code>echo</code>.
+        <ul>
+          <li>
+            <code>echomsg</code> messages can be reviewed with the
+            <code>:messages</code> command.
+          </li>
+          <li>
+            <code>echo</code> messages disappear permanently on redraw, which
+            can be very annoying to users who failed to read the message in
+            time.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </CATEGORY>
+  <CATEGORY title="Layout">
+    <p>
+      Lay out <code>plugin/</code> files in the following sections, if
+      applicable, separated by two blank lines:
+    </p>
+    <ul>
+      <li>
+        Declaration of script constants
+      </li>
+      <li>
+        Declaration of configuration variables
+      </li>
+      <li>
+        Other declarations (commands in <code>commands.vim</code> file,
+        autocommands in <code>autocmds.vim</code> file, etc.)
+      </li>
+    </ul>
+    <p>
+      Lay out <code>autoload/</code> files in the following sections, if
+      applicable, separated by two blank lines:
+    </p>
+    <ul>
+      <li>
+        <code>maktaba#library#Require</code> calls
+      </li>
+      <li>
+        Script-local variables
+      </li>
+      <li>
+        Script-local functions
+      </li>
+      <li>
+        Private autoloaded functions
+      </li>
+      <li>
+        Public autoloaded functions
+      </li>
+    </ul>
+    <p>
+      This is recommended convention and is not enforced.
+    </p>
+
+  </CATEGORY>
+  <CATEGORY title="Recommended Shortcuts">
+    
+    <p>
+      Use the following shortcuts:
+    </p>
+    <ul>
+      <li>
+        <code>catch</code> over <code>catch /.*/</code>
+      </li>
+      <li>
+        <code>return</code> over <code>return 0</code> when the return value
+        has no semantic purpose.
+      </li>
+    </ul>
+
+  </CATEGORY>
+  <CATEGORY title="Errata">
+    <p>
+      This section plumbs some of the darker corners of vimscript, explaining
+      the language pathologies that you wish you didn't have to know.
+      
+    </p>
+
+    <STYLEPOINT title="Compatibility Mode">
+      <SUMMARY>
+        If you don't support vi-compatibility mode, fail gracefully.
+      </SUMMARY>
+      <BODY>
+        <p>
+          When <code>compatible</code> is set, many vim features are not
+          available. The vim feature which most commonly affects vimscript
+          authors is line continuations.
+        </p>
+        <p>
+          If you want your plugin to work in vim with vi compatibility on, you
+          will need to save the compatibility options at the beginning of each
+          plugin file, clear them, and restore them at the end of each plugin
+          file. See <code>:help use-cpo-save</code> for details.
+        </p>
+        <p>
+          Plugins that depend on maktaba generally don't need to worry about
+          compatible mode since maktaba currently just disables it, printing a
+          warning.
+        </p>
+      </BODY>
+    </STYLEPOINT>
+  </CATEGORY>
+
+  <p align="right">
+    Revision 1.1
+  </p>
+
+  
+  <address>
+    Nate Soares<br/>
+    Joshua Hoak<br/>
+    David Barnett<br/>
+  </address>
+</GUIDE>
