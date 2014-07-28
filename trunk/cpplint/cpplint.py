@@ -133,6 +133,38 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
       Examples:
         --extensions=hpp,cpp
+
+    cpplint.py supports per-directory configurations specified in CPPLINT.cfg
+    files. CPPLINT.cfg file can contain a number of key=value pairs.
+    Currently the following options are supported:
+
+      set noparent
+      filter=+filter1,-filter2,...
+      exclude_files=regex
+
+    "set noparent" option prevents cpplint from traversing directory tree
+    upwards looking for more .cfg files in parent directories. This option
+    is usually placed in the top-level project directory.
+
+    The "filter" option is similar in function to --filter flag. It specifies
+    message filters in addition to the |_DEFAULT_FILTERS| and those specified
+    through --filter command-line flag.
+
+    "exclude_files" allows to specify a regular expression to be matched against
+    a file name. If the expression matches, the file is skipped and not run
+    through liner.
+
+    CPPLINT.cfg has an effect on files in the same directory and all
+    sub-directories, unless overridden by a nested configuration file.
+
+      Example file:
+        filter=-build/include_order,+build/include_alpha
+        exclude_files=.*\.cc
+
+    The above example disables build/include_order warning and enables
+    build/include_alpha as well as excludes all .cc from being
+    processed by linter, in the current directory (where the .cfg
+    file is located) and all sub-directories.
 """
 
 # We categorize each error message we print.  Here are the categories.
@@ -682,6 +714,8 @@ class _CppLintState(object):
     self.error_count = 0    # global count of reported errors
     # filters to apply when emitting error messages
     self.filters = _DEFAULT_FILTERS[:]
+    # backup of filter list. Used to restore the state after each file.
+    self._filters_backup = self.filters[:]
     self.counting = 'total'  # In what way are we counting errors?
     self.errors_by_category = {}  # string to int dict storing error counts
 
@@ -720,6 +754,10 @@ class _CppLintState(object):
     """
     # Default filters always have less priority than the flag ones.
     self.filters = _DEFAULT_FILTERS[:]
+    self.AddFilters(filters)
+
+  def AddFilters(self, filters):
+    """ Adds more filters to the existing list of error-message filters. """
     for filt in filters.split(','):
       clean_filt = filt.strip()
       if clean_filt:
@@ -728,6 +766,14 @@ class _CppLintState(object):
       if not (filt.startswith('+') or filt.startswith('-')):
         raise ValueError('Every filter in --filters must start with + or -'
                          ' (%s does not)' % filt)
+
+  def BackupFilters(self):
+    """ Saves the current filter list to backup storage."""
+    self._filters_backup = self.filters[:]
+
+  def RestoreFilters(self):
+    """ Restores filters previously backed up."""
+    self.filters = self._filters_backup[:]
 
   def ResetErrorCounts(self):
     """Sets the module's error statistic back to zero."""
@@ -796,6 +842,25 @@ def _SetFilters(filters):
   """
   _cpplint_state.SetFilters(filters)
 
+def _AddFilters(filters):
+  """Adds more filter overrides.
+
+  Unlike _SetFilters, this function does not reset the current list of filters
+  available.
+
+  Args:
+    filters: A string of comma-separated filters (eg "whitespace/indent").
+             Each filter should start with + or -; else we die.
+  """
+  _cpplint_state.AddFilters(filters)
+
+def _BackupFilters():
+  """ Saves the current filter list to backup storage."""
+  _cpplint_state.BackupFilters()
+
+def _RestoreFilters():
+  """ Restores filters previously backed up."""
+  _cpplint_state.RestoreFilters()
 
 class _FunctionState(object):
   """Tracks current function name and the number of lines in its body."""
@@ -5328,7 +5393,7 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckDefaultLambdaCaptures(filename, clean_lines, line, error)
   for check_fn in extra_check_functions:
     check_fn(filename, clean_lines, line, error)
-	
+
 def FlagCxx11Features(filename, clean_lines, linenum, error):
   """Flag those c++11 features that we only allow in certain places.
 
@@ -5424,6 +5489,75 @@ def ProcessFileData(filename, file_extension, lines, error,
 
   CheckForNewlineAtEOF(filename, lines, error)
 
+def ProcessConfigOverrides(filename):
+  """ Loads the configuration files and processes the config overrides.
+
+  Args:
+    filename: The name of the file being processed by the linter.
+
+  Returns:
+    False if the current |filename| should not be processed further.
+  """
+
+  abs_filename = os.path.abspath(filename)
+  cfg_filters = []
+  keep_looking = True
+  while keep_looking:
+    abs_path, base_name = os.path.split(abs_filename)
+    if not base_name:
+      break  # Reached the root directory.
+
+    cfg_file = os.path.join(abs_path, "CPPLINT.cfg")
+    abs_filename = abs_path
+    if not os.path.isfile(cfg_file):
+      continue
+
+    try:
+      with open(cfg_file) as file_handle:
+        for line in file_handle:
+          line, _, _ = line.partition('#')  # Remove comments.
+          if not line.strip():
+            continue
+
+          name, _, val = line.partition('=')
+          name = name.strip()
+          val = val.strip()
+          if name == 'set noparent':
+            keep_looking = False
+          elif name == 'filter':
+            cfg_filters.append(val)
+          elif name == 'exclude_files':
+            # When matching exclude_files pattern, use the base_name of
+            # the current file name or the directory name we are processing.
+            # For example, if we are checking for lint errors in /foo/bar/baz.cc
+            # and we found the .cfg file at /foo/CPPLINT.cfg, then the config
+            # file's "exclude_files" filter is meant to be checked against "bar"
+            # and not "baz" nor "bar/baz.cc".
+            if base_name:
+              pattern = re.compile(val)
+              if pattern.match(base_name):
+                sys.stderr.write('Ignoring "%s": file excluded by "%s". '
+                                 'File path component "%s" matches '
+                                 'pattern "%s"\n' %
+                                 (filename, cfg_file, base_name, val))
+                return False
+          else:
+            sys.stderr.write(
+                'Invalid configuration option (%s) in file %s\n' %
+                (name, cfg_file))
+
+    except IOError:
+      sys.stderr.write(
+          "Skipping config file '%s': Can't open for reading\n" % cfg_file)
+      keep_looking = False
+
+  # Apply all the accumulated filters in reverse order (top-level directory
+  # config options having the least priority).
+  for filter in reversed(cfg_filters):
+     _AddFilters(filter)
+
+  return True
+
 
 def ProcessFile(filename, vlevel, extra_check_functions=[]):
   """Does google-lint on a single file.
@@ -5440,6 +5574,11 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
   """
 
   _SetVerboseLevel(vlevel)
+  _BackupFilters()
+
+  if not ProcessConfigOverrides(filename):
+    _RestoreFilters()
+    return
 
   lf_lines = []
   crlf_lines = []
@@ -5471,6 +5610,7 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
   except IOError:
     sys.stderr.write(
         "Skipping input '%s': Can't open for reading\n" % filename)
+    _RestoreFilters()
     return
 
   # Note, if no dot is found, this will give the entire filename as the ext.
@@ -5504,6 +5644,7 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
               'Unexpected \\r (^M) found; better to use only \\n')
 
   sys.stderr.write('Done processing %s\n' % filename)
+  _RestoreFilters()
 
 
 def PrintUsage(message):
