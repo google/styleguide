@@ -141,6 +141,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       set noparent
       filter=+filter1,-filter2,...
       exclude_files=regex
+      linelength=80
 
     "set noparent" option prevents cpplint from traversing directory tree
     upwards looking for more .cfg files in parent directories. This option
@@ -153,6 +154,8 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
     "exclude_files" allows to specify a regular expression to be matched against
     a file name. If the expression matches, the file is skipped and not run
     through liner.
+
+    "linelength" allows to specify the allowed line length for the project.
 
     CPPLINT.cfg has an effect on files in the same directory and all
     sub-directories, unless overridden by a nested configuration file.
@@ -5915,6 +5918,12 @@ def ProcessConfigOverrides(filename):
                                  'pattern "%s"\n' %
                                  (filename, cfg_file, base_name, val))
                 return False
+          elif name == 'linelength':
+            global _line_length
+            try:
+                _line_length = int(val)
+            except ValueError:
+                sys.stderr.write('Line length must be numeric.')
           else:
             sys.stderr.write(
                 'Invalid configuration option (%s) in file %s\n' %
