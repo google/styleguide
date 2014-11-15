@@ -1389,7 +1389,7 @@
             These are reserved for the user and for vim itself.
           </li>
           <li>
-            Use <code>addmatch()</code> to create a matchlevel unique to your
+            Use <code>matchadd()</code> to create a matchlevel unique to your
             plugin.
           </li>
         </ul>
