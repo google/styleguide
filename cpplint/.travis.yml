@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.4"
+  - "3.3"
+  - "3.2"
+  - "2.7"
+  - "2.6"
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+# install: "sudo apt-get install"
+# command to run tests, e.g. python setup.py test
+script: python cpplint_unittest.py
