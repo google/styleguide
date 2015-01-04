@@ -3896,7 +3896,7 @@ class CpplintTest(CpplintTestBase):
     cpplint.ProcessFileData(file_path, 'h', [], error_collector)
     for error in error_collector.ResultList():
       matched = re.search(
-          'No #ifndef header guard found, suggested CPP variable is: ([A-Z_]+)',
+          'No #ifndef header guard found, suggested CPP variable is: ([A-Z0-9_]+)',
           error)
       if matched is not None:
         return matched.group(1)

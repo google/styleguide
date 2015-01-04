@@ -4109,7 +4109,7 @@ def CheckTrailingSemicolon(filename, clean_lines, linenum, error):
         clean_lines, linenum, closing_brace_pos)
     if opening_parenthesis[2] > -1:
       line_prefix = opening_parenthesis[0][0:opening_parenthesis[2]]
-      macro = Search(r'\b([A-Z_]+)\s*$', line_prefix)
+      macro = Search(r'\b([A-Z0-9_]+)\s*$', line_prefix)
       func = Match(r'^(.*\])\s*$', line_prefix)
       if ((macro and
            macro.group(1) not in (
