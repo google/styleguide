@@ -81,5 +81,5 @@ Then:
  - run:
 ```
 python setup.py sdist register -r pypi
-python setup.py sdist bdist upload -r pypi
+python setup.py sdist upload -r pypi
  ```
