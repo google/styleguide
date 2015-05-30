@@ -1666,7 +1666,7 @@ def GetHeaderGuardCPPVariable(filename):
   filename = re.sub(r'/\.flymake/([^/]*)$', r'/\1', filename)
   # Replace 'c++' with 'cpp'.
   filename = filename.replace('C++', 'cpp').replace('c++', 'cpp')
-  
+
   fileinfo = FileInfo(filename)
   file_path_from_root = fileinfo.RepositoryName()
   if _root:
@@ -4794,7 +4794,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
 
   # Make Windows paths like Unix.
   fullname = os.path.abspath(filename).replace('\\', '/')
-  
+
   # Perform other checks now that we are sure that this is not an include line
   CheckCasts(filename, clean_lines, linenum, error)
   CheckGlobalStatic(filename, clean_lines, linenum, error)
@@ -6034,7 +6034,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   nesting_state.CheckCompletedBlocks(filename, error)
 
   CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error)
-  
+
   # Check that the .cc file has included its header if it exists.
   if file_extension == 'cc':
     CheckHeaderFileIncluded(filename, include_state, error)
@@ -6103,6 +6103,15 @@ def ProcessConfigOverrides(filename):
                 _line_length = int(val)
             except ValueError:
                 sys.stderr.write('Line length must be numeric.')
+          elif name == 'extensions':
+              global _valid_extensions
+              try:
+                  extensions = [ext.strip() for ext in val.split(',')]
+                  _valid_extensions = _valid_extensions.union(set(extensions))
+              except ValueError:
+                  sys.stderr.write('Extensions should be a comma-separated list of values;'
+                                   'for example: extensions=hpp,cpp\n'
+                                   'This could not be parsed: "%s"' % (values,))
           else:
             sys.stderr.write(
                 'Invalid configuration option (%s) in file %s\n' %
