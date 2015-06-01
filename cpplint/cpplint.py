@@ -501,6 +501,12 @@ _line_length = 80
 # This is set by --extensions flag.
 _valid_extensions = set(['cc', 'h', 'cpp', 'cu', 'cuh'])
 
+# Files with any of these extensions are considered to be
+# header files (and will undergo different style checks).
+# This set can be extended by using the --header-extensions
+# option (also supported in CPPLINT.cfg)
+_header_extensions = set(['h'])
+
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of error-suppressions.
 
@@ -1666,7 +1672,7 @@ def GetHeaderGuardCPPVariable(filename):
   filename = re.sub(r'/\.flymake/([^/]*)$', r'/\1', filename)
   # Replace 'c++' with 'cpp'.
   filename = filename.replace('C++', 'cpp').replace('c++', 'cpp')
-  
+
   fileinfo = FileInfo(filename)
   file_path_from_root = fileinfo.RepositoryName()
   if _root:
@@ -1780,21 +1786,22 @@ def CheckHeaderFileIncluded(filename, include_state, error):
     return
 
   fileinfo = FileInfo(filename)
-  headerfile = filename[0:len(filename) - 2] + 'h'
-  if not os.path.exists(headerfile):
-    return
-  headername = FileInfo(headerfile).RepositoryName()
-  first_include = 0
-  for section_list in include_state.include_list:
-    for f in section_list:
-      if headername in f[0] or f[0] in headername:
+  for ext in _header_extensions:
+      headerfile = filename[0:len(filename) - 2] + ext
+      if not os.path.exists(headerfile):
         return
-      if not first_include:
-        first_include = f[1]
+      headername = FileInfo(headerfile).RepositoryName()
+      first_include = 0
+      for section_list in include_state.include_list:
+        for f in section_list:
+          if headername in f[0] or f[0] in headername:
+            return
+          if not first_include:
+            first_include = f[1]
 
-  error(filename, first_include, 'build/include', 5,
-        '%s should include its header file %s' % (fileinfo.RepositoryName(),
-                                                  headername))
+      error(filename, first_include, 'build/include', 5,
+            '%s should include its header file %s' % (fileinfo.RepositoryName(),
+                                                      headername))
 
 
 def CheckForBadCharacters(filename, lines, error):
@@ -4431,7 +4438,7 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
 
   # Check if the line is a header guard.
   is_header_guard = False
-  if file_extension == 'h':
+  if file_extension in _header_extensions:
     cppvar = GetHeaderGuardCPPVariable(filename)
     if (line.startswith('#ifndef %s' % cppvar) or
         line.startswith('#define %s' % cppvar) or
@@ -4794,13 +4801,13 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
 
   # Make Windows paths like Unix.
   fullname = os.path.abspath(filename).replace('\\', '/')
-  
+
   # Perform other checks now that we are sure that this is not an include line
   CheckCasts(filename, clean_lines, linenum, error)
   CheckGlobalStatic(filename, clean_lines, linenum, error)
   CheckPrintf(filename, clean_lines, linenum, error)
 
-  if file_extension == 'h':
+  if file_extension in _header_extensions:
     # TODO(unknown): check that 1-arg constructors are explicit.
     #                How to tell it's a constructor?
     #                (handled in CheckForNonStandardConstructs for now)
@@ -4907,7 +4914,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   # Check for use of unnamed namespaces in header files.  Registration
   # macros are typically OK, so we allow use of "namespace {" on lines
   # that end with backslashes.
-  if (file_extension == 'h'
+  if (file_extension in _header_extensions
       and Search(r'\bnamespace\s*{', line)
       and line[-1] != '\\'):
     error(filename, linenum, 'build/namespaces', 4,
@@ -6023,7 +6030,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   RemoveMultiLineComments(filename, lines, error)
   clean_lines = CleansedLines(lines)
 
-  if file_extension == 'h':
+  if file_extension in _header_extensions:
     CheckForHeaderGuard(filename, clean_lines, error)
 
   for line in xrange(clean_lines.NumLines()):
@@ -6034,7 +6041,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   nesting_state.CheckCompletedBlocks(filename, error)
 
   CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error)
-  
+
   # Check that the .cc file has included its header if it exists.
   if file_extension == 'cc':
     CheckHeaderFileIncluded(filename, include_state, error)
