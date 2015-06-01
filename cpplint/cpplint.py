@@ -57,6 +57,7 @@ _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed] [--root=subdir]
                    [--linelength=digits]
+                   [--headers=ext1,ext2]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -133,6 +134,13 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
       Examples:
         --extensions=hpp,cpp
+
+    headers=extension,extension,...
+      The allowed header extensions that cpplint will consider to be header files
+      (by default, only .h files will be assumed to be headers)
+
+      Examples:
+        --headers=h,hpp
 
     cpplint.py supports per-directory configurations specified in CPPLINT.cfg
     files. CPPLINT.cfg file can contain a number of key=value pairs.
@@ -503,7 +511,7 @@ _valid_extensions = set(['cc', 'h', 'cpp', 'cu', 'cuh'])
 
 # Files with any of these extensions are considered to be
 # header files (and will undergo different style checks).
-# This set can be extended by using the --header-extensions
+# This set can be extended by using the --headers
 # option (also supported in CPPLINT.cfg)
 _header_extensions = set(['h'])
 
@@ -6255,7 +6263,8 @@ def ParseArguments(args):
                                                  'filter=',
                                                  'root=',
                                                  'linelength=',
-                                                 'extensions='])
+                                                 'extensions=',
+                                                 'headers='])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
@@ -6294,6 +6303,12 @@ def ParseArguments(args):
       global _valid_extensions
       try:
           _valid_extensions = set(val.split(','))
+      except ValueError:
+          PrintUsage('Extensions must be comma seperated list.')
+    elif opt == '--headers':
+      global _header_extensions
+      try:
+          _header_extensions = set(val.split(','))
       except ValueError:
           PrintUsage('Extensions must be comma seperated list.')
 
