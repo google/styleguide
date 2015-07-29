@@ -106,6 +106,8 @@
       <emptyLine />
       <package name="info" withSubpackages="true" static="false" />
       <emptyLine />
+      <package name="io" withSubpackages="true" static="false" />
+      <emptyLine />
       <package name="it" withSubpackages="true" static="false" />
       <emptyLine />
       <package name="jal" withSubpackages="true" static="false" />
