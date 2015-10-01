@@ -648,7 +648,7 @@ enum SomeEnum { ENUM_CONSTANT }
 // Not constants
 static String nonFinal = "non-final";
 final String nonStatic = "non-static";
-static final Set&lt;String&gt; mutableCollection = new HashSet&lt;String&gt;();
+static final Set&lt;String&gt; mutableCollection = new HashSet&lt;&gt;();
 static final ImmutableSet&lt;SomeMutableType&gt; mutableElements = ImmutableSet.of(mutable);
 static final Logger logger = Logger.getLogger(MyClass.getName());
 static final String[] nonEmptyArray = {"these", "can", "change"};
