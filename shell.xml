@@ -263,7 +263,7 @@ Revision 1.26
     </SUMMARY>
     <BODY>
       <p>
-        This matches the convention in the <a href="cppguide.xml?showone=TODO_Comments#TODO_Comments">C++
+        This matches the convention in the <a href="cppguide.html?showone=TODO_Comments#TODO_Comments">C++
           Guide</a>.
       </p>
       <p>
@@ -1141,7 +1141,7 @@ Revision 1.26
   </p>
   <p>
     Please take a few minutes to read the Parting Words section at the bottom
-    of the <a href="cppguide.xml">C++ Guide</a>.
+    of the <a href="cppguide.html">C++ Guide</a>.
   </p>
 </CATEGORY>
 
