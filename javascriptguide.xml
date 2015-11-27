@@ -980,7 +980,7 @@
     <STYLEPOINT title="Code formatting">
       <SUMMARY>Expand for more information.</SUMMARY>
       <BODY>
-        <p>We follow the <a href="cppguide.xml#Formatting">C++ formatting
+        <p>We follow the <a href="cppguide.html#Formatting">C++ formatting
           rules</a> in spirit, with the following additional clarifications.</p>
         <SUBSECTION title="Curly Braces">
           <p>Because of implicit semicolon insertion, always start your curly
@@ -2215,7 +2215,7 @@
       <BODY>
         <p>
           We follow the
-          <a href="cppguide.xml#Comments">
+          <a href="cppguide.html#Comments">
             C++ style for comments</a> in spirit.
         </p>
 
