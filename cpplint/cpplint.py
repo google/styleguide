@@ -61,6 +61,7 @@ _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed] [--root=subdir]
                    [--linelength=digits] [--recursive]
+                   [--extensions=hpp,cpp,...]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
