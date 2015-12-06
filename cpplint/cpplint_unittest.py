@@ -3743,6 +3743,24 @@ class CpplintTest(CpplintTestBase):
       cpplint._line_length = old_line_length
       cpplint._valid_extensions = old_valid_extensions
 
+  def testRecursiveArgument(self):
+    working_dir = os.getcwd()
+    temp_dir = tempfile.mkdtemp()
+    try:
+      src_dir = os.path.join(temp_dir, "src")
+      nested_dir = os.path.join(temp_dir, "src", "nested")
+      os.makedirs(nested_dir)
+      open(os.path.join(temp_dir, "one.cpp"), 'w').close()
+      open(os.path.join(src_dir, "two.cpp"), 'w').close()
+      open(os.path.join(nested_dir, "three.cpp"), 'w').close()
+      os.chdir(temp_dir)
+      expected = ['one.cpp', 'src/two.cpp', 'src/nested/three.cpp']
+      actual = cpplint.ParseArguments(['--recursive', 'one.cpp', 'src'])
+      self.assertEqual(set(expected), set(actual))
+    finally:
+        os.chdir(working_dir)
+        shutil.rmtree(temp_dir)
+
   def testLineLength(self):
     old_line_length = cpplint._line_length
     try:

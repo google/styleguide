@@ -60,7 +60,7 @@ _valid_extensions = set(['c', 'cc', 'cpp', 'cxx', 'c++', 'h', 'hpp', 'hxx',
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed] [--root=subdir]
-                   [--linelength=digits]
+                   [--linelength=digits] [--recursive]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -132,6 +132,10 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
       Examples:
         --linelength=120
+
+    recursive
+      Each directory given in the list of files to be linted is replaced by
+      all files that descend from that directory.
 
     extensions=extension,extension,...
       The allowed file extensions that cpplint will check
@@ -6267,7 +6271,8 @@ def ParseArguments(args):
                                                  'filter=',
                                                  'root=',
                                                  'linelength=',
-                                                 'extensions='])
+                                                 'extensions=',
+                                                 'recursive'])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
@@ -6275,6 +6280,7 @@ def ParseArguments(args):
   output_format = _OutputFormat()
   filters = ''
   counting_style = ''
+  recursive = False
 
   for (opt, val) in opts:
     if opt == '--help':
@@ -6308,9 +6314,14 @@ def ParseArguments(args):
           _valid_extensions = set(val.split(','))
       except ValueError:
           PrintUsage('Extensions must be comma seperated list.')
+    elif opt == '--recursive':
+      recursive = True
 
   if not filenames:
     PrintUsage('No files were specified.')
+
+  if recursive:
+      filenames = _ExpandDirectories(filenames)
 
   _SetOutputFormat(output_format)
   _SetVerboseLevel(verbosity)
@@ -6319,6 +6330,30 @@ def ParseArguments(args):
 
   return filenames
 
+def _ExpandDirectories(filenames):
+  """Searches a list of filenames and replaces directories in the list with
+  all files descending from those directories.
+
+  Args:
+    filenames: A list of files or directories
+
+  Returns:
+    A list of all files that are members of filenames or descended from a
+    directory in filenames
+  """
+  expanded = set()
+  for filename in filenames:
+      if not os.path.isdir(filename):
+        expanded.add(filename)
+        continue
+
+      for root, dirs, files in os.walk(filename):
+        for file in files:
+          fullname = os.path.join(root, file)
+          if fullname.startswith('.' + os.path.sep):
+            fullname = fullname[len('.' + os.path.sep):]
+          expanded.add(fullname)
+  return list(expanded)
 
 def main():
   filenames = ParseArguments(sys.argv[1:])
