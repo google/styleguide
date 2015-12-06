@@ -134,15 +134,19 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       Examples:
         --linelength=120
 
-    recursive
-      Each directory given in the list of files to be linted is replaced by
-      all files that descend from that directory.
-
     extensions=extension,extension,...
       The allowed file extensions that cpplint will check
 
       Examples:
         --extensions=hpp,cpp
+
+    recursive
+      Each directory given in the list of files to be linted is replaced by
+      all files that descend from that directory. Only files with extensions
+      in the allowed file extensions list are included.
+
+      Examples:
+        --recursive
 
     cpplint.py supports per-directory configurations specified in CPPLINT.cfg
     files. CPPLINT.cfg file can contain a number of key=value pairs.
@@ -6333,7 +6337,8 @@ def ParseArguments(args):
 
 def _ExpandDirectories(filenames):
   """Searches a list of filenames and replaces directories in the list with
-  all files descending from those directories.
+  all files descending from those directories. Files with extensions not in
+  the valid extensions list are excluded.
 
   Args:
     filenames: A list of files or directories
@@ -6354,7 +6359,13 @@ def _ExpandDirectories(filenames):
           if fullname.startswith('.' + os.path.sep):
             fullname = fullname[len('.' + os.path.sep):]
           expanded.add(fullname)
-  return list(expanded)
+
+  filtered = []
+  for filename in expanded:
+      if os.path.splitext(filename)[1][1:] in _valid_extensions:
+          filtered.append(filename)
+
+  return filtered
 
 def main():
   filenames = ParseArguments(sys.argv[1:])
