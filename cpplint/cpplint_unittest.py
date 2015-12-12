@@ -3772,11 +3772,62 @@ class CpplintTest(CpplintTestBase):
       open(os.path.join(src_dir, "three.cc"), 'w').close()
       os.chdir(temp_dir)
       expected = ['one.cpp', 'src/two.cpp']
-      actual = cpplint.ParseArguments(['--recursive', '--extensions=cpp', 'one.cpp', 'src'])
+      actual = cpplint.ParseArguments(['--recursive', '--extensions=cpp',
+          'one.cpp', 'src'])
       self.assertEqual(set(expected), set(actual))
     finally:
         os.chdir(working_dir)
         shutil.rmtree(temp_dir)
+
+  def testJUnitXML(self):
+    try:
+      cpplint._cpplint_state._junit_errors = []
+      cpplint._cpplint_state._junit_failures = []
+      expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
+          '<testsuite name="cpplint" errors="0" failures="0" tests="1">'
+          '<testcase name="passed" />'
+          '</testsuite>')
+      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+
+      cpplint._cpplint_state._junit_errors = ['ErrMsg1']
+      cpplint._cpplint_state._junit_failures = []
+      expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
+          '<testsuite name="cpplint" errors="1" failures="0" tests="1">'
+          '<testcase name="error"><error>ErrMsg1</error></testcase>'
+          '</testsuite>')
+      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+
+      cpplint._cpplint_state._junit_errors = ['ErrMsg1', 'ErrMsg2']
+      cpplint._cpplint_state._junit_failures = []
+      expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
+          '<testsuite name="cpplint" errors="2" failures="0" tests="2">'
+          '<testcase name="error"><error>ErrMsg1\nErrMsg2</error></testcase>'
+          '</testsuite>')
+      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+
+      cpplint._cpplint_state._junit_errors = ['ErrMsg']
+      cpplint._cpplint_state._junit_failures = [('File', 5, 'FailMsg')]
+      expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
+          '<testsuite name="cpplint" errors="1" failures="1" tests="2">'
+          '<testcase name="error"><error>ErrMsg</error></testcase>'
+          '<testcase name="File"><failure>5: FailMsg</failure></testcase>'
+          '</testsuite>')
+      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+
+      cpplint._cpplint_state._junit_errors = []
+      cpplint._cpplint_state._junit_failures = [('File1', 5, 'FailMsg1'),
+          ('File2', 99, 'FailMsg2'), ('File1', 19, 'FailMsg3')]
+      expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
+          '<testsuite name="cpplint" errors="0" failures="3" tests="3">'
+          '<testcase name="File1"><failure>5: FailMsg1\n'
+          '19: FailMsg3</failure></testcase>'
+          '<testcase name="File2"><failure>99: FailMsg2</failure></testcase>'
+          '</testsuite>')
+      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+
+    finally:
+      cpplint._cpplint_state._junit_errors = []
+      cpplint._cpplint_state._junit_failures = []
 
   def testLineLength(self):
     old_line_length = cpplint._line_length
