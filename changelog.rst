@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+0.0.6
+-----
+
+Adds the --recursive flag and JUnit XML output.
+
 0.0.5
 -----
 
