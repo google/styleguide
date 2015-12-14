@@ -919,7 +919,7 @@ class _CppLintState(object):
         body += template.format(failed_file, text)
     return ('<?xml version="1.0" encoding="UTF-8" ?>\n'
         '<testsuite name="cpplint" errors="{0}" failures="{1}" tests="{2}">'
-        '{3}</testsuite>').format(num_errors, num_failures, num_tests, body)
+        '{3}</testsuite>\n').format(num_errors, num_failures, num_tests, body)
 
 
 _cpplint_state = _CppLintState()
