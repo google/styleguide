@@ -1,7 +1,7 @@
 cpplint - static code checker for C++
 =====================================
 
-This project continues the work of cpplint, a C++ style checker following [Google's C++ style guide](http://google.github.io/styleguide/cppguide.html). It provides cpplint as a PyPI packages and adds a few features and fixes. It is maintained as a fork of [google/styleguide](https://github.com/google/styleguide) in hopes that it can be merged in the future.
+This project continues the work of cpplint, a C++ style checker following `Google's C++ style guide <http://google.github.io/styleguide/cppguide.html>`_. It provides cpplint as a PyPI packages and adds a few features and fixes. It is maintained as a fork of `google/styleguide <https://github.com/google/styleguide>`_ in hopes that it can be merged in the future.
 
 To install cpplint from PyPI, run:
 
@@ -46,6 +46,7 @@ To release a new version:
     python setup.py sdist register -r pypi
     python setup.py sdist upload -r pypi
 
-Thanks to [tkruse](https://github.com/tkruse) for putting cpplint on PyPI and maintaining the PyPI version for many years!
+Thanks to `tkruse <https://github.com/tkruse>`_ for putting cpplint on PyPI and maintaining the PyPI version for many years!
 
-[![Build Status](https://travis-ci.org/theandrewdavis/cpplint.svg)](https://travis-ci.org/theandrewdavis/cpplint)
+.. image:: https://travis-ci.org/theandrewdavis/cpplint.svg
+    :target: https://travis-ci.org/theandrewdavis/cpplint
