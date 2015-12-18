@@ -433,7 +433,7 @@
       <BODY>
         <p>The ability to create closures is perhaps the most useful and often
           overlooked feature of JS. Here is
-          <a href="http://jibbering.com/faq/faq_notes/closures.html">
+          <a href="http://jibbering.com/faq/notes/closures/">
             a good description of how closures work</a>.</p>
         <p>One thing to keep in mind, however, is that a closure keeps a pointer
           to its enclosing scope. As a result, attaching a closure to a DOM
