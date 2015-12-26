@@ -1797,9 +1797,9 @@ def CheckHeaderFileIncluded(filename, include_state, error):
   for ext in _header_extensions:
       headerfile = filename[0:len(filename) - 2] + ext
       if not os.path.exists(headerfile):
-        return
+        continue
       headername = FileInfo(headerfile).RepositoryName()
-      first_include = 0
+      first_include = None
       for section_list in include_state.include_list:
         for f in section_list:
           if headername in f[0] or f[0] in headername:
