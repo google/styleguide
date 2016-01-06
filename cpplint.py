@@ -892,8 +892,9 @@ class _CppLintState(object):
     else:
       sys.stderr.write(message)
 
-  def AddJUnitFailure(self, filename, linenum, message):
-    self._junit_failures.append((filename, linenum, message))
+  def AddJUnitFailure(self, filename, linenum, message, category, confidence):
+    self._junit_failures.append((filename, linenum, message, category,
+        confidence))
 
   def FormatJUnitXML(self):
     num_errors = len(self._junit_errors)
@@ -931,8 +932,9 @@ class _CppLintState(object):
           testcase = xml.etree.ElementTree.SubElement(testsuite, 'testcase')
           testcase.attrib['name'] = failed_file
           failure = xml.etree.ElementTree.SubElement(testcase, 'failure')
-          failure_texts = ['{0}: {1}'.format(f[1], f[2]) for f in failures]
-          failure.text = '\n'.join(failure_texts)
+          template = '{0}: {1} [{2}] [{3}]'
+          texts = [template.format(f[1], f[2], f[3], f[4]) for f in failures]
+          failure.text = '\n'.join(texts)
 
     xml_decl = '<?xml version="1.0" encoding="UTF-8" ?>\n'
     return xml_decl + xml.etree.ElementTree.tostring(testsuite, 'utf-8').decode('utf-8')
@@ -1213,7 +1215,8 @@ def Error(filename, linenum, category, confidence, message):
       sys.stderr.write('%s:%s: warning: %s  [%s] [%d]\n' % (
           filename, linenum, message, category, confidence))
     elif _cpplint_state.output_format == 'junit':
-        _cpplint_state.AddJUnitFailure(filename, linenum, message)
+        _cpplint_state.AddJUnitFailure(filename, linenum, message, category,
+            confidence)
     else:
       m = '%s:%s:  %s  [%s] [%d]\n' % (
           filename, linenum, message, category, confidence)
