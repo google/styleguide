@@ -41,6 +41,9 @@ To release a new version:
 .. code-block:: bash
 
     vi setup.py # increment the version
+    vi changelog.rst # log changes
+    git add setup.py changelog.rst
+    git commit -m "Releasing 0.0.6"
     git tag 0.0.6
     git push --tags
     python setup.py sdist register -r pypi

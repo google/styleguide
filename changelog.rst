@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+0.0.7
+-----
+
+Fixes a Windows include guard bug and adds escaping and more detail to JUnit XML output.
+
 0.0.6
 -----
 
