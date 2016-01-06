@@ -3784,45 +3784,54 @@ class CpplintTest(CpplintTestBase):
       cpplint._cpplint_state._junit_errors = []
       cpplint._cpplint_state._junit_failures = []
       expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
-          '<testsuite name="cpplint" errors="0" failures="0" tests="1">'
+          '<testsuite errors="0" failures="0" name="cpplint" tests="1">'
           '<testcase name="passed" />'
-          '</testsuite>\n')
+          '</testsuite>')
       self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
 
       cpplint._cpplint_state._junit_errors = ['ErrMsg1']
       cpplint._cpplint_state._junit_failures = []
       expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
-          '<testsuite name="cpplint" errors="1" failures="0" tests="1">'
-          '<testcase name="error"><error>ErrMsg1</error></testcase>'
-          '</testsuite>\n')
+          '<testsuite errors="1" failures="0" name="cpplint" tests="1">'
+          '<testcase name="errors"><error>ErrMsg1</error></testcase>'
+          '</testsuite>')
       self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
 
       cpplint._cpplint_state._junit_errors = ['ErrMsg1', 'ErrMsg2']
       cpplint._cpplint_state._junit_failures = []
       expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
-          '<testsuite name="cpplint" errors="2" failures="0" tests="2">'
-          '<testcase name="error"><error>ErrMsg1\nErrMsg2</error></testcase>'
-          '</testsuite>\n')
+          '<testsuite errors="2" failures="0" name="cpplint" tests="2">'
+          '<testcase name="errors"><error>ErrMsg1\nErrMsg2</error></testcase>'
+          '</testsuite>')
       self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
 
       cpplint._cpplint_state._junit_errors = ['ErrMsg']
       cpplint._cpplint_state._junit_failures = [('File', 5, 'FailMsg')]
       expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
-          '<testsuite name="cpplint" errors="1" failures="1" tests="2">'
-          '<testcase name="error"><error>ErrMsg</error></testcase>'
+          '<testsuite errors="1" failures="1" name="cpplint" tests="2">'
+          '<testcase name="errors"><error>ErrMsg</error></testcase>'
           '<testcase name="File"><failure>5: FailMsg</failure></testcase>'
-          '</testsuite>\n')
+          '</testsuite>')
       self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
 
       cpplint._cpplint_state._junit_errors = []
       cpplint._cpplint_state._junit_failures = [('File1', 5, 'FailMsg1'),
           ('File2', 99, 'FailMsg2'), ('File1', 19, 'FailMsg3')]
       expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
-          '<testsuite name="cpplint" errors="0" failures="3" tests="3">'
+          '<testsuite errors="0" failures="3" name="cpplint" tests="3">'
           '<testcase name="File1"><failure>5: FailMsg1\n'
           '19: FailMsg3</failure></testcase>'
           '<testcase name="File2"><failure>99: FailMsg2</failure></testcase>'
-          '</testsuite>\n')
+          '</testsuite>')
+      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+
+      cpplint._cpplint_state._junit_errors = ['&</error>']
+      cpplint._cpplint_state._junit_failures = [('File1', 5, '&</failure>')]
+      expected = ('<?xml version="1.0" encoding="UTF-8" ?>\n'
+          '<testsuite errors="1" failures="1" name="cpplint" tests="2">'
+          '<testcase name="errors"><error>&amp;&lt;/error&gt;</error>'
+          '</testcase><testcase name="File1"><failure>5: '
+          '&amp;&lt;/failure&gt;</failure></testcase></testsuite>')
       self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
 
     finally:

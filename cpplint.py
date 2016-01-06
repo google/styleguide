@@ -51,6 +51,7 @@ import sre_compile
 import string
 import sys
 import unicodedata
+import xml.etree.ElementTree
 
 # The allowed extensions for file names
 # This is set by --extensions flag.
@@ -892,36 +893,49 @@ class _CppLintState(object):
       sys.stderr.write(message)
 
   def AddJUnitFailure(self, filename, linenum, message):
-      self._junit_failures.append((filename, linenum, message))
+    self._junit_failures.append((filename, linenum, message))
 
   def FormatJUnitXML(self):
     num_errors = len(self._junit_errors)
     num_failures = len(self._junit_failures)
+
+    testsuite = xml.etree.ElementTree.Element('testsuite')
+    testsuite.attrib['name'] = 'cpplint'
+    testsuite.attrib['errors'] = str(num_errors)
+    testsuite.attrib['failures'] = str(num_failures)
+
     if num_errors == 0 and num_failures == 0:
-      num_tests = 1
-      body = '<testcase name="passed" />'
+      testsuite.attrib['tests'] = str(1)
+      xml.etree.ElementTree.SubElement(testsuite, 'testcase', name='passed')
+
     else:
-      num_tests = num_errors + num_failures
-      body = ''
-      if len(self._junit_errors) > 0:
-        template = '<testcase name="error"><error>{0}</error></testcase>'
-        body += template.format('\n'.join(self._junit_errors))
-      failed_file_order = []
-      failures_by_file = {}
-      for failure in self._junit_failures:
-        failed_file = failure[0]
-        if failed_file not in failed_file_order:
-          failed_file_order.append(failed_file)
-          failures_by_file[failed_file] = []
-        failures_by_file[failed_file].append(failure)
-      for failed_file in failed_file_order:
-        failures = failures_by_file[failed_file]
-        text = '\n'.join(['{0}: {1}'.format(f[1], f[2]) for f in failures])
-        template = '<testcase name="{0}"><failure>{1}</failure></testcase>'
-        body += template.format(failed_file, text)
-    return ('<?xml version="1.0" encoding="UTF-8" ?>\n'
-        '<testsuite name="cpplint" errors="{0}" failures="{1}" tests="{2}">'
-        '{3}</testsuite>\n').format(num_errors, num_failures, num_tests, body)
+      testsuite.attrib['tests'] = str(num_errors + num_failures)
+      if num_errors > 0:
+        testcase = xml.etree.ElementTree.SubElement(testsuite, 'testcase')
+        testcase.attrib['name'] = 'errors'
+        error = xml.etree.ElementTree.SubElement(testcase, 'error')
+        error.text = '\n'.join(self._junit_errors)
+      if num_failures > 0:
+        # Group failures by file
+        failed_file_order = []
+        failures_by_file = {}
+        for failure in self._junit_failures:
+          failed_file = failure[0]
+          if failed_file not in failed_file_order:
+            failed_file_order.append(failed_file)
+            failures_by_file[failed_file] = []
+          failures_by_file[failed_file].append(failure)
+        # Create a testcase for each file
+        for failed_file in failed_file_order:
+          failures = failures_by_file[failed_file]
+          testcase = xml.etree.ElementTree.SubElement(testsuite, 'testcase')
+          testcase.attrib['name'] = failed_file
+          failure = xml.etree.ElementTree.SubElement(testcase, 'failure')
+          failure_texts = ['{0}: {1}'.format(f[1], f[2]) for f in failures]
+          failure.text = '\n'.join(failure_texts)
+
+    xml_decl = '<?xml version="1.0" encoding="UTF-8" ?>\n'
+    return xml_decl + xml.etree.ElementTree.tostring(testsuite, 'utf-8').decode('utf-8')
 
 
 _cpplint_state = _CppLintState()
