@@ -4588,9 +4588,10 @@ def _ClassifyInclude(fileinfo, include, is_system):
   target_dir, target_base = (
       os.path.split(_DropCommonSuffixes(fileinfo.RepositoryName())))
   include_dir, include_base = os.path.split(_DropCommonSuffixes(include))
+  public_dir = os.path.normpath(target_dir + '/../public').replace('\\', '/')
   if target_base == include_base and (
       include_dir == target_dir or
-      include_dir == os.path.normpath(target_dir + '/../public')):
+      include_dir == public_dir):
     return _LIKELY_MY_HEADER
 
   # If the target and include share some initial basename
