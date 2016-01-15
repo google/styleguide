@@ -193,12 +193,12 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
 
     "exclude_files" allows to specify a regular expression to be matched against
     a file name. If the expression matches, the file is skipped and not run
-    through liner.
+    through the linter.
 
-    "linelength" allows to specify the allowed line length for the project.
+    "linelength" specifies the allowed line length for the project.
 
     CPPLINT.cfg has an effect on files in the same directory and all
-    sub-directories, unless overridden by a nested configuration file.
+    subdirectories, unless overridden by a nested configuration file.
 
       Example file:
         filter=-build/include_order,+build/include_alpha
@@ -207,7 +207,7 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
     The above example disables build/include_order warning and enables
     build/include_alpha as well as excludes all .cc from being
     processed by linter, in the current directory (where the .cfg
-    file is located) and all sub-directories.
+    file is located) and all subdirectories.
 """ % (list(_valid_extensions))
 
 # We categorize each error message we print.  Here are the categories.
