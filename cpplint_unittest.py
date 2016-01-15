@@ -4227,6 +4227,53 @@ class CpplintTest(CpplintTestBase):
     finally:
         shutil.rmtree(temp_directory)
 
+  def testBuildHeaderGuardWithRepository(self):
+    temp_directory = tempfile.mkdtemp()
+    temp_directory2 = tempfile.mkdtemp()
+    try:
+        os.makedirs(os.path.join(temp_directory, ".svn"))
+        trunk_dir = os.path.join(temp_directory, "trunk")
+        os.makedirs(trunk_dir)
+        header_directory = os.path.join(trunk_dir, "cpplint")
+        os.makedirs(header_directory)
+        file_path = os.path.join(header_directory, 'cpplint_test_header.h')
+        open(file_path, 'a').close()
+        file_info = cpplint.FileInfo(file_path)
+
+        # search for .svn if _repository is not specified
+        self.assertEqual('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
+                          cpplint.GetHeaderGuardCPPVariable(file_path))
+
+        # use the provided repository root for header guards
+        cpplint._repository = os.path.relpath(trunk_dir)
+        self.assertEqual('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                          cpplint.GetHeaderGuardCPPVariable(file_path))
+        cpplint._repository = os.path.abspath(trunk_dir)
+        self.assertEqual('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                          cpplint.GetHeaderGuardCPPVariable(file_path))
+
+        # ignore _repository if it doesnt exist
+        cpplint._repository = os.path.join(temp_directory, 'NON_EXISTANT')
+        self.assertEqual('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
+                          cpplint.GetHeaderGuardCPPVariable(file_path))
+
+        # ignore _repository if it exists but file isn't in it
+        cpplint._repository = os.path.relpath(temp_directory2)
+        self.assertEqual('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
+                          cpplint.GetHeaderGuardCPPVariable(file_path))
+
+        # _root should be relative to _repository
+        cpplint._repository = os.path.relpath(trunk_dir)
+        cpplint._root = 'cpplint'
+        self.assertEqual('CPPLINT_TEST_HEADER_H_',
+                          cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    finally:
+        shutil.rmtree(temp_directory)
+        shutil.rmtree(temp_directory2)
+        cpplint._repository = None
+        cpplint._root = None
+
   def testBuildInclude(self):
     # Test that include statements have slashes in them.
     self.TestLint('#include "foo.h"',

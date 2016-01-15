@@ -61,8 +61,8 @@ _valid_extensions = set(['c', 'cc', 'cpp', 'cxx', 'c++', 'h', 'hpp', 'hxx',
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
                    [--filter=-x,+y,...]
-                   [--counting=total|toplevel|detailed] [--root=subdir]
-                   [--linelength=digits] [--recursive]
+                   [--counting=total|toplevel|detailed] [--repository=path]
+                   [--root=subdir] [--linelength=digits] [--recursive]
                    [--extensions=hpp,cpp,...]
         <file> [file] ...
 
@@ -117,17 +117,40 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
       also be printed. If 'detailed' is provided, then a count
       is provided for each category like 'build/class'.
 
-    root=subdir
-      The root directory used for deriving header guard CPP variable.
-      By default, the header guard CPP variable is calculated as the relative
-      path to the directory that contains .git, .hg, or .svn.  When this flag
-      is specified, the relative path is calculated from the specified
-      directory. If the specified directory does not exist, this flag is
-      ignored.
+    repository=path
+      The top level directory of the repository, used to derive the header
+      guard CPP variable. By default, this is determined by searching for a
+      path that contains .git, .hg, or .svn. When this flag is specified, the
+      given path is used instead. This option allows the header guard CPP
+      variable to remain consistent even if members of a team have different
+      repository root directories (such as when checking out a subdirectory
+      with SVN). In addition, users of non-mainstream version control systems
+      can use this flag to ensure readable header guard CPP variables.
 
       Examples:
-        Assuming that src/.git exists, the header guard CPP variables for
-        src/chrome/browser/ui/browser.h are:
+        Assuming that Alice checks out ProjectName and Bob checks out
+        ProjectName/trunk and trunk contains src/chrome/ui/browser.h, then
+        with no --repository flag, the header guard CPP variable will be:
+
+        Alice => TRUNK_SRC_CHROME_BROWSER_UI_BROWSER_H_
+        Bob   => SRC_CHROME_BROWSER_UI_BROWSER_H_
+
+        If Alice uses the --repository=trunk flag and Bob omits the flag or
+        uses --repository=. then the header guard CPP variable will be:
+
+        Alice => SRC_CHROME_BROWSER_UI_BROWSER_H_
+        Bob   => SRC_CHROME_BROWSER_UI_BROWSER_H_
+
+    root=subdir
+      The root directory used for deriving header guard CPP variables. This
+      directory is relative to the top level directory of the repository which
+      by default is determined by searching for a directory that contains .git,
+      .hg, or .svn but can also be controlled with the --repository flag. If
+      the specified directory does not exist, this flag is ignored.
+
+      Examples:
+        Assuming that src is the top level directory of the repository, the
+        header guard CPP variables for src/chrome/browser/ui/browser.h are:
 
         No flag => CHROME_BROWSER_UI_BROWSER_H_
         --root=chrome => BROWSER_UI_BROWSER_H_
@@ -509,6 +532,11 @@ _error_suppressions = {}
 # The root directory used for deriving header guard CPP variable.
 # This is set by --root flag.
 _root = None
+
+# The top level repository directory. If set, _root is calculated relative to
+# this directory instead of the directory containing version control artifacts.
+# This is set by the --repository flag.
+_repository = None
 
 # The allowed line length of files.
 # This is set by --linelength flag.
@@ -1094,6 +1122,19 @@ class FileInfo(object):
 
     if os.path.exists(fullname):
       project_dir = os.path.dirname(fullname)
+
+      # If the user specified a repository path, it exists, and the file is
+      # contained in it, use the specified repository path
+      if _repository:
+        repo = FileInfo(_repository).FullName()
+        root_dir = project_dir
+        while os.path.exists(root_dir):
+          if root_dir == repo:
+            return os.path.relpath(fullname, root_dir)
+          one_up_dir = os.path.dirname(root_dir)
+          if one_up_dir == root_dir:
+            break
+          root_dir = one_up_dir
 
       if os.path.exists(os.path.join(project_dir, ".svn")):
         # If there's a .svn file in the current directory, we recursively look
@@ -6378,6 +6419,9 @@ def ParseArguments(args):
     elif opt == '--root':
       global _root
       _root = val
+    elif opt == '--repository':
+      global _repository
+      _repository = val
     elif opt == '--linelength':
       global _line_length
       try:
