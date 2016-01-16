@@ -3754,7 +3754,8 @@ class CpplintTest(CpplintTestBase):
       open(os.path.join(src_dir, "two.cpp"), 'w').close()
       open(os.path.join(nested_dir, "three.cpp"), 'w').close()
       os.chdir(temp_dir)
-      expected = ['one.cpp', 'src/two.cpp', 'src/nested/three.cpp']
+      expected = ['one.cpp', os.path.join('src', 'two.cpp'),
+                  os.path.join('src', 'nested', 'three.cpp')]
       actual = cpplint.ParseArguments(['--recursive', 'one.cpp', 'src'])
       self.assertEqual(set(expected), set(actual))
     finally:
@@ -3771,7 +3772,7 @@ class CpplintTest(CpplintTestBase):
       open(os.path.join(src_dir, "two.cpp"), 'w').close()
       open(os.path.join(src_dir, "three.cc"), 'w').close()
       os.chdir(temp_dir)
-      expected = ['one.cpp', 'src/two.cpp']
+      expected = ['one.cpp', os.path.join('src', 'two.cpp')]
       actual = cpplint.ParseArguments(['--recursive', '--extensions=cpp',
           'one.cpp', 'src'])
       self.assertEqual(set(expected), set(actual))

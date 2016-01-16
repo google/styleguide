@@ -1129,8 +1129,9 @@ class FileInfo(object):
         repo = FileInfo(_repository).FullName()
         root_dir = project_dir
         while os.path.exists(root_dir):
-          if root_dir == repo:
-            return os.path.relpath(fullname, root_dir)
+	  # allow case insensitive compare on Windows
+          if os.path.normcase(root_dir) == os.path.normcase(repo):
+            return os.path.relpath(fullname, root_dir).replace('\\', '/')
           one_up_dir = os.path.dirname(root_dir)
           if one_up_dir == root_dir:
             break
@@ -4721,9 +4722,11 @@ def _ClassifyInclude(fileinfo, include, is_system):
   target_dir, target_base = (
       os.path.split(_DropCommonSuffixes(fileinfo.RepositoryName())))
   include_dir, include_base = os.path.split(_DropCommonSuffixes(include))
+  target_dir_pub = os.path.normpath(target_dir + '/../public')
+  target_dir_pub = target_dir_pub.replace('\\', '/')
   if target_base == include_base and (
       include_dir == target_dir or
-      include_dir == os.path.normpath(target_dir + '/../public')):
+      include_dir == target_dir_pub):
     return _LIKELY_MY_HEADER
 
   # If the target and include share some initial basename
