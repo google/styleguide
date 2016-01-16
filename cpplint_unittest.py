@@ -4198,6 +4198,13 @@ class CpplintTest(CpplintTestBase):
               '  [build/header_guard] [5]' % expected_guard),
           error_collector.ResultList())
 
+  def testPragmaOnce(self):
+    error_collector = ErrorCollector(self.assertTrue)
+    cpplint.ProcessFileData('mydir/foo.h', 'h',
+        ['// Copyright 2014 Your Company.', '#pragma once', ''],
+        error_collector)
+    self.assertEqual([], error_collector.ResultList())
+
   def testBuildHeaderGuardWithRoot(self):
     temp_directory = tempfile.mkdtemp()
     try:
