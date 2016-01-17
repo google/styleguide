@@ -32,6 +32,8 @@ The modifications in this branch are minor fixes and cosmetic changes:
 * continuous integration on travis
 * support for recursive file discover via the --recursive argument
 * JUnit XML output format
+* Overriding repository root auto-detection via --repository
+* Support ``#pragma once`` as an alternative to header include guards
 
 Maintaining
 -----------

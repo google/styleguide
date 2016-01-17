@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+0.0.8
+-----
+
+Adds the --repository flag and adds support for ``#pragma once`` as an alternative to header include guards.
+
 0.0.7
 -----
 
