@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+0.0.9
+-----
+
+Adds the --exclude flag to exclude files from being linted.
+
 0.0.8
 -----
 

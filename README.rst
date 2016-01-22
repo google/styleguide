@@ -30,7 +30,8 @@ The modifications in this branch are minor fixes and cosmetic changes:
 * python 3k compatibility
 * minor fixes around default file extensions
 * continuous integration on travis
-* support for recursive file discover via the --recursive argument
+* support for recursive file discovery via the --recursive argument
+* support for excluding files via --exclude
 * JUnit XML output format
 * Overriding repository root auto-detection via --repository
 * Support ``#pragma once`` as an alternative to header include guards
