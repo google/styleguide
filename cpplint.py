@@ -6433,15 +6433,15 @@ def ParseArguments(args):
     elif opt == '--linelength':
       global _line_length
       try:
-          _line_length = int(val)
+        _line_length = int(val)
       except ValueError:
-          PrintUsage('Line length must be digits.')
+        PrintUsage('Line length must be digits.')
     elif opt == '--extensions':
       global _valid_extensions
       try:
-          _valid_extensions = set(val.split(','))
+        _valid_extensions = set(val.split(','))
       except ValueError:
-          PrintUsage('Extensions must be comma seperated list.')
+        PrintUsage('Extensions must be comma seperated list.')
     elif opt == '--recursive':
       recursive = True
 
@@ -6449,7 +6449,7 @@ def ParseArguments(args):
     PrintUsage('No files were specified.')
 
   if recursive:
-      filenames = _ExpandDirectories(filenames)
+    filenames = _ExpandDirectories(filenames)
 
   _SetOutputFormat(output_format)
   _SetVerboseLevel(verbosity)
