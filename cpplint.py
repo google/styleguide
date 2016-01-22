@@ -165,9 +165,10 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
         --linelength=120
 
     recursive
-      Each directory given in the list of files to be linted is replaced by
-      all files that descend from that directory. Files with extensions not in
-      the valid extensions list are excluded.
+      Search for files to lint recursively. Each directory given in the list
+      of files to be linted is replaced by all files that descend from that
+      directory. Files with extensions not in the valid extensions list are
+      excluded.
 
     exclude=path
       Exclude the given path from the list of files to be linted. Relative
