@@ -44,6 +44,7 @@ same line, but it is far from perfect (in either direction).
 import codecs
 import copy
 import getopt
+import glob
 import math  # for log
 import os
 import re
@@ -63,7 +64,7 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
                    [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed] [--repository=path]
                    [--root=subdir] [--linelength=digits] [--recursive]
-                   [--extensions=hpp,cpp,...]
+                   [--exclude=path] [--extensions=hpp,cpp,...]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -167,6 +168,17 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
       Each directory given in the list of files to be linted is replaced by
       all files that descend from that directory. Files with extensions not in
       the valid extensions list are excluded.
+
+    exclude=path
+      Exclude the given path from the list of files to be linted. Relative
+      paths are evaluated relative to the current directory and shell globbing
+      is performed. This flag can be provided multiple times to exclude
+      multiple files.
+
+      Examples:
+        --exclude=one.cc
+        --exclude=src/*.cc
+        --exclude=src/*.cc --exclude=test/*.cc
 
     extensions=extension,extension,...
       The allowed file extensions that cpplint will check
@@ -537,6 +549,9 @@ _root = None
 # this directory instead of the directory containing version control artifacts.
 # This is set by the --repository flag.
 _repository = None
+
+# Files to exclude from linting. This is set by the --exclude flag.
+_excludes = None
 
 # The allowed line length of files.
 # This is set by --linelength flag.
@@ -6239,7 +6254,7 @@ def ProcessConfigOverrides(filename):
             if base_name:
               pattern = re.compile(val)
               if pattern.match(base_name):
-                _cpplint_state.PrintError('Ignoring "%s": file excluded by '
+                _cpplint_state.PrintInfo('Ignoring "%s": file excluded by '
                     '"%s". File path component "%s" matches pattern "%s"\n' %
                     (filename, cfg_file, base_name, val))
                 return False
@@ -6396,6 +6411,7 @@ def ParseArguments(args):
                                                  'root=',
                                                  'linelength=',
                                                  'extensions=',
+                                                 'exclude=',
                                                  'recursive'])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
@@ -6436,6 +6452,11 @@ def ParseArguments(args):
         _line_length = int(val)
       except ValueError:
         PrintUsage('Line length must be digits.')
+    elif opt == '--exclude':
+      global _excludes
+      if not _excludes:
+        _excludes = set()
+      _excludes.update(glob.glob(val))
     elif opt == '--extensions':
       global _valid_extensions
       try:
@@ -6450,6 +6471,9 @@ def ParseArguments(args):
 
   if recursive:
     filenames = _ExpandDirectories(filenames)
+
+  if _excludes:
+    filenames = _FilterExcludedFiles(filenames)
 
   _SetOutputFormat(output_format)
   _SetVerboseLevel(verbosity)
@@ -6489,6 +6513,13 @@ def _ExpandDirectories(filenames):
           filtered.append(filename)
 
   return filtered
+
+def _FilterExcludedFiles(filenames):
+  """Filters out files listed in the --exclude command line switch. File paths
+  in the switch are evaluated relative to the current working directory
+  """
+  exclude_paths = [os.path.abspath(f) for f in _excludes]
+  return [f for f in filenames if os.path.abspath(f) not in exclude_paths]
 
 def main():
   filenames = ParseArguments(sys.argv[1:])

@@ -3780,6 +3780,31 @@ class CpplintTest(CpplintTestBase):
         os.chdir(working_dir)
         shutil.rmtree(temp_dir)
 
+  def testExclude(self):
+    working_dir = os.getcwd()
+    temp_dir = tempfile.mkdtemp()
+    try:
+      src_dir = os.path.join(temp_dir, 'src')
+      os.makedirs(src_dir)
+      open(os.path.join(src_dir, 'one.cc'), 'w').close()
+      open(os.path.join(src_dir, 'two.cc'), 'w').close()
+      open(os.path.join(src_dir, 'three.cc'), 'w').close()
+      os.chdir(temp_dir)
+
+      expected = [os.path.join('src', 'one.cc')]
+      actual = cpplint.ParseArguments(['--recursive',
+          '--exclude=src{0}t*'.format(os.sep), 'src'])
+      self.assertEqual(set(expected), set(actual))
+
+      expected = [os.path.join('src', 'one.cc')]
+      actual = cpplint.ParseArguments(['--recursive',
+          '--exclude=src/two.cc', '--exclude=src/three.cc', 'src'])
+      self.assertEqual(set(expected), set(actual))
+
+    finally:
+        os.chdir(working_dir)
+        shutil.rmtree(temp_dir)
+
   def testJUnitXML(self):
     try:
       cpplint._cpplint_state._junit_errors = []
