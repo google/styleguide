@@ -48,6 +48,7 @@ To release a new version:
     git add setup.py changelog.rst
     git commit -m "Releasing 0.0.6"
     git tag 0.0.6
+    git push
     git push --tags
     python setup.py sdist register -r pypi
     python setup.py sdist upload -r pypi
