@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+1.0.1
+-----
+
+* Updates PyPi README
+
 1.0.0
 -----
 
