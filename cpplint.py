@@ -96,6 +96,10 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
       Errors with lower verbosity levels have lower confidence and are more
       likely to be false positives.
 
+    quiet
+      Supress output other than linting errors, such as information about
+      which files have been processed and excluded.
+
     filter=-x,+y,...
       Specify a comma-separated list of category-filters to apply: only
       error messages whose category names pass the filters will be printed.
@@ -554,6 +558,9 @@ _repository = None
 # Files to exclude from linting. This is set by the --exclude flag.
 _excludes = None
 
+# Whether to supress PrintInfo messages
+_quiet = False
+
 # The allowed line length of files.
 # This is set by --linelength flag.
 _line_length = 80
@@ -927,7 +934,7 @@ class _CppLintState(object):
     self.PrintInfo('Total errors found: %d\n' % self.error_count)
 
   def PrintInfo(self, message):
-    if self.output_format != 'junit':
+    if not _quiet and self.output_format != 'junit':
       sys.stderr.write(message)
 
   def PrintError(self, message):
@@ -6414,6 +6421,7 @@ def ParseArguments(args):
                                                  'linelength=',
                                                  'extensions=',
                                                  'exclude=',
+                                                 'quiet',
                                                  'recursive'])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
@@ -6467,6 +6475,9 @@ def ParseArguments(args):
         PrintUsage('Extensions must be comma seperated list.')
     elif opt == '--recursive':
       recursive = True
+    elif opt == '--quiet':
+      global _quiet
+      _quiet = True
 
   if not filenames:
     PrintUsage('No files were specified.')

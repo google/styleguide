@@ -41,6 +41,7 @@ import sys
 import unittest
 import tempfile
 import shutil
+import StringIO
 
 import cpplint
 
@@ -3868,6 +3869,11 @@ class CpplintTest(CpplintTestBase):
     finally:
       cpplint._cpplint_state._junit_errors = []
       cpplint._cpplint_state._junit_failures = []
+
+  def testQuiet(self):
+    self.assertEqual(cpplint._quiet, False)
+    cpplint.ParseArguments(['--quiet', 'one.cpp'])
+    self.assertEqual(cpplint._quiet, True)
 
   def testLineLength(self):
     old_line_length = cpplint._line_length
