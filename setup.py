@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 setup(name='cpplint',
-      version='1.0.1',
+      version='1.1.0',
       py_modules=['cpplint'],
       # generate platform specific start script
       entry_points={

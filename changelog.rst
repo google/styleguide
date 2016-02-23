@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+1.1.0
+-----
+
+* Add quiet option to suppress non error-related output.
+
 1.0.1
 -----
 
