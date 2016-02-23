@@ -41,7 +41,6 @@ import sys
 import unittest
 import tempfile
 import shutil
-import StringIO
 
 import cpplint
 
