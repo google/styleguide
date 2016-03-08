@@ -14,7 +14,7 @@ that apply to that project.
 
 Our [C++ Style Guide][cpp], [Objective-C Style Guide][objc], [Java Style
 Guide][java], [Python Style Guide][py], [R Style Guide][r], [Shell Style
-Guide][sh], [HTML/CSS Style Guide][htmlcss], [JavaScript Style Guide][js],
+Guide][sh], [HTML/CSS Style Guide][htmlcss], [JavaScript Style Guide][js], [JSON Style Guide][json],
 [AngularJS Style Guide][angular], [Common Lisp Style Guide][cl], and [Vimscript
 Style Guide][vim] are now available. We have also released [cpplint][cpplint],
 a tool to assist with style guide compliance, and [google-c-style.el][emacs],
@@ -39,6 +39,7 @@ for more details.
 [sh]: http://google.github.io/styleguide/shell.xml
 [htmlcss]: http://google.github.io/styleguide/htmlcssguide.xml
 [js]: http://google.github.io/styleguide/javascriptguide.xml
+[json]: http://google.github.io/styleguide/jsoncstyleguide.xml
 [angular]: http://google.github.io/styleguide/angularjs-google-style.html
 [cl]: http://google.github.io/styleguide/lispguide.xml
 [vim]: http://google.github.io/styleguide/vimscriptguide.xml
