@@ -4738,6 +4738,10 @@ def _ClassifyInclude(fileinfo, include, is_system):
   # those already checked for above.
   is_cpp_h = include in _CPP_HEADERS
 
+  # Headers with C++ extensions shouldn't be considered C system headers
+  if is_system and os.path.splitext(include)[1] in ['.hpp', '.hxx', '.h++']:
+      is_system = False
+
   if is_system:
     if is_cpp_h:
       return _CPP_SYS_HEADER

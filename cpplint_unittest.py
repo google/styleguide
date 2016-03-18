@@ -4320,6 +4320,13 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('#include "Python.h"', '')
     self.TestLint('#include "lua.h"', '')
 
+  def testHppInclude(self):
+    code = '\n'.join([
+      '#include <vector>',
+      '#include <boost/any.hpp>'
+    ])
+    self.TestLanguageRulesCheck('foo.h', code, '')
+
   def testBuildPrintfFormat(self):
     error_collector = ErrorCollector(self.assertTrue)
     cpplint.ProcessFileData(
@@ -4709,6 +4716,18 @@ class OrderOfIncludesTest(CpplintTestBase):
                      classify_include(file_info('foo/foo.cc'),
                                       'string',
                                       False))
+    self.assertEqual(cpplint._OTHER_HEADER,
+                     classify_include(file_info('foo/foo.cc'),
+                                      'boost/any.hpp',
+                                      True))
+    self.assertEqual(cpplint._OTHER_HEADER,
+                     classify_include(file_info('foo/foo.hxx'),
+                                      'boost/any.hpp',
+                                      True))
+    self.assertEqual(cpplint._OTHER_HEADER,
+                     classify_include(file_info('foo/foo.h++'),
+                                      'boost/any.hpp',
+                                      True))
 
     self.assertEqual(cpplint._LIKELY_MY_HEADER,
                      classify_include(file_info('foo/foo.cc'),
