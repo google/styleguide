@@ -57,7 +57,9 @@ import xml.etree.ElementTree
 # The allowed extensions for file names
 # This is set by --extensions flag.
 _valid_extensions = set(['c', 'cc', 'cpp', 'cxx', 'c++', 'h', 'hpp', 'hxx',
-    'h++'])
+    'h++', 'cu', 'cuh'])
+
+_header_extensions = set(['h', 'hpp', 'hxx', 'h++', 'cuh'])
 
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
@@ -6197,7 +6199,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   RemoveMultiLineComments(filename, lines, error)
   clean_lines = CleansedLines(lines)
 
-  if file_extension == 'h':
+  if file_extension in _header_extensions:
     CheckForHeaderGuard(filename, clean_lines, error)
 
   for line in range(clean_lines.NumLines()):

@@ -4228,6 +4228,28 @@ class CpplintTest(CpplintTestBase):
               '  [build/header_guard] [5]' % expected_guard),
           error_collector.ResultList())
 
+    # Cuda guard
+    file_path = 'mydir/foo.cuh'
+    expected_guard = self.GetBuildHeaderGuardPreprocessorSymbol(file_path)
+    error_collector = ErrorCollector(self.assertTrue)
+    cpplint.ProcessFileData(file_path, 'cuh',
+                            ['#ifndef FOO',
+                             '#define FOO',
+                             '#endif  // FOO'],
+                            error_collector)
+    self.assertEqual(
+        1,
+        error_collector.ResultList().count(
+            '#ifndef header guard has wrong style, please use: %s'
+            '  [build/header_guard] [5]' % expected_guard),
+        error_collector.ResultList())
+    self.assertEqual(
+        1,
+        error_collector.ResultList().count(
+            '#endif line should be "#endif  // %s"'
+            '  [build/header_guard] [5]' % expected_guard),
+        error_collector.ResultList())
+
   def testPragmaOnce(self):
     error_collector = ErrorCollector(self.assertTrue)
     cpplint.ProcessFileData('mydir/foo.h', 'h',
