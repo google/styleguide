@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+1.2.0
+-----
+
+* Added `.cu` and `.cuh` as supported file extensions by default.
+* Moved the warning "Include the directory when naming .h files" from the `build/include` category to the `build/include_subdir` category.
+
 1.1.0
 -----
 
