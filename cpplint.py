@@ -242,6 +242,7 @@ _ERROR_CATEGORIES = [
     'build/forward_decl',
     'build/header_guard',
     'build/include',
+    'build/include_subdir',
     'build/include_alpha',
     'build/include_order',
     'build/include_what_you_use',
@@ -4804,7 +4805,7 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
   # naming convention but not the include convention.
   match = Match(r'#include\s*"([^/]+\.h)"', line)
   if match and not _THIRD_PARTY_HEADERS_PATTERN.match(match.group(1)):
-    error(filename, linenum, 'build/include', 4,
+    error(filename, linenum, 'build/include_subdir', 4,
           'Include the directory when naming .h files')
 
   # we shouldn't include a file more than once. actually, there are a
