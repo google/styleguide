@@ -58,3 +58,6 @@ Thanks to `tkruse <https://github.com/tkruse>`_ for putting cpplint on PyPI and 
 
 .. image:: https://travis-ci.org/theandrewdavis/cpplint.svg
     :target: https://travis-ci.org/theandrewdavis/cpplint
+
+.. image:: https://img.shields.io/pypi/v/cpplint.svg
+    :target: https://pypi.python.org/pypi/cpplint
