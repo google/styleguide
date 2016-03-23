@@ -1,6 +1,6 @@
 <HTML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcq="http://purl.org/dc/qualifiers/1.0/" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fn="http://www.w3.org/2005/xpath-functions">
 <HEAD>
-<TITLE>Google Python Style Guide</TITLE>
+<TITLE>Google Python 代码风格指南</TITLE>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <LINK HREF="http://www.google.com/favicon.ico" type="image/x-icon" rel="shortcut icon">
 <LINK HREF="styleguide.css" type="text/css" rel="stylesheet">
@@ -133,10 +133,11 @@
               </SCRIPT>
 </HEAD>
 <BODY>
-<H1>Google Python Style Guide</H1>
+<H1>Google Python 代码风格指南</H1>
   <p align="right">
 
-    Revision 2.59
+    版本 2.59<br/>
+    <a href="http://google.github.io/styleguide/pyguide.html">英文原版</a>
   </p>
   
   <address>
@@ -147,151 +148,113 @@
     Matt Smart<br>
     Mike Shields<br>
   </address>
-  <DIV style="margin-left: 50%; font-size: 75%;">
+  <DIV style="text-align: right; font-size: 75%;">
 <P>
-        Each style point has a summary for which additional information is available
-        by toggling the accompanying arrow button that looks this way:
-        <SPAN class="showhide_button" style="margin-left: 0; float: none">▶</SPAN>.
-        You may toggle all summaries with the big arrow button:
+		通过点击箭头按钮<SPAN class="showhide_button" style="margin-left: 0; float: none">▶</SPAN>来展开或折叠一个摘要的更多信息<br/>
+		您也可以使用大的箭头按钮来展开全部/折叠全部：
       </P>
 <DIV style=" font-size: larger; margin-left: +2em;">
 <SPAN class="showhide_button" style="font-size: 180%; float: none" onclick="javascript:ShowHideAll()" name="show_hide_all_button" id="show_hide_all_button">▶</SPAN>
-        Toggle all summaries
+        展开/折叠全部
       </DIV>
 </DIV>
 <DIV class="toc">
-<DIV class="toc_title">Table of Contents</DIV>
+<DIV class="toc_title">内容列表</DIV>
 <TABLE>
 <TR valign="top" class="">
-<TD><DIV class="toc_category"><A href="#Python_Language_Rules">Python Language Rules</A></DIV></TD>
+<TD><DIV class="toc_category"><A href="#Python_Language_Rules">Python语言规范</A></DIV></TD>
 <TD><DIV class="toc_stylepoint">
-<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lint">Lint</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports">Imports</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">Packages</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Exceptions">Exceptions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables">Global variables</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#List_Comprehensions">List Comprehensions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Iterators_and_Operators">Default Iterators and Operators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Generators">Generators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lambda_Functions">Lambda Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Conditional_Expressions">Conditional Expressions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Argument_Values">Default Argument Values</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Properties">Properties</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#True/False_evaluations">True/False evaluations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Deprecated_Language_Features">Deprecated Language Features</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lexical_Scoping">Lexical Scoping</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Function_and_Method_Decorators">Function and Method Decorators</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Threading">Threading</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Power_Features">Power Features</A></SPAN> </DIV></TD>
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lint">Lint</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports">导入</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">包</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Exceptions">异常</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables">全局变量</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Nested/Local/Inner_Classes_and_Functions">嵌套/局部/内部 类和方法</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#List_Comprehensions">列表推导</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Iterators_and_Operators">默认迭代器和运算符</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Generators">生成器</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lambda_Functions">Lambda函数</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Conditional_Expressions">条件表达式</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Default_Argument_Values">默认参数值</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Properties">属性</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#True/False_evaluations">True/False 求值</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Deprecated_Language_Features">弃用的语言特性</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lexical_Scoping">词法作用域(Lexical Scoping)</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Function_and_Method_Decorators">方法和函数装饰器</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Threading">线程</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Power_Features">激进的特性</A></SPAN> </DIV></TD>
 </TR>
 <TR valign="top" class="">
-<TD><DIV class="toc_category"><A href="#Python_Style_Rules">Python Style Rules</A></DIV></TD>
+<TD><DIV class="toc_category"><A href="#Python_Style_Rules">Python风格规范</A></DIV></TD>
 <TD><DIV class="toc_stylepoint">
-<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Semicolons">Semicolons</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Line_length">Line length</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Parentheses">Parentheses</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Indentation">Indentation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Blank_Lines">Blank Lines</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Whitespace">Whitespace</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Shebang_Line">Shebang Line</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Comments">Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Classes">Classes</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Strings">Strings</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Files_and_Sockets">Files and Sockets</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#TODO_Comments">TODO Comments</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports_formatting">Imports formatting</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Statements">Statements</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Access_Control">Access Control</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Naming">Naming</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Main">Main</A></SPAN> </DIV></TD>
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Semicolons">分号</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Line_length">行长度</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Parentheses">圆括号</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Indentation">缩进排版</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Blank_Lines">空白行</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Whitespace">空格</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Shebang_Line">组织行(Shebang Line)</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Comments">注释</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Classes">类</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Strings">字符串</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Files_and_Sockets">文件和Sockets</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#TODO_Comments">TODO注释</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Imports_formatting">导入格式</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Statements">语句</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Access_Control">访问控制</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Naming">命名</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Main">主函数(Main)</A></SPAN> </DIV></TD>
 </TR>
 </TABLE>
 </DIV>
   <DIV class="">
-<H2 name="Important_Note" id="Important_Note">Important Note</H2>
+<H2 name="Important_Note" id="Important_Note">重要提示！</H2>
     <DIV class="">
-<H3><A name="Displaying_Hidden_Details_in_this_Guide" id="Displaying_Hidden_Details_in_this_Guide">Displaying Hidden Details in this Guide</A></H3>
+<H3><A name="Displaying_Hidden_Details_in_this_Guide" id="Displaying_Hidden_Details_in_this_Guide">在本文中显示隐藏的详情</A></H3>
 <SPAN class="link_button" id="link-Displaying_Hidden_Details_in_this_Guide__button" name="link-Displaying_Hidden_Details_in_this_Guide__button"><A href="?showone=Displaying_Hidden_Details_in_this_Guide#Displaying_Hidden_Details_in_this_Guide">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Displaying_Hidden_Details_in_this_Guide')" name="Displaying_Hidden_Details_in_this_Guide__button" id="Displaying_Hidden_Details_in_this_Guide__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-       This style guide contains many details that are initially
-       hidden from view.  They are marked by the triangle icon, which you
-       see here on your left.  Click it now.
-       You should see "Hooray" appear below.
+       本指南中包含很多隐藏起来的详情内容，它们通过三角形图标标记，如同你现在看到这行的左侧的图标。点击一下，您应该可以看到下面出现了一些文字。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Displaying_Hidden_Details_in_this_Guide__body" id="Displaying_Hidden_Details_in_this_Guide__body" style="display: none">
-       <p>
-        Hooray!  Now you know you can expand points to get more
-        details.  Alternatively, there's a "toggle all" at the
-        top of this document.
+       <p>哇，现在你知道了你可以展开一个论点来查看它的细节。此外，在文章顶部还有一个“展开/折叠全部”的按钮。
        </p>
       </DIV></DIV>
     </DIV>
   </DIV>
   <DIV class="">
-<H2 name="Background" id="Background">Background</H2>
+<H2 name="Background" id="Background">背景</H2>
     <p>
-      Python is the main scripting language used at Google.  This
-      style guide is a list of <em>do</em>s and <em>don't</em>s for Python
-      programs.
+    	在Google，Python是一门被主要使用的脚本语言。这份指南是一个在Python编程中 <em>“应该做”</em> 和 <em>“不应该做”</em> 的一个列表。
     </p>
     
     <p>
-      To help you format code correctly, we've created a <a href="google_python_style.vim">settings
-      file for Vim</a>.  For Emacs, the default settings should be fine.
+    	为了帮助你正确的格式化代码，我们创建了一个<a href="google_python_style.vim">Vim的配置文件</a>。在Emacs中，默认的设置应该就可以了。
     </p>
     
     
   </DIV>
   
   <DIV class="">
-<H2 name="Python_Language_Rules" id="Python_Language_Rules">Python Language Rules</H2>
+<H2 name="Python_Language_Rules" id="Python_Language_Rules">Python语言规范</H2>
      <DIV class="">
 <H3><A name="Lint" id="Lint">Lint</A></H3>
 <SPAN class="link_button" id="link-Lint__button" name="link-Lint__button"><A href="?showone=Lint#Lint">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lint')" name="Lint__button" id="Lint__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Run <code>pylint</code> over your code.
+        在你的代码上运行 <code>pylint</code>
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Lint__body" id="Lint__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-        pylint
-        is a tool for finding bugs and style problems in Python source
-        code. It finds
-        problems that are typically caught by a compiler for less dynamic
-        languages like C and C++.
-        
-        Because of the
-        dynamic nature of Python, some warnings may be incorrect; however,
-        spurious warnings should be fairly infrequent.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+        pylint是一个可以在Python源码中查找Bugs和风格问题的工具。它查找那些典型的被编译器捕获的问题。
+        因为Python的动态特性，一些警告可能会被错误的报出；然而这种误报会非常少。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-        Catches easy-to-miss errors like typos, using-vars-before-assignment, etc.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+        能捕获那些容易被忽视的错误，如拼写错误，使用未赋值的变量等。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-        <code>pylint</code>
-        isn't perfect.  To take advantage of it, we'll need to sometimes:
-        a) Write around it b) Suppress its warnings or c) Improve it.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+        <code>pylint</code>不是完美的，利用它，我们有时需要：a）围绕它写一些代码 b)压制它的一些警告或者 c）改善它。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-        Make sure you run <code>pylint</code> on your code.
-        Suppress warnings if they are inappropriate so that other issues are
-        not hidden.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+		确保对你的代码进行<code>pylint</code>。抑制警告，如果它们出现的不合理，以便其他问题不被隐藏。
         </P>
         
         <p>
-          To suppress warnings, you can set a line-level comment:
+          抑制警告，你可以设置一个行级注释：:
         </p>
         
         <DIV class=""><PRE>
 <span class="external"></span>dict = 'something awful'  # Bad Idea... pylint: disable=redefined-builtin</PRE></DIV>
         <p>
-          pylint
-          warnings are each identified by a alphanumeric code
-          (<code>C0112</code>) and a symbolic name
-          (<code>empty-docstring</code>).  Prefer the symbolic
-          names in new code or when updating existing code.
-          
+          pylint的警告都是通过一个字母数字代码(<code>C0112</code>) 和一个象征性的名字(<code>empty-docstring</code>)来识别的。
+          在写新代码或者更新已经存在的代码时，更推荐使用符号名来标识。
         </p>
         <p>
-          If the reason for the suppression is not clear from the symbolic name,
-          add an explanation.
+          如果符号名不能够见名知意，就添加一个解释。
         </p>
         <p>
-          Suppressing in this way has the advantage that we can easily search
-          for suppressions and revisit them.
+          这种方式的抑制有一个好处就是我们可以很容易地查找并回顾它们。
         </p>
         <p>
-          You can get a list of
-          pylint
-          warnings by doing
-          <code>pylint --list-msgs</code>.
-          To get more information on a particular message, use
-          <code>pylint --help-msg=C6409</code>.
+          你可以通过 <code>pylint --list-msgs</code>来获取一个pylint的警告列表。查看一个消息的更多详细信息，可使用<code>pylint --help-msg=C6409</code>
         </p>
         <p>
-          Prefer <code>pylint: disable</code> to the deprecated older form
-          <code>pylint: disable-msg</code>.
+		  推荐使用<code>pylint: disable</code> 来代替弃用的旧形式<coyizhide>pylint: disable-msg</code>
         </p>
         <p>
-        Unused argument warnings can be suppressed by using `_' as the
-        identifier for the unused argument or prefixing the argument name with
-        `unused_'.  In situations where changing the argument names is
-        infeasible, you can mention them at the beginning of the function.
-        For example:
+          要抑制“未使用的参数”警告，可以通过使用`_'来标识未使用的参数或者在参数名的前缀上加`unused_'。在改变参数名是不可行的情况下，你可以在函数开始之前提及它们，例如：
         </p>
         <DIV class=""><PRE>
 <span class="external"></span>def foo(a, unused_b, unused_c, d=None, e=None):
@@ -302,42 +265,35 @@
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Imports" id="Imports">Imports</A></H3>
+<H3><A name="Imports" id="Imports">导入</A></H3>
 <SPAN class="link_button" id="link-Imports__button" name="link-Imports__button"><A href="?showone=Imports#Imports">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports')" name="Imports__button" id="Imports__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use <code>import</code>s for packages and modules only.
+        只对包和模块使用 <code>import</code>s
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Imports__body" id="Imports__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-          Reusability mechanism for sharing code from one module to another.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+          模块间共享代码的重用机制。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-          The namespace management convention is simple.  The source of each
-          identifier is indicated in a consistent way; <code>x.Obj</code> says
-          that object <code>Obj</code> is defined in module <code>x</code>.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+		  命名空间的管理约定非常简单。每一个标识的来源都是用一种一致的方式来表明的；<code>x.Obj</code>意味着对象<code>Obj</code>被定义在模块<code>x</code>下。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN> Module names can still collide.  Some module names are
-          inconveniently long.
+<SPAN class="stylepoint_section">缺点: </SPAN> 
+		  模块名可能还会冲突。一些模块名太长，不方面使用。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-          Use <code>import x</code> for importing packages and modules.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+          使用<code>import x</code>来导入包和模块。
           <br>
-          Use <code>from x import y</code> where <code>x</code> is
-          the package prefix and <code>y</code> is the module name with no
-          prefix.
+          使用<code>from x import y</code> 在 <code>x</code> 是包前缀并且 <code>y</code>是没有前缀的模块名的地方
           <br>
-          Use <code>from x import y as z</code> if two modules named
-          <code>y</code> are to be imported or if <code>y</code> is an
-          inconveniently long name.
+          使用<code>from x import y as z</code> 如果被导入的两个模块都叫 <code>y</code> 或者 <code>y</code>是一个不方便使用的长名字。
         </P>
-        For example the module
-        <code>sound.effects.echo</code> may be imported as follows:
+        例如模块 <code>sound.effects.echo</code> 可以以如下方式来导入:
     <DIV class=""><PRE>
 <span class="external"></span>from sound.effects import echo
 <span class="external"></span>...
@@ -345,113 +301,89 @@
 <span class="external"></span>
 </PRE></DIV>
     <p>
-      Do not use relative names in imports. Even if the module is in the
-      same package, use the full package name.  This helps prevent
-      unintentionally importing a package twice.
+      导入时不要使用相对的命名，即使这个模块在同一个包中，请使用完整包名，这样可以防止无意间两次导入同一个包。
     </p>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Packages" id="Packages">Packages</A></H3>
+<H3><A name="Packages" id="Packages">包</A></H3>
 <SPAN class="link_button" id="link-Packages__button" name="link-Packages__button"><A href="?showone=Packages#Packages">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Packages')" name="Packages__button" id="Packages__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Import each module using the full pathname location of the module.
+        导入每一个模块时都使用模块的全路径.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Packages__body" id="Packages__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Avoids conflicts in module names.  Makes it easier to find modules.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      避免模块名冲突。可以让查找模块更加简单。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      Makes it harder to deploy code because you have to replicate the
-      package hierarchy.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      部署代码更难，因为你必须层次地复制包。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-          All new code should import each module by its full package name.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+          所有的新代码都应该通过它的完整包名来导入。
         </P>
       <p>
-        Imports should be as follows:
+        导入应该如下所示:
       </p>
     
     <DIV class=""><PRE># Reference in code with complete name.
 import sound.effects.echo
 
-# Reference in code with just module name (preferred).
+# Reference in code with just module name (首选这种方式).
 from sound.effects import echo
 </PRE></DIV>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Exceptions" id="Exceptions">Exceptions</A></H3>
+<H3><A name="Exceptions" id="Exceptions">异常</A></H3>
 <SPAN class="link_button" id="link-Exceptions__button" name="link-Exceptions__button"><A href="?showone=Exceptions#Exceptions">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Exceptions')" name="Exceptions__button" id="Exceptions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Exceptions are allowed but must be used carefully.
+        可以使用异常，但必须小心地使用.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Exceptions__body" id="Exceptions__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      Exceptions are a means of breaking out of the normal flow of control
-      of a code block to handle errors or other exceptional conditions.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+      异常是一种跳出代码块正常的流程来处理错误或者其他的异常条件的方法
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      The control flow of normal operation code is not cluttered by
-      error-handling code. It also allows the control flow to skip multiple
-      frames when a certain condition occurs, e.g., returning from N
-      nested functions in one step instead of having to carry-through
-      error codes.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      异常-捕获代码不会使正常的流程代码变得杂乱。它允许控制流程当某一条件发生时跳过多个框架，例如，从多层嵌套的函数中一步返回，而不是继续执行有异常的代码。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      May cause the control flow to be confusing. Easy to miss error
-      cases when making library calls.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      可能引起控制流程混乱。当调用一个库时，容易漏掉异常情况。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
+<SPAN class="stylepoint_section">结论:  </SPAN>
         
-        
-      Exceptions must follow certain conditions:
+      异常必须遵循下列的某些条件：
         
         <ul>
-          <li>Raise exceptions like this: <code>raise MyException('Error
-            message')</code> or <code>raise MyException</code>.  Do not
-            use the two-argument form (<code>raise MyException, 'Error
-            message'</code>) or deprecated string-based exceptions
+          <li>如此挂起一个异常: <code>raise MyException('Error
+            message')</code> 或者 <code>raise MyException</code>.  不要使用两个参数的方式 (<code>raise MyException, 'Error message'</code>) 或者弃用的基于字符串的异常 
             (<code>raise 'Error message'</code>).</li>
-          <li>Modules or packages should define their own domain-specific
-            base exception class, which should inherit from the built-in
-            Exception class.  The base exception for a module should be called
-            <code>Error</code>.
+          <li>模块或包都应该定义它们自己特定域内的异常基类，这个异常基类应该继承Python内建的异常类。一个模块的异常基类应该被命名为<code>Error</code>.
             <DIV class=""><PRE>
 <span class="external"></span>class Error(Exception):
   <span class="external">  </span>pass</PRE></DIV>
 </li>
-          <li>Never use catch-all <code>except:</code> statements, or
-            catch <code>Exception</code> or <code>StandardError</code>,
-            unless you are re-raising the exception or in the outermost
-            block in your thread (and printing an error message).  Python
-            is very tolerant in this regard and <code>except:</code> will
-            really catch everything including misspelled names, sys.exit()
-            calls, Ctrl+C interrupts, unittest failures and all kinds of
-            other exceptions that you simply don't want to catch.</li>
-          <li>Minimize the amount of code in a
-            <code>try</code>/<code>except</code> block.  The larger the
-            body of the <code>try</code>, the more likely that an
-            exception will be raised by a line of code that you didn't
-            expect to raise an exception.  In those cases,
-            the <code>try</code>/<code>except</code> block hides a real
-            error.</li>
-          <li>Use the <code>finally</code> clause to execute code whether
-            or not an exception is raised in the <code>try</code> block.
-            This is often useful for cleanup, i.e., closing a file.</li>
-          <li>When capturing an exception, use <code>as</code> rather than
-            a comma.  For example:
+          <li>永远不要使用<code>except:</code>语句捕获所有异常，或者捕获<code>Exception</code> 或 <code>StandardError</code>，
+            除非你是重挂起一个异常或者是你在线程的最外层(还是要打印一条异常消息)。Python在这点上非常宽容，<code>except:</code>真的会捕获到所有的异常，包括拼错的名字，sys.exit()调用, Ctrl+C 中断，
+            单元测试失败和一些简单到你不想去捕获的所有其他种类的异常。</li>
+          <li>
+			最小化代码块中<code>try</code>/<code>except</code>的体积。一个<code>try</code>体积越大，你就越会触发一个期望之外的异常，
+			这种情况下，<code>try</code>/<code>except</code>块会隐藏一个真正的错误。
+          </li>
+          <li>
+				使用<code>finally</code>子句来执行那些在<code>try</code>块中有没有异常都应该被执行的代码。这通常是在善后时很有用，如，关闭一个文件。
+		  </li>
+          <li>当捕获到一个异常时，使用 <code>as</code> 而不是一个逗号，例如：
             <DIV class=""><PRE>
 <span class="external"></span>try:
   <span class="external">  </span>raise Error
@@ -463,110 +395,90 @@ from sound.effects import echo
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Global_variables" id="Global_variables">Global variables</A></H3>
+<H3><A name="Global_variables" id="Global_variables">全局变量</A></H3>
 <SPAN class="link_button" id="link-Global_variables__button" name="link-Global_variables__button"><A href="?showone=Global_variables#Global_variables">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Global_variables')" name="Global_variables__button" id="Global_variables__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Avoid global variables.
+        避免使用全局变量.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Global_variables__body" id="Global_variables__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      Variables that are declared at the module level.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+      那些被声明成模块级别的变量。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Occasionally useful.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      偶尔是有用的。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      Has the potential to change module behavior during the import,
-      because assignments to module-level variables are done when the
-      module is imported.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+	  在导入时可能会潜在地改变一个模块的行为，因为当模块被导入时，模块级别的变量会被赋值。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-      Avoid global variables in favor of class variables.  Some
-      exceptions are:
+<SPAN class="stylepoint_section">结论:  </SPAN>
+	  避免全局变量有利于类变量，一些例外如下：
       <ul>
-        <li>Default options for scripts.</li>
-        <li>Module-level constants.  For example: <code>PI = 3.14159</code>.
-          Constants should be named using all caps with underscores;
-          see <a HREF="#Naming">Naming</a> below.</li>
-        <li>It is sometimes useful for globals to cache values needed
-          or returned by functions.</li>
-        <li>If needed, globals should be made internal to the module
-          and accessed through public module level functions;
-          see <a HREF="#Naming">Naming</a> below.</li>
+        <li>脚本的默认选择项.</li>
+        <li>模块级别的常量。如：<code>PI = 3.14159</code>。常量命名时应该全部大写并以下划线连接，请参考下方的<a HREF="#Naming">命名</a>.</li>
+        <li>有时使用全局变量缓存一个必要的值或者通过函数返回的值是很有用的。</li>
+        <li>如果需要，全局变量应该被设置成在模块内部可用，可以通过公共模块级别的函数进行访问；请参考下方的<a HREF="#Naming">命名</a></li>
       </ul>
         </P>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Nested/Local/Inner_Classes_and_Functions" id="Nested/Local/Inner_Classes_and_Functions">Nested/Local/Inner Classes and Functions</A></H3>
+<H3><A name="Nested/Local/Inner_Classes_and_Functions" id="Nested/Local/Inner_Classes_and_Functions">嵌套/局部/内部 类和方法</A></H3>
 <SPAN class="link_button" id="link-Nested/Local/Inner_Classes_and_Functions__button" name="link-Nested/Local/Inner_Classes_and_Functions__button"><A href="?showone=Nested/Local/Inner_Classes_and_Functions#Nested/Local/Inner_Classes_and_Functions">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Nested/Local/Inner_Classes_and_Functions')" name="Nested/Local/Inner_Classes_and_Functions__button" id="Nested/Local/Inner_Classes_and_Functions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Nested/local/inner classes and functions are fine.
+        嵌套/局部/内部 类和函数都可以用.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Nested/Local/Inner_Classes_and_Functions__body" id="Nested/Local/Inner_Classes_and_Functions__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      A class can be defined inside of a method, function, or class.  A
-      function can be defined inside a method or function.  Nested functions
-      have read-only access to variables defined in enclosing scopes.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+	  一个类可以被定义在一个方法，函数或者类的内部。一个函数可以被定义在一个方法或者另一个函数的内部。封闭区间中定义的变量对嵌套函数是只读的。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Allows definition of utility classes and functions that are only
-      used inside of a very limited scope. Very <a HREF="http://en.wikipedia.org/wiki/Abstract_data_type">ADT</a>-y.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+	  允许定义仅在一个非常局限的范围内使用的实用类和函数。非常 <a HREF="http://en.wikipedia.org/wiki/Abstract_data_type">ADT</a>-y.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      Instances of nested or local classes cannot be pickled.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      嵌套或局部类的实例不能被序列化。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-      They are fine.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+      它们都是可以用的。
         </P>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="List_Comprehensions" id="List_Comprehensions">List Comprehensions</A></H3>
+<H3><A name="List_Comprehensions" id="List_Comprehensions">列表推导</A></H3>
 <SPAN class="link_button" id="link-List_Comprehensions__button" name="link-List_Comprehensions__button"><A href="?showone=List_Comprehensions#List_Comprehensions">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('List_Comprehensions')" name="List_Comprehensions__button" id="List_Comprehensions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Okay to use for simple cases.
+        可以在简单的情况下使用.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="List_Comprehensions__body" id="List_Comprehensions__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      List comprehensions and generator expressions provide a concise
-      and efficient way to create lists and iterators without
-      resorting to the use of <code>map()</code>,
-      <code>filter()</code>, or <code>lambda</code>.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+      列表推导和生成器表达式提供了一种简洁高效的方式来创建列表和迭代器, 而不必借助<code>map()</code>, <code>filter()</code>, 或<code>lambda</code>.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Simple list comprehensions can be clearer and simpler than
-      other list creation techniques.  Generator expressions can be
-      very efficient, since they avoid the creation of a list
-      entirely.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      简单的列表推导可以比其他的列表生成技术更加简单明了。生成器表达式非常有效，因为它们避免了创建整个列表。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      Complicated list comprehensions or generator expressions can be
-      hard to read.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      复杂的列表推导和生成器表达式可能会难以阅读。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-      Okay to use for simple cases.  Each portion must fit on one line:
-      mapping expression, <code>for</code> clause, filter expression.
-      Multiple <code>for</code> clauses or filter expressions are not
-      permitted.  Use loops instead when things get more complicated.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+      在简单的情况下使用，每个部分应该独占一行：映射表达式，<code>for</code>语句，过滤表达式。
+      多重<code>for</code>语句或者过滤表达式是被不允许使用的。如果事情变得复杂请使用循环来替代。
         </P>
 
 <DIV class=""><PRE>Ye<span class="external"></span>s:
@@ -603,38 +515,31 @@ from sound.effects import echo
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Default_Iterators_and_Operators" id="Default_Iterators_and_Operators">Default Iterators and Operators</A></H3>
+<H3><A name="Default_Iterators_and_Operators" id="Default_Iterators_and_Operators">默认的迭代器和运算符</A></H3>
 <SPAN class="link_button" id="link-Default_Iterators_and_Operators__button" name="link-Default_Iterators_and_Operators__button"><A href="?showone=Default_Iterators_and_Operators#Default_Iterators_and_Operators">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Iterators_and_Operators')" name="Default_Iterators_and_Operators__button" id="Default_Iterators_and_Operators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use default iterators and operators for types that support them,
-        like lists, dictionaries, and files.
+      	 如果类型支持，就使用默认的迭代器和运算符，如列表，字典，文件.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Default_Iterators_and_Operators__body" id="Default_Iterators_and_Operators__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      Container types, like dictionaries and lists, define default
-      iterators and membership test operators ("in" and "not in").
+<SPAN class="stylepoint_section">定义:  </SPAN>
+      集合类型，像字典和列表，定义默认迭代器和成员测试操作符("in" 和 "not in").
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      The default iterators and operators are simple and efficient.
-      They express the operation directly, without extra method calls.
-      A function that uses default operators is generic. It can be
-      used with any type that supports the operation.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      默认的迭代器和操作符都是简单且高效的。它们直接表达操作，没有额外的方法调用。
+      使用默认运算符的函数是通用的。它可以与任何它支持操作的类型在一起使用。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      You can't tell the type of objects by reading the method names
-      (e.g. has_key() means a dictionary).  This is also an advantage.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      你不能通过阅读方法名说出对象的类型(例如:has_key()意思是一个字典)。不过这也是一个优点。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN> Use default iterators and operators for types
-      that support them, like lists, dictionaries, and files.  The
-      built-in types define iterator methods, too.  Prefer these
-      methods to methods that return lists, except that you should not
-      mutate a container while iterating over it.
+<SPAN class="stylepoint_section">结论:  </SPAN> 
+      为那些支持它们的类型使用默认的迭代器和操作符，如列表，字段和文件。内建的类型也定义了迭代方法。
+      优先考虑这些方法，而不是那些返回列表的方法。当然，在你遍历它时，你不能修改集合本身。
 
 <DIV class=""><PRE>Yes:  <span class="external"></span>for key in adict: ...
       <span class="external"></span>if key not in adict: ...
@@ -648,150 +553,122 @@ from sound.effects import echo
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Generators" id="Generators">Generators</A></H3>
+<H3><A name="Generators" id="Generators">生成器</A></H3>
 <SPAN class="link_button" id="link-Generators__button" name="link-Generators__button"><A href="?showone=Generators#Generators">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Generators')" name="Generators__button" id="Generators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use generators as needed.
+        需要时使用生成器.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Generators__body" id="Generators__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      A generator function returns an iterator that yields a value each
-      time it executes a yield statement.  After it yields a value, the
-      runtime state of the generator function is suspended until the
-      next value is needed.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+      生成器函数返回一个在每一次执行它的产出语句时得到一个值的迭代器。在它产出一个值之后，生成器函数的运行状态是暂停的，直到下一个值被请求。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Simpler code, because the state of local variables and control flow
-      are preserved for each call.  A generator uses less memory than a
-      function that creates an entire list of values at once.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      代码简单，因为局部变量和控制流程的状态在每次调用时都被保存。
+      由于可以一次就创建整个列的值，因此生成器比函数使用更少的内存。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-          None.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+          无。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-      Fine.  Use "Yields:" rather than "Returns:" in the
-      doc string for generator functions.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+      推荐使用。为生成器函数的文档字符串中使用"Yields:"比"Returns:"更好。
         </P>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Lambda_Functions" id="Lambda_Functions">Lambda Functions</A></H3>
+<H3><A name="Lambda_Functions" id="Lambda_Functions">Lambda函数</A></H3>
 <SPAN class="link_button" id="link-Lambda_Functions__button" name="link-Lambda_Functions__button"><A href="?showone=Lambda_Functions#Lambda_Functions">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lambda_Functions')" name="Lambda_Functions__button" id="Lambda_Functions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Okay for one-liners.
+        在一行中是可以的.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Lambda_Functions__body" id="Lambda_Functions__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      Lambdas define anonymous functions in an expression, as
-      opposed to a statement.  They are often used to define callbacks or
-      operators for higher-order functions like <code>map()</code> and
-      <code>filter()</code>.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+      与语句相反，Lambdas在一个表达式中定义了匿名函数。它们常被用作定义回调或者如<code>map()</code>和<code>filter()</code>之类的高阶函数操作符。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Convenient.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      方便。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN> Harder to read and debug than local functions.  The
-      lack of names means stack traces are more difficult to
-      understand.  Expressiveness is limited because the function may
-      only contain an expression.
+<SPAN class="stylepoint_section">缺点: </SPAN> 
+      比局部函数难以阅读和调试。名字的确实意味着堆栈跟踪是理解更困难的。表现有一定的局限性，因为函数可能只包含一个表达式。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-      Okay to use them for one-liners. If the code inside the lambda
-      function is any longer than 60–80 chars, it's probably better to
-      define it as a regular (nested) function.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+      在一行中使用它们是没有问题的。如果lambda函数中的代码长度超过60-80个字符，最好还是定义成常规(内嵌)函数。
        <p>
-         For common operations like multiplication, use the functions from the
-         <code>operator</code> module instead of lambda functions.  For
-         example, prefer <code>operator.mul</code> to <code>lambda
-         x, y: x * y</code>.
+         对于诸如乘法之类的常规操作符，使用<code>operator</code>模块中的函数替代lambda函数。
+         例如，<code>operator.mul</code>比<code>lambda x, y: x * y</code>更好。
        </p>
         </P>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Conditional_Expressions" id="Conditional_Expressions">Conditional Expressions</A></H3>
+<H3><A name="Conditional_Expressions" id="Conditional_Expressions">条件表达式</A></H3>
 <SPAN class="link_button" id="link-Conditional_Expressions__button" name="link-Conditional_Expressions__button"><A href="?showone=Conditional_Expressions#Conditional_Expressions">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Conditional_Expressions')" name="Conditional_Expressions__button" id="Conditional_Expressions__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Okay for one-liners.
+        在一行中是可以的.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Conditional_Expressions__body" id="Conditional_Expressions__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      Conditional expressions are mechanisms that provide a shorter syntax
-      for if statements. For example:
-      <code>x = 1 if cond else 2</code>.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+      条件表达式是比if语句更短的语法的一种机制。例如：<code>x = 1 if cond else 2</code>.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Shorter and more convenient than an if statement.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      比if语句更加简短和方便。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      May be harder to read than an if statement. The condition may be difficult
-      to locate if the expression is long.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      可能会比if语句难以阅读一些。如果表达式过长，定位会变得困难。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-      Okay to use for one-liners. In other cases prefer to use a complete if
-      statement.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+      在一行中使用是没问题的。在其他场景中使用完整的if语句会更好。
         </P>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Default_Argument_Values" id="Default_Argument_Values">Default Argument Values</A></H3>
+<H3><A name="Default_Argument_Values" id="Default_Argument_Values">默认参数值</A></H3>
 <SPAN class="link_button" id="link-Default_Argument_Values__button" name="link-Default_Argument_Values__button"><A href="?showone=Default_Argument_Values#Default_Argument_Values">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Default_Argument_Values')" name="Default_Argument_Values__button" id="Default_Argument_Values__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Okay in most cases.
+        大多数情况下是可以的.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Default_Argument_Values__body" id="Default_Argument_Values__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      You can specify values for variables at the end of a function's
-      parameter list, e.g., <code>def foo(a, b=0):</code>. If
-      <code>foo</code> is called with only one argument,
-      <code>b</code> is set to 0. If it is called with two arguments,
-      <code>b</code> has the value of the second argument.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+      你可以在一个函数的参数列表的结尾指定参数的值，如<code>def foo(a, b=0):</code>。
+      如果<code>foo</code>被仅有一个参数进行调用时，<code>b</code>就会被设置成0。
+      如果它是通过两个参数进行调用时，<code>b</code>就会得到第二个参数的值。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Often you have a function that uses lots of default values,
-      but—rarely—you want to override the
-      defaults. Default argument values provide an easy way to do this,
-      without having to define lots of functions for the rare
-      exceptions. Also, Python does not support overloaded
-      methods/functions and default arguments are an easy way of
-      "faking" the overloading behavior.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      你经常会遇到一个有大量默认值的函数，但是你很少想去覆盖这些默认值。
+      默认参数值提供了一种容易的方式去做到这点，可以不用为这些罕见的异常定义大量的函数。
+      而且，Python不支持重载方法/函数，默认参数就是一种简单的方式来“假充”重载行为。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      Default arguments are evaluated once at module load
-      time.  This may cause problems if the argument is a mutable
-      object such as a list or a dictionary.  If the function modifies
-      the object (e.g., by appending an item to a list), the default
-      value is modified.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      默认参数在模块加载时赋值一次。这可能在参数是诸如列表或一个字段时带来一些问题。
+      如果方法修改了对象(如添加一项到一个列表中)，默认值就被修改了。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-      Okay to use with the following caveat:
+<SPAN class="stylepoint_section">结论:  </SPAN>
+      遵守下列警告时可以使用：
       <p>
-        Do not use mutable objects as default values in the function or method
-        definition.
+        在函数或方法定义时，不要使用可变的对象作为默认值。
       </p>
 <DIV class=""><PRE>Yes: <span class="external"></span>def foo(a, b=None):
        <span class="external">  </span>if b is None:
@@ -806,51 +683,37 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Properties" id="Properties">Properties</A></H3>
+<H3><A name="Properties" id="Properties">属性</A></H3>
 <SPAN class="link_button" id="link-Properties__button" name="link-Properties__button"><A href="?showone=Properties#Properties">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Properties')" name="Properties__button" id="Properties__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use properties for accessing or setting data where you would
-        normally have used simple, lightweight accessor or setter methods.
+      使用属性来访问或者设置数据，在你通常会简单地，轻量级的访问或设置方法的数据的地方。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Properties__body" id="Properties__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN> A way to wrap method calls for getting and
-      setting an attribute as a standard attribute access when the
-      computation is lightweight.
+<SPAN class="stylepoint_section">定义:  </SPAN> 
+        一种用于包装方法调用的方式. 当运算量不大, 它是获取和设置属性(attribute)的标准方式。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN> Readability is increased by eliminating explicit
-      get and set method calls for simple attribute access.  Allows
-      calculations to be lazy.  Considered the Pythonic way to
-      maintain the interface of a class.  In terms of performance,
-      allowing properties bypasses needing trivial accessor methods
-      when a direct variable access is reasonable. This also allows
-      accessor methods to be added in the future without breaking the
-      interface.
+<SPAN class="stylepoint_section">优点:  </SPAN> 
+      通过消除简单属性访问时显式的get和set方法调用, 可读性提高了。允许延迟计算。
+      用Pythonic方式维护类的接口。就性能而言，当直接访问变量是合理的， 添加访问方法就显得琐碎而无意义。
+      使用属性可以绕过这个问题。将来也可以在不破坏接口的情况下将访问方法加上。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN> Properties are specified after the getter and
-      setter methods are declared, requiring one to notice they are
-      used for properties farther down in the code (except for readonly
-      properties created with the <code>@property</code> decorator - see
-      below).  Must inherit from
-      <code>object</code>.  Can hide side-effects much like operator
-      overloading.  Can be confusing for subclasses.
+<SPAN class="stylepoint_section">缺点: </SPAN> 
+    属性是在getter和setter方法声明后指定的，
+    这需要使用者在接下来的代码中注意: set和get是用于属性的(除了用 <code>@property</code> 装饰器创建的只读属性)。
+    必须继承自<code>object</code>类。可能隐藏比如操作符重载之类的副作用。继承时可能会让人困惑。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN> Use properties in new code to access or
-      set data where you would normally have used simple, lightweight
-      accessor or setter methods.  Read-only properties should be created
-      with the <code>@property</code>
-      <a HREF="#Function_and_Method_Decorators">decorator</a>.
+<SPAN class="stylepoint_section">结论:  </SPAN> 
+      在你可以通常会使用简单，轻量的accessor或setter 方法的新代码中使用属性来访问或设置数据。只读属性可以通过带有<code>@property</code>的
+      <a HREF="#Function_and_Method_Decorators">装饰器</a>来创建。
 
      <p><a id="properties-template-dp">
-      Inheritance with properties can be non-obvious if the property itself is
-      not overridden.  Thus one must make sure that accessor methods are
-      called indirectly to ensure methods overridden in subclasses are called
-      by the property (using the Template Method DP).
+      如果属性自身没有被重写，那么继承的属性可以是非显式的。因此使用者必须确保访问方法间接被调用, 以保证子类中的重载方法被属性调用(使用模板方法设计模式)
      </a></p>
 
      <DIV class=""><PRE>Yes: <span class="external"></span>import math
@@ -902,65 +765,51 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="True/False_evaluations" id="True/False_evaluations">True/False evaluations</A></H3>
+<H3><A name="True/False_evaluations" id="True/False_evaluations">True/False求值</A></H3>
 <SPAN class="link_button" id="link-True/False_evaluations__button" name="link-True/False_evaluations__button"><A href="?showone=True/False_evaluations#True/False_evaluations">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('True/False_evaluations')" name="True/False_evaluations__button" id="True/False_evaluations__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use the "implicit" false if at all possible.
+        尽可能的使用隐式false
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="True/False_evaluations__body" id="True/False_evaluations__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN> Python evaluates certain values as <code>false</code>
-      when in a boolean context. A quick "rule of thumb" is that all
-      "empty" values are considered <code>false</code> so <code>0, None, [], {},
-      ''</code> all evaluate as <code>false</code> in a boolean context.
+<SPAN class="stylepoint_section">定义:  </SPAN> 
+      Python在布尔上下文中会将某些值求值为<code>false</code>。 
+      按简单的直觉来讲, 就是所有的"空"值都被认为是<code>false</code>. 因此<code>0, None, [], {},''</code> 都被认为是<code>false</code>。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN> Conditions using Python booleans are easier to read
-      and less error-prone. In most cases, they're also faster.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+       使用Python布尔值的条件语句更易读也更不易犯错. 大部分情况下, 也更快。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      May look strange to C/C++ developers.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      对C/C++开发人员来说, 可能看起来有点怪。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-      Use the "implicit" false if at all possible, e.g., <code>if
-      foo:</code> rather than <code>if foo != []:</code>.  There are a
-      few caveats that you should keep in mind though:
+<SPAN class="stylepoint_section">结论:  </SPAN>
+      尽可能使用隐式的false, 例如: 使用 <code>if foo:</code> 而不是 <code>if foo != []:</code> 。 不过还是有一些注意事项需要你铭记在心：
     <ul>
       <li>
-        Never use <code>==</code> or <code>!=</code> to compare
-        singletons like <code>None</code>.  Use <code>is</code>
-        or <code>is not</code>.</li>
-
-      <li>Beware of writing <code>if x:</code> when you really mean
-        <code>if x is not None:</code>—e.g., when testing whether
-        a variable or argument that defaults to <code>None</code> was
-        set to some other value.  The other value might be a value
-        that's false in a boolean context!</li>
+        永远不要用<code>==</code>或者<code>!=</code> 来比较单件, 比如<code>None</code>. 使用<code>is</code>或者<code>is not</code>。
+      </li>
 
       <li>
-        Never compare a boolean variable to <code>False</code> using
-        <code>==</code>.  Use <code>if not x:</code> instead. If
-        you need to distinguish <code>False</code> from
-        <code>None</code> then chain the expressions,
-        such as <code>if not x and x is not None:</code>.
-        </li>
+        注意: 当你写下 <code>if x:</code> 时, 你其实表示的是 <code>if x is not None:</code> 。 
+        例如: 当你要测试一个默认值是<code>None</code>的变量或参数是否被设为其它值。这个值在布尔语义下可能是false! 
+      </li>
 
       <li>
-        For sequences (strings, lists, tuples), use the fact that
-        empty sequences are false, so <code>if not seq:</code> or
-        <code>if seq:</code> is preferable to <code>if
-        len(seq):</code> or <code>if not
-          len(seq):</code>.</li>
+        永远不要用==将一个布尔量与<code>False</code>相比较。 使用 <code>if not x:</code>  代替。 
+        如果你需要区分<code>False</code>和<code>None</code>, 你应该用像 <code>if not x and x is not None:</code> 这样的语句。
+      </li>
 
       <li>
-        When handling integers, implicit false may involve more risk than
-        benefit (i.e., accidentally handling <code>None</code> as 0).  You may
-        compare a value which is known to be an integer (and is not the
-        result of <code>len()</code>) against the integer 0.
+        对于序列(字符串, 列表, 元组), 要注意空序列是false. 因此 <code>if not seq:</code> 或者 <code>if seq:</code> 比 <code>if len(seq):</code> 或 <code>if not len(seq):</code> 要更好。
+      </li>
+
+      <li>
+         处理整数时, 使用隐式false可能会得不偿失(即不小心将<code>None</code>当做0来处理). 你可以将一个已知是整型(且不是<code>len()</code>的返回结果)的值与0比较。
 <DIV class=""><PRE>Yes: <span class="external"></span>if not users:
        <span class="external">  </span>print 'no users'
 
@@ -980,37 +829,29 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 </li>
 
       <li>
-        Note that <code>'0'</code> (i.e., <code>0</code> as string)
-        evaluates to true.</li>
+        注意：<code>'0'</code> (如, <code>0</code> 作为一个字符串)将被推导成true。</li>
     </ul>
         </P>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Deprecated_Language_Features" id="Deprecated_Language_Features">Deprecated Language Features</A></H3>
+<H3><A name="Deprecated_Language_Features" id="Deprecated_Language_Features">弃用的语言特性</A></H3>
 <SPAN class="link_button" id="link-Deprecated_Language_Features__button" name="link-Deprecated_Language_Features__button"><A href="?showone=Deprecated_Language_Features#Deprecated_Language_Features">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Deprecated_Language_Features')" name="Deprecated_Language_Features__button" id="Deprecated_Language_Features__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use string methods instead of the <code>string</code> module
-        where possible.  Use function call syntax instead
-        of <code>apply</code>.  Use list comprehensions
-        and <code>for</code> loops instead of <code>filter</code> and
-        <code>map</code> when the function argument would have been an
-        inlined lambda anyway.  Use <code>for</code> loops instead of
-        <code>reduce</code>.
+      	尽可能的使用string方法来替代<code>string</code>模块。使用函数调用语句来替代<code>apply</code>。
+      	当函数参数是一个内联lambda表达式时，使用列表推导和<code>for</code> 循环来替代<code>filter</code>和<code>map</code> 。
+      	使用<code>for</code>循环替代<code>reduce</code>。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Deprecated_Language_Features__body" id="Deprecated_Language_Features__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-          Current versions of Python provide alternative constructs
-          that people find generally preferable.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+          当前版本的Python提供了大家通常更喜欢的替代品。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-          We do not use any Python version which does not support
-          these features, so there is no reason not to use the new
-          styles.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+          我们不使用不支持这些特性的Python版本, 所以没理由不用新的方式。
 <DIV class=""><PRE>Yes: <span class="external"></span>words = foo.split(':')
 
      <span class="external"></span>[x[1] for x in my_list if x[2] == 5]
@@ -1027,27 +868,23 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Lexical_Scoping" id="Lexical_Scoping">Lexical Scoping</A></H3>
+<H3><A name="Lexical_Scoping" id="Lexical_Scoping">词法作用域(Lexical Scoping)</A></H3>
 <SPAN class="link_button" id="link-Lexical_Scoping__button" name="link-Lexical_Scoping__button"><A href="?showone=Lexical_Scoping#Lexical_Scoping">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lexical_Scoping')" name="Lexical_Scoping__button" id="Lexical_Scoping__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Okay to use.
+        可以使用.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Lexical_Scoping__body" id="Lexical_Scoping__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
-      A nested Python function can refer to variables defined in
-      enclosing functions, but can not assign to them.  Variable
-      bindings are resolved using lexical scoping, that is, based on
-      the static program text.  Any assignment to a name in a block
-      will cause Python to treat all references to that name as a
-      local variable, even if the use precedes the assignment.  If a
-      global declaration occurs, the name is treated as a global
-      variable.
+<SPAN class="stylepoint_section">定义:  </SPAN>
+      嵌套的Python函数可以引用外层函数中定义的变量, 但是不能够对它们赋值. 
+      变量绑定的解析是使用词法作用域, 也就是基于静态的程序文本. 
+      对一个块中的某个名称的任何赋值都会导致Python将对该名称的全部引用当做局部变量, 
+      甚至是赋值前的处理. 如果碰到global声明, 该名称就会被视作全局变量.
 
     <p>
-      An example of the use of this feature is:
+      使用此功能的一个例子：
     </p>
 
     <DIV class=""><PRE>
@@ -1061,15 +898,12 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 </PRE></DIV>
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN>
-      Often results in clearer, more elegant code.  Especially comforting
-      to experienced Lisp and Scheme (and Haskell and ML and …)
-      programmers.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      通常会产生清晰的，高雅的代码。尤其会让有经验的Lisp和Scheme(还有Haskell, ML等)程序员感到欣慰。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN>
-      Can lead to confusing bugs. Such as this example based on
-      <a HREF="http://www.python.org/dev/peps/pep-0227/">PEP-0227</a>:
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      可能会产生让人迷惑的Bug,如基于<a HREF="http://www.python.org/dev/peps/pep-0227/">PEP-0227</a>的一个例子：:
 <DIV class=""><PRE class="badcode">
 <span class="external"></span>i = 4
 <span class="external"></span>def foo(x):
@@ -1082,36 +916,31 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
     <span class="external">    </span>print i,
   <span class="external">  </span>bar()</PRE></DIV>
       <p>
-        So <code>foo([1, 2, 3])</code> will print <code>1 2 3 3</code>, not
-        <code>1 2 3 4</code>.
+        因此 <code>foo([1, 2, 3])</code> 将打印出 <code>1 2 3 3</code>, 而非<code>1 2 3 4</code>.
       </p>
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-      Okay to use.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+      可以使用。
         </P>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Function_and_Method_Decorators" id="Function_and_Method_Decorators">Function and Method Decorators</A></H3>
+<H3><A name="Function_and_Method_Decorators" id="Function_and_Method_Decorators">方法和函数装饰器</A></H3>
 <SPAN class="link_button" id="link-Function_and_Method_Decorators__button" name="link-Function_and_Method_Decorators__button"><A href="?showone=Function_and_Method_Decorators#Function_and_Method_Decorators">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Function_and_Method_Decorators')" name="Function_and_Method_Decorators__button" id="Function_and_Method_Decorators__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use decorators judiciously when there is a clear advantage.
+        如果好处显然，就明智且谨慎地使用装饰器。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Function_and_Method_Decorators__body" id="Function_and_Method_Decorators__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN>
+<SPAN class="stylepoint_section">定义:  </SPAN>
       
-      <a HREF="http://www.python.org/doc/2.4.3/whatsnew/node6.html">Decorators
-       for Functions and Methods</a>
-      (a.k.a "the <code>@</code> notation").
-      The most common decorators are <code>@classmethod</code> and
-      <code>@staticmethod</code>, for converting ordinary methods to class or
-      static methods. However, the decorator syntax allows for
-      user-defined decorators as well. Specifically, for some function
-      <code>my_decorator</code>, this:
+      <a HREF="http://www.python.org/doc/2.4.3/whatsnew/node6.html">方法和函数装饰器</a>
+      (也称为 " <code>@</code> 标记").
+      最常见的装饰圈是 <code>@classmethod</code> 和 <code>@staticmethod</code>, 
+      用于将普通的函数转变成类或静态函数。然而，装饰器语法也允许用户自定义的装饰器。特别是对一些函数<code>my_decorator</code>，下列两段代码是等价的：
       <DIV class=""><PRE>
 <span class="external"></span>class C(object):
   <span class="external">  </span>@my_decorator
@@ -1120,7 +949,6 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 <span class="external"></span>
 </PRE></DIV>
 
-      is equivalent to:
       <DIV class=""><PRE>
 <span class="external"></span>class C(object):
   <span class="external">  </span>def method(self):
@@ -1130,147 +958,120 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 </PRE></DIV>
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN> Elegantly specifies some transformation on a method; the
-      transformation might eliminate some repetitive code, enforce invariants,
-      etc.
+<SPAN class="stylepoint_section">优点:  </SPAN>
+      对一个方法优美地指定一些转化；这些转化可能会消除一些重复代码，加强不变性，等。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN> Decorators can perform arbitrary operations on a
-      function's arguments or return values, resulting in surprising
-      implicit behavior.
-      Additionally, decorators execute at import time.  Failures in decorator
-      code are pretty much impossible to recover from.
+<SPAN class="stylepoint_section">缺点: </SPAN> 
+      装饰器可以在函数的参数或返回值上执行任何操作, 这可能导致让人惊异的隐藏行为。此外, 装饰器在导入时执行，从装饰器代码的失败中恢复更加不可能。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN> Use decorators judiciously when there is a clear
-      advantage.  Decorators should follow the same import and naming
-      guidelines as functions.  Decorator pydoc should clearly state that the
-      function is a decorator.  Write unit tests for decorators.
+<SPAN class="stylepoint_section">结论:  </SPAN> 
+      如果好处显然, 就明智而谨慎的使用装饰器。装饰器应该遵守和函数一样的导入和命名规则。
+      装饰器的python文档应该清晰的说明该函数是一个装饰器。 请为装饰器编写单元测试。
 
     <p>
-      Avoid external dependencies in the decorator itself (e.g. don't rely on
-      files, sockets, database connections, etc.), since they might not be
-      available when the decorator runs (at import time, perhaps from
-      <code>pydoc</code> or other tools).  A decorator that is
-      called with valid parameters should (as much as possible) be guaranteed
-      to succeed in all cases.
+      避免装饰器自身对外界的依赖(如：不要依赖于文件, socket, 数据库连接等), 
+      因为装饰器运行时这些资源可能不可用(在导入时，也许是由 <code>pydoc</code> 或其它工具导入)。
+      应该保证一个用有效参数调用的装饰器在所有情况下都是成功的。
     </p>
     <p>
-      Decorators are a special case of "top level code" - see
-      <a HREF="#Main">main</a> for more discussion.
+      装饰器是“顶级代码”的一种特殊情况 - 参见 <a HREF="#Main">main</a>了解更多信息。
     </p>
         </P>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Threading" id="Threading">Threading</A></H3>
+<H3><A name="Threading" id="Threading">线程</A></H3>
 <SPAN class="link_button" id="link-Threading__button" name="link-Threading__button"><A href="?showone=Threading#Threading">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Threading')" name="Threading__button" id="Threading__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Do not rely on the atomicity of built-in types.
+        不要依赖内建类型的原子性。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Threading__body" id="Threading__body" style="display: none">
         <p>
-          While Python's built-in data types such as dictionaries appear
-          to have atomic operations, there are corner cases where they
-          aren't atomic (e.g. if <code>__hash__</code> or
-          <code>__eq__</code> are implemented as Python methods) and their
-          atomicity should not be relied upon.  Neither should you rely on
-          atomic variable assignment (since this in turn depends on
-          dictionaries).
+          虽然Python的内建数据类型例如字典看上去拥有原子操作, 
+          但是在某些情形下它们仍然不是原子的(例如: 如果code>__hash__</code>或<code>__eq__</code>被实现为Python方法)且它们的原子性是不可靠的。
+          你也不能指望原子变量赋值(因为这个反过来依赖于字典)。
         </p>
 
         <p>
-          Use the Queue module's <code>Queue</code> data type as the preferred
-          way to
-          communicate data between threads.  Otherwise, use the threading
-          module and its locking primitives.  Learn about the proper use
-          of condition variables so you can use
-          <code>threading.Condition</code> instead of using lower-level
-          locks.
+          优先使用Queue模块的 <code>Queue</code> 数据类型作为线程间的数据通信方式。
+          另外, 使用threading模块及其锁原语(locking primitives)。
+          了解条件变量的合适使用方式, 这样你就可以使用 <code>threading.Condition</code> 来取代低级别的锁了。
         </p>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Power_Features" id="Power_Features">Power Features</A></H3>
+<H3><A name="Power_Features" id="Power_Features">激进的特性</A></H3>
 <SPAN class="link_button" id="link-Power_Features__button" name="link-Power_Features__button"><A href="?showone=Power_Features#Power_Features">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Power_Features')" name="Power_Features__button" id="Power_Features__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Avoid these features.
+        避开这些特性。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Power_Features__body" id="Power_Features__body" style="display: none">
         <P class="">
-<SPAN class="stylepoint_section">Definition:  </SPAN> Python is an extremely flexible language and
-      gives you many fancy features such as metaclasses, access to bytecode,
-      on-the-fly compilation, dynamic inheritance, object reparenting,
-      import hacks, reflection, modification of system internals,
-      etc.
+<SPAN class="stylepoint_section">定义:  </SPAN> 
+       Python是一种异常灵活的语言, 它为你提供了很多花哨的特性, 诸如元类(metaclasses), 
+       访问字节码, 任意编译(on-the-fly compilation), 动态继承, 对象父类重定义(object reparenting), 
+       导入作弊(import hacks), 反射, 系统内修改(modification of system internals), 等等
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Pros:  </SPAN> These are powerful language features.  They can
-      make your code more compact.
+<SPAN class="stylepoint_section">优点:  </SPAN> 
+      这些都是强大的语言功能，它们可以让你的代码更简洁。
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Cons: </SPAN> It's very tempting to use these "cool" features
-      when they're not absolutely necessary.  It's harder to read,
-      understand, and debug code that's using unusual features
-      underneath.  It doesn't seem that way at first (to the original
-      author), but when revisiting the code, it tends to be more
-      difficult than code that is longer but is straightforward.
+<SPAN class="stylepoint_section">缺点: </SPAN>
+      使用这些很"酷"的特性十分诱人, 但不是绝对必要。
+      使用奇技淫巧的代码将更加难以阅读和调试。开始可能还好(对原作者而言), 但当你回顾代码, 它们可能会比那些稍长一点但是很直接的代码更加难以理解.
         </P>
         <P class="">
-<SPAN class="stylepoint_section">Decision:  </SPAN>
-          Avoid these features in 
-          your code.
+<SPAN class="stylepoint_section">结论:  </SPAN>
+          避免这些特性出现在你的代码中。
         </P>
       </DIV></DIV>
     </DIV>
   </DIV>
   <DIV class="">
-<H2 name="Python_Style_Rules" id="Python_Style_Rules">Python Style Rules</H2>
+<H2 name="Python_Style_Rules" id="Python_Style_Rules">Python风格规范</H2>
     <DIV class="">
-<H3><A name="Semicolons" id="Semicolons">Semicolons</A></H3>
+<H3><A name="Semicolons" id="Semicolons">分号</A></H3>
 <SPAN class="link_button" id="link-Semicolons__button" name="link-Semicolons__button"><A href="?showone=Semicolons#Semicolons">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Semicolons')" name="Semicolons__button" id="Semicolons__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Do not terminate your lines with semi-colons and do not use
-        semi-colons to put two commands on the same line.
+      	不要在行尾加分号，也不要用分号把两条语句放在同一行。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Semicolons__body" id="Semicolons__body" style="display: none">
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Line_length" id="Line_length">Line length</A></H3>
+<H3><A name="Line_length" id="Line_length">行长度</A></H3>
 <SPAN class="link_button" id="link-Line_length__button" name="link-Line_length__button"><A href="?showone=Line_length#Line_length">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Line_length')" name="Line_length__button" id="Line_length__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Maximum line length is <em>80 characters</em>.
+        行最大长度为 <em>80个字符</em>.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Line_length__body" id="Line_length__body" style="display: none">
     <p>
-      Exceptions:
+      例外:
       <ul>
-        <li>Long import statements.</li>
-        <li>URLs in comments.</li>
+        <li>长的导入语句</li>
+        <li>注释中的URLs</li>
         
       </ul>
     </p>
 
     <p>
-      Do not use backslash line continuation.
+      不用使用反斜杠延续行
     </p>
 
     <p>
-      Make use of Python's
-      
-      <a HREF="http://docs.python.org/reference/lexical_analysis.html#implicit-line-joining">implicit
-      line joining inside parentheses, brackets and braces</a>.
-      If necessary, you can add an extra pair of parentheses around an
-      expression.
+      利用Python的<a HREF="http://docs.python.org/reference/lexical_analysis.html#implicit-line-joining">圆括号，中括号和花括号中的隐式连接</a>。
+      如果必要，你可以添加在一个表达式两边添加额外的圆括号。
     </p>
 
     
@@ -1282,8 +1083,7 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 
 
     <p>
-      When a literal string won't fit on a single line, use parentheses for
-      implicit line joining.
+      当字符串过长不适应放在一个单独的行中，使用圆括号隐式地连接行。
     </p>
 
     <DIV class=""><PRE>
@@ -1291,7 +1091,7 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 <span class="external"></span>     'long long long long long long string')</PRE></DIV>
 
     <p>
-      Within comments, put long URLs on their own line if necessary.
+      在注释内部，如果有必要可以将过长的URLs放在它们自己的行中。
     </p>
 
     <DIV class=""><PRE>Yes:  <span class="external"></span># See details at
@@ -1302,26 +1102,22 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
      <span class="external"></span># v2.0/csv_file_name_extension_full_specification.html</PRE></DIV>
 
     <p>
-      Make note of the indentation of the elements in the line
-      continuation examples above; see the
-      <a HREF="#Indentation">indentation</a>
-      section for explanation.
+      注意上面例子中的元素缩进; 你可以在<a HREF="#Indentation">缩进 </a>部分找到解释。
     </p>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Parentheses" id="Parentheses">Parentheses</A></H3>
+<H3><A name="Parentheses" id="Parentheses">圆括号</A></H3>
 <SPAN class="link_button" id="link-Parentheses__button" name="link-Parentheses__button"><A href="?showone=Parentheses#Parentheses">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Parentheses')" name="Parentheses__button" id="Parentheses__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use parentheses sparingly.
+        少量的使用圆括号.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Parentheses__body" id="Parentheses__body" style="display: none">
     <p>
-      Do not use them in return statements or conditional statements unless
-      using parentheses for implied line continuation. (See above.)
-      It is however fine to use parentheses around tuples.
+      不要在返回语句或者条件语句中使用它们，除非为隐式的行连接使用圆括号(参加上一条)。
+      在元组(tuples)两边使用圆括号总是对的。
     </p>
 
 <DIV class=""><PRE>Yes: <span class="external"></span>if foo:
@@ -1342,21 +1138,18 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Indentation" id="Indentation">Indentation</A></H3>
+<H3><A name="Indentation" id="Indentation">缩进排版</A></H3>
 <SPAN class="link_button" id="link-Indentation__button" name="link-Indentation__button"><A href="?showone=Indentation#Indentation">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Indentation')" name="Indentation__button" id="Indentation__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Indent your code blocks with <em>4 spaces</em>.
+        使用 <em>4个空格</em> 来缩进你的代码块。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Indentation__body" id="Indentation__body" style="display: none">
     <p>
-      Never use tabs or mix tabs and spaces.
-      In cases of implied line continuation, you should align wrapped elements
-      either vertically, as per the examples in the
-      <a HREF="#Line_length">line length</a> section; or using a hanging
-      indent of 4 spaces, in which case there should be no argument on
-      the first line.
+      永远别使用tab或混合tab和空格。
+      在隐式行连接情景下，你应该垂直地包裹元素，如同之前<a HREF="#Line_length">行长度</a>章节中的例子；
+      或者使用一个4空格悬挂式缩进，这种情况下在第一行中不应该有参数。
     </p>
 
 
@@ -1400,43 +1193,37 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Blank_Lines" id="Blank_Lines">Blank Lines</A></H3>
+<H3><A name="Blank_Lines" id="Blank_Lines">空白行</A></H3>
 <SPAN class="link_button" id="link-Blank_Lines__button" name="link-Blank_Lines__button"><A href="?showone=Blank_Lines#Blank_Lines">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Blank_Lines')" name="Blank_Lines__button" id="Blank_Lines__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Two blank lines between top-level definitions, one blank line
-        between method definitions.
+        在顶级定义之间使用两行空白行，在方法定义之间使用一行空白行。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Blank_Lines__body" id="Blank_Lines__body" style="display: none">
     <p>
-      Two blank lines between top-level definitions, be they function
-      or class definitions.  One blank line between method definitions
-      and between the <code>class</code> line and the first method.
-      Use single blank lines as you judge appropriate within functions or
-      methods.
+      顶级定义之间空两行, 比如函数或者类定义。
+      方法定义, 类定义与第一个方法之间, 都应该空一行。
+      函数或方法中, 某些地方要是你觉得合适, 就空一行。
     </p>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Whitespace" id="Whitespace">Whitespace</A></H3>
+<H3><A name="Whitespace" id="Whitespace">空格</A></H3>
 <SPAN class="link_button" id="link-Whitespace__button" name="link-Whitespace__button"><A href="?showone=Whitespace#Whitespace">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Whitespace')" name="Whitespace__button" id="Whitespace__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Follow standard typographic rules for the use of spaces around
-        punctuation.
+        安装标准的排版规则来使用标点两边的空格。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Whitespace__body" id="Whitespace__body" style="display: none">
     <p>
-      No whitespace inside parentheses, brackets or braces.
+      圆括号，中括号，花括号的里面不要有空格。
     </p>
 <DIV class=""><PRE>Yes: <span class="external"></span>spam(ham[1], {eggs: 2}, [])</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:  <span class="external"></span>spam( ham[ 1 ], { eggs: 2 }, [ ] )</PRE></DIV>
     <p>
-      No whitespace before a comma, semicolon, or colon.  Do use
-      whitespace after a comma, semicolon, or colon except at the end
-      of the line.
+      逗号，分号，冒号之前不要有空格。在逗号，分号，冒号之后使用一个空格，除了在行尾。
     </p>
 <DIV class=""><PRE>Yes: <span class="external"></span>if x == 4:
        <span class="external">  </span>print x, y
@@ -1445,8 +1232,7 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
        <span class="external">  </span>print x , y
      <span class="external"></span>x , y = y , x</PRE></DIV>
     <p>
-      No whitespace before the open paren/bracket that starts an argument list,
-      indexing or slicing.
+      参数列表, 索引或切片的左括号前不要加空格。
     </p>
     <DIV class=""><PRE>Yes: <span class="external"></span>spam(1)</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:  <span class="external"></span>spam (1)</PRE></DIV>
@@ -1454,26 +1240,20 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 <DIV class=""><PRE class="badcode">No:  <span class="external"></span>dict ['key'] = list [index]</PRE></DIV>
 
     <p>
-      Surround binary operators with a single space on either side for
-      assignment (<code>=</code>), comparisons (<code>==, &lt;, &gt;, !=,
-        &lt;&gt;, &lt;=, &gt;=, in, not in, is, is not</code>), and Booleans
-      (<code>and, or, not</code>).  Use your better judgment for the
-      insertion of spaces around arithmetic operators but always be
-      consistent about whitespace on either side of a binary operator.
+      在二元操作符两边都加上一个空格, 比如赋值(<code>=</code>), 
+      比较(<code>==, &lt;, &gt;, !=, &lt;&gt;, &lt;=, &gt;=, in, not in, is, is not</code>), 
+      布尔(<code>and, or, not</code>)。 至于算术操作符两边的空格该如何使用, 需要你自己好好判断. 不过两侧务必要保持一致。
     </p>
 <DIV class=""><PRE>Yes: <span class="external"></span>x == 1</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:  <span class="external"></span>x&lt;1</PRE></DIV>
     <p>
-      Don't use spaces around the '=' sign when used to indicate a
-      keyword argument or a default parameter value.
+      当'='用于指示关键字参数或默认参数值时, 不要在其两侧使用空格。
     </p>
 <DIV class=""><PRE>Yes: <span class="external"></span>def complex(real, imag=0.0): return magic(r=real, i=imag)</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:  <span class="external"></span>def complex(real, imag = 0.0): return magic(r = real, i = imag)</PRE></DIV>
 
     <p>
-      Don't use spaces to vertically align tokens on consecutive lines, since it
-      becomes a maintenance burden (applies to <code>:</code>, <code>#</code>,
-      <code>=</code>, etc.):
+      不要用空格来垂直对齐多行间的标记, 因为这会成为维护的负担(适用于<code>:</code>, <code>#</code>,<code>=</code>等):
     </p>
 <DIV class=""><PRE>Yes:
   foo = 1000  # comment
@@ -1498,132 +1278,108 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 
     <a name="Python_Interpreter"></a>
     <DIV class="">
-<H3><A name="Shebang_Line" id="Shebang_Line">Shebang Line</A></H3>
+<H3><A name="Shebang_Line" id="Shebang_Line">组织行(Shebang Line)</A></H3>
 <SPAN class="link_button" id="link-Shebang_Line__button" name="link-Shebang_Line__button"><A href="?showone=Shebang_Line#Shebang_Line">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Shebang_Line')" name="Shebang_Line__button" id="Shebang_Line__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Most <code>.py</code> files do not need to start with a
-        <code>#!</code> line.  Start the main file of a
-         program with
-        <code>#!/usr/bin/python</code> with an optional single digit
-        <code>2</code> or <code>3</code> suffix per
-        <a href="http://www.python.org/dev/peps/pep-0394/">PEP-394</a>.
+        大多数 <code>.py</code> 文件不需要以一个 <code>#!</code> 行开始。根据<a href="http://www.python.org/dev/peps/pep-0394/">PEP-394</a>，程序的main文件应该以
+        <code>#!/usr/bin/python2</code>或<code>#!/usr/bin/python3</code>开始。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Shebang_Line__body" id="Shebang_Line__body" style="display: none">
         
         <p>
-          This line is used by the kernel to find the Python interpreter, but is
-          ignored by Python when importing modules.  It is only necessary on a
-          file that will be executed directly.
+          这一行被用作查找Python编译器的核心，但是当导入模块时，会被Python忽略。
+          它只需在一个将会被直接执行的文件中引入。
         </p>
       </DIV></DIV>
     </DIV>
 
     <DIV class="">
-<H3><A name="Comments" id="Comments">Comments</A></H3>
+<H3><A name="Comments" id="Comments">注释</A></H3>
 <SPAN class="link_button" id="link-Comments__button" name="link-Comments__button"><A href="?showone=Comments#Comments">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Comments')" name="Comments__button" id="Comments__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Be sure to use the right style for module, function, method and in-line
-        comments.
+        确保在模块，函数，方法和行内都使用格式正确的注释。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Comments__body" id="Comments__body" style="display: none">
 
     <P class="">
-<SPAN class="stylepoint_subsection">Doc Strings</SPAN>
+<SPAN class="stylepoint_subsection">文档字符串</SPAN>
 
     <p>
-      Python has a unique commenting style using doc strings.  A doc
-      string is a string that is the first statement in a package,
-      module, class or function.  These strings can be extracted
-      automatically through the <code>__doc__</code> member of the
-      object and are used by <code>pydoc</code>.  (Try running
-      <code>pydoc</code> on your module to see how it looks.)  We
-      always use the three double-quote <code>"""</code> format for doc strings
-      (per <a href="http://www.python.org/dev/peps/pep-0257/">PEP 257</a>).
-      A doc string should be organized as a
-      summary line (one physical line) terminated by a period,
-      question mark, or exclamation point, followed by a blank line,
-      followed by the rest of the doc string starting at the same
-      cursor position as the first quote of the first line.  There are
-      more formatting guidelines for doc strings below.
+      Python有一种独一无二的的注释方式: 使用文档字符串。
+      文档字符串是包, 模块, 类或函数里的第一条语句。
+      这些字符串可以通过对象的<code>__doc__</code>成员被自动提取, 并且被<code>pydoc</code>所用。
+      (你可以在你的模块上运行<code>pydoc</code>试一下, 看看它是怎样的)。
+      我们总是对文档字符串使用三重双引号<code>"""</code>(<a href="http://www.python.org/dev/peps/pep-0257/">PEP 257</a>)。
+      一个文档字符串应该被组织成：一个以句号，问号或叹号结束的摘要行(或者该文档字符串单纯只有一行)。
+      接着是一个空行，再接着是文档字符串剩余的部分，它应该和文档字符串的第一行的第一个引号对齐。
+      以下有更多关于文档字符串的规范指南。
     </p>
 
     </P>
     <P class="">
-<SPAN class="stylepoint_subsection">Modules</SPAN>
+<SPAN class="stylepoint_subsection">模块</SPAN>
 
     
     
     <p>
-      Every file should contain license boilerplate.
-      Choose the appropriate boilerplate for the license used by the project
-      (for example, Apache 2.0, BSD, LGPL, GPL)
+      每个文件应该包含一个许可样板。根据项目使用的许可(例如, Apache 2.0, BSD, LGPL, GPL), 选择合适的样板
     </p>
     </P>
     <P class="">
-<SPAN class="stylepoint_subsection">Functions and Methods</SPAN>
+<SPAN class="stylepoint_subsection">方法和函数</SPAN>
 
     <p>
-      As used in this section "function" applies to methods, function, and
-      generators.
+      本节所指的函数包括函数, 方法, 和生成器。
     </p>
 
     <p>
-      A function must have a docstring, unless it meets all of the following
-      criteria:
+      一个函数必须要有文档字符串, 除非它满足以下所有条件：
       <ul>
-        <li>not externally visible</li>
-        <li>very short</li>
-        <li>obvious</li>
+        <li>外部不可见</li>
+        <li>非常短小</li>
+        <li>简单明了</li>
       </ul>
     </p>
 
     <p>
-      A docstring should give enough information to write a call to the function
-      without reading the function's code.  A docstring should describe the
-      function's calling syntax and its semantics, not its implementation.  For
-      tricky code, comments alongside the code are more appropriate than using
-      docstrings.
+      文档字符串应该给出足够的信息，可以使不阅读方法代码的情况下就可以调用一个函数。
+      文档字符串应该描述函数的调用语法和它的语义，而不是它的实现过程。
+      对于复杂的代码, 在代码旁边加注释会比使用文档字符串更有合适。
+
     </p>
 
     <p>
-      Certain aspects of a function should be documented in special sections,
-      listed below. Each section begins with a heading line, which ends with a
-      colon. Sections should be indented two spaces, except for the heading.
+      关于函数的几个方面应该在特定的小节中进行描述记录， 这几个方面如下文所述。
+      每节应该以一个标题行开始，标题行以冒号结尾。除标题行外, 节的其他内容应被缩进2个空格。
     </p>
 
     <dl>
-      <dt>Args:</dt>
+      <dt>参数:</dt>
       <dd>
-        List each parameter by name. A description should follow the name, and
-        be separated by a colon and a space. If the description is too long to
-        fit on a single 80-character line, use a hanging indent of 2 or 4 spaces
-        (be consistent with the rest of the file).
-
+        列出每个参数的名字。并在名字后使用一个冒号和一个空格, 分隔对该参数的描述。
+        如果描述太长超过了单行80字符,使用2或者4个空格的悬挂缩进(与文件其他部分保持一致)。
         <p>
-          The description should mention required type(s) and the meaning of
-          the argument.
+          描述应该包括所需参数的类型和含义。
         </p>
 
         <p>
-          If a function accepts *foo (variable length argument lists) and/or
-          **bar (arbitrary keyword arguments), they should be listed as *foo and
-          **bar.
+
+        如果一个函数接受*foo(可变长度参数列表)或者**bar (任意关键字参数), 应该详细列出*foo和**bar。
         </p>
       </dd>
 
-      <dt>Returns: (or Yields: for generators)</dt>
+      <dt>返回: (或者 生成器的Yields:)</dt>
       <dd>
-        Describe the type and semantics of the return value. If the function
-        only returns None, this section is not required.
+        描述返回值的类型和语义。 如果函数返回None, 这一部分就不是必须填写的。
       </dd>
 
-      <dt>Raises:</dt>
+      <dt>挂起:</dt>
       <dd>
-        List all exceptions that are relevant to the interface.
+        列出与接口有关的所有异常。
       </dd>
     </dl>
 
@@ -1662,13 +1418,12 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 </PRE></DIV>
     </P>
     <P class="">
-<SPAN class="stylepoint_subsection">Classes</SPAN>
+<SPAN class="stylepoint_subsection">类</SPAN>
 
     <p>
-      Classes should have a doc string below the class definition describing
-      the class.  If your class has public attributes, they should be documented
-      here in an Attributes section and follow the same formatting as a
-      function's Args section.
+      类应该在其定义下有一个用于描述该类的文档字符串。
+      如果你的类有公共属性, 那么文档中应该有一个属性段落。
+      并且应该遵守和函数参数相同的格式。
     </p>
 
     <DIV class=""><PRE>
@@ -1695,15 +1450,14 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 
     </P>
     <P class="">
-<SPAN class="stylepoint_subsection">Block and Inline Comments</SPAN>
+<SPAN class="stylepoint_subsection">块和行内注释</SPAN>
 
     <p>
-      The final place to have comments is in tricky parts of the
-      code. If you're going to have to explain it at the next
-      <a HREF="http://en.wikipedia.org/wiki/Code_review">code review</a>,
-      you should comment it now.  Complicated operations get a few lines of
-      comments before the operations
-      commence. Non-obvious ones get comments at the end of the line.
+      最需要写注释的是代码中那些难以理解的部分。
+      如果你在下次<a HREF="http://en.wikipedia.org/wiki/Code_review">code review</a>的时候必须解释一下, 
+      那么你应该现在就给它写注释。对于复杂的操作, 应该在其操作开始前写上若干行注释。
+      对于不是一目了然的代码, 应在其行尾添加注释.
+
     </p>
 
     <DIV class=""><PRE>
@@ -1717,14 +1471,11 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
 </PRE></DIV>
 
     <p>
-      To improve legibility, these comments should be at least 2 spaces away
-      from the code.
+      为了提高可读性, 注释应该至少离开代码2个空格。
     </p>
 
     <p>
-      On the other hand, never describe the code. Assume the person
-      reading the code knows Python (though not what you're trying to
-      do) better than you do.
+      另一方面, 绝不要描述代码。可以假设阅读代码的人比你更懂Python（他只是不知道你的代码要做什么）。
     </p>
 
     <DIV class=""><PRE class="badcode">
@@ -1737,13 +1488,12 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Classes" id="Classes">Classes</A></H3>
+<H3><A name="Classes" id="Classes">类</A></H3>
 <SPAN class="link_button" id="link-Classes__button" name="link-Classes__button"><A href="?showone=Classes#Classes">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Classes')" name="Classes__button" id="Classes__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        If a class inherits from no other base classes, explicitly inherit
-    from <code>object</code>.  This also applies to nested classes.
+        如果一个类不继承自其他类，那么就显示地继承<code>object</code>，这也适用于嵌套类。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Classes__body" id="Classes__body" style="display: none">
     <DIV class=""><PRE>Yes: <span class="external"></span>class SampleClass(object):
@@ -1770,26 +1520,24 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
         <span class="external">    </span>pass
 <span class="external"></span>
 </PRE></DIV>
-    <p>Inheriting from <code>object</code> is needed to make properties work
-    properly, and it will protect your code from one particular potential
-    incompatibility with Python 3000.  It also defines
-    special methods that implement the default semantics of objects including
-    <code>__new__</code>, <code>__init__</code>, <code>__delattr__</code>,
+    <p>
+
+    继承自 <code>object</code> 是使属性(properties)正常工作所必需的, 
+    并且这样可以保护你的代码, 使其不受Python 3000的一个特殊的潜在不兼容性影响。
+    这样做也定义了一些特殊的方法, 这些方法实现了对象的默认语义, 
+    包括 <code>__new__</code>, <code>__init__</code>, <code>__delattr__</code>,
     <code>__getattribute__</code>, <code>__setattr__</code>,
-    <code>__hash__</code>, <code>__repr__</code>, and <code>__str__</code>.
+    <code>__hash__</code>, <code>__repr__</code>, 和 <code>__str__</code>。
     </p>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Strings" id="Strings">Strings</A></H3>
+<H3><A name="Strings" id="Strings">字符串</A></H3>
 <SPAN class="link_button" id="link-Strings__button" name="link-Strings__button"><A href="?showone=Strings#Strings">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Strings')" name="Strings__button" id="Strings__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use the <code>format</code> method or the <code>%</code> operator for
-        formatting strings, even when the parameters are all strings. Use your
-        best judgement to decide between <code>+</code> and <code>%</code>
-        (or <code>format</code>) though.
+        使用<code>format</code>方法或者<code>%</code>操作符来格式化字符串，即便是参数都是字符串也这样。用你的最佳判断来觉得在<code>+</code> 和<code>%</code>之间进行取舍。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Strings__body" id="Strings__body" style="display: none">
 
@@ -1804,12 +1552,11 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
     <span class="external"></span>x = 'name: ' + name + '; score: ' + str(n)</PRE></DIV>
 
     <p>
-      Avoid using the <code>+</code> and <code>+=</code> operators to
-      accumulate a string within a loop. Since strings are immutable, this
-      creates unnecessary temporary objects and results in quadratic rather
-      than linear running time. Instead, add each substring to a list
-      and <code>''.join</code> the list after the loop terminates (or, write
-      each substring to a <code>io.BytesIO</code> buffer).
+
+      避免在循环中用<code>+</code>和<code>+=</code>操作符来累加字符串。
+      由于字符串是不可变的, 这样做会创建不必要的临时对象, 并且导致二次方而不是线性的运行时间。
+      作为替代方案, 你可以将每个子串加入列表, 然后在循环结束后用 <code>''.join</code> 连接列表。(或者将每个子串写入一个 <code>io.BytesIO</code> 缓存中)
+
     </p>
 
 <DIV class=""><PRE>Yes: <span class="external"></span>items = ['&lt;table&gt;']
@@ -1823,11 +1570,9 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
     <span class="external"></span>employee_table += '&lt;/table&gt;'</PRE></DIV>
 
     <p>
-      Be consistent with your choice of string quote character within a file.
-      Pick <code>'</code> or <code>"</code> and stick with it.
-      It is okay to use the other quote character on a string to avoid the
-      need to <code>\</code> escape within the string.
-      GPyLint enforces this.
+      在同一个文件中, 保持使用字符串引号的一致性。
+      使用单引号<code>'</code>或者双引号<code>"</code>之一用以引用字符串, 并在同一文件中沿用。
+      在字符串内可以使用另外一种引号, 以避免在字符串中使用反斜杠<code>\</code>。PyLint强制这样做。
     </p>
 
 <DIV class=""><PRE>Ye<span class="external"></span>s:
@@ -1840,14 +1585,11 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
   <span class="external"></span>Gollum("Always the great lint. Watching. Watching.")</PRE></DIV>
 
     <p>
-      Prefer <code>"""</code> for multi-line strings rather than
-      <code>'''</code>. Projects may choose to use <code>'''</code> for
-      all non-docstring multi-line strings if and only if they also use
-      <code>'</code> for regular strings.
-      Doc strings must use <code>"""</code> regardless.
-      Note that it is often cleaner to
-      use implicit line joining since multi-line strings do
-      not flow with the indentation of the rest of the program:
+      为多行字符串使用三重双引号<code>"""</code> 而非三重单引号<code>'''</code>。
+      当且仅当项目中使用单引号<code>'</code>来引用字符串时，
+      才可能会使用三重单引号<code>'''</code>为非文档字符串的多行字符串来标识引用。
+      文档字符串必须使用三重双引号<code>"""</code>。
+      不过要注意, 通常用隐式行连接更清晰, 因为多行字符串与程序其他部分的缩进方式不一致：
     </p>
 
 <DIV class=""><PRE>Ye<span class="external"></span>s:
@@ -1862,53 +1604,44 @@ Don'<span class="external"></span>t do this.
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Files_and_Sockets" id="Files_and_Sockets">Files and Sockets</A></H3>
+<H3><A name="Files_and_Sockets" id="Files_and_Sockets">文件和Sockets</A></H3>
 <SPAN class="link_button" id="link-Files_and_Sockets__button" name="link-Files_and_Sockets__button"><A href="?showone=Files_and_Sockets#Files_and_Sockets">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Files_and_Sockets')" name="Files_and_Sockets__button" id="Files_and_Sockets__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Explicitly close files and sockets when done with them.
+        当用完时，显示地关闭文件和sockets。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Files_and_Sockets__body" id="Files_and_Sockets__body" style="display: none">
         <p>
-          Leaving files, sockets or other file-like objects open unnecessarily
-          has many downsides, including:
-
+          处于打开状态就离开文件，sockets或者其它类似文件的对象，会带来很多不必要的缺陷，包括：
           <ul>
-            <li>They may consume limited system resources, such as file
-              descriptors.  Code that deals with many such objects may exhaust
-              those resources unnecessarily if they're not returned to the
-              system promptly after use.</li>
-            <li>Holding files open may prevent other actions being performed on
-              them, such as moves or deletion.</li>
-            <li>Files and sockets that are shared throughout a program may
-              inadvertantly be read from or written to after logically being
-              closed.  If they are actually closed, attempts to read or write
-              from them will throw exceptions, making the problem known
-              sooner.</li>
+            <li>
+              它们可能会消耗有限的系统资源, 如文件描述符。如果这些资源在使用后没有及时归还系统, 那么用于处理这些对象的代码会将资源消耗殆尽。
+            </li>
+            <li>
+              保持文件打开可能会阻止对于文件的其他操作，如移动、删除。
+            </li>
+            <li>
+              文件和sockets在整个程序中共用可能会在逻辑关闭后被无意的读取或者写入。
+              如果事实上已经关闭了，试图去读或写都会抛出异常，这样就可以让问题更快被知道。
+            </li>
           </ul>
         </p>
 
         <p>
-          Furthermore, while files and sockets are automatically closed when the
-          file object is destructed, tying the life-time of the file object to
-          the state of the file is poor practice, for several reasons:
-
+          而且, 虽然文件和sockets会在文件对象销毁时自动关闭, 试图将文件对象的生命周期和文件的状态绑定在一起的想法, 都是不现实的. 因为有如下原因：
           <ul>
-            <li>There are no guarantees as to when the runtime will actually run
-              the file's destructor.  Different Python implementations use
-              different memory management techniques, such as delayed Garbage
-              Collection, which may increase the object's lifetime arbitrarily
-              and indefinitely.</li>
-            <li>Unexpected references to the file may keep it around longer than
-              intended (e.g. in tracebacks of exceptions, inside globals,
-              etc).</li>
+            <li>
+              没有任何方法可以确保运行时会真正的执行文件的析构。不同的Python实现采用不同的内存管理技术, 比如延时垃圾处理机制. 延时垃圾处理机制可能会导致对象生命周期被任意无限制的延长。
+            </li>
+            <li>
+              对于文件意外的引用,会导致对于文件的持有时间超出预期(比如对于异常的跟踪, 包含有全局变量等)
+            </li>
           </ul>
         </p>
 
         <p>
-          The preferred way to manage files is using the <a HREF="http://docs.python.org/reference/compound_stmts.html#the-with-statement">
-          "with" statement</a>:
+          推荐使用<a HREF="http://docs.python.org/reference/compound_stmts.html#the-with-statement"> "with" 语句</a>来管理文件:
         </p>
 
 <DIV class=""><PRE>
@@ -1917,8 +1650,7 @@ Don'<span class="external"></span>t do this.
     <span class="external">    </span>print line</PRE></DIV>
 
         <p>
-          For file-like objects that do not support the "with" statement, use
-          contextlib.closing():
+          对于不支持使用"with"语句的类似文件的对象,使用 contextlib.closing():
         </p>
 
 <DIV class=""><PRE>
@@ -1929,82 +1661,62 @@ Don'<span class="external"></span>t do this.
     <span class="external">    </span>print line</PRE></DIV>
 
         <p>
-          Legacy AppEngine code using Python 2.5 may enable the "with" statement
-          using "from __future__ import with_statement".
+          Legacy AppEngine 中Python 2.5的代码如使用"with"语句, 需要添加 "from future import with_statement"。
         </p>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="TODO_Comments" id="TODO_Comments">TODO Comments</A></H3>
+<H3><A name="TODO_Comments" id="TODO_Comments">TODO注释</A></H3>
 <SPAN class="link_button" id="link-TODO_Comments__button" name="link-TODO_Comments__button"><A href="?showone=TODO_Comments#TODO_Comments">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('TODO_Comments')" name="TODO_Comments__button" id="TODO_Comments__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Use <code>TODO</code> comments for code that is temporary, a
-        short-term solution, or good-enough but not perfect.
+        对代码使用 <code>TODO</code>注释只能是临时的，短期的解决方案，足够好但不够完美。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="TODO_Comments__body" id="TODO_Comments__body" style="display: none">
         <p>
-          <code>TODO</code>s should include the string <code>TODO</code> in
-          all caps, followed by the
-          
-          name, e-mail address, or other
-          identifier
-          of the person who can best provide context about the problem
-          referenced by the <code>TODO</code>,
-          in parentheses.  A colon is optional.  A comment explaining what there
-          is to do is required. The main purpose is to have
-          a consistent <code>TODO</code> format that can be searched to find the
-          person who can provide more details upon request.  A
-          <code>TODO</code> is not a commitment that the person referenced
-          will fix the problem.  Thus when you create a <code>TODO</code>, it is
-          almost always your
-          
-          name
-          that is given.
-        </p>
+          <code>TODO</code>s应该包含一个全部大写的<code>TODO</code>字符串，紧跟着是用括号括起来的你的名字, email地址或其它标识符。
+          然后是一个可选的冒号. 接着必须有一行注释, 解释要做什么。
+          主要目的是为了有一个统一的<code>TODO</code>格式, 这样添加注释的人就可以搜索到(并可以按需提供更多细节)。
+          写了<code>TODO</code>注释并不保证写的人会亲自解决问题。当你写了一个<code>TODO</code>, 请注上你的名字。
+
+       </p>
         
         <DIV class=""><PRE># TODO(kl@gmail.com): Use a "*" here for string repetition.
 # TODO(Zeke) Change this to use relations.</PRE></DIV>
         <p>
-          If your <code>TODO</code> is of the form "At a future date do
-          something" make sure that you either include a very specific
-          date ("Fix by November 2009") or a very specific event
-          ("Remove this code when all clients can handle XML responses.").
+          如果你的<code>TODO</code>是"将来做某事"的形式, 那么请确保你包含了一个指定的日期("2009年11月解决")或者一个特定的事件("等到所有的客户都可以处理XML请求就移除这些代码")。
         </p>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Imports_formatting" id="Imports_formatting">Imports formatting</A></H3>
+<H3><A name="Imports_formatting" id="Imports_formatting">导入格式</A></H3>
 <SPAN class="link_button" id="link-Imports_formatting__button" name="link-Imports_formatting__button"><A href="?showone=Imports_formatting#Imports_formatting">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Imports_formatting')" name="Imports_formatting__button" id="Imports_formatting__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Imports should be on separate lines.
+        导入语句应该独占一行。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Imports_formatting__body" id="Imports_formatting__body" style="display: none">
     <p>
-      E.g.:
+      例如:
     </p>
 
 <DIV class=""><PRE>Yes: <span class="external"></span>import os
      <span class="external"></span>import sys</PRE></DIV>
 <DIV class=""><PRE class="badcode">No:  <span class="external"></span>import os, sys</PRE></DIV>
     <p>
-      Imports are always put at the top of the file, just after any
-      module comments and doc strings and before module globals and
-      constants.  Imports should be grouped with the order being most generic
-      to least generic:
+      导入应该总数放着文件的顶部，仅仅是在模块注释和doc strings之后，在模块全局变量和内容之前。
+      导入应该按照最通用到不通用的顺序进行排列分组：
     </p>
     <ul>
-      <li>standard library imports</li>
-      <li>third-party imports</li>
+      <li>标准库的导入</li>
+      <li>第三方库的导入</li>
       
-      <li>application-specific imports</li>
+      <li>应用程序特定的库的导入</li>
     </ul>
     <p>
-      Within each grouping, imports should be sorted lexicographically,
-      ignoring case, according to each module's full package path.
+      每个分组中，导入应该按照字母顺序进行排列，忽略大小写，依照每个模块的全路径进行排列。
     </p>
     <DIV class=""><PRE>
 <span class="external"></span>import foo
@@ -2018,22 +1730,18 @@ Don'<span class="external"></span>t do this.
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Statements" id="Statements">Statements</A></H3>
+<H3><A name="Statements" id="Statements">语句</A></H3>
 <SPAN class="link_button" id="link-Statements__button" name="link-Statements__button"><A href="?showone=Statements#Statements">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Statements')" name="Statements__button" id="Statements__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Generally only one statement per line.
+        通常在一行中只有一条语句。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Statements__body" id="Statements__body" style="display: none">
     <p>
-      However, you may put the
-      result of a test on the same line as the test only if the entire
-      statement fits on one line.  In particular, you can never do so
-      with <code>try</code>/<code>except</code> since the
-      <code>try</code> and <code>except</code> can't both fit on the
-      same line, and you can only do so with an <code>if</code> if
-      there is no <code>else</code>.
+      然而, 如果测试结果与测试语句在一行放得下, 你也可以将它们放在同一行。
+      特别说明一点，决不能将<code>try</code>/<code>except</code> 放在一行，因为<code>try</code> 和 <code>except</code>在同一行不能配合使用。
+      你只能在没有<code>else</code>的情况下才能将<code>if</code>语句放在一行。
     </p>
 
     <DIV class=""><PRE>Ye<span class="external"></span>s:
@@ -2055,30 +1763,23 @@ Don'<span class="external"></span>t do this.
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Access_Control" id="Access_Control">Access Control</A></H3>
+<H3><A name="Access_Control" id="Access_Control">访问控制</A></H3>
 <SPAN class="link_button" id="link-Access_Control__button" name="link-Access_Control__button"><A href="?showone=Access_Control#Access_Control">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Access_Control')" name="Access_Control__button" id="Access_Control__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        If an accessor function would be trivial you should use public variables
-        instead of accessor functions to avoid the extra cost of function
-        calls in Python. When more functionality is added you can use
-        <code>property</code> to keep the syntax consistent.
+        在Python中，如果一个访问函数是繁琐且不重要的，你应该使用公有变量来替代它，从而避免函数调用时不必要的资源开销。当添加更多功能时，你可以用<code>属性</code>来保持语句的一致性。
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Access_Control__body" id="Access_Control__body" style="display: none">
     <p>
-      On the other hand, if access is more complex, or the cost of accessing
-      the variable is significant, you should use function calls (following the
-      <a HREF="#naming">Naming</a> guidelines) such as <code>get_foo()</code>
-      and <code>set_foo()</code>. If the past behavior allowed access through a
-      property, do not bind the new accessor functions to the property. Any
-      code still attempting to access the variable by the old method should
-      break visibly so they are made aware of the change in complexity.
+      另一方面，如果访问是非常复杂的，或者访问一个变量的价值具有重要意义，你就应该使用函数调用(遵循<a HREF="#naming">命名</a>指南)的方式，如<code>get_foo()</code>
+      和 <code>set_foo()</code>。如果过去的行为允许通过一个属性来访问，就不要绑定一个新的控制器方法到这个属性上。
+      这样, 任何试图通过老方法访问变量的代码就没法运行, 使用者也就会意识到复杂性发生了变化。
     </p>
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Naming" id="Naming">Naming</A></H3>
+<H3><A name="Naming" id="Naming">命名</A></H3>
 <SPAN class="link_button" id="link-Naming__button" name="link-Naming__button"><A href="?showone=Naming#Naming">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Naming')" name="Naming__button" id="Naming__button">▶</SPAN>
@@ -2091,47 +1792,40 @@ Don'<span class="external"></span>t do this.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Naming__body" id="Naming__body" style="display: none">
     <P class="">
-<SPAN class="stylepoint_subsection">Names to Avoid</SPAN>
+<SPAN class="stylepoint_subsection">应该避免的名字</SPAN>
 
     <ul>
-      <li>single character names except for counters or iterators</li>
-      <li>dashes (<code>-</code>) in any package/module name</li>
+      <li>单字符名字，除了计数器或迭代器</li>
+      <li>在任何包或模块名中使用破折号(<code>-</code>)</li>
       <li>
-<code>__double_leading_and_trailing_underscore__</code> names
-        (reserved by Python)</li>
+        双下划线开头和结尾 <code>__double_leading_and_trailing_underscore__</code> 的名字(Python保留)</li>
     </ul>
 
     </P>
     <P class="">
-<SPAN class="stylepoint_subsection">Naming Convention</SPAN>
+<SPAN class="stylepoint_subsection">命名惯例</SPAN>
 
     <ul>
       <li>
-        "Internal" means internal to a module or protected
-        or private within a class.</li>
+        "Internal"意味着对模块或者protected类或private类来说都是内部的。</li>
       <li>
-        Prepending a single underscore (<code>_</code>) has some
-        support for protecting module variables and functions (not included
-        with <code>import * from</code>).  Prepending a double underscore
-        (<code>__</code>) to an instance variable or method
-        effectively serves to make the variable or method private to its class
-        (using name mangling).</li>
+        用单下划线(<code>_</code>)开头表示模块变量或函数是protected的(使用<code>import * from</code>时不会包含)。
+        用双下划线(<code>__</code>)开头的实例变量或方法表示类内私有。
+      </li>
       <li>
-        Place related classes and top-level functions together in a
-        module. Unlike Java,
-        there is no need to limit yourself to one class per module.</li>
+        将相关的类和顶级函数放在同一个模块里. 不像Java, 没必要限制一个类一个模块。
+      </li>
       <li>
-        Use CapWords for class names, but lower_with_under.py for module names.
-        Although there are many existing modules named CapWords.py, this is now
-        discouraged because it's confusing when the module happens to be
-        named after a class.  ("wait -- did I write
-        <code>import StringIO</code> or <code>from StringIO import
+        对类名使用大写字母开头的单词(如CapWords, 即Pascal风格), 但是模块名应该用小写加下划线的方式(如lower_with_under.py)。
+        尽管已经有很多现存的模块使用类似于CapWords.py这样的命名, 但现在已经不鼓励这样做, 因为如果模块名碰巧和类名一致, 这会让人困扰。
+        ("等等 -- 我是否要这样写
+        <code>import StringIO</code> 或 <code>from StringIO import
         StringIO</code>?")</li>
     </ul>
 
     </P>
     <P class="">
-<SPAN class="stylepoint_subsection">Guidelines derived from Guido's Recommendations</SPAN>
+<SPAN class="stylepoint_subsection">从Guido的建议衍生出来的指南</SPAN>
 
     <table rules="all" border="1" cellspacing="2" cellpadding="2">
       
@@ -2221,33 +1915,18 @@ Don'<span class="external"></span>t do this.
       </DIV></DIV>
     </DIV>
     <DIV class="">
-<H3><A name="Main" id="Main">Main</A></H3>
+<H3><A name="Main" id="Main">主函数(Main)</A></H3>
 <SPAN class="link_button" id="link-Main__button" name="link-Main__button"><A href="?showone=Main#Main">
           link
         </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Main')" name="Main__button" id="Main__button">▶</SPAN>
       <DIV style="display:inline;" class="">
-        Even a file meant to be used as a script should be importable and a
-        mere import should not have the side effect of executing the script's
-        main functionality. The main functionality should be in a main()
-        function.
+        即使是一个打算被用作脚本的文件, 也应该是可导入的. 并且简单的导入不应该导致这个脚本的主功能(main functionality)被执行, 这是一种副作用. 主功能应该放在一个main()函数中. 
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Main__body" id="Main__body" style="display: none">
     <p>
-      In Python,
-      <code>pydoc</code> as well as unit tests
-      require modules to be importable.  Your code should always check
-      <code>if __name__ == '__main__'</code> before executing your
-      main program so that the main program is not executed when the
-      module is imported.
-      
+      在Python中，<code>pydoc</code>和单元测试一样，都要求模块是可导入的。你的代码中在执行你的主程序之前总是应该检查<code>if __name__ == '__main__'</code>，
+      以便当模块是被导入的时主程序是不能够被执行的。
     </p>
-
-    
-
-    
-
-    
-
     <DIV class=""><PRE>
 <span class="external"></span>def main():
    <span class="external">   </span>...
@@ -2258,42 +1937,34 @@ Don'<span class="external"></span>t do this.
 </PRE></DIV>
 
     <p>
-      All code at the top level will be executed when the module is
-      imported.  Be careful not to call functions, create objects, or
-      perform other operations that should not be executed when the
-      file is being <code>pydoc</code>ed.
+      在模块被导入时所有的顶级代码将被执行。注意不要调用方法，创建对象或者执行那些不应该在使用<code>pydoc</code>时执行的操作。
     </p>
       </DIV></DIV>
     </DIV>
   </DIV>
 
-<H2>Parting Words</H2>
+<H2>临别赠言</H2>
     <p>
-      <em>BE CONSISTENT</em>.
+      <em>请保持一致性</em>.
     </p>
 
     <p>
-      If you're editing code, take a few minutes to look at the code
-      around you and determine its style.  If they use spaces around
-      all their arithmetic operators, you should too.  If their
-      comments have little boxes of hash marks around them, make your
-      comments have little boxes of hash marks around them too.
+      如果你正在编写代码，花几分钟看一下你的代码，然后决定它的风格。如果它们在所有的算术操作符两边使用空格，那么你也应该这么做。如果它们的注释都使用码标线包住，请确认你也这么做。
     </p>
 
     <p>
-      The point of having style guidelines is to have a common vocabulary
-      of coding so people can concentrate on what you're saying rather
-      than on how you're saying it.  We present global style rules here so
-      people know the vocabulary, but local style is also important.  If
-      code you add to a file looks drastically different from the existing
-      code around it, it throws readers out of their rhythm when they go to
-      read it.  Avoid this.
+      制定风格指南的目的是让编码有一个共同的词汇表，这样就可以让其他人关注你讲的是什么，而不是你是如何讲的。
+      我们在这里推出一个全局的样式规则就是让人们知道这些词汇表，但是你们自己制定的样式同样重要。
+      如果你添加到一个文件中的代码和已经存在的代码风格截然不同，它会让阅读代码的人不知所措，避免这种情况。
     </p>
-
+    <p>
+      【重要提示】：本文由英文翻译而来，在翻译的过程中由于英文水平和技术水平的限制，难免会出现不准确或错误。在你阅读本文的时候如果遇到不懂，不理解的情况，请参阅<a href="http://google.github.io/styleguide/pyguide.html">英文版</a>。
+          同时，欢迎你指出错误，以便让此文更好，先谢过。
+    </p>
 
 
 <p align="right">
-Revision 2.59
+版本 2.59
 </p>
 
 
