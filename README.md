@@ -5,7 +5,7 @@ Google 编码风格指南
 
 “风格”包含一个很大的范围，从 “为变量名使用camelCase(驼峰写法)” 到 “永远不使用全局变量”，再到 “永远不使用exceptions(通用异常类)”。本项目是我们为Google项目进行编码时的风格指南，您可能会指出在这一页看到的风格指南适用于此项目。
 
-我们的 [C++风格指南][cpp]，[Objective-C风格指南][objc]，[Java风格指南][java]，[Python风格指南][py]，[R风格指南][r]，[Shell风格指南][sh]，[HTML/CSS风格指南][htmlcss]，[JavaScript风格指南][js]，[AngularJS风格指南][angular]，[Common Lisp风格指南][cl]， 和[Vimscript风格指南][vim] 现在都已经可用了。我们还发布了[cpplint][cpplint](一个帮助遵循代码风格指南的工具)和 [google-c-style.el][emacs]（一个为Google编码风格的Emacs settings 文件）.
+我们的 [C++ Style Guide][cpp]，[Objective-C Style Guide][objc]，[Java Style Guide][java]，[Python风格指南][py]，[R Style Guide][r]，[Shell Style Guide][sh]，[HTML/CSS风格指南][htmlcss]，[JavaScript风格指南][js]，[AngularJS Style Guide][angular]，[Common Lisp Style Guide][cl]， 和[Vimscript Style Guide][vim] 现在都已经可用了。我们还发布了[cpplint][cpplint](一个帮助遵循代码风格指南的工具)和 [google-c-style.el][emacs]（一个为Google编码风格的Emacs settings 文件）.
 
 如果您的项目需要您创建一个新的XML文档格式，我们的[XML 文档格式编码风格指南][xml]可能会有帮助。除格式的实际风格规则外，指南还涉及如何自主设计文档格式和改编已存在文档格式，如何进行实时XML文档格式编写，还有对元素和属性的建议。
 
@@ -19,8 +19,8 @@ Google 编码风格指南
 [py]: http://liuxing3169.github.io/zh-google-styleguide/pyguide.html
 [r]: http://google.github.io/styleguide/Rguide.xml
 [sh]: http://google.github.io/styleguide/shell.xml
-[htmlcss]: http://google.github.io/styleguide/htmlcssguide.xml
-[js]: http://google.github.io/styleguide/javascriptguide.xml
+[htmlcss]: http://liuxing3169.github.io/zh-google-styleguide/htmlcssguide.xml
+[js]: http://liuxing3169.github.io/zh-google-styleguide/javascriptguide.xml
 [angular]: http://google.github.io/styleguide/angularjs-google-style.html
 [cl]: http://google.github.io/styleguide/lispguide.xml
 [vim]: http://google.github.io/styleguide/vimscriptguide.xml
