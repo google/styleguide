@@ -16,7 +16,7 @@ Google 编码风格指南
 [cpp]: http://google.github.io/styleguide/cppguide.html
 [objc]: http://google.github.io/styleguide/objcguide.xml
 [java]: http://google.github.io/styleguide/javaguide.html
-[py]: http://google.github.io/styleguide/pyguide.html
+[py]: http://liuxing3169.github.io/zh-google-styleguide/pyguide.html
 [r]: http://google.github.io/styleguide/Rguide.xml
 [sh]: http://google.github.io/styleguide/shell.xml
 [htmlcss]: http://google.github.io/styleguide/htmlcssguide.xml
