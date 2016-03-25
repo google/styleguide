@@ -1,60 +1,47 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
-<GUIDE title="Google HTML/CSS Style Guide">
+<GUIDE title="Google HTML/CSS 代码风格指南">
   <p class="revision">
     
-    Revision 2.23
+    版本 2.23
   </p>
   
   <OVERVIEW>
-    <CATEGORY title="Important Note">
-      <STYLEPOINT title="Displaying Hidden Details in This Guide">
+    <CATEGORY title="重要提示">
+      <STYLEPOINT title="在本文中显示隐藏的详情">
         <SUMMARY>
-          This style guide contains many details that are initially
-          hidden from view. They are marked by the triangle icon, which you
-          see here on your left. Click it now.
-          You should see “Hooray” appear below.
+          本指南中包含很多隐藏起来的详情内容，它们通过三角形图标标记，如同你现在看到这行的左侧的图标。点击一下，您应该可以看到下面出现了一些文字。
         </SUMMARY>
         <BODY>
           <p>
-            Hooray! Now you know you can expand points to get more
-            details. Alternatively, there’s a “toggle all” at the
-            top of this document.
+            哇，现在你知道了你可以展开一个论点来查看它的细节。此外，在文章顶部还有一个“展开/折叠全部”的按钮。
           </p>
         </BODY>
       </STYLEPOINT>
     </CATEGORY>
-    <CATEGORY title="Background">
+    <CATEGORY title="背景">
       
       <p>
-        This document defines formatting and style rules for HTML and
-        CSS. It aims at improving collaboration, code quality, and
-        enabling supporting infrastructure. It applies to raw,
-        working files that use HTML and CSS, including GSS
-        files. Tools are free to obfuscate, minify, and compile as
-        long as the general code quality is maintained.
+        这份文档定义了HTML和CSS的格式及风格上的规则。这样做的目标是提高协作，代码质量并使其支持基础架构。
+        适用于HTML/CSS文件，包括GSS文件。 只要代码质量是可以被维护的，就能很好的被工具混淆、压缩和合并。
       </p>
       
       
     </CATEGORY>
   </OVERVIEW>
 
-  <CATEGORY title="General Style Rules">
-    <STYLEPOINT title="Protocol">
+  <CATEGORY title="风格规则">
+    <STYLEPOINT title="协议">
       <SUMMARY>
-        Omit the protocol from embedded resources.
+        从内置资源中隐藏协议。
       </SUMMARY>
       <BODY>
         <p>
-          Omit the protocol portion (<code>http:</code>,
-          <code>https:</code>) from URLs pointing to images and other
-          media files, style sheets, and scripts unless the respective
-          files are not available over both protocols.
+          从指向图片和其他多媒体文件，样式，脚本的URL中隐藏协议部分(<code>http:</code>,<code>https:</code>)
+          除那些通过这两个协议都不能被访问的文件外。
         </p>
         <p>
-          Omitting the protocol—which makes the URL
-          relative—prevents mixed content issues and results in
-          minor file size savings.
+          省略协议-使URL成相对地址，防止内容混淆问题和导致小文件重复下载。
         </p>
         <BAD_CODE_SNIPPET>
           &lt;!-- Not recommended --&gt;
@@ -81,14 +68,14 @@
     
   </CATEGORY>
 
-  <CATEGORY title="General Formatting Rules">
-    <STYLEPOINT title="Indentation">
+  <CATEGORY title="格式规则">
+    <STYLEPOINT title="缩进">
       <SUMMARY>
-        Indent by 2 spaces at a time.
+        每次缩进两个空格。
       </SUMMARY>
       <BODY>
         <p>
-          Don’t use tabs or mix tabs and spaces for indentation.
+          不要用TAB键或混合TAB键和空格来进行缩进。
         </p>
         <CODE_SNIPPET>
           &lt;ul&gt;
@@ -103,16 +90,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Capitalization">
+    <STYLEPOINT title="大小写">
       <SUMMARY>
-        Use only lowercase.
+        只用使用小写。
       </SUMMARY>
       <BODY>
         <p>
-          All code has to be lowercase: This applies to HTML element names,
-          attributes, attribute values (unless
-          <code>text/CDATA</code>), CSS selectors, properties, and
-          property values (with the exception of strings).
+          所有的代码都用小写字母：适用于HTML元素名，属性，属性值（除了<code>text/CDATA</code> ）， 选择器，特性，特性值（除了字符串）。
         </p>
         <BAD_CODE_SNIPPET>
           &lt;!-- Not recommended --&gt;
@@ -132,14 +116,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Trailing Whitespace">
+    <STYLEPOINT title="行尾空格">
       <SUMMARY>
-        Remove trailing white spaces.
+        删除行尾空格。
       </SUMMARY>
       <BODY>
         <p>
-          Trailing white spaces are unnecessary and can complicate
-          diffs.
+          行尾空格没必要存在，还会使差异比较时变得复杂。
         </p>
         <BAD_CODE_SNIPPET>
           &lt;!-- Not recommended --&gt;
@@ -153,62 +136,49 @@
     </STYLEPOINT>
   </CATEGORY>
 
-  <CATEGORY title="General Meta Rules">
-    <STYLEPOINT title="Encoding">
+  <CATEGORY title="Meta规则">
+    <STYLEPOINT title="编码">
       <SUMMARY>
-        Use UTF-8 (no BOM).
+        使用UTF-8 (不带BOM头)。
       </SUMMARY>
       <BODY>
         <p>
-          Make sure your editor uses UTF-8 as character encoding,
-          without a byte order mark.
+          确保你的编辑器用没有字节顺序标记的UTF-8编码格式进行编写。
         </p>
         <p>
-          Specify the encoding in HTML templates and documents via
-          <code>&lt;meta charset="utf-8"&gt;</code>. Do not specify
-          the encoding of style sheets as these assume UTF-8.
+          在HTML模板和文件中通过<code>&lt;meta charset="utf-8"&gt;</code>指定编码格式。不需要制定样式表的编码，假定都为UTF-8。
         </p>
         <p>
-          (More on encodings and when and how to specify them can be
-          found in <a href="http://www.w3.org/International/tutorials/tutorial-char-enc/">Handling
-          character encodings in HTML and CSS</a>.)
+        （更多关于编码和何时及怎样指定它，请查看 <a href="http://www.w3.org/International/tutorials/tutorial-char-enc/">Handling character encodings in HTML and CSS</a>。）
         </p>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Comments">
+    <STYLEPOINT title="注释">
       <SUMMARY>
-        Explain code as needed, where possible.
+        在需要的，合理的地方解释你写的代码。
       </SUMMARY>
       <BODY>
         <p>
-          Use comments to explain code: What does it cover, what
-          purpose does it serve, why is respective solution used or
-          preferred?
+          用注释来解释代码：它包括什么，它的目的是什么，它能做什么，为什么使用这个解决方案，还是说只是因为偏爱如此呢？
         </p>
         <p>
-          (This item is optional as it is not deemed a realistic
-          expectation to always demand fully documented code. Mileage
-          may vary heavily for HTML and CSS code and depends on the
-          project’s complexity.)
+          (本规则可选，没必要每份代码都描述的很充分，它会增重HTML和CSS的代码。这取决于该项目的复杂程度。)
         </p>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Action Items">
+    <STYLEPOINT title="处理项">
       <SUMMARY>
-        Mark todos and action items with <code>TODO</code>.
+        用 <code>TODO</code> 标记代办事项和正活动的条目。
       </SUMMARY>
       <BODY>
         <p>
-          Highlight todos by using the keyword <code>TODO</code> only,
-          not other common formats like <code>@@</code>.
+          只用 <code>TODO</code> 来强调代办事项， 不要用其他的常见格式，例如 <code>@@</code> 。
         </p>
         <p>
-          Append a contact (username or mailing list) in parentheses
-          as with the format <code>TODO(contact)</code>.
+          用圆括号起来的，诸如<code>TODO(contact)</code> 这样的格式，附加联系方式（用户名或电子邮件列表）。
         </p>
         <p>
-          Append action items after a colon as in <code>TODO: action
-          item</code>.
+          可在冒号之后附加活动条目说明等，例如 <code>TODO: action item</code> 。
         </p>
         
         <CODE_SNIPPET>
@@ -227,46 +197,38 @@
     </STYLEPOINT>
   </CATEGORY>
 
-  <CATEGORY title="HTML Style Rules">
-    <STYLEPOINT title="Document Type">
+  <CATEGORY title="HTML风格规则">
+    <STYLEPOINT title="文档类型">
       <SUMMARY>
-        Use HTML5.
+        使用HTML5。
       </SUMMARY>
       <BODY>
         <p>
-          HTML5 (HTML syntax) is preferred for all HTML documents:
-          <code>&lt;!DOCTYPE html&gt;</code>.
+          优先为所有HTML文档使用HTML5 (HTML语法) :<code>&lt;!DOCTYPE html&gt;</code>.
         </p>
         <p>
-          (It’s recommended to use HTML, as <code>text/html</code>. Do not use
-          XHTML. XHTML, as <a href="http://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a>,
-          lacks both browser and infrastructure support and offers
-          less room for optimization than HTML.)
+          （推荐用HTML文本文档格式，即 <code>text/html</code> . 不要用 XHTML。 XHTML格式，即 <a href="http://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a> , 
+          缺少浏览器和基础设施的支持，还比HTML能优化的空间要少一些。用更多的存储空间。）
         </p>
         <p>
-          Although fine with HTML, do not close void elements, i.e. write
-          <code>&lt;br&gt;</code>, not <code>&lt;br /&gt;</code>.
+          虽说对于HTML来说是没问题的，但不要关闭空元素，例如，这样写<code>&lt;br&gt;</code>，而不是<code>&lt;br /&gt;</code>。
         </p>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="HTML Validity">
+    <STYLEPOINT title="HTML代码有效性">
       <SUMMARY>
-        Use valid HTML where possible.
+        尽量使用有效的HTML。
       </SUMMARY>
       <BODY>
         <p>
-          Use valid HTML code unless that is not possible due to
-          otherwise unattainable performance goals regarding file size.
+          编写有效的HTML代码，除非没可能处理文件大小时有其他方面的难以达到的性能目标。
         </p>
         
         <p>
-          Use tools such as the <a href="http://validator.w3.org/nu/">W3C
-          HTML validator</a> to test.
+          使用如<a href="http://validator.w3.org/nu/">W3C HTML validator</a>之类的工具进行测试。
         </p>
         <p>
-          Using valid HTML is a measurable baseline quality attribute
-          that contributes to learning about technical requirements
-          and constraints, and that ensures proper HTML usage.
+          HTML代码有效性是重要的质量衡量标准，并可确保HTML代码可以正确使用。
         </p>
         <BAD_CODE_SNIPPET>
           &lt;!-- Not recommended --&gt;
@@ -282,20 +244,16 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Semantics">
+    <STYLEPOINT title="语义">
       <SUMMARY>
-        Use HTML according to its purpose.
+        根据HTML各个元素的用途而去使用它们。
       </SUMMARY>
       <BODY>
         <p>
-          Use elements (sometimes incorrectly called “tags”) for what
-          they have been created for. For example, use heading
-          elements for headings, <code>p</code> elements for
-          paragraphs, <code>a</code> elements for anchors, etc.
+          使用元素 (有时候错称其为“标签”) 要知道它们创建的目的是什么。 例如，用heading元素构造标题， <code>p</code> 元素构造段落, <code>a</code> 元素构造锚点等。
         </p>
         <p>
-          Using HTML according to its purpose is important for
-          accessibility, reuse, and code efficiency reasons.
+          根据HTML各个元素的用途而去使用是很重要的，它涉及到文档的可访问性、重用和代码效率等问题。
         </p>
         
         <BAD_CODE_SNIPPET>
@@ -308,30 +266,19 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Multimedia Fallback">
+    <STYLEPOINT title="多媒体后备">
       <SUMMARY>
-        Provide alternative contents for multimedia.
+        为多媒体提供备选内容。
       </SUMMARY>
       <BODY>
         <p>
-          For multimedia, such as images, videos, animated objects via
-          <code>canvas</code>, make sure to offer alternative
-          access. For images that means use of meaningful alternative
-          text (<code>alt</code>) and for video and audio transcripts
-          and captions, if available.
+        	对于多媒体，如图像，视频，通过 <code>canvas</code> 读取的动画对象，确保提供备选方案。 对于图像使用有意义的备选文本（ <code>alt</code> ），对于视频和音频使用有效的字幕和文字说明。
         </p>
         <p>
-          Providing alternative contents is important for
-          accessibility reasons: A blind user has few cues to tell
-          what an image is about without <code>@alt</code>, and other
-          users may have no way of understanding what video or audio
-          contents are about either.
+          提供备选内容是很重要的，原因：给盲人用户以一些提示性的文字，用 <code>@alt</code> 告诉他这图像是关于什么的，还有一些其他用户可能没有办法来知道视频或音频内容是什么。
         </p>
         <p>
-          (For images whose <code>alt</code> attributes would
-          introduce redundancy, and for images whose purpose is purely
-          decorative which you cannot immediately use CSS for, use no
-          alternative text, as in <code>alt=""</code>.)
+          （图像的 <code>alt</code> 属性会产生冗余，对那些目的是纯粹地装饰性的图片，你不能立即为它使用CSS，使用没有显示时的替代文本，如<code>alt=""</code>。)
         </p>
         
         <BAD_CODE_SNIPPET>
@@ -345,32 +292,22 @@
       </BODY>
     </STYLEPOINT>
 
-    <STYLEPOINT title="Separation of Concerns">
+    <STYLEPOINT title="关注点分离">
       <SUMMARY>
-        Separate structure from presentation from behavior.
+        将展现和行为分开。
       </SUMMARY>
       <BODY>
         <p>
-          Strictly keep structure (markup), presentation (styling),
-          and behavior (scripting) apart, and try to keep the
-          interaction between the three to an absolute minimum.
+          严格保持结构 （标记），表现 （样式），和行为 （脚本）分离, 并尽量让这三者之间的交互保持最低限度。
         </p>
         <p>
-          That is, make sure documents and templates contain only HTML
-          and HTML that is solely serving structural purposes. Move
-          everything presentational into style sheets, and everything
-          behavioral into scripts.
+          是的，确保文档和模板只包含HTML。HTML的唯一目的是为结构服务， 把所有表现都放到样式表里，把所有行为都放到脚本里。
         </p>
         <p>
-          In addition, keep the contact area as small as possible by
-          linking as few style sheets and scripts as possible from
-          documents and templates.
+          此外，尽量使脚本和样式表在文档与模板中有最小接触面积，即减少外链。
         </p>
         <p>
-          Separating structure from presentation from behavior is
-          important for maintenance reasons. It is always more
-          expensive to change HTML documents and templates than it is
-          to update style sheets and scripts.
+          将结构，表现和行为分开对于维护是很重要的，因为更改HTML文档结构和模板会比更新样式表和脚本更花费成本。
         </p>
         
         <BAD_CODE_SNIPPET>
@@ -399,23 +336,16 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Entity References">
+    <STYLEPOINT title="实体引用">
       <SUMMARY>
-        Do not use entity references.
+        不要使用实体引用。
       </SUMMARY>
       <BODY>
         <p>
-          There is no need to use entity references like
-          <code>&amp;mdash;</code>, <code>&amp;rdquo;</code>, or
-          <code>&amp;#x263a;</code>, assuming the same encoding
-          (UTF-8) is used for files and editors as well as among
-          teams.
+          不需要使用类似 <code>&amp;mdash;</code> 、 <code>&amp;rdquo;</code> 或 <code>&amp;#x263a;</code> 等的实体引用, 假定团队中所用的文件和编辑器是同一编码（UTF-8）。
         </p>
         <p>
-          The only exceptions apply to characters with special meaning
-          in HTML (like <code>&lt;</code> and <code>&amp;</code>) as
-          well as control or “invisible” characters (like no-break
-          spaces).
+          唯一的特例是在HTML中有特殊含义的字符(如<code>&lt;</code> 和 <code>&amp;</code>)，还有 “不可见” 字符 （例如no-break空格）。
         </p>
         <BAD_CODE_SNIPPET>
           &lt;!-- Not recommended --&gt;
@@ -427,23 +357,17 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Optional Tags">
+    <STYLEPOINT title="可选标签">
       <SUMMARY>
-        Omit optional tags (optional).
+        省略可选标签（可选）。
       </SUMMARY>
       <BODY>
         <p>
-          For file size optimization and scannability purposes,
-          consider omitting optional tags.
-          The <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/syntax.html#syntax-tag-omission">HTML5
-          specification</a> defines what tags can be omitted.
+          出于优化文件大小和可校验的目的， 可以考虑省略可选标签。
+          <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/syntax.html#syntax-tag-omission">HTML5 specification</a>定义了哪些是可省略标签。
         </p>
         <p>
-          (This approach may require a grace period to be established
-          as a wider guideline as it’s significantly different
-          from what web developers are typically taught. For
-          consistency and simplicity reasons it’s best served
-          omitting all optional tags, not just a selection.)
+          （这种方法可能需要一个宽限期才能被建立，就如同不同的开发者遵守他的编程规范指南一样。考虑到一致性和简洁的原因，最好是省略所有可选标记，而不仅仅是一个选择。）
         </p>
         <BAD_CODE_SNIPPET>
           &lt;!-- Not recommended --&gt;
@@ -465,23 +389,19 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="type Attributes">
+    <STYLEPOINT title="type 属性">
       <SUMMARY>
-        Omit <code>type</code> attributes for style sheets and scripts.
+        省略样式表和脚本的<code>type</code>属性。
       </SUMMARY>
       <BODY>
         <p>
-          Do not use <code>type</code> attributes for style sheets
-          (unless not using CSS) and scripts (unless not using
-          JavaScript).
+          不用为样式表(除非不是使用CSS)和脚本(除非不是使用JavsScript)使用<code>type</code>属性。
         </p>
         <p>
-          Specifying <code>type</code> attributes in these contexts is
-          not necessary as HTML5 implies
-          <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/semantics.html#attr-style-type"><code>text/css</code></a>
-          and
-          <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#attr-script-type"><code>text/javascript</code></a>
-          as defaults. This can be safely done even for older browsers.
+        	指定这些内容的<code>type</code>属性是不必要的，
+        	HTML5暗含<a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/semantics.html#attr-style-type"><code>text/css</code></a>
+        	和<a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#attr-script-type"><code>text/javascript</code></a>
+        	作为默认。这样做对那些老旧版本的浏览器来说也是安全的。
         </p>
         <BAD_CODE_SNIPPET>
           &lt;!-- Not recommended --&gt;
@@ -505,28 +425,21 @@
     </STYLEPOINT>
   </CATEGORY>
 
-  <CATEGORY title="HTML Formatting Rules">
-    <STYLEPOINT title="General Formatting">
+  <CATEGORY title="HTML格式规则">
+    <STYLEPOINT title="格式">
       <SUMMARY>
-        Use a new line for every block, list, or table element, and
-        indent every such child element.
+        为每个块，列表，table元素使用单独一行，并作为子元素进行缩进。
       </SUMMARY>
       <BODY>
         <p>
-          Independent of the styling of an element (as CSS allows
-          elements to assume a different role per <code>display</code>
-          property), put every block, list, or table element on a new
-          line.
+          独立的元素样式（因为CSS允许在每一个分辨率下呈现不同的规则), 将块元素、列表元素或表格元素都放在新行。
         </p>
         <p>
-          Also, indent them if they are child elements of a block,
-          list, or table element.
+          另外，缩进块元素、列表元素或表格元素的子元素。
         </p>
         <p>
-          (If you run into issues around whitespace between list items
-          it’s acceptable to put all <code>li</code> elements in one
-          line. A linter is encouraged to throw a warning instead of
-          an error.)
+          （如果你陷入到列表项的两侧空白的问题中，可以将所有的<code>li</code>元素放在一行中。
+          linter对于抛出一个警告而不是一个错误来说已经足够了。)
         </p>
         <CODE_SNIPPET>
           &lt;blockquote&gt;
@@ -554,14 +467,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="HTML Quotation Marks">
+    <STYLEPOINT title="HTML 引号">
       <SUMMARY>
-        When quoting attributes values, use double quotation marks.
+        当引用属性值时，使用双引号。
       </SUMMARY>
       <BODY>
         <p>
-          Use double (<code>""</code>) rather than single quotation marks
-          (<code>''</code>) around attribute values.
+          在属性值两边使用双引号(<code>""</code>)而不是单引号(<code>''</code>)。
         </p>
         <BAD_CODE_SNIPPET>
           &lt;!-- Not recommended --&gt;
@@ -575,51 +487,40 @@
     </STYLEPOINT>
   </CATEGORY>
 
-  <CATEGORY title="CSS Style Rules">
-    <STYLEPOINT title="CSS Validity">
+  <CATEGORY title="CSS风格规则">
+    <STYLEPOINT title="CSS代码有效性">
       <SUMMARY>
-        Use valid CSS where possible.
+        尽量使用有效的CSS。
       </SUMMARY>
       <BODY>
         <p>
-          Unless dealing with CSS validator bugs or requiring
-          proprietary syntax, use valid CSS code.
+          使用有效的CSS代码，除非是处理CSS校验器程序错误或者需要专有语法。
         </p>
         
         <p>
-          Use tools such as the <a href="http://jigsaw.w3.org/css-validator/">W3C
-          CSS validator</a> to test.
+          使用诸如<a href="http://jigsaw.w3.org/css-validator/">W3C SS validator</a>之类的工具进行测试。
         </p>
         <p>
-          Using valid CSS is a measurable baseline quality attribute
-          that allows to spot CSS code that may not have any effect
-          and can be removed, and that ensures proper CSS usage.
+        	使用有效的CSS是重要的质量衡量标准，如果发现有的CSS代码没有任何效果的可以删除，确保CSS用法适当。
         </p>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="ID and Class Naming">
+    <STYLEPOINT title="ID和Class的命名">
       <SUMMARY>
-        Use meaningful or generic ID and class names.
+        为ID和class使用有意义的或通用的名字。
       </SUMMARY>
       <BODY>
         <p>
-          Instead of presentational or cryptic names, always use ID
-          and class names that reflect the purpose of the element in
-          question, or that are otherwise generic.
+          应该从ID和class的名字上就能看出这元素是干什么用的，而不是表象或模糊不清的命名。或者是在其他方面通用的。
         </p>
         <p>
-          Names that are specific and reflect the purpose of the
-          element should be preferred as these are most understandable
-          and the least likely to change.
+          明确的和能够反映元素目的的名字应该被优选考虑，因为它们更容易被理解，可能更少被修改。
         </p>
         <p>
-          Generic names are simply a fallback for elements that have no
-          particular or no meaning different from their siblings. They are
-          typically needed as “helpers.”
+          通用名称可以加在兄弟元素都不特殊或没有个别意义的元素上，通常类似“helpers”。
         </p>
         <p>
-          Using functional or generic names reduces the probability of
-          unnecessary document or template changes.
+          使用功能性或通用的名字会减少不必要的文档或模板修改。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended: meaningless */
@@ -641,19 +542,16 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="ID and Class Name Style">
+    <STYLEPOINT title="ID和Class命名风格">
       <SUMMARY>
-        Use ID and class names that are as short as possible but as long as
-        necessary.
+        非必要的情况下，ID和class的名称应尽量简短。
       </SUMMARY>
       <BODY>
         <p>
-          Try to convey what an ID or class is about while being as
-          brief as possible.
+          简要传达ID或class是关于什么的。
         </p>
         <p>
-          Using ID and class names this way contributes to acceptable
-          levels of understandability and code efficiency.
+          通过这种方式，似的代码易懂且高效。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended */
@@ -668,17 +566,16 @@
       </BODY>
     </STYLEPOINT>
 
-    <STYLEPOINT title="Type Selectors">
+    <STYLEPOINT title="类型选择器">
       <SUMMARY>
-        Avoid qualifying ID and class names with type selectors.
+        避免通过类型选择器类排列ID和Class的名字。
       </SUMMARY>
       <BODY>
-        <p>Unless necessary (for example with helper classes), do not
-          use element names in conjunction with IDs or classes.
+        <p>
+          除非是必要的(如helper类)，不要把元素名与ID或Class名字设置成一样的。
         </p>
         <p>
-          Avoiding unnecessary ancestor selectors is useful for <a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">performance
-          reasons</a>.
+          出于<a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">性能上的考虑</a>避免使用父辈节点做选择器。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended */
@@ -692,20 +589,17 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Shorthand Properties">
+    <STYLEPOINT title="速记属性">
       <SUMMARY>
-        Use shorthand properties where possible.
+        尽可能使用速记属性。
       </SUMMARY>
       <BODY>
         <p>
-          CSS offers a variety of <a href="http://www.w3.org/TR/CSS21/about.html#shorthand">shorthand</a>
-          properties (like <code>font</code>)
-          that should be used whenever possible, even in cases where
-          only one value is explicitly set.
+          应该尽可能的使用CSS提供的<a href="http://www.w3.org/TR/CSS21/about.html#shorthand">速记</a>属性(如<code>font</code>)，
+          即使是在仅设置一个值的情况下。
         </p>
         <p>
-          Using shorthand properties is useful for code efficiency and
-          understandability.
+          使用速记属性对于代码功效和易读性是非常有用的。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended */
@@ -726,14 +620,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="0 and Units">
+    <STYLEPOINT title="0和单位">
       <SUMMARY>
-        Omit unit specification after “0” values.
+        在“0”值之后省略单位名称。
       </SUMMARY>
       <BODY>
         <p>
-          Do not use units after <code>0</code> values unless they are
-          required.
+          不要在<code>0</code>值之后使用单位，除非它们是必需的。
         </p>
         <CODE_SNIPPET>
           margin: 0;
@@ -741,28 +634,26 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Leading 0s">
+    <STYLEPOINT title="0开头的小数">
       <SUMMARY>
-        Omit leading “0”s in values.
+        省略“0”值开头的小数。
       </SUMMARY>
       <BODY>
         <p>
-          Do not use put <code>0</code>s in front of values or lengths
-          between -1 and 1.
+          不要在值或长度在-1到1之间的值的前面使用<code>0</code>（小数不要小数点前的0）。
         </p>
         <CODE_SNIPPET>
           font-size: .8em;
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Hexadecimal Notation">
+    <STYLEPOINT title="十六进制">
       <SUMMARY>
-        Use 3 character hexadecimal notation where possible.
+        尽可能的使用3个字符的十六进制计数法。
       </SUMMARY>
       <BODY>
         <p>
-          For color values that permit it, 3 character hexadecimal
-          notation is shorter and more succinct.
+          在color值中使用3字符的十六进制计数法，这样更简短明了。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended */
@@ -774,23 +665,18 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Prefixes">
+    <STYLEPOINT title="前缀">
       <SUMMARY>
-        Prefix selectors with an application-specific prefix (optional).
+        选择器前面加上特殊应用标识的前缀（可选）。
       </SUMMARY>
       <BODY>
         <p>
-          In large projects as well as for code that gets embedded in
-          other projects or on external sites use prefixes (as
-          namespaces) for ID and class names. Use short, unique
-          identifiers followed by a dash.
+          大型项目中最好在ID或class名字前加上这种标识性前缀（命名空间），使用短破折号连接。
         </p>
         
         
         <p>
-          Using namespaces helps preventing naming conflicts and can
-          make maintenance easier, for example in search and replace
-          operations.
+          使用命名空间可以防止命名冲突，方便维护，比如在搜索和替换操作上。
         </p>
         <CODE_SNIPPET>
           .adw-help {} /* AdWords */
@@ -798,15 +684,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="ID and Class Name Delimiters">
+    <STYLEPOINT title="ID和lass名称中的分隔符">
       <SUMMARY>
-        Separate words in ID and class names by a hyphen.
+        在ID和class名字中通过短破折号“-”分隔多个单词。
       </SUMMARY>
       <BODY>
         <p>
-          Do not concatenate words and abbreviations in selectors by
-          any characters (including none at all) other than hyphens,
-          in order to improve understanding and scannability.
+          别在选择器名字里用短破折号“-”以外的连接词(包括啥也没有)， 以增进对名字的理解和查找。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended: does not separate the words “demo” and “image” */
@@ -824,8 +708,7 @@
     </STYLEPOINT>
     <STYLEPOINT title="Hacks">
       <SUMMARY>
-        Avoid user agent detection as well as CSS “hacks”—try a different
-        approach first.
+        像避免使用CSS “hacks”一样避免用户代理检测 —— 请先尝试使用其他的解决方法。
       </SUMMARY>
       <BODY>
         <p>
@@ -846,21 +729,17 @@
     </STYLEPOINT>
   </CATEGORY>
 
-  <CATEGORY title="CSS Formatting Rules">
-    <STYLEPOINT title="Declaration Order">
+  <CATEGORY title="CSS格式规则">
+    <STYLEPOINT title="声明顺序">
       <SUMMARY>
-        Alphabetize declarations.
+        按字母顺序排列声明。
       </SUMMARY>
       <BODY>
         <p>
-          Put declarations in alphabetical order in order to achieve
-          consistent code in a way that is easy to remember and
-          maintain.
+          把声明按字母顺序排列以便使用一种方式取得一致的代码，可以更容易记住和维护。
         </p>
         <p>
-          Ignore vendor-specific prefixes for sorting purposes. However,
-          multiple vendor-specific prefixes for a certain CSS property should
-          be kept sorted (e.g. -moz prefix comes before -webkit).
+          忽略浏览器的特定前缀排序，但多浏览器特定的某个CSS属性前缀应相对保持排序（例如-moz前缀在-webkit前面）。
         </p>
         <CODE_SNIPPET>
           background: fuchsia;
@@ -874,15 +753,14 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Block Content Indentation">
+    <STYLEPOINT title="块状内容缩进">
       <SUMMARY>
-        Indent all block content.
+        缩进所有块状内容。
       </SUMMARY>
       <BODY>
         <p>
-          Indent all <a href="http://www.w3.org/TR/CSS21/syndata.html#block">block
-          content</a>, that is rules within rules as well as declarations, so to
-          reflect hierarchy and improve understanding.
+          缩进所有<a href="http://www.w3.org/TR/CSS21/syndata.html#block">块状内容</a>，它和声明是一样的规则，如此可反映层次关系和更容易理解。
+
         </p>
         <CODE_SNIPPET>
           @media screen, projection {
@@ -896,14 +774,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Declaration Stops">
+    <STYLEPOINT title="声明结束">
       <SUMMARY>
-        Use a semicolon after every declaration.
+        在每个声明结束之后使用一个分号。
       </SUMMARY>
       <BODY>
         <p>
-          End every declaration with a semicolon for consistency and
-          extensibility reasons.
+          考虑到一致性和拓展性，请在每个声明尾部都加上分号。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended */
@@ -921,14 +798,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Property Name Stops">
+    <STYLEPOINT title="属性名结束">
       <SUMMARY>
-        Use a space after a property name’s colon.
+        在属性名冒号后加一个空格。
       </SUMMARY>
       <BODY>
         <p>
-          Always use a single space between property and value (but no
-          space between property and colon) for consistency reasons.
+          为保持一致性，总是在属性和值之间使用一个空格(但不要在属性和冒号之间空格)。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended */
@@ -944,19 +820,16 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Declaration Block Separation">
+    <STYLEPOINT title="声明块间隔">
       <SUMMARY>
-        Use a space between the last selector and the declaration block.
+        在最后一个选择器与定义块之间使用一个空格。
       </SUMMARY>
       <BODY>
         <p>
-          Always use a single space between the last selector and the opening
-          brace that begins the <a href="http://www.w3.org/TR/CSS21/syndata.html#rule-sets">declaration
-          block</a>.
+          总是在最后一个选择器和开大括号之间使用一个空格，然后再开始<a href="http://www.w3.org/TR/CSS21/syndata.html#rule-sets">声明块</a>
         </p>
         <p>
-          The opening brace should be on the same line as the last selector in a
-          given rule.
+          开大括号应该和最后一个选择器待在一行。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended: missing space */
@@ -978,13 +851,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Selector and Declaration Separation">
+    <STYLEPOINT title="选择器和声明间隔">
       <SUMMARY>
-        Separate selectors and declarations by new lines.
+        通过新行分隔选择器和声明定义。
       </SUMMARY>
       <BODY>
         <p>
-          Always start a new line for each selector and declaration.
+          每个选择器和声明另起一行。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended */
@@ -1003,13 +876,13 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="Rule Separation">
+    <STYLEPOINT title="规则间隔">
       <SUMMARY>
-        Separate rules by new lines.
+        通过新航分隔规则。
       </SUMMARY>
       <BODY>
         <p>
-          Always put a blank line (two line breaks) between rules.
+          在两个规则之间空一行。
         </p>
         <CODE_SNIPPET>
           html {
@@ -1023,20 +896,17 @@
         </CODE_SNIPPET>
       </BODY>
     </STYLEPOINT>
-    <STYLEPOINT title="CSS Quotation Marks">
+    <STYLEPOINT title="CSS中引号">
       <SUMMARY>
-        Use single quotation marks for attribute selectors and property values.
+        为属性选择器和属性值使用单引号。
       </SUMMARY>
       <BODY>
         <p>
-          Use single (<code>''</code>) rather than double (<code>""</code>)
-          quotation marks for attribute selectors or property values. Do not
-          use quotation marks in URI values (<code>url()</code>).
+          为属性选择器或属性值使用单引号(<code>''</code>)，而不是双引号(<code>""</code>)。不要在URI值(<code>url()</code>)中使用引号。
         </p>
         <p>
-          Exception: If you do need to use the <code>@charset</code> rule,
-          use double quotation marks—<a href="http://www.w3.org/TR/CSS21/syndata.html#charset">single
-          quotation marks are not permitted</a>.
+          特例：如果你需要使用<code>@charset</code>规则，使用双引号-<a href="http://www.w3.org/TR/CSS21/syndata.html#charset">single
+          quotation marks are not permitted</a>。
         </p>
         <BAD_CODE_SNIPPET>
           /* Not recommended */
@@ -1058,16 +928,15 @@
     </STYLEPOINT>
   </CATEGORY>
 
-  <CATEGORY title="CSS Meta Rules">
+  <CATEGORY title="CSS Meta 规则">
     
-    <STYLEPOINT title="Section Comments">
+    <STYLEPOINT title="片段注释">
       <SUMMARY>
-        Group sections by a section comment (optional).
+        通过章节注释来分组不同章节(可选)。
       </SUMMARY>
       <BODY>
         <p>
-          If possible, group style sheet sections together by using
-          comments. Separate sections with new lines.
+          如果可能，通过注释将样式表的不同片段进行分组。不同章节之间空一行。
         </p>
         <CODE_SNIPPET>
           /* Header */
@@ -1090,23 +959,16 @@
 
   <PARTING_WORDS>
     <p>
-      <em>Be consistent.</em>
+      <em>请保持一致性.</em>
     </p>
     <p>
-      If you’re editing code, take a few minutes to look at the code
-      around you and determine its style. If they use spaces around
-      all their arithmetic operators, you should too. If their
-      comments have little boxes of hash marks around them, make your
-      comments have little boxes of hash marks around them too.
+      如果你正在编写代码，花几分钟看一下你的代码，然后决定它的风格。如果它们在所有的算术操作符两边使用空格，那么你也应该这么做。如果它们的注释都使用码标线包住，请确认你也这么做。
     </p>
     <p>
-      The point of having style guidelines is to have a common vocabulary
-      of coding so people can concentrate on what you’re saying rather
-      than on how you’re saying it. We present global style rules here so
-      people know the vocabulary, but local style is also important. If
-      code you add to a file looks drastically different from the existing
-      code around it, it throws readers out of their rhythm when they go to
-      read it. Avoid this.
+      制定风格指南的目的是让编码有一个共同的词汇表，这样就可以让其他人关注你讲的是什么，而不是你是如何讲的。 我们在这里推出一个全局的样式规则就是让人们知道这些词汇表，但是你们自己制定的样式同样重要。 如果你添加到一个文件中的代码和已经存在的代码风格截然不同，它会让阅读代码的人不知所措，避免这种情况。
+    </p>
+    <p>
+    	【重要提示】：本文由英文翻译而来，在翻译的过程中由于英文水平和技术水平的限制，难免会出现不准确或错误。在你阅读本文的时候如果遇到不懂，不理解的情况，请参阅<a href='http://google.github.io/styleguide/htmlcssguide.xml'>英文版</a>。 同时，欢迎你指出错误，以便让此文更好，先谢过。
     </p>
   </PARTING_WORDS>
 
