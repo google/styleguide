@@ -2,10 +2,10 @@
 <?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
-    
+
     Revision 2.93
   </p>
-  
+
   <address>
     Aaron Whyte<br/>
     Bob Jervis<br/>
@@ -35,23 +35,23 @@
     <CATEGORY title="Background">
       <p>
         JavaScript is the main client-side scripting language used
-        
+
         by many of Google's open-source
           projects.
         This style guide is a list of <em>do</em>s and <em>don't</em>s for
         JavaScript programs.
       </p>
-      
-      
-      
-      
-      
+
+
+
+
+
     </CATEGORY>
   </OVERVIEW>
   <CATEGORY title="JavaScript Language Rules">
-    
 
-    
+
+
 
     <STYLEPOINT title="var">
       <SUMMARY>
@@ -100,7 +100,7 @@
              considered immutable only if they do not demonstrate observable
              state change.  This is not enforced by the compiler.</p>
 
-           
+
            </SUBSECTION>
 
           <SUBSECTION title="Constant pointers (variables and properties)">
@@ -759,7 +759,7 @@
           <p>Optional and variable arguments can also be specified in
             <code>@param</code> annotations. Although either convention is
             acceptable to the compiler, using both together is preferred.</p>
-          
+
         </SUBSECTION>
 
         <SUBSECTION title="Getters and Setters">
@@ -801,8 +801,8 @@
                 ...
               };
             </CODE_SNIPPET>
-            
-            
+
+
             <p>Many JavaScript libraries, including
               <a href="http://code.google.com/closure/library/">
                 the Closure Library
@@ -826,7 +826,7 @@
               parent namespace know what you are doing. If you start a project
               that creates hats for sloths, make sure that the Sloth team knows
               that you're using <code>sloth.hats</code>.</p>
-            
+
           </SUBSUBSECTION>
           <SUBSUBSECTION title="Use different namespaces for external code and internal code">
             <p>"External code" is code that comes from outside your codebase,
@@ -867,8 +867,8 @@
 
               goog.exportSymbol('foo.hats.BowlerHat', googleyhats.BowlerHat);
             </CODE_SNIPPET>
-            
-            
+
+
           </SUBSUBSECTION>
           <SUBSUBSECTION title="Alias long type names to improve readability">
             <p>Use local aliases for fully-qualified types if doing so improves
@@ -937,7 +937,7 @@
             and should contain no punctuation except for <code>-</code> or
             <code>_</code> (prefer <code>-</code> to <code>_</code>).</p>
         </SUBSECTION>
-        
+
       </BODY>
     </STYLEPOINT>
 
@@ -1807,9 +1807,9 @@
 
               <tr>
                 <td>
-                  
+
                   null
-                  
+
                 </td>
                 <td>
                   <CODE_SNIPPET>
@@ -1821,9 +1821,9 @@
 
               <tr>
                 <td>
-                  
+
                   undefined
-                  
+
                 </td>
                 <td>
                   <CODE_SNIPPET>
@@ -2099,7 +2099,7 @@
             <code>MyClass</code> is initialized with a null value, it will issue
             a warning.</p>
 
-          
+
 
           <p>Optional parameters to functions may be undefined at runtime, so if
           they are assigned to class properties, those properties must be
@@ -2329,7 +2329,7 @@
 
         <SUBSECTION title="Top/File-Level Comments">
           <p>
-            
+
             A <a href="copyright.html">copyright notice</a> and author information are optional.
             File overviews are generally recommended whenever a file consists of
             more than a single class definition. The top level comment is
@@ -2346,7 +2346,7 @@
              */
           </CODE_SNIPPET>
 
-          
+
         </SUBSECTION>
 
         <SUBSECTION title="Class Comments">
@@ -2416,7 +2416,7 @@
               <tr>
                 <td>
                   <a name="tag-author">@author</a>
-                  
+
                 </td>
                 <td>
                   <code>@author username@google.com (first last)</code>
@@ -2431,11 +2431,11 @@
                 <td>
                   Document the author of a file or the owner of a test,
                   generally only used in the <code>@fileoverview</code> comment.
-                  
+
                 </td>
               </tr>
 
-              
+
 
               <tr>
                 <td><a name="tag-code">@code</a></td>
@@ -2728,11 +2728,11 @@
                 <td>
                   <p>
                     Declares an
-                    
+
                     externs file.
                   </p>
 
-                  
+
                 </td>
               </tr>
 
@@ -2891,9 +2891,9 @@
                 </td>
               </tr>
 
-              
 
-              
+
+
 
               <tr>
                 <td><a name="tag-noalias">@noalias</a></td>
@@ -3204,7 +3204,7 @@
                 <td>
                   Suppresses warnings from tools. Warning categories are
                   separated by <code>|</code> or <code>,</code>.
-                  
+
                 </td>
               </tr>
 
@@ -3303,12 +3303,12 @@
                 </td>
               </tr>
 
-              
+
 
             </tbody>
           </table>
 
-          
+
 
           <p>
             You may also see other types of JSDoc annotations in third-party
@@ -3386,15 +3386,15 @@
     <STYLEPOINT title="Compiling">
       <SUMMARY>Required</SUMMARY>
       <BODY>
-        
+
 
         <p>Use of JS compilers such as the
           <a href="http://code.google.com/closure/compiler/">Closure Compiler</a>
           is required for all customer-facing code.</p>
 
-        
 
-        
+
+
       </BODY>
     </STYLEPOINT>
 
@@ -3584,7 +3584,7 @@
     </STYLEPOINT>
   </CATEGORY>
 
-  
+
 
   <PARTING_WORDS>
     <p>
@@ -3615,7 +3615,7 @@
     Revision 2.93
   </p>
 
-  
+
   <address>
     Aaron Whyte<br/>
     Bob Jervis<br/>
