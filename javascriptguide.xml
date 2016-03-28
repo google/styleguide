@@ -619,8 +619,7 @@
         </BAD_CODE_SNIPPET>
         <p>The whitespace at the beginning of each line can't be safely stripped
           at compile time; whitespace after the slash will result in tricky
-          errors; and while most script engines support this, it is not part
-          of ECMAScript. </p>
+          errors. </p>
         <p>Use string concatenation instead:</p>
         <CODE_SNIPPET>
           var myString = 'A rather long string of English text, an error message ' +
