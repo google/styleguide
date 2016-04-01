@@ -197,7 +197,7 @@
           or ".vim" suffix if desired). It should be split into plugin/,
           autoload/, etc. subdirectories as necessary, and it should declare
           metadata in the addon-info.json format (see the
-          <a href="http://goo.gl/CUXJZC">VAM documentation</a> for details).
+          <a href="https://github.com/MarcWeber/vim-addon-manager/blob/master/doc/vim-addon-manager-additional-documentation.txt">VAM documentation</a> for details).
         </p>
       </BODY>
     </STYLEPOINT>
