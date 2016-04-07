@@ -2546,6 +2546,10 @@ class CpplintTest(CpplintTestBase):
                                  rvalue_error)
           self.TestMultiLineLint(indent + head + '(A<B> &&c)' + body,
                                  rvalue_error)
+          self.TestMultiLineLint(indent + head + '(D::A&& b)' + body,
+                                 rvalue_error)
+          self.TestMultiLineLint(indent + head + '(::A&& b)' + body,
+                                 rvalue_error)
 
     # Function templates
     self.TestLint('std::conditional<A, B&, C&&>::type', rvalue_error)

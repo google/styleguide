@@ -3638,16 +3638,24 @@ def IsRValueType(typenames, clean_lines, nesting_state, linenum, column):
   # recognize pointer and reference types:
   #   int* Function()
   #   int& Function()
-  if (match.group(2) in typenames or
-      match.group(2) in ['char', 'char16_t', 'char32_t', 'wchar_t', 'bool',
-                         'short', 'int', 'long', 'signed', 'unsigned',
-                         'float', 'double', 'void', 'auto', '>', '*', '&']):
+  symbol_match = Match(r'^(.*)([>*&])\s*$', prefix)
+  if symbol_match and symbol_match.group(2) in ['>', '*', '&']:
     return True
+
+  known_types = ['char', 'char16_t', 'char32_t', 'wchar_t', 'bool',
+                 'short', 'int', 'long', 'signed', 'unsigned',
+                 'float', 'double', 'void', 'auto']
+  last_word_match = Search(r'((\w|::)+)(\s*)$', prefix)
+  if last_word_match:
+    last_word = last_word_match.group(1)
+    before_last_word = prefix[:-len(last_word_match.group(0))]
+    if last_word in typenames or last_word in known_types:
+      return True
 
   # If we see a close parenthesis, look for decltype on the other side.
   # decltype would unambiguously identify a type, anything else is
   # probably a parenthesized expression and not a type.
-  if match.group(2) == ')':
+  if symbol_match and symbol_match.group(2) == ')':
     return IsDecltype(
         clean_lines, linenum, len(match.group(1)) + len(match.group(2)) - 1)
 
@@ -3677,7 +3685,7 @@ def IsRValueType(typenames, clean_lines, nesting_state, linenum, column):
   #   block        {   type&&
   #   constructor  {   expression &&
   start = linenum
-  line = match.group(1)
+  line = before_last_word if last_word_match else match.group(1)
   match_symbol = None
   while start >= 0:
     # We want to skip over identifiers and commas to get to a symbol.
