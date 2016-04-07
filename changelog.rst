@@ -1,59 +1,64 @@
 Changelog
 ---------
 
+1.2.2
+-----
+
+* Fixes bug causing RValue detection with namespaces to fail.
+
+1.2.1
+-----
+
+* Fixes error in setup.py.
+
 1.2.0
 -----
 
-* Fixed error in setup.py
-
-1.2.0
------
-
-* Added `.cu` and `.cuh` as supported file extensions by default.
-* Moved the warning "Include the directory when naming .h files" from the `build/include` category to the `build/include_subdir` category.
+* Adds `.cu` and `.cuh` as supported file extensions by default.
+* Moves the warning "Include the directory when naming .h files" from the `build/include` category to the `build/include_subdir` category.
 
 1.1.0
 -----
 
-* Add quiet option to suppress non error-related output.
+* Adds quiet option to suppress non error-related output.
 
 1.0.1
 -----
 
-* Updates PyPi README
+* Updates PyPi README.
 
 1.0.0
 -----
 
-* Fixes a --repository flag bug
+* Fixes a --repository flag bug.
 
 0.0.9
 -----
 
-* Adds the --exclude flag to exclude files from being linted
+* Adds the --exclude flag to exclude files from being linted.
 
 0.0.8
 -----
 
-* Adds the --repository flag to set the location of the project root for header guard calculations
-* Adds support for ``#pragma once`` as an alternative to header include guards
+* Adds the --repository flag to set the location of the project root for header guard calculations.
+* Adds support for ``#pragma once`` as an alternative to header include guards.
 
 0.0.7
 -----
 
-* Fixes a Windows include guard bug
-* Adds escaping and more detail to JUnit XML output
+* Fixes a Windows include guard bug.
+* Adds escaping and more detail to JUnit XML output.
 
 0.0.6
 -----
 
-* Adds the --recursive flag
-* Adds JUnit XML output
+* Adds the --recursive flag.
+* Adds JUnit XML output.
 
 0.0.5
 -----
 
-* Maintenance release, undoes earlier project folder structure changes to remain as true to upstream as possible
+* Maintenance release, undoes earlier project folder structure changes to remain as true to upstream as possible.
 
 0.0.4
 -----
