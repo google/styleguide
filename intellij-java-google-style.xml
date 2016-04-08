@@ -102,6 +102,8 @@
       <emptyLine />
       <package name="ie" withSubpackages="true" static="false" />
       <emptyLine />
+      <package name="io" withSubpackages="true" static="false" />
+      <emptyLine />
       <package name="imageinfo" withSubpackages="true" static="false" />
       <emptyLine />
       <package name="info" withSubpackages="true" static="false" />
@@ -473,4 +475,3 @@
     <option name="PARENT_SETTINGS_INSTALLED" value="true" />
   </codeStyleSettings>
 </code_scheme>
-
