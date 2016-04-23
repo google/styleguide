@@ -4635,9 +4635,13 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
   #
   # The "$Id:...$" comment may also get very long without it being the
   # developers fault.
+  #
+  # Doxygen documentation copying can get pretty long when using an overloaded
+  # function declaration
   if (not line.startswith('#include') and not is_header_guard and
       not Match(r'^\s*//.*http(s?)://\S*$', line) and
-      not Match(r'^// \$Id:.*#[0-9]+ \$$', line)):
+      not Match(r'^// \$Id:.*#[0-9]+ \$$', line) and
+      not Match(r'^\s*/// [@\\](copydoc|copydetails|copybrief) .*$', line)):
     line_width = GetLineWidth(line)
     extended_length = int((_line_length * 1.25))
     if line_width > extended_length:
