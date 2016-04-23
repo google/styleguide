@@ -2927,6 +2927,10 @@ class CpplintTest(CpplintTestBase):
     DoTest(self, ['', '', '', 'using namespace foo;'])
     DoTest(self, ['// hello', 'using namespace foo;'])
 
+  def testUsingLiteralsNamespaces(self):
+    self.TestLint('using namespace std::literals;', '')
+    self.TestLint('using namespace std::literals::chrono_literals;', '')
+
   def testNewlineAtEOF(self):
     def DoTest(self, data, is_missing_eof):
       error_collector = ErrorCollector(self.assertTrue)
