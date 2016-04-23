@@ -428,6 +428,15 @@ class CpplintTest(CpplintTestBase):
         'static const char kL' + ('o' * 50) + 'ngIdentifier[] = R"()";\n',
         'Lines should be <= 80 characters long'
         '  [whitespace/line_length] [2]')
+    self.TestLint(
+        '  /// @copydoc ' + ('o' * (cpplint._line_length * 2)),
+        '')
+    self.TestLint(
+        '  /// @copydetails ' + ('o' * (cpplint._line_length * 2)),
+        '')
+    self.TestLint(
+        '  /// @copybrief ' + ('o' * (cpplint._line_length * 2)),
+        '')
 
   # Test error suppression annotations.
   def testErrorSuppression(self):
