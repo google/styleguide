@@ -6419,7 +6419,7 @@ def PrintUsage(message):
   if message:
     sys.exit('\nFATAL ERROR: ' + message)
   else:
-    sys.exit(1)
+    sys.exit(0)
 
 
 def PrintCategories():
