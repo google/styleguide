@@ -2595,6 +2595,8 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('decltype(a)&& b = c;', rvalue_error)
     self.TestLint('A(int s, A&& a);', rvalue_error)
     self.TestLint('A(std::string s, A&& a);', rvalue_error)
+    self.TestLint('A(const std::string &s, A&& a);', rvalue_error)
+    self.TestLint('A(int* s, A&& a);', rvalue_error)
     self.TestLint('unique_ptr(unique_ptr&& u) noexcept;', rvalue_error)
 
     # Cast expressions
