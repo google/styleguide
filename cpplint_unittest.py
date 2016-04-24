@@ -1007,6 +1007,22 @@ class CpplintTest(CpplintTestBase):
 
   def testRawStrings(self):
     self.TestMultiLineLint(
+      """
+      int main() {
+        struct A {
+           A(std::string s, A&& a);
+        };
+      }""",
+        'RValue references are an unapproved C++ feature.  [build/c++11] [3]')
+
+    self.TestMultiLineLint(
+      """
+      template <class T, class D = default_delete<T>> class unique_ptr {
+       public:
+          unique_ptr(unique_ptr&& u) noexcept;
+      };""",
+        'RValue references are an unapproved C++ feature.  [build/c++11] [3]')
+    self.TestMultiLineLint(
         """
         void Func() {
           static const char kString[] = R"(
@@ -2577,6 +2593,9 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('const a&& b = c;', rvalue_error)
     self.TestLint('struct a&& b = c;', rvalue_error)
     self.TestLint('decltype(a)&& b = c;', rvalue_error)
+    self.TestLint('A(int s, A&& a);', rvalue_error)
+    self.TestLint('A(std::string s, A&& a);', rvalue_error)
+    self.TestLint('unique_ptr(unique_ptr&& u) noexcept;', rvalue_error)
 
     # Cast expressions
     self.TestLint('a = const_cast<b&&>(c);', rvalue_error)
@@ -5664,6 +5683,12 @@ class NestingStateTest(unittest.TestCase):
     self.assertEqual(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
     self.assertEqual(self.nesting_state.stack[0].name, 'K')
+
+  def testTemplateDefaultArg(self):
+    self.UpdateWithLines([
+      'template <class T, class D = default_delete<T>> class unique_ptr {',])
+    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertTrue(self.nesting_state.stack[0], isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
 
   def testTemplateInnerClass(self):
     self.UpdateWithLines(['class A {',
