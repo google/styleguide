@@ -8,10 +8,11 @@
 </head>
 <body onload="initStyleGuide();">
 <div id="content">
-<h1>Google C++ Style Guide</h1>
+<h1>Seelio C++ Style Guide</h1>
 <div class="horizontal_toc" id="tocDiv"></div>
 
 <div class="main_body">
+
 
 <h2 class="ignoreLink" id="Background">Background</h2>
 
@@ -37,12 +38,20 @@ Most open-source projects developed by
 Google conform to the requirements in this guide.
 </p>
 
-
-
-
-
 <p>Note that this guide is not a C++ tutorial: we assume that
 the reader is familiar with the language. </p>
+
+<h3 id="Transition">Plan for Transitioning</h3>
+<div class="stylebody">
+  Currently, our codebase does not follow any specific style rules.
+  We will use the following plan to update the files in our projects 
+    to adhere to the rules described in this guide.
+Whenever a developer touches a file that does not adhere to the rules of the 
+style guide, he/she must first run the file through the tools provided for 
+formatting the file and submit a pull request to update that file to 
+the proper format.  Any changes not related to updating the file to adhere 
+this style guide must take place in a separate pull request.
+</div>
 
 <h3 id="Goals">Goals of the Style Guide</h3>
 <div class="stylebody">
@@ -5132,7 +5141,8 @@ interacts with the Windows API, which uses
 <h3 id="Spaces_vs._Tabs">Spaces vs. Tabs</h3>
 
 <div class="summary">
-<p>Use only spaces, and indent 2 spaces at a time.</p>
+<p>Use only spaces, and indent 4 spaces at a time.
+</p>
 </div>
 
 <div class="stylebody">
