@@ -70,7 +70,7 @@ Data should not be arbitrarily grouped for convenience.
 <CODE_SNIPPET>
 {
   "company": "Google",
-  "website": "http://www.google.com/",
+  "website": "https://www.google.com/",
   "addressLine1": "111 8th Ave",
   "addressLine2": "4th Floor",
   "state": "NY",
@@ -82,7 +82,7 @@ Data should not be arbitrarily grouped for convenience.
 <CODE_SNIPPET>
 {
   "company": "Google",
-  "website": "http://www.google.com/",
+  "website": "https://www.google.com/",
   "address": {
     "line1": "111 8th Ave",
     "line2": "4th Floor",
@@ -292,7 +292,7 @@ public enum Color {
 Dates should be formatted as recommended by RFC 3339.
 </SUMMARY>
 <BODY>
-<p>Dates should be strings formatted as recommended by <a href="http://www.ietf.org/rfc/rfc3339.txt">RFC 3339</a></p>
+<p>Dates should be strings formatted as recommended by <a href="https://www.ietf.org/rfc/rfc3339.txt">RFC 3339</a></p>
 <CODE_SNIPPET>
 {
   "lastUpdate": "2007-11-06T16:34:41.000Z"
@@ -306,7 +306,7 @@ Dates should be formatted as recommended by RFC 3339.
 Time durations should be formatted as recommended by ISO 8601.
 </SUMMARY>
 <BODY>
-<p>Time duration values should be strings formatted as recommended by <a href="http://en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601</a>.</p>
+<p>Time duration values should be strings formatted as recommended by <a href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601</a>.</p>
 <CODE_SNIPPET>
 {
   // three years, six months, four days, twelve hours,
@@ -322,7 +322,7 @@ Time durations should be formatted as recommended by ISO 8601.
 Latitudes/Longitudes should be formatted as recommended by ISO 6709.
 </SUMMARY>
 <BODY>
-<p>Latitude/Longitude should be strings formatted as recommended by <a href="http://en.wikipedia.org/wiki/ISO_6709">ISO 6709</a>.  Furthermore, they should favor the ±DD.DDDD±DDD.DDDD degrees format.</p>
+<p>Latitude/Longitude should be strings formatted as recommended by <a href="https://en.wikipedia.org/wiki/ISO_6709">ISO 6709</a>.  Furthermore, they should favor the ±DD.DDDD±DDD.DDDD degrees format.</p>
 <CODE_SNIPPET>
 {
   // The latitude/longitude location of the statue of liberty.
@@ -334,7 +334,7 @@ Latitudes/Longitudes should be formatted as recommended by ISO 6709.
 </STYLEPOINT>
 </CATEGORY>
 <CATEGORY title="JSON Structure &amp; Reserved Property Names">
-<p>In order to maintain a consistent interface across APIs, JSON objects should follow the structure outlined below.  This structure applies to both requests and responses made with JSON.  Within this structure, there are certain property names that are reserved for specific uses.  These properties are NOT required; in other words, each reserved property may appear zero or one times.  But if a service needs these properties, this naming convention is recommend.  Here is a schema of the JSON structure, represented in <a href="http://www.google.com/url?sa=D&amp;q=http%3A%2F%2Forderly-json.org%2F">Orderly</a> format (which in turn can be compiled into a <a href="http://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fjson-schema.org%2F">JSONSchema</a>).  You can few examples of the JSON structure at the end of this guide.</p>
+<p>In order to maintain a consistent interface across APIs, JSON objects should follow the structure outlined below.  This structure applies to both requests and responses made with JSON.  Within this structure, there are certain property names that are reserved for specific uses.  These properties are NOT required; in other words, each reserved property may appear zero or one times.  But if a service needs these properties, this naming convention is recommend.  Here is a schema of the JSON structure, represented in <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Forderly-json.org%2F">Orderly</a> format (which in turn can be compiled into a <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fjson-schema.org%2F">JSONSchema</a>).  You can few examples of the JSON structure at the end of this guide.</p>
 <CODE_SNIPPET>
 object {
   string apiVersion?;
@@ -412,12 +412,12 @@ Property Value Type: string<br />Parent: -
 <BODY>
 <p>Client sets this value and server echos data in the response.   This is useful in JSON-P and batch situations , where the user can use the <code>context</code> to correlate responses with requests.  This property is a top-level property because the <code>context</code> should present regardless of whether the response was successful or an error.  <code>context</code> differs from <code>id</code> in that <code>context</code> is specified by the user while <code>id</code> is assigned by the service.</p><p>Example:</p><p>Request #1:</p>
 <CODE_SNIPPET>
-http://www.google.com/myapi?context=bart
+https://www.google.com/myapi?context=bart
 
 </CODE_SNIPPET>
 <p>Request #2:</p>
 <CODE_SNIPPET>
-http://www.google.com/myapi?context=lisa
+https://www.google.com/myapi?context=lisa
 
 </CODE_SNIPPET>
 <p>Response #1:</p>
@@ -572,7 +572,7 @@ Property Value Type: string<br />Parent: <code>data</code>
 Property Value Type: string<br />Parent: <code>data</code>
 </SUMMARY>
 <BODY>
-<p>Represents the etag for the response.  Details about ETags in the GData APIs can be found here: <a href="http://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning">http://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning</a></p><p>Example:</p>
+<p>Represents the etag for the response.  Details about ETags in the GData APIs can be found here: <a href="https://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning">https://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning</a></p><p>Example:</p>
 <CODE_SNIPPET>
 {"data": {"etag": "W/"C0QBRXcycSp7ImA9WxRVFUk.""}}
 
@@ -596,7 +596,7 @@ Property Value Type: string<br />Parent: <code>data</code>
 Property Value Type: string (formatted as specified in BCP 47)<br />Parent: <code>data (or any child element)</code>
 </SUMMARY>
 <BODY>
-<p>Indicates the language of the rest of the properties in this object.  This property mimics HTML's <code>lang</code> property and XML's <code>xml:lang</code> properties.  The value should be a language value as defined in <a href="http://www.rfc-editor.org/rfc/bcp/bcp47.txt">BCP 47</a>.  If a single JSON object contains data in multiple languages, the service is responsible for developing and documenting an appropriate location for the <code>lang</code> property.</p><p>Example:</p>
+<p>Indicates the language of the rest of the properties in this object.  This property mimics HTML's <code>lang</code> property and XML's <code>xml:lang</code> properties.  The value should be a language value as defined in <a href="https://www.rfc-editor.org/rfc/bcp/bcp47.txt">BCP 47</a>.  If a single JSON object contains data in multiple languages, the service is responsible for developing and documenting an appropriate location for the <code>lang</code> property.</p><p>Example:</p>
 <CODE_SNIPPET>
 {"data": {
   "items": [
@@ -614,7 +614,7 @@ Property Value Type: string (formatted as specified in BCP 47)<br />Parent: <cod
 Property Value Type: string (formatted as specified in RFC 3339)<br />Parent: <code>data</code>
 </SUMMARY>
 <BODY>
-<p>Indicates the last date/time (<a href="http://www.ietf.org/rfc/rfc3339.txt">RFC 3339</a>) the item was updated, as defined by the service.</p><p>Example:</p>
+<p>Indicates the last date/time (<a href="https://www.ietf.org/rfc/rfc3339.txt">RFC 3339</a>) the item was updated, as defined by the service.</p><p>Example:</p>
 <CODE_SNIPPET>
 {"data": {"updated": "2007-11-06T16:34:41.000Z"}}
 
@@ -737,7 +737,7 @@ Property Value Type: string<br />Parent: <code>data</code>
 <CODE_SNIPPET>
 {
   "data": {
-    "pagingLinkTemplate": "http://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N"
+    "pagingLinkTemplate": "https://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N"
   }
 }
 
@@ -789,7 +789,7 @@ Property Value Type: object / string<br />Parent: <code>data</code>
 {
   "data": {
     "self": { },
-    "selfLink": "http://www.google.com/feeds/album/1234"
+    "selfLink": "https://www.google.com/feeds/album/1234"
   }
 }
 
@@ -806,7 +806,7 @@ Property Value Type: object / string<br />Parent: <code>data</code>
 {
   "data": {
     "edit": { },
-    "editLink": "http://www.google.com/feeds/album/1234/edit"
+    "editLink": "https://www.google.com/feeds/album/1234/edit"
   }
 }
 
@@ -823,7 +823,7 @@ Property Value Type: object / string<br />Parent: <code>data</code>
 {
   "data": {
     "next": { },
-    "nextLink": "http://www.google.com/feeds/album/1234/next"
+    "nextLink": "https://www.google.com/feeds/album/1234/next"
   }
 }
 
@@ -840,7 +840,7 @@ Property Value Type: object / string<br />Parent: <code>data</code>
 {
   "data": {
     "previous": { },
-    "previousLink": "http://www.google.com/feeds/album/1234/next"
+    "previousLink": "https://www.google.com/feeds/album/1234/next"
   }
 }
 
@@ -1001,7 +1001,7 @@ Property Value Type: string<br />Parent: <code>error.errors</code>
 <CODE_SNIPPET>
 {
   "error":{
-    "errors": [{"sendReport": "http://report.example.com/"}]
+    "errors": [{"sendReport": "https://report.example.com/"}]
   }
 }
 
@@ -1054,7 +1054,7 @@ Property Value Type: string<br />Parent: <code>error.errors</code>
 <CATEGORY title="Examples">
 <STYLEPOINT title="YouTube JSON API">
 <SUMMARY>
-Here's an example of the YouTube JSON API's response object.  You can learn more about YouTube's JSON API here: <a href="http://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html">http://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html</a>.
+Here's an example of the YouTube JSON API's response object.  You can learn more about YouTube's JSON API here: <a href="https://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html">https://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html</a>.
 </SUMMARY>
 <BODY>
 <CODE_SNIPPET>
@@ -1081,16 +1081,16 @@ Here's an example of the YouTube JSON API's response object.  You can learn more
           "golden retriever",
         ],
         "thumbnail": {
-          "default": "http://i.ytimg.com/vi/BGODurRfVv4/default.jpg",
-          "hqDefault": "http://i.ytimg.com/vi/BGODurRfVv4/hqdefault.jpg"
+          "default": "https://i.ytimg.com/vi/BGODurRfVv4/default.jpg",
+          "hqDefault": "https://i.ytimg.com/vi/BGODurRfVv4/hqdefault.jpg"
         },
         "player": {
-          "default": "http://www.youtube.com/watch?v=BGODurRfVv4&amp;feature=youtube_gdata",
-          "mobile": "http://m.youtube.com/details?v=BGODurRfVv4"
+          "default": "https://www.youtube.com/watch?v=BGODurRfVv4&amp;feature=youtube_gdata",
+          "mobile": "https://m.youtube.com/details?v=BGODurRfVv4"
         },
         "content": {
           "1": "rtsp://v5.cache6.c.youtube.com/CiILENy73wIaGQn-Vl-0uoNjBBMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp",
-          "5": "http://www.youtube.com/v/BGODurRfVv4?f=videos&amp;app=youtube_gdata",
+          "5": "https://www.youtube.com/v/BGODurRfVv4?f=videos&amp;app=youtube_gdata",
           "6": "rtsp://v7.cache7.c.youtube.com/CiILENy73wIaGQn-Vl-0uoNjBBMYESARFEgGUgZ2aWRlb3MM/0/0/0/video.3gp"
         },
         "duration": 315,
@@ -1125,9 +1125,9 @@ This example demonstrates how the Google search items could be represented as a 
     "itemsPerPage": 10,
     "startIndex": 11,
     "totalItems": 2700000,
-    "nextLink": "http://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=20&amp;sa=N"
-    "previousLink": "http://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=0&amp;sa=N",
-    "pagingLinkTemplate": "http://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N",
+    "nextLink": "https://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=20&amp;sa=N"
+    "previousLink": "https://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=0&amp;sa=N",
+    "pagingLinkTemplate": "https://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N",
     "items": [
       {
         "title": "Pizz'a Chicago Home Page"
@@ -1149,7 +1149,7 @@ This example demonstrates how the Google search items could be represented as a 
 A list of reserved JavaScript words that should be avoided in property names.
 </SUMMARY>
 <BODY>
-<p>The words below are reserved by the JavaScript language and cannot be referred to using dot notation.  The list represents best knowledge of keywords at this time; the list may change or vary based on your specific execution environment.</p><p>From the <a href="http://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fwww.ecma-international.org%2Fpublications%2Fstandards%2FEcma-262.htm">ECMAScript Language Specification 5th Edition</a></p>
+<p>The words below are reserved by the JavaScript language and cannot be referred to using dot notation.  The list represents best knowledge of keywords at this time; the list may change or vary based on your specific execution environment.</p><p>From the <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fwww.ecma-international.org%2Fpublications%2Fstandards%2FEcma-262.htm">ECMAScript Language Specification 5th Edition</a></p>
 <BAD_CODE_SNIPPET>
 abstract
 boolean break byte
@@ -1175,7 +1175,7 @@ yield
 <HR/>
 
 <p align="center">
-Except as otherwise <a href="http://code.google.com/policies.html">noted</a>, the content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>, and code samples are licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>.
+Except as otherwise <a href="https://code.google.com/policies.html">noted</a>, the content of this page is licensed under the <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>, and code samples are licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>.
 </p>
 <p align="right">
 Revision 0.9

@@ -386,7 +386,7 @@
       </li>
       <li>
         Plugin metadata should be declared in the addon-info.json format (see
-        the <a href="http://goo.gl/CUXJZC">VAM documentation</a> for details).
+        the <a href="https://github.com/MarcWeber/vim-addon-manager/blob/master/doc/vim-addon-manager-additional-documentation.txt">VAM documentation</a> for details).
       </li>
       <li>
         Functions should go in the <code>autoload/</code> subdirectory of
@@ -523,7 +523,7 @@
           documentation in .vim files in conformance with the vimdoc standards
           and include fields like "description" and "author" in the
           addon-info.json file (see the
-          <a href="http://goo.gl/CUXJZC">VAM documentation</a>).
+          <a href="https://github.com/MarcWeber/vim-addon-manager/blob/master/doc/vim-addon-manager-additional-documentation.txt">VAM documentation</a>).
         </p>
       </BODY>
     </STYLEPOINT>
@@ -1273,7 +1273,7 @@
         <p>
           Declaring dependencies in addon-info.json allows conformant plugin
           managers (like VAM) to ensure dependencies are installed. See the
-          <a href="http://goo.gl/CUXJZC">VAM documentation</a> for details.
+          <a href="https://github.com/MarcWeber/vim-addon-manager/blob/master/doc/vim-addon-manager-additional-documentation.txt">VAM documentation</a> for details.
         </p>
         <p>
           Calling <code>maktaba#library#Require</code> from dependent code at
