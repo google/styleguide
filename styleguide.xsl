@@ -1,10 +1,10 @@
 <xsl:stylesheet version="1.0"
-xmlns:xsl="https://www.w3.org/1999/XSL/Transform"
-xmlns:rdf="https://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 xmlns:dc="http://purl.org/dc/elements/1.1/"
 xmlns:dcq="http://purl.org/dc/qualifiers/1.0/"
-xmlns:fo="https://www.w3.org/1999/XSL/Format"
-xmlns:fn="https://www.w3.org/2005/xpath-functions">
+xmlns:fo="http://www.w3.org/1999/XSL/Format"
+xmlns:fn="http://www.w3.org/2005/xpath-functions">
   <xsl:output method="html"/>
   <!-- Set to 1 to show explanations by default.  Set to 0 to hide them -->
   <xsl:variable name="show_explanation_default" select="0" />
