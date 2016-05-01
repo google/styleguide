@@ -588,6 +588,10 @@ def Search(pattern, s):
     _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
   return _regexp_compile_cache[pattern].search(s)
 
+def IsSourceExtension(s):
+    """File extension (excluding dot) matches a source file extension."""
+    return s in ('c', 'cc', 'cpp', 'cxx')
+
 
 class _IncludeState(object):
   """Tracks line numbers for includes, and the order in which includes appear.
@@ -1058,7 +1062,7 @@ class FileInfo(object):
 
   def IsSource(self):
     """File has a source file extension."""
-    return self.Extension()[1:] in ('c', 'cc', 'cpp', 'cxx')
+    return IsSourceExtension(self.Extension()[1:])
 
 
 def _ShouldPrintError(category, confidence, linenum):
@@ -1670,7 +1674,7 @@ def GetHeaderGuardCPPVariable(filename):
   fileinfo = FileInfo(filename)
   file_path_from_root = fileinfo.RepositoryName()
   if _root:
-    file_path_from_root = re.sub('^' + _root + os.sep, '', file_path_from_root)
+    file_path_from_root = re.sub('^' + _root + '/', '', file_path_from_root)
   return re.sub(r'[^a-zA-Z0-9]', '_', file_path_from_root).upper() + '_'
 
 
@@ -1775,12 +1779,14 @@ def CheckForHeaderGuard(filename, clean_lines, error):
 def CheckHeaderFileIncluded(filename, include_state, error):
   """Logs an error if a .cc file does not include its header."""
 
+  fileinfo = FileInfo(filename)
+
   # Do not check test files
-  if filename.endswith('_test.cc') or filename.endswith('_unittest.cc'):
+  if (fileinfo.BaseName().endswith('_test') or
+      fileinfo.BaseName().endswith('_unittest')):
     return
 
-  fileinfo = FileInfo(filename)
-  headerfile = filename[0:len(filename) - 2] + 'h'
+  headerfile = filename[0:len(filename) - len(fileinfo.Extension())] + '.h'
   if not os.path.exists(headerfile):
     return
   headername = FileInfo(headerfile).RepositoryName()
@@ -4582,9 +4588,10 @@ def _ClassifyInclude(fileinfo, include, is_system):
   target_dir, target_base = (
       os.path.split(_DropCommonSuffixes(fileinfo.RepositoryName())))
   include_dir, include_base = os.path.split(_DropCommonSuffixes(include))
+  public_dir = os.path.normpath(target_dir + '/../public').replace('\\', '/')
   if target_base == include_base and (
       include_dir == target_dir or
-      include_dir == os.path.normpath(target_dir + '/../public')):
+      include_dir == public_dir):
     return _LIKELY_MY_HEADER
 
   # If the target and include share some initial basename
@@ -5549,9 +5556,11 @@ def FilesBelongToSameModule(filename_cc, filename_h):
     string: the additional prefix needed to open the header file.
   """
 
-  if not filename_cc.endswith('.cc'):
+  fileinfo = FileInfo(filename_cc)
+  if not fileinfo.IsSource():
     return (False, '')
-  filename_cc = filename_cc[:-len('.cc')]
+  filename_cc = filename_cc[:-len(fileinfo.Extension())]
+
   if filename_cc.endswith('_unittest'):
     filename_cc = filename_cc[:-len('_unittest')]
   elif filename_cc.endswith('_test'):
@@ -6036,7 +6045,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error)
   
   # Check that the .cc file has included its header if it exists.
-  if file_extension == 'cc':
+  if IsSourceExtension(file_extension):
     CheckHeaderFileIncluded(filename, include_state, error)
 
   # We check here rather than inside ProcessLine so that we see raw
