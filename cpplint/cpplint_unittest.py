@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8; -*-
 #
 # Copyright (c) 2009 Google Inc. All rights reserved.
@@ -39,8 +39,23 @@ import random
 import re
 import sys
 import unittest
+import tempfile
+import shutil
 
 import cpplint
+
+if sys.version_info < (3,):
+    range = xrange
+    def u(x):
+        return codecs.unicode_escape_decode(x)[0]
+    def b(x):
+        return x
+else:
+    xrange = range
+    def u(x):
+        return x
+    def b(x):
+        return codecs.latin_1_encode(x)[0]
 
 
 # This class works as an error collector and replaces cpplint.Error
@@ -305,8 +320,8 @@ class CpplintTest(CpplintTestBase):
   # Test get line width.
   def testGetLineWidth(self):
     self.assertEquals(0, cpplint.GetLineWidth(''))
-    self.assertEquals(10, cpplint.GetLineWidth(u'x' * 10))
-    self.assertEquals(16, cpplint.GetLineWidth(u'都|道|府|県|支庁'))
+    self.assertEquals(10, cpplint.GetLineWidth('x' * 10))
+    self.assertEquals(16, cpplint.GetLineWidth(u('\u90fd|\u9053|\u5e9c|\u770c|\u652f\u5e81')))
 
   def testGetTextInside(self):
     self.assertEquals('', cpplint._GetTextInside('fun()', r'fun\('))
@@ -2926,9 +2941,13 @@ class CpplintTest(CpplintTestBase):
   def testInvalidUtf8(self):
     def DoTest(self, raw_bytes, has_invalid_utf8):
       error_collector = ErrorCollector(self.assert_)
+      if sys.version_info < (3,):
+          unidata = unicode(raw_bytes, 'utf8', 'replace').split('\n')
+      else:
+          unidata = str(raw_bytes, 'utf8', 'replace').split('\n')
       cpplint.ProcessFileData(
           'foo.cc', 'cc',
-          unicode(raw_bytes, 'utf8', 'replace').split('\n'),
+          unidata,
           error_collector)
       # The warning appears only once.
       self.assertEquals(
@@ -2938,12 +2957,12 @@ class CpplintTest(CpplintTestBase):
               ' (or Unicode replacement character).'
               '  [readability/utf8] [5]'))
 
-    DoTest(self, 'Hello world\n', False)
-    DoTest(self, '\xe9\x8e\xbd\n', False)
-    DoTest(self, '\xe9x\x8e\xbd\n', True)
+    DoTest(self, b('Hello world\n'), False)
+    DoTest(self, b('\xe9\x8e\xbd\n'), False)
+    DoTest(self, b('\xe9x\x8e\xbd\n'), True)
     # This is the encoding of the replacement character itself (which
     # you can see by evaluating codecs.getencoder('utf8')(u'\ufffd')).
-    DoTest(self, '\xef\xbf\xbd\n', True)
+    DoTest(self, b('\xef\xbf\xbd\n'), True)
 
   def testBadCharacters(self):
     # Test for NUL bytes only
@@ -2958,10 +2977,16 @@ class CpplintTest(CpplintTestBase):
     # Make sure both NUL bytes and UTF-8 are caught if they appear on
     # the same line.
     error_collector = ErrorCollector(self.assert_)
+    raw_bytes = b('\xe9x\0')
+    if sys.version_info < (3,):
+          unidata = unicode(raw_bytes, 'utf8', 'replace')
+    else:
+          unidata = str(raw_bytes, 'utf8', 'replace')
     cpplint.ProcessFileData(
         'nul_utf8.cc', 'cc',
         ['// Copyright 2014 Your Company.',
-         unicode('\xe9x\0', 'utf8', 'replace'), ''],
+         unidata,
+         ''],
         error_collector)
     self.assertEquals(
         error_collector.Results(),
@@ -3873,7 +3898,7 @@ class CpplintTest(CpplintTestBase):
     cpplint.ProcessFileData(file_path, 'h', [], error_collector)
     for error in error_collector.ResultList():
       matched = re.search(
-          'No #ifndef header guard found, suggested CPP variable is: ([A-Z_]+)',
+          'No #ifndef header guard found, suggested CPP variable is: ([A-Z0-9_]+)',
           error)
       if matched is not None:
         return matched.group(1)
@@ -4073,27 +4098,34 @@ class CpplintTest(CpplintTestBase):
           error_collector.ResultList())
 
   def testBuildHeaderGuardWithRoot(self):
-    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                             'cpplint_test_header.h')
-    file_info = cpplint.FileInfo(file_path)
-    if file_info.FullName() == file_info.RepositoryName():
-      # When FileInfo cannot deduce the root directory of the repository,
-      # FileInfo.RepositoryName returns the same value as FileInfo.FullName.
-      # This can happen when this source file was obtained without .svn or
-      # .git directory. (e.g. using 'svn export' or 'git archive').
-      # Skip this test in such a case because --root flag makes sense only
-      # when the root directory of the repository is properly deduced.
-      return
+    temp_directory = tempfile.mkdtemp()
+    try:
+        os.makedirs(os.path.join(temp_directory, ".svn"))
+        header_directory = os.path.join(temp_directory, "cpplint")
+        os.makedirs(header_directory)
+        file_path = os.path.join(header_directory, 'cpplint_test_header.h')
+        open(file_path, 'a').close()
+        file_info = cpplint.FileInfo(file_path)
+        if file_info.FullName() == file_info.RepositoryName():
+            # When FileInfo cannot deduce the root directory of the repository,
+            # FileInfo.RepositoryName returns the same value as FileInfo.FullName.
+            # This can happen when this source file was obtained without .svn or
+            # .git directory. (e.g. using 'svn export' or 'git archive').
+            # Skip this test in such a case because --root flag makes sense only
+            # when the root directory of the repository is properly deduced.
+            return
 
-    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
-                      cpplint.GetHeaderGuardCPPVariable(file_path))
-    cpplint._root = 'cpplint'
-    self.assertEquals('CPPLINT_TEST_HEADER_H_',
-                      cpplint.GetHeaderGuardCPPVariable(file_path))
-    # --root flag is ignored if an non-existent directory is specified.
-    cpplint._root = 'NON_EXISTENT_DIR'
-    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
-                      cpplint.GetHeaderGuardCPPVariable(file_path))
+        self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                          cpplint.GetHeaderGuardCPPVariable(file_path))
+        cpplint._root = 'cpplint'
+        self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                          cpplint.GetHeaderGuardCPPVariable(file_path))
+        # --root flag is ignored if an non-existent directory is specified.
+        cpplint._root = 'NON_EXISTENT_DIR'
+        self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                          cpplint.GetHeaderGuardCPPVariable(file_path))
+    finally:
+        shutil.rmtree(temp_directory)
 
   def testBuildInclude(self):
     # Test that include statements have slashes in them.
@@ -4285,7 +4317,7 @@ class Cxx11Test(CpplintTestBase):
     lines = lines[:]
 
     # Header files need to have an ifdef guard wrapped around their code.
-    if extension == 'h':
+    if extension.startswith('h'):
       guard = filename.upper().replace('/', '_').replace('.', '_') + '_'
       lines.insert(0, '#ifndef ' + guard)
       lines.insert(1, '#define ' + guard)
