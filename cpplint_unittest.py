@@ -2928,8 +2928,8 @@ class CpplintTest(CpplintTestBase):
     DoTest(self, ['// hello', 'using namespace foo;'])
 
   def testUsingLiteralsNamespaces(self):
-    self.TestLint('using namespace std::literals;', '')
-    self.TestLint('using namespace std::literals::chrono_literals;', '')
+    self.TestLint('using namespace std::literals;', 'Do not use namespace using-directives.  Use using-declarations instead.  [build/namespaces_literals] [5]')
+    self.TestLint('using namespace std::literals::chrono_literals;', 'Do not use namespace using-directives.  Use using-declarations instead.  [build/namespaces_literals] [5]')
 
   def testNewlineAtEOF(self):
     def DoTest(self, data, is_missing_eof):
