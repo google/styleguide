@@ -1,4 +1,11 @@
 language: python
+
+# use container infra for linux
+sudo: false
+
+git:
+  depth: 3
+
 python:
   - "3.5"
   - "3.4"
