@@ -44,14 +44,22 @@ import shutil
 
 import cpplint
 
+try:
+  xrange
+except NameError:
+  xrange = range
+
+try:
+  unicode
+except NameError:
+  basestring = unicode = str
+
 if sys.version_info < (3,):
-  range = xrange
   def u(x):
     return codecs.unicode_escape_decode(x)[0]
   def b(x):
     return x
 else:
-  xrange = range
   def u(x):
     return x
   def b(x):
@@ -4391,7 +4399,6 @@ class CpplintTest(CpplintTestBase):
       os.makedirs(header_directory)
       file_path = os.path.join(header_directory, 'cpplint_test_header.h')
       open(file_path, 'a').close()
-      file_info = cpplint.FileInfo(file_path)
 
       # search for .svn if _repository is not specified
       self.assertEqual('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',

@@ -568,20 +568,26 @@ _quiet = False
 # This is set by --linelength flag.
 _line_length = 80
 
+try:
+    xrange
+except NameError:
+    xrange = range
+
+try:
+  unicode
+except NameError:
+  basestring = unicode = str
+
 if sys.version_info < (3,):
     def u(x):
         return codecs.unicode_escape_decode(x)[0]
-    TEXT_TYPE = unicode
     # BINARY_TYPE = str
-    range = xrange
     itervalues = dict.itervalues
     iteritems = dict.iteritems
 else:
     def u(x):
         return x
-    TEXT_TYPE = str
     # BINARY_TYPE = bytes
-    xrange = range
     itervalues = dict.values
     iteritems = dict.items
 
@@ -4541,7 +4547,7 @@ def GetLineWidth(line):
     The width of the line in column positions, accounting for Unicode
     combining characters and wide characters.
   """
-  if isinstance(line, TEXT_TYPE):
+  if isinstance(line, unicode):
     width = 0
     for uc in unicodedata.normalize('NFC', line):
       if unicodedata.east_asian_width(uc) in ('W', 'F'):
@@ -4983,9 +4989,6 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   match = Match(r'^\s*#\s*(if|ifdef|ifndef|elif|else|endif)\b', line)
   if match:
     include_state.ResetSection(match.group(1))
-
-  # Make Windows paths like Unix.
-  fullname = os.path.abspath(filename).replace('\\', '/')
 
   # Perform other checks now that we are sure that this is not an include line
   CheckCasts(filename, clean_lines, linenum, error)
