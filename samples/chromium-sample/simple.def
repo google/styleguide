@@ -1,0 +1,21 @@
+src/*
+1
+src/chrome_content_renderer_client.cc:113:  Include the directory when naming .h files  [build/include_subdir] [4]
+src/chrome_content_renderer_client.cc:1156:  Use int16/int64/etc, rather than the C type long  [runtime/int] [4]
+src/chrome_content_renderer_client.cc:1161:  Use int16/int64/etc, rather than the C type long  [runtime/int] [4]
+src/chrome_content_renderer_client.cc:5:  samples/chromium-sample/src/chrome_content_renderer_client.cc should include its header file samples/chromium-sample/src/chrome_content_renderer_client.h  [build/include] [5]
+Done processing src/chrome_content_renderer_client.cc
+src/chrome_content_renderer_client.h:5:  #ifndef header guard has wrong style, please use: SAMPLES_CHROMIUM_SAMPLE_SRC_CHROME_CONTENT_RENDERER_CLIENT_H_  [build/header_guard] [5]
+src/chrome_content_renderer_client.h:225:  #endif line should be "#endif  // SAMPLES_CHROMIUM_SAMPLE_SRC_CHROME_CONTENT_RENDERER_CLIENT_H_"  [build/header_guard] [5]
+src/chrome_content_renderer_client.h:115:  Use int16/int64/etc, rather than the C type long  [runtime/int] [4]
+src/chrome_content_renderer_client.h:117:  Use int16/int64/etc, rather than the C type long  [runtime/int] [4]
+Done processing src/chrome_content_renderer_client.h
+src/io_thread.cc:1148:  Closing ) should be moved to the previous line  [whitespace/parens] [2]
+src/io_thread.cc:1547:  Missing space around colon in range-based for loop  [whitespace/forcolon] [2]
+src/io_thread.cc:5:  samples/chromium-sample/src/io_thread.cc should include its header file samples/chromium-sample/src/io_thread.h  [build/include] [5]
+Done processing src/io_thread.cc
+src/io_thread.h:5:  #ifndef header guard has wrong style, please use: SAMPLES_CHROMIUM_SAMPLE_SRC_IO_THREAD_H_  [build/header_guard] [5]
+src/io_thread.h:565:  #endif line should be "#endif  // SAMPLES_CHROMIUM_SAMPLE_SRC_IO_THREAD_H_"  [build/header_guard] [5]
+Done processing src/io_thread.h
+Total errors found: 13
+
