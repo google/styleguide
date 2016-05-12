@@ -727,6 +727,8 @@ class _IncludeState(object):
 
   def __init__(self):
     self.include_list = [[]]
+    self._section = None
+    self._last_header = None
     self.ResetSection('')
 
   def FindHeader(self, header):
