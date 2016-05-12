@@ -931,7 +931,7 @@ class _CppLintState(object):
 
   def PrintErrorCounts(self):
     """Print a summary of errors by category, and the total."""
-    for category, count in iteritems(self.errors_by_category):
+    for category, count in sorted(iteritems(self.errors_by_category)):
       self.PrintInfo('Category \'%s\' errors found: %d\n' %
                        (category, count))
     self.PrintInfo('Total errors found: %d\n' % self.error_count)
@@ -5872,7 +5872,7 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
     return
 
   # All the lines have been processed, report the errors found.
-  for required_header_unstripped in required:
+  for required_header_unstripped in sorted(required, key=required.__getitem__):
     template = required[required_header_unstripped][1]
     if required_header_unstripped.strip('<>"') not in include_dict:
       error(filename, required[required_header_unstripped][0],
