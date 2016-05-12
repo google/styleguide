@@ -940,7 +940,8 @@ class _CppLintState(object):
     for category, count in iteritems(self.errors_by_category):
       self.PrintInfo('Category \'%s\' errors found: %d\n' %
                        (category, count))
-    self.PrintInfo('Total errors found: %d\n' % self.error_count)
+    if self.error_count > 0:
+      self.PrintInfo('Total errors found: %d\n' % self.error_count)
 
   def PrintInfo(self, message):
     if not _quiet and self.output_format != 'junit':
