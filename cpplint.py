@@ -475,7 +475,7 @@ _CHECK_MACROS = [
     ]
 
 # Replacement macros for CHECK/DCHECK/EXPECT_TRUE/EXPECT_FALSE
-_CHECK_REPLACEMENT = dict([(m, {}) for m in _CHECK_MACROS])
+_CHECK_REPLACEMENT = dict([(macro_var, {}) for macro_var in _CHECK_MACROS])
 
 for op, replacement in [('==', 'EQ'), ('!=', 'NE'),
                         ('>=', 'GE'), ('>', 'GT'),
@@ -569,7 +569,7 @@ _quiet = False
 _line_length = 80
 
 if sys.version_info < (3,):
-    def u(x):
+    def unicode_escape_decode(x):
         return codecs.unicode_escape_decode(x)[0]
     TEXT_TYPE = unicode
     # BINARY_TYPE = str
@@ -577,7 +577,7 @@ if sys.version_info < (3,):
     itervalues = dict.itervalues
     iteritems = dict.iteritems
 else:
-    def u(x):
+    def unicode_escape_decode(x):
         return x
     TEXT_TYPE = str
     # BINARY_TYPE = bytes
@@ -1286,9 +1286,9 @@ def Error(filename, linenum, category, confidence, message):
         _cpplint_state.AddJUnitFailure(filename, linenum, message, category,
             confidence)
     else:
-      m = '%s:%s:  %s  [%s] [%d]\n' % (
+      final_message = '%s:%s:  %s  [%s] [%d]\n' % (
           filename, linenum, message, category, confidence)
-      sys.stderr.write(m)
+      sys.stderr.write(final_message)
 
 # Matches standard C++ escape sequences per 2.13.2.3 of the C++ standard.
 _RE_PATTERN_CLEANSE_LINE_ESCAPES = re.compile(
@@ -1832,7 +1832,7 @@ def GetHeaderGuardCPPVariable(filename):
   filename = re.sub(r'/\.flymake/([^/]*)$', r'/\1', filename)
   # Replace 'c++' with 'cpp'.
   filename = filename.replace('C++', 'cpp').replace('c++', 'cpp')
-  
+
   fileinfo = FileInfo(filename)
   file_path_from_root = fileinfo.RepositoryName()
   if _root:
@@ -1986,7 +1986,7 @@ def CheckForBadCharacters(filename, lines, error):
     error: The function to call with any errors found.
   """
   for linenum, line in enumerate(lines):
-    if u('\ufffd') in line:
+    if unicode_escape_decode('\ufffd') in line:
       error(filename, linenum, 'readability/utf8', 5,
             'Line contains invalid UTF-8 (or Unicode replacement character).')
     if '\0' in line:
@@ -4977,9 +4977,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   if match:
     include_state.ResetSection(match.group(1))
 
-  # Make Windows paths like Unix.
-  fullname = os.path.abspath(filename).replace('\\', '/')
-  
+
   # Perform other checks now that we are sure that this is not an include line
   CheckCasts(filename, clean_lines, linenum, error)
   CheckGlobalStatic(filename, clean_lines, linenum, error)
@@ -6219,7 +6217,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   nesting_state.CheckCompletedBlocks(filename, error)
 
   CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error)
-  
+
   # Check that the .cc file has included its header if it exists.
   if file_extension == 'cc':
     CheckHeaderFileIncluded(filename, include_state, error)
@@ -6299,8 +6297,8 @@ def ProcessConfigOverrides(filename):
 
   # Apply all the accumulated filters in reverse order (top-level directory
   # config options having the least priority).
-  for filter in reversed(cfg_filters):
-     _AddFilters(filter)
+  for cfg_filter in reversed(cfg_filters):
+     _AddFilters(cfg_filter)
 
   return True
 
@@ -6528,9 +6526,9 @@ def _ExpandDirectories(filenames):
         expanded.add(filename)
         continue
 
-      for root, dirs, files in os.walk(filename):
-        for file in files:
-          fullname = os.path.join(root, file)
+      for root, _, files in os.walk(filename):
+        for loopfile in files:
+          fullname = os.path.join(root, loopfile)
           if fullname.startswith('.' + os.path.sep):
             fullname = fullname[len('.' + os.path.sep):]
           expanded.add(fullname)

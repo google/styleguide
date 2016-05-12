@@ -46,15 +46,15 @@ import cpplint
 
 if sys.version_info < (3,):
   range = xrange
-  def u(x):
+  def unicode_escape_decode(x):
     return codecs.unicode_escape_decode(x)[0]
-  def b(x):
+  def codecs_latin_encode(x):
     return x
 else:
   xrange = range
-  def u(x):
+  def unicode_escape_decode(x):
     return x
-  def b(x):
+  def codecs_latin_encode(x):
     return codecs.latin_1_encode(x)[0]
 
 
@@ -321,7 +321,7 @@ class CpplintTest(CpplintTestBase):
   def testGetLineWidth(self):
     self.assertEqual(0, cpplint.GetLineWidth(''))
     self.assertEqual(10, cpplint.GetLineWidth('x' * 10))
-    self.assertEqual(16, cpplint.GetLineWidth(u('\u90fd|\u9053|\u5e9c|\u770c|\u652f\u5e81')))
+    self.assertEqual(16, cpplint.GetLineWidth(unicode_escape_decode('\u90fd|\u9053|\u5e9c|\u770c|\u652f\u5e81')))
 
   def testGetTextInside(self):
     self.assertEqual('', cpplint._GetTextInside('fun()', r'fun\('))
@@ -2961,12 +2961,12 @@ class CpplintTest(CpplintTestBase):
               ' (or Unicode replacement character).'
               '  [readability/utf8] [5]'))
 
-    DoTest(self, b('Hello world\n'), False)
-    DoTest(self, b('\xe9\x8e\xbd\n'), False)
-    DoTest(self, b('\xe9x\x8e\xbd\n'), True)
+    DoTest(self, codecs_latin_encode('Hello world\n'), False)
+    DoTest(self, codecs_latin_encode('\xe9\x8e\xbd\n'), False)
+    DoTest(self, codecs_latin_encode('\xe9x\x8e\xbd\n'), True)
     # This is the encoding of the replacement character itself (which
     # you can see by evaluating codecs.getencoder('utf8')(u'\ufffd')).
-    DoTest(self, b('\xef\xbf\xbd\n'), True)
+    DoTest(self, codecs_latin_encode('\xef\xbf\xbd\n'), True)
 
   def testBadCharacters(self):
     # Test for NUL bytes only
@@ -2981,7 +2981,7 @@ class CpplintTest(CpplintTestBase):
     # Make sure both NUL bytes and UTF-8 are caught if they appear on
     # the same line.
     error_collector = ErrorCollector(self.assertTrue)
-    raw_bytes = b('\xe9x\0')
+    raw_bytes = codecs_latin_encode('\xe9x\0')
     if sys.version_info < (3,):
           unidata = unicode(raw_bytes, 'utf8', 'replace')
     else:
