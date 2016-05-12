@@ -4732,12 +4732,10 @@ def _IsTestFilename(filename):
   Returns:
     True if 'filename' looks like a test, False otherwise.
   """
-  if (filename.endswith('_test.cc') or
+  return (filename.endswith('_test.cc') or
       filename.endswith('_unittest.cc') or
-      filename.endswith('_regtest.cc')):
-    return True
-  else:
-    return False
+      filename.endswith('_regtest.cc'))
+
 
 
 def _ClassifyInclude(fileinfo, include, is_system):
@@ -6052,11 +6050,9 @@ def IsBlockInNameSpace(nesting_state, is_forward_declaration):
     Whether or not the new block is directly in a namespace.
   """
   if is_forward_declaration:
-    if len(nesting_state.stack) >= 1 and (
-        isinstance(nesting_state.stack[-1], _NamespaceInfo)):
-      return True
-    else:
-      return False
+    return len(nesting_state.stack) >= 1 and (
+      isinstance(nesting_state.stack[-1], _NamespaceInfo))
+
 
   return (len(nesting_state.stack) > 1 and
           nesting_state.stack[-1].check_namespace_indentation and
