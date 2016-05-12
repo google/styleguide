@@ -44,19 +44,35 @@ import shutil
 
 import cpplint
 
-if sys.version_info < (3,):
-  range = xrange
-  def unicode_escape_decode(x):
-    return codecs.unicode_escape_decode(x)[0]
-  def codecs_latin_encode(x):
-    return x
-else:
+try:
+  xrange(1, 0)
+except NameError:
+  #  -- pylint: disable=redefined-builtin
   xrange = range
-  def unicode_escape_decode(x):
-    return x
-  def codecs_latin_encode(x):
-    return codecs.latin_1_encode(x)[0]
 
+try:
+  unicode
+except NameError:
+  #  -- pylint: disable=redefined-builtin
+  basestring = unicode = str
+
+try:
+  long(2)
+except NameError:
+  #  -- pylint: disable=redefined-builtin
+  long = int
+
+def unicode_escape_decode(x):
+  if sys.version_info < (3,):
+    return codecs.unicode_escape_decode(x)[0]
+  else:
+    return x
+
+def codecs_latin_encode(x):
+  if sys.version_info < (3,):
+    return x
+  else:
+    return codecs.latin_1_encode(x)[0]
 
 # This class works as an error collector and replaces cpplint.Error
 # function for the unit tests.  We also verify each category we see
@@ -4302,7 +4318,6 @@ class CpplintTest(CpplintTestBase):
       os.makedirs(header_directory)
       file_path = os.path.join(header_directory, 'cpplint_test_header.h')
       open(file_path, 'a').close()
-      file_info = cpplint.FileInfo(file_path)
 
       # search for .svn if _repository is not specified
       self.assertEqual('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',

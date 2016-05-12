@@ -568,22 +568,39 @@ _quiet = False
 # This is set by --linelength flag.
 _line_length = 80
 
+try:
+  xrange(1, 0)
+except NameError:
+  #  -- pylint: disable=redefined-builtin
+  xrange = range
+
+try:
+  unicode
+except NameError:
+  #  -- pylint: disable=redefined-builtin
+  basestring = unicode = str
+
+try:
+  long(2)
+except NameError:
+  #  -- pylint: disable=redefined-builtin
+  long = int
+
 if sys.version_info < (3,):
-    def unicode_escape_decode(x):
-        return codecs.unicode_escape_decode(x)[0]
-    TEXT_TYPE = unicode
-    # BINARY_TYPE = str
-    range = xrange
-    itervalues = dict.itervalues
-    iteritems = dict.iteritems
+  #  -- pylint: disable=no-member
+  # BINARY_TYPE = str
+  itervalues = dict.itervalues
+  iteritems = dict.iteritems
 else:
-    def unicode_escape_decode(x):
-        return x
-    TEXT_TYPE = str
-    # BINARY_TYPE = bytes
-    xrange = range
-    itervalues = dict.values
-    iteritems = dict.items
+  # BINARY_TYPE = bytes
+  itervalues = dict.values
+  iteritems = dict.items
+
+def unicode_escape_decode(x):
+  if sys.version_info < (3,):
+    return codecs.unicode_escape_decode(x)[0]
+  else:
+    return x
 
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of error-suppressions.
@@ -4537,7 +4554,7 @@ def GetLineWidth(line):
     The width of the line in column positions, accounting for Unicode
     combining characters and wide characters.
   """
-  if isinstance(line, TEXT_TYPE):
+  if isinstance(line, unicode):
     width = 0
     for uc in unicodedata.normalize('NFC', line):
       if unicodedata.east_asian_width(uc) in ('W', 'F'):
@@ -4976,7 +4993,6 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   match = Match(r'^\s*#\s*(if|ifdef|ifndef|elif|else|endif)\b', line)
   if match:
     include_state.ResetSection(match.group(1))
-
 
   # Perform other checks now that we are sure that this is not an include line
   CheckCasts(filename, clean_lines, linenum, error)
@@ -6554,6 +6570,8 @@ def main():
     # Change stderr to write with replacement characters so we don't die
     # if we try to print something containing non-ASCII characters.
     sys.stderr = codecs.StreamReader(sys.stderr,
+                                     codecs.getreader('utf8'),
+                                     codecs.getwriter('utf8'),
                                      'replace')
     _cpplint_state.ResetErrorCounts()
     for filename in filenames:
