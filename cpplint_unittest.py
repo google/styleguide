@@ -133,7 +133,7 @@ class MockIo(object):
   def __init__(self, mock_file):
     self.mock_file = mock_file
 
-  def open(self,  # pylint: disable-msg=C6409
+  def open(self,  # pylint: disable=C6409
            unused_filename, unused_mode, unused_encoding, _):
     return self.mock_file
 
@@ -5697,7 +5697,7 @@ class NestingStateTest(unittest.TestCase):
     self.assertEqual(len(self.nesting_state.stack), 0)
 
 
-# pylint: disable-msg=C6409
+# pylint: disable=C6409
 def setUp():
   """Runs before all tests are executed.
   """
@@ -5706,7 +5706,7 @@ def setUp():
   cpplint._cpplint_state.SetFilters('')
 
 
-# pylint: disable-msg=C6409
+# pylint: disable=C6409
 def tearDown():
   """A global check to make sure all error-categories have been tested.
 
