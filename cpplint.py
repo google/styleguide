@@ -6106,7 +6106,7 @@ def CheckItemIndentationInNamespace(filename, raw_lines_no_comments, linenum,
 
 def ProcessLine(filename, file_extension, clean_lines, line,
                 include_state, function_state, nesting_state, error,
-                extra_check_functions=[]):
+                extra_check_functions=None):
   """Processes a single line in the file.
 
   Args:
@@ -6146,8 +6146,9 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckDefaultLambdaCaptures(filename, clean_lines, line, error)
   CheckRedundantVirtual(filename, clean_lines, line, error)
   CheckRedundantOverrideOrFinal(filename, clean_lines, line, error)
-  for check_fn in extra_check_functions:
-    check_fn(filename, clean_lines, line, error)
+  if extra_check_functions:
+    for check_fn in extra_check_functions:
+      check_fn(filename, clean_lines, line, error)
 
 def FlagCxx11Features(filename, clean_lines, linenum, error):
   """Flag those c++11 features that we only allow in certain places.
@@ -6196,7 +6197,7 @@ def FlagCxx11Features(filename, clean_lines, linenum, error):
 
 
 def ProcessFileData(filename, file_extension, lines, error,
-                    extra_check_functions=[]):
+                    extra_check_functions=None):
   """Performs lint checks and reports any errors to the given error function.
 
   Args:
@@ -6321,7 +6322,7 @@ def ProcessConfigOverrides(filename):
   return True
 
 
-def ProcessFile(filename, vlevel, extra_check_functions=[]):
+def ProcessFile(filename, vlevel, extra_check_functions=None):
   """Does google-lint on a single file.
 
   Args:
