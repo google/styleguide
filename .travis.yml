@@ -22,6 +22,6 @@ install:
 # command to run tests, e.g. python setup.py test
 script:
   - python cpplint_unittest.py
-  - pyflakes cpplint.py
-  - pyflakes cpplint_unittest.py
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pyflakes cpplint.py; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pyflakes cpplint_unittest.py; fi
   - python cpplint.py --help
