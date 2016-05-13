@@ -45,6 +45,7 @@ import codecs
 import copy
 import getopt
 import glob
+import itertools
 import math  # for log
 import os
 import re
@@ -54,12 +55,20 @@ import sys
 import unicodedata
 import xml.etree.ElementTree
 
+# Files with any of these extensions are considered to be
+# header files (and will undergo different style checks).
+# This set can be extended by using the --headers
+# option (also supported in CPPLINT.cfg)
+_header_extensions = set(['h', 'hpp', 'hxx', 'h++', 'cuh'])
+_nonheader_extensions = set(['c', 'cc', 'cpp', 'cxx', 'c++', 'cu'])
+
+
 # The allowed extensions for file names
 # This is set by --extensions flag.
-_valid_extensions = set(['c', 'cc', 'cpp', 'cxx', 'c++', 'h', 'hpp', 'hxx',
-    'h++', 'cu', 'cuh'])
+_valid_extensions = _nonheader_extensions.union(_header_extensions)
 
-_header_extensions = set(['h', 'hpp', 'hxx', 'h++', 'cuh'])
+# files with this suffix before the extension will be treated as test files
+_test_suffixes = set(['_unittest', '_test', '_regtest'])
 
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
@@ -1212,7 +1221,7 @@ class FileInfo(object):
     return self.Split()[1]
 
   def Extension(self):
-    """File extension - text following the final period."""
+    """File extension - text following the final period, includes that period."""
     return self.Split()[2]
 
   def NoExtension(self):
@@ -1944,28 +1953,29 @@ def CheckForHeaderGuard(filename, clean_lines, error):
 
 
 def CheckHeaderFileIncluded(filename, include_state, error):
-  """Logs an error if a .cc file does not include its header."""
+  """Logs an error if a source file does not include its header."""
 
   # Do not check test files
-  if filename.endswith('_test.cc') or filename.endswith('_unittest.cc'):
+  if _IsTestFilename(filename):
     return
 
   fileinfo = FileInfo(filename)
-  headerfile = filename[0:len(filename) - 2] + 'h'
-  if not os.path.exists(headerfile):
-    return
-  headername = FileInfo(headerfile).RepositoryName()
-  first_include = 0
-  for section_list in include_state.include_list:
-    for f in section_list:
-      if headername in f[0] or f[0] in headername:
-        return
-      if not first_include:
-        first_include = f[1]
+  for ext in _header_extensions:
+      headerfile = filename[:filename.rfind('.') + 1] + ext
+      if not os.path.exists(headerfile):
+        continue
+      headername = FileInfo(headerfile).RepositoryName()
+      first_include = None
+      for section_list in include_state.include_list:
+        for f in section_list:
+          if headername in f[0] or f[0] in headername:
+            return
+          if not first_include:
+            first_include = f[1]
 
-  error(filename, first_include, 'build/include', 5,
-        '%s should include its header file %s' % (fileinfo.RepositoryName(),
-                                                  headername))
+      error(filename, first_include, 'build/include', 5,
+            '%s should include its header file %s' % (fileinfo.RepositoryName(),
+                                                      headername))
 
 
 def CheckForBadCharacters(filename, lines, error):
@@ -4610,7 +4620,7 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
 
   # Check if the line is a header guard.
   is_header_guard = False
-  if file_extension == 'h':
+  if file_extension in _header_extensions:
     cppvar = GetHeaderGuardCPPVariable(filename)
     if (line.startswith('#ifndef %s' % cppvar) or
         line.startswith('#define %s' % cppvar) or
@@ -4696,8 +4706,11 @@ def _DropCommonSuffixes(filename):
   Returns:
     The filename with the common suffix removed.
   """
-  for suffix in ('test.cc', 'regtest.cc', 'unittest.cc',
-                 'inl.h', 'impl.h', 'internal.h'):
+  for suffix in itertools.chain(
+      ('%s.%s' % (test_suffix.lstrip('_'), ext)
+       for test_suffix, ext in itertools.product(_test_suffixes, _nonheader_extensions)),
+      ('%s.%s' % (suffix, ext)
+       for suffix, ext in itertools.product(['inl', 'imp', 'internal'], _header_extensions))):
     if (filename.endswith(suffix) and len(filename) > len(suffix) and
         filename[-len(suffix) - 1] in ('-', '_')):
       return filename[:-len(suffix) - 1]
@@ -4713,12 +4726,10 @@ def _IsTestFilename(filename):
   Returns:
     True if 'filename' looks like a test, False otherwise.
   """
-  if (filename.endswith('_test.cc') or
-      filename.endswith('_unittest.cc') or
-      filename.endswith('_regtest.cc')):
-    return True
-  else:
-    return False
+  for test_suffix, ext in itertools.product(_test_suffixes, _nonheader_extensions):
+    if filename.endswith(test_suffix + '.' + ext):
+      return True
+  return False
 
 
 def _ClassifyInclude(fileinfo, include, is_system):
@@ -4828,11 +4839,16 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
       error(filename, linenum, 'build/include', 4,
             '"%s" already included at %s:%s' %
             (include, filename, duplicate_line))
-    elif (include.endswith('.cc') and
+      return
+
+    for extension in _nonheader_extensions:
+      if (include.endswith('.' + extension) and
           os.path.dirname(fileinfo.RepositoryName()) != os.path.dirname(include)):
-      error(filename, linenum, 'build/include', 4,
-            'Do not include .cc files from other packages')
-    elif not _THIRD_PARTY_HEADERS_PATTERN.match(include):
+        error(filename, linenum, 'build/include', 4,
+              'Do not include .' + extension + ' files from other packages')
+        return
+
+    if not _THIRD_PARTY_HEADERS_PATTERN.match(include):
       include_state.include_list[-1].append((include, linenum))
 
       # We want to ensure that headers appear in the right order:
@@ -4985,7 +5001,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   CheckGlobalStatic(filename, clean_lines, linenum, error)
   CheckPrintf(filename, clean_lines, linenum, error)
 
-  if file_extension == 'h':
+  if file_extension in _header_extensions:
     # TODO(unknown): check that 1-arg constructors are explicit.
     #                How to tell it's a constructor?
     #                (handled in CheckForNonStandardConstructs for now)
@@ -5092,7 +5108,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   # Check for use of unnamed namespaces in header files.  Registration
   # macros are typically OK, so we allow use of "namespace {" on lines
   # that end with backslashes.
-  if (file_extension == 'h'
+  if (file_extension in _header_extensions
       and Search(r'\bnamespace\s*{', line)
       and line[-1] != '\\'):
     error(filename, linenum, 'build/namespaces', 4,
@@ -5725,7 +5741,7 @@ def FilesBelongToSameModule(filename_cc, filename_h):
   some false positives. This should be sufficiently rare in practice.
 
   Args:
-    filename_cc: is the path for the .cc file
+    filename_cc: is the path for the source (e.g. .cc) file
     filename_h: is the path for the header path
 
   Returns:
@@ -5733,20 +5749,24 @@ def FilesBelongToSameModule(filename_cc, filename_h):
     bool: True if filename_cc and filename_h belong to the same module.
     string: the additional prefix needed to open the header file.
   """
-
-  if not filename_cc.endswith('.cc'):
+  fileinfo_cc = FileInfo(filename_cc)
+  if not fileinfo_cc.Extension().lstrip('.') in _nonheader_extensions:
     return (False, '')
-  filename_cc = filename_cc[:-len('.cc')]
-  if filename_cc.endswith('_unittest'):
-    filename_cc = filename_cc[:-len('_unittest')]
-  elif filename_cc.endswith('_test'):
-    filename_cc = filename_cc[:-len('_test')]
+
+  fileinfo_h = FileInfo(filename_h)
+  if not fileinfo_h.Extension().lstrip('.') in _header_extensions:
+    return (False, '')
+
+  filename_cc = filename_cc[:-(len(fileinfo_cc.Extension()))]
+  for suffix in _test_suffixes:
+    if filename_cc.endswith(suffix):
+      filename_cc = filename_cc[:-len(suffix)]
+      break
+
   filename_cc = filename_cc.replace('/public/', '/')
   filename_cc = filename_cc.replace('/internal/', '/')
 
-  if not filename_h.endswith('.h'):
-    return (False, '')
-  filename_h = filename_h[:-len('.h')]
+  filename_h = filename_h[:-(len(fileinfo_h.Extension()))]
   if filename_h.endswith('-inl'):
     filename_h = filename_h[:-len('-inl')]
   filename_h = filename_h.replace('/public/', '/')
@@ -5868,8 +5888,10 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
   # didn't include it in the .h file.
   # TODO(unknown): Do a better job of finding .h files so we are confident that
   # not having the .h file means there isn't one.
-  if filename.endswith('.cc') and not header_found:
-    return
+  if not header_found:
+    for extension in _nonheader_extensions:
+      if filename.endswith('.' + extension):
+        return
 
   # All the lines have been processed, report the errors found.
   for required_header_unstripped in required:
@@ -6221,7 +6243,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error)
   
   # Check that the .cc file has included its header if it exists.
-  if file_extension == 'cc':
+  if file_extension in _nonheader_extensions:
     CheckHeaderFileIncluded(filename, include_state, error)
 
   # We check here rather than inside ProcessLine so that we see raw
@@ -6537,7 +6559,7 @@ def _ExpandDirectories(filenames):
 
   filtered = []
   for filename in expanded:
-      if os.path.splitext(filename)[1][1:] in _valid_extensions:
+      if os.path.splitext(filename)[1][1:] in GetAllExtensions():
           filtered.append(filename)
 
   return filtered
