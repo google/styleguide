@@ -37,10 +37,11 @@ import codecs
 import os
 import random
 import re
-import sys
-import unittest
-import tempfile
 import shutil
+import sys
+import tempfile
+import unittest
+
 
 import cpplint
 
