@@ -903,9 +903,15 @@ class _CppLintState(object):
   def PrintErrorCounts(self):
     """Print a summary of errors by category, and the total."""
     for category, count in self.errors_by_category.iteritems():
-      sys.stderr.write('Category \'%s\' errors found: %d\n' %
-                       (category, count))
-    sys.stderr.write('Total errors found: %d\n' % self.error_count)
+      if count > 0:
+        sys.stderr.write('Category \'%s\' errors found: %d\n' % (category, count))
+      else:
+        sys.stdout.write('Category \'%s\' no errors found\n' % (category))
+
+    if self.error_count > 0:
+      sys.stderr.write('Total errors found: %d\n' % self.error_count)
+    else:
+      sys.stdout.write('No errors found')
 
 _cpplint_state = _CppLintState()
 
