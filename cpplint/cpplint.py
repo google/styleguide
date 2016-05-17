@@ -5862,7 +5862,7 @@ def ProcessConfigOverrides(filename):
             if base_name:
               pattern = re.compile(val)
               if pattern.match(base_name):
-                sys.stderr.write('Ignoring "%s": file excluded by "%s". '
+                sys.stdout.write('Ignoring "%s": file excluded by "%s". '
                                  'File path component "%s" matches '
                                  'pattern "%s"\n' %
                                  (filename, cfg_file, base_name, val))
