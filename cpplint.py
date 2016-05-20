@@ -4122,6 +4122,14 @@ def CheckTrailingSemicolon(filename, clean_lines, linenum, error):
       # outputting warnings for the matching closing brace, if there are
       # nested blocks with trailing semicolons, we will get the error
       # messages in reversed order.
+
+      # We need to check the line forward for NOLINT
+      raw_lines = clean_lines.raw_lines
+      ParseNolintSuppressions(filename, raw_lines[endlinenum-1], endlinenum-1,
+                              error)
+      ParseNolintSuppressions(filename, raw_lines[endlinenum], endlinenum,
+                              error)
+
       error(filename, endlinenum, 'readability/braces', 4,
             "You don't need a ; after a }")
 
