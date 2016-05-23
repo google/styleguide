@@ -5873,6 +5873,15 @@ def ProcessConfigOverrides(filename):
                 _line_length = int(val)
             except ValueError:
                 sys.stderr.write('Line length must be numeric.')
+          elif name == 'extensions':
+              global _valid_extensions
+              try:
+                  extensions = [ext.strip() for ext in val.split(',')]
+                  _valid_extensions = _valid_extensions.union(set(extensions))
+              except ValueError:
+                  sys.stderr.write('Extensions should be a comma-separated list of values;'
+                                   'for example: extensions=hpp,cpp\n'
+                                   'This could not be parsed: "%s"' % (values,))
           else:
             sys.stderr.write(
                 'Invalid configuration option (%s) in file %s\n' %
