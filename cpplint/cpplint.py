@@ -528,6 +528,12 @@ _root = None
 # This is set by --linelength flag.
 _line_length = 80
 
+# The allowed indent for access keywords.
+# Set by default to +1, it can be changed with the
+# --access_keywords_indent (and correspondingly, in the CPPLINT.cfg
+# file too).
+_access_keyword_indent = 1
+
 # The allowed extensions for file names
 # This is set by --extensions flag.
 _valid_extensions = set(['cc', 'h', 'cpp', 'cu', 'cuh'])
@@ -2274,7 +2280,8 @@ class _PreprocessorInfo(object):
 class NestingState(object):
   """Holds states related to parsing braces."""
 
-  def __init__(self):
+  def __init__(self, access_keyword_indent=1):
+    self.access_keyword_indent = access_keyword_indent
     # Stack for tracking all braces.  An object is pushed whenever we
     # see a "{", and popped when we see a "}".  Only 3 types of
     # objects are possible:
@@ -2559,8 +2566,8 @@ class NestingState(object):
         # Check that access keywords are indented +1 space.  Skip this
         # check if the keywords are not preceded by whitespaces.
         indent = access_match.group(1)
-        if (len(indent) != classinfo.class_indent + 1 and
-            Match(r'^\s*$', indent)):
+        if (len(indent) != classinfo.class_indent + self.access_keyword_indent and
+                (self.access_keyword_indent == 0 or Match(r'^\s*$', indent))):
           if classinfo.is_struct:
             parent = 'struct ' + classinfo.name
           else:
@@ -5784,7 +5791,7 @@ def ProcessFileData(filename, file_extension, lines, error,
 
   include_state = _IncludeState()
   function_state = _FunctionState()
-  nesting_state = NestingState()
+  nesting_state = NestingState(access_keyword_indent=_access_keyword_indent)
 
   ResetNolintSuppressions()
 
@@ -5873,6 +5880,12 @@ def ProcessConfigOverrides(filename):
                 _line_length = int(val)
             except ValueError:
                 sys.stderr.write('Line length must be numeric.')
+          elif name == 'access_keywords_indent':
+              global _access_keyword_indent
+              try:
+                  _access_keyword_indent = int(val)
+              except ValueError:
+                  sys.stderr.write('Access keyword indent must be numeric.')
           else:
             sys.stderr.write(
                 'Invalid configuration option (%s) in file %s\n' %
@@ -6059,6 +6072,12 @@ def ParseArguments(args):
           _valid_extensions = set(val.split(','))
       except ValueError:
           PrintUsage('Extensions must be comma seperated list.')
+    elif opt == '--access_keywords_indent':
+        global _access_keyword_indent
+        try:
+            _access_keyword_indent = int(val)
+        except ValueError:
+            PrintUsage('Access keywords indent values should be an integer value only.')
 
   if not filenames:
     PrintUsage('No files were specified.')
