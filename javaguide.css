@@ -513,3 +513,60 @@ code {
   padding: 0.25em 0.5em;
   white-space: nowrap
 }
+
+
+/* TOC CSS */
+
+table.columns {
+  border: none;
+}
+
+td.two_columns {
+  -webkit-column-count: 2;
+  column-count: 2;
+}
+
+.toc_category {
+  font-size: 10pt;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  border-left-width: 2px;
+  border-right-width: 2px;
+  border-color: grey;
+}
+
+.toc_stylepoint {
+  font-size: 10pt;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+li.toc_entry {
+  padding-right: 1em;
+  display: inline;
+  list-style-type: none;
+}
+
+/*
+ * This space is required to trigger the linewrap on the links
+ * at href boundaries
+ */
+li.toc_entry::after {
+    content: " ";
+  }
+
+li.toc_entry a {
+  white-space: nowrap;
+}
+
+/* Horizontal TOC */
+.toc td, .toc th {
+  border-width: 1px 5px;
+  overflow: hidden;
+}
+
+/* Vertical TOC */
+
+.toc td.two_columns {
+  border-width: 0px;
+}
