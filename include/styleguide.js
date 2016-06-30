@@ -245,7 +245,7 @@ function hasClass(element, cls) {
 function LinkifyHeader(header, fileName, sizePixels) {
   var link = document.createElement('a');
   link.href = '#' + header.id;
-  link.alt = 'link to ' + header.id;
+  link.setAttribute('alt', 'link to ' + header.id);
   link.innerHTML =
       '<img src="include/' + fileName + '"' +
       ' width=' + sizePixels +
