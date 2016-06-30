@@ -563,6 +563,21 @@ class CpplintTest(CpplintTestBase):
                              ''],
                             error_collector)
     self.assertEqual('', error_collector.Results())
+    # NOLINT, NOLINTNEXTLINE silences the readability/braces warning for "};".
+    error_collector = ErrorCollector(self.assert_)
+    cpplint.ProcessFileData('test.cc', 'cc',
+                            ['// Copyright 2014 Your Company.',
+                             'for (int i = 0; i != 100; ++i) {',
+                             '\tstd::cout << i << std::endl;',
+                             '};  // NOLINT',
+                             'for (int i = 0; i != 100; ++i) {',
+                             '\tstd::cout << i << std::endl;',
+                             '// NOLINTNEXTLINE',
+                             '};',
+                             '//  LINT_KERNEL_FILE',
+                             ''],
+                            error_collector)
+    self.assertEquals('', error_collector.Results())
 
   # Test Variable Declarations.
   def testVariableDeclarations(self):
