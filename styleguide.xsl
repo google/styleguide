@@ -23,7 +23,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
           <HEAD>
               <TITLE><xsl:value-of select="@title"/></TITLE>
               <META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-              <LINK HREF="http://www.google.com/favicon.ico" type="image/x-icon"
+              <LINK HREF="https://www.google.com/favicon.ico" type="image/x-icon"
                     rel="shortcut icon"/>
               <LINK HREF="styleguide.css"
                     type="text/css" rel="stylesheet"/>

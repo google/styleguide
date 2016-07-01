@@ -378,8 +378,8 @@ CalculateSampleCovariance &lt;- function(x, y, verbose = TRUE) {
           of the two systems, see Thomas Lumley's
           "Programmer's Niche: A Simple
           Class, in S3 and S4" in R News 4/1, 2004, pgs. 33 - 36:
-          <a href="http://cran.r-project.org/doc/Rnews/Rnews_2004-1.pdf">
-          http://cran.r-project.org/doc/Rnews/Rnews_2004-1.pdf</a>.)
+          <a href="https://cran.r-project.org/doc/Rnews/Rnews_2004-1.pdf">
+          https://cran.r-project.org/doc/Rnews/Rnews_2004-1.pdf</a>.)
           </p>
           <p>Use S3 objects and methods unless there is a strong reason to use
             S4 objects or methods. A primary justification for an S4 object

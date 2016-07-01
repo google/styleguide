@@ -58,7 +58,7 @@
         </p>
         <BAD_CODE_SNIPPET>
           &lt;!-- Not recommended --&gt;
-          &lt;script src="http://www.google.com/js/gweb/analytics/autotrack.js"&gt;&lt;/script&gt;
+          &lt;script src="https://www.google.com/js/gweb/analytics/autotrack.js"&gt;&lt;/script&gt;
         </BAD_CODE_SNIPPET>
         <CODE_SNIPPET>
           &lt;!-- Recommended --&gt;
@@ -67,7 +67,7 @@
         <BAD_CODE_SNIPPET>
           /* Not recommended */
           .example {
-            background: url(http://www.google.com/images/example);
+            background: url(https://www.google.com/images/example);
           }
         </BAD_CODE_SNIPPET>
         <CODE_SNIPPET>
@@ -170,7 +170,7 @@
         </p>
         <p>
           (More on encodings and when and how to specify them can be
-          found in <a href="http://www.w3.org/International/tutorials/tutorial-char-enc/">Handling
+          found in <a href="https://www.w3.org/International/tutorials/tutorial-char-enc/">Handling
           character encodings in HTML and CSS</a>.)
         </p>
       </BODY>
@@ -239,7 +239,7 @@
         </p>
         <p>
           (It’s recommended to use HTML, as <code>text/html</code>. Do not use
-          XHTML. XHTML, as <a href="http://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a>,
+          XHTML. XHTML, as <a href="https://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a>,
           lacks both browser and infrastructure support and offers
           less room for optimization than HTML.)
         </p>
@@ -260,7 +260,7 @@
         </p>
         
         <p>
-          Use tools such as the <a href="http://validator.w3.org/nu/">W3C
+          Use tools such as the <a href="https://validator.w3.org/nu/">W3C
           HTML validator</a> to test.
         </p>
         <p>
@@ -435,7 +435,7 @@
         <p>
           For file size optimization and scannability purposes,
           consider omitting optional tags.
-          The <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/syntax.html#syntax-tag-omission">HTML5
+          The <a href="https://whatwg.org/specs/web-apps/current-work/multipage/syntax.html#syntax-tag-omission">HTML5
           specification</a> defines what tags can be omitted.
         </p>
         <p>
@@ -478,9 +478,9 @@
         <p>
           Specifying <code>type</code> attributes in these contexts is
           not necessary as HTML5 implies
-          <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/semantics.html#attr-style-type"><code>text/css</code></a>
+          <a href="https://whatwg.org/specs/web-apps/current-work/multipage/semantics.html#attr-style-type"><code>text/css</code></a>
           and
-          <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#attr-script-type"><code>text/javascript</code></a>
+          <a href="https://whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#attr-script-type"><code>text/javascript</code></a>
           as defaults. This can be safely done even for older browsers.
         </p>
         <BAD_CODE_SNIPPET>
@@ -587,7 +587,7 @@
         </p>
         
         <p>
-          Use tools such as the <a href="http://jigsaw.w3.org/css-validator/">W3C
+          Use tools such as the <a href="https://jigsaw.w3.org/css-validator/">W3C
           CSS validator</a> to test.
         </p>
         <p>
@@ -698,7 +698,7 @@
       </SUMMARY>
       <BODY>
         <p>
-          CSS offers a variety of <a href="http://www.w3.org/TR/CSS21/about.html#shorthand">shorthand</a>
+          CSS offers a variety of <a href="https://www.w3.org/TR/CSS21/about.html#shorthand">shorthand</a>
           properties (like <code>font</code>)
           that should be used whenever possible, even in cases where
           only one value is explicitly set.
@@ -880,7 +880,7 @@
       </SUMMARY>
       <BODY>
         <p>
-          Indent all <a href="http://www.w3.org/TR/CSS21/syndata.html#block">block
+          Indent all <a href="https://www.w3.org/TR/CSS21/syndata.html#block">block
           content</a>, that is rules within rules as well as declarations, so to
           reflect hierarchy and improve understanding.
         </p>
@@ -951,7 +951,7 @@
       <BODY>
         <p>
           Always use a single space between the last selector and the opening
-          brace that begins the <a href="http://www.w3.org/TR/CSS21/syndata.html#rule-sets">declaration
+          brace that begins the <a href="https://www.w3.org/TR/CSS21/syndata.html#rule-sets">declaration
           block</a>.
         </p>
         <p>
@@ -1035,7 +1035,7 @@
         </p>
         <p>
           Exception: If you do need to use the <code>@charset</code> rule,
-          use double quotation marks—<a href="http://www.w3.org/TR/CSS21/syndata.html#charset">single
+          use double quotation marks—<a href="https://www.w3.org/TR/CSS21/syndata.html#charset">single
           quotation marks are not permitted</a>.
         </p>
         <BAD_CODE_SNIPPET>

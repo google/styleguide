@@ -17,7 +17,7 @@ Revision 1.26
 
   <CATEGORY title="Background">
 
-    
+
 
     <STYLEPOINT title="Which Shell to Use">
       <SUMMARY>
@@ -169,7 +169,7 @@ Revision 1.26
       <p>
         Every file must have a top-level comment including a brief overview of
         its contents.
-        A 
+        A
         copyright notice
         and author information are optional.
       </p>
@@ -182,7 +182,7 @@ Revision 1.26
         </CODE_SNIPPET>
       </p>
 
-      
+
     </BODY>
   </STYLEPOINT>
 
@@ -273,7 +273,7 @@ Revision 1.26
       </p>
       <p>
         Examples:
-        
+
         <CODE_SNIPPET>
           # TODO(mrmonkey): Handle the unlikely edge cases (bug ####)
         </CODE_SNIPPET>
@@ -652,7 +652,7 @@ Revision 1.26
           # alnum character class followed by the string name.
           # Note that the RHS should not be quoted here.
           # For the gory details, see
-          # E14 at http://tiswww.case.edu/php/chet/bash/FAQ
+          # E14 at https://tiswww.case.edu/php/chet/bash/FAQ
           if [[ "filename" =~ ^[[:alnum:]]+name ]]; then
             echo "Match"
           fi
@@ -1141,7 +1141,7 @@ Revision 1.26
   </p>
   <p>
     Please take a few minutes to read the Parting Words section at the bottom
-    of the <a href="cppguide.xml">C++ Guide</a>.
+    of the <a href="cppguide.html">C++ Guide</a>.
   </p>
 </CATEGORY>
 

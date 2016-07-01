@@ -341,7 +341,7 @@ of Includes</a> for rules about when to #include a header.</p>
 
 <div class="summary">
 <p>Define functions inline only when they are small, say, 10
-lines or less.</p>
+lines or fewer.</p>
 </div>
 
 <div class="stylebody">
@@ -476,6 +476,7 @@ might look like this:</p>
 
 #include &lt;sys/types.h&gt;
 #include &lt;unistd.h&gt;
+
 #include &lt;hash_map&gt;
 #include &lt;vector&gt;
 
@@ -578,6 +579,7 @@ below. Terminate namespaces with comments as shown in the
 given examples. See also the rules on
 <a href="#Namespace_Names">Namespace Names</a>.</p>
 </div>
+</div>
 
 <h4 class="stylepoint_subsection">Unnamed Namespaces</h4>
 
@@ -615,7 +617,7 @@ bool UpdateInternals(Frobber* f, int newval) {
 
   <p>Namespaces wrap the entire source file after
   includes,  
-  <a href="http://gflags.github.io/gflags/">
+  <a href="https://gflags.github.io/gflags/">
   gflags</a> definitions/declarations
   and forward declarations of classes from other namespaces.</p>
 
@@ -678,30 +680,11 @@ using namespace foo;
 </pre>
   </li>
 
-  <li><p>You may use a <i>using-declaration</i>
-  anywhere in a <code>.cc</code> file (including in
-  the global namespace), and in functions,
-  methods, classes, or within internal namespaces in
-  <code>.h</code> files.</p>
-
-  <p>Do not use using-declarations in <code>.h</code>
-  files except in explicitly marked internal-only
-  namespaces, because anything imported into a namespace
-  in a <code>.h</code> file becomes part of the public
+  <li><p>Do not use <i>Namespace aliases</i> at namespace scope
+  in header files except in explicitly marked
+  internal-only namespaces, because anything imported into a namespace
+  in a header file becomes part of the public
   API exported by that file.</p>
-
-<pre>// OK in .cc files.
-// Must be in a function, method, internal namespace, or
-// class in .h files.
-using ::foo::bar;
-</pre>
-  </li>
-
-  <li><p><i>Namespace aliases</i> are allowed anywhere where
-  a <i>using-declaration</i> is allowed. In particular,
-  namespace aliases should not be used at namespace scope
-  in <code>.h</code> files except in explicitly marked
-  internal-only namespaces.</p>
 
 <pre>// Shorten access to some commonly used names in .cc files.
 namespace baz = ::foo::bar::baz;
@@ -870,13 +853,14 @@ for static variables are called is only partially
 specified in C++ and can even change from build to build,
 which can cause bugs that are difficult to find.
 Therefore in addition to banning globals of class type,
-we do not allow static POD variables to be initialized
+we do not allow namespace-scope static variables to be initialized
 with the result of a function, unless that function (such
 as getenv(), or getpid()) does not itself depend on any
-other globals. (This prohibition does not apply to a static
-variable within function scope, since its initialization
-order is well-defined and does not occur until control
-passes through its declaration.)</p>
+other globals. However, a static POD variable within
+function scope may be initialized with the result of a
+function, since its initialization order is well-defined
+and does not occur until control passes through its
+declaration.</p>
 
 <p>Likewise, global and static variables are destroyed
 when the program terminates, regardless of whether the
@@ -979,9 +963,9 @@ of the constructor.</p>
   IsValid()</code> state checking mechanism (or similar) which is easy
   to forget to call.</li>
 
-  <li>You cannot take address of a constructor, so whatever work is done in
-  the constructor cannot easily be handed off to, for example, another
-  thread.</li>
+  <li>You cannot take the address of a constructor, so whatever work
+  is done in the constructor cannot easily be handed off to, for
+  example, another thread.</li>
 </ul>
 </div>
 
@@ -1171,7 +1155,7 @@ in some cases.</p>
 operations for them can be confusing, nonsensical, or outright
 incorrect. Copy/assigment operations for base class types are
 hazardous, because use of them can lead to
-<a href="http://en.wikipedia.org/wiki/Object_slicing">object
+<a href="https://en.wikipedia.org/wiki/Object_slicing">object
 slicing</a>. Defaulted or carelessly-implemented copy operations
 can be incorrect, and the resulting bugs can be confusing and
 difficult to diagnose.</p>
@@ -1705,7 +1689,7 @@ reasons, we allow data members of a test fixture class to
 be <code>protected</code> when using
 
 
-<a href="http://code.google.com/p/googletest/">Google
+<a href="https://code.google.com/p/googletest/">Google
 Test</a>).</p>
 </div>
 
@@ -1729,7 +1713,7 @@ are empty, omit them.</p>
 be in the following order:</p>
 
 <ul>
-  <li>Typedefs and Enums</li>
+  <li>Using-declarations, Typedefs and Enums</li>
 
   <li>Constants (<code>static const</code> data
   members)</li>
@@ -1942,9 +1926,11 @@ arguments of the same type, consider making it take a
 <h3 id="Default_Arguments">Default Arguments</h3>
 
 <div class="summary">
-<p>We do not allow default function parameters, except in
-limited situations as explained below. Simulate them with
-function overloading instead, if appropriate.</p>
+<p>Default arguments are allowed on non-virtual functions
+when the default is guaranteed to always have the same
+value. Follow the same restrictions as for <a href="#Function_Overloading">function overloading</a>, and
+prefer overloaded functions if the readability gained with
+default arguments doesn't outweigh the downsides below.</p>
 </div>
 
 <div class="stylebody">
@@ -1961,43 +1947,37 @@ arguments.</p>
 </div>
 
 <div class="cons">
+<p>Defaulted arguments are another way to achieve the
+semantics of overloaded functions, so all the <a href="#Function_Overloading">reasons not to overload
+functions</a> apply.</p>
+
+<p>The defaults for arguments in a virtual function call are
+determined by the static type of the target object, and
+there's no guarantee that all overrides of a given function
+declare the same defaults.</p>
+
+<p>Default parameters are re-evaluated at each call site,
+which can bloat the generated code. Readers may also expect
+the default's value to be fixed at the declaration instead
+of varying at each call.</p>
+
 <p>Function pointers are confusing in the presence of
 default arguments, since the function signature often
-doesn't match the call signature. Adding a default
-argument to an existing function changes its type, which
-can cause problems with code taking its address. Adding
-function overloads avoids these problems. In addition,
-default parameters may result in bulkier code since they
-are replicated at every call-site -- as opposed to
-overloaded functions, where "the default" appears only in
-the function definition.</p>
+doesn't match the call signature. Adding
+function overloads avoids these problems.</p>
 </div>
 
 <div class="decision">
-<p>While the cons above are not that onerous, they still
-outweigh the (small) benefits of default arguments over
-function overloading. So except as described below, we
-require all arguments to be explicitly specified.</p>
+<p>Default arguments are banned on virtual functions, where
+they don't work properly, and in cases where the specified
+default might not evaluate to the same value depending on
+when it was evaluated. (For example, don't write <code>void
+f(int n = counter++);</code>.)</p>
 
-<p>One specific exception is when the function is a
-static function (or in an unnamed namespace) in a .cc
-file. In this case, the cons don't apply since the
-function's use is so localized.</p>
-
-<p>In addition, default function parameters are allowed in
-constructors. Most of the cons listed above don't apply to
-constructors because it's impossible to take their address.</p>
-
-<p>Another specific exception is when default arguments
-are used to simulate variable-length argument lists.</p>
-
-
-  <pre>// Support up to 4 params by using a default empty AlphaNum.
-string StrCat(const AlphaNum &amp;a,
-              const AlphaNum &amp;b = gEmptyAlphaNum,
-              const AlphaNum &amp;c = gEmptyAlphaNum,
-              const AlphaNum &amp;d = gEmptyAlphaNum);
-</pre>
+<p>In some other cases, default arguments can improve the
+readability of their function declarations enough to
+overcome the downsides above, so they are allowed. When in
+doubt, use overloads.</p>
 </div>
 
 </div> 
@@ -2612,9 +2592,13 @@ workarounds disguise your true intent.</p>
 <h3 id="Casting">Casting</h3>
 
 <div class="summary">
-<p>Use C++ casts like <code>static_cast&lt;&gt;()</code>. Do
-not use other cast formats like <code>int y =
-(int)x;</code> or <code>int y = int(x);</code>.</p>
+<p>Use C++-style casts
+like <code>static_cast&lt;float&gt;(double_value)</code>, or brace
+initialization for conversion of arithmetic types like
+<code>int64 y = int64{1} &lt;&lt; 42</code>. Do not use
+cast formats like
+<code>int y = (int)x</code> or <code>int y = int(x)</code> (but the latter
+is okay when invoking a constructor of a class type).</p>
 </div>
 
 <div class="stylebody">
@@ -2626,41 +2610,49 @@ of cast operations.</p>
 </div>
 
 <div class="pros">
-<p>The problem with C casts is the ambiguity of the
-operation; sometimes you are doing a <em>conversion</em>
+<p>The problem with C casts is the ambiguity of the operation;
+sometimes you are doing a <em>conversion</em>
 (e.g., <code>(int)3.5</code>) and sometimes you are doing
-a <em>cast</em> (e.g., <code>(int)"hello"</code>); C++
-casts avoid this. Additionally C++ casts are more visible
-when searching for them.</p>
+a <em>cast</em> (e.g., <code>(int)"hello"</code>). Brace
+initialization and C++ casts can often help avoid this
+ambiguity. Additionally, C++ casts are more visible when searching for
+them.</p>
 </div>
 
 <div class="cons">
-<p>The syntax is nasty.</p>
+<p>The C++-style cast syntax is verbose and cumbersome.</p>
 </div>
 
 <div class="decision">
-<p>Do not use C-style casts. Instead, use these C++-style
-casts. </p>
+<p>Do not use C-style casts. Instead, use these C++-style casts when
+explicit type conversion is necessary. </p>
 
 <ul>
+  <li>Convert arithmetic types using brace initialization.  This is
+  the safest approach because code will not compile if conversion can
+  result in information loss.  The syntax is also concise.</li>
+
   
 
-  <li>Use <code>static_cast</code> as the equivalent of a
-  C-style cast that does value conversion, or when you need to explicitly up-cast a
-  pointer from a class to its superclass.</li>
+  <li>Use <code>static_cast</code> as the equivalent of a C-style cast
+  that does value conversion, when you need to
+  explicitly up-cast a pointer from a class to its superclass, or when
+  you need to explicitly cast a pointer from a superclass to a
+  subclass.  In this last case, you must be sure your object is
+  actually an instance of the subclass.</li>
+
+   
 
   <li>Use <code>const_cast</code> to remove the
   <code>const</code> qualifier (see <a href="#Use_of_const">const</a>).</li>
-
-  
-
-  
 
   <li>Use <code>reinterpret_cast</code> to do unsafe
   conversions of pointer types to and from integer and
   other pointer types. Use this only if you know what you
   are doing and you understand the aliasing issues.
   </li>
+
+  
 </ul>
 
 <p>See the <a href="#Run-Time_Type_Information__RTTI_">
@@ -2723,7 +2715,7 @@ may select a different overload than you expect).</li>
 <li>The practice of building up output through chains
 of <code>&lt;&lt;</code> operators interferes with
 internationalization, because it bakes word order into the
-code, and streams' support for localization is <a href="http://www.boost.org/doc/libs/1_48_0/libs/locale/doc/html/rationale.html#rationale_why">
+code, and streams' support for localization is <a href="https://www.boost.org/doc/libs/1_48_0/libs/locale/doc/html/rationale.html#rationale_why">
 flawed</a>.</li>
 
 
@@ -2874,9 +2866,10 @@ Therefore we strongly recommend that you use
 <code>const</code> whenever it makes sense to do so:</p>
 
 <ul>
-  <li>If a function does not modify an argument passed by
-  reference or by pointer, that argument should be
-  <code>const</code>.</li>
+  <li>If a function guarantees that it will not modify an argument
+  passed by reference or by pointer, the corresponding function parameter
+  should be a reference-to-const (<code>const T&amp;</code>) or
+  pointer-to-const (<code>const T*</code>), respectively.</li>
 
   <li>Declare methods to be <code>const</code> whenever
   possible. Accessors should almost always be
@@ -3651,8 +3644,11 @@ current scope. For example, instead of:
   executor-&gt;Schedule([&amp;] { Frobnicate(foo); })
   ...
 }
-// BAD! `Frobnicate` may be a member function and `foo` may be destroyed
-// by the time the lambda runs.
+// BAD! The fact that the lambda makes use of a reference to `foo` and
+// possibly `this` (if `Frobnicate` is a member function) may not be
+// apparent on a cursory inspection. If the lambda is invoked after
+// the function returns, that would be bad, because both `foo`
+// and the enclosing object could have been destroyed.
 </pre>
 prefer to write:
 <pre>{
@@ -3661,9 +3657,9 @@ prefer to write:
   executor-&gt;Schedule([&amp;foo] { Frobnicate(foo); })
   ...
 }
-// GOOD - The lambda cannot accidentally capture `this` and
-// the explicit by-reference capture is more obvious and therefore
-// more likely to be checked for correctness.
+// BETTER - The compile will fail if `Frobnicate` is a member
+// function, and it's clearer that `foo` is dangerously captured by
+// reference.
 </pre>
 </li>
 <li>Keep unnamed lambdas short.  If a lambda body is more than
@@ -3767,7 +3763,7 @@ collection.</p>
 
 <div class="definition">
 <p> The
-<a href="http://www.boost.org/">
+<a href="https://www.boost.org/">
 Boost library collection</a> is a popular collection of
 peer-reviewed, free, open-source C++ libraries.</p>
 </div>
@@ -3797,27 +3793,27 @@ Currently, the following libraries are permitted:</p>
 
 <ul>
   <li>
-  <a href="http://www.boost.org/libs/utility/call_traits.htm">
+  <a href="https://www.boost.org/libs/utility/call_traits.htm">
   Call Traits</a> from <code>boost/call_traits.hpp</code></li>
 
-  <li><a href="http://www.boost.org/libs/utility/compressed_pair.htm">
+  <li><a href="https://www.boost.org/libs/utility/compressed_pair.htm">
   Compressed Pair</a> from  <code>boost/compressed_pair.hpp</code></li>
 
-  <li><a href="http://www.boost.org/libs/graph/">
+  <li><a href="https://www.boost.org/libs/graph/">
   The Boost Graph Library (BGL)</a> from <code>boost/graph</code>,
   except serialization (<code>adj_list_serialize.hpp</code>) and
    parallel/distributed algorithms and data structures
    (<code>boost/graph/parallel/*</code> and
    <code>boost/graph/distributed/*</code>).</li>
 
-  <li><a href="http://www.boost.org/libs/property_map/">
+  <li><a href="https://www.boost.org/libs/property_map/">
   Property Map</a> from <code>boost/property_map</code>, except
   parallel/distributed property maps (<code>boost/property_map/parallel/*</code>).</li>
 
-  <li><a href="http://www.boost.org/libs/iterator/">
+  <li><a href="https://www.boost.org/libs/iterator/">
   Iterator</a> from <code>boost/iterator</code></li>
 
-  <li>The part of <a href="http://www.boost.org/libs/polygon/">
+  <li>The part of <a href="https://www.boost.org/libs/polygon/">
   Polygon</a> that deals with Voronoi diagram
   construction and doesn't depend on the rest of
   Polygon:
@@ -3825,25 +3821,25 @@ Currently, the following libraries are permitted:</p>
   <code>boost/polygon/voronoi_diagram.hpp</code>, and
   <code>boost/polygon/voronoi_geometry_type.hpp</code></li>
 
-  <li><a href="http://www.boost.org/libs/bimap/">
+  <li><a href="https://www.boost.org/libs/bimap/">
   Bimap</a> from <code>boost/bimap</code></li>
 
-  <li><a href="http://www.boost.org/libs/math/doc/html/dist.html">
+  <li><a href="https://www.boost.org/libs/math/doc/html/dist.html">
   Statistical Distributions and Functions</a> from
   <code>boost/math/distributions</code></li>
 
-  <li><a href="http://www.boost.org/libs/multi_index/">
+  <li><a href="https://www.boost.org/libs/multi_index/">
   Multi-index</a> from <code>boost/multi_index</code></li>
 
-  <li><a href="http://www.boost.org/libs/heap/">
+  <li><a href="https://www.boost.org/libs/heap/">
   Heap</a> from <code>boost/heap</code></li>
 
-  <li>The flat containers from <a href="http://www.boost.org/libs/container/">
+  <li>The flat containers from <a href="https://www.boost.org/libs/container/">
   Container</a>:
   <code>boost/container/flat_map</code>, and
   <code>boost/container/flat_set</code></li>
 
-  <li><a href="http://www.boost.org/libs/intrusive/">
+  <li><a href="https://www.boost.org/libs/intrusive/">
   Intrusive</a> from <code>boost/intrusive</code>.</li>
 </ul>
 
@@ -3857,12 +3853,12 @@ is discouraged because they've been superseded by
 standard libraries in C++11:</p>
 
 <ul>
-  <li><a href="http://www.boost.org/libs/array/">
+  <li><a href="https://www.boost.org/libs/array/">
   Array</a> from <code>boost/array.hpp</code>: use
   <a href="http://en.cppreference.com/w/cpp/container/array">
    <code>std::array</code></a> instead.</li>
 
-   <li><a href="http://www.boost.org/libs/ptr_container/">
+   <li><a href="https://www.boost.org/libs/ptr_container/">
    Pointer Container</a> from <code>boost/ptr_container</code>: use containers of
    <a href="http://en.cppreference.com/w/cpp/memory/unique_ptr">
    <code>std::unique_ptr</code></a> instead.</li>
@@ -3914,7 +3910,7 @@ the former, but the latter requires expertise that a type author
 usually doesn't have, and shouldn't need. The stakes here are high
 because low-quality hash functions can be security vulnerabilities,
 due to the emergence of
-<a href="http://emboss.github.io/blog/2012/12/14/breaking-murmur-hash-flooding-dos-reloaded/">
+<a href="https://emboss.github.io/blog/2012/12/14/breaking-murmur-hash-flooding-dos-reloaded/">
 hash flooding attacks</a>.</p>
 
 <p>Even for experts, <code>std::hash</code> specializations are
@@ -3967,7 +3963,7 @@ project. </p>
 <div class="stylebody">
 
 <div class="definition">
-<p> C++11 contains <a href="http://en.wikipedia.org/wiki/C%2B%2B11">
+<p> C++11 contains <a href="https://en.wikipedia.org/wiki/C%2B%2B11">
 significant changes</a> both to the language and
 libraries. </p>
 </div>
@@ -4026,9 +4022,104 @@ guide, the following C++11 features may not be used:</p>
   <code>&lt;fenv.h&gt;</code> headers, because many
   compilers do not support those features reliably.</li>
 
+  <li>Ref-qualifiers on member functions, such as <code>void X::Foo()
+    &amp;</code> or <code>void X::Foo() &amp;&amp;</code>, because of concerns
+    that they're an overly obscure feature.</li>
+
+  
+
+  
+</div>
+
+</div> 
+
+<h3 id="Aliases">Aliases</h3>
+
+<div class="summary">
+<p>Public aliases are for the benefit of an API's user, and should be clearly documented.</p>
+</div>
+<div class="stylebody">
+<div class="definition">
+<p>There are several ways to create names that are aliases of other entities:</p>
+<pre>typedef Foo Bar;
+using Bar = Foo;
+using other_namespace::Foo;
+</pre>
+
+  <p>Like other declarations, aliases declared in a header file are part of that
+  header's public API unless they're in a function definition, in the private portion of a class,
+  or in an explicitly-marked internal namespace. Aliases in such areas or in .cc files are
+  implementation details (because client code can't refer to them), and are not restricted by this
+  rule.</p>
+</div>
+
+<div class="pros">
+  <ul>
+    <li>Aliases can improve readability by simplifying a long or complicated name.</li>
+    <li>Aliases can reduce duplication by naming in one place a type used repeatedly in an API,
+      which <em>might</em> make it easier to change the type later.
+    </li>
   </ul>
 </div>
 
+<div class="cons">
+  <ul>
+    <li>When placed in a header where client code can refer to them, aliases increase the
+      number of entities in that header's API, increasing its complexity.</li>
+    <li>Clients can easily rely on unintended details of public aliases, making
+      changes difficult.</li>
+    <li>It can be tempting to create a public alias that is only intended for use
+      in the implementation, without considering its impact on the API, or on maintainability.</li>
+    <li>Aliases can create risk of name collisions</li>
+    <li>Aliases can reduce readability by giving a familiar construct an unfamiliar name</li>
+    <li>Type aliases can create an unclear API contract:
+      it is unclear whether the alias is guaranteed to be identical to the type it aliases,
+      to have the same API, or only to be usable in specified narrow ways</li>
+  </ul>
+</div>
+
+<div class="decision">
+<p>Don't put an alias in your public API just to save typing in the implementation;
+  do so only if you intend it to be used by your clients.</p>
+<p>When defining a public alias, document the intent of
+the new name, including whether it is guaranteed to always be the same as the type
+it's currently aliased to, or whether a more limited compatibility is
+intended. This lets the user know whether they can treat the types as
+substitutable or whether more specific rules must be followed, and can help the
+implementation retain some degree of freedom to change the alias.</p>
+<p>Don't put namespace aliases in your public API. (See also <a href="#Namespaces">Namespaces</a>).
+</p>
+
+<p>For example, these aliases document how they are intended to be used in client code:</p>
+<pre>namespace a {
+// Used to store field measurements. DataPoint may change from Bar* to some internal type.
+// Client code should treat it as an opaque pointer.
+using DataPoint = foo::bar::Bar*;
+
+// A set of measurements. Just an alias for user convenience.
+using TimeSeries = std::unordered_set&lt;DataPoint, std::hash&lt;DataPoint&gt;, DataPointComparator&gt;;
+}  // namespace a
+</pre>
+
+<p>These aliases don't document intended use, and half of them aren't meant for client use:</p>
+
+<pre class="badcode">namespace a {
+// Bad: none of these say how they should be used.
+using DataPoint = foo::bar::Bar*;
+using std::unordered_set;  // Bad: just for local convenience
+using std::hash;           // Bad: just for local convenience
+typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&gt; TimeSeries;
+}  // namespace a
+</pre>
+
+<p>However, local convenience aliases are fine in function definitions, private sections of
+  classes, explicitly marked internal namespaces, and in .cc files:</p>
+
+<pre>// In a .cc file
+using std::unordered_set;
+</pre>
+
+</div>
 </div> 
 
 <h2 id="Naming">Naming</h2>
@@ -4130,7 +4221,7 @@ letter for each new word, with no underscores:
 
 <div class="stylebody">
 
-<p>The names of all types &#8212; classes, structs, typedefs,
+<p>The names of all types &#8212; classes, structs, type aliases,
 enums, and type template parameters &#8212; have the same naming convention.
 Type names should start with a capital letter and have a capital letter
 for each new word. No underscores. For example:</p>
@@ -4142,6 +4233,9 @@ struct UrlTableProperties { ...
 
 // typedefs
 typedef hash_map&lt;UrlTableProperties *, string&gt; PropertiesMap;
+
+// using aliases
+using PropertiesMap = hash_map&lt;UrlTableProperties *, string&gt;;
 
 // enums
 enum UrlTableErrors { ...
@@ -4255,6 +4349,11 @@ DeleteUrl()
 OpenFileOrDie()
 </pre>
 
+<p>(The same naming rule applies to class- and namespace-scope
+constants that are exposed as part of an API and that are intended to look
+like functions, because the fact that they're
+objects rather than functions is an unimportant implementation detail.)</p>
+
 <p>Functions that are very cheap to call may instead follow the style
 for variable names (all lower-case, with underscores between words).
 The rule of thumb is that such a function should be so cheap that you
@@ -4323,7 +4422,7 @@ details from user-facing declarations, one common choice is
 <p>Preferably, the individual enumerators should be named
 like <a href="#Constant_Names">constants</a>. However, it
 is also acceptable to name them like
-<a href="Macro_Names">macros</a>.  The enumeration name,
+<a href="#Macro_Names">macros</a>.  The enumeration name,
 <code>UrlTableErrors</code> (and
 <code>AlternateUrlTableErrors</code>), is a type, and
 therefore mixed case.</p>
@@ -4836,24 +4935,23 @@ a short-term solution, or good-enough but not perfect.</p>
 <p><code>TODO</code>s should include the string
 <code>TODO</code> in all caps, followed by the
 
-name, e-mail address, or other
-identifier of the person
- with the best context
+name, e-mail address, bug ID, or other
+identifier
+of the person or issue with the best context
 about the problem referenced by the <code>TODO</code>. The
 main purpose is to have a consistent <code>TODO</code> that
 can be searched to find out how to get more details upon
 request. A <code>TODO</code> is not a commitment that the
 person referenced will fix the problem. Thus when you create
-a <code>TODO</code>, it is almost always your
-
-name
-that is given.</p>
+a <code>TODO</code> with a name, it is almost always your
+name that is given.</p>
 
 
 
 <div>
 <pre>// TODO(kl@gmail.com): Use a "*" here for concatenation operator.
 // TODO(Zeke) change this to use relations.
+// TODO(bug 12345): remove the "Last visitors" feature
 </pre>
 </div>
 
@@ -4973,7 +5071,7 @@ URL longer than 80 characters.</p>
 
 <p class="exception">A raw-string literal may have content
 that exceeds 80 characters.  Except for test code, such literals
-should appear near top of a file.</p>
+should appear near the top of a file.</p>
 
 <p class="exception">An <code>#include</code> statement with a
 long path may exceed 80 columns.</p>

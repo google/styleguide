@@ -60,14 +60,14 @@ Revision 2.59
     sure you've read:
     <ul>
       <li>
-        <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/index.html">
+        <a href="https://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/index.html">
           Apple's Cocoa Coding Guidelines
         </a>
       </li>
       <li>
         
         <div>
-          <a href="http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml">
+          <a href="https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml">
             Google's Open Source C++ Style Guide
           </a>
         </div>
@@ -95,7 +95,7 @@ Revision 2.59
   <p>
     Google has already released open-source code that conforms to these
     guidelines as part of the
-    <a href="http://code.google.com/p/google-toolbox-for-mac/">
+    <a href="https://code.google.com/p/google-toolbox-for-mac/">
       Google Toolbox for Mac project
     </a>
     (abbreviated GTM throughout this document).
@@ -109,7 +109,7 @@ Revision 2.59
     Note that this guide is not an Objective-C tutorial. We assume that the
     reader is familiar with the language. If you are new to Objective-C or
     need a refresher, please read
-    <a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html">
+    <a href="https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html">
       Programming with Objective-C
     </a>.
   </p>
@@ -616,7 +616,7 @@ Revision 2.59
     Naming rules are very important in maintainable code. Objective-C method
     names tend to be very long, but this has the benefit that a block of code
     can almost read like prose, thus rendering many comments unnecessary. </p>
-    <p> When writing pure Objective-C code, we mostly follow standard <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html">Objective-C
+    <p> When writing pure Objective-C code, we mostly follow standard <a href="https://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html">Objective-C
     naming rules</a>. These naming guidelines may differ
     significantly from those outlined in the C++ style guide. For example,
     Google's C++ style guide recommends the use of underscores between words
@@ -625,7 +625,7 @@ Revision 2.59
   </p>
   <p>
     Any class, category, method, or variable name may use all capitals for
-    <a href="http://en.wikipedia.org/wiki/Initialism">initialisms</a>
+    <a href="https://en.wikipedia.org/wiki/Initialism">initialisms</a>
     within the name. This follows Apple's standard of using all capitals
     within a name for initialisms such as URL, TIFF, and EXIF.
   </p>
@@ -807,7 +807,7 @@ Revision 2.59
         The method name should read like a sentence if possible, meaning you
         should choose parameter names that flow with the method name. (e.g.
         <code>convertPoint:fromRect:</code> or
-        <code>replaceCharactersInRange:withString:</code>). See <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingMethods.html#//apple_ref/doc/uid/20001282-BCIGIJJF">Apple's
+        <code>replaceCharactersInRange:withString:</code>). See <a href="https://developer.apple.com/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingMethods.html#//apple_ref/doc/uid/20001282-BCIGIJJF">Apple's
         Guide to Naming Methods</a> for more details.
       </p>
       <p>
@@ -1189,7 +1189,7 @@ Revision 2.59
       </CODE_SNIPPET>
       <p>
         If you are using Objective-C 2.0, you should instead declare your
-        private category using a <a href="http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/Articles/chapter_4_section_5.html#">class
+        private category using a <a href="https://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/Articles/chapter_4_section_5.html#">class
         extension</a>, for example:
       </p>
       <CODE_SNIPPET>

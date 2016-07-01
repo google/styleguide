@@ -2,7 +2,7 @@
 <HEAD>
 <TITLE>Google Python Style Guide</TITLE>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
-<LINK HREF="http://www.google.com/favicon.ico" type="image/x-icon" rel="shortcut icon">
+<LINK HREF="https://www.google.com/favicon.ico" type="image/x-icon" rel="shortcut icon">
 <LINK HREF="styleguide.css" type="text/css" rel="stylesheet">
 <SCRIPT language="javascript" type="text/javascript">
 
@@ -521,7 +521,7 @@ from sound.effects import echo
         <P class="">
 <SPAN class="stylepoint_section">Pros:  </SPAN>
       Allows definition of utility classes and functions that are only
-      used inside of a very limited scope. Very <a HREF="http://en.wikipedia.org/wiki/Abstract_data_type">ADT</a>-y.
+      used inside of a very limited scope. Very <a HREF="https://en.wikipedia.org/wiki/Abstract_data_type">ADT</a>-y.
         </P>
         <P class="">
 <SPAN class="stylepoint_section">Cons: </SPAN>
@@ -1069,7 +1069,7 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
         <P class="">
 <SPAN class="stylepoint_section">Cons: </SPAN>
       Can lead to confusing bugs. Such as this example based on
-      <a HREF="http://www.python.org/dev/peps/pep-0227/">PEP-0227</a>:
+      <a HREF="https://www.python.org/dev/peps/pep-0227/">PEP-0227</a>:
 <DIV class=""><PRE class="badcode">
 <span class="external"></span>i = 4
 <span class="external"></span>def foo(x):
@@ -1104,7 +1104,7 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
         <P class="">
 <SPAN class="stylepoint_section">Definition:  </SPAN>
       
-      <a HREF="http://www.python.org/doc/2.4.3/whatsnew/node6.html">Decorators
+      <a HREF="https://www.python.org/doc/2.4.3/whatsnew/node6.html">Decorators
        for Functions and Methods</a>
       (a.k.a "the <code>@</code> notation").
       The most common decorators are <code>@classmethod</code> and
@@ -1267,7 +1267,7 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
     <p>
       Make use of Python's
       
-      <a HREF="http://docs.python.org/reference/lexical_analysis.html#implicit-line-joining">implicit
+      <a HREF="https://docs.python.org/reference/lexical_analysis.html#implicit-line-joining">implicit
       line joining inside parentheses, brackets and braces</a>.
       If necessary, you can add an extra pair of parentheses around an
       expression.
@@ -1295,10 +1295,10 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
     </p>
 
     <DIV class=""><PRE>Yes:  <span class="external"></span># See details at
-      <span class="external"></span># http://www.example.com/us/developer/documentation/api/content/v2.0/csv_file_name_extension_full_specification.html</PRE></DIV>
+      <span class="external"></span># https://www.example.com/us/developer/documentation/api/content/v2.0/csv_file_name_extension_full_specification.html</PRE></DIV>
 
     <DIV class=""><PRE class="badcode">No:  <span class="external"></span># See details at
-     <span class="external"></span># http://www.example.com/us/developer/documentation/api/content/\
+     <span class="external"></span># https://www.example.com/us/developer/documentation/api/content/\
      <span class="external"></span># v2.0/csv_file_name_extension_full_specification.html</PRE></DIV>
 
     <p>
@@ -1506,9 +1506,8 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
         Most <code>.py</code> files do not need to start with a
         <code>#!</code> line.  Start the main file of a
          program with
-        <code>#!/usr/bin/python</code> with an optional single digit
-        <code>2</code> or <code>3</code> suffix per
-        <a href="http://www.python.org/dev/peps/pep-0394/">PEP-394</a>.
+        <code>#!/usr/bin/env python</code> with an optional single digit
+        <code>2</code> or <code>3</code> suffix.
       </DIV>
       <DIV class=""><DIV class="stylepoint_body" name="Shebang_Line__body" id="Shebang_Line__body" style="display: none">
         
@@ -1542,7 +1541,7 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
       object and are used by <code>pydoc</code>.  (Try running
       <code>pydoc</code> on your module to see how it looks.)  We
       always use the three double-quote <code>"""</code> format for doc strings
-      (per <a href="http://www.python.org/dev/peps/pep-0257/">PEP 257</a>).
+      (per <a href="https://www.python.org/dev/peps/pep-0257/">PEP 257</a>).
       A doc string should be organized as a
       summary line (one physical line) terminated by a period,
       question mark, or exclamation point, followed by a blank line,
@@ -1700,7 +1699,7 @@ No:  <span class="external"></span>def foo(a, b=FLAGS.my_thing):  # sys.argv has
     <p>
       The final place to have comments is in tricky parts of the
       code. If you're going to have to explain it at the next
-      <a HREF="http://en.wikipedia.org/wiki/Code_review">code review</a>,
+      <a HREF="https://en.wikipedia.org/wiki/Code_review">code review</a>,
       you should comment it now.  Complicated operations get a few lines of
       comments before the operations
       commence. Non-obvious ones get comments at the end of the line.
@@ -1907,7 +1906,7 @@ Don'<span class="external"></span>t do this.
         </p>
 
         <p>
-          The preferred way to manage files is using the <a HREF="http://docs.python.org/reference/compound_stmts.html#the-with-statement">
+          The preferred way to manage files is using the <a HREF="https://docs.python.org/reference/compound_stmts.html#the-with-statement">
           "with" statement</a>:
         </p>
 
@@ -1924,7 +1923,7 @@ Don'<span class="external"></span>t do this.
 <DIV class=""><PRE>
 <span class="external"></span>import contextlib
 
-<span class="external"></span>with contextlib.closing(urllib.urlopen("http://www.python.org/")) as front_page:
+<span class="external"></span>with contextlib.closing(urllib.urlopen("https://www.python.org/")) as front_page:
   <span class="external">  </span>for line in front_page:
     <span class="external">    </span>print line</PRE></DIV>
 

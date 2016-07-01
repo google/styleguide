@@ -2,10 +2,10 @@
 <?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
 <GUIDE title="Google JavaScript Style Guide">
   <p class="revision">
-    
+
     Revision 2.93
   </p>
-  
+
   <address>
     Aaron Whyte<br/>
     Bob Jervis<br/>
@@ -35,23 +35,23 @@
     <CATEGORY title="Background">
       <p>
         JavaScript is the main client-side scripting language used
-        
+
         by many of Google's open-source
           projects.
         This style guide is a list of <em>do</em>s and <em>don't</em>s for
         JavaScript programs.
       </p>
-      
-      
-      
-      
-      
+
+
+
+
+
     </CATEGORY>
   </OVERVIEW>
   <CATEGORY title="JavaScript Language Rules">
-    
 
-    
+
+
 
     <STYLEPOINT title="var">
       <SUMMARY>
@@ -100,7 +100,7 @@
              considered immutable only if they do not demonstrate observable
              state change.  This is not enforced by the compiler.</p>
 
-           
+
            </SUBSECTION>
 
           <SUBSECTION title="Constant pointers (variables and properties)">
@@ -355,7 +355,7 @@
           first appear! </p>
 
         <p>For that reason, it is best to use <code>goog.inherits()</code> from
-          <a href="http://code.google.com/closure/library/">
+          <a href="https://code.google.com/closure/library/">
             the Closure Library
           </a>
           or a similar library function.
@@ -619,8 +619,7 @@
         </BAD_CODE_SNIPPET>
         <p>The whitespace at the beginning of each line can't be safely stripped
           at compile time; whitespace after the slash will result in tricky
-          errors; and while most script engines support this, it is not part
-          of ECMAScript. </p>
+          errors. </p>
         <p>Use string concatenation instead:</p>
         <CODE_SNIPPET>
           var myString = 'A rather long string of English text, an error message ' +
@@ -759,7 +758,7 @@
           <p>Optional and variable arguments can also be specified in
             <code>@param</code> annotations. Although either convention is
             acceptable to the compiler, using both together is preferred.</p>
-          
+
         </SUBSECTION>
 
         <SUBSECTION title="Getters and Setters">
@@ -801,10 +800,10 @@
                 ...
               };
             </CODE_SNIPPET>
-            
-            
+
+
             <p>Many JavaScript libraries, including
-              <a href="http://code.google.com/closure/library/">
+              <a href="https://code.google.com/closure/library/">
                 the Closure Library
               </a>
               and
@@ -826,7 +825,7 @@
               parent namespace know what you are doing. If you start a project
               that creates hats for sloths, make sure that the Sloth team knows
               that you're using <code>sloth.hats</code>.</p>
-            
+
           </SUBSUBSECTION>
           <SUBSUBSECTION title="Use different namespaces for external code and internal code">
             <p>"External code" is code that comes from outside your codebase,
@@ -867,8 +866,8 @@
 
               goog.exportSymbol('foo.hats.BowlerHat', googleyhats.BowlerHat);
             </CODE_SNIPPET>
-            
-            
+
+
           </SUBSUBSECTION>
           <SUBSUBSECTION title="Alias long type names to improve readability">
             <p>Use local aliases for fully-qualified types if doing so improves
@@ -937,7 +936,7 @@
             and should contain no punctuation except for <code>-</code> or
             <code>_</code> (prefer <code>-</code> to <code>_</code>).</p>
         </SUBSECTION>
-        
+
       </BODY>
     </STYLEPOINT>
 
@@ -980,7 +979,7 @@
     <STYLEPOINT title="Code formatting">
       <SUMMARY>Expand for more information.</SUMMARY>
       <BODY>
-        <p>We follow the <a href="cppguide.xml#Formatting">C++ formatting
+        <p>We follow the <a href="cppguide.html#Formatting">C++ formatting
           rules</a> in spirit, with the following additional clarifications.</p>
         <SUBSECTION title="Curly Braces">
           <p>Because of implicit semicolon insertion, always start your curly
@@ -1135,7 +1134,7 @@
             <a href="https://docs.google.com/document/pub?id=1ETFAuh2kaXMVL-vafUYhaWlhl6b5D9TOvboVg7Zl68Y"><code>goog.scope</code></a>
             may be used to shorten references to
             namespaced symbols in programs using
-            <a href="http://code.google.com/closure/library/">the Closure
+            <a href="https://code.google.com/closure/library/">the Closure
               Library</a>.</p>
           <p>Only one <code>goog.scope</code> invocation may be added per
             file.  Always place it in the global scope.</p>
@@ -1301,7 +1300,7 @@
           functions, and properties.</p>
         <p>The --jscomp_warning=visibility compiler flag turns on compiler
           warnings for visibility violations. See
-          <a href="http://code.google.com/p/closure-compiler/wiki/Warnings">
+          <a href="https://code.google.com/p/closure-compiler/wiki/Warnings">
             Closure Compiler
           Warnings</a>.
         </p>
@@ -1807,9 +1806,9 @@
 
               <tr>
                 <td>
-                  
+
                   null
-                  
+
                 </td>
                 <td>
                   <CODE_SNIPPET>
@@ -1821,9 +1820,9 @@
 
               <tr>
                 <td>
-                  
+
                   undefined
-                  
+
                 </td>
                 <td>
                   <CODE_SNIPPET>
@@ -2099,7 +2098,7 @@
             <code>MyClass</code> is initialized with a null value, it will issue
             a warning.</p>
 
-          
+
 
           <p>Optional parameters to functions may be undefined at runtime, so if
           they are assigned to class properties, those properties must be
@@ -2215,12 +2214,12 @@
       <BODY>
         <p>
           We follow the
-          <a href="cppguide.xml#Comments">
+          <a href="cppguide.html#Comments">
             C++ style for comments</a> in spirit.
         </p>
 
         <p>All files, classes, methods and properties should be documented with
-          <a href="http://code.google.com/p/jsdoc-toolkit/">JSDoc</a>
+          <a href="https://code.google.com/p/jsdoc-toolkit/">JSDoc</a>
           comments with the appropriate <a href="#JSDoc_Tag_Reference">tags</a>
           and <a href="#JsTypes">types</a>. Textual descriptions for properties,
           methods, method parameters and method return values should be included
@@ -2235,7 +2234,7 @@
 
         <SUBSECTION title="Comment Syntax">
           <p>The JSDoc syntax is based on
-          <a href="http://www.oracle.com/technetwork/java/javase/documentation/index-137868.html">
+          <a href="https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html">
           JavaDoc</a>. Many tools extract metadata from JSDoc comments to
           perform code validation and optimizations. These comments must be
           well-formed.</p>
@@ -2322,14 +2321,14 @@
              */
           </CODE_SNIPPET>
 
-          The <a href="http://www.oracle.com/technetwork/java/javase/documentation/index-137868.html">
+          The <a href="https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html">
           JavaDoc</a> style guide is a useful resource on how to write
           well-formed doc comments.
         </SUBSECTION>
 
         <SUBSECTION title="Top/File-Level Comments">
           <p>
-            
+
             A <a href="copyright.html">copyright notice</a> and author information are optional.
             File overviews are generally recommended whenever a file consists of
             more than a single class definition. The top level comment is
@@ -2346,7 +2345,7 @@
              */
           </CODE_SNIPPET>
 
-          
+
         </SUBSECTION>
 
         <SUBSECTION title="Class Comments">
@@ -2416,7 +2415,7 @@
               <tr>
                 <td>
                   <a name="tag-author">@author</a>
-                  
+
                 </td>
                 <td>
                   <code>@author username@google.com (first last)</code>
@@ -2431,11 +2430,11 @@
                 <td>
                   Document the author of a file or the owner of a test,
                   generally only used in the <code>@fileoverview</code> comment.
-                  
+
                 </td>
               </tr>
 
-              
+
 
               <tr>
                 <td><a name="tag-code">@code</a></td>
@@ -2728,11 +2727,11 @@
                 <td>
                   <p>
                     Declares an
-                    
+
                     externs file.
                   </p>
 
-                  
+
                 </td>
               </tr>
 
@@ -2860,7 +2859,7 @@
                   For example, <code>@type {Foo}</code> means "an instance of Foo",
                   but <code>@lends {Foo}</code> means "the constructor Foo".<p/>
 
-                  The <a href="http://code.google.com/p/jsdoc-toolkit/wiki/TagLends">
+                  The <a href="https://code.google.com/p/jsdoc-toolkit/wiki/TagLends">
                   JSDoc Toolkit docs</a> have more information on this
                   annotation.
                 </td>
@@ -2891,9 +2890,9 @@
                 </td>
               </tr>
 
-              
 
-              
+
+
 
               <tr>
                 <td><a name="tag-noalias">@noalias</a></td>
@@ -3204,7 +3203,7 @@
                 <td>
                   Suppresses warnings from tools. Warning categories are
                   separated by <code>|</code> or <code>,</code>.
-                  
+
                 </td>
               </tr>
 
@@ -3303,17 +3302,17 @@
                 </td>
               </tr>
 
-              
+
 
             </tbody>
           </table>
 
-          
+
 
           <p>
             You may also see other types of JSDoc annotations in third-party
             code. These annotations appear in the
-            <a href="http://code.google.com/p/jsdoc-toolkit/wiki/TagReference">
+            <a href="https://code.google.com/p/jsdoc-toolkit/wiki/TagReference">
               JSDoc Toolkit Tag Reference
             </a>
             but are currently discouraged in Google code. You should consider
@@ -3386,15 +3385,15 @@
     <STYLEPOINT title="Compiling">
       <SUMMARY>Required</SUMMARY>
       <BODY>
-        
+
 
         <p>Use of JS compilers such as the
-          <a href="http://code.google.com/closure/compiler/">Closure Compiler</a>
+          <a href="https://code.google.com/closure/compiler/">Closure Compiler</a>
           is required for all customer-facing code.</p>
 
-        
 
-        
+
+
       </BODY>
     </STYLEPOINT>
 
@@ -3584,7 +3583,7 @@
     </STYLEPOINT>
   </CATEGORY>
 
-  
+
 
   <PARTING_WORDS>
     <p>
@@ -3615,7 +3614,7 @@
     Revision 2.93
   </p>
 
-  
+
   <address>
     Aaron Whyte<br/>
     Bob Jervis<br/>

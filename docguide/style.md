@@ -366,8 +366,8 @@ to read in source and most importantly, **a pain to modify later**.
 ```markdown
 Fruit | Attribute | Notes
 --- | --- | --- | ---
-Apple | [Juicy](http://example.com/SomeReallyReallyReallyReallyReallyReallyReallyReallyLongQuery), Firm, Sweet | Apples keep doctors away.
-Banana | [Convenient](http://example.com/SomeDifferentReallyReallyReallyReallyReallyReallyReallyReallyLongQuery), Soft, Sweet | Contrary to popular belief, most apes prefer mangoes.
+Apple | [Juicy](https://example.com/SomeReallyReallyReallyReallyReallyReallyReallyReallyLongQuery), Firm, Sweet | Apples keep doctors away.
+Banana | [Convenient](https://example.com/SomeDifferentReallyReallyReallyReallyReallyReallyReallyReallyLongQuery), Soft, Sweet | Contrary to popular belief, most apes prefer mangoes.
 
 DO NOT DO THIS
 ```
@@ -380,7 +380,7 @@ in a slightly less compact, though much more edit-friendly way:
 
 ### Apple
 
-* [Juicy](http://SomeReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyLongURL)
+* [Juicy](https://SomeReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyLongURL)
 * Firm
 * Sweet
 
@@ -388,7 +388,7 @@ Apples keep doctors away.
 
 ### Banana
 
-* [Convenient](http://example.com/SomeDifferentReallyReallyReallyReallyReallyReallyReallyReallyLongQuery)
+* [Convenient](https://example.com/SomeDifferentReallyReallyReallyReallyReallyReallyReallyReallyLongQuery)
 * Soft
 * Sweet
 

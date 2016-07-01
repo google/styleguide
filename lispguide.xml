@@ -85,7 +85,7 @@ Robert Brown
     <SUMMARY>
       Each guideline's level of importance is indicated
       by use of the following keywords and phrases, adapted from
-      <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.
+      <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.
     </SUMMARY>
     <BODY>
       <table>
@@ -676,10 +676,10 @@ Robert Brown
       <p>
         Common Lisp indentation in Emacs is provided by the cl-indent library.
         The latest version of cl-indent is packaged with
-        <a HREF="http://www.common-lisp.net/project/slime/">SLIME</a>
+        <a HREF="https://www.common-lisp.net/project/slime/">SLIME</a>
         (under contrib/slime-cl-indent.el). After installing SLIME, set up Emacs
         to load SLIME automatically using
-        <a HREF="http://www.common-lisp.net/project/slime/doc/html/Loading-Contribs.html">these instructions</a>, adding slime-indentation to the list of
+        <a HREF="https://www.common-lisp.net/project/slime/doc/html/Loading-Contribs.html">these instructions</a>, adding slime-indentation to the list of
         contrib libraries to be loaded in the call to slime-setup.
      </p>
      <p>
@@ -692,7 +692,7 @@ Robert Brown
         This is particularly useful when creating forms that behave like macros
         or special operators that are indented differently than standard
         function calls (e.g. defun, labels, or let). Add a
-        <a HREF="http://www.gnu.org/software/emacs/manual/html_node/emacs/Hooks.html">hook</a> to 'lisp-mode-hook that calls common-lisp-set-style to set
+        <a HREF="https://www.gnu.org/software/emacs/manual/html_node/emacs/Hooks.html">hook</a> to 'lisp-mode-hook that calls common-lisp-set-style to set
         the appropriate style automatically.
       </p>
       
@@ -1065,7 +1065,7 @@ Robert Brown
         ;;;; project-euler.lisp
         ;;;; File-level comments or comments for large sections of code.
 
-        ;;; Problems are described in more detail here:  http://projecteuler.net/
+        ;;; Problems are described in more detail here:  https://projecteuler.net/
 
         ;;; Divisibility
         ;;; Comments that describe a group of definitions.
@@ -1153,7 +1153,7 @@ Robert Brown
       <p>
         Be specific when indicating times or software releases
         in a TODO comment and use
-        <a HREF="http://www.w3.org/TR/NOTE-datetime">YYYY-MM-DD</a>
+        <a HREF="https://www.w3.org/TR/NOTE-datetime">YYYY-MM-DD</a>
         format for dates to make automated processing of such dates easier,
         e.g., 2038-01-20 for the end of the 32-bit signed <code>time_t</code>.
       </p>
@@ -1972,7 +1972,7 @@ Robert Brown
         much less first-class "protocol" objects.
         However, there may indeed be an abstract CLOS class
         or an
-        <a href="http://common-lisp.net/~frideau/lil-ilc2012/lil-ilc2012.html">Interface-Passing Style</a> interface
+        <a href="https://common-lisp.net/~frideau/lil-ilc2012/lil-ilc2012.html">Interface-Passing Style</a> interface
         that embodies the protocol.
         Further (sub)classes or (sub)interfaces may then implement
         all or part of a protocol by defining
@@ -2311,7 +2311,7 @@ Robert Brown
         Lisp evaluation happens at several times,
         some of them interleaved.
         Be aware of them when writing macros.
-        <a href="http://fare.livejournal.com/146698.html">EVAL-WHEN considered harmful to your mental health</a>.
+        <a href="https://fare.livejournal.com/146698.html">EVAL-WHEN considered harmful to your mental health</a>.
       </p>
       <p>
         In summary of the article linked above,
@@ -2808,7 +2808,7 @@ Robert Brown
       </p>
       <BAD_CODE_SNIPPET>
         ;; Bad
-        (defconstant +google-url+ "http://www.google.com/")
+        (defconstant +google-url+ "https://www.google.com/")
         (defconstant +valid-colors+ '(red green blue))
       </BAD_CODE_SNIPPET>
       
@@ -2825,7 +2825,7 @@ Robert Brown
       </p>
       <CODE_SNIPPET>
         ;; Better, for Open-Source code:
-        (define-constant +google-url+ "http://www.google.com/" :test #'string=)
+        (define-constant +google-url+ "https://www.google.com/" :test #'string=)
         (define-constant +valid-colors+ '(red green blue))
       </CODE_SNIPPET>
       <p>
@@ -3815,7 +3815,7 @@ Robert Brown
       </CODE_SNIPPET>
       <p>
         In particular, the above means that the
-        <a href="http://www.lispworks.com/documentation/HyperSpec/Body/t_satisf.htm">example</a>
+        <a href="https://www.lispworks.com/documentation/HyperSpec/Body/t_satisf.htm">example</a>
         used in the Common Lisp Standard is erroneous:
         <code>(and integer (satisfies evenp))</code>
         is <em>not</em> a safe, conformant type specifier to use,
