@@ -19,8 +19,8 @@ install:
 # install: "sudo apt-get install"
 # command to run tests, e.g. python setup.py test
 script:
-  - cpplint_unittest.py
-  - cpplint_clitest.py
+  - python cpplint_unittest.py
+  - python cpplint_clitest.py
   - pyflakes cpplint.py
   - pyflakes cpplint_unittest.py
   - pyflakes cpplint_clitest.py
