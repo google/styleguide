@@ -221,7 +221,7 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
 
       Example file:
         filter=-build/include_order,+build/include_alpha
-        exclude_files=.*\.cc
+        exclude_files=.*\\.cc
 
     The above example disables build/include_order warning and enables
     build/include_alpha as well as excludes all .cc from being
@@ -475,7 +475,7 @@ _CHECK_MACROS = [
     ]
 
 # Replacement macros for CHECK/DCHECK/EXPECT_TRUE/EXPECT_FALSE
-_CHECK_REPLACEMENT = dict([(m, {}) for m in _CHECK_MACROS])
+_CHECK_REPLACEMENT = dict([(macro_var, {}) for macro_var in _CHECK_MACROS])
 
 for op, replacement in [('==', 'EQ'), ('!=', 'NE'),
                         ('>=', 'GE'), ('>', 'GT'),
@@ -569,27 +569,38 @@ _quiet = False
 _line_length = 80
 
 try:
-    xrange
+  xrange(1, 0)
 except NameError:
-    xrange = range
+  #  -- pylint: disable=redefined-builtin
+  xrange = range
 
 try:
   unicode
 except NameError:
+  #  -- pylint: disable=redefined-builtin
   basestring = unicode = str
 
+try:
+  long(2)
+except NameError:
+  #  -- pylint: disable=redefined-builtin
+  long = int
+
 if sys.version_info < (3,):
-    def u(x):
-        return codecs.unicode_escape_decode(x)[0]
-    # BINARY_TYPE = str
-    itervalues = dict.itervalues
-    iteritems = dict.iteritems
+  #  -- pylint: disable=no-member
+  # BINARY_TYPE = str
+  itervalues = dict.itervalues
+  iteritems = dict.iteritems
 else:
-    def u(x):
-        return x
-    # BINARY_TYPE = bytes
-    itervalues = dict.values
-    iteritems = dict.items
+  # BINARY_TYPE = bytes
+  itervalues = dict.values
+  iteritems = dict.items
+
+def unicode_escape_decode(x):
+  if sys.version_info < (3,):
+    return codecs.unicode_escape_decode(x)[0]
+  else:
+    return x
 
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of error-suppressions.
@@ -716,6 +727,8 @@ class _IncludeState(object):
 
   def __init__(self):
     self.include_list = [[]]
+    self._section = None
+    self._last_header = None
     self.ResetSection('')
 
   def FindHeader(self, header):
@@ -1142,7 +1155,7 @@ class FileInfo(object):
     return os.path.abspath(self._filename).replace('\\', '/')
 
   def RepositoryName(self):
-    """FullName after removing the local path to the repository.
+    r"""FullName after removing the local path to the repository.
 
     If we have a real absolute path name here we can try to do something smart:
     detecting the root of the checkout and truncating /path/to/checkout from
@@ -1293,9 +1306,9 @@ def Error(filename, linenum, category, confidence, message):
         _cpplint_state.AddJUnitFailure(filename, linenum, message, category,
             confidence)
     else:
-      m = '%s:%s:  %s  [%s] [%d]\n' % (
+      final_message = '%s:%s:  %s  [%s] [%d]\n' % (
           filename, linenum, message, category, confidence)
-      sys.stderr.write(m)
+      sys.stderr.write(final_message)
 
 # Matches standard C++ escape sequences per 2.13.2.3 of the C++ standard.
 _RE_PATTERN_CLEANSE_LINE_ESCAPES = re.compile(
@@ -1993,7 +2006,7 @@ def CheckForBadCharacters(filename, lines, error):
     error: The function to call with any errors found.
   """
   for linenum, line in enumerate(lines):
-    if u('\ufffd') in line:
+    if unicode_escape_decode('\ufffd') in line:
       error(filename, linenum, 'readability/utf8', 5,
             'Line contains invalid UTF-8 (or Unicode replacement character).')
     if '\0' in line:
@@ -4731,12 +4744,10 @@ def _IsTestFilename(filename):
   Returns:
     True if 'filename' looks like a test, False otherwise.
   """
-  if (filename.endswith('_test.cc') or
+  return (filename.endswith('_test.cc') or
       filename.endswith('_unittest.cc') or
-      filename.endswith('_regtest.cc')):
-    return True
-  else:
-    return False
+      filename.endswith('_regtest.cc'))
+
 
 
 def _ClassifyInclude(fileinfo, include, is_system):
@@ -4880,7 +4891,7 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
 
 
 def _GetTextInside(text, start_pattern):
-  """Retrieves all the text between matching open and close parentheses.
+  r"""Retrieves all the text between matching open and close parentheses.
 
   Given a string of lines and a regular expression string, retrieve all the text
   following the expression and between opening punctuation symbols like
@@ -6051,11 +6062,9 @@ def IsBlockInNameSpace(nesting_state, is_forward_declaration):
     Whether or not the new block is directly in a namespace.
   """
   if is_forward_declaration:
-    if len(nesting_state.stack) >= 1 and (
-        isinstance(nesting_state.stack[-1], _NamespaceInfo)):
-      return True
-    else:
-      return False
+    return len(nesting_state.stack) >= 1 and (
+      isinstance(nesting_state.stack[-1], _NamespaceInfo))
+
 
   return (len(nesting_state.stack) > 1 and
           nesting_state.stack[-1].check_namespace_indentation and
@@ -6105,7 +6114,7 @@ def CheckItemIndentationInNamespace(filename, raw_lines_no_comments, linenum,
 
 def ProcessLine(filename, file_extension, clean_lines, line,
                 include_state, function_state, nesting_state, error,
-                extra_check_functions=[]):
+                extra_check_functions=None):
   """Processes a single line in the file.
 
   Args:
@@ -6145,8 +6154,9 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckDefaultLambdaCaptures(filename, clean_lines, line, error)
   CheckRedundantVirtual(filename, clean_lines, line, error)
   CheckRedundantOverrideOrFinal(filename, clean_lines, line, error)
-  for check_fn in extra_check_functions:
-    check_fn(filename, clean_lines, line, error)
+  if extra_check_functions:
+    for check_fn in extra_check_functions:
+      check_fn(filename, clean_lines, line, error)
 
 def FlagCxx11Features(filename, clean_lines, linenum, error):
   """Flag those c++11 features that we only allow in certain places.
@@ -6195,7 +6205,7 @@ def FlagCxx11Features(filename, clean_lines, linenum, error):
 
 
 def ProcessFileData(filename, file_extension, lines, error,
-                    extra_check_functions=[]):
+                    extra_check_functions=None):
   """Performs lint checks and reports any errors to the given error function.
 
   Args:
@@ -6314,13 +6324,13 @@ def ProcessConfigOverrides(filename):
 
   # Apply all the accumulated filters in reverse order (top-level directory
   # config options having the least priority).
-  for filter in reversed(cfg_filters):
-     _AddFilters(filter)
+  for cfg_filter in reversed(cfg_filters):
+     _AddFilters(cfg_filter)
 
   return True
 
 
-def ProcessFile(filename, vlevel, extra_check_functions=[]):
+def ProcessFile(filename, vlevel, extra_check_functions=None):
   """Does google-lint on a single file.
 
   Args:
@@ -6543,9 +6553,9 @@ def _ExpandDirectories(filenames):
         expanded.add(filename)
         continue
 
-      for root, dirs, files in os.walk(filename):
-        for file in files:
-          fullname = os.path.join(root, file)
+      for root, _, files in os.walk(filename):
+        for loopfile in files:
+          fullname = os.path.join(root, loopfile)
           if fullname.startswith('.' + os.path.sep):
             fullname = fullname[len('.' + os.path.sep):]
           expanded.add(fullname)
@@ -6570,8 +6580,8 @@ def main():
   try:
     # Change stderr to write with replacement characters so we don't die
     # if we try to print something containing non-ASCII characters.
-    sys.stderr = codecs.StreamReader(sys.stderr,
-                                     'replace')
+    sys.stderr = codecs.StreamReader(sys.stderr, 'replace')
+    
     _cpplint_state.ResetErrorCounts()
     for filename in filenames:
       ProcessFile(filename, _cpplint_state.verbose_level)
