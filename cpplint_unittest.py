@@ -37,10 +37,11 @@ import codecs
 import os
 import random
 import re
-import sys
-import unittest
-import tempfile
 import shutil
+import sys
+import tempfile
+import unittest
+
 
 import cpplint
 
@@ -265,18 +266,19 @@ class CpplintTestBase(unittest.TestCase):
                       self.PerformIncludeWhatYouUse(code))
 
   def TestBlankLinesCheck(self, lines, start_errors, end_errors):
-    error_collector = ErrorCollector(self.assertTrue)
-    cpplint.ProcessFileData('foo.cc', 'cc', lines, error_collector)
-    self.assertEqual(
-        start_errors,
-        error_collector.Results().count(
-            'Redundant blank line at the start of a code block '
-            'should be deleted.  [whitespace/blank_line] [2]'))
-    self.assertEqual(
-        end_errors,
-        error_collector.Results().count(
-            'Redundant blank line at the end of a code block '
-            'should be deleted.  [whitespace/blank_line] [3]'))
+    for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
+      error_collector = ErrorCollector(self.assertTrue)
+      cpplint.ProcessFileData('foo.' + extension, extension, lines, error_collector)
+      self.assertEqual(
+          start_errors,
+          error_collector.Results().count(
+                'Redundant blank line at the start of a code block '
+                'should be deleted.  [whitespace/blank_line] [2]'))
+      self.assertEqual(
+          end_errors,
+          error_collector.Results().count(
+              'Redundant blank line at the end of a code block '
+              'should be deleted.  [whitespace/blank_line] [3]'))
 
 
 class CpplintTest(CpplintTestBase):
@@ -785,11 +787,13 @@ class CpplintTest(CpplintTestBase):
 
   def testIncludeWhatYouUseNoImplementationFiles(self):
     code = 'std::vector<int> foo;'
-    self.assertEqual('Add #include <vector> for vector<>'
-                      '  [build/include_what_you_use] [4]',
-                      self.PerformIncludeWhatYouUse(code, 'foo.h'))
-    self.assertEqual('',
-                      self.PerformIncludeWhatYouUse(code, 'foo.cc'))
+    for extension in ['h', 'hpp', 'hxx', 'h++', 'cuh']:
+      self.assertEqual('Add #include <vector> for vector<>'
+                       '  [build/include_what_you_use] [4]',
+                       self.PerformIncludeWhatYouUse(code, 'foo.' + extension))
+    for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
+      self.assertEqual('',
+                       self.PerformIncludeWhatYouUse(code, 'foo.' + extension))
 
   def testIncludeWhatYouUse(self):
     self.TestIncludeWhatYouUse(
@@ -974,7 +978,12 @@ class CpplintTest(CpplintTestBase):
     f = cpplint.FilesBelongToSameModule
     self.assertEqual((True, ''), f('a.cc', 'a.h'))
     self.assertEqual((True, ''), f('base/google.cc', 'base/google.h'))
-    self.assertEqual((True, ''), f('base/google_test.cc', 'base/google.h'))
+    self.assertEqual((True, ''), f('base/google_test.c', 'base/google.h'))
+    self.assertEqual((True, ''), f('base/google_test.cc', 'base/google.hpp'))
+    self.assertEqual((True, ''), f('base/google_test.cxx', 'base/google.hxx'))
+    self.assertEqual((True, ''), f('base/google_test.cpp', 'base/google.hpp'))
+    self.assertEqual((True, ''), f('base/google_test.c++', 'base/google.h++'))
+    self.assertEqual((True, ''), f('base/google_test.cu', 'base/google.cuh'))
     self.assertEqual((True, ''),
                       f('base/google_unittest.cc', 'base/google.h'))
     self.assertEqual((True, ''),
@@ -1131,16 +1140,17 @@ class CpplintTest(CpplintTestBase):
         'Use C++11 raw strings or concatenation instead.'
         '  [readability/multiline_string] [5]')
 
-    file_path = 'mydir/foo.cc'
+    for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
+      file_path = 'mydir/foo.' + extension
 
-    error_collector = ErrorCollector(self.assertTrue)
-    cpplint.ProcessFileData(file_path, 'cc',
-                            ['const char* str = "This is a\\',
-                             ' multiline string.";'],
-                            error_collector)
-    self.assertEqual(
-        2,  # One per line.
-        error_collector.ResultList().count(multiline_string_error_message))
+      error_collector = ErrorCollector(self.assertTrue)
+      cpplint.ProcessFileData(file_path, extension,
+                              ['const char* str = "This is a\\',
+                               ' multiline string.";'],
+                              error_collector)
+      self.assertEqual(
+          2,  # One per line.
+          error_collector.ResultList().count(multiline_string_error_message))
 
   # Test non-explicit single-argument constructors
   def testExplicitSingleArgumentConstructors(self):
@@ -2801,7 +2811,6 @@ class CpplintTest(CpplintTestBase):
   def testStaticOrGlobalSTLStrings(self):
     error_msg = ('For a static/global string constant, use a C style '
                  'string instead: "%s[]".  [runtime/string] [4]')
-
     self.TestLint('string foo;',
                   error_msg % 'char foo')
     self.TestLint('string kFoo = "hello";  // English',
@@ -3816,7 +3825,6 @@ class CpplintTest(CpplintTestBase):
     old_verbose_level = cpplint._cpplint_state.verbose_level
     old_filters = cpplint._cpplint_state.filters
     old_line_length = cpplint._line_length
-    old_valid_extensions = cpplint._valid_extensions
     try:
       # Don't print usage during the tests, or filter categories
       cpplint._USAGE = ''
@@ -3880,7 +3888,8 @@ class CpplintTest(CpplintTestBase):
       cpplint._cpplint_state.verbose_level = old_verbose_level
       cpplint._cpplint_state.filters = old_filters
       cpplint._line_length = old_line_length
-      cpplint._valid_extensions = old_valid_extensions
+      cpplint._header_extensions = set([])
+      cpplint._valid_extensions = set([])
 
   def testRecursiveArgument(self):
     working_dir = os.getcwd()
@@ -3918,6 +3927,8 @@ class CpplintTest(CpplintTestBase):
     finally:
         os.chdir(working_dir)
         shutil.rmtree(temp_dir)
+        cpplint._header_extensions = set([])
+        cpplint._valid_extensions = set([])
 
   def testExclude(self):
     working_dir = os.getcwd()
@@ -4086,18 +4097,20 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
   def testUnnamedNamespacesInHeaders(self):
-    self.TestLanguageRulesCheck(
-        'foo.h', 'namespace {',
-        'Do not use unnamed namespaces in header files.  See'
-        ' http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
-        ' for more information.  [build/namespaces] [4]')
-    # namespace registration macros are OK.
-    self.TestLanguageRulesCheck('foo.h', 'namespace {  \\', '')
-    # named namespaces are OK.
-    self.TestLanguageRulesCheck('foo.h', 'namespace foo {', '')
-    self.TestLanguageRulesCheck('foo.h', 'namespace foonamespace {', '')
-    self.TestLanguageRulesCheck('foo.cc', 'namespace {', '')
-    self.TestLanguageRulesCheck('foo.cc', 'namespace foo {', '')
+    for extension in ['h', 'hpp', 'hxx', 'h++', 'cuh']:
+        self.TestLanguageRulesCheck(
+            'foo.' + extension, 'namespace {',
+            'Do not use unnamed namespaces in header files.  See'
+            ' http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
+            ' for more information.  [build/namespaces] [4]')
+        # namespace registration macros are OK.
+        self.TestLanguageRulesCheck('foo.' + extension, 'namespace {  \\', '')
+        # named namespaces are OK.
+        self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
+        self.TestLanguageRulesCheck('foo.' + extension, 'namespace foonamespace {', '')
+    for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
+        self.TestLanguageRulesCheck('foo.' + extension, 'namespace {', '')
+        self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
 
   def testBuildClass(self):
     # Test that the linter can parse to the end of class definitions,
@@ -4907,16 +4920,33 @@ class OrderOfIncludesTest(CpplintTestBase):
                                       False))
 
   def testTryDropCommonSuffixes(self):
+    cpplint._header_extensions = set([])
+    cpplint._valid_extensions = set([])
     self.assertEqual('foo/foo', cpplint._DropCommonSuffixes('foo/foo-inl.h'))
+    self.assertEqual('foo/foo', cpplint._DropCommonSuffixes('foo/foo-inl.hxx'))
+    self.assertEqual('foo/foo', cpplint._DropCommonSuffixes('foo/foo-inl.h++'))
+    self.assertEqual('foo/foo', cpplint._DropCommonSuffixes('foo/foo-inl.hpp'))
     self.assertEqual('foo/bar/foo',
                      cpplint._DropCommonSuffixes('foo/bar/foo_inl.h'))
     self.assertEqual('foo/foo', cpplint._DropCommonSuffixes('foo/foo.cc'))
+    self.assertEqual('foo/foo', cpplint._DropCommonSuffixes('foo/foo.cxx'))
+    self.assertEqual('foo/foo', cpplint._DropCommonSuffixes('foo/foo.c'))
     self.assertEqual('foo/foo_unusualinternal',
                      cpplint._DropCommonSuffixes('foo/foo_unusualinternal.h'))
+    self.assertEqual('foo/foo_unusualinternal',
+                     cpplint._DropCommonSuffixes('foo/foo_unusualinternal.hpp'))
     self.assertEqual('',
                      cpplint._DropCommonSuffixes('_test.cc'))
+    self.assertEqual('',
+                     cpplint._DropCommonSuffixes('_test.c'))
+    self.assertEqual('',
+                     cpplint._DropCommonSuffixes('_test.c++'))
+    self.assertEqual('test',
+                     cpplint._DropCommonSuffixes('test.c'))
     self.assertEqual('test',
                      cpplint._DropCommonSuffixes('test.cc'))
+    self.assertEqual('test',
+                     cpplint._DropCommonSuffixes('test.c++'))
 
   def testRegression(self):
     def Format(includes):
