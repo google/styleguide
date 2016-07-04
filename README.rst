@@ -27,8 +27,8 @@ Changes
 The modifications in this branch are minor fixes and cosmetic changes:
 
 * more default extensions
-* python 3k compatibility
-* minor fixes around default file extensions
+* python 3 compatibility
+* customizable file extensions with the --extensions and --headers arguments
 * continuous integration on travis
 * support for recursive file discovery via the --recursive argument
 * support for excluding files via --exclude
