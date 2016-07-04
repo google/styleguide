@@ -1,0 +1,33 @@
+--counting=toplevel --filter=-whitespace,-build/include_what_you_use src/*.cpp
+1
+src/sillycode.cpp:0:  No copyright message found.  You should have a line: "Copyright [year] <Copyright Owner>"  [legal/copyright] [5]
+src/sillycode.cpp:9:  Is this a non-const reference? If so, make const or use a pointer: vector<string>& v  [runtime/references] [2]
+src/sillycode.cpp:35:  If/else bodies with multiple statements require braces  [readability/braces] [4]
+src/sillycode.cpp:61:  Single-parameter constructors should be marked explicit.  [runtime/explicit] [5]
+src/sillycode.cpp:71:  Single-parameter constructors should be marked explicit.  [runtime/explicit] [5]
+src/sillycode.cpp:80:  Constructors callable with one argument should be marked explicit.  [runtime/explicit] [5]
+src/sillycode.cpp:90:  RValue references are an unapproved C++ feature.  [build/c++11] [3]
+src/sillycode.cpp:94:  RValue references are an unapproved C++ feature.  [build/c++11] [3]
+src/sillycode.cpp:105:  RValue references are an unapproved C++ feature.  [build/c++11] [3]
+src/sillycode.cpp:106:  RValue references are an unapproved C++ feature.  [build/c++11] [3]
+src/sillycode.cpp:113:  Is this a non-const reference? If so, make const or use a pointer: N::X& a  [runtime/references] [2]
+src/sillycode.cpp:113:  Is this a non-const reference? If so, make const or use a pointer: N::X& b  [runtime/references] [2]
+src/sillycode.cpp:118:  Is this a non-const reference? If so, make const or use a pointer: N::X& a  [runtime/references] [2]
+src/sillycode.cpp:118:  Is this a non-const reference? If so, make const or use a pointer: N::X& b  [runtime/references] [2]
+src/sillycode.cpp:159:  All parameters should be named in a function  [readability/function] [3]
+src/sillycode.cpp:166:  Do not use variable-length arrays.  Use an appropriately named ('k' followed by CamelCase) compile-time constant for the size.  [runtime/arrays] [1]
+src/sillycode.cpp:173:  For a static/global string constant, use a C style string instead: "char s[]".  [runtime/string] [4]
+src/sillycode.cpp:178:  Default lambda captures are an unapproved C++ feature.  [build/c++11] [4]
+src/sillycode.cpp:194:  If an else has a brace on one side, it should have it on both  [readability/braces] [5]
+src/sillycode.cpp:197:  If an else has a brace on one side, it should have it on both  [readability/braces] [5]
+src/sillycode.cpp:203:  For a static/global string constant, use a C style string instead: "char var[]".  [runtime/string] [4]
+src/sillycode.cpp:203:  Default lambda captures are an unapproved C++ feature.  [build/c++11] [4]
+src/sillycode.cpp:223:  Using C-style cast.  Use reinterpret_cast<double*>(...) instead  [readability/casting] [4]
+src/sillycode.cpp:238:  Using C-style cast.  Use reinterpret_cast<derived2*>(...) instead  [readability/casting] [4]
+Done processing src/sillycode.cpp
+Category 'build' errors found: 6
+Category 'legal' errors found: 1
+Category 'readability' errors found: 6
+Category 'runtime' errors found: 11
+Total errors found: 24
+
