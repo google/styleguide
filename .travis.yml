@@ -21,4 +21,4 @@ install:
 script:
   - pyflakes cpplint.py
   - pyflakes cpplint_unittest.py
-  - pyflakes cpplint.py --help
+  - pyflakes cpplint_clitest.py
