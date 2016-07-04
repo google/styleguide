@@ -1,4 +1,11 @@
 language: python
+
+# use container infra for linux
+sudo: false
+
+git:
+  depth: 3
+
 python:
   - "3.5"
   - "3.4"
@@ -6,7 +13,15 @@ python:
   - "3.2"
   - "2.7"
   - "2.6"
+  - "pypy"
+  - "pypy3"
+install:
+  - pip install pyflakes
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 # install: "sudo apt-get install"
 # command to run tests, e.g. python setup.py test
-script: python cpplint_unittest.py
+script:
+  - python cpplint_unittest.py
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pyflakes cpplint.py; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pyflakes cpplint_unittest.py; fi
+  - python cpplint.py --help

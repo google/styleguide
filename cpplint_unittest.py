@@ -44,14 +44,22 @@ import shutil
 
 import cpplint
 
+try:
+  xrange
+except NameError:
+  xrange = range
+
+try:
+  unicode
+except NameError:
+  basestring = unicode = str
+
 if sys.version_info < (3,):
-  range = xrange
   def u(x):
     return codecs.unicode_escape_decode(x)[0]
   def b(x):
     return x
 else:
-  xrange = range
   def u(x):
     return x
   def b(x):
@@ -420,6 +428,15 @@ class CpplintTest(CpplintTestBase):
         'static const char kL' + ('o' * 50) + 'ngIdentifier[] = R"()";\n',
         'Lines should be <= 80 characters long'
         '  [whitespace/line_length] [2]')
+    self.TestLint(
+        '  /// @copydoc ' + ('o' * (cpplint._line_length * 2)),
+        '')
+    self.TestLint(
+        '  /// @copydetails ' + ('o' * (cpplint._line_length * 2)),
+        '')
+    self.TestLint(
+        '  /// @copybrief ' + ('o' * (cpplint._line_length * 2)),
+        '')
 
   # Test error suppression annotations.
   def testErrorSuppression(self):
@@ -990,6 +1007,22 @@ class CpplintTest(CpplintTestBase):
 
   def testRawStrings(self):
     self.TestMultiLineLint(
+      """
+      int main() {
+        struct A {
+           A(std::string s, A&& a);
+        };
+      }""",
+        'RValue references are an unapproved C++ feature.  [build/c++11] [3]')
+
+    self.TestMultiLineLint(
+      """
+      template <class T, class D = default_delete<T>> class unique_ptr {
+       public:
+          unique_ptr(unique_ptr&& u) noexcept;
+      };""",
+        'RValue references are an unapproved C++ feature.  [build/c++11] [3]')
+    self.TestMultiLineLint(
         """
         void Func() {
           static const char kString[] = R"(
@@ -1353,6 +1386,47 @@ class CpplintTest(CpplintTestBase):
             Foo(std::initializer_list<T> &arg) {}
           };""",
           '')
+      # Special case for variadic arguments
+      error_collector = ErrorCollector(self.assert_)
+      cpplint.ProcessFileData('foo.cc', 'cc',
+          ['class Foo {',
+          '  template<typename... Args>',
+          '  explicit Foo(const int arg, Args&&... args) {}',
+          '};'],
+          error_collector)
+      self.assertEqual(0, error_collector.ResultList().count(
+        'Constructors that require multiple arguments should not be marked '
+        'explicit.  [runtime/explicit] [0]'))
+      error_collector = ErrorCollector(self.assert_)
+      cpplint.ProcessFileData('foo.cc', 'cc',
+          ['class Foo {',
+          '  template<typename... Args>',
+          '  explicit Foo(Args&&... args) {}',
+          '};'],
+          error_collector)
+      self.assertEqual(0, error_collector.ResultList().count(
+        'Constructors that require multiple arguments should not be marked '
+        'explicit.  [runtime/explicit] [0]'))
+      error_collector = ErrorCollector(self.assert_)
+      cpplint.ProcessFileData('foo.cc', 'cc',
+          ['class Foo {',
+          '  template<typename... Args>',
+          '  Foo(const int arg, Args&&... args) {}',
+          '};'],
+          error_collector)
+      self.assertEqual(1, error_collector.ResultList().count(
+        'Constructors callable with one argument should be marked explicit.'
+        '  [runtime/explicit] [5]'))
+      error_collector = ErrorCollector(self.assert_)
+      cpplint.ProcessFileData('foo.cc', 'cc',
+          ['class Foo {',
+          '  template<typename... Args>',
+          '  Foo(Args&&... args) {}',
+          '};'],
+          error_collector)
+      self.assertEqual(1, error_collector.ResultList().count(
+        'Constructors callable with one argument should be marked explicit.'
+        '  [runtime/explicit] [5]'))
       # Anything goes inside an assembly block
       error_collector = ErrorCollector(self.assertTrue)
       cpplint.ProcessFileData('foo.cc', 'cc',
@@ -2519,6 +2593,11 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('const a&& b = c;', rvalue_error)
     self.TestLint('struct a&& b = c;', rvalue_error)
     self.TestLint('decltype(a)&& b = c;', rvalue_error)
+    self.TestLint('A(int s, A&& a);', rvalue_error)
+    self.TestLint('A(std::string s, A&& a);', rvalue_error)
+    self.TestLint('A(const std::string &s, A&& a);', rvalue_error)
+    self.TestLint('A(int* s, A&& a);', rvalue_error)
+    self.TestLint('unique_ptr(unique_ptr&& u) noexcept;', rvalue_error)
 
     # Cast expressions
     self.TestLint('a = const_cast<b&&>(c);', rvalue_error)
@@ -3210,6 +3289,54 @@ class CpplintTest(CpplintTestBase):
                             ['sum += MathUtil::SafeIntRound(x); x += 0.1;'],
                             error_collector)
     cpplint._cpplint_state.verbose_level = old_verbose_level
+
+  def testLambdasOnSameLine(self):
+    error_collector = ErrorCollector(self.assert_)
+    old_verbose_level = cpplint._cpplint_state.verbose_level
+    cpplint._cpplint_state.verbose_level = 0
+    cpplint.ProcessFileData('foo.cc', 'cc',
+                            ['const auto lambda = '
+                              '[](const int i) { return i; };'],
+                            error_collector)
+    cpplint._cpplint_state.verbose_level = old_verbose_level
+    self.assertEqual(0, error_collector.Results().count(
+        'More than one command on the same line  [whitespace/newline] [0]'))
+
+    error_collector = ErrorCollector(self.assert_)
+    old_verbose_level = cpplint._cpplint_state.verbose_level
+    cpplint._cpplint_state.verbose_level = 0
+    cpplint.ProcessFileData('foo.cc', 'cc',
+                            ['const auto result = std::any_of(vector.begin(), '
+                              'vector.end(), '
+                              '[](const int i) { return i > 0; });'],
+                            error_collector)
+    cpplint._cpplint_state.verbose_level = old_verbose_level
+    self.assertEqual(0, error_collector.Results().count(
+        'More than one command on the same line  [whitespace/newline] [0]'))
+
+    error_collector = ErrorCollector(self.assert_)
+    old_verbose_level = cpplint._cpplint_state.verbose_level
+    cpplint._cpplint_state.verbose_level = 0
+    cpplint.ProcessFileData('foo.cc', 'cc',
+                            ['return mutex::Lock<void>([this]() { '
+                              'this->ReadLock(); }, [this]() { '
+                              'this->ReadUnlock(); });'],
+                            error_collector)
+    cpplint._cpplint_state.verbose_level = old_verbose_level
+    self.assertEqual(0, error_collector.Results().count(
+        'More than one command on the same line  [whitespace/newline] [0]'))
+
+    error_collector = ErrorCollector(self.assert_)
+    old_verbose_level = cpplint._cpplint_state.verbose_level
+    cpplint._cpplint_state.verbose_level = 0
+    cpplint.ProcessFileData('foo.cc', 'cc',
+                            ['return mutex::Lock<void>([this]() { '
+                              'this->ReadLock(); }, [this]() { '
+                              'this->ReadUnlock(); }, object);'],
+                            error_collector)
+    cpplint._cpplint_state.verbose_level = old_verbose_level
+    self.assertEqual(0, error_collector.Results().count(
+        'More than one command on the same line  [whitespace/newline] [0]'))
 
   def testEndOfNamespaceComments(self):
     error_collector = ErrorCollector(self.assertTrue)
@@ -4302,7 +4429,6 @@ class CpplintTest(CpplintTestBase):
       os.makedirs(header_directory)
       file_path = os.path.join(header_directory, 'cpplint_test_header.h')
       open(file_path, 'a').close()
-      file_info = cpplint.FileInfo(file_path)
 
       # search for .svn if _repository is not specified
       self.assertEqual('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
@@ -5559,6 +5685,12 @@ class NestingStateTest(unittest.TestCase):
     self.assertEqual(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
     self.assertEqual(self.nesting_state.stack[0].name, 'K')
+
+  def testTemplateDefaultArg(self):
+    self.UpdateWithLines([
+      'template <class T, class D = default_delete<T>> class unique_ptr {',])
+    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertTrue(self.nesting_state.stack[0], isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
 
   def testTemplateInnerClass(self):
     self.UpdateWithLines(['class A {',
