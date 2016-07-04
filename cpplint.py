@@ -283,6 +283,7 @@ _ERROR_CATEGORIES = [
     'build/include_alpha',
     'build/include_order',
     'build/include_what_you_use',
+    'build/namespaces_literals',
     'build/namespaces',
     'build/printf_format',
     'build/storage_class',
@@ -5119,9 +5120,14 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
           % (match.group(1), match.group(2)))
 
   if Search(r'\busing namespace\b', line):
-    error(filename, linenum, 'build/namespaces', 5,
-          'Do not use namespace using-directives.  '
-          'Use using-declarations instead.')
+    if Search(r'\bliterals\b', line):
+      error(filename, linenum, 'build/namespaces_literals', 5,
+            'Do not use namespace using-directives.  '
+            'Use using-declarations instead.')
+    else:
+      error(filename, linenum, 'build/namespaces', 5,
+            'Do not use namespace using-directives.  '
+            'Use using-declarations instead.')
 
   # Detect variable-length arrays.
   match = Match(r'\s*(.+::)?(\w+) [a-z]\w*\[(.+)];', line)
