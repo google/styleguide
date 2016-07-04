@@ -235,6 +235,7 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
       filter=+filter1,-filter2,...
       exclude_files=regex
       linelength=80
+      root=subdir
 
     "set noparent" option prevents cpplint from traversing directory tree
     upwards looking for more .cfg files in parent directories. This option
@@ -249,6 +250,9 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
     through the linter.
 
     "linelength" specifies the allowed line length for the project.
+
+    The "root" option is similar in function to the --root flag (see example
+    above).
 
     CPPLINT.cfg has an effect on files in the same directory and all
     subdirectories, unless overridden by a nested configuration file.
@@ -6389,6 +6393,9 @@ def ProcessConfigOverrides(filename):
                   sys.stderr.write('Extensions should be a comma-separated list of values;'
                                    'for example: extensions=hpp,cpp\n'
                                    'This could not be parsed: "%s"' % (val,))
+          elif name == 'root':
+            global _root
+            _root = val
           else:
             _cpplint_state.PrintError(
                 'Invalid configuration option (%s) in file %s\n' %
