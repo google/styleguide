@@ -1395,7 +1395,7 @@ class CpplintTest(CpplintTestBase):
           };""",
           '')
       # Special case for variadic arguments
-      error_collector = ErrorCollector(self.assert_)
+      error_collector = ErrorCollector(self.assertTrue)
       cpplint.ProcessFileData('foo.cc', 'cc',
           ['class Foo {',
           '  template<typename... Args>',
@@ -1405,7 +1405,7 @@ class CpplintTest(CpplintTestBase):
       self.assertEqual(0, error_collector.ResultList().count(
         'Constructors that require multiple arguments should not be marked '
         'explicit.  [runtime/explicit] [0]'))
-      error_collector = ErrorCollector(self.assert_)
+      error_collector = ErrorCollector(self.assertTrue)
       cpplint.ProcessFileData('foo.cc', 'cc',
           ['class Foo {',
           '  template<typename... Args>',
@@ -1415,7 +1415,7 @@ class CpplintTest(CpplintTestBase):
       self.assertEqual(0, error_collector.ResultList().count(
         'Constructors that require multiple arguments should not be marked '
         'explicit.  [runtime/explicit] [0]'))
-      error_collector = ErrorCollector(self.assert_)
+      error_collector = ErrorCollector(self.assertTrue)
       cpplint.ProcessFileData('foo.cc', 'cc',
           ['class Foo {',
           '  template<typename... Args>',
@@ -1425,7 +1425,7 @@ class CpplintTest(CpplintTestBase):
       self.assertEqual(1, error_collector.ResultList().count(
         'Constructors callable with one argument should be marked explicit.'
         '  [runtime/explicit] [5]'))
-      error_collector = ErrorCollector(self.assert_)
+      error_collector = ErrorCollector(self.assertTrue)
       cpplint.ProcessFileData('foo.cc', 'cc',
           ['class Foo {',
           '  template<typename... Args>',
@@ -3299,7 +3299,7 @@ class CpplintTest(CpplintTestBase):
     cpplint._cpplint_state.verbose_level = old_verbose_level
 
   def testLambdasOnSameLine(self):
-    error_collector = ErrorCollector(self.assert_)
+    error_collector = ErrorCollector(self.assertTrue)
     old_verbose_level = cpplint._cpplint_state.verbose_level
     cpplint._cpplint_state.verbose_level = 0
     cpplint.ProcessFileData('foo.cc', 'cc',
@@ -3310,7 +3310,7 @@ class CpplintTest(CpplintTestBase):
     self.assertEqual(0, error_collector.Results().count(
         'More than one command on the same line  [whitespace/newline] [0]'))
 
-    error_collector = ErrorCollector(self.assert_)
+    error_collector = ErrorCollector(self.assertTrue)
     old_verbose_level = cpplint._cpplint_state.verbose_level
     cpplint._cpplint_state.verbose_level = 0
     cpplint.ProcessFileData('foo.cc', 'cc',
@@ -3322,7 +3322,7 @@ class CpplintTest(CpplintTestBase):
     self.assertEqual(0, error_collector.Results().count(
         'More than one command on the same line  [whitespace/newline] [0]'))
 
-    error_collector = ErrorCollector(self.assert_)
+    error_collector = ErrorCollector(self.assertTrue)
     old_verbose_level = cpplint._cpplint_state.verbose_level
     cpplint._cpplint_state.verbose_level = 0
     cpplint.ProcessFileData('foo.cc', 'cc',
@@ -3334,7 +3334,7 @@ class CpplintTest(CpplintTestBase):
     self.assertEqual(0, error_collector.Results().count(
         'More than one command on the same line  [whitespace/newline] [0]'))
 
-    error_collector = ErrorCollector(self.assert_)
+    error_collector = ErrorCollector(self.assertTrue)
     old_verbose_level = cpplint._cpplint_state.verbose_level
     cpplint._cpplint_state.verbose_level = 0
     cpplint.ProcessFileData('foo.cc', 'cc',
