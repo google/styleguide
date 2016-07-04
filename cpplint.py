@@ -6581,7 +6581,7 @@ def main():
     # Change stderr to write with replacement characters so we don't die
     # if we try to print something containing non-ASCII characters.
     sys.stderr = codecs.StreamReader(sys.stderr, 'replace')
-    
+
     _cpplint_state.ResetErrorCounts()
     for filename in filenames:
       ProcessFile(filename, _cpplint_state.verbose_level)
