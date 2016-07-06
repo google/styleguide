@@ -114,6 +114,8 @@ class SignatureTests(unittest.TestCase):
 
     def runAndCheck(self, cwd, args, expectedStatus, expectedOut, expectedErr):
         cmd = BASE_CMD + ' ' + args
+        # command to reproduce, do not forget first two lines have special meaning
+        print("cd " + cwd + ";" + cmd + " 2> <filename>")
         (status, out, err) = RunShellCommand(cmd, cwd)
         try:
             self.assertEqual(expectedStatus, status)

@@ -103,7 +103,7 @@ src/sillycode.cpp:236:  At least two spaces is best between code and comments  [
 src/sillycode.cpp:238:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
 src/sillycode.cpp:238:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 src/sillycode.cpp:238:  Using C-style cast.  Use reinterpret_cast<derived2*>(...) instead  [readability/casting] [4]
-src/sillycode.cpp:239:  Lines should very rarely be longer than 100 characters  [whitespace/line_length] [4]
+src/sillycode.cpp:239:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
 src/sillycode.cpp:239:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 src/sillycode.cpp:248:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 src/sillycode.cpp:249:  At least two spaces is best between code and comments  [whitespace/comments] [2]
