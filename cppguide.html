@@ -15,7 +15,7 @@
 
 <h2 class="ignoreLink" id="Background">Background</h2>
 
-<p>C++ is the main development language  used by
+<p>C++ is one of the main development languages  used by
 many of Google's open-source projects. As every C++
 programmer knows, the language has many powerful features, but
 this power brings with it complexity, which in turn can make
@@ -179,36 +179,37 @@ pitfalls of using header files.</p>
 <h3 id="Self_contained_Headers">Self-contained Headers</h3>
 
 <div class="summary">
-<p>Header files should be self-contained and end in <code>.h</code>. Files that
-are meant for textual inclusion, but are not headers, should end in
-<code>.inc</code>. Separate <code>-inl.h</code> headers are disallowed.</p>
+<p>Header files should be self-contained (compile on their own) and
+end in <code>.h</code>.  Non-header files that are meant for inclusion
+should end in <code>.inc</code>. </p>
 </div> 
 
 <div class="stylebody">
-<p>All header files should be self-contained. In other
-words, users and refactoring tools should not have to adhere to special
-conditions in order to include the header. Specifically, a
-header should have <a href="#The__define_Guard">header guards</a>,
-should include all other headers it needs, and should not require any
-particular symbols to be defined.</p>
+<p>All header files should be self-contained. Users and refactoring
+tools should not have to adhere to special conditions to include the
+header. Specifically, a header should
+have <a href="#The__define_Guard">header guards</a> and include all
+other headers it needs.</p>
 
-<p>There are rare cases where a file is not meant to be self-contained, but
-instead is meant to be textually included at a specific point in the code.
-Examples are files that need to be included multiple times or
-platform-specific extensions that essentially are part of other headers. Such
-files should use the file extension <code>.inc</code>.</p>
+<p>If a template or inline function is declared in a <code>.h</code>
+file, that same header should provide its definition.  The definitions
+of these constructs must be included into every <code>.cc</code> file
+that uses them, or the program may fail to link in some build
+configurations. Do not move these definitions to separately included
+header files (<code>-inl.h</code>); this practice was common in the
+past, but is no longer allowed.</p>
 
-<p>If a template or inline function is declared in a <code>.h</code> file,
-define it in that same file. The definitions of these constructs must
-be included into every <code>.cc</code> file that uses them, or the
-program may fail to link in some build configurations. Do not move these
-definitions to separate <code>-inl.h</code> files.</p>
+<p>As an exception, a template that is explicitly instantiated for
+all relevant sets of template arguments, or that is a private
+implementation detail of a class, is allowed to be defined in the one
+and only <code>.cc</code> file that instantiates the template.</p>
 
-<p>As an exception, a function template that is explicitly
-instantiated for all relevant sets of template arguments, or
-that is a private member of a class, may
-be defined in the only <code>.cc</code> file that
-instantiates the template.</p>
+<p>There are rare cases where a file is not meant to be
+self-contained, but it is meant to be included at a specific point in
+the code.  Examples are files that need to be included multiple times
+or platform-specific implementation details that are essentially part
+of other self-contained headers. Such files should use the file
+extension <code>.inc</code>.</p>
 
 </div> 
 
@@ -509,7 +510,8 @@ system-specific code small and localized. Example:</p>
 <p>With few exceptions, place code in a namespace. Namespaces
 should have unique names based on the project name, and possibly
 its path. Unnamed namespaces in <code>.cc</code> files are
-encouraged. Do not use <i>using-directives</i>. Do not use
+encouraged. Do not use <i>using-directives</i> (e.g.
+<code>using namespace foo</code>). Do not use
 inline namespaces.</p>
 </div>
 
@@ -732,7 +734,7 @@ external resources or have significant dependencies.</p>
 </div>
 
 <div class="decision">
-<p>Sometimes it is useful, or even necessary, to define a
+<p>Sometimes it is useful to define a
 function not bound to a class instance. Such a function
 can be either a static member or a nonmember function.
 Nonmember functions should not depend on external
@@ -758,7 +760,7 @@ class FooBar {
 }
 </pre>
 
-<p>If you must define a nonmember function and it is only
+<p>If you define a nonmember function and it is only
 needed in its <code>.cc</code> file, use an unnamed
 <a href="#Namespaces">namespace</a> or
 <code>static</code> linkage (eg <code>static int Foo()
@@ -1097,10 +1099,10 @@ also omit <code>explicit</code>, in order to support copy-initialization
 <h3 id="Copyable_Movable_Types">Copyable and Movable Types</h3>
 <a id="Copy_Constructors"></a>
 <div class="summary">
-<p>Support copying and/or moving if it makes sense for your type.
-Otherwise, disable the implicitly generated special
-functions that perform copies and moves.</p>
-</div>
+<p>Support copying and/or moving if these operations are clear and meaningful
+for your type. Otherwise, disable the implicitly generated special functions
+that perform copies and moves.
+</p></div>
 
 <div class="stylebody">
 
@@ -1122,15 +1124,15 @@ in some situations, e.g. when passing objects by value.</p>
 </div>
 
 <div class="pros">
-<p>Objects of copyable and movable types can be passed and returned
-by value, which makes APIs simpler, safer, and more general.
-Unlike when passing pointers or references, there's no risk of
-confusion over ownership, lifetime, mutability, and similar
-issues, and no need to specify them in the contract. It also
-prevents non-local interactions between the client and the
-implementation, which makes them easier to understand and
-maintain. Such objects can be used with generic
-APIs that require pass-by-value, such as most containers.</p>
+<p>Objects of copyable and movable types can be passed and returned by value,
+which makes APIs simpler, safer, and more general. Unlike when passing objects
+by pointer or reference, there's no risk of confusion over ownership,
+lifetime, mutability, and similar issues, and no need to specify them in the
+contract. It also prevents non-local interactions between the client and the
+implementation, which makes them easier to understand, maintain, and optimize by
+the compiler. Further, such objects can be used with generic APIs that
+require pass-by-value, such as most containers, and they allow for additional
+flexibility in e.g., type composition.</p>
 
 <p>Copy/move constructors and assignment operators are usually
 easier to define correctly than alternatives
@@ -1151,54 +1153,39 @@ in some cases.</p>
 </div>
 
 <div class="cons">
-<p>Many types do not need to be copyable, and providing copy
-operations for them can be confusing, nonsensical, or outright
-incorrect. Copy/assigment operations for base class types are
-hazardous, because use of them can lead to
-<a href="https://en.wikipedia.org/wiki/Object_slicing">object
-slicing</a>. Defaulted or carelessly-implemented copy operations
-can be incorrect, and the resulting bugs can be confusing and
-difficult to diagnose.</p>
+<p>Some types do not need to be copyable, and providing copy
+operations for such types can be confusing, nonsensical, or outright
+incorrect. Types representing singleton objects (<code>Registerer</code>),
+objects tied to a specific scope (<code>Cleanup</code>), or closely coupled to
+object identity (<code>Mutex</code>) cannot be copied meaningfully.
+Copy operations for base class types that are to be used
+polymorphically are hazardous, because use of them can lead to
+<a href="http://en.wikipedia.org/wiki/Object_slicing">object slicing</a>.
+Defaulted or carelessly-implemented copy operations can be incorrect, and the
+resulting bugs can be confusing and difficult to diagnose.</p>
 
 <p>Copy constructors are invoked implicitly, which makes the
-invocation easy to miss. This may cause confusion, particularly
-for programmers used to languages where pass-by-reference is
-conventional or mandatory. It may also encourage excessive
-copying, which can cause performance problems.</p>
-
-
+invocation easy to miss. This may cause confusion for programmers used to
+languages where pass-by-reference is conventional or mandatory. It may also
+encourage excessive copying, which can cause performance problems.</p>
 </div>
 
 <div class="decision">
 
-<p>Make your type copyable/movable if it will be useful, and if it makes sense
-in the context of the rest of the API.  As a rule of thumb, if the behavior
-(including computational complexity) of a copy isn't immediately obvious to
-users of your type, your type shouldn't be copyable.  If you define a copy or
-move constructor, define the corresponding assignment operator, and vice-versa.
-If your type is copyable, do not define move operations unless they are
-significantly more efficient than the corresponding copy operations. If your
+<p>Provide the copy and move operations if their meaning is clear to a casual
+user and the copying/moving does not incur unexpected costs. If you define a
+copy or move constructor, define the corresponding assignment operator, and
+vice-versa. If your type is copyable, do not define move operations unless they
+are significantly more efficient than the corresponding copy operations. If your
 type is not copyable, but the correctness of a move is obvious to users of the
 type, you may make the type move-only by defining both of the move operations.
 </p>
 
 <p>If your type provides copy operations, it is recommended that you design
-your class so that the default implementation of those operations is correct
-and that you explicitly define them with <code>= default</code>.  Remember to
-review the correctness of any defaulted operations as you would any other
-code.</p>
-
-<pre>class Foo {  // Copyable and movable type.
- public:
-  Foo(Foo&amp;&amp; other) = default;
-  Foo(const Foo&amp; other) = default;
-  Foo&amp; operator=(Foo&amp;&amp; other) = default;
-  Foo&amp; operator=(const Foo&amp; other) = default;
-
- private:
-  string field_;
-};
-</pre>
+your class so that the default implementation of those operations is correct.
+Remember to review the correctness of any defaulted operations as you would any
+other code, and to document that your class is copyable and/or cheaply movable
+if that's an API guarantee.</p>
 
 <pre class="badcode">class Foo {
  public:
@@ -1218,93 +1205,11 @@ copyable, provide a public virtual <code>Clone()</code>
 method, and a protected copy constructor that derived classes
 can use to implement it.</p>
 
-<p>If you do not want to support copy/move operations on
-your type, explicitly disable them using <code>= delete</code> or
-whatever
-other mechanism your project uses.
+<p>If you do not want to support copy/move operations on your type,
+explicitly disable them using <code>= delete</code> in
+the <code>public:</code> section. </p>
 
-</p></div> 
 </div> 
-
-<h3 id="Delegating_and_inheriting_constructors">Delegating and Inheriting Constructors</h3>
-
-<div class="summary">
-<p> Use delegating and inheriting
-constructors when they reduce code duplication.</p>
-</div>
-
-<div class="stylebody">
-
-<div class="definition">
-
-<p>Delegating and inheriting constructors are two
-different features, both introduced in C++11, for
-reducing code duplication in constructors. Delegating
-constructors allow one of a class's constructors to
-forward work to one of the class's other constructors,
-using a special variant of the initialization list
-syntax. For example:</p>
-
-<pre>X::X(const string&amp; name) : name_(name) {
-  ...
-}
-
-X::X() : X("") {}
-</pre>
-
-<p>Inheriting constructors allow a derived class to have
-its base class's constructors available directly, just as
-with any of the base class's other member functions,
-instead of having to redeclare them. This is especially
-useful if the base has multiple constructors. For
-example:</p>
-
-<pre>class Base {
- public:
-  Base();
-  Base(int n);
-  Base(const string&amp; s);
-  ...
-};
-
-class Derived : public Base {
- public:
-  using Base::Base;  // Base's constructors are redeclared here.
-};
-</pre>
-
-<p>This is especially useful when <code>Derived</code>'s
-constructors don't have to do anything more than calling
-<code>Base</code>'s constructors.</p>
-</div>
-
-<div class="pros">
-<p>Delegating and inheriting constructors reduce
-verbosity and boilerplate, which can improve
-readability.</p>
-
-<p>Delegating constructors are familiar to Java
-programmers.</p>
-</div>
-
-<div class="cons">
-<p>It's possible to approximate the behavior of
-delegating constructors by using a helper function.</p>
-
-<p>Inheriting constructors may be confusing if a derived
-class introduces new member variables, since the base
-class constructor doesn't know about them.</p>
-</div>
-
-<div class="decision">
-<p>Use delegating and inheriting constructors when they reduce
-boilerplate and improve readability.
-Be cautious about inheriting constructors when your derived class has
-new member variables. Inheriting constructors may still be appropriate
-in that case if you can use in-class member initialization
-for the derived class's member variables.</p>
-</div>
-
 </div> 
 
 <h3 id="Structs_vs._Classes">Structs vs. Classes</h3>
@@ -1718,7 +1623,7 @@ be in the following order:</p>
   <li>Constants (<code>static const</code> data
   members)</li>
 
-  <li>Constructors</li>
+  <li>Constructors and assignment operators</li>
 
   <li>Destructor</li>
 
@@ -2190,8 +2095,6 @@ do use shared ownership, prefer to use
 you need to be compatible with older versions of C++.
 Never use <code>std::auto_ptr</code>. Instead, use
 <code>std::unique_ptr</code>.</p>
-
-
 </div> 
 
 </div> 
@@ -2628,9 +2531,10 @@ them.</p>
 explicit type conversion is necessary. </p>
 
 <ul>
-  <li>Convert arithmetic types using brace initialization.  This is
-  the safest approach because code will not compile if conversion can
-  result in information loss.  The syntax is also concise.</li>
+  <li>Use brace initialization to convert arithmetic types
+  (e.g. <code>int64{x}</code>).  This is the safest approach because code
+  will not compile if conversion can result in information loss.  The
+  syntax is also concise.</li>
 
   
 
@@ -2715,7 +2619,7 @@ may select a different overload than you expect).</li>
 <li>The practice of building up output through chains
 of <code>&lt;&lt;</code> operators interferes with
 internationalization, because it bakes word order into the
-code, and streams' support for localization is <a href="https://www.boost.org/doc/libs/1_48_0/libs/locale/doc/html/rationale.html#rationale_why">
+code, and streams' support for localization is <a href="http://www.boost.org/doc/libs/1_48_0/libs/locale/doc/html/rationale.html#rationale_why">
 flawed</a>.</li>
 
 
@@ -3227,7 +3131,8 @@ uint64_t my_mask = 3ULL &lt;&lt; 48;
 
 <div class="summary">
 <p>Be very cautious with macros. Prefer inline functions,
-enums, and <code>const</code> variables to macros.</p>
+enums, and <code>const</code> variables to macros. Don't
+use macros to define pieces of a C++ API.</p>
 </div>
 
 <div class="stylebody">
@@ -3235,6 +3140,26 @@ enums, and <code>const</code> variables to macros.</p>
 <p>Macros mean that the code you see is not the same as
 the code the compiler sees. This can introduce unexpected
 behavior, especially since macros have global scope.</p>
+
+<p>The problems introduced by macros are especially severe
+when they are used to define pieces of a C++ API,
+and still more so for public APIs. Every error message from
+the compiler when developers incorrectly use that interface
+now must explain how the macros formed the interface.
+Refactoring and analysis tools have a dramatically harder
+time updating the interface. As a consequence, we
+specifically disallow using macros in this way.
+For example, avoid patterns like:</p>
+
+<pre class="badcode">class WOMBAT_TYPE(Foo) {
+  // ...
+
+ public:
+  EXPAND_PUBLIC_WOMBAT_API(Foo)
+
+  EXPAND_WOMBAT_COMPARISONS(Foo, ==, &lt;)
+};
+</pre>
 
 <p>Luckily, macros are not nearly as necessary in C++ as
 they are in C. Instead of using a macro to inline
@@ -3254,7 +3179,10 @@ lower-level libraries. And some of their special features
 (like stringifying, concatenation, and so forth) are not
 available through the language proper. But before using a
 macro, consider carefully whether there's a non-macro way
-to achieve the same result.</p>
+to achieve the same result. If you need to use a macro to
+define an interface, contact 
+your project leads to request
+a waiver of this rule.</p>
 
 <p>The following usage pattern will avoid many problems
 with macros; if you use macros, follow it whenever
@@ -3347,95 +3275,46 @@ memset(&amp;data, 0, sizeof(data));
 <h3 id="auto">auto</h3>
 
 <div class="summary">
-<p>Use <code>auto</code> to avoid type names that are just
-clutter. Continue to use manifest type declarations when it
-helps readability, and never use <code>auto</code> for
-anything but local variables.</p>
+<p>Use <code>auto</code> to avoid type names that are noisy, obvious,
+or unimportant - cases where the type doesn't aid in clarity for the
+reader. Continue to use manifest type declarations when it helps
+readability, and never use <code>auto</code> for anything but local
+variables.</p>
 </div>
 
 <div class="stylebody">
 
-<div class="definition">
-<p> In C++11, a variable whose type is given as <code>auto</code>
-will be given a type that matches that of the expression used to
-initialize it. You can use <code>auto</code> either to
-initialize a variable by copying, or to bind a
-reference.</p>
-
-<pre>vector&lt;string&gt; v;
-...
-auto s1 = v[0];  // Makes a copy of v[0].
-const auto&amp; s2 = v[0];  // s2 is a reference to v[0].
-</pre>
-</div>
-
-<p>The <code>auto</code> keyword is also used in an
-unrelated C++11 feature: it's part of the syntax for a
-new kind of function declaration with a
-<a href="#trailing_return">trailing return type</a>.</p>
-
-
 <div class="pros">
-<p>C++ type names can sometimes be long and cumbersome,
-especially when they involve templates or namespaces. In
-a statement like:</p>
-
-<pre>sparse_hash_map&lt;string, int&gt;::iterator iter = m.find(val);
-</pre>
+<p>
+</p><ul>
+<li>C++ type names can be long and cumbersome, especially when they
+involve templates or namespaces.</li>
+<li>When a C++ type name is repeated within a single declaration or a
+small code region, the repetition may not be aiding readability.</li>
+<li>It is sometimes safer to let the type be specified by the type of
+the initialization expression, since that avoids the possibility of
+unintended copies or type conversions.</li>
+</ul>
+<p></p>
 </div>
-
-<p>the return type is hard to read, and obscures the
-primary purpose of the statement. Changing it to:</p>
-
-<pre>auto iter = m.find(val);
-</pre>
-
-<p>makes it more readable.</p>
-
-<p>Without <code>auto</code> we are sometimes forced to
-write a type name twice in the same expression, adding no
-value for the reader, as in:</p>
-
-<pre>diagnostics::ErrorStatus* status = new diagnostics::ErrorStatus("xyz");
-</pre>
-
-<p>Using <code>auto</code> makes it easier to use
-intermediate variables when appropriate, by reducing the
-burden of writing their types explicitly.</p>
-
 <div class="cons">
 
 <p>Sometimes code is clearer when types are manifest,
 especially when a variable's initialization depends on
-things that were declared far away. In an expression
+things that were declared far away. In expressions
 like:</p>
 
-
-<pre>auto i = x.Lookup(key);
+<pre class="badcode">auto foo = x.add_foo();
+auto i = y.Find(key);
 </pre>
 
-<p>it may not be obvious what <code>i</code>'s type is,
-if <code>x</code> was declared hundreds of lines earlier.</p>
+<p>It may not be obvious what the resulting types are if the type
+of <code>y</code> isn't very well known, or if <code>y</code> was
+declared many lines earlier.</p>
 
 <p>Programmers have to understand the difference between
 <code>auto</code> and <code>const auto&amp;</code> or
 they'll get copies when they didn't mean to.</p>
-
-<p>The interaction between <code>auto</code> and C++11
-brace-initialization can be confusing. The exact
-rules have been in flux, and compilers don't all
-implement the final rules yet.  
-The declarations:</p>
-
-<pre>auto x{3};
-auto y = {3};
-</pre>
-
-<p>mean different things &#8212;
-<code>x</code> is an <code>int</code>, while
-<code>y</code> is a <code>std::initializer_list&lt;int&gt;</code>.
-The same applies to other normally-invisible proxy types.
-</p>
 
 <p>If an <code>auto</code> variable is used as part of an
 interface, e.g. as a constant in a header, then a
@@ -3446,12 +3325,47 @@ than intended.</p>
 
 <div class="decision">
 
-<p><code>auto</code> is permitted, for local variables
-only. Do not use <code>auto</code> for file-scope or
-namespace-scope variables, or for class members. Never
-initialize an <code>auto</code>-typed variable with
-a braced initializer list.
-</p></div>
+<p><code>auto</code> is permitted, for local variables only, when it
+increases readability, particularly as described below. Do not
+use <code>auto</code> for file-scope or namespace-scope variables, or
+for class members. Never initialize an <code>auto</code>-typed
+variable with a braced initializer list.</p>
+
+<p>Specific cases where <code>auto</code> is allowed or encouraged:
+</p><ul>
+<li>(Encouraged) For iterators and other long/cluttery type names, particularly
+when the type is clear from context (calls
+to <code>find</code>, <code>begin</code>, or <code>end</code> for
+instance).</li>
+<li>(Allowed) When the type is clear from local context (in the same expression
+or within a few lines).  Initialization of a pointer or smart pointer
+with calls
+to <code>new</code> 
+commonly falls into this category, as does use of <code>auto</code> in
+a range-based loop over a container whose type is spelled out
+nearby.</li>
+<li>(Allowed) When the type doesn't matter because it isn't being used for
+anything other than equality comparison.</li>
+<li>(Encouraged) When iterating over a map with a range-based loop
+(because it is often assumed that the correct type
+is <code>pair&lt;KeyType,ValueType&gt;</code> whereas it is actually
+<code>pair&lt;const KeyType,ValueType&gt;</code>). This is
+particularly well paired with local <code>key</code>
+and <code>value</code> aliases for <code>.first</code>
+and <code>.second</code> (often const-ref).
+<pre class="code">for (const auto&amp; item : some_map) {
+  const KeyType&amp; key = item.first;
+  const ValType&amp; value = item.second;
+  // The rest of the loop can now just refer to key and value,
+  // a reader can see the types in question, and we've avoided
+  // the too-common case of extra copies in this iteration.
+}
+</pre>
+</li>
+</ul>
+
+<p></p>
+</div>
 
 </div> 
 
@@ -3553,9 +3467,8 @@ means can be confusing.</p>
 <h3 id="Lambda_expressions">Lambda expressions</h3>
 
 <div class="summary">
-<p>Use lambda expressions where appropriate.  Avoid
-default lambda captures when capturing <code>this</code> or
-if the lambda will escape the current scope.</p>
+<p>Use lambda expressions where appropriate. Prefer explicit captures
+when the lambda will escape the current scope.</p>
 </div>
 
 <div class="stylebody">
@@ -3571,19 +3484,29 @@ functions as arguments. For example:</p>
 });
 </pre>
 
-They further allow capturing variables from the enclosing scope either
-explicitly by name, or implicitly using a default capture. Default captures
-implicitly capture any variable referenced in the lambda body, including
-<code>this</code> if any members are used.  The default capture must come
-first and be one of <code>&amp;</code> for capture by reference or
-<code>=</code> for capture by value, followed by any explicit captures which
-differ from the default:
+<p> They further allow capturing variables from the enclosing scope either
+explicitly by name, or implicitly using a default capture. Explicit captures
+require each variable to be listed, as
+either a value or reference capture:</p>
 
 <pre>int weight = 3;
 int sum = 0;
-// Captures `weight` (implicitly) by value and `sum` by reference.
-std::for_each(v.begin(), v.end(), [=, &amp;sum](int x) {
+// Captures `weight` by value and `sum` by reference.
+std::for_each(v.begin(), v.end(), [weight, &amp;sum](int x) {
   sum += weight * x;
+});
+</pre>
+
+
+Default captures implicitly capture any variable referenced in the
+lambda body, including <code>this</code> if any members are used:
+
+<pre>const std::vector&lt;int&gt; lookup_table = ...;
+std::vector&lt;int&gt; indices = ...;
+// Captures `lookup_table` by reference, sorts `indices` by the value
+// of the associated element in `lookup_table`.
+std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
+  return lookup_table[a] &lt; lookup_table[b];
 });
 </pre>
 
@@ -3614,19 +3537,20 @@ wrapper <code>std::function</code>.
 
 <div class="cons">
 <ul>
-  <li>Default captures make it easy to overlook an
-    implicit capture and use of <code>this</code>.
-  </li>
+  <li>Variable capture in lambdas can be a source of dangling-pointer
+  bugs, particularly if a lambda escapes the current scope.</li>
 
-  <li>Variable capture in lambdas can be tricky, and
-  might be a new source of dangling-pointer bugs,
-  particularly if a lambda escapes the current scope.</li>
+  <li>Default captures by value can be misleading because they do not prevent
+  dangling-pointer bugs. Capturing a pointer by value doesn't cause a deep
+  copy, so it often has the same lifetime issues as capture by reference.
+  This is especially confusing when capturing 'this' by value, since the use
+  of 'this' is often implicit.</li>
 
   <li>It's possible for use of lambdas to get out of
   hand; very long nested anonymous functions can make
   code harder to understand.</li>
 
-  
+
 </ul>
 </div>
 
@@ -3634,10 +3558,8 @@ wrapper <code>std::function</code>.
 <ul>
 <li>Use lambda expressions where appropriate, with formatting as
 described <a href="#Formatting_Lambda_Expressions">below</a>.</li>
-<li>Use default captures judiciously, when it aids readability.
-In particular, prefer to write lambda captures explicitly when
-capturing <code>this</code> or if the lambda will escape the
-current scope. For example, instead of:
+<li>Prefer explicit captures if the lambda may escape the current scope.
+For example, instead of:
 <pre class="badcode">{
   Foo foo;
   ...
@@ -3661,6 +3583,15 @@ prefer to write:
 // function, and it's clearer that `foo` is dangerously captured by
 // reference.
 </pre>
+</li>
+<li>Use default capture by reference ([&amp;]) only when the
+lifetime of the lambda is obviously shorter than any potential
+captures.
+</li>
+<li>Use default capture by value ([=]) only as a means of binding a
+few variables for a short lambda, where the set of captured
+variables is obvious at a glance. Prefer not to write long or
+complex lambdas with default capture by value.
 </li>
 <li>Keep unnamed lambdas short.  If a lambda body is more than
 maybe five lines long, prefer to give the lambda a name, or to
@@ -4029,8 +3960,57 @@ guide, the following C++11 features may not be used:</p>
   
 
   
+</ul>
 </div>
 
+</div> 
+
+<h3 id="Nonstandard_Extensions">Nonstandard Extensions</h3>
+
+<div class="summary">
+<p>Nonstandard extensions to C++ may not be used unless otherwise specified.</p>
+</div>
+<div class="stylebody">
+<div class="definition">
+<p>Compilers support various extensions that are not part of standard C++. Such
+  extensions include GCC's <code>__attribute__</code>, intrinsic functions such
+  as <code>__builtin_prefetch</code>, designated initializers (e.g.
+  <code>Foo f = {.field = 3}</code>), inline assembly, <code>__COUNTER__</code>,
+  <code>__PRETTY_FUNCTION__</code>, compound statement expressions (e.g.
+  <code>foo = ({ int x; Bar(&amp;x); x })</code>, and the <code>a?:b</code>
+  syntax.</p>
+</div>
+
+<div class="pros">
+  <ul>
+    <li>Nonstandard extensions may provide useful features that do not exist
+      in standard C++. For example, some people think that designated
+      initializers are more readable than standard C++ features like
+      constructors.</li>
+    <li>Important performance guidance to the compiler can only be specified
+      using extensions.</li>
+  </ul>
+</div>
+
+<div class="cons">
+  <ul>
+    <li>Nonstandard extensions do not work in all compilers. Use of nonstandard
+      extensions reduces portability of code.</li>
+    <li>Even if they are supported in all targeted compilers, the extensions
+      are often not well-specified, and there may be subtle behavior differences
+      between compilers.</li>
+    <li>Nonstandard extensions add to the language features that a reader must
+      know to understand the code.</li>
+  </ul>
+</div>
+
+<div class="decision">
+<p>Do not use nonstandard extensions. You may use portability wrappers that
+  are implemented using nonstandard extensions, so long as those wrappers
+  
+  are provided by a designated project-wide
+  portability header.</p>
+</div>
 </div> 
 
 <h3 id="Aliases">Aliases</h3>
@@ -4141,7 +4121,7 @@ the rules are the rules.</p>
 <h3 id="General_Naming_Rules">General Naming Rules</h3>
 
 <div class="summary">
-<p>Names should be descriptive; eschew abbreviation.</p>
+<p>Names should be descriptive; avoid abbreviation.</p>
 </div>
 
 <div class="stylebody">
@@ -4299,14 +4279,6 @@ the trailing underscores that data members in classes have.</p>
 Classes</a> for a discussion of when to use a struct
 versus a class.</p>
 
-<h4 class="stylepoint_subsection">Global Variables</h4>
-
-<p>There are no special requirements for global
-variables, which should be rare in any case, but if you
-use one, consider prefixing it with <code>g_</code> or
-some other marker to easily distinguish it from local
-variables.</p>
-
 </div> 
 
 <h3 id="Constant_Names">Constant Names</h3>
@@ -4375,9 +4347,10 @@ of the class's member variables.</p>
 <h3 id="Namespace_Names">Namespace Names</h3>
 
 <div class="summary">
-Namespace names are all lower-case. Top-level
-namespace names are based on the project name
-.
+Namespace names are all lower-case. Top-level namespace names are
+based on the project name
+. Avoid collisions
+between nested namespaces and well-known top-level namespaces.
 </div>
 
 <div class="stylebody">
@@ -4397,21 +4370,28 @@ as variable names. Code inside the namespace seldom needs to
 mention the namespace name, so there's usually no particular need
 for abbreviation anyway.</p>
 
-<p>Naming conventions for nested namespaces are at the discretion
-of the team owning the enclosing namespace. If a nested namespace
-is used to group related functions in a single header file, consider basing
-its name on the header name, e.g. namespace <code>foo::bar</code>
-for functions defined in the header file <code>bar.h</code>.
-If the nested namespace is being used to distinguish implementation
-details from user-facing declarations, one common choice is
-<code>internal</code>.</p>
+<p>Avoid nested namespaces that match well-known top-level
+namespaces. Collisions between namespace names can lead to surprising
+build breaks because of name lookup rules. In particular, do not
+create any nested <code>std</code> namespaces. Prefer unique project
+identifiers
+(<code>websearch::index</code>, <code>websearch::index_util</code>)
+over collision-prone names like <code>websearch::util</code>.</p>
+
+<p>For <code>internal</code> namespaces, be wary of other code being
+added to the same <code>internal</code> namespace causing a collision
+(internal helpers within a team tend to be related and may lead to
+collisions). In such a situation, using the filename to make a unique
+internal name is helpful
+(<code>websearch::index::frobber_internal</code> for use
+in <code>frobber.h</code>)</p>
 
 </div> 
 
 <h3 id="Enumerator_Names">Enumerator Names</h3>
 
 <div class="summary">
-<p>Enumerators should be named <i>either</i> like
+<p>Enumerators (for both scoped and unscoped enums) should be named <i>either</i> like
 <a href="#Constant_Names">constants</a> or like
 <a href="#Macro_Names">macros</a>: either <code>kEnumName</code> or
 <code>ENUM_NAME</code>.</p>
@@ -4537,9 +4517,13 @@ comment and what style you use where.</p>
 <h3 id="File_Comments">File Comments</h3>
 
 <div class="summary">
-<p> Start each file with license
-boilerplate, followed by a description of its
-contents.</p>
+<p>Start each file with license boilerplate.</p>
+
+<p>File comments describe the contents of a file. If a file declares,
+implements, or tests exactly one abstraction that is documented by a comment
+at the point of declaration, file comments are not required. All other files
+must have file comments.</p>
+
 </div>
 
 <div class="stylebody">
@@ -4559,30 +4543,22 @@ author line, consider deleting the author line.</p>
 
 <h4 class="stylepoint_subsection">File Contents</h4>
 
-<p>Every file should have a comment at the top describing
-its contents, unless the specific conditions described below apply.</p>
-
-<p>A file-level comment in a <code>.h</code> should broadly describe
-the contents of the file. If the file declares multiple abstractions, the
-file-level comment should document how they are related. A 1 or 2 sentence
-file-level comment may be sufficient. The detailed documentation about
-individual abstractions belongs with those abstractions, not at the file
-level.</p>
+<p>If a <code>.h</code> declares multiple abstractions, the file-level comment
+should broadly describe the contents of the file, and how the abstractions are
+related. A 1 or 2 sentence file-level comment may be sufficient. The detailed
+documentation about individual abstractions belongs with those abstractions,
+not at the file level.</p>
 
 <p>Do not duplicate comments in both the <code>.h</code> and the
 <code>.cc</code>. Duplicated comments diverge.</p>
 
-<p>A file-level comment may be omitted if the file declares, implements, or
-tests exactly one abstraction that is documented by a comment at the point
-of declaration.</p><p>
-
-</p></div> 
+</div> 
 
 <h3 id="Class_Comments">Class Comments</h3>
 
 <div class="summary">
-<p>Every class definition should have an accompanying comment
-that describes what it is for and how it should be used.</p>
+<p>Every non-obvious class declaration should have an accompanying
+comment that describes what it is for and how it should be used.</p>
 </div>
 
 <div class="stylebody">
@@ -4609,28 +4585,34 @@ surrounding multithreaded use.</p>
 <p>The class comment is often a good place for a small example code snippet
 demonstrating a simple and focused usage of the class.</p>
 
+<p>When sufficiently separated (e.g. <code>.h</code> and <code>.cc</code>
+files), comments describing the use of the class should go together with its
+interface definition; comments about the class operation and implementation
+should accompany the implementation of the class's methods.</p>
+
 </div> 
 
 <h3 id="Function_Comments">Function Comments</h3>
 
 <div class="summary">
-<p>Declaration comments describe use of the function; comments
-at the definition of a function describe operation.</p>
+<p>Declaration comments describe use of the function (when it is
+non-obvious); comments at the definition of a function describe
+operation.</p>
 </div>
 
 <div class="stylebody">
 
 <h4 class="stylepoint_subsection">Function Declarations</h4>
 
-<p>Every function declaration should have comments
-immediately preceding it that describe what the function
-does and how to use it. These comments should be
-descriptive ("Opens the file") rather than imperative
-("Open the file"); the comment describes the function, it
-does not tell the function what to do. In general, these
-comments do not describe how the function performs its
-task. Instead, that should be left to comments in the
-function definition.</p>
+<p>Almost every function declaration should have comments immediately
+preceding it that describe what the function does and how to use
+it. These comments may be omitted only if the function is simple and
+obvious (e.g. simple accessors for obvious properties of the
+class).  These comments should be descriptive ("Opens the file")
+rather than imperative ("Open the file"); the comment describes the
+function, it does not tell the function what to do. In general, these
+comments do not describe how the function performs its task. Instead,
+that should be left to comments in the function definition.</p>
 
 <p>Types of things to mention in comments at the function
 declaration:</p>
@@ -4733,25 +4715,28 @@ is used for. In certain cases, more comments are required.</p>
 
 <h4 class="stylepoint_subsection">Class Data Members</h4>
 
-<p>Each class data member (also called an instance
-variable or member variable) should have a comment
-describing what it is used for. If the variable can take
-sentinel values with special meanings, such as a null
-pointer or -1, document this. For example:</p>
+<p>The purpose of each class data member (also called an instance
+variable or member variable) must be clear. If there are any
+invariants (special values, relationships between members, lifetime
+requirements) not clearly expressed by the type and name, they must be
+commented. However, if the type and name suffice (<code>int
+num_events_;</code>), no comment is needed.</p>
 
+<p>In particular, add comments to describe the existence and meaning
+of sentinel values, such as nullptr or -1, when they are not
+obvious. For example:</p>
 
 <pre>private:
- // Keeps track of the total number of entries in the table.
- // Used to ensure we do not go over the limit. -1 means
+ // Used to bounds-check table accesses. -1 means
  // that we don't yet know how many entries the table has.
  int num_total_entries_;
 </pre>
 
 <h4 class="stylepoint_subsection">Global Variables</h4>
 
-<p>As with data members, all global variables should have
-a comment describing what they are and what they are used
-for. For example:</p>
+<p>All global variables should have a comment describing what they
+are, what they are used for, and (if unclear) why it needs to be
+global. For example:</p>
 
 <pre>// The total number of tests cases that we run through in this regression test.
 const int kNumTestCases = 6;
@@ -5226,10 +5211,10 @@ function call.</p>
 
 <pre>class Foo {
  public:
-  Foo(Foo&amp;&amp;) = default;
-  Foo(const Foo&amp;) = default;
-  Foo&amp; operator=(Foo&amp;&amp;) = default;
-  Foo&amp; operator=(const Foo&amp;) = default;
+  Foo(Foo&amp;&amp;);
+  Foo(const Foo&amp;);
+  Foo&amp; operator=(Foo&amp;&amp;);
+  Foo&amp; operator=(const Foo&amp;);
 };
 </pre>
 
@@ -5252,6 +5237,12 @@ void Circle::Rotate(double /*radians*/) {}
 <pre class="badcode">// Bad - if someone wants to implement later, it's not clear what the
 // variable means.
 void Circle::Rotate(double) {}
+</pre>
+
+<p>Attributes, and macros that expand to attributes, appear at the very
+beginning of the function declaration or definition, before the
+return type:</p>
+<pre>MUST_USE_RESULT bool IsOK();
 </pre>
 
 </div> 
@@ -5790,7 +5781,7 @@ beginning of the line.</p>
 
 <div class="stylebody">
 
-<p>The basic format for a class declaration (lacking the
+<p>The basic format for a class definition (lacking the
 comments, see <a href="#Class_Comments">Class
 Comments</a> for a discussion of what comments are
 needed) is:</p>
@@ -6210,6 +6201,6 @@ more interesting. Have fun!</p>
 <hr>
 
 </div> 
-</div></body></html></div>
+</body></html></div>
 </body>
 </html>
