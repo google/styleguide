@@ -323,6 +323,14 @@ class CpplintTest(CpplintTestBase):
     results = self.GetNamespaceResults(lines)
     self.assertEqual(results, '')
 
+  def testWhitespaceBeforeNamespace(self):
+    lines = ['  namespace Test {',
+             '  void foo() { }',
+             '  }  // namespace Test']
+
+    results = self.GetNamespaceResults(lines)
+    self.assertEqual(results, '')
+
   def testFalsePositivesNoError(self):
     lines = ['namespace Test {',
              'struct OuterClass {',
@@ -395,13 +403,23 @@ class CpplintTest(CpplintTestBase):
         '// Hello',
         '')
     self.TestLint(
-        '// ' + 'x' * 80,
+        '// x' + ' x' * 40,
         'Lines should be <= 80 characters long'
         '  [whitespace/line_length] [2]')
     self.TestLint(
-        '// ' + 'x' * 100,
-        'Lines should very rarely be longer than 100 characters'
-        '  [whitespace/line_length] [4]')
+        '// x' + ' x' * 50,
+        'Lines should be <= 80 characters long'
+        '  [whitespace/line_length] [2]')
+    self.TestLint(
+        '// //some/path/to/f' + ('i' * 100) + 'le',
+        '')
+    self.TestLint(
+        '//   //some/path/to/f' + ('i' * 100) + 'le',
+        '')
+    self.TestLint(
+        '//   //some/path/to/f' + ('i' * 50) + 'le and some comments',
+        'Lines should be <= 80 characters long'
+        '  [whitespace/line_length] [2]')
     self.TestLint(
         '// http://g' + ('o' * 100) + 'gle.com/',
         '')
@@ -487,6 +505,64 @@ class CpplintTest(CpplintTestBase):
                              ''],
                             error_collector)
     self.assertEqual('', error_collector.Results())
+    # LINT_C_FILE silences cast warnings for entire file.
+    error_collector = ErrorCollector(self.assert_)
+    cpplint.ProcessFileData('test.h', 'h',
+                            ['// Copyright 2014 Your Company.',
+                             '// NOLINT(build/header_guard)',
+                             'int64 a = (uint64) 65;',
+                             '//  LINT_C_FILE',
+                             ''],
+                            error_collector)
+    self.assertEqual('', error_collector.Results())
+    # Vim modes silence cast warnings for entire file.
+    for modeline in ['vi:filetype=c',
+                     'vi:sw=8 filetype=c',
+                     'vi:sw=8 filetype=c ts=8',
+                     'vi: filetype=c',
+                     'vi: sw=8 filetype=c',
+                     'vi: sw=8 filetype=c ts=8',
+                     'vim:filetype=c',
+                     'vim:sw=8 filetype=c',
+                     'vim:sw=8 filetype=c ts=8',
+                     'vim: filetype=c',
+                     'vim: sw=8 filetype=c',
+                     'vim: sw=8 filetype=c ts=8',
+                     'vim: set filetype=c:',
+                     'vim: set sw=8 filetype=c:',
+                     'vim: set sw=8 filetype=c ts=8:',
+                     'vim: set filetype=c :',
+                     'vim: set sw=8 filetype=c :',
+                     'vim: set sw=8 filetype=c ts=8 :',
+                     'vim: se filetype=c:',
+                     'vim: se sw=8 filetype=c:',
+                     'vim: se sw=8 filetype=c ts=8:',
+                     'vim: se filetype=c :',
+                     'vim: se sw=8 filetype=c :',
+                     'vim: se sw=8 filetype=c ts=8 :']:
+      error_collector = ErrorCollector(self.assert_)
+      cpplint.ProcessFileData('test.h', 'h',
+                              ['// Copyright 2014 Your Company.',
+                               '// NOLINT(build/header_guard)',
+                               'int64 a = (uint64) 65;',
+                               '/* Prevent warnings about the modeline',
+                               modeline,
+                               '*/',
+                               ''],
+                              error_collector)
+      self.assertEqual('', error_collector.Results())
+    # LINT_KERNEL_FILE silences whitespace/tab warnings for entire file.
+    error_collector = ErrorCollector(self.assert_)
+    cpplint.ProcessFileData('test.h', 'h',
+                            ['// Copyright 2014 Your Company.',
+                             '// NOLINT(build/header_guard)',
+                             'struct test {',
+                             '\tint member;',
+                             '};',
+                             '//  LINT_KERNEL_FILE',
+                             ''],
+                            error_collector)
+    self.assertEqual('', error_collector.Results())
 
   # Test Variable Declarations.
   def testVariableDeclarations(self):
@@ -551,14 +627,55 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('[](int/*unused*/) -> bool {', '')
     self.TestLint('[](int /*unused*/) -> bool {', '')
     self.TestLint('auto f = [](MyStruct* /*unused*/)->int {', '')
-    self.TestLint(
-        '[](int) -> bool {',
-        'All parameters should be named in a function'
-        '  [readability/function] [3]')
-    self.TestLint(
-        'auto f = [](MyStruct*)->int {',
-        'All parameters should be named in a function'
-        '  [readability/function] [3]')
+    self.TestLint('[](int) -> bool {', '')
+    self.TestLint('auto f = [](MyStruct*)->int {', '')
+
+    # Cast with brace initializers
+    self.TestLint('int64_t{4096} * 1000 * 1000', '')
+    self.TestLint('size_t{4096} * 1000 * 1000', '')
+    self.TestLint('uint_fast16_t{4096} * 1000 * 1000', '')
+
+    # Brace initializer with templated type
+    self.TestMultiLineLint(
+        """
+        template <typename Type1,
+                  typename Type2>
+        void Function(int arg1,
+                      int arg2) {
+          variable &= ~Type1{0} - 1;
+        }""",
+        '')
+    self.TestMultiLineLint(
+        """
+        template <typename Type>
+        class Class {
+          void Function() {
+            variable &= ~Type{0} - 1;
+          }
+        };""",
+        '')
+    self.TestMultiLineLint(
+        """
+        template <typename Type>
+        class Class {
+          void Function() {
+            variable &= ~Type{0} - 1;
+          }
+        };""",
+        '')
+    self.TestMultiLineLint(
+        """
+        namespace {
+        template <typename Type>
+        class Class {
+          void Function() {
+            if (block) {
+              variable &= ~Type{0} - 1;
+            }
+          }
+        };
+        }""",
+        '')
 
   # Test taking address of casts (runtime/casting)
   def testRuntimeCasting(self):
@@ -602,6 +719,10 @@ class CpplintTest(CpplintTestBase):
         'You seem to be initializing a member variable with itself.'
         '  [runtime/init] [4]')
     self.TestLint(
+        'Foo::Foo(Bar r, Bel l) : r_(CHECK_NOTNULL(r_)) { }',
+        'You seem to be initializing a member variable with itself.'
+        '  [runtime/init] [4]')
+    self.TestLint(
         'Foo::Foo(Bar r, Bel l) : r_(r), l_(l) { }',
         '')
     self.TestLint(
@@ -610,14 +731,12 @@ class CpplintTest(CpplintTestBase):
 
   # Test for unnamed arguments in a method.
   def testCheckForUnnamedParams(self):
-    message = ('All parameters should be named in a function'
-               '  [readability/function] [3]')
-    self.TestLint('virtual void Func(int*) const;', message)
-    self.TestLint('virtual void Func(int*);', message)
-    self.TestLint('void Method(char*) {', message)
-    self.TestLint('void Method(char*);', message)
-    self.TestLint('static void operator delete[](void*) throw();', message)
-    self.TestLint('int Method(int);', message)
+    self.TestLint('virtual void Func(int*) const;', '')
+    self.TestLint('virtual void Func(int*);', '')
+    self.TestLint('void Method(char*) {', '')
+    self.TestLint('void Method(char*);', '')
+    self.TestLint('static void operator delete[](void*) throw();', '')
+    self.TestLint('int Method(int);', '')
 
     self.TestLint('virtual void Func(int* p);', '')
     self.TestLint('void operator delete(void* x) throw();', '')
@@ -669,6 +788,7 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('operator bool();', '')  # Conversion operator
     self.TestLint('new int64(123);', '')  # "new" operator on basic type
     self.TestLint('new   int64(123);', '')  # "new" operator on basic type
+    self.TestLint('new const int(42);', '')  # "new" on const-qualified type
     self.TestLint('using a = bool(int arg);', '')  # C++11 alias-declaration
     self.TestLint('x = bit_cast<double(*)[3]>(y);', '')  # array of array
     self.TestLint('void F(const char(&src)[N]);', '')  # array of references
@@ -882,7 +1002,7 @@ class CpplintTest(CpplintTestBase):
         """#include "base/foobar.h"
            bool foobar = swap(0,1);
         """,
-        'Add #include <algorithm> for swap  [build/include_what_you_use] [4]')
+        'Add #include <utility> for swap  [build/include_what_you_use] [4]')
     self.TestIncludeWhatYouUse(
         """#include "base/foobar.h"
            bool foobar = transform(a.begin(), a.end(), b.start(), Foo);
@@ -1030,7 +1150,7 @@ class CpplintTest(CpplintTestBase):
            A(std::string s, A&& a);
         };
       }""",
-        'RValue references are an unapproved C++ feature.  [build/c++11] [3]')
+        '')
 
     self.TestMultiLineLint(
       """
@@ -1038,7 +1158,7 @@ class CpplintTest(CpplintTestBase):
        public:
           unique_ptr(unique_ptr&& u) noexcept;
       };""",
-        'RValue references are an unapproved C++ feature.  [build/c++11] [3]')
+        '')
     self.TestMultiLineLint(
         """
         void Func() {
@@ -1265,16 +1385,13 @@ class CpplintTest(CpplintTestBase):
           };""",
           'Zero-parameter constructors should not be marked explicit.'
           '  [runtime/explicit] [5]')
-      # Warn explicit multi-argument constructors at lowest severity
+      # No warning for multi-parameter constructors
       self.TestMultiLineLint(
           """
           class Foo {
             explicit Foo(int f, int g);
           };""",
-          'Constructors that require multiple arguments '
-          'should not be marked explicit.  [runtime/explicit] [0]')
-      # but explicit multi-argument constructors with only one non-default
-      # argument are OK
+          '')
       self.TestMultiLineLint(
           """
           class Foo {
@@ -1970,18 +2087,6 @@ class CpplintTest(CpplintTestBase):
         'EXPECT_TRUE(+42 >= x);',
         'Consider using EXPECT_GE instead of EXPECT_TRUE(a >= b)'
         '  [readability/check] [2]')
-    self.TestLint(
-        'EXPECT_TRUE_M(-42 > x);',
-        'Consider using EXPECT_GT_M instead of EXPECT_TRUE_M(a > b)'
-        '  [readability/check] [2]')
-    self.TestLint(
-        'EXPECT_TRUE_M(42U <= x);',
-        'Consider using EXPECT_LE_M instead of EXPECT_TRUE_M(a <= b)'
-        '  [readability/check] [2]')
-    self.TestLint(
-        'EXPECT_TRUE_M(42L < x);',
-        'Consider using EXPECT_LT_M instead of EXPECT_TRUE_M(a < b)'
-        '  [readability/check] [2]')
 
     self.TestLint(
         'EXPECT_FALSE(x == 42);',
@@ -2002,10 +2107,6 @@ class CpplintTest(CpplintTestBase):
     self.TestLint(
         'ASSERT_FALSE(x <= 42);',
         'Consider using ASSERT_GT instead of ASSERT_FALSE(a <= b)'
-        '  [readability/check] [2]')
-    self.TestLint(
-        'ASSERT_FALSE_M(x < 42);',
-        'Consider using ASSERT_GE_M instead of ASSERT_FALSE_M(a < b)'
         '  [readability/check] [2]')
 
     self.TestLint('CHECK(x<42);',
@@ -2140,6 +2241,10 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('stream& operator>>(stream& s, Foo& f);', '')
     self.TestLint('stream& operator<<(stream& s, Foo& f);', '')
     self.TestLint('void swap(Bar& a, Bar& b);', '')
+    self.TestLint('ostream& LogFunc(ostream& s);', '')
+    self.TestLint('ostringstream& LogFunc(ostringstream& s);', '')
+    self.TestLint('istream& LogFunc(istream& s);', '')
+    self.TestLint('istringstream& LogFunc(istringstream& s);', '')
     # Returning a non-const reference from a function is OK.
     self.TestLint('int& g();', '')
     # Passing a const reference to a struct (using the struct keyword) is OK.
@@ -2389,6 +2494,9 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('((a+b))', '')
     self.TestLint('foo (foo)', 'Extra space before ( in function call'
                   '  [whitespace/parens] [4]')
+    # asm volatile () may have a space, as it isn't a function call.
+    self.TestLint('asm volatile ("")', '')
+    self.TestLint('__asm__ __volatile__ ("")', '')
     self.TestLint('} catch (const Foo& ex) {', '')
     self.TestLint('case (42):', '')
     self.TestLint('typedef foo (*foo)(foo)', '')
@@ -2426,9 +2534,20 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('for {', '')
     self.TestLint('EXPECT_DEBUG_DEATH({', '')
     self.TestLint('std::is_convertible<A, B>{}', '')
+    self.TestLint('blah{32}', 'Missing space before {'
+                  '  [whitespace/braces] [5]')
+    self.TestLint('int8_t{3}', '')
+    self.TestLint('int16_t{3}', '')
+    self.TestLint('int32_t{3}', '')
+    self.TestLint('uint64_t{12345}', '')
+    self.TestLint('constexpr int64_t kBatchGapMicros ='
+                  ' int64_t{7} * 24 * 3600 * 1000000;  // 1 wk.', '')
+    self.TestLint('MoveOnly(int i1, int i2) : ip1{new int{i1}}, '
+                  'ip2{new int{i2}} {}',
+                  '')
 
   def testSemiColonAfterBraces(self):
-    self.TestLint('if (cond) {};',
+    self.TestLint('if (cond) { func(); };',
                   'You don\'t need a ; after a }  [readability/braces] [4]')
     self.TestLint('void Func() {};',
                   'You don\'t need a ; after a }  [readability/braces] [4]')
@@ -2444,8 +2563,11 @@ class CpplintTest(CpplintTestBase):
 
     self.TestLint('class X : public Y {};', '')
     self.TestLint('class X : public MACRO() {};', '')
+    self.TestLint('class X : public decltype(expr) {};', '')
     self.TestLint('DEFINE_FACADE(PCQueue::Watcher, PCQueue) {};', '')
     self.TestLint('VCLASS(XfaTest, XfaContextTest) {};', '')
+    self.TestLint('class STUBBY_CLASS(H, E) {};', '')
+    self.TestLint('class STUBBY2_CLASS(H, E) {};', '')
     self.TestLint('TEST(TestCase, TestName) {};',
                   'You don\'t need a ; after a }  [readability/braces] [4]')
     self.TestLint('TEST_F(TestCase, TestName) {};',
@@ -2471,19 +2593,6 @@ class CpplintTest(CpplintTestBase):
                            '         b;\n'
                            '};\n',
                            '')
-
-    for lambda_with_default_capture in ('void f() { [=]{}; }',
-                                        'void f() { [=](int i) {}; }',
-                                        'void f() { [=, &x]{}; }',
-                                        'void f() { [&]{}; }',
-                                        'void f() { [ & ]{}; }',
-                                        'void f() { [&, y]{}; }'):
-      self.TestLint(lambda_with_default_capture,
-                    'Default lambda captures are an unapproved C++ feature.  '
-                    '[build/c++11] [4]')
-
-    # "[&...]" isn't necessarily a default capture, though "[=...]" always is.
-    self.TestLint('void f() { [&variable]{}; }', '')
 
     # Avoid false positives with operator[]
     self.TestLint('table_to_children[&*table].push_back(dependent);', '')
@@ -2519,13 +2628,28 @@ class CpplintTest(CpplintTestBase):
                            '  }\n'
                            '};\n', '')
     self.TestMultiLineLint('if (true) {\n'
-                           '  if (false){}\n'
+                           '  if (false){ func(); }\n'
                            '}\n',
                            'Missing space before {  [whitespace/braces] [5]')
     self.TestMultiLineLint('MyClass::MyClass()\n'
                            '    : initializer_{\n'
                            '          Func()} {\n'
                            '}\n', '')
+    self.TestLint('const pair<string, string> kCL' +
+                  ('o' * 41) + 'gStr[] = {\n',
+                  'Lines should be <= 80 characters long'
+                  '  [whitespace/line_length] [2]')
+    self.TestMultiLineLint('const pair<string, string> kCL' +
+                           ('o' * 40) + 'ngStr[] =\n'
+                           '    {\n'
+                           '        {"gooooo", "oooogle"},\n'
+                           '};\n', '')
+    self.TestMultiLineLint('const pair<string, string> kCL' +
+                           ('o' * 39) + 'ngStr[] =\n'
+                           '    {\n'
+                           '        {"gooooo", "oooogle"},\n'
+                           '};\n', '{ should almost always be at the end of '
+                           'the previous line  [whitespace/braces] [4]')
 
   def testSpacingAroundElse(self):
     self.TestLint('}else {', 'Missing space before else'
@@ -2562,6 +2686,7 @@ class CpplintTest(CpplintTestBase):
                   'Missing spaces around <<  [whitespace/operators] [3]')
     self.TestLint('a<<b',
                   'Missing spaces around <<  [whitespace/operators] [3]')
+    self.TestLint('10LL<<20', '')
     self.TestLint('10ULL<<20', '')
     self.TestLint('a>>b',
                   'Missing spaces around >>  [whitespace/operators] [3]')
@@ -2587,150 +2712,6 @@ class CpplintTest(CpplintTestBase):
 
     self.TestLint('using Vector3<T>::operator==;', '')
     self.TestLint('using Vector3<T>::operator!=;', '')
-
-  def testRvalueReference(self):
-    space_error = 'Missing spaces around &&  [whitespace/operators] [3]'
-    rvalue_error = ('RValue references are an unapproved C++ feature.'
-                    '  [build/c++11] [3]')
-
-    # Places where lack of space are allowed
-    self.TestLint('DEFINE_BINARY_OPERATOR(&&)', '')
-    self.TestLint('bool operator&&(A b) {}', '')
-    self.TestLint('bool operator&&(A b) {', '')
-    self.TestLint('bool operator&&(A b);', '')
-
-    # Assignment expressions
-    self.TestLint('a = b && c;', '')
-    self.TestLint('a = b&& c;', space_error)
-    self.TestLint('a = b &&c;', space_error)
-    self.TestLint('a = (b&& c);', space_error)
-    self.TestLint('a = (b &&c);', space_error)
-    self.TestLint('a&& b = c;', rvalue_error)
-    self.TestLint('a<b>&& c = d;', rvalue_error)
-    self.TestLint('auto&& a = b;', rvalue_error)
-    self.TestLint('const a&& b = c;', rvalue_error)
-    self.TestLint('struct a&& b = c;', rvalue_error)
-    self.TestLint('decltype(a)&& b = c;', rvalue_error)
-    self.TestLint('A(int s, A&& a);', rvalue_error)
-    self.TestLint('A(std::string s, A&& a);', rvalue_error)
-    self.TestLint('A(const std::string &s, A&& a);', rvalue_error)
-    self.TestLint('A(int* s, A&& a);', rvalue_error)
-    self.TestLint('unique_ptr(unique_ptr&& u) noexcept;', rvalue_error)
-
-    # Cast expressions
-    self.TestLint('a = const_cast<b&&>(c);', rvalue_error)
-    self.TestLint('a = const_cast<const b&&>(c);', rvalue_error)
-    self.TestLint('a = static_cast<b&&>(c);', rvalue_error)
-    self.TestLint('a = static_cast<const b&&>(c);', rvalue_error)
-    self.TestLint('a = dynamic_cast<b&&>(c);', rvalue_error)
-    self.TestLint('a = dynamic_cast<const b&&>(c);', rvalue_error)
-    self.TestLint('a = reinterpret_cast<b&&>(c);', rvalue_error)
-    self.TestLint('a = reinterpret_cast<const b&&>(c);', rvalue_error)
-    self.TestLint('a = cast < b&& c;', space_error)
-
-    # Function parameters
-    for indent in ['', '  ']:
-      for head in ['void Func', 'vector<int> Func', 'vector<int>\nFunc',
-                   'inline void Func',
-                   'Constructor', 'Constructor::Constructor',
-                   'operator=', 'operator =', 'operator = ']:
-        for body in [' {}', ' {', ';']:
-          self.TestMultiLineLint(indent + head + '(A&& b)' + body, rvalue_error)
-          self.TestMultiLineLint(indent + head + '(A &&b)' + body, rvalue_error)
-          self.TestMultiLineLint(indent + head + '(A&&... b)' + body,
-                                 rvalue_error)
-          self.TestMultiLineLint(indent + head + '(A<B>&& c)' + body,
-                                 rvalue_error)
-          self.TestMultiLineLint(indent + head + '(A<B> &&c)' + body,
-                                 rvalue_error)
-          self.TestMultiLineLint(indent + head + '(D::A&& b)' + body,
-                                 rvalue_error)
-          self.TestMultiLineLint(indent + head + '(::A&& b)' + body,
-                                 rvalue_error)
-
-    # Function templates
-    self.TestLint('std::conditional<A, B&, C&&>::type', rvalue_error)
-    self.TestLint('std::conditional<A, B&&, C&>::type', rvalue_error)
-
-    # Template functions
-    self.TestLint('template <typename T> R&& F()', rvalue_error)
-    self.TestLint('template <typename T> R&& F() {', rvalue_error)
-    self.TestMultiLineLint('template <typename T>\nR&& F()', rvalue_error)
-    self.TestMultiLineLint('template <typename T>\nR&& F() {', rvalue_error)
-    self.TestLint('template <typename T> void F(T a, R&& b)', rvalue_error)
-    self.TestLint('template <typename T> void F(T a, R &&b)', rvalue_error)
-    self.TestLint('template <typename T> void F(T a, R&& b) {', rvalue_error)
-
-    # For loops
-    self.TestLint('for (a&& b;;)', rvalue_error)
-    self.TestLint('for (a&& b;;) {', rvalue_error)
-    self.TestLint('for (; a&& b;)', space_error)
-    self.TestLint('for (; a&& b;) {', space_error)
-
-    # Constructors
-    self.TestLint('A(a&& b)', rvalue_error)
-    self.TestLint('explicit A(a&& b)', rvalue_error)
-    self.TestLint('A(a b) : c(d&& e)', space_error)
-    self.TestLint('A(a b) : c(), d(e&& f)', space_error)
-
-  def testAllowedRvalueReference(self):
-    # Verify that RValue reference warnings for a line range can be silenced
-    error_collector = ErrorCollector(self.assertTrue)
-    cpplint.ProcessFileData('foo.cc', 'cc',
-                            ['// Copyright 2014 Your Company.',
-                             'GOOGLE_ALLOW_RVALUE_REFERENCES_PUSH',
-                             'void F(A&& b);',
-                             'GOOGLE_ALLOW_RVALUE_REFERENCES_POP',
-                             ''],
-                            error_collector)
-    self.assertEqual(error_collector.Results(), '')
-
-    # RValue references for constructors and operator=
-    error_collector = ErrorCollector(self.assertTrue)
-    cpplint.ProcessFileData(
-        'foo.cc', 'cc',
-        ['// Copyright 2014 Your Company.',
-         'class X {',
-         '  X(X&& param) = delete;  // NOLINT(runtime/explicit)',
-         '  X(X &&param) = default;  // NOLINT(runtime/explicit)',
-         '  inline X(X&& param) = default;  // NOLINT(runtime/explicit)',
-         '',
-         '  X& operator=(X&& param) = delete;',
-         '  X& operator=(X&& param) = default;',
-         '};',
-         'A::A(A&&) = default;',
-         'Outer::Inner::Inner(Inner&&) = default;',
-         ''],
-        error_collector)
-    self.assertEqual(error_collector.Results(), '')
-
-    # Assume templated function parameters are forwarded, and are allowed
-    error_collector = ErrorCollector(self.assertTrue)
-    cpplint.ProcessFileData(
-        'foo.cc', 'cc',
-        ['// Copyright 2014 Your Company.',
-         'template <typename Allowed1>',
-         'void Function1(Allowed1&& a);',
-         '',
-         'template <typename Allowed2, typename Allowed3>',
-         'void Function2(Allowed2&& a, Allowed3 &&b) {',
-         '}',
-         '',
-         'template <class Allowed4>',
-         'void Function3(Ignored1 *a, Allowed4&& b) {',
-         '}',
-         '',
-         'template <typename... Allowed5>',
-         'void Function4(Allowed5&&... a) {',
-         '}',
-         '',
-         'template <class... Allowed6>',
-         'void Function5(',
-         '    Allowed6 &&...a) {',
-         '}',
-         ''],
-        error_collector)
-    self.assertEqual(error_collector.Results(), '')
 
   def testSpacingBeforeLastSemicolon(self):
     self.TestLint('call_function() ;',
@@ -2765,6 +2746,11 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('for (;;)', '')
     self.TestLint('for (;;) continue;', '')
     self.TestLint('for (;;) func();', '')
+    self.TestLint('if (test) {}',
+                  'If statement had no body and no else clause'
+                  '  [whitespace/empty_if_body] [4]')
+    self.TestLint('if (test) func();', '')
+    self.TestLint('if (test) {} else {}', '')
     self.TestMultiLineLint("""while (true &&
                                      false);""",
                            'Empty loop bodies should use {} or continue'
@@ -2781,6 +2767,39 @@ class CpplintTest(CpplintTestBase):
                            while (false);""",
                            'Empty loop bodies should use {} or continue'
                            '  [whitespace/empty_loop_body] [5]')
+    self.TestMultiLineLint("""if (test) {
+                           }""",
+                           'If statement had no body and no else clause'
+                           '  [whitespace/empty_if_body] [4]')
+    self.TestMultiLineLint("""if (test,
+                               func({})) {
+                           }""",
+                           'If statement had no body and no else clause'
+                           '  [whitespace/empty_if_body] [4]')
+    self.TestMultiLineLint("""if (test)
+                             func();""", '')
+    self.TestLint('if (test) { hello; }', '')
+    self.TestLint('if (test({})) { hello; }', '')
+    self.TestMultiLineLint("""if (test) {
+                             func();
+                           }""", '')
+    self.TestMultiLineLint("""if (test) {
+                             // multiline
+                             // comment
+                           }""", '')
+    self.TestMultiLineLint("""if (test) {  // comment
+                           }""", '')
+    self.TestMultiLineLint("""if (test) {
+                           } else {
+                           }""", '')
+    self.TestMultiLineLint("""if (func(p1,
+                               p2,
+                               p3)) {
+                             func();
+                           }""", '')
+    self.TestMultiLineLint("""if (func({}, p1)) {
+                             func();
+                           }""", '')
 
   def testSpacingForRangeBasedFor(self):
     # Basic correctly formatted case:
@@ -2809,18 +2828,48 @@ class CpplintTest(CpplintTestBase):
 
   # Static or global STL strings.
   def testStaticOrGlobalSTLStrings(self):
+    # A template for the error message for a const global/static string.
     error_msg = ('For a static/global string constant, use a C style '
                  'string instead: "%s[]".  [runtime/string] [4]')
+    # The error message for a non-const global/static string variable.
+    nonconst_error_msg = ('Static/global string variables are not permitted.'
+                          '  [runtime/string] [4]')
+
     self.TestLint('string foo;',
-                  error_msg % 'char foo')
+                  nonconst_error_msg)
     self.TestLint('string kFoo = "hello";  // English',
-                  error_msg % 'char kFoo')
+                  nonconst_error_msg)
     self.TestLint('static string foo;',
-                  error_msg % 'static char foo')
+                  nonconst_error_msg)
     self.TestLint('static const string foo;',
                   error_msg % 'static const char foo')
+    self.TestLint('static const std::string foo;',
+                  error_msg % 'static const char foo')
     self.TestLint('string Foo::bar;',
-                  error_msg % 'char Foo::bar')
+                  nonconst_error_msg)
+
+    self.TestLint('std::string foo;',
+                  nonconst_error_msg)
+    self.TestLint('std::string kFoo = "hello";  // English',
+                  nonconst_error_msg)
+    self.TestLint('static std::string foo;',
+                  nonconst_error_msg)
+    self.TestLint('static const std::string foo;',
+                  error_msg % 'static const char foo')
+    self.TestLint('std::string Foo::bar;',
+                  nonconst_error_msg)
+
+    self.TestLint('::std::string foo;',
+                  nonconst_error_msg)
+    self.TestLint('::std::string kFoo = "hello";  // English',
+                  nonconst_error_msg)
+    self.TestLint('static ::std::string foo;',
+                  nonconst_error_msg)
+    self.TestLint('static const ::std::string foo;',
+                  error_msg % 'static const char foo')
+    self.TestLint('::std::string Foo::bar;',
+                  nonconst_error_msg)
+
     self.TestLint('string* pointer', '')
     self.TestLint('string *pointer', '')
     self.TestLint('string* pointer = Func();', '')
@@ -2840,12 +2889,14 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('string Foo::bar() {}', '')
     self.TestLint('string Foo::operator*() {}', '')
     # Rare case.
-    self.TestLint('string foo("foobar");', error_msg % 'char foo')
+    self.TestLint('string foo("foobar");', nonconst_error_msg)
     # Should not catch local or member variables.
     self.TestLint('  string foo', '')
     # Should not catch functions.
     self.TestLint('string EmptyString() { return ""; }', '')
     self.TestLint('string EmptyString () { return ""; }', '')
+    self.TestLint('string const& FileInfo::Pathname() const;', '')
+    self.TestLint('string const &FileInfo::Pathname() const;', '')
     self.TestLint('string VeryLongNameFunctionSometimesEndsWith(\n'
                   '    VeryLongNameType very_long_name_variable) {}', '')
     self.TestLint('template<>\n'
@@ -2876,21 +2927,24 @@ class CpplintTest(CpplintTestBase):
                              'NestedClass::MemberFunction3();',
                              'string TemplateClass<T>::',
                              'NestedClass::MemberFunction4();',
-                             'string Class',
+                             'const string Class',
                              '::static_member_variable1;',
-                             'string Class::',
+                             'const string Class::',
                              'static_member_variable2;',
-                             'string Class',
+                             'const string Class',
                              '::static_member_variable3 = "initial value";',
-                             'string Class::',
+                             'const string Class::',
                              'static_member_variable4 = "initial value";',
+                             'string Class::',
+                             'static_member_variable5;',
                              ''],
                             error_collector)
     self.assertEqual(error_collector.Results(),
-                      [error_msg % 'char Class::static_member_variable1',
-                       error_msg % 'char Class::static_member_variable2',
-                       error_msg % 'char Class::static_member_variable3',
-                       error_msg % 'char Class::static_member_variable4'])
+                      [error_msg % 'const char Class::static_member_variable1',
+                       error_msg % 'const char Class::static_member_variable2',
+                       error_msg % 'const char Class::static_member_variable3',
+                       error_msg % 'const char Class::static_member_variable4',
+                       nonconst_error_msg])
 
   def testNoSpacesInFunctionCalls(self):
     self.TestLint('TellStory(1, 3);',
@@ -2940,6 +2994,9 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('// TODO(ljenkins): Fix this', '')
     self.TestLint('#if 1  // TEST_URLTODOCID_WHICH_HAS_THAT_WORD_IN_IT_H_', '')
     self.TestLint('// See also similar TODO above', '')
+    self.TestLint(r'EXPECT_EQ("\\", '
+                  r'NormalizePath("/./../foo///bar/..//x/../..", ""));',
+                  '')
 
   def testTwoSpacesBetweenCodeAndComments(self):
     self.TestLint('} // namespace foo',
@@ -3541,10 +3598,9 @@ class CpplintTest(CpplintTestBase):
         '')
     self.TestMultiLineLint(
         TrimExtraIndent('''
-            static const char kNotRawString[] = "("
-             ")";'''),
-        'Weird number of spaces at line-start.  '
-        'Are you using a 2-space indent?  [whitespace/indent] [3]')
+            KV<Query,
+               Tuple<TaxonomyId, PetacatCategoryId, double>>'''),
+        '')
     self.TestMultiLineLint(
         ' static const char kSingleLineRawString[] = R"(...)";',
         'Weird number of spaces at line-start.  '
@@ -4037,18 +4093,18 @@ class CpplintTest(CpplintTestBase):
     try:
       cpplint._line_length = 80
       self.TestLint(
-          '// %s' % ('H' * 77),
+          '// H %s' % ('H' * 75),
           '')
       self.TestLint(
-          '// %s' % ('H' * 78),
+          '// H %s' % ('H' * 76),
           'Lines should be <= 80 characters long'
           '  [whitespace/line_length] [2]')
       cpplint._line_length = 120
       self.TestLint(
-          '// %s' % ('H' * 117),
+          '// H %s' % ('H' * 115),
           '')
       self.TestLint(
-          '// %s' % ('H' * 118),
+          '// H %s' % ('H' * 116),
           'Lines should be <= 120 characters long'
           '  [whitespace/line_length] [2]')
     finally:
@@ -4109,7 +4165,7 @@ class CpplintTest(CpplintTestBase):
         self.TestLanguageRulesCheck(
             'foo.' + extension, 'namespace {',
             'Do not use unnamed namespaces in header files.  See'
-            ' http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
+            ' https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
             ' for more information.  [build/namespaces] [4]')
         # namespace registration macros are OK.
         self.TestLanguageRulesCheck('foo.' + extension, 'namespace {  \\', '')
@@ -4189,7 +4245,8 @@ class CpplintTest(CpplintTestBase):
     cpplint.ProcessFileData(file_path, 'h', [], error_collector)
     for error in error_collector.ResultList():
       matched = re.search(
-          'No #ifndef header guard found, suggested CPP variable is: ([A-Z0-9_]+)',
+          'No #ifndef header guard found, suggested CPP variable is: '
+          '([A-Z0-9_]+)',
           error)
       if matched is not None:
         return matched.group(1)
@@ -4581,8 +4638,8 @@ class CpplintTest(CpplintTestBase):
     storage_classes = ['extern', 'register', 'static', 'typedef']
 
     build_storage_class_error_message = (
-        'Storage class (static, extern, typedef, etc) should be first.'
-        '  [build/storage_class] [5]')
+        'Storage-class specifier (static, extern, typedef, etc) should be '
+        'at the beginning of the declaration.  [build/storage_class] [5]')
 
     # Some explicit cases. Legal in C++, deprecated in C99.
     self.TestLint('const int static foo = 5;',
@@ -4714,6 +4771,9 @@ class Cxx11Test(CpplintTestBase):
     self.assertEqual(expected_error, collector.Results())
 
   def testBlockedHeaders(self):
+    self.TestCxx11Feature('#include <tr1/regex>',
+                          'C++ TR1 headers such as <tr1/regex> are '
+                          'unapproved.  [build/c++tr1] [5]')
     self.TestCxx11Feature('#include <mutex>',
                           '<mutex> is an unapproved C++11 header.'
                           '  [build/c++11] [5]')
@@ -4757,6 +4817,25 @@ class Cxx11Test(CpplintTestBase):
                   ' construct a pair directly'
                   '  [build/explicit_make_pair] [4]')
     self.TestLint('my_make_pair<int, int>', '')
+
+class Cxx14Test(CpplintTestBase):
+
+  def TestCxx14Feature(self, code, expected_error):
+    lines = code.split('\n')
+    collector = ErrorCollector(self.assert_)
+    cpplint.RemoveMultiLineComments('foo.h', lines, collector)
+    clean_lines = cpplint.CleansedLines(lines)
+    cpplint.FlagCxx14Features('foo.cc', clean_lines, 0, collector)
+    self.assertEqual(expected_error, collector.Results())
+
+  def testBlockedHeaders(self):
+    self.TestCxx14Feature('#include <scoped_allocator>',
+                          '<scoped_allocator> is an unapproved C++14 header.'
+                           '  [build/c++14] [5]')
+    self.TestCxx14Feature('#include <shared_mutex>',
+                          '<shared_mutex> is an unapproved C++14 header.'
+                          '  [build/c++14] [5]')
+
 
 class CleansedLinesTest(unittest.TestCase):
 
@@ -5403,6 +5482,20 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
         'NonMacro(arg)',
         'Lint failed to find start of function body.'
         '  [readability/fn_size] [5]')
+
+  def testFunctionLengthCheckWithNamespace(self):
+    old_verbosity = cpplint._SetVerboseLevel(1)
+    self.TestFunctionLengthsCheck(
+        ('namespace {\n'
+         'void CodeCoverageCL35256059() {\n' +
+         ('  X++;\n' * 3000) +
+         '}\n'
+         '}  // namespace\n'),
+        ('Small and focused functions are preferred: '
+         'CodeCoverageCL35256059() has 3000 non-comment lines '
+         '(error triggered by exceeding 20 lines).'
+         '  [readability/fn_size] [5]'))
+    cpplint._SetVerboseLevel(old_verbosity)
 
 
 def TrimExtraIndent(text_block):
