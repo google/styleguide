@@ -364,7 +364,6 @@ src/libvlc.c:640:  { should almost always be at the end of the previous line  [w
 Done processing src/libvlc.c
 src/libvlc.h:0:  No #ifndef header guard found, suggested CPP variable is: SAMPLES_VLC_SAMPLE_SRC_LIBVLC_H_  [build/header_guard] [5]
 src/libvlc.h:34:  Extra space before ( in function call  [whitespace/parens] [4]
-src/libvlc.h:34:  All parameters should be named in a function  [readability/function] [3]
 src/libvlc.h:35:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:40:  Extra space after ( in function call  [whitespace/parens] [4]
 src/libvlc.h:40:  Extra space before ( in function call  [whitespace/parens] [4]
@@ -375,19 +374,13 @@ src/libvlc.h:41:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:41:  Extra space before )  [whitespace/parens] [2]
 src/libvlc.h:45:  Extra space after ( in function call  [whitespace/parens] [4]
 src/libvlc.h:45:  Extra space before )  [whitespace/parens] [2]
-src/libvlc.h:49:  All parameters should be named in a function  [readability/function] [3]
 src/libvlc.h:58:  Extra space after ( in function call  [whitespace/parens] [4]
 src/libvlc.h:58:  Extra space before )  [whitespace/parens] [2]
 src/libvlc.h:60:  Extra space before ( in function call  [whitespace/parens] [4]
-src/libvlc.h:60:  All parameters should be named in a function  [readability/function] [3]
 src/libvlc.h:62:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:66:  Extra space before ( in function call  [whitespace/parens] [4]
-src/libvlc.h:66:  All parameters should be named in a function  [readability/function] [3]
 src/libvlc.h:68:  Extra space after ( in function call  [whitespace/parens] [4]
 src/libvlc.h:68:  Extra space before )  [whitespace/parens] [2]
-src/libvlc.h:76:  All parameters should be named in a function  [readability/function] [3]
-src/libvlc.h:77:  All parameters should be named in a function  [readability/function] [3]
-src/libvlc.h:78:  All parameters should be named in a function  [readability/function] [3]
 src/libvlc.h:84:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/libvlc.h:86:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:90:  Extra space after ( in function call  [whitespace/parens] [4]
@@ -417,12 +410,9 @@ src/libvlc.h:185:  { should almost always be at the end of the previous line  [w
 src/libvlc.h:191:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/libvlc.h:200:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/libvlc.h:222:  Extra space before ( in function call  [whitespace/parens] [4]
-src/libvlc.h:222:  All parameters should be named in a function  [readability/function] [3]
 src/libvlc.h:223:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:224:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:224:  Extra space before )  [whitespace/parens] [2]
-src/libvlc.h:224:  All parameters should be named in a function  [readability/function] [3]
-src/libvlc.h:227:  All parameters should be named in a function  [readability/function] [3]
 Done processing src/libvlc.h
 src/missing.c:44:  Extra space before ( in function call  [whitespace/parens] [4]
 src/missing.c:45:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
@@ -614,5 +604,4 @@ src/missing.c:399:  Extra space before ( in function call  [whitespace/parens] [
 src/missing.c:400:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/missing.c:401:  Extra space before ( in function call  [whitespace/parens] [4]
 Done processing src/missing.c
-Total errors found: 611
-
+Total errors found: 601
