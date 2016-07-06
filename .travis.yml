@@ -23,9 +23,9 @@ script:
   - python cpplint_clitest.py
   - python cpplint.py --help
 
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; pyflakes cpplint_unittest.py
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; pyflakes cpplint_clitest.py
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; pyflakes cpplint.py
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; pyflakes cpplint_unittest.py; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; pyflakes cpplint_clitest.py; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; pyflakes cpplint.py; fi
 
   - if [[ $TRAVIS_PYTHON_VERSION != 2.6 ]]; then pylint --max-locals=25 --max-line-length=100 --max-attributes=10 -d bad-indentation,invalid-name,too-many-statements,multiple-statements,global-statement,missing-docstring,too-many-branches,too-many-return-statements,too-many-arguments,fixme,bad-continuation,bad-option-value,redefined-builtin,too-few-public-methods,no-self-use,too-many-lines,too-many-function-args,unused-argument,anomalous-unicode-escape-in-string,too-many-boolean-expressions   cpplint.py; fi
   - if [[ $TRAVIS_PYTHON_VERSION != 2.6 ]]; then pylint --max-locals=25 --max-line-length=100 --max-attributes=10 -d bad-indentation,invalid-name,too-many-statements,multiple-statements,global-statement,missing-docstring,too-many-branches,too-many-return-statements,too-many-arguments,fixme,bad-continuation,bad-option-value,redefined-builtin,too-few-public-methods,no-self-use,too-many-lines,too-many-function-args,unused-argument,anomalous-unicode-escape-in-string,too-many-boolean-expressions   cpplint_clitest.py; fi
