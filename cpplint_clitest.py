@@ -61,6 +61,7 @@ class UsageTest(unittest.TestCase):
     def testHelp(self):
         (status, out, err) = RunShellCommand(BASE_CMD + ' --help')
         self.assertEqual(0, status)
+        self.assertEqual(b'', out)
         self.assertTrue(err.startswith(b'\nSyntax: cpplint'))
 
 
@@ -69,7 +70,8 @@ class SignatureTests(unittest.TestCase):
     Regression tests: The test starts a filetreewalker scanning for files name *.def
     Such files are expected to have as first line the argument
     to a cpplint invocation from within the same directory, as second line the
-    expected status code, and all other lines the expected systemerr output (two blank lines at end).
+    expected status code, and all other lines the expected systemerr output (two blank
+    lines at end).
     """
 
     def testChromiumSample(self):
@@ -89,12 +91,12 @@ class SignatureTests(unittest.TestCase):
 
     def testCodeliteSample(self):
         self.checkAllInFolder('./samples/codelite-sample', 1)
-    
+
     def checkAllInFolder(self, foldername, expectedDefs):
         # uncomment to show complete diff
         # self.maxDiff = None
         count = 0
-        for dirpath, dnames, fnames in os.walk(foldername):
+        for dirpath, _, fnames in os.walk(foldername):
             for f in fnames:
                 if f.endswith('.def'):
                     count += 1
