@@ -111,10 +111,6 @@ src/sillycode.cpp:252:  Tab found; better to use spaces  [whitespace/tab] [1]
 src/sillycode.cpp:252:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 src/sillycode.cpp:255:  Empty loop bodies should use {} or continue  [whitespace/empty_loop_body] [5]
 src/sillycode.cpp:255:  At least two spaces is best between code and comments  [whitespace/comments] [2]
-src/sillycode.cpp:9:  Add #include <vector> for vector<>  [build/include_what_you_use] [4]
-src/sillycode.cpp:121:  Add #include <algorithm> for swap  [build/include_what_you_use] [4]
-src/sillycode.cpp:219:  Add #include <limits> for numeric_limits<>  [build/include_what_you_use] [4]
-src/sillycode.cpp:232:  Add #include <string> for string  [build/include_what_you_use] [4]
 Done processing src/sillycode.cpp
-Total errors found: 115
+Total errors found: 111
 
