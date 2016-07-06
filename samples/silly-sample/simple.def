@@ -38,6 +38,7 @@ src/sillycode.cpp:113:  Is this a non-const reference? If so, make const or use 
 src/sillycode.cpp:114:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/sillycode.cpp:115:  Tab found; better to use spaces  [whitespace/tab] [1]
 src/sillycode.cpp:115:  Missing space after ,  [whitespace/comma] [3]
+src/sillycode.cpp:117:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/sillycode.cpp:117:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
 src/sillycode.cpp:118:  Is this a non-const reference? If so, make const or use a pointer: N::X& a  [runtime/references] [2]
 src/sillycode.cpp:118:  Is this a non-const reference? If so, make const or use a pointer: N::X& b  [runtime/references] [2]
