@@ -2852,7 +2852,7 @@ def CheckSpacingForFunctionCall(filename, clean_lines, linenum, error):
   # Note that we assume the contents of [] to be short enough that
   # they'll never need to wrap.
   if (  # Ignore control structures.
-      not Search(r'\b(if|for|while|switch|return|new|delete|catch|sizeof)\b',
+      not Search(r'\b(if|for|foreach|while|switch|return|new|delete|catch|sizeof)\b',
                  fncall) and
       # Ignore pointers/references to functions.
       not Search(r' \([^)]+\)\([^)]*(\)|,$)', fncall) and
@@ -3339,7 +3339,7 @@ def CheckParenthesisSpacing(filename, clean_lines, linenum, error):
   # there should either be zero or one spaces inside the parens.
   # We don't want: "if ( foo)" or "if ( foo   )".
   # Exception: "for ( ; foo; bar)" and "for (foo; bar; )" are allowed.
-  match = Search(r'\b(if|for|while|switch)\s*'
+  match = Search(r'\b(if|for|foreach|while|switch)\s*'
                  r'\(([ ]*)(.).*[^ ]+([ ]*)\)\s*{\s*$',
                  line)
   if match:
@@ -3922,7 +3922,7 @@ def CheckEmptyBlockBody(filename, clean_lines, linenum, error):
   # We also check "if" blocks here, since an empty conditional block
   # is likely an error.
   line = clean_lines.elided[linenum]
-  matched = Match(r'\s*(for|while|if)\s*\(', line)
+  matched = Match(r'\s*(for|foreach|while|if)\s*\(', line)
   if matched:
     # Find the end of the conditional expression.
     (end_line, end_linenum, end_pos) = CloseExpression(
