@@ -56,7 +56,7 @@ import unicodedata
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed] [--root=subdir]
-                   [--linelength=digits]
+                   [--linelength=digits] [--quiet]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -128,6 +128,15 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       Examples:
         --linelength=120
 
+    quiet makes output quiet unless errors occurs
+      Mainly used by automation tools when parsing huge amount of files.
+      In those cases actual error might get lost in the pile of other stats
+      prints.
+
+      This argument is also handy for build system integration, so it's
+      possible to add automated lint target to a project and invoke it
+      via build system and have no pollution of terminals or IDE.
+
     extensions=extension,extension,...
       The allowed file extensions that cpplint will check
 
@@ -143,6 +152,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       exclude_files=regex
       linelength=80
       root=subdir
+      quiet
 
     "set noparent" option prevents cpplint from traversing directory tree
     upwards looking for more .cfg files in parent directories. This option
@@ -160,6 +170,8 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
     The "root" option is similar in function to the --root flag (see example
     above).
+
+    The "quiet" option is similar in function to the --quiet.
 
     CPPLINT.cfg has an effect on files in the same directory and all
     sub-directories, unless overridden by a nested configuration file.
@@ -531,6 +543,9 @@ _root = None
 # The allowed line length of files.
 # This is set by --linelength flag.
 _line_length = 80
+
+# Supress messages unless error occurs.
+_quiet = False
 
 # The allowed extensions for file names
 # This is set by --extensions flag.
@@ -909,7 +924,8 @@ class _CppLintState(object):
     for category, count in self.errors_by_category.iteritems():
       sys.stderr.write('Category \'%s\' errors found: %d\n' %
                        (category, count))
-    sys.stderr.write('Total errors found: %d\n' % self.error_count)
+    if self.error_count > 0 or not _quiet:
+      sys.stderr.write('Total errors found: %d\n' % self.error_count)
 
 _cpplint_state = _CppLintState()
 
@@ -5893,6 +5909,8 @@ def ProcessConfigOverrides(filename):
           elif name == 'root':
             global _root
             _root = val
+          elif name == 'quiet':
+            _quiet = True
           else:
             sys.stderr.write(
                 'Invalid configuration option (%s) in file %s\n' %
@@ -5995,7 +6013,8 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
         Error(filename, linenum, 'whitespace/newline', 1,
               'Unexpected \\r (^M) found; better to use only \\n')
 
-  sys.stderr.write('Done processing %s\n' % filename)
+  if not _quiet:
+    sys.stderr.write('Done processing %s\n' % filename)
   _RestoreFilters()
 
 
@@ -6038,7 +6057,7 @@ def ParseArguments(args):
                                                  'filter=',
                                                  'root=',
                                                  'linelength=',
-                                                 'extensions='])
+                                                 'extensions=', 'quiet'])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
@@ -6079,6 +6098,9 @@ def ParseArguments(args):
           _valid_extensions = set(val.split(','))
       except ValueError:
           PrintUsage('Extensions must be comma seperated list.')
+    elif opt == '--quiet':
+      global _quiet
+      _quiet = True
 
   if not filenames:
     PrintUsage('No files were specified.')
