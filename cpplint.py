@@ -791,7 +791,7 @@ def Search(pattern, s):
 
 def _IsSourceExtension(s):
   """File extension (excluding dot) matches a source file extension."""
-  return s in GetAllExtensions()
+  return s in GetNonHeaderExtensions()
 
 
 class _IncludeState(object):
@@ -2089,9 +2089,9 @@ def CheckHeaderFileIncluded(filename, include_state, error):
   if Search(_TEST_FILE_SUFFIX, fileinfo.BaseName()):
     return
 
-  headerfile = filename[0:len(filename) - len(fileinfo.Extension())] + '.h'
   for ext in GetHeaderExtensions():
-      headerfile = filename[0:len(filename) - len(fileinfo.Extension())] + ext
+      basefilename = filename[0:len(filename) - len(fileinfo.Extension())]
+      headerfile = basefilename + '.' + ext
       if not os.path.exists(headerfile):
         continue
       headername = FileInfo(headerfile).RepositoryName()
