@@ -7,7 +7,6 @@ src/tr1/c_policy.hpp:14:  Line ends in whitespace.  Consider deleting these extr
 src/tr1/c_policy.hpp:15:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
 src/tr1/c_policy.hpp:16:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
 src/tr1/c_policy.hpp:17:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
-src/tr1/c_policy.hpp:18:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:18:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
 src/tr1/c_policy.hpp:19:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/tr1/c_policy.hpp:20:  public: should be indented +1 space inside struct policy  [whitespace/indent] [3]
@@ -34,7 +33,6 @@ src/tr1/c_policy.hpp:47:  Line ends in whitespace.  Consider deleting these extr
 src/tr1/c_policy.hpp:48:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
 src/tr1/c_policy.hpp:49:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
 src/tr1/c_policy.hpp:50:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
-src/tr1/c_policy.hpp:51:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:51:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
 src/tr1/c_policy.hpp:52:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/tr1/c_policy.hpp:53:  public: should be indented +1 space inside struct policy  [whitespace/indent] [3]
@@ -67,11 +65,6 @@ src/tr1/c_policy.hpp:109:  Namespace should be terminated with "// namespace mat
 src/tr1/c_policy.hpp:109:  Namespace should be terminated with "// namespace boost"  [readability/namespace] [5]
 src/tr1/c_policy.hpp:109:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 src/tr1/c_policy.hpp:111:  Missing space before {  [whitespace/braces] [5]
-src/tr1/c_policy.hpp:122:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
-src/tr1/c_policy.hpp:123:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
-src/tr1/c_policy.hpp:124:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
-src/tr1/c_policy.hpp:125:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
-src/tr1/c_policy.hpp:126:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:131:  Namespace should be terminated with "// namespace c_policies"  [readability/namespace] [5]
 Done processing src/tr1/c_policy.hpp
 Total errors found: 73
