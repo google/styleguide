@@ -10,7 +10,6 @@ src/sillycode.cpp:113:  Is this a non-const reference? If so, make const or use 
 src/sillycode.cpp:113:  Is this a non-const reference? If so, make const or use a pointer: N::X& b  [runtime/references] [2]
 src/sillycode.cpp:118:  Is this a non-const reference? If so, make const or use a pointer: N::X& a  [runtime/references] [2]
 src/sillycode.cpp:118:  Is this a non-const reference? If so, make const or use a pointer: N::X& b  [runtime/references] [2]
-src/sillycode.cpp:159:  All parameters should be named in a function  [readability/function] [3]
 src/sillycode.cpp:166:  Do not use variable-length arrays.  Use an appropriately named ('k' followed by CamelCase) compile-time constant for the size.  [runtime/arrays] [1]
 src/sillycode.cpp:173:  For a static/global string constant, use a C style string instead: "char s[]".  [runtime/string] [4]
 src/sillycode.cpp:194:  If an else has a brace on one side, it should have it on both  [readability/braces] [5]
