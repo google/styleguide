@@ -2646,4 +2646,5 @@ src/descriptor_unittest.cc:5929:  Single-parameter constructors should be marked
 src/descriptor_unittest.cc:5968:  Single-parameter constructors should be marked explicit.  [runtime/explicit] [5]
 src/descriptor_unittest.cc:6486:  Redundant blank line at the end of a code block should be deleted.  [whitespace/blank_line] [3]
 Done processing src/descriptor_unittest.cc
-Total errors found: 2642
+Total errors found: 2643
+

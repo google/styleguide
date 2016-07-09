@@ -107,5 +107,5 @@ src/sillycode.cpp:252:  At least two spaces is best between code and comments  [
 src/sillycode.cpp:255:  Empty loop bodies should use {} or continue  [whitespace/empty_loop_body] [5]
 src/sillycode.cpp:255:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 Done processing src/sillycode.cpp
-Total errors found: 111
+Total errors found: 106
 

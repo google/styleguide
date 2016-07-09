@@ -19,9 +19,8 @@ src/sillycode.cpp:222:  Static/global string variables are not permitted.  [runt
 src/sillycode.cpp:223:  Using C-style cast.  Use reinterpret_cast<double*>(...) instead  [readability/casting] [4]
 src/sillycode.cpp:238:  Using C-style cast.  Use reinterpret_cast<derived2*>(...) instead  [readability/casting] [4]
 Done processing src/sillycode.cpp
-Category 'build' errors found: 6
 Category 'legal' errors found: 1
-Category 'readability' errors found: 6
-Category 'runtime' errors found: 11
-Total errors found: 24
+Category 'readability' errors found: 5
+Category 'runtime' errors found: 12
+Total errors found: 18
 

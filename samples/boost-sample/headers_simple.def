@@ -67,5 +67,5 @@ src/tr1/c_policy.hpp:109:  At least two spaces is best between code and comments
 src/tr1/c_policy.hpp:111:  Missing space before {  [whitespace/braces] [5]
 src/tr1/c_policy.hpp:131:  Namespace should be terminated with "// namespace c_policies"  [readability/namespace] [5]
 Done processing src/tr1/c_policy.hpp
-Total errors found: 73
+Total errors found: 66
 

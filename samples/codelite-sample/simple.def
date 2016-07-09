@@ -682,5 +682,5 @@ src/pptable.h:128:  Tab found; better to use spaces  [whitespace/tab] [1]
 src/pptable.h:129:  Tab found; better to use spaces  [whitespace/tab] [1]
 src/pptable.h:131:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 Done processing src/pptable.h
-Total errors found: 679
+Total errors found: 680
 
