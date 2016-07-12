@@ -994,6 +994,11 @@ class CpplintTest(CpplintTestBase):
         'Add #include <hash_map> for hash_map<>'
         '  [build/include_what_you_use] [4]')
     self.TestIncludeWhatYouUse(
+        """#include "base/containers/hash_tables.h"
+          base::hash_map<int, int> foobar;
+        """,
+        '')
+    self.TestIncludeWhatYouUse(
         """#include "base/foobar.h"
            bool foobar = std::less<int>(0,1);
         """,

@@ -5694,8 +5694,13 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
       continue
 
     for pattern, template, header in _re_pattern_templates:
-      if pattern.search(line):
-        required[header] = (linenum, template)
+      matched = pattern.search(line)
+      if matched:
+        # Don't warn about IWYU in non-STL namespaces:
+        # (We check only the first match per line; good enough.)
+        prefix = line[:matched.start()]
+        if prefix.endswith('std::') or not prefix.endswith('::'):
+          required[header] = (linenum, template)
 
   # The policy is that if you #include something in foo.h you don't need to
   # include it again in foo.cc. Here, we will look at possible includes.
