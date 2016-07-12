@@ -1,6 +1,13 @@
 Changelog
 ---------
 
+1.3.0
+-----
+
+* Incorporate cpplint updates from google.
+* Add --headers flag to choose which extensions are header files.
+* Add regression testsing.
+
 1.2.2
 -----
 
