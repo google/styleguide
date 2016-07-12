@@ -955,6 +955,12 @@ class CpplintTest(CpplintTestBase):
         'Add #include <utility> for pair<>'
         '  [build/include_what_you_use] [4]')
     self.TestIncludeWhatYouUse(
+        """#include <hash_map>
+           auto foo = std::make_pair(1, 2);
+        """,
+        'Add #include <utility> for make_pair'
+        '  [build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
         """#include <utility>
            std::pair<int,int> foo;
         """,
@@ -1047,6 +1053,18 @@ class CpplintTest(CpplintTestBase):
         'Add #include <map> for multimap<>'
         '  [build/include_what_you_use] [4]')
     self.TestIncludeWhatYouUse(
+        """#include <string>
+           void a(const std::unordered_map<int,string> &foobar);
+        """,
+        'Add #include <unordered_map> for unordered_map<>'
+        '  [build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
+        """#include <string>
+           void a(const std::unordered_set<int> &foobar);
+        """,
+        'Add #include <unordered_set> for unordered_set<>'
+        '  [build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
         """#include <queue>
            void a(const std::priority_queue<int> &foobar);
         """,
@@ -1069,6 +1087,31 @@ class CpplintTest(CpplintTestBase):
            int i = numeric_limits<int>::max()
         """,
         '')
+    self.TestIncludeWhatYouUse(
+        """#include <string>
+           std::unique_ptr<int> x;
+        """,
+        'Add #include <memory> for unique_ptr<>'
+        '  [build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
+        """#include <string>
+           auto x = std::make_unique<int>(0);
+        """,
+        'Add #include <memory> for make_unique<>'
+        '  [build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
+        """#include <vector>
+           vector<int> foo(vector<int> x) { return std::move(x); }
+        """,
+        'Add #include <utility> for move'
+        '  [build/include_what_you_use] [4]')
+    self.TestIncludeWhatYouUse(
+        """#include <string>
+           int a, b;
+           std::swap(a, b);
+        """,
+        'Add #include <utility> for swap'
+        '  [build/include_what_you_use] [4]')
 
     # Test the UpdateIncludeState code path.
     mock_header_contents = ['#include "blah/foo.h"', '#include "blah/bar.h"']
