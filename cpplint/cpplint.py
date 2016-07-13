@@ -5262,12 +5262,15 @@ _HEADERS_CONTAINING_TEMPLATES = (
     ('<limits>', ('numeric_limits',)),
     ('<list>', ('list',)),
     ('<map>', ('map', 'multimap',)),
-    ('<memory>', ('allocator',)),
+    ('<memory>', ('allocator', 'make_shared', 'make_unique', 'shared_ptr',
+                  'unique_ptr', 'weak_ptr')),
     ('<queue>', ('queue', 'priority_queue',)),
     ('<set>', ('set', 'multiset',)),
     ('<stack>', ('stack',)),
     ('<string>', ('char_traits', 'basic_string',)),
     ('<tuple>', ('tuple',)),
+    ('<unordered_map>', ('unordered_map', 'unordered_multimap')),
+    ('<unordered_set>', ('unordered_set', 'unordered_multiset')),
     ('<utility>', ('pair',)),
     ('<vector>', ('vector',)),
 
@@ -5282,7 +5285,7 @@ _HEADERS_MAYBE_TEMPLATES = (
     ('<algorithm>', ('copy', 'max', 'min', 'min_element', 'sort',
                      'transform',
                     )),
-    ('<utility>', ('swap',)),
+    ('<utility>', ('forward', 'make_pair', 'move', 'swap')),
     )
 
 _RE_PATTERN_STRING = re.compile(r'\bstring\b')
