@@ -186,37 +186,21 @@ statements.</p>
 
 <h4 id="s3.3.3-import-ordering-and-spacing">3.3.3 Ordering and spacing</h4>
 
-
-
-<p>Import statements are divided into the following groups, in this order, with each group
-separated by a single blank line:</p>
+<p>Imports are ordered as follows:</p>
 
 <ol>
-  <li>All static imports in a single group
-  <ul>
-    <li>Static import is not used for static nested classes; these are imported with normal imports
-    in the appropriate group below.</li>
-  </ul>
-  </li>
-
-  <li><code>com.google</code> imports
-  (only if this source file is in the <code>com.google</code> package
-  space)</li>
-
-  <li>Third-party imports, one group per top-level package, in ASCII sort order
-  <ul>
-    <li>for example: <code>android</code>, <code>com</code>, <code>org</code>, <code>sun</code></li>
-  </ul>
-  </li>
-
-  <li><code>java</code> imports</li>
-
-  <li><code>javax</code> imports</li>
+  <li>All static imports in a single block.</li>
+  <li>All non-static imports in a single block.</li>
 </ol>
 
-<p>Within a group there are no blank lines, and the imported names appear in ASCII sort
-order. (<strong>Note:</strong> this is not the same as the import <em>statements</em> being in
-ASCII sort order; the presence of semicolons warps the result.)</p>
+<p>If there are both static and non-static imports, a single blank line separates the two
+blocks. There are no other blank lines between import statements.</p>
+
+<p>Within each block the imported names appear in ASCII sort order. (<strong>Note:</strong>
+this is not the same as the import <em>statements</em> being in ASCII sort order, since '.'
+sorts before ';'.)</p>
+
+
 
 <h3 id="s3.4-class-declaration">3.4 Class declaration</h3>
 
@@ -284,9 +268,15 @@ for <em>nonempty</em> blocks and block-like constructs:</p>
   <code class="prettyprint lang-java">else</code> or a comma.</li>
 </ul>
 
-<p>Example:</p>
+<p>Examples:</p>
 
-<pre class="prettyprint lang-java">return new MyClass() {
+<pre class="prettyprint lang-java">return () -&gt; {
+  while (condition()) {
+    method();
+  }
+};
+
+return new MyClass() {
   @Override public void method() {
     if (condition()) {
       try {
@@ -381,7 +371,8 @@ without the need to line-wrap.</p>
   such as C++ and JavaScript.)
     <ul>
       <li>This also applies to the following "operator-like" symbols: the dot separator
-      (<code class="prettyprint lang-java">.</code>), the ampersand in type bounds
+      (<code class="prettyprint lang-java">.</code>), the two colons of a method reference
+      (<code class="prettyprint lang-java">::</code>), the ampersand in type bounds
       (<code class="prettyprint lang-java">&lt;T extends Foo &amp; Bar&gt;</code>), and the pipe in
       catch blocks
       (<code class="prettyprint lang-java">catch (FooException | BarException e)</code>).</li>
@@ -443,7 +434,8 @@ previous lines.</p>
   </li><li><em>Optionally</em> before the first member or after the last member of the class (neither
   encouraged nor discouraged).</li>
 
-  <li>As required by other sections of this document (such as Section 3.3,
+  <li>As required by other sections of this document (such as Section 3,
+  <a href="#s3-source-file-structure">Source file structure</a>, and Section 3.3,
   <a href="#s3.3-import-statements">Import statements</a>).</li>
 </ol>
 
@@ -488,6 +480,17 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
 
     <li>the colon (<code class="prettyprint lang-java">:</code>) in an enhanced
     <code class="prettyprint lang-java">for</code> ("foreach") statement</li>
+
+    <li>the arrow in a lambda expression:
+    <code class="prettyprint lang-java">(String str) -&gt; str.length()</code></li>
+  </ul>
+    but not
+
+  <ul>
+    <li>the two colons (<code class="prettyprint lang-java">::</code>) of a method reference, which
+    is written like <code class="prettyprint lang-java">Object::toString</code></li>
+    <li>the dot separator (<code class="prettyprint lang-java">.</code>), which is written like
+      <code class="prettyprint lang-java">object.toString()</code></li>
   </ul>
   </li>
 
@@ -690,7 +693,8 @@ for example:</p>
 <pre class="prettyprint lang-java">@Partial @Mock DataLoader loader;
 </pre>
 
-<p>There are no specific rules for formatting parameter and local variable annotations.</p>
+<p>There are no specific rules for formatting annotations on parameters, local variables, or types.
+</p>
 
 <a name="comments"></a>
 <h4 id="s4.8.6-comments">4.8.6 Comments</h4>
@@ -729,7 +733,7 @@ re-wrap the lines when necessary (paragraph-style). Most formatters don't re-wra
 recommended by the Java Language Specification:
 </p>
 
-<pre>public protected private abstract static final transient volatile synchronized native strictfp
+<pre>public protected private abstract default static final transient volatile synchronized native strictfp
 </pre>
 
 <h4 id="s4.8.8-numeric-literals">4.8.8 Numeric Literals</h4>
