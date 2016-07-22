@@ -202,6 +202,11 @@ sorts before ';'.)</p>
 
 
 
+<h4 id="s3.3.4-import-class-not-static">3.3.4 No static import for classes</h4>
+
+<p>Static import is not used for static nested classes. They are imported with
+normal imports.</p>
+
 <h3 id="s3.4-class-declaration">3.4 Class declaration</h3>
 
 <a name="oneclassperfile"></a>
@@ -370,12 +375,17 @@ without the need to line-wrap.</p>
   the symbol. (Note that this is not the same practice used in Google style for other languages,
   such as C++ and JavaScript.)
     <ul>
-      <li>This also applies to the following "operator-like" symbols: the dot separator
-      (<code class="prettyprint lang-java">.</code>), the two colons of a method reference
-      (<code class="prettyprint lang-java">::</code>), the ampersand in type bounds
-      (<code class="prettyprint lang-java">&lt;T extends Foo &amp; Bar&gt;</code>), and the pipe in
-      catch blocks
-      (<code class="prettyprint lang-java">catch (FooException | BarException e)</code>).</li>
+      <li>This also applies to the following "operator-like" symbols:
+        <ul>
+          <li>the dot separator (<code class="prettyprint lang-java">.</code>)</li>
+          <li>the two colons of a method reference
+          (<code class="prettyprint lang-java">::</code>)</li>
+          <li>an ampersand in a type bound
+          (<code class="prettyprint lang-java">&lt;T extends Foo &amp; Bar&gt;</code>)</li>
+          <li>a pipe in a catch block
+          (<code class="prettyprint lang-java">catch (FooException | BarException e)</code>).</li>
+        </ul>
+      </li>
     </ul>
   </li>
 
@@ -392,6 +402,19 @@ without the need to line-wrap.</p>
 
   <li>A comma (<code class="prettyprint lang-java">,</code>) stays attached to the token that
   precedes it.</li>
+
+  <li>A line is never broken adjacent to the arrow in a lambda, except that a
+  break may come immediately after the arrow if the body of the lambda consists
+  of a single unbraced expression. Examples:
+<pre class="prettyprint lang-java">MyLambda&lt;String, Long, Object&gt; lambda =
+    (String label, Long value, Object obj) -&gt; {
+        ...
+    };
+
+Predicate&lt;String&gt; predicate = str -&gt;
+    longExpressionInvolving(str);
+</pre>
+  </li>
 </ol>
 
 <p class="note"><strong>Note:</strong> The primary goal for line wrapping is to have clear
@@ -490,7 +513,7 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
     <li>the two colons (<code class="prettyprint lang-java">::</code>) of a method reference, which
     is written like <code class="prettyprint lang-java">Object::toString</code></li>
     <li>the dot separator (<code class="prettyprint lang-java">.</code>), which is written like
-      <code class="prettyprint lang-java">object.toString()</code></li>
+    <code class="prettyprint lang-java">object.toString()</code></li>
   </ul>
   </li>
 
