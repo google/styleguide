@@ -54,6 +54,24 @@ To release a new version:
     python setup.py sdist register -r pypi
     python setup.py sdist upload -r pypi
 
+To incorporate google's changes:
+
+.. code-block:: bash
+
+    # assumes a merged google branch exists locally
+    git fetch google gh-pages
+    git rebase FETCH_HEAD google
+
+    git checkout -b updates google
+    git rebase --onto master master updates
+    git push -u origin updates
+    # check travis
+    git push origin --delete updates
+
+    git rebase updates master
+    git branch -D updates
+    git push
+
 Thanks to `tkruse <https://github.com/tkruse>`_ for putting cpplint on PyPI and maintaining the PyPI version for many years!
 
 .. image:: https://travis-ci.org/theandrewdavis/cpplint.svg
