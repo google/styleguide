@@ -1,5 +1,9 @@
 language: python
 
+branches:
+  except:
+  - google
+
 # use container infra for linux
 sudo: false
 
