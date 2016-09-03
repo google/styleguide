@@ -561,23 +561,26 @@ class CpplintTest(CpplintTestBase):
         'int a = (int)-1.0;',
         'Using C-style cast.  Use static_cast<int>(...) instead'
         '  [readability/casting] [4]')
-    self.TestLint(
-        'int *a = (int *)NULL;',
-        'Using C-style cast.  Use reinterpret_cast<int *>(...) instead'
-        '  [readability/casting] [4]')
 
-    self.TestLint(
-        'uint16 a = (uint16)1.0;',
-        'Using C-style cast.  Use static_cast<uint16>(...) instead'
-        '  [readability/casting] [4]')
-    self.TestLint(
-        'int32 a = (int32)1.0;',
-        'Using C-style cast.  Use static_cast<int32>(...) instead'
-        '  [readability/casting] [4]')
-    self.TestLint(
-        'uint64 a = (uint64)1.0;',
-        'Using C-style cast.  Use static_cast<uint64>(...) instead'
-        '  [readability/casting] [4]')
+    cast_types = ['int *', 'int* ', 'const int *', 'const int* ',
+                  'const int * const', 'const int* const']
+    for cast_type in cast_types:
+      self.TestLint(
+          cast_type + 'a = (' + cast_type.rstrip() + ')NULL;',
+          'Using C-style cast.  Use reinterpret_cast<' + cast_type.rstrip() +
+          '>(...) instead  [readability/casting] [4]')
+
+    cast_types = ['unsigned', 'unsigned char', 'char', 'unsigned int', 'int',
+                  'float', 'double', 'bool',
+                  'uint8', 'uint8_t', 'int8', 'int8_t',
+                  'uint16', 'uint16_t', 'int16', 'int16_t',
+                  'uint32', 'uint32_t', 'int32', 'int32_t',
+                  'uint64', 'uint64_t', 'int64', 'int64_t']
+    for cast_type in cast_types:
+      self.TestLint(
+          cast_type + ' a = (' + cast_type + ')1.0;',
+          'Using C-style cast.  Use static_cast<' + cast_type + '>(...) instead'
+          '  [readability/casting] [4]')
 
     # These shouldn't be recognized casts.
     self.TestLint('u a = (u)NULL;', '')
