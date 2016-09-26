@@ -907,9 +907,15 @@ class _CppLintState(object):
   def PrintErrorCounts(self):
     """Print a summary of errors by category, and the total."""
     for category, count in self.errors_by_category.iteritems():
-      sys.stderr.write('Category \'%s\' errors found: %d\n' %
-                       (category, count))
-    sys.stderr.write('Total errors found: %d\n' % self.error_count)
+      if count > 0:
+        sys.stderr.write('Category \'%s\' errors found: %d\n' % (category, count))
+      else:
+        sys.stdout.write('Category \'%s\' no errors found\n' % (category))
+
+    if self.error_count > 0:
+      sys.stderr.write('Total errors found: %d\n' % self.error_count)
+    else:
+      sys.stdout.write('No errors found')
 
 _cpplint_state = _CppLintState()
 
@@ -5888,7 +5894,7 @@ def ProcessConfigOverrides(filename):
             if base_name:
               pattern = re.compile(val)
               if pattern.match(base_name):
-                sys.stderr.write('Ignoring "%s": file excluded by "%s". '
+                sys.stdout.write('Ignoring "%s": file excluded by "%s". '
                                  'File path component "%s" matches '
                                  'pattern "%s"\n' %
                                  (filename, cfg_file, base_name, val))
@@ -6004,7 +6010,7 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
         Error(filename, linenum, 'whitespace/newline', 1,
               'Unexpected \\r (^M) found; better to use only \\n')
 
-  sys.stderr.write('Done processing %s\n' % filename)
+  sys.stdout.write('Done processing %s\n' % filename)
   _RestoreFilters()
 
 
