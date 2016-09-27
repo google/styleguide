@@ -550,7 +550,7 @@ _valid_extensions = set(['cc', 'h', 'cpp', 'cu', 'cuh'])
 
 # Treat all headers starting with 'h' equally: .h, .hpp, .hxx etc.
 # This is set by --headers flag.
-_hpp_headers = None
+_hpp_headers = set(['h'])
 
 # {str, bool}: a map from error categories to booleans which indicate if the
 # category should be suppressed for every line.
@@ -566,10 +566,7 @@ def ProcessHppHeadersOption(val):
     PrintUsage('Header extensions must be comma seperated list.')
 
 def IsHeaderExtension(file_extension):
-  if _hpp_headers and file_extension in _hpp_headers:
-    return True
-  else:
-    return file_extension == 'h'
+  return file_extension in _hpp_headers
 
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of line error-suppressions.
