@@ -194,19 +194,13 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
       Examples:
         --extensions=%s
 
-    headers=extension,extension,...
-      The allowed header extensions that cpplint will consider to be header files
-      (by default, only files with extensions %s
-      will be assumed to be headers)
-
-      Examples:
-        --headers=%s
-
     headers=x,y,...
       The header extensions that cpplint will treat as .h in checks. Values are
       automatically added to --extensions list.
+     (by default, only files with extensions %s will be assumed to be headers)
 
       Examples:
+        --headers=%s
         --headers=hpp,hxx
         --headers=hpp
 
@@ -690,10 +684,7 @@ def ProcessHppHeadersOption(val):
     PrintUsage('Header extensions must be comma seperated list.')
 
 def IsHeaderExtension(file_extension):
-  if _hpp_headers and file_extension in _hpp_headers:
-    return True
-  else:
-    return file_extension == 'h'
+  return file_extension in _hpp_headers
 
 def GetHeaderExtensions():
   return _hpp_headers or ['h']
