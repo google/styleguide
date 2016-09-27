@@ -3778,6 +3778,7 @@ class CpplintTest(CpplintTestBase):
     old_error_categories = cpplint._ERROR_CATEGORIES
     old_output_format = cpplint._cpplint_state.output_format
     old_verbose_level = cpplint._cpplint_state.verbose_level
+    old_headers = cpplint._hpp_headers
     old_filters = cpplint._cpplint_state.filters
     old_line_length = cpplint._line_length
     old_valid_extensions = cpplint._valid_extensions
@@ -3795,6 +3796,7 @@ class CpplintTest(CpplintTestBase):
       self.assertRaises(SystemExit, cpplint.ParseArguments, ['--filter=foo'])
       self.assertRaises(SystemExit, cpplint.ParseArguments,
                         ['--filter=+a,b,-c'])
+      self.assertRaises(SystemExit, cpplint.ParseArguments, ['--headers'])
 
       self.assertEquals(['foo.cc'], cpplint.ParseArguments(['foo.cc']))
       self.assertEquals(old_output_format, cpplint._cpplint_state.output_format)
@@ -3837,6 +3839,13 @@ class CpplintTest(CpplintTestBase):
       self.assertEqual(['foo.h'],
                        cpplint.ParseArguments(['--extensions=hpp,cpp,cpp', 'foo.h']))
       self.assertEqual(set(['hpp', 'cpp']), cpplint._valid_extensions)
+      
+      self.assertEqual(set(['h']), cpplint._hpp_headers)  # Default value
+      self.assertEqual(['foo.h'],
+                       cpplint.ParseArguments(['--extensions=cpp,cpp', '--headers=hpp,h', 'foo.h']))
+      self.assertEqual(set(['hpp', 'h']), cpplint._hpp_headers)
+      self.assertEqual(set(['hpp', 'h', 'cpp']), cpplint._valid_extensions)
+      
     finally:
       cpplint._USAGE = old_usage
       cpplint._ERROR_CATEGORIES = old_error_categories
@@ -3845,6 +3854,7 @@ class CpplintTest(CpplintTestBase):
       cpplint._cpplint_state.filters = old_filters
       cpplint._line_length = old_line_length
       cpplint._valid_extensions = old_valid_extensions
+      cpplint._hpp_headers = old_headers
 
   def testLineLength(self):
     old_line_length = cpplint._line_length
