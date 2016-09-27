@@ -56,7 +56,7 @@ import unicodedata
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed] [--root=subdir]
-                   [--linelength=digits]
+                   [--linelength=digits] [--headers=x,y,...]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -134,6 +134,14 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       Examples:
         --extensions=hpp,cpp
 
+    headers=x,y,...
+      The header extensions that cpplint will treat as .h in checks. Values are
+      automatically added to --extensions list.
+
+      Examples:
+        --headers=hpp,hxx
+        --headers=hpp
+
     cpplint.py supports per-directory configurations specified in CPPLINT.cfg
     files. CPPLINT.cfg file can contain a number of key=value pairs.
     Currently the following options are supported:
@@ -143,6 +151,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       exclude_files=regex
       linelength=80
       root=subdir
+      headers=x,y,...
 
     "set noparent" option prevents cpplint from traversing directory tree
     upwards looking for more .cfg files in parent directories. This option
@@ -160,6 +169,9 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
     The "root" option is similar in function to the --root flag (see example
     above).
+    
+    The "headers" option is similar in function to the --headers flag 
+    (see example above).
 
     CPPLINT.cfg has an effect on files in the same directory and all
     sub-directories, unless overridden by a nested configuration file.
@@ -536,10 +548,25 @@ _line_length = 80
 # This is set by --extensions flag.
 _valid_extensions = set(['cc', 'h', 'cpp', 'cu', 'cuh'])
 
+# Treat all headers starting with 'h' equally: .h, .hpp, .hxx etc.
+# This is set by --headers flag.
+_hpp_headers = set(['h'])
+
 # {str, bool}: a map from error categories to booleans which indicate if the
 # category should be suppressed for every line.
 _global_error_suppressions = {}
 
+def ProcessHppHeadersOption(val):
+  global _hpp_headers
+  try:
+    _hpp_headers = set(val.split(','))
+    # Automatically append to extensions list so it does not have to be set 2 times
+    _valid_extensions.update(_hpp_headers)
+  except ValueError:
+    PrintUsage('Header extensions must be comma seperated list.')
+
+def IsHeaderExtension(file_extension):
+  return file_extension in _hpp_headers
 
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of line error-suppressions.
@@ -4272,7 +4299,7 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
 
   # Check if the line is a header guard.
   is_header_guard = False
-  if file_extension == 'h':
+  if IsHeaderExtension(file_extension):
     cppvar = GetHeaderGuardCPPVariable(filename)
     if (line.startswith('#ifndef %s' % cppvar) or
         line.startswith('#define %s' % cppvar) or
@@ -4622,7 +4649,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   CheckGlobalStatic(filename, clean_lines, linenum, error)
   CheckPrintf(filename, clean_lines, linenum, error)
 
-  if file_extension == 'h':
+  if IsHeaderExtension(file_extension):
     # TODO(unknown): check that 1-arg constructors are explicit.
     #                How to tell it's a constructor?
     #                (handled in CheckForNonStandardConstructs for now)
@@ -4729,7 +4756,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   # Check for use of unnamed namespaces in header files.  Registration
   # macros are typically OK, so we allow use of "namespace {" on lines
   # that end with backslashes.
-  if (file_extension == 'h'
+  if (IsHeaderExtension(file_extension)
       and Search(r'\bnamespace\s*{', line)
       and line[-1] != '\\'):
     error(filename, linenum, 'build/namespaces', 4,
@@ -5819,7 +5846,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   RemoveMultiLineComments(filename, lines, error)
   clean_lines = CleansedLines(lines)
 
-  if file_extension == 'h':
+  if IsHeaderExtension(file_extension):
     CheckForHeaderGuard(filename, clean_lines, error)
 
   for line in xrange(clean_lines.NumLines()):
@@ -5902,6 +5929,8 @@ def ProcessConfigOverrides(filename):
           elif name == 'root':
             global _root
             _root = val
+          elif name == 'headers':
+            ProcessHppHeadersOption(val)
           else:
             sys.stderr.write(
                 'Invalid configuration option (%s) in file %s\n' %
@@ -6047,7 +6076,8 @@ def ParseArguments(args):
                                                  'filter=',
                                                  'root=',
                                                  'linelength=',
-                                                 'extensions='])
+                                                 'extensions=',
+                                                 'headers='])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
@@ -6088,6 +6118,8 @@ def ParseArguments(args):
           _valid_extensions = set(val.split(','))
       except ValueError:
           PrintUsage('Extensions must be comma seperated list.')
+    elif opt == '--headers':
+      ProcessHppHeadersOption(val)
 
   if not filenames:
     PrintUsage('No files were specified.')
