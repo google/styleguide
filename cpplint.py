@@ -1083,7 +1083,7 @@ class _CppLintState(object):
 
   def PrintInfo(self, message):
     if not _quiet and self.output_format != 'junit':
-      sys.stderr.write(message)
+      sys.stdout.write(message)
 
   def PrintError(self, message):
     if self.output_format == 'junit':
