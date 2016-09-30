@@ -411,6 +411,15 @@ _CPP_HEADERS = frozenset([
     'cwctype',
     ])
 
+_YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS = frozenset([
+    'boost/optional.hpp',
+    'gflags/gflags.h',
+    'glog/logging.h',
+    'glog/stl_logging.h',
+    'gtest/gtest.h',
+    'rapidjson/document.h'
+    ])
+
 # Type names
 _TYPES = re.compile(
     r'^(?:'
@@ -4382,6 +4391,12 @@ def _ClassifyInclude(fileinfo, include, is_system):
     >>> _ClassifyInclude(FileInfo('foo/foo.cc'), 'foo/bar.h', False)
     _OTHER_HEADER
   """
+
+  # We include some third-party headers using angle brackets, so don't treat those as C system
+  # headers. These headers should be included after C++ system headers.
+  if is_system and include in _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS:
+    is_system = False
+
   # This is a list of all standard c++ header files, except
   # those already checked for above.
   is_cpp_h = include in _CPP_HEADERS
