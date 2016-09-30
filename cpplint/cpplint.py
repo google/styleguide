@@ -4694,9 +4694,10 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
           'Did you mean "memset(%s, 0, %s)"?'
           % (match.group(1), match.group(2)))
 
-  if Search(r'\busing namespace\b', line):
+  match = Search(r'\busing namespace\s+([a-zA-Z0-9_:]+)', line)
+  if match and match.group(1) != 'std::placeholders':
     error(filename, linenum, 'build/namespaces', 5,
-          'Do not use namespace using-directives.  '
+          'Do not use namespace using-directives (except for std::placeholders).  '
           'Use using-declarations instead.')
 
   # Detect variable-length arrays.
