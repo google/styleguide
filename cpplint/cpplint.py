@@ -412,7 +412,6 @@ _CPP_HEADERS = frozenset([
     ])
 
 _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS = frozenset([
-    'boost/optional.hpp',
     'gflags/gflags.h',
     'glog/logging.h',
     'glog/stl_logging.h',
@@ -4394,7 +4393,10 @@ def _ClassifyInclude(fileinfo, include, is_system):
 
   # We include some third-party headers using angle brackets, so don't treat those as C system
   # headers. These headers should be included after C++ system headers.
-  if is_system and include in _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS:
+  if is_system and (
+      include in _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS or
+      include.startswith('boost/')
+      ):
     is_system = False
 
   # This is a list of all standard c++ header files, except
