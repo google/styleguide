@@ -416,6 +416,7 @@ _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS = frozenset([
     'glog/logging.h',
     'glog/stl_logging.h',
     'gtest/gtest.h',
+    'gtest/gtest_prod.h',
     'rapidjson/document.h'
     ])
 
@@ -1764,7 +1765,7 @@ def GetHeaderGuardCPPVariable(filename):
     if suffix == '\\':
       suffix += '\\'
     file_path_from_root = re.sub('^' + _root + suffix, '', file_path_from_root)
-  return re.sub(r'[^a-zA-Z0-9]', '_', file_path_from_root).upper() + '_'
+  return re.sub(r'[^a-zA-Z0-9]', '_', file_path_from_root).upper()
 
 
 def CheckForHeaderGuard(filename, clean_lines, error):
@@ -1841,24 +1842,14 @@ def CheckForHeaderGuard(filename, clean_lines, error):
             '#endif line should be "#endif  // %s"' % cppvar)
     return
 
-  # Didn't find the corresponding "//" comment.  If this file does not
-  # contain any "//" comments at all, it could be that the compiler
-  # only wants "/**/" comments, look for those instead.
-  no_single_line_comments = True
-  for i in xrange(1, len(raw_lines) - 1):
-    line = raw_lines[i]
-    if Match(r'^(?:(?:\'(?:\.|[^\'])*\')|(?:"(?:\.|[^"])*")|[^\'"])*//', line):
-      no_single_line_comments = False
-      break
-
-  if no_single_line_comments:
-    match = Match(r'#endif\s*/\*\s*' + cppvar + r'(_)?\s*\*/', endif)
-    if match:
-      if match.group(1) == '_':
-        # Low severity warning for double trailing underscore
-        error(filename, endif_linenum, 'build/header_guard', 0,
-              '#endif line should be "#endif  /* %s */"' % cppvar)
-      return
+  # Check for /* comment */ instead.
+  match = Match(r'#endif\s*/\*\s*' + cppvar + r'(_)?\s*\*/', endif)
+  if match:
+    if match.group(1) == '_':
+      # Low severity warning for double trailing underscore
+      error(filename, endif_linenum, 'build/header_guard', 0,
+            '#endif line should be "#endif  /* %s */"' % cppvar)
+    return
 
   # Didn't find anything
   error(filename, endif_linenum, 'build/header_guard', 5,
