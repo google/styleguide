@@ -4275,22 +4275,43 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
   scope_or_label_pattern = r'\s*\w+\s*:\s*\\?$'
   classinfo = nesting_state.InnermostClass()
   initial_spaces = 0
+  complain = 1
   cleansed_line = clean_lines.elided[linenum]
-  while initial_spaces < len(line) and line[initial_spaces] == ' ':
-    initial_spaces += 1
+  initial_spaces = GetIndentLevel(line)
   # There are certain situations we allow one space, notably for
   # section labels, and also lines containing multi-line raw strings.
   # We also don't check for lines that look like continuation lines
   # (of lines ending in double quotes, commas, equals, or angle brackets)
   # because the rules for how to indent those are non-trivial.
-  if (not Search(r'[",=><] *$', prev) and
-      (initial_spaces == 1 or initial_spaces == 3) and
+  # We also don't check for lines that have a number of leading spaces 
+  # greater than 1/4 of our line length.
+  if (initial_spaces > (_line_length / 4)):
+    complain = 0
+  if (Search(r' +(error|private|public|protected):', prev)):
+    complain = 0
+  if (Search(r'&& *$', prev)) or (Search(r'^ *&&', line)):
+    complain = 0
+  if (Search(r'\|\| *$', prev)) or (Search(r'^ *\|\|', line)):
+    complain = 0
+  if (Search(r'[=><!]= *$', prev)) or (Search(r'^ *[=><!]=', line)):
+    complain = 0
+  if (Search(r'[><!] *$', prev)) or (Search(r'^ *[><!]', prev)):
+    complain = 0
+  if (Search(r'[",=] *$', prev)):
+    complain = 0
+  if (Search(r'[\+\-\*\\/] *$', prev)):
+    complain = 0
+  if (Search(r' +for \(', prev)):
+    complain = 0
+
+  if (not (complain == 0) and
+      #(initial_spaces == 1 or initial_spaces == 3) and
+      ((initial_spaces % _indent_spaces) > 0) and
       not Match(scope_or_label_pattern, cleansed_line) and
       not (clean_lines.raw_lines[linenum] != line and
            Match(r'^\s*""', line))):
     error(filename, linenum, 'whitespace/indent', 3,
           'Weird number of spaces at line-start.  '
-          'Are you using a 2-space indent?')
 
   if line and line[-1].isspace():
     error(filename, linenum, 'whitespace/end_of_line', 4,
