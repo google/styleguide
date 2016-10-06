@@ -4301,11 +4301,15 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
     complain = 0
   if (Search(r' +(error|private|public|protected):', prev)):
     complain = 0
-  if (Search(r'&& *$', prev)):
+  if (Search(r'&& *$', prev)) or (Search(r'^ *&&', line)):
     complain = 0
-  if (Search(r'\|\| *$', prev)):
+  if (Search(r'\|\| *$', prev)) or (Search(r'^ *\|\|', line)):
     complain = 0
-  if (Search(r'[",=><] *$', prev)):
+  if (Search(r'[=><!]= *$', prev)) or (Search(r'^ *[=><!]=', line)):
+    complain = 0
+  if (Search(r'[><!] *$', prev)) or (Search(r'^ *[><!]', prev)):
+    complain = 0
+  if (Search(r'[",=] *$', prev)):
     complain = 0
   if (Search(r'[\+\-\*\\/] *$', prev)):
     complain = 0

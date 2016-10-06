@@ -3459,6 +3459,7 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('static int noindent;', '')
     self.TestLint('  int two_space_indent;', '')
     self.TestLint('    int four_space_indent;', '')
+    self.TestLint('      int six_space_indent;', '')
     self.TestLint(' int one_space_indent;',
                   'Weird number of spaces at line-start.  '
                   'Are you using a 2-space indent?  [whitespace/indent] [3]')
@@ -3496,6 +3497,102 @@ class CpplintTest(CpplintTestBase):
         ' static const char kSingleLineRawString[] = R"(...)";',
         'Weird number of spaces at line-start.  '
         'Are you using a 2-space indent?  [whitespace/indent] [3]')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo &&
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                && bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo ||
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                || bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo ==
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                == bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo !=
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                != bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo <=
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                <= bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo >=
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                >= bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo <
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                < bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo >
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                > bar)
+              goto pass;'''),
+        '')
 
   def testSectionIndent(self):
     self.TestMultiLineLint(
