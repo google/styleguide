@@ -3593,6 +3593,18 @@ class CpplintTest(CpplintTestBase):
                 > bar)
               goto pass;'''),
         '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo && !
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo &&
+                !(bar))
+              goto pass;'''),
+        '')
 
   def testSectionIndent(self):
     self.TestMultiLineLint(
