@@ -3520,12 +3520,12 @@ class CpplintTest(CpplintTestBase):
     self.TestMultiLineLint(
         """
         struct D {
-         };""",
+          };""",
         'Closing brace should be aligned with beginning of struct D'
         '  [whitespace/indent] [3]')
     self.TestMultiLineLint(
         """
-         template<typename E> class F {
+          template<typename E> class F {
         };""",
         'Closing brace should be aligned with beginning of class F'
         '  [whitespace/indent] [3]')
@@ -3960,8 +3960,9 @@ class CpplintTest(CpplintTestBase):
         'class Foo;',
         '')
     self.TestMultiLineLint(
-        """struct Foo*
-             foo = NewFoo();""",
+        """
+        struct Foo*
+            foo = NewFoo();""",
         '')
     # Test preprocessor.
     self.TestMultiLineLint(
@@ -3992,7 +3993,8 @@ class CpplintTest(CpplintTestBase):
     # The crosstool compiler we currently use will fail to compile the
     # code in this test, so we might consider removing the lint check.
     self.TestMultiLineLint(
-        """#if 0
+        """
+        #if 0
         #endif Not a comment""",
         'Uncommented text after #endif is non-standard.  Use a comment.'
         '  [build/endif_comment] [5]')
