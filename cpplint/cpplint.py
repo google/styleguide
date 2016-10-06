@@ -142,6 +142,13 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
         --headers=hpp,hxx
         --headers=hpp
 
+    indentspaces=digits
+      This is the allowed number of spaces used for each indent level at the 
+      beginning of a line of code. The default value is 2 spaces.
+
+      Examples:
+        --indentspaces=4
+
     cpplint.py supports per-directory configurations specified in CPPLINT.cfg
     files. CPPLINT.cfg file can contain a number of key=value pairs.
     Currently the following options are supported:
@@ -152,6 +159,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       linelength=80
       root=subdir
       headers=x,y,...
+      indentspaces=2
 
     "set noparent" option prevents cpplint from traversing directory tree
     upwards looking for more .cfg files in parent directories. This option
@@ -551,6 +559,10 @@ _valid_extensions = set(['cc', 'h', 'cpp', 'cu', 'cuh'])
 # Treat all headers starting with 'h' equally: .h, .hpp, .hxx etc.
 # This is set by --headers flag.
 _hpp_headers = set(['h'])
+
+# The allowed number of indent spaces for each level of indentation
+# This is set by --indentspaces flag.
+_indent_spaces = 2
 
 # {str, bool}: a map from error categories to booleans which indicate if the
 # category should be suppressed for every line.
@@ -4275,22 +4287,44 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
   scope_or_label_pattern = r'\s*\w+\s*:\s*\\?$'
   classinfo = nesting_state.InnermostClass()
   initial_spaces = 0
+  complain = 1
   cleansed_line = clean_lines.elided[linenum]
-  while initial_spaces < len(line) and line[initial_spaces] == ' ':
-    initial_spaces += 1
+  initial_spaces = GetIndentLevel(line)
   # There are certain situations we allow one space, notably for
   # section labels, and also lines containing multi-line raw strings.
   # We also don't check for lines that look like continuation lines
   # (of lines ending in double quotes, commas, equals, or angle brackets)
   # because the rules for how to indent those are non-trivial.
-  if (not Search(r'[",=><] *$', prev) and
-      (initial_spaces == 1 or initial_spaces == 3) and
+  # We also don't check for lines that have a number of leading spaces 
+  # greater than 1/4 of our line length.
+  if (initial_spaces > (_line_length / 4)):
+    complain = 0
+  if (Search(r' +(error|private|public|protected):', prev)):
+    complain = 0
+  if (Search(r'&& *$', prev)) or (Search(r'^ *&&', line)):
+    complain = 0
+  if (Search(r'\|\| *$', prev)) or (Search(r'^ *\|\|', line)):
+    complain = 0
+  if (Search(r'[=><!]= *$', prev)) or (Search(r'^ *[=><!]=', line)):
+    complain = 0
+  if (Search(r'[><!] *$', prev)) or (Search(r'^ *[><!]', prev)):
+    complain = 0
+  if (Search(r'[",=] *$', prev)):
+    complain = 0
+  if (Search(r'[\+\-\*\\/] *$', prev)):
+    complain = 0
+  if (Search(r' +for \(', prev)):
+    complain = 0
+
+  if (not (complain == 0) and
+      #(initial_spaces == 1 or initial_spaces == 3) and
+      ((initial_spaces % _indent_spaces) > 0) and
       not Match(scope_or_label_pattern, cleansed_line) and
       not (clean_lines.raw_lines[linenum] != line and
            Match(r'^\s*""', line))):
     error(filename, linenum, 'whitespace/indent', 3,
           'Weird number of spaces at line-start.  '
-          'Are you using a 2-space indent?')
+          'Are you using a %d-space indent?' % (_indent_spaces))
 
   if line and line[-1].isspace():
     error(filename, linenum, 'whitespace/end_of_line', 4,
@@ -5930,6 +5964,12 @@ def ProcessConfigOverrides(filename):
             _root = val
           elif name == 'headers':
             ProcessHppHeadersOption(val)
+          elif name == 'indentspaces':
+            global _indent_spaces
+            try:
+                _indent_spaces = int(val)
+            except ValueError:
+                sys.stderr.write('Indent spaces must be numeric.')
           else:
             sys.stderr.write(
                 'Invalid configuration option (%s) in file %s\n' %
@@ -6076,7 +6116,8 @@ def ParseArguments(args):
                                                  'root=',
                                                  'linelength=',
                                                  'extensions=',
-                                                 'headers='])
+                                                 'headers=',
+                                                 'indentspaces'])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
@@ -6119,6 +6160,12 @@ def ParseArguments(args):
           PrintUsage('Extensions must be comma seperated list.')
     elif opt == '--headers':
       ProcessHppHeadersOption(val)
+    elif opt == '--indentspaces':
+      global _indent_spaces
+      try:
+          _indent_spaces = int(val)
+      except ValueError:
+          PrintUsage('Indent spaces must be digits.')
 
   if not filenames:
     PrintUsage('No files were specified.')

@@ -3459,10 +3459,17 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('static int noindent;', '')
     self.TestLint('  int two_space_indent;', '')
     self.TestLint('    int four_space_indent;', '')
+    self.TestLint('      int six_space_indent;', '')
     self.TestLint(' int one_space_indent;',
                   'Weird number of spaces at line-start.  '
                   'Are you using a 2-space indent?  [whitespace/indent] [3]')
     self.TestLint('   int three_space_indent;',
+                  'Weird number of spaces at line-start.  '
+                  'Are you using a 2-space indent?  [whitespace/indent] [3]')
+    self.TestLint('     int five_space_indent;',
+                  'Weird number of spaces at line-start.  '
+                  'Are you using a 2-space indent?  [whitespace/indent] [3]')
+    self.TestLint('       int seven_space_indent;',
                   'Weird number of spaces at line-start.  '
                   'Are you using a 2-space indent?  [whitespace/indent] [3]')
     self.TestLint(' char* one_space_indent = "public:";',
@@ -3496,6 +3503,114 @@ class CpplintTest(CpplintTestBase):
         ' static const char kSingleLineRawString[] = R"(...)";',
         'Weird number of spaces at line-start.  '
         'Are you using a 2-space indent?  [whitespace/indent] [3]')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo &&
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                && bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo ||
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                || bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo ==
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                == bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo !=
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                != bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo <=
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                <= bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo >=
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                >= bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo <
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                < bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo >
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo
+                > bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo && !
+                bar)
+              goto pass;'''),
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent('''
+            if (foo &&
+                !(bar))
+              goto pass;'''),
+        '')
 
   def testSectionIndent(self):
     self.TestMultiLineLint(
@@ -3520,12 +3635,12 @@ class CpplintTest(CpplintTestBase):
     self.TestMultiLineLint(
         """
         struct D {
-         };""",
+          };""",
         'Closing brace should be aligned with beginning of struct D'
         '  [whitespace/indent] [3]')
     self.TestMultiLineLint(
         """
-         template<typename E> class F {
+          template<typename E> class F {
         };""",
         'Closing brace should be aligned with beginning of class F'
         '  [whitespace/indent] [3]')
@@ -3960,8 +4075,9 @@ class CpplintTest(CpplintTestBase):
         'class Foo;',
         '')
     self.TestMultiLineLint(
-        """struct Foo*
-             foo = NewFoo();""",
+        """
+        struct Foo*
+            foo = NewFoo();""",
         '')
     # Test preprocessor.
     self.TestMultiLineLint(
@@ -3992,7 +4108,8 @@ class CpplintTest(CpplintTestBase):
     # The crosstool compiler we currently use will fail to compile the
     # code in this test, so we might consider removing the lint check.
     self.TestMultiLineLint(
-        """#if 0
+        """
+        #if 0
         #endif Not a comment""",
         'Uncommented text after #endif is non-standard.  Use a comment.'
         '  [build/endif_comment] [5]')
