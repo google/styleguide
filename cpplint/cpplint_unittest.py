@@ -3754,7 +3754,7 @@ class CpplintTest(CpplintTestBase):
         #else
           baz;
           qux;
-        #endif""",
+        #endif  // foo""",
         '')
     self.TestMultiLineLint(
         """void F() {
@@ -3920,7 +3920,7 @@ class CpplintTest(CpplintTestBase):
                              '#include "path/unique.h"',
                              '#else',
                              '#include "path/unique.h"',
-                             '#endif',
+                             '#endif  // MACRO',
                              ''],
                             error_collector)
     self.assertEquals(
@@ -3969,7 +3969,7 @@ class CpplintTest(CpplintTestBase):
           struct Foo : public Goo {
         #else
           struct Foo : public Hoo {
-        #endif
+        #endif  // DERIVE_FROM_GOO
           };""",
         '')
     self.TestMultiLineLint(
@@ -3979,7 +3979,7 @@ class CpplintTest(CpplintTestBase):
           : public Goo {
         #else
           : public Hoo {
-        #endif
+        #endif  // DERIVE_FROM_GOO
         };""",
         '')
     # Test incomplete class
@@ -3996,6 +3996,27 @@ class CpplintTest(CpplintTestBase):
         #endif Not a comment""",
         'Uncommented text after #endif is non-standard.  Use a comment.'
         '  [build/endif_comment] [5]')
+
+    correct_lines = [
+      '#endif  // text',
+      '#endif  //'
+    ]
+
+    for line in correct_lines:
+      self.TestLint(line, '')
+
+    incorrect_lines = [
+      '#endif',
+      '#endif Not a comment',
+      '#endif / One `/` is not enough to start a comment'
+    ]
+
+    for line in incorrect_lines:
+      self.TestLint(
+        line,
+        'Uncommented text after #endif is non-standard.  Use a comment.'
+        '  [build/endif_comment] [5]')
+
 
   def testBuildForwardDecl(self):
     # The crosstool compiler we currently use will fail to compile the
