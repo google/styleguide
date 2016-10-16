@@ -1791,6 +1791,8 @@ def CheckForHeaderGuard(filename, clean_lines, error):
     if Search(r'//\s*NOLINT\(build/header_guard\)', i):
       return
 
+  # This will give us a header guard ending in "_H" (no trailing underscore prescribed by the style
+  # guide).
   cppvar = GetHeaderGuardCPPVariable(filename)
 
   ifndef = ''
@@ -1806,6 +1808,9 @@ def CheckForHeaderGuard(filename, clean_lines, error):
         # set ifndef to the header guard presented on the #ifndef line.
         ifndef = linesplit[1]
         ifndef_linenum = linenum
+        if ifndef == cppvar + '_':
+          # Accept header guards that end in either "_H_" or "_H".
+          cppvar = ifndef
       if not define and linesplit[0] == '#define':
         define = linesplit[1]
     # find the last occurrence of #endif, save entire line
