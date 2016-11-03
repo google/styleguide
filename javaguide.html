@@ -3,10 +3,11 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Google Java Style Guide</title>
-<link rel="stylesheet" type="text/css" href="javaguide.css"/>
+<link rel="stylesheet" type="text/css" href="javaguide.css">
 <script language="javascript" src="include/styleguide.js"></script>
-<link href="https://www.google.com/favicon.ico" type="image/x-icon" rel="shortcut icon" />
-  <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js" type="text/javascript"></script></head>
+<link rel="shortcut icon" type="image/x-icon" href="https://www.google.com/favicon.ico" />
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+</head>
 <body onload="initStyleGuide();">
 <div id="content">
 <h1>Google Java Style Guide</h1>
@@ -36,7 +37,11 @@ avoids giving <em>advice</em> that isn't clearly enforceable (whether by human o
   <li>The term <em>class</em> is used inclusively to mean an "ordinary" class, enum class,
   interface or annotation type (<code class="prettyprint lang-java">@interface</code>).</li>
 
-  <li>The term <em>comment</em> always refers to <em>implementation</em> comments. We do not
+  <li>The term <em>member</em> (of a class) is used inclusively to mean a nested class, field,
+  method, <em>or constructor</em>; that is, all top-level contents of a class except initializers
+  and comments.
+
+  </li><li>The term <em>comment</em> always refers to <em>implementation</em> comments. We do not
   use the phrase "documentation comments", instead using the common term "Javadoc."</li>
 </ol>
 
@@ -202,6 +207,11 @@ sorts before ';'.)</p>
 
 
 
+<h4 id="s3.3.4-import-class-not-static">3.3.4 No static import for classes</h4>
+
+<p>Static import is not used for static nested classes. They are imported with
+normal imports.</p>
+
 <h3 id="s3.4-class-declaration">3.4 Class declaration</h3>
 
 <a name="oneclassperfile"></a>
@@ -209,16 +219,17 @@ sorts before ';'.)</p>
 
 <p>Each top-level class resides in a source file of its own.</p>
 
-<h4 id="s3.4.2-class-member-ordering">3.4.2 Class member ordering</h4>
+<a name="s3.4.2-class-member-ordering"></a>
+<h4 id="s3.4.2-ordering-class-contents">3.4.2 Ordering of class contents</h4>
 
-<p>The ordering of the members of a class can have a great effect on learnability, but there is
-no single correct recipe for how to do it. Different classes may order their members
-differently.</p>
+<p>The order you choose for the members and initializers of your class can have a great effect on
+learnability. However, there's no single correct recipe for how to do it; different classes may
+order their contents in different ways.</p>
 
-<p>What is important is that each class order its members in <strong><em>some</em> logical
-order</strong>, which its maintainer could explain if asked. For example, new methods are not
-just habitually added to the end of the class, as that would yield "chronological by date
-added" ordering, which is not a logical ordering.</p>
+<p>What is important is that each class uses <strong><em>some</em> logical order</strong>, which its
+maintainer could explain if asked. For example, new methods are not just habitually added to the end
+of the class, as that would yield "chronological by date added" ordering, which is not a logical
+ordering.</p>
 
 
 
@@ -226,8 +237,7 @@ added" ordering, which is not a logical ordering.</p>
 <h5 id="s3.4.2.1-overloads-never-split">3.4.2.1 Overloads: never split</h5>
 
 <p>When a class has multiple constructors, or multiple methods with the same name, these appear
-sequentially, with no intervening members (not even private ones).</p>
-
+sequentially, with no other code in between (not even private members).</p>
 
 <h2 id="s4-formatting">4 Formatting</h2>
 
@@ -299,16 +309,27 @@ return new MyClass() {
 <a name="emptyblocks"></a>
 <h4 id="s4.1.3-braces-empty-blocks">4.1.3 Empty blocks: may be concise</h4>
 
-<p>An empty block or block-like construct <em>may</em> be closed immediately after it is
-opened, with no characters or line break in between
+<p>An empty block or block-like construct may be in K &amp; R style (as described in
+<a href="#s4.1.2-blocks-k-r-style">Section 4.1.2</a>). Alternatively, it may be closed immediately
+after it is opened, with no characters or line break in between
 (<code class="prettyprint lang-java">{}</code>), <strong>unless</strong> it is part of a
 <em>multi-block statement</em> (one that directly contains multiple blocks:
-<code class="prettyprint lang-java">if/else-if/else</code> or
+<code class="prettyprint lang-java">if/else</code> or
 <code class="prettyprint lang-java">try/catch/finally</code>).</p>
 
-<p>Example:</p>
+<p>Examples:</p>
 
-<pre class="prettyprint lang-java">  void doNothing() {}
+<pre class="prettyprint lang-java">  // This is acceptable
+  void doNothing() {}
+
+  // This is equally acceptable
+  void doNothingElse() {
+  }
+</pre>
+<pre class="prettyprint lang-java badcode">  // This is not acceptable: No concise empty blocks in a multi-block statement
+  try {
+    doSomething();
+  } catch (Exception e) {}
 </pre>
 
 <h3 id="s4.2-block-indentation">4.2 Block indentation: +2 spaces</h3>
@@ -370,12 +391,17 @@ without the need to line-wrap.</p>
   the symbol. (Note that this is not the same practice used in Google style for other languages,
   such as C++ and JavaScript.)
     <ul>
-      <li>This also applies to the following "operator-like" symbols: the dot separator
-      (<code class="prettyprint lang-java">.</code>), the two colons of a method reference
-      (<code class="prettyprint lang-java">::</code>), the ampersand in type bounds
-      (<code class="prettyprint lang-java">&lt;T extends Foo &amp; Bar&gt;</code>), and the pipe in
-      catch blocks
-      (<code class="prettyprint lang-java">catch (FooException | BarException e)</code>).</li>
+      <li>This also applies to the following "operator-like" symbols:
+        <ul>
+          <li>the dot separator (<code class="prettyprint lang-java">.</code>)</li>
+          <li>the two colons of a method reference
+          (<code class="prettyprint lang-java">::</code>)</li>
+          <li>an ampersand in a type bound
+          (<code class="prettyprint lang-java">&lt;T extends Foo &amp; Bar&gt;</code>)</li>
+          <li>a pipe in a catch block
+          (<code class="prettyprint lang-java">catch (FooException | BarException e)</code>).</li>
+        </ul>
+      </li>
     </ul>
   </li>
 
@@ -392,6 +418,19 @@ without the need to line-wrap.</p>
 
   <li>A comma (<code class="prettyprint lang-java">,</code>) stays attached to the token that
   precedes it.</li>
+
+  <li>A line is never broken adjacent to the arrow in a lambda, except that a
+  break may come immediately after the arrow if the body of the lambda consists
+  of a single unbraced expression. Examples:
+<pre class="prettyprint lang-java">MyLambda&lt;String, Long, Object&gt; lambda =
+    (String label, Long value, Object obj) -&gt; {
+        ...
+    };
+
+Predicate&lt;String&gt; predicate = str -&gt;
+    longExpressionInvolving(str);
+</pre>
+  </li>
 </ol>
 
 <p class="note"><strong>Note:</strong> The primary goal for line wrapping is to have clear
@@ -418,8 +457,8 @@ previous lines.</p>
 <p>A single blank line appears:</p>
 
 <ol>
-  <li><em>Between</em> consecutive members (or initializers) of a class: fields, constructors,
-  methods, nested classes, static initializers, instance initializers.
+  <li><em>Between</em> consecutive members or initializers of a class: fields, constructors,
+  methods, nested classes, static initializers, and instance initializers.
   <ul>
     <li><span class="exception"><strong>Exception:</strong> A blank line between two consecutive
     fields (having no other code between them) is optional. Such blank lines are used as needed to
@@ -431,8 +470,8 @@ previous lines.</p>
 
   <li>Between statements, <em>as needed</em> to organize the code into logical subsections.
   
-  </li><li><em>Optionally</em> before the first member or after the last member of the class (neither
-  encouraged nor discouraged).</li>
+  </li><li><em>Optionally</em> before the first member or initializer, or after the last member or
+  initializer of the class (neither encouraged nor discouraged).</li>
 
   <li>As required by other sections of this document (such as Section 3,
   <a href="#s3-source-file-structure">Source file structure</a>, and Section 3.3,
@@ -490,7 +529,7 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
     <li>the two colons (<code class="prettyprint lang-java">::</code>) of a method reference, which
     is written like <code class="prettyprint lang-java">Object::toString</code></li>
     <li>the dot separator (<code class="prettyprint lang-java">.</code>), which is written like
-      <code class="prettyprint lang-java">object.toString()</code></li>
+    <code class="prettyprint lang-java">object.toString()</code></li>
   </ul>
   </li>
 
@@ -629,8 +668,8 @@ one or more <em>switch labels</em> (either <code class="prettyprint lang-java">c
 
 <p>As with any other block, the contents of a switch block are indented +2.</p>
 
-<p>After a switch label, a newline appears, and the indentation level is increased +2, exactly as
-if a block were being opened. The following switch label returns to the previous indentation
+<p>After a switch label, there is a line break, and the indentation level is increased +2, exactly
+as if a block were being opened. The following switch label returns to the previous indentation
 level, as if a block had been closed.</p>
 
 <a name="fallthrough"></a>
@@ -701,6 +740,9 @@ for example:</p>
 
 <p>This section addresses <em>implementation comments</em>. Javadoc is addressed separately in
 Section 7, <a href="#s7-javadoc">Javadoc</a>.</p>
+
+<p>Any line break may be preceded by arbitrary whitespace followed by an implementation comment.
+Such a comment renders the line non-blank.</p>
 
 <h5 id="s4.8.6.1-block-comment-style">4.8.6.1 Block comment style</h5>
 
@@ -802,15 +844,15 @@ Way to name test methods.</p>
 <p>Constant names use <code class="prettyprint lang-java">CONSTANT_CASE</code>: all uppercase
 letters, with words separated by underscores. But what <em>is</em> a constant, exactly?</p>
 
-<p>Every constant is a static final field, but not all static final fields are constants. Before
-choosing constant case, consider whether the field really <em>feels like</em> a constant. For
-example, if any of that instance's observable state can change, it is almost certainly not a
-constant. Merely <em>intending</em> to never mutate the object is generally not
-enough. Examples:</p>
+<p>Constants are static final fields whose contents are deeply immutable and whose methods have no
+detectable side effects. This includes primitives, Strings, immutable types, and immutable
+collections of immutable types. If any of the instance's observable state can change, it is not a
+constant. Merely <em>intending</em> to never mutate the object is not enough. Examples:</p>
 
 <pre class="prettyprint lang-java">// Constants
 static final int NUMBER = 5;
 static final ImmutableList&lt;String&gt; NAMES = ImmutableList.of("Ed", "Ann");
+static final ImmutableMap&lt;String, Integer&gt; AGES = ImmutableMap.of("Ed", 35, "Ann", 32);
 static final Joiner COMMA_JOINER = Joiner.on(','); // because Joiner is immutable
 static final SomeMutableType[] EMPTY_ARRAY = {};
 enum SomeEnum { ENUM_CONSTANT }
@@ -820,6 +862,8 @@ static String nonFinal = "non-final";
 final String nonStatic = "non-static";
 static final Set&lt;String&gt; mutableCollection = new HashSet&lt;String&gt;();
 static final ImmutableSet&lt;SomeMutableType&gt; mutableElements = ImmutableSet.of(mutable);
+static final ImmutableMap&lt;String, SomeMutableType&gt; mutableValues =
+    ImmutableMap.of("Ed", mutableInstance, "Ann", mutableInstance2);
 static final Logger logger = Logger.getLogger(MyClass.getName());
 static final String[] nonEmptyArray = {"these", "can", "change"};
 </pre>
@@ -1058,7 +1102,7 @@ are indented four (or more) spaces from the position of the <code>@</code>.
 
 <h3 id="s7.2-summary-fragment">7.2 The summary fragment</h3>
 
-<p>The Javadoc for each class and member begins with a brief <strong>summary fragment</strong>. This
+<p>Each Javadoc block begins with a brief <strong>summary fragment</strong>. This
 fragment is very important: it is the only part of the text that appears in certain contexts such as
 class and method indexes.</p>
 
