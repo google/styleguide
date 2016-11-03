@@ -21,14 +21,14 @@
     (or not apply) these recommendations, as relevant to their own use cases.</p>
 
 <p class="external">This document describes style for AngularJS apps in google3. This guide
-    supplements and extends the <a href="https://google.github.io/styleguide/javascriptguide.xml">
+    supplements and extends the <a href="https://google.github.io/styleguide/jsguide.html">
         Google JavaScript Style Guide</a>.
 </p>
 
 <p><b>Style Note</b>: Examples on the AngularJS external webpage, and many external apps, are
     written in a style that freely uses closures, favors functional inheritance, and does not often use
     <a class="external"
-                               href="https://google.github.io/styleguide/javascriptguide.xml?showone=JavaScript_Types#JavaScript_Types">
+                               href="https://github.com/google/closure-compiler/wiki/Types-in-the-Closure-Type-System">
         JavaScript types</a>. Google follows a more rigorous Javascript style to support JSCompiler
     optimizations and large code bases - see the javascript-style mailing list.
     This is not an Angular-specific issue, and is not discussed further in this style guide.
@@ -151,9 +151,7 @@ goog.provide('hello.versions.Versions');
 </pre>
 
 <h3 id="controllers">Controllers and Scopes</h3>
-<p>Controllers are classes. Methods should be defined on MyCtrl.prototype.
-    See <a href="https://google.github.io/styleguide/javascriptguide.xml?showone=Method_and_property_definitions#Method_and_property_definitions">
-        the JavaScript style guide</a></p>
+<p>Controllers are classes. Methods should be defined on MyCtrl.prototype.</p>
 
 <p>Google Angular applications should use the <b>'controller as'</b> style to export the controller
     onto the scope. This is fully implemented in Angular 1.2 and can be mimicked in pre-Angular 1.2
