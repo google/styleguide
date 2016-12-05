@@ -50,7 +50,6 @@ window.initStyleGuide = function(init) {
 
   // Call the pretty-printer after we've fixed up the code blocks.
   var pretty = document.createElement('script');
-  pretty.src = 'https://cdn.rawgit.com/google/code-prettify/master/loader/' +
-      'run_prettify.js';
+  pretty.src = 'https://raw.githubusercontent.com/google/code-prettify/master/loader/run_prettify.js';
   document.body.appendChild(pretty);
 }.bind(null, window.initStyleGuide);
