@@ -143,7 +143,7 @@
 <setting id="org.eclipse.jdt.core.compiler.problem.enumIdentifier" value="error"/>
 <setting id="org.eclipse.jdt.core.formatter.alignment_for_generic_type_arguments" value="16"/>
 <setting id="org.eclipse.jdt.core.formatter.indent_switchstatements_compare_to_switch" value="true"/>
-<setting id="org.eclipse.jdt.core.formatter.comment_new_line_at_start_of_html_paragraph" value="true"/>
+<setting id="org.eclipse.jdt.core.formatter.comment_new_line_at_start_of_html_paragraph" value="false"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_ellipsis" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.brace_position_for_block" value="end_of_line"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comment_prefix" value="do not insert"/>
