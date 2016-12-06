@@ -306,7 +306,7 @@
     <option name="LABEL_INDENT_ABSOLUTE" value="false" />
     <option name="USE_RELATIVE_INDENTS" value="false" />
   </ADDITIONAL_INDENT_OPTIONS>
-  <ADDITIONAL_INDENT_OPTIONS fileType="java">
+  <ADDITIONAL_INDENT_OPTIONS fileType="JAVA">
     <option name="INDENT_SIZE" value="2" />
     <option name="CONTINUATION_INDENT_SIZE" value="4" />
     <option name="TAB_SIZE" value="8" />
