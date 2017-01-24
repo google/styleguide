@@ -169,8 +169,8 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
     The "root" option is similar in function to the --root flag (see example
     above).
-    
-    The "headers" option is similar in function to the --headers flag 
+
+    The "headers" option is similar in function to the --headers flag
     (see example above).
 
     CPPLINT.cfg has an effect on files in the same directory and all
@@ -5323,7 +5323,22 @@ for _header, _templates in _HEADERS_MAYBE_TEMPLATES:
     # Match max<type>(..., ...), max(..., ...), ::max(..., ...) but not
     # foo->max, foo.max or type::max().
     _re_pattern_headers_maybe_templates.append(
-        (re.compile(r'[^>.](?<!\w::)\b' + _template + r'(<.*?>)?\([^\)]'),
+        (re.compile(r"""
+                    (
+                    \bstd:: | # starts with std::
+                    [(+\-=?%^&*/\[] | # used in arithmetic expression or ternary conditional operator
+                    [^:]: | # the second part of ternary conditional operator
+                    ^ # or just the start of the line
+                    ) [\s]* # possibly we have spaces
+                    """ + _template +
+                    r"""
+                    (
+                    [\s]* # possibly, spaces
+                    <.*?> # the arguments for the template
+                    )? # we can omit the template part
+                    [\s]* #spaces
+                    \( [^\)] # after function we should have opening brace
+                    """, re.X),
             _template,
             _header))
 
