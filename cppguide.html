@@ -296,16 +296,17 @@ function, or template without an associated definition.</p>
   Replacing an <code>#include</code> with a forward
   declaration can silently change the meaning of
   code:
-      <pre>      // b.h:
-      struct B {};
-      struct D : B {};
+<pre>
+// b.h:
+struct B {};
+struct D : B {};
 
-      // good_user.cc:
-      #include "b.h"
-      void f(B*);
-      void f(void*);
-      void test(D* x) { f(x); }  // calls f(B*)
-      </pre>
+// good_user.cc:
+#include "b.h"
+void f(B*);
+void f(void*);
+void test(D* x) { f(x); }  // calls f(B*)
+</pre>
   If the <code>#include</code> was replaced with forward
   decls for <code>B</code> and <code>D</code>,
   <code>test()</code> would call <code>f(void*)</code>.
@@ -2966,7 +2967,7 @@ problems of printing, comparisons, and structure alignment.</p>
 #define PRIuS __PRIS_PREFIX "u"
 #define PRIXS __PRIS_PREFIX "X"
 #define PRIoS __PRIS_PREFIX "o"
-  </pre>
+</pre>
   </div> 
 
   <table border="1" summary="portable printf specifiers">
