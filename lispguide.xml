@@ -3146,7 +3146,7 @@ Robert Brown
     </SUMMARY>
     <BODY>
       <p>
-        You should simpler forms such as
+        You should use simpler forms such as
         <code>DOLIST</code> or <code>DOTIMES</code>
         instead of <code>LOOP</code>
         in simple cases when you're not going to use any
