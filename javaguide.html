@@ -662,7 +662,8 @@ new int[] {             3,
 <p class="terminology"><strong>Terminology Note:</strong> Inside the braces of a
 <em>switch block</em> are one or more <em>statement groups</em>. Each statement group consists of
 one or more <em>switch labels</em> (either <code class="prettyprint lang-java">case FOO:</code> or
-<code class="prettyprint lang-java">default:</code>), followed by one or more statements.</p>
+<code class="prettyprint lang-java">default:</code>), followed by one or more statements (or, for
+the <em>last</em> statement group, <em>zero</em> or more statements).</p>
 
 <h5 id="s4.8.4.1-switch-indentation">4.8.4.1 Indentation</h5>
 
@@ -704,6 +705,13 @@ at the end of the statement group.</p>
 
 <p>Each switch statement includes a <code class="prettyprint lang-java">default</code> statement
 group, even if it contains no code.</p>
+
+<p><strong>Exception:</strong> A switch statement for an <code>enum</code> type <em>may</em> omit
+the <code class="prettyprint lang-java">default</code> statement group, <em>if</em> it includes
+explicit cases covering <em>all</em> possible values of that type. This enables IDEs or other static
+analysis tools to issue a warning if any cases were missed.
+
+</p>
 
 <a name="annotations"></a>
 <h4 id="s4.8.5-annotations">4.8.5 Annotations</h4>
@@ -1053,9 +1061,9 @@ lang-java">Object.finalize</code>.</p>
 <p class="tip"><strong>Tip:</strong> Don't do it. If you absolutely must, first read and understand
 
 
-  <a href="http://books.google.com/books?isbn=8131726592"><em>Effective Java</em></a>
+  <a href="http://books.google.com/books?isbn=8131726592"><em>Effective Java</em> Item 7,</a>
 
-Item 7, "Avoid Finalizers," very carefully, and <em>then</em> don't do it.</p>
+"Avoid Finalizers," very carefully, and <em>then</em> don't do it.</p>
 
 
 <a name="javadoc"></a>
@@ -1081,22 +1089,24 @@ public int method(String p1) { ... }
 <pre class="prettyprint lang-java">/** An especially short bit of Javadoc. */
 </pre>
 
-<p>The basic form is always acceptable. The single-line form may be substituted when there are no
-at-clauses present, and the entirety of the Javadoc block (including comment markers) can fit on a
-single line.</p>
+<p>The basic form is always acceptable. The single-line form may be substituted when the entirety
+of the Javadoc block (including comment markers) can fit on a single line. Note that this only
+applies when there are no block tags such as <code>@return</code>.
 
-<h4 id="s7.1.2-javadoc-paragraphs">7.1.2 Paragraphs</h4>
+</p><h4 id="s7.1.2-javadoc-paragraphs">7.1.2 Paragraphs</h4>
 
 <p>One blank line&#8212;that is, a line containing only the aligned leading asterisk
-(<code>*</code>)&#8212;appears between paragraphs, and before the group of "at-clauses" if
+(<code>*</code>)&#8212;appears between paragraphs, and before the group of block tags if
 present. Each paragraph but the first has <code>&lt;p&gt;</code> immediately before the first word,
 with no space after.</p>
 
-<h4 id="s7.1.3-javadoc-at-clauses">7.1.3 At-clauses</h4>
+<a name="s7.1.3-javadoc-at-clauses"></a>
 
-<p>Any of the standard "at-clauses" that are used appear in the order <code>@param</code>,
+<h4 id="s7.1.3-javadoc-block-tags">7.1.3 Block tags</h4>
+
+<p>Any of the standard "block tags" that are used appear in the order <code>@param</code>,
 <code>@return</code>, <code>@throws</code>, <code>@deprecated</code>, and these four types never
-appear with an empty description. When an at-clause doesn't fit on a single line, continuation lines
+appear with an empty description. When a block tag doesn't fit on a single line, continuation lines
 are indented four (or more) spaces from the position of the <code>@</code>.
 </p>
 
