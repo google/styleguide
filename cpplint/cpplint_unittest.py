@@ -1316,6 +1316,80 @@ class CpplintTest(CpplintTestBase):
           };""",
           'Single-parameter constructors should be marked explicit.'
           '  [runtime/explicit] [5]')
+      # missing explicit for constexpr constructors is bad as well
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            constexpr Foo(int f);
+          };""",
+          'Single-parameter constructors should be marked explicit.'
+          '  [runtime/explicit] [5]')
+      # missing explicit for constexpr+inline constructors is bad as well
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            constexpr inline Foo(int f);
+          };""",
+          'Single-parameter constructors should be marked explicit.'
+          '  [runtime/explicit] [5]')
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            inline constexpr Foo(int f);
+          };""",
+          'Single-parameter constructors should be marked explicit.'
+          '  [runtime/explicit] [5]')
+      # explicit with inline is accepted
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            inline explicit Foo(int f);
+          };""",
+          '')
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            explicit inline Foo(int f);
+          };""",
+          '')
+      # explicit with constexpr is accepted
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            constexpr explicit Foo(int f);
+          };""",
+          '')
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            explicit constexpr Foo(int f);
+          };""",
+          '')
+      # explicit with constexpr+inline is accepted
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            inline constexpr explicit Foo(int f);
+          };""",
+          '')
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            explicit inline constexpr Foo(int f);
+          };""",
+          '')
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            constexpr inline explicit Foo(int f);
+          };""",
+          '')
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            explicit constexpr inline Foo(int f);
+          };""",
+          '')
       # structs are caught as well.
       self.TestMultiLineLint(
           """
