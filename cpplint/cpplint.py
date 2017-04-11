@@ -1713,12 +1713,27 @@ def CheckForCopyright(filename, lines, error):
 
   # We'll say it should occur by line 10. Don't forget there's a
   # dummy line at the front.
+  yugabyte_copyright = "// Copyright (c) YugaByte, Inc."
+  allowed = [yugabyte_copyright,
+             "// Copyright 2010 Google Inc.  All Rights Reserved",
+             "// regarding copyright ownership.  The ASF licenses this file",
+             "// Copyright (c) 2012 The Chromium Authors. All rights reserved.",
+             "// Copyright (c) 2011 The LevelDB Authors. All rights reserved."]
   for line in xrange(1, min(len(lines), 11)):
-    if re.search(r'Copyright', lines[line], re.I): break
+    line_str = lines[line]
+    if re.search(r'Copyright', line_str, re.I):
+      if line_str in allowed:
+        break
+      error(filename,
+            0,
+            'legal/copyright',
+            5,
+            'Invalid copyright message: "{0}". Should be: "{1}"'.format(line_str, yugabyte_copyright))
+      break
   else:                       # means no copyright line was found
     error(filename, 0, 'legal/copyright', 5,
           'No copyright message found.  '
-          'You should have a line: "Copyright [year] <Copyright Owner>"')
+          'You should have a line: {0}'.format(yugabyte_copyright))
 
 
 def GetIndentLevel(line):
@@ -4588,6 +4603,9 @@ _RE_PATTERN_CONST_REF_PARAM = (
 # Stream types.
 _RE_PATTERN_REF_STREAM_PARAM = (
     r'(?:.*stream\s*&\s*' + _RE_PATTERN_IDENT + r')')
+_RE_PATTERN_BAD_REF_OR_AST_PARAM = re.compile(
+    r'(' + _RE_PATTERN_TYPE + r'(?:\s*(?:\bconst\b|[*]))*\s+'
+    r'[&*]\s+' + _RE_PATTERN_IDENT + r')\s*(?:=[^,()]+)?[,)]')
 
 
 def CheckLanguage(filename, clean_lines, linenum, file_extension,
@@ -5056,6 +5074,54 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
             'Is this a non-const reference? '
             'If so, make const or use a pointer: ' +
             ReplaceAll(' *<', '<', parameter))
+
+
+def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_state, error):
+    line = clean_lines.elided[linenum]
+
+    if linenum > 1:
+        previous = None
+        if Match(r'\s*::(?:[\w<>]|::)+\s*&\s*\S', line):
+            previous = Search(r'\b((?:const\s*)?(?:[\w<>]|::)+[\w<>])\s*$',
+                              clean_lines.elided[linenum - 1])
+        elif Match(r'\s*[a-zA-Z_]([\w<>]|::)+\s*&\s*\S', line):
+            previous = Search(r'\b((?:const\s*)?(?:[\w<>]|::)+::)\s*$',
+                              clean_lines.elided[linenum - 1])
+        if previous:
+            line = previous.group(1) + line.lstrip()
+        else:
+            endpos = line.rfind('>')
+            if endpos > -1:
+                (_, startline, startpos) = ReverseCloseExpression(
+                    clean_lines, linenum, endpos)
+                if startpos > -1 and startline < linenum:
+                    line = ''
+                    for i in xrange(startline, linenum + 1):
+                        line += clean_lines.elided[i].strip()
+
+    if (nesting_state.previous_stack_top and
+            not (isinstance(nesting_state.previous_stack_top, _ClassInfo) or
+                     isinstance(nesting_state.previous_stack_top, _NamespaceInfo))):
+        return
+
+    if linenum > 0:
+        for i in xrange(linenum - 1, max(0, linenum - 10), -1):
+            previous_line = clean_lines.elided[i]
+            if not Search(r'[),]\s*$', previous_line):
+                break
+            if Match(r'^\s*:\s+\S', previous_line):
+                return
+
+    if Search(r'\\\s*$', line):
+        return
+
+    if IsInitializerList(clean_lines, linenum):
+        return
+
+    decls = ReplaceAll(r'{[^}]*}', ' ', line)  # exclude function body
+    for parameter in re.findall(_RE_PATTERN_BAD_REF_OR_AST_PARAM, decls):
+        error(filename, linenum, 'whitespace/operators', 2,
+              'Put space before or after ampersand/asterisk for: ' + parameter)
 
 
 def CheckCasts(filename, clean_lines, linenum, error):
@@ -5719,6 +5785,7 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckLanguage(filename, clean_lines, line, file_extension, include_state,
                 nesting_state, error)
   CheckForNonConstReference(filename, clean_lines, line, nesting_state, error)
+  CheckAsteriskAndAmpersandSpacing(filename, clean_lines, line, nesting_state, error)
   CheckForNonStandardConstructs(filename, clean_lines, line,
                                 nesting_state, error)
   CheckVlogArguments(filename, clean_lines, line, error)
@@ -5728,7 +5795,7 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckRedundantVirtual(filename, clean_lines, line, error)
   CheckRedundantOverrideOrFinal(filename, clean_lines, line, error)
   for check_fn in extra_check_functions:
-    check_fn(filename, clean_lines, line, error)
+    check_fn(filename, clean_lines, line, nesting_state, error)
 
 def FlagCxx11Features(filename, clean_lines, linenum, error):
   """Flag those c++11 features that we only allow in certain places.
