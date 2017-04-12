@@ -13,10 +13,12 @@ import time
 
 extensions = [".cpp", ".cc", ".c", ".hpp", ".h"]
 
+
 def main():
     args = ['cpplint.py']
     filenames = []
     for arg in sys.argv[1:]:
+        # --git-diff prepares the same file list as `arc lint`
         if arg == "--git-diff":
             commit = subprocess.check_output(["git", "merge-base", "origin/master", "HEAD"]).strip()
             output = subprocess.check_output(["git", "diff", commit, "--name-status"]).decode('utf-8')

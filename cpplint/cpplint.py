@@ -5088,8 +5088,27 @@ def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_sta
                      the current stack of nested blocks being parsed.
       error: The function to call with any errors found.
     """
+    # Do nothing if there is no '&' or '*' on current line.
     line = clean_lines.elided[linenum]
+    if '&' not in line and '*' not in line:
+        return
 
+    # Long type names may be broken across multiple lines, usually in one
+    # of these forms:
+    #   LongType
+    #       ::LongTypeContinued &identifier
+    #   LongType::
+    #       LongTypeContinued &identifier
+    #   LongType<
+    #       ...>::LongTypeContinued &identifier
+    #
+    # If we detected a type split across two lines, join the previous
+    # line to current line so that we can match const references
+    # accordingly.
+    #
+    # Note that this only scans back one line, since scanning back
+    # arbitrary number of lines would be expensive.  If you have a type
+    # that spans more than 2 lines, please use a typedef.
     if linenum > 1:
         previous = None
         if Match(r'\s*::(?:[\w<>]|::)+\s*&\s*\S', line):
@@ -5110,9 +5129,18 @@ def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_sta
                     for i in xrange(startline, linenum + 1):
                         line += clean_lines.elided[i].strip()
 
+    # Check for non-const references in function parameters.  A single '&' may
+    # found in the following places:
+    #   inside expression: binary & for bitwise AND
+    #   inside expression: unary & for taking the address of something
+    #   inside declarators: reference parameter
+    # We will exclude the first two cases by checking that we are not inside a
+    # function body, including one that was just introduced by a trailing '{'.
+    # TODO(unknown): Doesn't account for 'catch(Exception& e)' [rare].
     if (nesting_state.previous_stack_top and
             not (isinstance(nesting_state.previous_stack_top, _ClassInfo) or
-                     isinstance(nesting_state.previous_stack_top, _NamespaceInfo))):
+                 isinstance(nesting_state.previous_stack_top, _NamespaceInfo))):
+        # Not at toplevel, not within a class, and not within a namespace
         return
 
     # Avoid initializer lists.  We only need to scan back from the
@@ -5815,7 +5843,7 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckRedundantVirtual(filename, clean_lines, line, error)
   CheckRedundantOverrideOrFinal(filename, clean_lines, line, error)
   for check_fn in extra_check_functions:
-    check_fn(filename, clean_lines, line, nesting_state, error)
+    check_fn(filename, clean_lines, line, error)
 
 def FlagCxx11Features(filename, clean_lines, linenum, error):
   """Flag those c++11 features that we only allow in certain places.
