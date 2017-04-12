@@ -1713,12 +1713,28 @@ def CheckForCopyright(filename, lines, error):
 
   # We'll say it should occur by line 10. Don't forget there's a
   # dummy line at the front.
+  YUGABYTE_COPYRIGHT = "// Copyright (c) YugaByte, Inc."
+  ALLOWED_COPYRIGHT_LINES = [YUGABYTE_COPYRIGHT,
+                             "// Copyright 2010 Google Inc.  All Rights Reserved",
+                             "// regarding copyright ownership.  The ASF licenses this file",
+                             "// Copyright (c) 2012 The Chromium Authors. All rights reserved.",
+                             "// Copyright (c) 2011 The LevelDB Authors. All rights reserved."]
   for line in xrange(1, min(len(lines), 11)):
-    if re.search(r'Copyright', lines[line], re.I): break
+    line_str = lines[line]
+    if re.search(r'Copyright', line_str, re.I):
+      if line_str in ALLOWED_COPYRIGHT_LINES:
+        break
+      error(filename,
+            0,
+            'legal/copyright',
+            5,
+            'Invalid copyright message: "{0}". Should be: "{1}"'.format(line_str,
+                                                                        YUGABYTE_COPYRIGHT))
+      break
   else:                       # means no copyright line was found
     error(filename, 0, 'legal/copyright', 5,
           'No copyright message found.  '
-          'You should have a line: "Copyright [year] <Copyright Owner>"')
+          'You should have a line: {0}'.format(yugabyte_copyright))
 
 
 def GetIndentLevel(line):
@@ -4588,6 +4604,9 @@ _RE_PATTERN_CONST_REF_PARAM = (
 # Stream types.
 _RE_PATTERN_REF_STREAM_PARAM = (
     r'(?:.*stream\s*&\s*' + _RE_PATTERN_IDENT + r')')
+_RE_PATTERN_BAD_REF_OR_AST_PARAM = re.compile(
+    r'(' + _RE_PATTERN_TYPE + r'(?:\s*(?:\bconst\b|[*]))*\s+'
+    r'[&*]\s+' + _RE_PATTERN_IDENT + r')\s*(?:=[^,()]+)?[,)]')
 
 
 def CheckLanguage(filename, clean_lines, linenum, file_extension,
@@ -5056,6 +5075,101 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
             'Is this a non-const reference? '
             'If so, make const or use a pointer: ' +
             ReplaceAll(' *<', '<', parameter))
+
+
+def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_state, error):
+    """Check for spaces near asterisk and ampersand in function declaration.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      linenum: The number of the line to check.
+      nesting_state: A NestingState instance which maintains information about
+                     the current stack of nested blocks being parsed.
+      error: The function to call with any errors found.
+    """
+    # Do nothing if there is no '&' or '*' on current line.
+    line = clean_lines.elided[linenum]
+    if '&' not in line and '*' not in line:
+        return
+
+    # Long type names may be broken across multiple lines, usually in one
+    # of these forms:
+    #   LongType
+    #       ::LongTypeContinued &identifier
+    #   LongType::
+    #       LongTypeContinued &identifier
+    #   LongType<
+    #       ...>::LongTypeContinued &identifier
+    #
+    # If we detected a type split across two lines, join the previous
+    # line to current line so that we can match const references
+    # accordingly.
+    #
+    # Note that this only scans back one line, since scanning back
+    # arbitrary number of lines would be expensive.  If you have a type
+    # that spans more than 2 lines, please use a typedef.
+    if linenum > 1:
+        previous = None
+        if Match(r'\s*::(?:[\w<>]|::)+\s*&\s*\S', line):
+            previous = Search(r'\b((?:const\s*)?(?:[\w<>]|::)+[\w<>])\s*$',
+                              clean_lines.elided[linenum - 1])
+        elif Match(r'\s*[a-zA-Z_]([\w<>]|::)+\s*&\s*\S', line):
+            previous = Search(r'\b((?:const\s*)?(?:[\w<>]|::)+::)\s*$',
+                              clean_lines.elided[linenum - 1])
+        if previous:
+            line = previous.group(1) + line.lstrip()
+        else:
+            endpos = line.rfind('>')
+            if endpos > -1:
+                (_, startline, startpos) = ReverseCloseExpression(
+                    clean_lines, linenum, endpos)
+                if startpos > -1 and startline < linenum:
+                    line = ''
+                    for i in xrange(startline, linenum + 1):
+                        line += clean_lines.elided[i].strip()
+
+    # Check for non-const references in function parameters.  A single '&' may
+    # found in the following places:
+    #   inside expression: binary & for bitwise AND
+    #   inside expression: unary & for taking the address of something
+    #   inside declarators: reference parameter
+    # We will exclude the first two cases by checking that we are not inside a
+    # function body, including one that was just introduced by a trailing '{'.
+    # TODO(unknown): Doesn't account for 'catch(Exception& e)' [rare].
+    if (nesting_state.previous_stack_top and
+            not (isinstance(nesting_state.previous_stack_top, _ClassInfo) or
+                 isinstance(nesting_state.previous_stack_top, _NamespaceInfo))):
+        # Not at toplevel, not within a class, and not within a namespace
+        return
+
+    # Avoid initializer lists.  We only need to scan back from the
+    # current line for something that starts with ':'.
+    #
+    # We don't need to check the current line, since the '&' would
+    # appear inside the second set of parentheses on the current line as
+    # opposed to the first set.
+    if linenum > 0:
+        for i in xrange(linenum - 1, max(0, linenum - 10), -1):
+            previous_line = clean_lines.elided[i]
+            if not Search(r'[),]\s*$', previous_line):
+                break
+            if Match(r'^\s*:\s+\S', previous_line):
+                return
+
+    # Avoid preprocessors
+    if Search(r'\\\s*$', line):
+        return
+
+    # Avoid constructor initializer lists
+    if IsInitializerList(clean_lines, linenum):
+        return
+
+    decls = ReplaceAll(r'{[^}]*}', ' ', line)  # exclude function body
+    for parameter in re.findall(_RE_PATTERN_BAD_REF_OR_AST_PARAM, decls):
+        error(filename, linenum, 'whitespace/operators', 2,
+              'Put space before or after ampersand/asterisk, but not on both sides, for: ' +
+              parameter)
 
 
 def CheckCasts(filename, clean_lines, linenum, error):
@@ -5719,6 +5833,7 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckLanguage(filename, clean_lines, line, file_extension, include_state,
                 nesting_state, error)
   CheckForNonConstReference(filename, clean_lines, line, nesting_state, error)
+  CheckAsteriskAndAmpersandSpacing(filename, clean_lines, line, nesting_state, error)
   CheckForNonStandardConstructs(filename, clean_lines, line,
                                 nesting_state, error)
   CheckVlogArguments(filename, clean_lines, line, error)
