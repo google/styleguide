@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""Wrapper script for cpplint.
+
+Intended to be invoked from CLion.
+Adds new feature --git-diff, so script is invoked for the same list of files as in `arc lint`.
+"""
 import codecs
 import os
 import StringIO

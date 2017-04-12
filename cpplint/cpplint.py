@@ -1713,22 +1713,23 @@ def CheckForCopyright(filename, lines, error):
 
   # We'll say it should occur by line 10. Don't forget there's a
   # dummy line at the front.
-  yugabyte_copyright = "// Copyright (c) YugaByte, Inc."
-  allowed = [yugabyte_copyright,
-             "// Copyright 2010 Google Inc.  All Rights Reserved",
-             "// regarding copyright ownership.  The ASF licenses this file",
-             "// Copyright (c) 2012 The Chromium Authors. All rights reserved.",
-             "// Copyright (c) 2011 The LevelDB Authors. All rights reserved."]
+  YUGABYTE_COPYRIGHT = "// Copyright (c) YugaByte, Inc."
+  ALLOWED_COPYRIGHT_LINES = [YUGABYTE_COPYRIGHT,
+                             "// Copyright 2010 Google Inc.  All Rights Reserved",
+                             "// regarding copyright ownership.  The ASF licenses this file",
+                             "// Copyright (c) 2012 The Chromium Authors. All rights reserved.",
+                             "// Copyright (c) 2011 The LevelDB Authors. All rights reserved."]
   for line in xrange(1, min(len(lines), 11)):
     line_str = lines[line]
     if re.search(r'Copyright', line_str, re.I):
-      if line_str in allowed:
+      if line_str in ALLOWED_COPYRIGHT_LINES:
         break
       error(filename,
             0,
             'legal/copyright',
             5,
-            'Invalid copyright message: "{0}". Should be: "{1}"'.format(line_str, yugabyte_copyright))
+            'Invalid copyright message: "{0}". Should be: "{1}"'.format(line_str,
+                                                                        YUGABYTE_COPYRIGHT))
       break
   else:                       # means no copyright line was found
     error(filename, 0, 'legal/copyright', 5,
@@ -5077,6 +5078,16 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
 
 
 def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_state, error):
+    """Check for spaces near asterisk and ampersand in function declaration.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      linenum: The number of the line to check.
+      nesting_state: A NestingState instance which maintains information about
+                     the current stack of nested blocks being parsed.
+      error: The function to call with any errors found.
+    """
     line = clean_lines.elided[linenum]
 
     if linenum > 1:
@@ -5104,6 +5115,12 @@ def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_sta
                      isinstance(nesting_state.previous_stack_top, _NamespaceInfo))):
         return
 
+    # Avoid initializer lists.  We only need to scan back from the
+    # current line for something that starts with ':'.
+    #
+    # We don't need to check the current line, since the '&' would
+    # appear inside the second set of parentheses on the current line as
+    # opposed to the first set.
     if linenum > 0:
         for i in xrange(linenum - 1, max(0, linenum - 10), -1):
             previous_line = clean_lines.elided[i]
@@ -5112,16 +5129,19 @@ def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_sta
             if Match(r'^\s*:\s+\S', previous_line):
                 return
 
+    # Avoid preprocessors
     if Search(r'\\\s*$', line):
         return
 
+    # Avoid constructor initializer lists
     if IsInitializerList(clean_lines, linenum):
         return
 
     decls = ReplaceAll(r'{[^}]*}', ' ', line)  # exclude function body
     for parameter in re.findall(_RE_PATTERN_BAD_REF_OR_AST_PARAM, decls):
         error(filename, linenum, 'whitespace/operators', 2,
-              'Put space before or after ampersand/asterisk for: ' + parameter)
+              'Put space before or after ampersand/asterisk, but not on both sides, for: ' +
+              parameter)
 
 
 def CheckCasts(filename, clean_lines, linenum, error):
