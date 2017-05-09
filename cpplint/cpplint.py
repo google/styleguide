@@ -4709,7 +4709,15 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
           'Did you mean "memset(%s, 0, %s)"?'
           % (match.group(1), match.group(2)))
 
-  if Search(r'\busing namespace\b', line):
+  # Check for 'using namespace' which pollutes namespaces.
+  # An exception is made for namespaces with the word 'literals',
+  # such namespaces are likely to only contain user-defined literals
+  # which by design are supposed to be imported by using-directives,
+  # e.g. 'using namespace std::chrono_literals;'.
+  # Headers do not take part of this 'literals' exception.
+  match = Search(r'\busing namespace\s+((\w|::)+)', line)
+  if (match and
+      (IsHeaderExtension(file_extension) or 'literals' not in match.group(1))):
     error(filename, linenum, 'build/namespaces', 5,
           'Do not use namespace using-directives.  '
           'Use using-declarations instead.')

@@ -3097,19 +3097,23 @@ class CpplintTest(CpplintTestBase):
   # precise, the '// marker so line numbers and indices both start at
   # 1' line was also causing the issue.
   def testLinePrecededByEmptyOrCommentLines(self):
-    def DoTest(self, lines):
+    def DoTest(self, filetype, lines, error_count):
       error_collector = ErrorCollector(self.assert_)
-      cpplint.ProcessFileData('foo.cc', 'cc', lines, error_collector)
+      cpplint.ProcessFileData('foo.' + filetype, filetype, lines,
+                              error_collector)
       # The warning appears only once.
       self.assertEquals(
-          1,
+          error_count,
           error_collector.Results().count(
               'Do not use namespace using-directives.  '
               'Use using-declarations instead.'
               '  [build/namespaces] [5]'))
-    DoTest(self, ['using namespace foo;'])
-    DoTest(self, ['', '', '', 'using namespace foo;'])
-    DoTest(self, ['// hello', 'using namespace foo;'])
+    DoTest(self, 'cc', ['using namespace foo;'], 1)
+    DoTest(self, 'h', ['using namespace foo;'], 1)
+    DoTest(self, 'cc', ['', '', '', 'using namespace foo;'], 1)
+    DoTest(self, 'cc', ['// hello', 'using namespace foo;'], 1)
+    DoTest(self, 'cc', ['using namespace std::chrono_literals;'], 0)
+    DoTest(self, 'h', ['using namespace std::chrono_literals;'], 1)
 
   def testNewlineAtEOF(self):
     def DoTest(self, data, is_missing_eof):
