@@ -6071,13 +6071,14 @@ def ParseArguments(args):
     The list of filenames to lint.
   """
   try:
-    (opts, filenames) = getopt.getopt(args, '', ['help', 'output=', 'verbose=',
+    (opts, unrecursive_paths) = getopt.getopt(args, '', ['help', 'recursive=', 'output=', 'verbose=',
                                                  'counting=',
                                                  'filter=',
                                                  'root=',
                                                  'linelength=',
                                                  'extensions=',
-                                                 'headers='])
+                                                 'headers=',
+                                                 'logfile='])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
@@ -6085,10 +6086,16 @@ def ParseArguments(args):
   output_format = _OutputFormat()
   filters = ''
   counting_style = ''
+  recursive_paths = []
+  log_file = None
 
   for (opt, val) in opts:
     if opt == '--help':
       PrintUsage(None)
+    elif opt == '--recursive':
+      recursive_paths.append(val)
+    elif opt == '--logfile':
+      log_file = val
     elif opt == '--output':
       if val not in ('emacs', 'vs7', 'eclipse'):
         PrintUsage('The only allowed output formats are emacs, vs7 and eclipse.')
@@ -6121,6 +6128,18 @@ def ParseArguments(args):
     elif opt == '--headers':
       ProcessHppHeadersOption(val)
 
+  # Get absolute paths
+  unrecursive_paths = GetABSPaths(unrecursive_paths)
+  recursive_paths = GetABSPaths(recursive_paths)
+
+  # Get All files
+  unrecursive_files = GetAllFiles(unrecursive_paths)
+  
+  recursive_files = GetAllFiles(recursive_paths,True)
+  filenames = unrecursive_files
+  for file in recursive_files:
+    filenames.append(file)    
+
   if not filenames:
     PrintUsage('No files were specified.')
 
@@ -6129,15 +6148,121 @@ def ParseArguments(args):
   _SetFilters(filters)
   _SetCountingStyle(counting_style)
 
-  return filenames
+  return (filenames,log_file)
 
+def GetABSPaths(paths):
+  result = []
+  for path in paths:
+    result.append(os.path.abspath(path))
+  return result
+
+def GetAllFiles(paths,recursive = False):
+  result = []
+  for path in paths:
+    path_helper = PathHelper(path)
+    path_files = path_helper.getFiles(recursive)
+    for file in path_files:
+      result.append(file)
+  return result
+
+class PathHelper:
+  def __init__(self,path):
+    self.__path = path
+    self.__load = False
+    self.__files_recursive = []
+    self.__files_normal = []
+    self.__dirs_recursive = []
+    self.__dirs_normal = []
+
+  def getPath(self,path):
+    return __path
+      
+  def setPath(self,path):
+    self.__path = path
+    self.__load = False
+    self.__files_recursive = []
+    self.__files_normal = []
+    self.__dirs_recursive = []
+    self.__dirs_normal = []
+  
+  def refresh(self):
+    setPath(self.__path)
+      
+
+  def getFiles(self,recursive = False):
+    if self.__load:
+      if recursive:
+        return self.__files_recursive
+      else:
+        return self.__files_normal
+    else:
+      self.__load = True
+      if recursive:
+        self.__getFiles(self.__path,self.__files_recursive,True)
+        return self.__files_recursive
+      else:
+        self.__getFiles(self.__path,self.__files_normal,False)
+        return self.__files_normal
+
+  def getDirs(self,recursive = False):
+    if self.__load:
+      if recursive:
+        return self.__dirs_recursive
+      else:
+        return self.__dirs_normal
+    else:
+      self.__load = True
+      if recursive:
+        self.__getFils(self.__path,self.__dirs_recursive,True)
+        return self.__dirs_recursive
+      else:
+        self.__getDirs(self.__path,self.__dirs_normal,False)
+        return self.__dirs_normal
+      
+  def __getFiles(self,path,filenames,recursive = False):
+    if os.path.isfile(path):
+      filenames.append(path)
+      return
+    if os.path.isdir(path) != True:
+      return
+    files = os.listdir(path)
+    for file in files:
+      fi_d = os.path.join(path,file)            
+      if os.path.isdir(fi_d):
+        if recursive:
+          self.__getFiles(fi_d,filenames,recursive)                  
+      elif os.path.isfile(fi_d):
+        filenames.append(os.path.join(path,fi_d))
+
+  def __getSubDirs(self,path,dirnames,recursive = False):
+    if os.path.isdir(path) != True:
+      return
+    dirs = os.listdir(path)
+    for dir in dirs:
+      dir_d = os.path.join(path,dir)            
+    if os.path.isdir(dir_d):
+      dirnames.append(dir_d)
+      if recursive:
+        self.__getFiles(dir_d,dirnames,recursive)      
 
 def main():
-  filenames = ParseArguments(sys.argv[1:])
+  #sys.argv = ['','--root=../sdk','--logfile=log.txt','../include']
+  args_info = ParseArguments(sys.argv[1:])
+  filenames = args_info[0]
+  log_file = args_info[1]
 
-  # Change stderr to write with replacement characters so we don't die
-  # if we try to print something containing non-ASCII characters.
-  sys.stderr = codecs.StreamReaderWriter(sys.stderr,
+  log_file_handler = None
+  orgin_out = sys.stdout
+  orgin_err = sys.stderr
+  if log_file != None:
+    log_file_handler = open(log_file, 'wb+')
+  if log_file_handler:
+    sys.stdout = log_file_handler
+    sys.stderr = log_file_handler
+  else:
+    # Change stderr to write with replacement characters so we don't die
+    # if we try to print something containing non-ASCII characters.
+    sys.stderr = codecs.StreamReaderWriter(sys.stderr,
                                          codecs.getreader('utf8'),
                                          codecs.getwriter('utf8'),
                                          'replace')
@@ -6146,7 +6271,10 @@ def main():
   for filename in filenames:
     ProcessFile(filename, _cpplint_state.verbose_level)
   _cpplint_state.PrintErrorCounts()
-
+  if log_file_handler:
+    log_file_handler.close()
+  sys.stdout = orgin_out
+  sys.stderr = orgin_err
   sys.exit(_cpplint_state.error_count > 0)
 
 
