@@ -6246,7 +6246,6 @@ class PathHelper:
         self.__getFiles(dir_d,dirnames,recursive)      
 
 def main():
-  #sys.argv = ['','--root=../sdk','--logfile=log.txt','../include']
   args_info = ParseArguments(sys.argv[1:])
   filenames = args_info[0]
   log_file = args_info[1]
