@@ -263,7 +263,7 @@ Revision 1.26
     </SUMMARY>
     <BODY>
       <p>
-        This matches the convention in the <a href="cppguide.xml?showone=TODO_Comments#TODO_Comments">C++
+        This matches the convention in the <a href="cppguide.html?showone=TODO_Comments#TODO_Comments">C++
           Guide</a>.
       </p>
       <p>
