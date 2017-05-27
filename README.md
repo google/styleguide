@@ -1,6 +1,6 @@
 Google Style Guides
 ===================
-
+## About 
 Every major open-source project has its own style guide: a set of conventions
 (sometimes arbitrary) about how to write code for that project. It is much
 easier to understand a large codebase when all the code in it is in a
@@ -11,12 +11,21 @@ consistent style.
 style guidelines we use for Google code. If you are modifying a project that
 originated at Google, you may be pointed to this page to see the style guides
 that apply to that project.
+## Style Guides
+The following style guides are now available 
+- [C++ Style Guide][cpp]
+- [Objective-C Style Guide][objc]
+- [Java Style Guide][java]
+- [Python Style Guide][py]
+- [R Style Guide][r] 
+- [Shell Style Guide][sh]
+- [HTML/CSS Style Guide][htmlcss]
+- [JavaScript Style Guide][js]
+- [AngularJS Style Guide][angular]
+- [Common Lisp Style Guide][cl]
+- [Vimscript Style Guide][vim] 
 
-Our [C++ Style Guide][cpp], [Objective-C Style Guide][objc], [Java Style
-Guide][java], [Python Style Guide][py], [R Style Guide][r], [Shell Style
-Guide][sh], [HTML/CSS Style Guide][htmlcss], [JavaScript Style Guide][js],
-[AngularJS Style Guide][angular], [Common Lisp Style Guide][cl], and [Vimscript
-Style Guide][vim] are now available. We have also released [cpplint][cpplint],
+We have also released [cpplint][cpplint],
 a tool to assist with style guide compliance, and [google-c-style.el][emacs],
 an Emacs settings file for Google style.
 
