@@ -5171,6 +5171,7 @@ def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_sta
             if Match(r'^\s*:\s+\S', previous_line):
                 return
 
+    # Scan backward to avoid false positives in expressions defined outside of function.
     static_functions = r'^\s*(static_assert|DEFINE_\w+)'
     if Match(static_functions, line):
         return
