@@ -417,7 +417,9 @@ _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS = frozenset([
     'glog/stl_logging.h',
     'gtest/gtest.h',
     'gtest/gtest_prod.h',
-    'rapidjson/document.h'
+    'rapidjson/document.h',
+    'ev++.h',
+    'squeasel.h'
     ])
 
 # Type names
@@ -1715,14 +1717,25 @@ def CheckForCopyright(filename, lines, error):
   # dummy line at the front.
   YUGABYTE_COPYRIGHT = "// Copyright (c) YugaByte, Inc."
   ALLOWED_COPYRIGHT_LINES = [YUGABYTE_COPYRIGHT,
-                             "// Copyright 2010 Google Inc.  All Rights Reserved",
-                             "// regarding copyright ownership.  The ASF licenses this file",
-                             "// Copyright (c) 2012 The Chromium Authors. All rights reserved.",
-                             "// Copyright (c) 2011 The LevelDB Authors. All rights reserved."]
+                             "// Portions Copyright (c) YugaByte, Inc.",
+                             "// regarding copyright ownership. The ASF licenses this file",
+                             "// Copyright (c) 20XX The Chromium Authors. All rights reserved",
+                             "// Copyright (c) 20XX The LevelDB Authors. All rights reserved",
+                             "// Copyright (c) 20XX-present, Facebook, Inc. All rights reserved",
+                             "// Copyright 20XX Google Inc. All rights reserved",
+                             "// Copyright (c) 20XX The LevelDB Authors. All rights reserved",
+                             "// Copyright (c) 20XX, Red Hat, Inc. All rights reserved",
+                             "// Copyright 20XX Facebook",
+                             " * Copyright 20XX Facebook",
+                            ]
   for line in xrange(1, min(len(lines), 11)):
     line_str = lines[line]
+    fixed_line = re.sub(r'20\d\d', '20XX', re.sub(' +', ' ', line_str))
+    fixed_line = re.sub('Reserved', 'reserved', re.sub('Rights', 'rights', fixed_line))
+    if fixed_line.endswith('reserved.'):
+        fixed_line = fixed_line[:-1]
     if re.search(r'Copyright', line_str, re.I):
-      if line_str in ALLOWED_COPYRIGHT_LINES:
+      if fixed_line in ALLOWED_COPYRIGHT_LINES:
         break
       error(filename,
             0,
@@ -4407,7 +4420,8 @@ def _ClassifyInclude(fileinfo, include, is_system):
   # headers. These headers should be included after C++ system headers.
   if is_system and (
       include in _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS or
-      include.startswith('boost/')
+      include.startswith('boost/') or
+      include.startswith('google/')
       ):
     is_system = False
 
@@ -4712,9 +4726,9 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
           % (match.group(1), match.group(2)))
 
   match = Search(r'\busing namespace\s+([a-zA-Z0-9_:]+)', line)
-  if match and match.group(1) != 'std::placeholders':
+  if match and match.group(1) != 'std::placeholders' and match.group(1) != 'std::chrono_literals':
     error(filename, linenum, 'build/namespaces', 5,
-          'Do not use namespace using-directives (except for std::placeholders).  '
+          'Do not use namespace using-directives (except for std::placeholders and std::chrono_literals).'
           'Use using-declarations instead.')
 
   # Detect variable-length arrays.
@@ -5143,7 +5157,7 @@ def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_sta
         # Not at toplevel, not within a class, and not within a namespace
         return
 
-    # Avoid initializer lists.  We only need to scan back from the
+    # Avoid initializer lists. We only need to scan back from the
     # current line for something that starts with ':'.
     #
     # We don't need to check the current line, since the '&' would
@@ -5156,6 +5170,19 @@ def CheckAsteriskAndAmpersandSpacing(filename, clean_lines, linenum, nesting_sta
                 break
             if Match(r'^\s*:\s+\S', previous_line):
                 return
+
+    # Scan backward to avoid false positives in expressions defined outside of function.
+    static_functions = r'^\s*(static_assert|DEFINE_\w+)'
+    if Match(static_functions, line):
+        return
+    if linenum > 0:
+        for i in xrange(linenum - 1, max(0, linenum - 5), -1):
+            previous_line = clean_lines.elided[i]
+            if Match(static_functions, previous_line):
+                return
+            if Search(r'\)\s*$', previous_line):
+                break
+
 
     # Avoid preprocessors
     if Search(r'\\\s*$', line):
