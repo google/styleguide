@@ -1747,7 +1747,7 @@ def CheckForCopyright(filename, lines, error):
   else:                       # means no copyright line was found
     error(filename, 0, 'legal/copyright', 5,
           'No copyright message found.  '
-          'You should have a line: {0}'.format(yugabyte_copyright))
+          'You should have a line: {0}'.format(YUGABYTE_COPYRIGHT))
 
 
 def GetIndentLevel(line):
