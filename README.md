@@ -49,6 +49,6 @@ The following Google style guides live outside of this project:
 [cpplint]: https://github.com/google/styleguide/tree/gh-pages/cpplint
 [emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
 [xml]: https://google.github.io/styleguide/xmlstyle.html
-[dart]: https://www.dartlang.org/guides/language/effective-dart
 [go]: https://github.com/golang/go/wiki/CodeReviewComments
+[dart]: https://www.dartlang.org/guides/language/effective-dart
 [ccl]: https://creativecommons.org/licenses/by/3.0/
