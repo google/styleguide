@@ -31,7 +31,7 @@ which encourages you to share these documents.
 See [https://creativecommons.org/licenses/by/3.0/][ccl] for more details.
 
 The following Google style guides live outside of this project:
-[Go Style][go] and [Effective Dart][dart].
+[Go Code Review Comments][go] and [Effective Dart][dart].
 
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
@@ -50,5 +50,5 @@ The following Google style guides live outside of this project:
 [emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
 [xml]: https://google.github.io/styleguide/xmlstyle.html
 [dart]: https://www.dartlang.org/guides/language/effective-dart
-[go]: https://github.com/golang/go/wiki/Style
+[go]: https://github.com/golang/go/wiki/CodeReviewComments
 [ccl]: https://creativecommons.org/licenses/by/3.0/
