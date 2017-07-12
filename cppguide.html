@@ -1733,7 +1733,9 @@ references while output arguments are pointers. Input
 parameters may be <code>const</code> pointers, but we
 never allow non-<code>const</code> reference parameters
 except when required by convention, e.g.,
-<code>swap()</code>.</p>
+<code>swap()</code>. <code>iostream</code> based types 
+may also be passed as non-<code>const</code> references.
+</p>
 
 <p>However, there are some instances where using
 <code>const T*</code> is preferable to <code>const
