@@ -1974,12 +1974,10 @@ def GetHeaderGuardCPPVariable(filename):
   fileinfo = FileInfo(filename)
   file_path_from_root = fileinfo.RepositoryName()
   if _root:
-    suffix = os.sep
-    # On Windows using directory separator will leave us with
-    # "bogus escape error" unless we properly escape regex.
-    if suffix == '\\':
-      suffix += '\\'
-    file_path_from_root = re.sub('^' + _root + suffix, '', file_path_from_root)
+    # Convert root path to unix format because file_path_from_root is also
+    # in that format and they wouldn't match otherwise on Windows machines
+    root = os.path.normpath(_root).replace('\\', '/')
+    file_path_from_root = re.sub('^' + root + '/', '', file_path_from_root)
   return re.sub(r'[^a-zA-Z0-9]', '_', file_path_from_root).upper() + '_'
 
 
