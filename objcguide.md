@@ -29,10 +29,6 @@ example that should give you a feel for the style, spacing, naming, and so on.
 Here is an example header file, demonstrating the correct commenting and spacing
 for an `@interface` declaration.
 
-Doxygen-style comments are encouraged for interfaces as they are parsed by Xcode
-to display formatted documentation. There is a wide variety of Doxygen commands;
-use them consistently within a project.
-
 ```objectivec 
 // GOOD:
 
@@ -90,7 +86,7 @@ An example source file, demonstrating the correct commenting and spacing for the
 #import "Shared/Util/Foo.h"
 
 @implementation Foo {
-  // The string used for displaying "hi".
+  /** The string used for displaying "hi". */
   NSString *_string;
 }
 
@@ -882,6 +878,10 @@ categories, protocol declarations, and enums.
 @end
 ```
 
+Doxygen-style comments are encouraged for interfaces as they are parsed by Xcode
+to display formatted documentation. There is a wide variety of Doxygen commands;
+use them consistently within a project.
+
 If you have already described an interface in detail in the comments at the top
 of your file, feel free to simply state, "See comment at top of file for a
 complete description", but be sure to have some sort of comment.
@@ -1015,7 +1015,7 @@ Examples of strong and weak declarations:
   IBOutlet NSButton *_okButton;  // Normal NSControl; implicitly weak on Mac only
 
   AnObjcObject *_doohickey;  // My doohickey
-  MyObjcParent * __weak _parent;  // To send messages back (owns this instance)
+  __weak MyObjcParent *_parent;  // To send messages back (owns this instance)
 
   // non-NSObject pointers...
   CWackyCPPClass *_wacky;  // Strong, some cross-platform object
