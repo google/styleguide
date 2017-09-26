@@ -1727,6 +1727,7 @@ def CheckForCopyright(filename, lines, error):
                              "// Copyright (c) 20XX, Red Hat, Inc. All rights reserved",
                              "// Copyright 20XX Facebook",
                              " * Copyright 20XX Facebook",
+                             "// Copyright 20XX-20XX Georges Menie (www.menie.org)",
                             ]
   for line in xrange(1, min(len(lines), 11)):
     line_str = lines[line]
