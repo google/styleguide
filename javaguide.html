@@ -346,10 +346,15 @@ applies to both code and comments throughout the block. (See the example in Sect
 <a name="columnlimit"></a>
 <h3 id="s4.4-column-limit">4.4 Column limit: 100</h3>
 
-<p>Java code has a column limit of 100 characters.
+<p>Java code has a column limit of 100 characters. A "character" means any Unicode code point.
 Except as noted below, any line that would exceed this limit must be line-wrapped, as explained in
 Section 4.5, <a href="#s4.5-line-wrapping">Line-wrapping</a>.
 </p>
+
+<p class="tip">Each Unicode code point counts as one character, even if its display width is
+greater or less. For example, if using
+<a href="https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms">fullwidth characters</a>,
+you may choose to wrap the line earlier than where this rule strictly requires.</p>
 
 <p><strong>Exceptions:</strong></p>
 
@@ -551,7 +556,7 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
 </ol>
 
 This rule is never interpreted as requiring or forbidding additional space at the start or
-end of a line; it addresses only <em>interior</em> space.<p></p>
+end of a line; it addresses only <em>interior</em> space.
 
 <h4 id="s4.6.3-horizontal-alignment">4.6.3 Horizontal alignment: never required</h4>
 
@@ -622,6 +627,9 @@ as if it were an array initializer (see Section 4.8.3.1 on
 
 <p>Every variable declaration (field or local) declares only one variable: declarations such as
 <code class="badcode">int a, b;</code> are not used.</p>
+
+<p><strong>Exception:</strong> Multiple variable declarations are acceptable in the header of a
+<code class="prettyprint lang-java">for</code> loop.</p>
 
 <h5 id="s4.8.2.2-variables-limited-scope">4.8.2.2 Declared when needed</h5>
 
@@ -842,15 +850,17 @@ with <code class="prettyprint lang-java">Test</code>. For example,
 <code class="prettyprint lang-java">stop</code>.</p>
 
 <p>Underscores may appear in JUnit <em>test</em> method names to separate logical components of the
-name. One typical pattern is <code>test<i>&lt;MethodUnderTest&gt;</i>_<i>&lt;state&gt;</i></code>,
-for example <code class="prettyprint lang-java">testPop_emptyStack</code>. There is no One Correct
+name, with <em>each</em> component written in <a href="#s5.3-camel-case">lowerCamelCase</a>.
+One typical pattern is <code><i>&lt;methodUnderTest&gt;</i>_<i>&lt;state&gt;</i></code>,
+for example <code class="prettyprint lang-java">pop_emptyStack</code>. There is no One Correct
 Way to name test methods.</p>
 
 <a name="constants"></a>
 <h4 id="s5.2.4-constant-names">5.2.4 Constant names</h4>
 
 <p>Constant names use <code class="prettyprint lang-java">CONSTANT_CASE</code>: all uppercase
-letters, with words separated by underscores. But what <em>is</em> a constant, exactly?</p>
+letters, with each word separated from the next by a single underscore. But what <em>is</em> a
+constant, exactly?</p>
 
 <p>Constants are static final fields whose contents are deeply immutable and whose methods have no
 detectable side effects. This includes primitives, Strings, immutable types, and immutable
