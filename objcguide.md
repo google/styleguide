@@ -1,5 +1,6 @@
 # Google Objective-C Style Guide
 
+
 > Objective-C is a dynamic, object-oriented extension of C. It's designed to be
 > easy to use and read, while enabling sophisticated object-oriented design. It
 > is the primary development language for applications on OS X and on iOS.
@@ -20,6 +21,47 @@
 > refresher, please read [Programming with
 > Objective-C](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html).
 
+
+## Principles
+
+### Optimize for the reader, not the writer
+
+Codebases often have extended lifetimes and more time is spent reading the code
+than writing it. We explicitly choose to optimize for the experience of our
+average software engineer reading, maintaining, and debugging code in our
+codebase rather than the ease of writing said code. For example, when something
+surprising or unusual is happening in a snippet of code, leaving textual hints
+for the reader is valuable.
+
+### Be consistent
+
+When the style guide allows multiple options it is preferable to pick one option
+over mixed usage of multiple options. Using one style consistently throughout a
+codebase lets engineers focus on other (more important) issues. Consistency also
+enables better automation because consistent code allows more efficient
+development and operation of tools that format or refactor code. In many cases,
+rules that are attributed to "Be Consistent" boil down to "Just pick one and
+stop worrying about it"; the potential value of allowing flexibility on these
+points is outweighed by the cost of having people argue over them.
+
+### Be consistent with Apple SDKs
+
+Consistency with the way Apple SDKs use Objective-C has value for the same
+reasons as consistency within our code base. If an Objective-C feature solves a
+problem that's an argument for using it. However, sometimes language features
+and idioms are flawed, or were just designed with assumptions that are not
+universal. In those cases it is appropriate to constrain or ban language
+features or idioms.
+
+### Style rules should pull their weight
+
+The benefit of a style rule must be large enough to justify asking engineers to
+remember it. The benefit is measured relative to the codebase we would get
+without the rule, so a rule against a very harmful practice may still have a
+small benefit if people are unlikely to do it anyway. This principle mostly
+explains the rules we don’t have, rather than the rules we do: for example, goto
+contravenes many of the following principles, but is not discussed due to its
+extreme rarity.
 
 ## Example 
 
@@ -521,7 +563,7 @@ parenthesis of the category.
 ```objectivec 
 // GOOD:
 
-// Using a category to extend a Foundation class.
+/** A category that adds parsing functionality to NSString. */
 @interface NSString (GTMNSStringParsingAdditions)
 - (NSString *)gtm_parsedString;
 @end
@@ -536,7 +578,7 @@ Proper capitalization should be respected, including at the beginning of names.
 ```objectivec 
 // GOOD:
 
-+ (NSURL *)URLWithString;
++ (NSURL *)URLWithString:(NSString *)URLString;
 ```
 
 The method name should read like a sentence if possible, meaning you should
@@ -693,7 +735,7 @@ class.
 Constant symbols (const global and static variables and constants created
 with #define) should use mixed case to delimit words.
 
-Constants should have an appropriate prefix.
+Global and file scope constants should have an appropriate prefix.
 
 ```objectivec 
 // GOOD:
@@ -1269,16 +1311,21 @@ pre-compiled and can be loaded much more quickly. In addition, remember to use
 ...
 ```
 
-### Avoid Accessors During init and dealloc 
+### Avoid Messaging the Current Object Within Initializers and `-dealloc`
 
-Instance subclasses may be in an inconsistent state during init and dealloc
-method execution, so code in those methods should avoid invoking accessors on
-self.
+Code in initializers and `-dealloc` should avoid invoking instance methods.
 
-Subclasses have not yet been initialized or have already deallocated when init
-and dealloc methods execute, making accessor methods on self potentially
-unreliable. Whenever practical, directly assign to and release ivars in those
-methods rather than rely on accessors.
+Superclass initialization completes before subclass initialization. Until all
+classes have had a chance to initialize their instance state any method
+invocation on self may lead to a subclass operating on uninitialized instance
+state.
+
+A similar issue exists for `-dealloc`, where a method invocation may cause a
+class to operate on state that has been deallocated.
+
+One case where this is less obvious is property accessors. These can be
+overridden just like any other selector. Whenever practical, directly assign to
+and release ivars in initializers and `-dealloc`, rather than rely on accessors.
 
 ```objectivec 
 // GOOD:
@@ -1292,6 +1339,13 @@ methods rather than rely on accessors.
 }
 ```
 
+Beware of factoring common initialization code into helper methods:
+
+-   Methods can be overridden in subclasses, either deliberately, or
+    accidentally due to naming collisions.
+-   When editing a helper method, it may not be obvious that the code is being
+    run from an initializer.
+
 ```objectivec 
 // AVOID:
 
@@ -1299,6 +1353,7 @@ methods rather than rely on accessors.
   self = [super init];
   if (self) {
     self.bar = 23;  // AVOID.
+    [self sharedMethod];  // AVOID. Fragile to subclassing or future extension.
   }
   return self;
 }
@@ -1428,7 +1483,7 @@ When converting a general integral value to a `BOOL` use ternary operators to
 return a `YES` or `NO` value.
 
 You can safely interchange and convert `BOOL`, `_Bool` and `bool` (see C++ Std
-4.7.4, 4.12 and C99 Std 6.3.1.2). Use `BOOL` in Objective C method signatures.
+4.7.4, 4.12 and C99 Std 6.3.1.2). Use `BOOL` in Objective-C method signatures.
 
 Using logical operators (`&&`, `||` and `!`) with `BOOL` is also valid and will
 return values that can be safely converted to `BOOL` without the need for a
