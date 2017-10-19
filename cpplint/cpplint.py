@@ -501,7 +501,7 @@ _ALT_TOKEN_REPLACEMENT = {
 # False positives include C-style multi-line comments and multi-line strings
 # but those have always been troublesome for cpplint.
 _ALT_TOKEN_REPLACEMENT_PATTERN = re.compile(
-    r'[ =()](' + ('|'.join(_ALT_TOKEN_REPLACEMENT.keys())) + r')(?=[ (]|$)')
+    r'[ =()](' + ('|'.join(list(_ALT_TOKEN_REPLACEMENT.keys()))) + r')(?=[ (]|$)')
 
 
 # These constants define types of headers for use with
@@ -933,7 +933,7 @@ class _CppLintState(object):
 
   def PrintErrorCounts(self):
     """Print a summary of errors by category, and the total."""
-    for category, count in self.errors_by_category.iteritems():
+    for category, count in self.errors_by_category.items():
       sys.stderr.write('Category \'%s\' errors found: %d\n' %
                        (category, count))
     sys.stdout.write('Total errors found: %d\n' % self.error_count)
@@ -1502,7 +1502,7 @@ def FindEndOfExpressionInLine(line, startpos, stack):
     On finding an unclosed expression: (-1, None)
     Otherwise: (-1, new stack at end of this line)
   """
-  for i in xrange(startpos, len(line)):
+  for i in range(startpos, len(line)):
     char = line[i]
     if char in '([{':
       # Found start of parenthesized expression, push to expression stack
@@ -1731,7 +1731,7 @@ def CheckForCopyright(filename, lines, error):
 
   # We'll say it should occur by line 10. Don't forget there's a
   # dummy line at the front.
-  for line in xrange(1, min(len(lines), 11)):
+  for line in range(1, min(len(lines), 11)):
     if re.search(r'Copyright', lines[line], re.I): break
   else:                       # means no copyright line was found
     error(filename, 0, 'legal/copyright', 5,
@@ -1864,7 +1864,7 @@ def CheckForHeaderGuard(filename, clean_lines, error):
   # contain any "//" comments at all, it could be that the compiler
   # only wants "/**/" comments, look for those instead.
   no_single_line_comments = True
-  for i in xrange(1, len(raw_lines) - 1):
+  for i in range(1, len(raw_lines) - 1):
     line = raw_lines[i]
     if Match(r'^(?:(?:\'(?:\.|[^\'])*\')|(?:"(?:\.|[^"])*")|[^\'"])*//', line):
       no_single_line_comments = False
@@ -1927,7 +1927,7 @@ def CheckForBadCharacters(filename, lines, error):
     error: The function to call with any errors found.
   """
   for linenum, line in enumerate(lines):
-    if u'\ufffd' in line:
+    if '\ufffd' in line:
       error(filename, linenum, 'readability/utf8', 5,
             'Line contains invalid UTF-8 (or Unicode replacement character).')
     if '\0' in line:
@@ -2205,7 +2205,7 @@ class _ClassInfo(_BlockInfo):
     # If there is a DISALLOW macro, it should appear near the end of
     # the class.
     seen_last_thing_in_class = False
-    for i in xrange(linenum - 1, self.starting_linenum, -1):
+    for i in range(linenum - 1, self.starting_linenum, -1):
       match = Search(
           r'\b(DISALLOW_COPY_AND_ASSIGN|DISALLOW_IMPLICIT_CONSTRUCTORS)\(' +
           self.name + r'\)',
@@ -2987,7 +2987,7 @@ def CheckForFunctionLengths(filename, clean_lines, linenum,
 
   if starting_func:
     body_found = False
-    for start_linenum in xrange(linenum, clean_lines.NumLines()):
+    for start_linenum in range(linenum, clean_lines.NumLines()):
       start_line = lines[start_linenum]
       joined_line += ' ' + start_line.lstrip()
       if Search(r'(;|})', start_line):  # Declarations and trivial functions
@@ -3444,7 +3444,7 @@ def _IsType(clean_lines, nesting_state, expr):
       continue
 
     # Look for typename in the specified range
-    for i in xrange(first_line, last_line + 1, 1):
+    for i in range(first_line, last_line + 1, 1):
       if Search(typename_pattern, clean_lines.elided[i]):
         return True
     block_index -= 1
@@ -3508,7 +3508,7 @@ def CheckBracesSpacing(filename, clean_lines, linenum, nesting_state, error):
     trailing_text = ''
     if endpos > -1:
       trailing_text = endline[endpos:]
-    for offset in xrange(endlinenum + 1,
+    for offset in range(endlinenum + 1,
                          min(endlinenum + 3, clean_lines.NumLines() - 1)):
       trailing_text += clean_lines.elided[offset]
     # We also suppress warnings for `uint64_t{expression}` etc., as the style
@@ -4062,7 +4062,7 @@ def CheckCheck(filename, clean_lines, linenum, error):
     expression = lines[linenum][start_pos + 1:end_pos - 1]
   else:
     expression = lines[linenum][start_pos + 1:]
-    for i in xrange(linenum + 1, end_line):
+    for i in range(linenum + 1, end_line):
       expression += lines[i]
     expression += last_line[0:end_pos - 1]
 
@@ -4190,7 +4190,7 @@ def GetLineWidth(line):
     The width of the line in column positions, accounting for Unicode
     combining characters and wide characters.
   """
-  if isinstance(line, unicode):
+  if isinstance(line, str):
     width = 0
     for uc in unicodedata.normalize('NFC', line):
       if unicodedata.east_asian_width(uc) in ('W', 'F'):
@@ -4516,7 +4516,7 @@ def _GetTextInside(text, start_pattern):
 
   # Give opening punctuations to get the matching close-punctuations.
   matching_punctuation = {'(': ')', '{': '}', '[': ']'}
-  closing_punctuation = set(matching_punctuation.itervalues())
+  closing_punctuation = set(matching_punctuation.values())
 
   # Find the position to start extracting text.
   match = re.search(start_pattern, text, re.M)
@@ -4835,7 +4835,7 @@ def IsDerivedFunction(clean_lines, linenum):
     virt-specifier.
   """
   # Scan back a few lines for start of current function
-  for i in xrange(linenum, max(-1, linenum - 10), -1):
+  for i in range(linenum, max(-1, linenum - 10), -1):
     match = Match(r'^([^()]*\w+)\(', clean_lines.elided[i])
     if match:
       # Look for "override" after the matching closing parenthesis
@@ -4856,7 +4856,7 @@ def IsOutOfLineMethodDefinition(clean_lines, linenum):
     True if current line contains an out-of-line method definition.
   """
   # Scan back a few lines for start of current function
-  for i in xrange(linenum, max(-1, linenum - 10), -1):
+  for i in range(linenum, max(-1, linenum - 10), -1):
     if Match(r'^([^()]*\w+)\(', clean_lines.elided[i]):
       return Match(r'^[^()]*\w+::\w+\(', clean_lines.elided[i]) is not None
   return False
@@ -4872,7 +4872,7 @@ def IsInitializerList(clean_lines, linenum):
     True if current line appears to be inside constructor initializer
     list, False otherwise.
   """
-  for i in xrange(linenum, 1, -1):
+  for i in range(linenum, 1, -1):
     line = clean_lines.elided[i]
     if i == linenum:
       remove_function_body = Match(r'^(.*)\{\s*$', line)
@@ -4973,7 +4973,7 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
           # Found the matching < on an earlier line, collect all
           # pieces up to current line.
           line = ''
-          for i in xrange(startline, linenum + 1):
+          for i in range(startline, linenum + 1):
             line += clean_lines.elided[i].strip()
 
   # Check for non-const references in function parameters.  A single '&' may
@@ -4997,7 +4997,7 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
   # appear inside the second set of parentheses on the current line as
   # opposed to the first set.
   if linenum > 0:
-    for i in xrange(linenum - 1, max(0, linenum - 10), -1):
+    for i in range(linenum - 1, max(0, linenum - 10), -1):
       previous_line = clean_lines.elided[i]
       if not Search(r'[),]\s*$', previous_line):
         break
@@ -5028,7 +5028,7 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
     # Don't see a whitelisted function on this line.  Actually we
     # didn't see any function name on this line, so this is likely a
     # multi-line parameter list.  Try a bit harder to catch this case.
-    for i in xrange(2):
+    for i in range(2):
       if (linenum > i and
           Search(whitelisted_functions, clean_lines.elided[linenum - i - 1])):
         return
@@ -5191,7 +5191,7 @@ def CheckCStyleCast(filename, clean_lines, linenum, cast_type, pattern, error):
   # Try expanding current context to see if we one level of
   # parentheses inside a macro.
   if linenum > 0:
-    for i in xrange(linenum - 1, max(0, linenum - 5), -1):
+    for i in range(linenum - 1, max(0, linenum - 5), -1):
       context = clean_lines.elided[i] + context
   if Match(r'.*\b[_A-Z][_A-Z0-9]*\s*\((?:\([^()]*\)|[^()])*$', context):
     return False
@@ -5410,7 +5410,7 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
   required = {}  # A map of header name to linenumber and the template entity.
                  # Example of required: { '<functional>': (1219, 'less<>') }
 
-  for linenum in xrange(clean_lines.NumLines()):
+  for linenum in range(clean_lines.NumLines()):
     line = clean_lines.elided[linenum]
     if not line or line[0] == '#':
       continue
@@ -5464,7 +5464,7 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
 
   # include_dict is modified during iteration, so we iterate over a copy of
   # the keys.
-  header_keys = include_dict.keys()
+  header_keys = list(include_dict.keys())
   for header in header_keys:
     (same_module, common_path) = FilesBelongToSameModule(abs_filename, header)
     fullpath = common_path + header
@@ -5546,7 +5546,7 @@ def CheckRedundantVirtual(filename, clean_lines, linenum, error):
   end_col = -1
   end_line = -1
   start_col = len(virtual.group(2))
-  for start_line in xrange(linenum, min(linenum + 3, clean_lines.NumLines())):
+  for start_line in range(linenum, min(linenum + 3, clean_lines.NumLines())):
     line = clean_lines.elided[start_line][start_col:]
     parameter_list = Match(r'^([^(]*)\(', line)
     if parameter_list:
@@ -5561,7 +5561,7 @@ def CheckRedundantVirtual(filename, clean_lines, linenum, error):
 
   # Look for "override" or "final" after the parameter list
   # (possibly on the next few lines).
-  for i in xrange(end_line, min(end_line + 3, clean_lines.NumLines())):
+  for i in range(end_line, min(end_line + 3, clean_lines.NumLines())):
     line = clean_lines.elided[i][end_col:]
     match = Search(r'\b(override|final)\b', line)
     if match:
@@ -5818,7 +5818,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   if IsHeaderExtension(file_extension):
     CheckForHeaderGuard(filename, clean_lines, error)
 
-  for line in xrange(clean_lines.NumLines()):
+  for line in range(clean_lines.NumLines()):
     ProcessLine(filename, file_extension, clean_lines, line,
                 include_state, function_state, nesting_state, error,
                 extra_check_functions)
