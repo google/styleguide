@@ -1777,6 +1777,8 @@ def GetHeaderGuardCPPVariable(filename):
   fileinfo = FileInfo(filename)
   file_path_from_root = fileinfo.RepositoryName()
   if _root:
+    file_path_from_root = fileinfo.FullName()
+
     suffix = os.sep
     # On Windows using directory separator will leave us with
     # "bogus escape error" unless we properly escape regex.
