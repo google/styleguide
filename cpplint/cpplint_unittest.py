@@ -4232,6 +4232,12 @@ class CpplintTest(CpplintTestBase):
 
     self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
                       cpplint.GetHeaderGuardCPPVariable(file_path))
+    #
+    # test --root flags:
+    #   this changes the cpp header guard prefix
+    #
+
+    # left-strip the header guard by using a root dir inside of the repo dir.
     cpplint._root = 'cpplint'
     self.assertEquals('CPPLINT_TEST_HEADER_H_',
                       cpplint.GetHeaderGuardCPPVariable(file_path))
@@ -4239,6 +4245,51 @@ class CpplintTest(CpplintTestBase):
     cpplint._root = 'NON_EXISTENT_DIR'
     self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
                       cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    # prepend to the header guard by using a root dir that is more outer
+    # than the repo dir
+
+    # (using absolute paths)
+    this_files_path = os.path.dirname(os.path.abspath(__file__))
+    (styleguide_path, this_files_dir) = os.path.split(this_files_path)
+    (styleguide_parent_path, _) = os.path.split(styleguide_path)
+    # parent dir of styleguide
+    cpplint._root = styleguide_parent_path
+    self.assertIsNotNone(styleguide_parent_path)
+    # do not have 'styleguide' repo in '/'
+    self.assertEquals('STYLEGUIDE_CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    # (using relative paths)
+    styleguide_rel_path = os.path.relpath(styleguide_path, this_files_path)
+    # '..'
+    cpplint._root = styleguide_rel_path
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    styleguide_rel_path = os.path.relpath(styleguide_parent_path,
+                                          this_files_path) # '../..'
+    cpplint._root = styleguide_rel_path
+    self.assertEquals('STYLEGUIDE_CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    cpplint._root = None
+
+  def testPathSplitToList(self):
+    self.assertEquals([''],
+                      cpplint.PathSplitToList(os.path.join('')))
+
+    self.assertEquals(['.'],
+                      cpplint.PathSplitToList(os.path.join('.')))
+
+    self.assertEquals(['..'],
+                      cpplint.PathSplitToList(os.path.join('..')))
+
+    self.assertEquals(['..', 'a', 'b'],
+                      cpplint.PathSplitToList(os.path.join('..', 'a', 'b')))
+
+    self.assertEquals(['a', 'b', 'c', 'd'],
+                      cpplint.PathSplitToList(os.path.join('a', 'b', 'c', 'd')))
 
   def testBuildInclude(self):
     # Test that include statements have slashes in them.
