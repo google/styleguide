@@ -1754,6 +1754,30 @@ def GetIndentLevel(line):
   else:
     return 0
 
+def PathSplitToList(path):
+  """Returns the path split into a list by the separator.
+
+  Args:
+    path: An absolute or relative path (e.g. '/a/b/c/' or '../a')
+
+  Returns:
+    A list of path components (e.g. ['a', 'b', 'c]).
+  """
+  lst = []
+  while True:
+    (head, tail) = os.path.split(path)
+    if head == path: # absolute paths end
+      lst.append(head)
+      break
+    if tail == path: # relative paths end
+      lst.append(tail)
+      break
+
+    path = head
+    lst.append(tail)
+
+  lst.reverse()
+  return lst
 
 def GetHeaderGuardCPPVariable(filename):
   """Returns the CPP variable that should be used as a header guard.
@@ -1776,13 +1800,39 @@ def GetHeaderGuardCPPVariable(filename):
 
   fileinfo = FileInfo(filename)
   file_path_from_root = fileinfo.RepositoryName()
-  if _root:
-    suffix = os.sep
-    # On Windows using directory separator will leave us with
-    # "bogus escape error" unless we properly escape regex.
-    if suffix == '\\':
-      suffix += '\\'
-    file_path_from_root = re.sub('^' + _root + suffix, '', file_path_from_root)
+
+  def FixupPathFromRoot():
+    # Process the file path with the --root flag if it was set.
+    if not _root:
+      return file_path_from_root
+
+    def StripListPrefix(lst, prefix):
+      # f(['x', 'y'], ['w, z']) -> None  (not a valid prefix)
+      if lst[:len(prefix)] != prefix:
+        return None
+      # f(['a, 'b', 'c', 'd'], ['a', 'b']) -> ['c', 'd']
+      return lst[(len(prefix)):]
+
+    # root behavior:
+    #   --root=subdir , lstrips subdir from the header guard
+    maybe_path = StripListPrefix(PathSplitToList(file_path_from_root),
+                                 PathSplitToList(_root))
+    if maybe_path:
+      return os.path.join(*maybe_path)
+
+    #   --root=.. , will prepend the outer directory to the header guard
+    full_path = fileinfo.FullName()
+    root_abspath = os.path.abspath(_root)
+
+    maybe_path = StripListPrefix(PathSplitToList(full_path),
+                                 PathSplitToList(root_abspath))
+    if maybe_path:
+      return os.path.join(*maybe_path)
+
+    #   --root=FAKE_DIR is ignored
+    return file_path_from_root
+
+  file_path_from_root = FixupPathFromRoot()
   return re.sub(r'[^a-zA-Z0-9]', '_', file_path_from_root).upper() + '_'
 
 
