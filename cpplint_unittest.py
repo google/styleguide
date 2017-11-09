@@ -4578,6 +4578,8 @@ class CpplintTest(CpplintTestBase):
       os.makedirs(os.path.join(temp_directory, ".svn"))
       header_directory = os.path.join(temp_directory, "cpplint")
       os.makedirs(header_directory)
+      # note: Tested file paths must be real, otherwise
+      # the repository name lookup will fail.
       file_path = os.path.join(header_directory, 'cpplint_test_header.h')
       open(file_path, 'a').close()
       file_info = cpplint.FileInfo(file_path)
@@ -4598,9 +4600,33 @@ class CpplintTest(CpplintTestBase):
       #
 
       # left-strip the header guard by using a root dir inside of the repo dir.
+      # relative directory
       cpplint._root = 'cpplint'
       self.assertEqual('CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
+
+      nested_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      os.path.join('nested',
+                                                   'cpplint_test_header.h'))
+      cpplint._root = os.path.join('cpplint', 'nested')
+      actual = cpplint.GetHeaderGuardCPPVariable(nested_file_path)
+      self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                        actual)
+
+      # absolute directory
+      # (note that CPPLINT.cfg root=setting is always made absolute)
+      cpplint._root = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+      self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                        cpplint.GetHeaderGuardCPPVariable(file_path))
+
+      nested_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      os.path.join('nested',
+                                                   'cpplint_test_header.h'))
+      cpplint._root = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                   'nested')
+      self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                        cpplint.GetHeaderGuardCPPVariable(nested_file_path))
+
       # --root flag is ignored if an non-existent directory is specified.
       cpplint._root = 'NON_EXISTENT_DIR'
       self.assertEqual('CPPLINT_CPPLINT_TEST_HEADER_H_',
@@ -4610,6 +4636,7 @@ class CpplintTest(CpplintTestBase):
       # than the repo dir
 
       # (using absolute paths)
+      # (note that CPPLINT.cfg root=setting is always made absolute)
       this_files_path = os.path.dirname(os.path.abspath(__file__))
       (styleguide_path, this_files_dir) = os.path.split(this_files_path)
       (styleguide_parent_path, _) = os.path.split(styleguide_path)
@@ -4620,6 +4647,10 @@ class CpplintTest(CpplintTestBase):
       self.assertEquals('STYLEGUIDE_CPPLINT_CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
 
+      # To run the 'relative path' tests, we must be in the directory of this test file.
+      cur_dir = os.getcwd()
+      os.chdir(this_files_path)
+
       # (using relative paths)
       styleguide_rel_path = os.path.relpath(styleguide_parent_path,
                                             this_files_path) # '../..'
@@ -4628,6 +4659,9 @@ class CpplintTest(CpplintTestBase):
                         cpplint.GetHeaderGuardCPPVariable(file_path))
 
       cpplint._root = None
+
+      # Restore previous CWD.
+      os.chdir(cur_dir)
     finally:
       shutil.rmtree(temp_directory)
 
