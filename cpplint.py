@@ -68,6 +68,7 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
                    [--recursive]
                    [--exclude=path]
                    [--extensions=hpp,cpp,...]
+                   [--quiet]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -100,8 +101,7 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
       likely to be false positives.
 
     quiet
-      Supress output other than linting errors, such as information about
-      which files have been processed and excluded.
+      Don't print anything if no errors are found.
 
     filter=-x,+y,...
       Specify a comma-separated list of category-filters to apply: only
@@ -997,6 +997,7 @@ class _CppLintState(object):
     self._filters_backup = self.filters[:]
     self.counting = 'total'  # In what way are we counting errors?
     self.errors_by_category = {}  # string to int dict storing error counts
+    self.quiet = False  # Suppress non-error messagess?
 
     # output format:
     # "emacs" - format that emacs can parse (default)
@@ -1013,6 +1014,12 @@ class _CppLintState(object):
   def SetOutputFormat(self, output_format):
     """Sets the output format for errors."""
     self.output_format = output_format
+
+  def SetQuiet(self, quiet):
+    """Sets the module's quiet settings, and returns the previous setting."""
+    last_quiet = self.quiet
+    self.quiet = quiet
+    return last_quiet
 
   def SetVerboseLevel(self, level):
     """Sets the module's verbosity, and returns the previous setting."""
@@ -1153,6 +1160,14 @@ def _OutputFormat():
 def _SetOutputFormat(output_format):
   """Sets the module's output format."""
   _cpplint_state.SetOutputFormat(output_format)
+
+def _Quiet():
+  """Return's the module's quiet setting."""
+  return _cpplint_state.quiet
+
+def _SetQuiet(quiet):
+  """Set the module's quiet status, and return previous setting."""
+  return _cpplint_state.SetQuiet(quiet)
 
 
 def _VerboseLevel():
@@ -6212,9 +6227,13 @@ def ProcessConfigOverrides(filename):
             if base_name:
               pattern = re.compile(val)
               if pattern.match(base_name):
-                _cpplint_state.PrintInfo('Ignoring "%s": file excluded by '
-                    '"%s". File path component "%s" matches pattern "%s"\n' %
-                    (filename, cfg_file, base_name, val))
+                if _cpplint_state.quiet:
+                  # Suppress "Ignoring file" warning when using --quiet.
+                  return False
+                _cpplint_state.PrintInfo('Ignoring "%s": file excluded by "%s". '
+                                 'File path component "%s" matches '
+                                 'pattern "%s"\n' %
+                                 (filename, cfg_file, base_name, val))
                 return False
           elif name == 'linelength':
             global _line_length
@@ -6271,6 +6290,7 @@ def ProcessFile(filename, vlevel, extra_check_functions=None):
 
   _SetVerboseLevel(vlevel)
   _BackupFilters()
+  old_errors = _cpplint_state.error_count
 
   if not ProcessConfigOverrides(filename):
     _RestoreFilters()
@@ -6339,7 +6359,10 @@ def ProcessFile(filename, vlevel, extra_check_functions=None):
         Error(filename, linenum, 'whitespace/newline', 1,
               'Unexpected \\r (^M) found; better to use only \\n')
 
-  _cpplint_state.PrintInfo('Done processing %s\n' % filename)
+  # Suppress printing anything if --quiet was passed unless the error
+  # count has increased after processing this file.
+  if not _cpplint_state.quiet or old_errors != _cpplint_state.error_count:
+    _cpplint_state.PrintInfo('Done processing %s\n' % filename)
   _RestoreFilters()
 
 
@@ -6389,15 +6412,16 @@ def ParseArguments(args):
                                                  'linelength=',
                                                  'extensions=',
                                                  'exclude=',
-                                                 'quiet',
                                                  'recursive',
-                                                 'headers='])
+                                                 'headers=',
+                                                 'quiet'])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
   verbosity = _VerboseLevel()
   output_format = _OutputFormat()
   filters = ''
+  quiet = _Quiet()
   counting_style = ''
   recursive = False
 
@@ -6409,6 +6433,8 @@ def ParseArguments(args):
         PrintUsage('The only allowed output formats are emacs, vs7, eclipse '
                    'and junit.')
       output_format = val
+    elif opt == '--quiet':
+      quiet = True
     elif opt == '--verbose':
       verbosity = int(val)
     elif opt == '--filter':
@@ -6446,9 +6472,6 @@ def ParseArguments(args):
       ProcessHppHeadersOption(val)
     elif opt == '--recursive':
       recursive = True
-    elif opt == '--quiet':
-      global _quiet
-      _quiet = True
 
   if not filenames:
     PrintUsage('No files were specified.')
@@ -6460,6 +6483,7 @@ def ParseArguments(args):
     filenames = _FilterExcludedFiles(filenames)
 
   _SetOutputFormat(output_format)
+  _SetQuiet(quiet)
   _SetVerboseLevel(verbosity)
   _SetFilters(filters)
   _SetCountingStyle(counting_style)
@@ -6516,7 +6540,9 @@ def main():
     _cpplint_state.ResetErrorCounts()
     for filename in filenames:
       ProcessFile(filename, _cpplint_state.verbose_level)
-    _cpplint_state.PrintErrorCounts()
+    # If --quiet is passed, suppress printing error count unless there are errors.
+    if not _cpplint_state.quiet or _cpplint_state.error_count > 0:
+      _cpplint_state.PrintErrorCounts()
 
     if _cpplint_state.output_format == 'junit':
       sys.stderr.write(_cpplint_state.FormatJUnitXML())
