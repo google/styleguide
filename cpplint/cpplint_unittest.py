@@ -37,6 +37,7 @@ import codecs
 import os
 import random
 import re
+import subprocess
 import sys
 import unittest
 
@@ -5685,6 +5686,83 @@ class NestingStateTest(unittest.TestCase):
     self.UpdateWithLines(['}'])
     self.assertEquals(len(self.nesting_state.stack), 0)
 
+
+class QuietTest(unittest.TestCase):
+
+  def setUp(self):
+    self.this_dir_path = os.path.dirname(os.path.abspath(__file__))
+    self.python_executable = sys.executable or 'python'
+    self.cpplint_test_h = os.path.join(self.this_dir_path,
+                                       'cpplint_test_header.h')
+
+  def _runCppLint(self, *args):
+    cpplint_abspath = os.path.join(self.this_dir_path, 'cpplint.py')
+
+    cmd_line = [self.python_executable, cpplint_abspath] +                     \
+        list(args) +                                                           \
+        [ self.cpplint_test_h ]
+
+    return_code = 0
+    try:
+      output = subprocess.check_output(cmd_line,
+                                       stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as err:
+      return_code = err.returncode
+      output = err.output
+
+    return (return_code, output)
+
+  def testNonQuietWithErrors(self):
+    # This will fail: the test header is missing a copyright and header guard.
+    (return_code, output) = self._runCppLint()
+    self.assertEquals(1, return_code)
+    # Always-on behavior: Print error messages as they come up.
+    self.assertIn("[legal/copyright]", output)
+    self.assertIn("[build/header_guard]", output)
+    # If --quiet was unspecified: Print 'Done processing' and 'Total errors..'
+    self.assertIn("Done processing", output)
+    self.assertIn("Total errors found:", output)
+
+  def testQuietWithErrors(self):
+    # When there are errors, behavior is identical to not passing --quiet.
+    (return_code, output) = self._runCppLint('--quiet')
+    self.assertEquals(1, return_code)
+    self.assertIn("[legal/copyright]", output)
+    self.assertIn("[build/header_guard]", output)
+    # Even though --quiet was used, print these since there were errors.
+    self.assertIn("Done processing", output)
+    self.assertIn("Total errors found:", output)
+
+  def testNonQuietWithoutErrors(self):
+    # This will succeed. We filtered out all the known errors for that file.
+    (return_code, output) = self._runCppLint('--filter=' +
+                                                '-legal/copyright,' +
+                                                '-build/header_guard')
+    self.assertEquals(0, return_code, output)
+    # No cpplint errors are printed since there were no errors.
+    self.assertNotIn("[legal/copyright]", output)
+    self.assertNotIn("[build/header_guard]", output)
+    # Print 'Done processing' and 'Total errors found' since
+    # --quiet was not specified.
+    self.assertIn("Done processing", output)
+    self.assertIn("Total errors found:", output)
+
+  def testQuietWithoutErrors(self):
+    # This will succeed. We filtered out all the known errors for that file.
+    (return_code, output) = self._runCppLint('--quiet',
+                                             '--filter=' +
+                                                 '-legal/copyright,' +
+                                                 '-build/header_guard')
+    self.assertEquals(0, return_code, output)
+    # No cpplint errors are printed since there were no errors.
+    self.assertNotIn("[legal/copyright]", output)
+    self.assertNotIn("[build/header_guard]", output)
+    # --quiet was specified and there were no errors:
+    # skip the printing of 'Done processing' and 'Total errors..'
+    self.assertNotIn("Done processing", output)
+    self.assertNotIn("Total errors found:", output)
+    # Output with no errors must be completely blank!
+    self.assertEquals("", output)
 
 # pylint: disable-msg=C6409
 def setUp():

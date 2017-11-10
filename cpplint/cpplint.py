@@ -57,6 +57,7 @@ _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed] [--root=subdir]
                    [--linelength=digits] [--headers=x,y,...]
+                   [--quiet]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -82,6 +83,9 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
     verbose=#
       Specify a number 0-5 to restrict errors to certain verbosity levels.
+
+    quiet
+      Don't print anything if no errors are found.
 
     filter=-x,+y,...
       Specify a comma-separated list of category-filters to apply: only
@@ -861,6 +865,7 @@ class _CppLintState(object):
     self._filters_backup = self.filters[:]
     self.counting = 'total'  # In what way are we counting errors?
     self.errors_by_category = {}  # string to int dict storing error counts
+    self.quiet = False  # Suppress non-error messagess?
 
     # output format:
     # "emacs" - format that emacs can parse (default)
@@ -870,6 +875,12 @@ class _CppLintState(object):
   def SetOutputFormat(self, output_format):
     """Sets the output format for errors."""
     self.output_format = output_format
+
+  def SetQuiet(self, quiet):
+    """Sets the module's quiet settings, and returns the previous setting."""
+    last_quiet = self.quiet
+    self.quiet = quiet
+    return last_quiet
 
   def SetVerboseLevel(self, level):
     """Sets the module's verbosity, and returns the previous setting."""
@@ -951,6 +962,14 @@ def _OutputFormat():
 def _SetOutputFormat(output_format):
   """Sets the module's output format."""
   _cpplint_state.SetOutputFormat(output_format)
+
+def _Quiet():
+  """Return's the module's quiet setting."""
+  return _cpplint_state.quiet
+
+def _SetQuiet(quiet):
+  """Set the module's quiet status, and return previous setting."""
+  return _cpplint_state.SetQuiet(quiet)
 
 
 def _VerboseLevel():
@@ -5955,6 +5974,9 @@ def ProcessConfigOverrides(filename):
             if base_name:
               pattern = re.compile(val)
               if pattern.match(base_name):
+                if _cpplint_state.quiet:
+                  # Suppress "Ignoring file" warning when using --quiet.
+                  return False
                 sys.stderr.write('Ignoring "%s": file excluded by "%s". '
                                  'File path component "%s" matches '
                                  'pattern "%s"\n' %
@@ -6006,6 +6028,7 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
 
   _SetVerboseLevel(vlevel)
   _BackupFilters()
+  old_errors = _cpplint_state.error_count
 
   if not ProcessConfigOverrides(filename):
     _RestoreFilters()
@@ -6074,7 +6097,10 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
         Error(filename, linenum, 'whitespace/newline', 1,
               'Unexpected \\r (^M) found; better to use only \\n')
 
-  sys.stdout.write('Done processing %s\n' % filename)
+  # Suppress printing anything if --quiet was passed unless the error
+  # count has increased after processing this file.
+  if not _cpplint_state.quiet or old_errors != _cpplint_state.error_count:
+    sys.stdout.write('Done processing %s\n' % filename)
   _RestoreFilters()
 
 
@@ -6118,13 +6144,15 @@ def ParseArguments(args):
                                                  'root=',
                                                  'linelength=',
                                                  'extensions=',
-                                                 'headers='])
+                                                 'headers=',
+                                                 'quiet'])
   except getopt.GetoptError:
     PrintUsage('Invalid arguments.')
 
   verbosity = _VerboseLevel()
   output_format = _OutputFormat()
   filters = ''
+  quiet = _Quiet()
   counting_style = ''
 
   for (opt, val) in opts:
@@ -6134,6 +6162,8 @@ def ParseArguments(args):
       if val not in ('emacs', 'vs7', 'eclipse'):
         PrintUsage('The only allowed output formats are emacs, vs7 and eclipse.')
       output_format = val
+    elif opt == '--quiet':
+      quiet = True
     elif opt == '--verbose':
       verbosity = int(val)
     elif opt == '--filter':
@@ -6166,6 +6196,7 @@ def ParseArguments(args):
     PrintUsage('No files were specified.')
 
   _SetOutputFormat(output_format)
+  _SetQuiet(quiet)
   _SetVerboseLevel(verbosity)
   _SetFilters(filters)
   _SetCountingStyle(counting_style)
@@ -6186,7 +6217,9 @@ def main():
   _cpplint_state.ResetErrorCounts()
   for filename in filenames:
     ProcessFile(filename, _cpplint_state.verbose_level)
-  _cpplint_state.PrintErrorCounts()
+  # If --quiet is passed, suppress printing error count unless there are errors.
+  if not _cpplint_state.quiet or _cpplint_state.error_count > 0:
+    _cpplint_state.PrintErrorCounts()
 
   sys.exit(_cpplint_state.error_count > 0)
 
