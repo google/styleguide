@@ -114,12 +114,13 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       ignored.
 
       Examples:
-        Assuming that src/.git exists, the header guard CPP variables for
-        src/chrome/browser/ui/browser.h are:
+        Assuming that top/src/.git exists (and cwd=top/src), the header guard
+        CPP variables for top/src/chrome/browser/ui/browser.h are:
 
         No flag => CHROME_BROWSER_UI_BROWSER_H_
         --root=chrome => BROWSER_UI_BROWSER_H_
         --root=chrome/browser => UI_BROWSER_H_
+        --root=.. => SRC_CHROME_BROWSER_UI_BROWSER_H_
 
     linelength=digits
       This is the allowed line length for the project. The default value is
@@ -168,9 +169,9 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
     "linelength" allows to specify the allowed line length for the project.
 
     The "root" option is similar in function to the --root flag (see example
-    above).
-    
-    The "headers" option is similar in function to the --headers flag 
+    above). Paths are relative to the directory of the CPPLINT.cfg.
+
+    The "headers" option is similar in function to the --headers flag
     (see example above).
 
     CPPLINT.cfg has an effect on files in the same directory and all
@@ -539,6 +540,7 @@ _error_suppressions = {}
 # The root directory used for deriving header guard CPP variable.
 # This is set by --root flag.
 _root = None
+_root_debug = False
 
 # The allowed line length of files.
 # This is set by --linelength flag.
@@ -1802,8 +1804,14 @@ def GetHeaderGuardCPPVariable(filename):
   file_path_from_root = fileinfo.RepositoryName()
 
   def FixupPathFromRoot():
+    if _root_debug:
+      sys.stderr.write("\n_root fixup, _root = '%s', repository name = '%s'\n"
+          %(_root, fileinfo.RepositoryName()))
+
     # Process the file path with the --root flag if it was set.
     if not _root:
+      if _root_debug:
+        sys.stderr.write("_root unspecified\n")
       return file_path_from_root
 
     def StripListPrefix(lst, prefix):
@@ -1817,6 +1825,11 @@ def GetHeaderGuardCPPVariable(filename):
     #   --root=subdir , lstrips subdir from the header guard
     maybe_path = StripListPrefix(PathSplitToList(file_path_from_root),
                                  PathSplitToList(_root))
+
+    if _root_debug:
+      sys.stderr.write("_root lstrip (maybe_path=%s, file_path_from_root=%s," +
+          " _root=%s)\n" %(maybe_path, file_path_from_root, _root))
+
     if maybe_path:
       return os.path.join(*maybe_path)
 
@@ -1826,8 +1839,16 @@ def GetHeaderGuardCPPVariable(filename):
 
     maybe_path = StripListPrefix(PathSplitToList(full_path),
                                  PathSplitToList(root_abspath))
+
+    if _root_debug:
+      sys.stderr.write("_root prepend (maybe_path=%s, full_path=%s, " +
+          "root_abspath=%s)\n" %(maybe_path, full_path, root_abspath))
+
     if maybe_path:
       return os.path.join(*maybe_path)
+
+    if _root_debug:
+      sys.stderr.write("_root ignore, returning %s\n" %(file_path_from_root))
 
     #   --root=FAKE_DIR is ignored
     return file_path_from_root
@@ -5947,7 +5968,8 @@ def ProcessConfigOverrides(filename):
                 sys.stderr.write('Line length must be numeric.')
           elif name == 'root':
             global _root
-            _root = val
+            # root directories are specified relative to CPPLINT.cfg dir.
+            _root = os.path.join(os.path.dirname(cfg_file), val)
           elif name == 'headers':
             ProcessHppHeadersOption(val)
           else:
