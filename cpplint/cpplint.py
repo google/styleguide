@@ -416,6 +416,7 @@ _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS = frozenset([
     'glog/logging.h',
     'glog/stl_logging.h',
     'gtest/gtest.h',
+    'gmock/gmock.h',
     'gtest/gtest_prod.h',
     'rapidjson/document.h',
     'ev++.h',
