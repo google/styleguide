@@ -13,17 +13,11 @@
 <h1>Google HTML/CSS Style Guide</h1>
 <h2 id="Background">1 Background</h2>
 
-<p></p>
-
 <p>This document defines formatting and style rules for HTML and CSS. It aims at
 improving collaboration, code quality, and enabling supporting infrastructure.
 It applies to raw, working files that use HTML and CSS, including GSS files.
 Tools are free to obfuscate, minify, and compile as long as the general code
 quality is maintained.</p>
-
-<p></p>
-
-<p></p>
 
 <h2 id="General">2 General</h2>
 
@@ -58,14 +52,6 @@ over HTTPS.</p>
 <pre><code class="language-css prettyprint">/* Recommended */
 @import 'https://fonts.googleapis.com/css?family=Open+Sans';
 </code></pre>
-
-
-
-<p></p>
-
-<p></p>
-
-<p></p>
 
 <h3 id="General_Formatting_Rules">2.2 General Formatting Rules</h3>
 
@@ -167,8 +153,6 @@ depends on the project&#8217;s complexity.)</p>
 &lt;center&gt;Test&lt;/center&gt;
 </code></pre>
 
-<p></p>
-
 <pre><code class="language-html prettyprint">&lt;!-- TODO: remove optional tags --&gt;
 &lt;ul&gt;
   &lt;li&gt;Apples&lt;/li&gt;
@@ -233,8 +217,6 @@ paragraphs, <code>a</code> elements for anchors, etc.</p>
 <p>Using HTML according to its purpose is important for accessibility, reuse, and
 code efficiency reasons.</p>
 
-<p></p>
-
 <pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
 &lt;div onclick="goToRecommendations();"&gt;All recommendations&lt;/div&gt;
 </code></pre>
@@ -258,8 +240,6 @@ may have no way of understanding what video or audio contents are about either.<
 <p>(For images whose <code>alt</code> attributes would introduce redundancy, and for images
 whose purpose is purely decorative which you cannot immediately use CSS for, use
 no alternative text, as in <code>alt=""</code>.)</p>
-
-<p></p>
 
 <pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
 &lt;img src="spreadsheet.png"&gt;
@@ -287,8 +267,6 @@ sheets and scripts as possible from documents and templates.</p>
 <p>Separating structure from presentation from behavior is important for
 maintenance reasons. It is always more expensive to change HTML documents and
 templates than it is to update style sheets and scripts.</p>
-
-<p></p>
 
 <pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
 &lt;!DOCTYPE html&gt;
@@ -338,7 +316,7 @@ The currency symbol for the Euro is &#8220;&#8364;&#8221;.
 <p>Omit optional tags (optional).</p>
 
 <p>For file size optimization and scannability purposes, consider omitting optional
-tags. The <a href="https://whatwg.org/specs/web-apps/current-work/multipage/syntax.html#syntax-tag-omission">HTML5 specification</a>
+tags. The <a href="https://html.spec.whatwg.org/multipage/syntax.html#syntax-tag-omission">HTML5 specification</a>
 defines what tags can be omitted.</p>
 
 <p>(This approach may require a grace period to be established as a wider guideline
@@ -372,8 +350,8 @@ tags, not just a selection.)</p>
 (unless not using JavaScript).</p>
 
 <p>Specifying <code>type</code> attributes in these contexts is not necessary as HTML5 implies
-<a href="https://whatwg.org/specs/web-apps/current-work/multipage/semantics.html#attr-style-type"><code>text/css</code></a>
-and <a href="https://whatwg.org/specs/web-apps/current-work/multipage/scripting.html#attr-script-type"><code>text/javascript</code></a>
+<a href="https://html.spec.whatwg.org/multipage/obsolete.html#attr-style-type"><code>text/css</code></a>
+and <a href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type"><code>text/javascript</code></a>
 as defaults. This can be safely done even for older browsers.</p>
 
 <pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
@@ -435,7 +413,37 @@ instead of an error.)</p>
 &lt;/table&gt;
 </code></pre>
 
-<h4 id="HTML_Quotation_Marks">3.2.2 HTML Quotation Marks</h4>
+<h4 id="HTML_Line-Wrapping">3.2.2 HTML Line-Wrapping</h4>
+
+<p>Break long lines (optional).</p>
+
+<p>While there is no column limit recommendation for HTML, you may consider
+wrapping long lines if it significantly improves readability.</p>
+
+<p>When line-wrapping, each continuation line should be indented at least 4
+additional spaces from the original line.</p>
+
+<pre><code class="language-html prettyprint">&lt;md-progress-circular md-mode="indeterminate" class="md-accent"
+    ng-show="ctrl.loading" md-diameter="35"&gt;
+&lt;/md-progress-circular&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;md-progress-circular
+    md-mode="indeterminate"
+    class="md-accent"
+    ng-show="ctrl.loading"
+    md-diameter="35"&gt;
+&lt;/md-progress-circular&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;md-progress-circular md-mode="indeterminate"
+                      class="md-accent"
+                      ng-show="ctrl.loading"
+                      md-diameter="35"&gt;
+&lt;/md-progress-circular&gt;
+</code></pre>
+
+<h4 id="HTML_Quotation_Marks">3.2.3 HTML Quotation Marks</h4>
 
 <p>When quoting attributes values, use double quotation marks.</p>
 
@@ -586,7 +594,7 @@ padding: 0;
 
 <p>Omit leading &#8220;0&#8221;s in values.</p>
 
-<p>Do not use put <code>0</code>s in front of values or lengths between -1 and 1.</p>
+<p>Do not put <code>0</code>s in front of values or lengths between -1 and 1.</p>
 
 <pre><code class="language-css prettyprint">font-size: .8em;
 </code></pre>
@@ -613,10 +621,6 @@ color: #ebc;
 <p>In large projects as well as for code that gets embedded in other projects or on
 external sites use prefixes (as namespaces) for ID and class names. Use short,
 unique identifiers followed by a dash.</p>
-
-<p></p>
-
-<p></p>
 
 <p>Using namespaces helps preventing naming conflicts and can make maintenance
 easier, for example in search and replace operations.</p>
@@ -658,10 +662,6 @@ will hurt projects in the long run as projects tend to take the way of least
 resistance. That is, allowing and making it easy to use detection and hacks
 means using detection and hacks more frequently&#8212;and more frequently is too
 frequently.</p>
-
-<p></p>
-
-<p></p>
 
 <h3 id="CSS_Formatting_Rules">4.2 CSS Formatting Rules</h3>
 
@@ -811,11 +811,10 @@ body {
 
 <h4 id="CSS_Quotation_Marks">4.2.8 CSS Quotation Marks</h4>
 
-<p>Use single quotation marks for attribute selectors and property values.</p>
-
 <p>Use single (<code>''</code>) rather than double (<code>""</code>) quotation marks for attribute
-selectors or property values. Do not use quotation marks in URI values
-(<code>url()</code>).</p>
+selectors and property values.</p>
+
+<p>Do not use quotation marks in URI values (<code>url()</code>).</p>
 
 <p>Exception: If you do need to use the <code>@charset</code> rule, use double quotation
 marks&#8212;<a href="https://www.w3.org/TR/CSS21/syndata.html#charset">single quotation marks are not permitted</a>.</p>
@@ -857,26 +856,6 @@ sections with new lines.</p>
 
 .adw-gallery {}
 </code></pre>
-
-
-
-<p></p>
-
-<p></p>
-
-
-
-<p></p>
-
-<p></p>
-
-
-
-
-
-<p></p>
-
-<p></p>
 
 <h2 id="Parting_Words">Parting Words</h2>
 
