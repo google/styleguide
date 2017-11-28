@@ -5194,8 +5194,11 @@ def CheckCasts(filename, clean_lines, linenum, error):
             matched_type)
 
   if not expecting_function:
+    # This doesn't check for short, long, or long long integer casts because
+    # they are disallowed by other lint rules.
     CheckCStyleCast(filename, clean_lines, linenum, 'static_cast',
-                    r'\((int|float|double|bool|char|u?int(16|32|64))\)', error)
+                    r'\((unsigned|(unsigned )?(char|int)|float|double|bool|'
+                    r'u?int(8|16|32|64)(_t)?)\)', error)
 
   # This doesn't catch all cases. Consider (const char * const)"hello".
   #
@@ -5207,7 +5210,7 @@ def CheckCasts(filename, clean_lines, linenum, error):
   else:
     # Check pointer casts for other than string constants
     CheckCStyleCast(filename, clean_lines, linenum, 'reinterpret_cast',
-                    r'\((\w+\s?\*+\s?)\)', error)
+                    r'\(((const )?\w+\s?\*+\s?(const)?)\)', error)
 
   # In addition, we look for people taking the address of a cast.  This
   # is dangerous -- casts can assign to temporaries, so the pointer doesn't
