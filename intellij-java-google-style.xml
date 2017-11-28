@@ -2,9 +2,9 @@
 <code_scheme name="GoogleStyle">
   <option name="OTHER_INDENT_OPTIONS">
     <value>
-      <option name="INDENT_SIZE" value="2" />
+      <option name="INDENT_SIZE" value="4" />
       <option name="CONTINUATION_INDENT_SIZE" value="4" />
-      <option name="TAB_SIZE" value="2" />
+      <option name="TAB_SIZE" value="4" />
       <option name="USE_TAB_CHARACTER" value="false" />
       <option name="SMART_TABS" value="false" />
       <option name="LABEL_INDENT_SIZE" value="0" />
@@ -25,7 +25,7 @@
       <package name="" withSubpackages="true" static="false" />
     </value>
   </option>
-  <option name="RIGHT_MARGIN" value="100" />
+  <option name="RIGHT_MARGIN" value="120" />
   <option name="JD_ALIGN_PARAM_COMMENTS" value="false" />
   <option name="JD_ALIGN_EXCEPTION_COMMENTS" value="false" />
   <option name="JD_P_AT_EMPTY_LINES" value="false" />
@@ -36,7 +36,7 @@
   <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
   <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
   <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="0" />
-  <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
+  <option name="ALIGN_MULTILINE_PARAMETERS" value="true" />
   <option name="ALIGN_MULTILINE_FOR" value="false" />
   <option name="CALL_PARAMETERS_WRAP" value="1" />
   <option name="METHOD_PARAMETERS_WRAP" value="1" />
@@ -85,7 +85,7 @@
   </codeStyleSettings>
   <codeStyleSettings language="ECMA Script Level 4">
     <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
-    <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
+    <option name="ALIGN_MULTILINE_PARAMETERS" value="true" />
     <option name="ALIGN_MULTILINE_FOR" value="false" />
     <option name="CALL_PARAMETERS_WRAP" value="1" />
     <option name="METHOD_PARAMETERS_WRAP" value="1" />
@@ -113,7 +113,7 @@
     <option name="KEEP_CONTROL_STATEMENT_IN_ONE_LINE" value="false" />
     <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
     <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="1" />
-    <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
+    <option name="ALIGN_MULTILINE_PARAMETERS" value="true" />
     <option name="ALIGN_MULTILINE_RESOURCES" value="false" />
     <option name="ALIGN_MULTILINE_FOR" value="false" />
     <option name="CALL_PARAMETERS_WRAP" value="1" />
@@ -134,9 +134,9 @@
     <option name="FOR_BRACE_FORCE" value="3" />
     <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     <indentOptions>
-      <option name="INDENT_SIZE" value="2" />
+      <option name="INDENT_SIZE" value="4" />
       <option name="CONTINUATION_INDENT_SIZE" value="4" />
-      <option name="TAB_SIZE" value="2" />
+      <option name="TAB_SIZE" value="4" />
     </indentOptions>
   </codeStyleSettings>
   <codeStyleSettings language="JSON">
@@ -148,7 +148,7 @@
   <codeStyleSettings language="JavaScript">
     <option name="RIGHT_MARGIN" value="80" />
     <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
-    <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
+    <option name="ALIGN_MULTILINE_PARAMETERS" value="true" />
     <option name="ALIGN_MULTILINE_FOR" value="false" />
     <option name="CALL_PARAMETERS_WRAP" value="1" />
     <option name="METHOD_PARAMETERS_WRAP" value="1" />
@@ -187,7 +187,7 @@
   <codeStyleSettings language="Python">
     <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
     <option name="RIGHT_MARGIN" value="80" />
-    <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
+    <option name="ALIGN_MULTILINE_PARAMETERS" value="true" />
     <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     <indentOptions>
       <option name="INDENT_SIZE" value="2" />
@@ -215,9 +215,9 @@
   </codeStyleSettings>
   <codeStyleSettings language="XML">
     <indentOptions>
-      <option name="INDENT_SIZE" value="2" />
+      <option name="INDENT_SIZE" value="4" />
       <option name="CONTINUATION_INDENT_SIZE" value="2" />
-      <option name="TAB_SIZE" value="2" />
+      <option name="TAB_SIZE" value="4" />
     </indentOptions>
     <arrangement>
       <rules>
