@@ -552,6 +552,12 @@ _valid_extensions = set(['cc', 'h', 'cpp', 'cu', 'cuh'])
 # category should be suppressed for every line.
 _global_error_suppressions = {}
 
+_NAMESPACES_ALLOWED_FOR_USING = [
+        'std::chrono_literals',
+        'std::literals',
+        'std::placeholders'
+    ]
+
 
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of line error-suppressions.
@@ -4728,10 +4734,10 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
           % (match.group(1), match.group(2)))
 
   match = Search(r'\busing namespace\s+([a-zA-Z0-9_:]+)', line)
-  if match and match.group(1) != 'std::placeholders' and match.group(1) != 'std::chrono_literals':
+  if match and match.group(1) not in _NAMESPACES_ALLOWED_FOR_USING:
     error(filename, linenum, 'build/namespaces', 5,
-          'Do not use namespace using-directives (except for std::placeholders and std::chrono_literals).'
-          'Use using-declarations instead.')
+          ('Do not use namespace using-directives (except for {}). '
+           'Use using-declarations instead.').format(', '.join(_NAMESPACES_ALLOWED_FOR_USING)))
 
   # Detect variable-length arrays.
   match = Match(r'\s*(.+::)?(\w+) [a-z]\w*\[(.+)];', line)
