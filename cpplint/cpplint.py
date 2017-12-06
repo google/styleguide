@@ -412,15 +412,18 @@ _CPP_HEADERS = frozenset([
     ])
 
 _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS = frozenset([
-    'gflags/gflags.h',
-    'glog/logging.h',
-    'glog/stl_logging.h',
-    'gtest/gtest.h',
-    'gmock/gmock.h',
-    'gtest/gtest_prod.h',
-    'rapidjson/document.h',
     'ev++.h',
     'squeasel.h'
+    ])
+
+_YB_THIRD_PARTY_HEADER_PREFIXES_USING_ANGLE_BRACKETS = tuple([
+    'boost',
+    'google',
+    'gflags',
+    'glog',
+    'gmock',
+    'gtest',
+    'rapidjson'
     ])
 
 # Type names
@@ -4428,8 +4431,7 @@ def _ClassifyInclude(fileinfo, include, is_system):
   # headers. These headers should be included after C++ system headers.
   if is_system and (
       include in _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS or
-      include.startswith('boost/') or
-      include.startswith('google/')
+      include.startswith(_YB_THIRD_PARTY_HEADER_PREFIXES_USING_ANGLE_BRACKETS)
       ):
     is_system = False
 
