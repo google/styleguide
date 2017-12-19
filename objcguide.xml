@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
-<GUIDE title="Google Objective-C Style Guide">
-  <p>
-    The style guide has moved to
-    <a href="https://github.com/google/styleguide/blob/gh-pages/objcguide.md">objcguide.md</a>
-  </p>
-</GUIDE>
