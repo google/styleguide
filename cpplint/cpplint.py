@@ -558,7 +558,8 @@ _global_error_suppressions = {}
 _NAMESPACES_ALLOWED_FOR_USING = [
         'std::chrono_literals',
         'std::literals',
-        'std::placeholders'
+        'std::placeholders',
+        'yb::size_literals'
     ]
 
 
