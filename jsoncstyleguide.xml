@@ -1,0 +1,1187 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
+<GUIDE title="Google JSON Style Guide">
+
+<p align="right">
+Revision 0.9
+</p>
+
+<address>
+</address>
+
+<OVERVIEW>
+<CATEGORY title="Important Note">
+<STYLEPOINT title="Display Hidden Details in this Guide">
+<SUMMARY>
+This style guide contains many details that are initially hidden from view.  They are marked by the triangle icon, which you see here on your left.  Click it now.  You should see "Hooray" appear below.
+</SUMMARY>
+<BODY>
+<p>Hooray!  Now you know you can expand points to get more details.  Alternatively, there's an "expand all" at the top of this document.</p>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Introduction">
+<p>This style guide documents guidelines and recommendations for building JSON APIs at Google.  In general, JSON APIs should follow the spec found at <a href="http://www.json.org">JSON.org</a>.  This style guide clarifies and standardizes specific cases so that JSON APIs from Google have a standard look and feel.  These guidelines are applicable to JSON requests and responses in both RPC-based and REST-based APIs.</p>
+</CATEGORY>
+<CATEGORY title="Definitions">
+<p>For the purposes of this style guide, we define the following terms:</p><ul><li><b>property</b> - a name/value pair inside a JSON object.</li><li><b>property name</b> - the name (or key) portion of the property.</li><li><b>property value</b> - the value portion of the property.</li></ul>
+<CODE_SNIPPET>
+{
+  // The name/value pair together is a "property".
+  "propertyName": "propertyValue"
+}
+
+</CODE_SNIPPET>
+<p>Javascript's <code>number</code> type encompasses all floating-point numbers, which is a broad designation.  In this guide, <code>number</code> will refer to JavaScript's <code>number</code> type, while <code>integer</code> will refer to integers.</p>
+</CATEGORY>
+</OVERVIEW>
+<CATEGORY title="General Guidelines">
+<STYLEPOINT title="Comments">
+<SUMMARY>
+No comments in JSON objects.
+</SUMMARY>
+<BODY>
+<p>Comments should not be included in JSON objects.  Some of the examples in this style guide include comments.  However this is only to clarify the examples.</p>
+<BAD_CODE_SNIPPET>
+{
+  // You may see comments in the examples below,
+  // But don't include comments in your JSON.
+  "propertyName": "propertyValue"
+}
+
+</BAD_CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Double Quotes">
+<SUMMARY>
+Use double quotes.
+</SUMMARY>
+<BODY>
+<p>If a property requires quotes, double quotes must be used.  All property names must be surrounded by double quotes.  Property values of type string must be surrounded by double quotes.  Other value types (like boolean or number) should not be surrounded by double quotes.</p>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Flattened data vs Structured Hierarchy">
+<SUMMARY>
+Data should not be arbitrarily grouped for convenience.
+</SUMMARY>
+<BODY>
+<p>Data elements should be "flattened" in the JSON representation.  Data should not be arbitrarily grouped for convenience.</p><p>In some cases, such as a collection of properties that represents a single structure, it may make sense to keep the structured hierarchy.  These cases should be carefully considered, and only used if it makes semantic sense.  For example, an address could be represented two ways, but the structured way probably makes more sense for developers:</p>
+<p>Flattened Address:</p>
+<CODE_SNIPPET>
+{
+  "company": "Google",
+  "website": "https://www.google.com/",
+  "addressLine1": "111 8th Ave",
+  "addressLine2": "4th Floor",
+  "state": "NY",
+  "city": "New York",
+  "zip": "10011"
+}
+</CODE_SNIPPET>
+<p>Structured Address:</p>
+<CODE_SNIPPET>
+{
+  "company": "Google",
+  "website": "https://www.google.com/",
+  "address": {
+    "line1": "111 8th Ave",
+    "line2": "4th Floor",
+    "state": "NY",
+    "city": "New York",
+    "zip": "10011"
+  }
+}
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Property Name Guidelines">
+<STYLEPOINT title="Property Name Format">
+<SUMMARY>
+Choose meaningful property names.
+</SUMMARY>
+<BODY>
+<p>Property names must conform to the following guidelines:</p><ul><li>Property names should be meaningful names with defined semantics.</li><li>Property names must be camel-cased, ascii strings.</li><li>The first character must be a letter, an underscore (_) or a dollar sign ($).</li><li>Subsequent characters can be a letter, a digit, an underscore, or a dollar sign.</li><li>Reserved JavaScript keywords should be avoided (A list of reserved JavaScript keywords can be found below).</li></ul><p>These guidelines mirror the guidelines for naming JavaScript identifiers.  This allows JavaScript clients to access properties using dot notation.  (for example, <code>result.thisIsAnInstanceVariable</code>).  Here's an example of an object with one property:</p>
+<CODE_SNIPPET>
+{
+  "thisPropertyIsAnIdentifier": "identifier value"
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Key Names in JSON Maps">
+<SUMMARY>
+JSON maps can use any Unicode character in key names.
+</SUMMARY>
+<BODY>
+<p>The property name naming rules do not apply when a JSON object is used as a map.  A map (also referred to as an associative array) is a data type with arbitrary key/value pairs that use the keys to access the corresponding values.  JSON objects and JSON maps look the same at runtime; this distinction is relevant to the design of the API.  The API documentation should indicate when JSON objects are used as maps.</p><p>The keys of a map do not have to obey the naming guidelines for property names.  Map keys may contain any Unicode characters.  Clients can access these properties using the square bracket notation familiar for maps (for example, <code>result.thumbnails["72"]</code>).</p>
+<CODE_SNIPPET>
+{
+  // The "address" property is a sub-object
+  // holding the parts of an address.
+  "address": {
+    "addressLine1": "123 Anystreet",
+    "city": "Anytown",
+    "state": "XX",
+    "zip": "00000"
+  },
+  // The "thumbnails" property is a map that maps
+  // a pixel size to the thumbnail url of that size.
+  "thumbnails": {
+    "72": "http://url.to.72px.thumbnail",
+    "144": "http://url.to.144px.thumbnail"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Reserved Property Names">
+<SUMMARY>
+Certain property names are reserved for consistent use across services.
+</SUMMARY>
+<BODY>
+<p>Details about reserved property names, along with the full list, can be found later on in this guide.  Services should avoid using these property names for anything other than their defined semantics.</p>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Singular vs Plural Property Names">
+<SUMMARY>
+Array types should have plural property names.  All other property names should be singular.
+</SUMMARY>
+<BODY>
+<p>Arrays usually contain multiple items, and a plural property name reflects this.  An example of this can be seen in the reserved names below.  The <code>items</code> property name is plural because it represents an array of item objects.  Most of the other fields are singular.</p><p>There may be exceptions to this, especially when referring to numeric property values.  For example, in the reserved names, <code>totalItems</code> makes more sense than <code>totalItem</code>.  However, technically, this is not violating the style guide, since <code>totalItems</code> can be viewed as <code>totalOfItems</code>, where <code>total</code> is singular (as per the style guide), and <code>OfItems</code> serves to qualify the total.  The field name could also be changed to <code>itemCount</code> to look singular.</p>
+<CODE_SNIPPET>
+{
+  // Singular
+  "author": "lisa",
+  // An array of siblings, plural
+  "siblings": [ "bart", "maggie"],
+  // "totalItem" doesn't sound right
+  "totalItems": 10,
+  // But maybe "itemCount" is better
+  "itemCount": 10,
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Naming Conflicts">
+<SUMMARY>
+Avoid naming conflicts by choosing a new property name or versioning the API.
+</SUMMARY>
+<BODY>
+<p>New properties may be added to the reserved list in the future.  There is no concept of JSON namespacing.  If there is a naming conflict, these can usually be resolved by choosing a new property name or by versioning.  For example, suppose we start with the following JSON object:</p>
+<CODE_SNIPPET>
+{
+  "apiVersion": "1.0",
+  "data": {
+    "recipeName": "pizza",
+    "ingredients": ["tomatoes", "cheese", "sausage"]
+  }
+}
+
+</CODE_SNIPPET>
+<p>If in the future we wish to make <code>ingredients</code> a reserved word, we can do one of two things:</p><p>1) Choose a different name:</p>
+<CODE_SNIPPET>
+{
+  "apiVersion": "1.0",
+  "data": {
+    "recipeName": "pizza",
+    "ingredientsData": "Some new property",
+    "ingredients": ["tomatoes", "cheese", "sausage"]
+  }
+}
+
+</CODE_SNIPPET>
+<p>2) Rename the property on a major version boundary:</p>
+<CODE_SNIPPET>
+{
+  "apiVersion": "2.0",
+  "data": {
+    "recipeName": "pizza",
+    "ingredients": "Some new property",
+    "recipeIngredients": ["tomatos", "cheese", "sausage"]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Property Value Guidelines">
+<STYLEPOINT title="Property Value Format">
+<SUMMARY>
+Property values must be Unicode booleans, numbers, strings, objects, arrays, or <code>null</code>.
+</SUMMARY>
+<BODY>
+<p>The spec at <a href="http://www.json.org">JSON.org</a> specifies exactly what type of data is allowed in a property value. This includes Unicode booleans, numbers, strings, objects, arrays, and <code>null</code>. JavaScript expressions are not allowed. APIs should support that spec for all values, and should choose the data type most appropriate for a particular property (numbers to represent numbers, etc.).</p><p>Good:</p>
+<CODE_SNIPPET>
+{
+  "canPigsFly": null,     // null
+  "areWeThereYet": false, // boolean
+  "answerToLife": 42,     // number
+  "name": "Bart",         // string
+  "moreData": {},         // object
+  "things": []            // array
+}
+
+</CODE_SNIPPET>
+<p>Bad:</p>
+<BAD_CODE_SNIPPET>
+{
+  "aVariableName": aVariableName,         // Bad - JavaScript identifier
+  "functionFoo": function() { return 1; } // Bad - JavaScript function
+}
+
+</BAD_CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Empty/Null Property Values">
+<SUMMARY>
+Consider removing empty or <code>null</code> values.
+</SUMMARY>
+<BODY>
+<p>If a property is optional or has an empty or <code>null</code> value, consider dropping the property from the JSON, unless there's a strong semantic reason for its existence.</p>
+<CODE_SNIPPET>
+{
+  "volume": 10,
+
+  // Even though the "balance" property's value is zero, it should be left in,
+  // since "0" signifies "even balance" (the value could be "-1" for left
+  // balance and "+1" for right balance.
+  "balance": 0,
+
+  // The "currentlyPlaying" property can be left out since it is null.
+  // "currentlyPlaying": null
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Enum Values">
+<SUMMARY>
+Enum values should be represented as strings.
+</SUMMARY>
+<BODY>
+<p>As APIs grow, enum values may be added, removed or changed. Using strings as enum values ensures that downstream clients can gracefully handle changes to enum values.</p><p>Java code:</p>
+<CODE_SNIPPET>
+public enum Color {
+  WHITE,
+  BLACK,
+  RED,
+  YELLOW,
+  BLUE
+}
+
+</CODE_SNIPPET>
+<p>JSON object:</p>
+<CODE_SNIPPET>
+{
+  "color": "WHITE"
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Property Value Data Types">
+<p>As mentioned above, property value types must be booleans, numbers, strings, objects, arrays, or <code>null</code>.  However, it is useful define a set of standard data types when dealing with certain values.  These data types will always be strings, but they will be formatted in a specific manner so that they can be easily parsed.</p>
+<STYLEPOINT title="Date Property Values">
+<SUMMARY>
+Dates should be formatted as recommended by RFC 3339.
+</SUMMARY>
+<BODY>
+<p>Dates should be strings formatted as recommended by <a href="https://www.ietf.org/rfc/rfc3339.txt">RFC 3339</a></p>
+<CODE_SNIPPET>
+{
+  "lastUpdate": "2007-11-06T16:34:41.000Z"
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Time Duration Property Values">
+<SUMMARY>
+Time durations should be formatted as recommended by ISO 8601.
+</SUMMARY>
+<BODY>
+<p>Time duration values should be strings formatted as recommended by <a href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601</a>.</p>
+<CODE_SNIPPET>
+{
+  // three years, six months, four days, twelve hours,
+  // thirty minutes, and five seconds
+  "duration": "P3Y6M4DT12H30M5S"
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Latitude/Longitude Property Values">
+<SUMMARY>
+Latitudes/Longitudes should be formatted as recommended by ISO 6709.
+</SUMMARY>
+<BODY>
+<p>Latitude/Longitude should be strings formatted as recommended by <a href="https://en.wikipedia.org/wiki/ISO_6709">ISO 6709</a>.  Furthermore, they should favor the ±DD.DDDD±DDD.DDDD degrees format.</p>
+<CODE_SNIPPET>
+{
+  // The latitude/longitude location of the statue of liberty.
+  "statueOfLiberty": "+40.6894-074.0447"
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="JSON Structure &amp; Reserved Property Names">
+<p>In order to maintain a consistent interface across APIs, JSON objects should follow the structure outlined below.  This structure applies to both requests and responses made with JSON.  Within this structure, there are certain property names that are reserved for specific uses.  These properties are NOT required; in other words, each reserved property may appear zero or one times.  But if a service needs these properties, this naming convention is recommend.  Here is a schema of the JSON structure, represented in <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Forderly-json.org%2F">Orderly</a> format (which in turn can be compiled into a <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fjson-schema.org%2F">JSONSchema</a>).  You can few examples of the JSON structure at the end of this guide.</p>
+<CODE_SNIPPET>
+object {
+  string apiVersion?;
+  string context?;
+  string id?;
+  string method?;
+  object {
+    string id?
+  }* params?;
+  object {
+    string kind?;
+    string fields?;
+    string etag?;
+    string id?;
+    string lang?;
+    string updated?; # date formatted RFC 3339
+    boolean deleted?;
+    integer currentItemCount?;
+    integer itemsPerPage?;
+    integer startIndex?;
+    integer totalItems?;
+    integer pageIndex?;
+    integer totalPages?;
+    string pageLinkTemplate /^https?:/ ?;
+    object {}* next?;
+    string nextLink?;
+    object {}* previous?;
+    string previousLink?;
+    object {}* self?;
+    string selfLink?;
+    object {}* edit?;
+    string editLink?;
+    array [
+      object {}*;
+    ] items?;
+  }* data?;
+  object {
+    integer code?;
+    string message?;
+    array [
+      object {
+        string domain?;
+        string reason?;
+        string message?;
+        string location?;
+        string locationType?;
+        string extendedHelp?;
+        string sendReport?;
+      }*;
+    ] errors?;
+  }* error?;
+}*;
+
+</CODE_SNIPPET>
+<p>The JSON object has a few top-level properties, followed by either a <code>data</code> object or an <code>error</code> object, but not both.  An explanation of each of these properties can be found below.</p>
+</CATEGORY>
+<CATEGORY title="Top-Level Reserved Property Names">
+<p>The top-level of the JSON object may contain the following properties.</p>
+<STYLEPOINT title="apiVersion">
+<SUMMARY>
+Property Value Type: string<br />Parent: -
+</SUMMARY>
+<BODY>
+<p>Represents the desired version of the service API in a request, and the version of the service API that's served in the response.  <code>apiVersion</code> should always be present.  This is not related to the version of the data.  Versioning of data should be handled through some other mechanism such as etags.</p><p>Example:</p>
+<CODE_SNIPPET>
+{ "apiVersion": "2.1" }
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="context">
+<SUMMARY>
+Property Value Type: string<br />Parent: -
+</SUMMARY>
+<BODY>
+<p>Client sets this value and server echos data in the response.   This is useful in JSON-P and batch situations , where the user can use the <code>context</code> to correlate responses with requests.  This property is a top-level property because the <code>context</code> should present regardless of whether the response was successful or an error.  <code>context</code> differs from <code>id</code> in that <code>context</code> is specified by the user while <code>id</code> is assigned by the service.</p><p>Example:</p><p>Request #1:</p>
+<CODE_SNIPPET>
+https://www.google.com/myapi?context=bart
+
+</CODE_SNIPPET>
+<p>Request #2:</p>
+<CODE_SNIPPET>
+https://www.google.com/myapi?context=lisa
+
+</CODE_SNIPPET>
+<p>Response #1:</p>
+<CODE_SNIPPET>
+{
+  "context": "bart",
+  "data": {
+    "items": []
+  }
+}
+
+</CODE_SNIPPET>
+<p>Response #2:</p>
+<CODE_SNIPPET>
+{
+  "context": "lisa",
+  "data": {
+    "items": []
+  }
+}
+
+</CODE_SNIPPET>
+<p>Common JavaScript handler code to process both responses:</p>
+<CODE_SNIPPET>
+function handleResponse(response) {
+  if (response.result.context == "bart") {
+    // Update the "Bart" section of the page.
+  } else if (response.result.context == "lisa") {
+    // Update the "Lisa" section of the page.
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="id">
+<SUMMARY>
+Property Value Type: string<br />Parent: -
+</SUMMARY>
+<BODY>
+<p>A server supplied identifier for the response (regardless of whether the response is a success or an error).  This is useful for correlating server logs with individual responses received at a client.</p><p>Example:</p>
+<CODE_SNIPPET>
+{ "id": "1" }
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="method">
+<SUMMARY>
+Property Value Type: string<br />Parent: -
+</SUMMARY>
+<BODY>
+<p>Represents the operation to perform, or that was performed, on the data.  In the case of a JSON request, the <code>method</code> property can be used to indicate which operation to perform on the data.  In the case of a JSON response, the <code>method</code> property can indicate the operation performed on the data.</p><p>One example of this is in JSON-RPC requests, where <code>method</code> indicates the operation to perform on the <code>params</code> property:</p>
+<CODE_SNIPPET>
+{
+  "method": "people.get",
+  "params": {
+    "userId": "@me",
+    "groupId": "@self"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="params">
+<SUMMARY>
+Property Value Type: object<br />Parent: -
+</SUMMARY>
+<BODY>
+<p>This object serves as a map of input parameters to send to an RPC request.  It can be used in conjunction with the <code>method</code> property to execute an RPC function.  If an RPC function does not need parameters, this property can be omitted.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "method": "people.get",
+  "params": {
+    "userId": "@me",
+    "groupId": "@self"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data">
+<SUMMARY>
+Property Value Type: object<br />Parent: -
+</SUMMARY>
+<BODY>
+<p>Container for all the data from a response.  This property itself has many reserved property names, which are described below.  Services are free to add their own data to this object.  A JSON response should contain either a <code>data</code> object or an <code>error</code> object, but not both.  If both <code>data</code> and <code>error</code> are present, the <code>error</code> object takes precedence.</p>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error">
+<SUMMARY>
+Property Value Type: object<br />Parent: -
+</SUMMARY>
+<BODY>
+<p>Indicates that an error has occurred, with details about the error.  The error format supports either one or more errors returned from the service.  A JSON response should contain either a <code>data</code> object or an <code>error</code> object, but not both.  If both <code>data</code> and <code>error</code> are present, the <code>error</code> object takes precedence.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "apiVersion": "2.0",
+  "error": {
+    "code": 404,
+    "message": "File Not Found",
+    "errors": [{
+      "domain": "Calendar",
+      "reason": "ResourceNotFoundException",
+      "message": "File Not Found
+    }]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Reserved Property Names in the data object">
+<p>The <code>data</code> property of the JSON object may contain the following properties.</p>
+<STYLEPOINT title="data.kind">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The <code>kind</code> property serves as a guide to what type of information this particular object stores.  It can be present at the <code>data</code> level, or at the <code>items</code> level, or in any object where its helpful to distinguish between various types of objects.  If the <code>kind</code> object is present, it should be the first property in the object (See the "Property Ordering" section below for more details).</p><p>Example:</p>
+<CODE_SNIPPET>
+// "Kind" indicates an "album" in the Picasa API.
+{"data": {"kind": "album"}}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.fields">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>Represents the fields present in the response when doing a partial GET, or the fields present in a request when doing a partial PATCH.  This property should only exist during a partial GET/PATCH, and should not be empty.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "kind": "user",
+    "fields": "author,id",
+    "id": "bart",
+    "author": "Bart"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.etag">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>Represents the etag for the response.  Details about ETags in the GData APIs can be found here: <a href="https://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning">https://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning</a></p><p>Example:</p>
+<CODE_SNIPPET>
+{"data": {"etag": "W/"C0QBRXcycSp7ImA9WxRVFUk.""}}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.id">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>A globally unique string used to reference the object.  The specific details of the <code>id</code> property are left up to the service.</p><p>Example:</p>
+<CODE_SNIPPET>
+{"data": {"id": "12345"}}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.lang">
+<SUMMARY>
+Property Value Type: string (formatted as specified in BCP 47)<br />Parent: <code>data (or any child element)</code>
+</SUMMARY>
+<BODY>
+<p>Indicates the language of the rest of the properties in this object.  This property mimics HTML's <code>lang</code> property and XML's <code>xml:lang</code> properties.  The value should be a language value as defined in <a href="https://www.rfc-editor.org/rfc/bcp/bcp47.txt">BCP 47</a>.  If a single JSON object contains data in multiple languages, the service is responsible for developing and documenting an appropriate location for the <code>lang</code> property.</p><p>Example:</p>
+<CODE_SNIPPET>
+{"data": {
+  "items": [
+    { "lang": "en",
+      "title": "Hello world!" },
+    { "lang": "fr",
+      "title": "Bonjour monde!" }
+  ]}
+}
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.updated">
+<SUMMARY>
+Property Value Type: string (formatted as specified in RFC 3339)<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>Indicates the last date/time (<a href="https://www.ietf.org/rfc/rfc3339.txt">RFC 3339</a>) the item was updated, as defined by the service.</p><p>Example:</p>
+<CODE_SNIPPET>
+{"data": {"updated": "2007-11-06T16:34:41.000Z"}}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.deleted">
+<SUMMARY>
+Property Value Type: boolean<br />Parent: <code>data (or any child element)</code>
+</SUMMARY>
+<BODY>
+<p>A marker element, that, when present, indicates the containing entry is deleted.  If deleted is present, its value must be <code>true</code>; a value of <code>false</code> can cause confusion and should be avoided.</p><p>Example:</p>
+<CODE_SNIPPET>
+{"data": {
+  "items": [
+    { "title": "A deleted entry",
+      "deleted": true
+    }
+  ]}
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.items">
+<SUMMARY>
+Property Value Type: array<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The property name <code>items</code> is reserved to represent an array of items (for example, photos in Picasa, videos in YouTube).  This construct is intended to provide a standard location for collections related to the current result.  For example, the JSON output could be plugged into a generic pagination system that knows to page on the <code>items</code> array.  If <code>items</code> exists, it should be the last property in the <code>data</code> object (See the "Property Ordering" section below for more details).</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "items": [
+      { /* Object #1 */ },
+      { /* Object #2 */ },
+      ...
+    ]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Reserved Property Names for Paging">
+<p>The following properties are located in the <code>data</code> object, and help page through a list of items.  Some of the language and concepts are borrowed from the <a href="http://www.opensearch.org/Home">OpenSearch specification</a>.</p><p>The paging properties below allow for various styles of paging, including:</p><ul><li>Previous/Next paging - Allows user's to move forward and backward through a list, one page at a time.  The <code>nextLink</code> and <code>previousLink</code> properties (described in the "Reserved Property Names for Links" section below) are used for this style of paging.</li><li>Index-based paging - Allows user's to jump directly to a specific item position within a list of items.  For example, to load 10 items starting at item 200, the developer may point the user to a url with the query string <code>?startIndex=200</code>.</li><li>Page-based paging - Allows user's to jump directly to a specific page within the items.  This is similar to index-based paging, but saves the developer the extra step of having to calculate the item index for a new page of items.  For example, rather than jump to item number 200, the developer could jump to page 20.  The urls during page-based paging could use the query string <code>?page=1</code> or <code>?page=20</code>.  The <code>pageIndex</code> and <code>totalPages</code> properties are used for this style of paging.</li></ul><p>An example of how to use these properties to implement paging can be found at the end of this guide.</p>
+<STYLEPOINT title="data.currentItemCount">
+<SUMMARY>
+Property Value Type: integer<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The number of items in this result set.  Should be equivalent to items.length, and is provided as a convenience property.  For example, suppose a developer requests a set of search items, and asks for 10 items per page.  The total set of that search has 14 total items.  The first page of items will have 10 items in it, so both <code>itemsPerPage</code> and <code>currentItemCount</code> will equal "10".  The next page of items will have the remaining 4 items; <code>itemsPerPage</code> will still be "10", but <code>currentItemCount</code> will be "4".</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    // "itemsPerPage" does not necessarily match "currentItemCount"
+    "itemsPerPage": 10,
+    "currentItemCount": 4
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.itemsPerPage">
+<SUMMARY>
+Property Value Type: integer<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The number of items in the result.  This is not necessarily the size of the data.items array; if we are viewing the last page of items, the size of data.items may be less than <code>itemsPerPage</code>.  However the size of data.items should not exceed <code>itemsPerPage</code>.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "itemsPerPage": 10
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.startIndex">
+<SUMMARY>
+Property Value Type: integer<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The index of the first item in data.items.  For consistency, <code>startIndex</code> should be 1-based.  For example, the first item in the first set of items should have a <code>startIndex</code> of 1.  If the user requests the next set of data, the <code>startIndex</code> may be 10.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "startIndex": 1
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.totalItems">
+<SUMMARY>
+Property Value Type: integer<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The total number of items available in this set.  For example, if a user has 100 blog posts, the response may only contain 10 items, but the <code>totalItems</code> would be 100.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "totalItems": 100
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.pagingLinkTemplate">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>A URI template indicating how users can calculate subsequent paging links.  The URI template also has some reserved variable names: <code>{index}</code> representing the item number to load, and <code>{pageIndex}</code>, representing the page number to load.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "pagingLinkTemplate": "https://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.pageIndex">
+<SUMMARY>
+Property Value Type: integer<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The index of the current page of items.  For consistency, <code>pageIndex</code> should be 1-based.  For example, the first page of items has a <code>pageIndex</code> of 1.  <code>pageIndex</code> can also be calculated from the item-based paging properties: <code>pageIndex = floor(startIndex / itemsPerPage) + 1</code>.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "pageIndex": 1
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.totalPages">
+<SUMMARY>
+Property Value Type: integer<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The total number of pages in the result set.  <code>totalPages</code> can also be calculated from the item-based paging properties above: <code>totalPages = ceiling(totalItems / itemsPerPage)</code>.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "totalPages": 50
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Reserved Property Names for Links">
+<p>The following properties are located in the <code>data</code> object, and represent references to other resources.  There are two forms of link properties: 1) objects, which can contain any sort of reference (such as a JSON-RPC object), and 2) URI strings, which represent URIs to resources (and will always be suffixed with "Link").</p>
+<STYLEPOINT title="data.self / data.selfLink">
+<SUMMARY>
+Property Value Type: object / string<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The self link can be used to retrieve the item's data.  For example, in a list of a user's Picasa album, each album object in the <code>items</code> array could contain a <code>selfLink</code> that can be used to retrieve data related to that particular album.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "self": { },
+    "selfLink": "https://www.google.com/feeds/album/1234"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.edit / data.editLink">
+<SUMMARY>
+Property Value Type: object / string<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The edit link indicates where a user can send update or delete requests.  This is useful for REST-based APIs.  This link need only be present if the user can update/delete this item.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "edit": { },
+    "editLink": "https://www.google.com/feeds/album/1234/edit"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.next / data.nextLink">
+<SUMMARY>
+Property Value Type: object / string<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The next link indicates how more data can be retrieved.  It points to the location to load the next set of data.  It can be used in conjunction with the <code>itemsPerPage</code>, <code>startIndex</code> and <code>totalItems</code> properties in order to page through data.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "next": { },
+    "nextLink": "https://www.google.com/feeds/album/1234/next"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="data.previous / data.previousLink">
+<SUMMARY>
+Property Value Type: object / string<br />Parent: <code>data</code>
+</SUMMARY>
+<BODY>
+<p>The previous link indicates how more data can be retrieved.  It points to the location to load the previous set of data.  It can be used in conjunction with the <code>itemsPerPage</code>, <code>startIndex</code> and <code>totalItems</code> properties in order to page through data.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "data": {
+    "previous": { },
+    "previousLink": "https://www.google.com/feeds/album/1234/next"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Reserved Property Names in the error object">
+<p>The <code>error</code> property of the JSON object may contain the following properties.</p>
+<STYLEPOINT title="error.code">
+<SUMMARY>
+Property Value Type: integer<br />Parent: <code>error</code>
+</SUMMARY>
+<BODY>
+<p>Represents the code for this error.  This property value will usually represent the HTTP response code.  If there are multiple errors, <code>code</code> will be the error code for the first error.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "error":{
+    "code": 404
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error.message">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>error</code>
+</SUMMARY>
+<BODY>
+<p>A human readable message providing more details about the error.  If there are multiple errors, <code>message</code> will be the message for the first error.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "error":{
+    "message": "File Not Found"
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error.errors">
+<SUMMARY>
+Property Value Type: array<br />Parent: <code>error</code>
+</SUMMARY>
+<BODY>
+<p>Container for any additional information regarding the error.  If the service returns multiple errors, each element in the <code>errors</code> array represents a different error.</p><p>Example:</p>
+<CODE_SNIPPET>
+{ "error": { "errors": [] } }
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error.errors[].domain">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>error.errors</code>
+</SUMMARY>
+<BODY>
+<p>Unique identifier for the service raising this error.  This helps distinguish service-specific errors (i.e. error inserting an event in a calendar) from general protocol errors (i.e. file not found).</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "error":{
+    "errors": [{"domain": "Calendar"}]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error.errors[].reason">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>error.errors</code>
+</SUMMARY>
+<BODY>
+<p>Unique identifier for this error.  Different from the <code>error.code</code> property in that this is not an http response code.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "error":{
+    "errors": [{"reason": "ResourceNotFoundException"}]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error.errors[].message">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>error.errors</code>
+</SUMMARY>
+<BODY>
+<p>A human readable message providing more details about the error.  If there is only one error, this field will match <code>error.message</code>.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "error":{
+    "code": 404
+    "message": "File Not Found",
+    "errors": [{"message": "File Not Found"}]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error.errors[].location">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>error.errors</code>
+</SUMMARY>
+<BODY>
+<p>The location of the error (the interpretation of its value depends on <code>locationType</code>).</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "error":{
+    "errors": [{"location": ""}]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error.errors[].locationType">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>error.errors</code>
+</SUMMARY>
+<BODY>
+<p>Indicates how the <code>location</code> property should be interpreted.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "error":{
+    "errors": [{"locationType": ""}]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error.errors[].extendedHelp">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>error.errors</code>
+</SUMMARY>
+<BODY>
+<p>A URI for a help text that might shed some more light on the error.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "error":{
+    "errors": [{"extendedHelper": "http://url.to.more.details.example.com/"}]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="error.errors[].sendReport">
+<SUMMARY>
+Property Value Type: string<br />Parent: <code>error.errors</code>
+</SUMMARY>
+<BODY>
+<p>A URI for a report form used by the service to collect data about the error condition. This URI should be preloaded with parameters describing the request.</p><p>Example:</p>
+<CODE_SNIPPET>
+{
+  "error":{
+    "errors": [{"sendReport": "https://report.example.com/"}]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Property Ordering">
+<p>Properties can be in any order within the JSON object.  However, in some cases the ordering of properties can help parsers quickly interpret data and lead to better performance.  One example is a pull parser in a mobile environment, where performance and memory are critical, and unnecessary parsing should be avoided.</p>
+<STYLEPOINT title="Kind Property">
+<SUMMARY>
+<code>kind</code> should be the first property
+</SUMMARY>
+<BODY>
+<p>Suppose a parser is responsible for parsing a raw JSON stream into a specific object.  The <code>kind</code> property guides the parser to instantiate the appropriate object.  Therefore it should be the first property in the JSON object.  This only applies when objects have a <code>kind</code> property (usually found in the <code>data</code> and <code>items</code> properties).</p>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Items Property">
+<SUMMARY>
+<code>items</code> should be the last property in the <code>data</code> object
+</SUMMARY>
+<BODY>
+<p>This allows all of the collection's properties to be read before reading each individual item.  In cases where there are a lot of items, this avoids unnecessarily parsing those items when the developer only needs fields from the data.</p>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Property Ordering Example">
+<BODY>
+<CODE_SNIPPET>
+// The "kind" property distinguishes between an "album" and a "photo".
+// "Kind" is always the first property in its parent object.
+// The "items" property is the last property in the "data" object.
+{
+  "data": {
+    "kind": "album",
+    "title": "My Photo Album",
+    "description": "An album in the user's account",
+    "items": [
+      {
+        "kind": "photo",
+        "title": "My First Photo"
+      }
+    ]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Examples">
+<STYLEPOINT title="YouTube JSON API">
+<SUMMARY>
+Here's an example of the YouTube JSON API's response object.  You can learn more about YouTube's JSON API here: <a href="https://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html">https://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html</a>.
+</SUMMARY>
+<BODY>
+<CODE_SNIPPET>
+{
+  "apiVersion": "2.0",
+  "data": {
+    "updated": "2010-02-04T19:29:54.001Z",
+    "totalItems": 6741,
+    "startIndex": 1,
+    "itemsPerPage": 1,
+    "items": [
+      {
+        "id": "BGODurRfVv4",
+        "uploaded": "2009-11-17T20:10:06.000Z",
+        "updated": "2010-02-04T06:25:57.000Z",
+        "uploader": "docchat",
+        "category": "Animals",
+        "title": "From service dog to SURFice dog",
+        "description": "Surf dog Ricochets inspirational video ...",
+        "tags": [
+          "Surf dog",
+          "dog surfing",
+          "dog",
+          "golden retriever",
+        ],
+        "thumbnail": {
+          "default": "https://i.ytimg.com/vi/BGODurRfVv4/default.jpg",
+          "hqDefault": "https://i.ytimg.com/vi/BGODurRfVv4/hqdefault.jpg"
+        },
+        "player": {
+          "default": "https://www.youtube.com/watch?v=BGODurRfVv4&amp;feature=youtube_gdata",
+          "mobile": "https://m.youtube.com/details?v=BGODurRfVv4"
+        },
+        "content": {
+          "1": "rtsp://v5.cache6.c.youtube.com/CiILENy73wIaGQn-Vl-0uoNjBBMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp",
+          "5": "https://www.youtube.com/v/BGODurRfVv4?f=videos&amp;app=youtube_gdata",
+          "6": "rtsp://v7.cache7.c.youtube.com/CiILENy73wIaGQn-Vl-0uoNjBBMYESARFEgGUgZ2aWRlb3MM/0/0/0/video.3gp"
+        },
+        "duration": 315,
+        "rating": 4.96,
+        "ratingCount": 2043,
+        "viewCount": 1781691,
+        "favoriteCount": 3363,
+        "commentCount": 1007,
+        "commentsAllowed": true
+      }
+    ]
+  }
+}
+
+</CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+<STYLEPOINT title="Paging Example">
+<SUMMARY>
+This example demonstrates how the Google search items could be represented as a JSON object, with special attention to the paging variables.
+</SUMMARY>
+<BODY>
+<p>This sample is for illustrative purposes only.  The API below does not actually exist.</p><p>Here's a sample Google search results page:<br /><img src="jsoncstyleguide_example_01.png" /><br /><img src="jsoncstyleguide_example_02.png" /></p><p>Here's a sample JSON representation of this page:</p>
+<CODE_SNIPPET>
+{
+  "apiVersion": "2.1",
+  "id": "1",
+  "data": {
+    "query": "chicago style pizza",
+    "time": "0.1",
+    "currentItemCount": 10,
+    "itemsPerPage": 10,
+    "startIndex": 11,
+    "totalItems": 2700000,
+    "nextLink": "https://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=20&amp;sa=N"
+    "previousLink": "https://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=0&amp;sa=N",
+    "pagingLinkTemplate": "https://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N",
+    "items": [
+      {
+        "title": "Pizz'a Chicago Home Page"
+        // More fields for the search results
+      }
+      // More search results
+    ]
+  }
+}
+
+</CODE_SNIPPET>
+<p>Here's how each of the colored boxes from the screenshot would be represented (the background colors correspond to the colors in the images above):</p><ul><li>Results <span style="background-color:rgb(180, 167, 214)">11</span> - 20 of about 2,700,000 = startIndex</li><li>Results 11 - <span style="background-color:rgb(255, 217, 102)">20</span> of about 2,700,000 = startIndex + currentItemCount - 1</li><li>Results 11 - 20 of about <span style="background-color:rgb(246, 178, 107)">2,700,000</span> = totalItems</li><li><span style="background-color:rgb(234, 153, 153)">Search results</span> = items (formatted appropriately)</li><li><span style="background-color:rgb(182, 215, 168)">Previous/Next</span> = previousLink / nextLink</li><li><span style="background-color:rgb(159, 197, 232)">Numbered links in "Gooooooooooogle"</span> = Derived from "pageLinkTemplate".  The developer is responsible for calculating the values for {index} and substituting those values into the "pageLinkTemplate".  The pageLinkTemplate's {index} variable is calculated as follows:<ul><li>Index #1 = 0 * itemsPerPage = 0</li><li>Index #2 = 2 * itemsPerPage = 10</li><li>Index #3 = 3 * itemsPerPage = 20</li><li>Index #N = N * itemsPerPage</li></ul></li></ul>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<CATEGORY title="Appendix">
+<STYLEPOINT title="Appendix A: Reserved JavaScript Words">
+<SUMMARY>
+A list of reserved JavaScript words that should be avoided in property names.
+</SUMMARY>
+<BODY>
+<p>The words below are reserved by the JavaScript language and cannot be referred to using dot notation.  The list represents best knowledge of keywords at this time; the list may change or vary based on your specific execution environment.</p><p>From the <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fwww.ecma-international.org%2Fpublications%2Fstandards%2FEcma-262.htm">ECMAScript Language Specification 5th Edition</a></p>
+<BAD_CODE_SNIPPET>
+abstract
+boolean break byte
+case catch char class const continue
+debugger default delete do double
+else enum export extends
+false final finally float for function
+goto
+if implements import in instanceof int interface
+let long
+native new null
+package private protected public
+return
+short static super switch synchronized
+this throw throws transient true try typeof
+var volatile void
+while with
+yield
+</BAD_CODE_SNIPPET>
+</BODY>
+</STYLEPOINT>
+</CATEGORY>
+<HR/>
+
+<p align="center">
+Except as otherwise <a href="https://code.google.com/policies.html">noted</a>, the content of this page is licensed under the <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>, and code samples are licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>.
+</p>
+<p align="right">
+Revision 0.9
+</p>
+
+<address>
+</address>
+
+</GUIDE>

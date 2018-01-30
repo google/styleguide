@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Google HTML/CSS Style Guide</title>
+<link rel="stylesheet" href="javaguide.css">
+<script src="include/styleguide.js"></script>
+<link rel="shortcut icon" href="https://www.google.com/favicon.ico">
+<script src="include/jsguide.js"></script>
+</head>
+<body onload="initStyleGuide();">
+<div id="content">
+<h1>Google HTML/CSS Style Guide</h1>
+<h2 id="Background">1 Background</h2>
+
+<p>This document defines formatting and style rules for HTML and CSS. It aims at
+improving collaboration, code quality, and enabling supporting infrastructure.
+It applies to raw, working files that use HTML and CSS, including GSS files.
+Tools are free to obfuscate, minify, and compile as long as the general code
+quality is maintained.</p>
+
+<h2 id="General">2 General</h2>
+
+<h3 id="General_Style_Rules">2.1 General Style Rules</h3>
+
+<h4 id="Protocol">2.1.1 Protocol</h4>
+
+<p>Use the HTTPS protocol for embedded resources where possible.</p>
+
+<p>Always use the HTTPS protocol (<code>https:</code>) for images and other media
+files, style sheets, and scripts, unless the respective files are not available
+over HTTPS.</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended: omits the protocol --&gt;
+&lt;script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Not recommended: uses the HTTP protocol --&gt;
+&lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended: omits the protocol */
+@import '//fonts.googleapis.com/css?family=Open+Sans';
+
+/* Not recommended: uses the HTTP protocol */
+@import 'http://fonts.googleapis.com/css?family=Open+Sans';
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+@import 'https://fonts.googleapis.com/css?family=Open+Sans';
+</code></pre>
+
+<h3 id="General_Formatting_Rules">2.2 General Formatting Rules</h3>
+
+<h4 id="Indentation">2.2.1 Indentation</h4>
+
+<p>Indent by 2 spaces at a time.</p>
+
+<p>Don&#8217;t use tabs or mix tabs and spaces for indentation.</p>
+
+<pre><code class="language-html prettyprint">&lt;ul&gt;
+  &lt;li&gt;Fantastic
+  &lt;li&gt;Great
+&lt;/ul&gt;
+</code></pre>
+
+<pre><code class="language-css prettyprint">.example {
+  color: blue;
+}
+</code></pre>
+
+<h4 id="Capitalization">2.2.2 Capitalization</h4>
+
+<p>Use only lowercase.</p>
+
+<p>All code has to be lowercase: This applies to HTML element names, attributes,
+attribute values (unless <code>text/CDATA</code>), CSS selectors, properties, and property
+values (with the exception of strings).</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;A HREF="/"&gt;Home&lt;/A&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;img src="google.png" alt="Google"&gt;
+</code></pre>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended */
+color: #E5E5E5;
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+color: #e5e5e5;
+</code></pre>
+
+<h4 id="Trailing_Whitespace">2.2.3 Trailing Whitespace</h4>
+
+<p>Remove trailing white spaces.</p>
+
+<p>Trailing white spaces are unnecessary and can complicate diffs.</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;p&gt;What?_
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;p&gt;Yes please.
+</code></pre>
+
+<h3 id="General_Meta_Rules">2.3 General Meta Rules</h3>
+
+<h4 id="Encoding">2.3.1 Encoding</h4>
+
+<p>Use UTF-8 (no BOM).</p>
+
+<p>Make sure your editor uses UTF-8 as character encoding, without a byte order
+mark.</p>
+
+<p>Specify the encoding in HTML templates and documents via <code>&lt;meta
+charset="utf-8"&gt;</code>. Do not specify the encoding of style sheets as these assume
+UTF-8.</p>
+
+<p>(More on encodings and when and how to specify them can be found in <a href="https://www.w3.org/International/tutorials/tutorial-char-enc/">Handling
+character encodings in HTML and CSS</a>.)</p>
+
+<h4 id="Comments">2.3.2 Comments</h4>
+
+<p>Explain code as needed, where possible.</p>
+
+<p>Use comments to explain code: What does it cover, what purpose does it serve,
+why is respective solution used or preferred?</p>
+
+<p>(This item is optional as it is not deemed a realistic expectation to always
+demand fully documented code. Mileage may vary heavily for HTML and CSS code and
+depends on the project&#8217;s complexity.)</p>
+
+<h4 id="Action_Items">2.3.3 Action Items</h4>
+
+<p>Mark todos and action items with <code>TODO</code>.</p>
+
+<p>Highlight todos by using the keyword <code>TODO</code> only, not other common formats like
+<code>@@</code>.</p>
+
+<p>Append a contact (username or mailing list) in parentheses as with the format
+<code>TODO(contact)</code>.</p>
+
+<p>Append action items after a colon as in <code>TODO: action item</code>.</p>
+
+<pre><code class="language-django prettyprint external">{# TODO(john.doe): revisit centering #}
+&lt;center&gt;Test&lt;/center&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- TODO: remove optional tags --&gt;
+&lt;ul&gt;
+  &lt;li&gt;Apples&lt;/li&gt;
+  &lt;li&gt;Oranges&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+
+<h2 id="HTML">3 HTML</h2>
+
+<h3 id="HTML_Style_Rules">3.1 HTML Style Rules</h3>
+
+<h4 id="Document_Type">3.1.1 Document Type</h4>
+
+<p>Use HTML5.</p>
+
+<p>HTML5 (HTML syntax) is preferred for all HTML documents: <code>&lt;!DOCTYPE html&gt;</code>.</p>
+
+<p>(It&#8217;s recommended to use HTML, as <code>text/html</code>. Do not use XHTML. XHTML, as
+<a href="https://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a>, lacks both browser
+and infrastructure support and offers less room for optimization than HTML.)</p>
+
+<p>Although fine with HTML, do not close void elements, i.e. write <code>&lt;br&gt;</code>, not
+<code>&lt;br /&gt;</code>.</p>
+
+<h4 id="HTML_Validity">3.1.2 HTML Validity</h4>
+
+<p>Use valid HTML where possible.</p>
+
+<p>Use valid HTML code unless that is not possible due to otherwise unattainable
+performance goals regarding file size.</p>
+
+<p>
+
+Use tools such as the <a href="https://validator.w3.org/nu/">W3C HTML validator</a>
+to test.
+</p>
+
+<p>Using valid HTML is a measurable baseline quality attribute that contributes to
+learning about technical requirements and constraints, and that ensures proper
+HTML usage.</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;title&gt;Test&lt;/title&gt;
+&lt;article&gt;This is only a test.
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Test&lt;/title&gt;
+&lt;article&gt;This is only a test.&lt;/article&gt;
+</code></pre>
+
+<h4 id="Semantics">3.1.3 Semantics</h4>
+
+<p>Use HTML according to its purpose.</p>
+
+<p>Use elements (sometimes incorrectly called &#8220;tags&#8221;) for what they have been
+created for. For example, use heading elements for headings, <code>p</code> elements for
+paragraphs, <code>a</code> elements for anchors, etc.</p>
+
+<p>Using HTML according to its purpose is important for accessibility, reuse, and
+code efficiency reasons.</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;div onclick="goToRecommendations();"&gt;All recommendations&lt;/div&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;a href="recommendations/"&gt;All recommendations&lt;/a&gt;
+</code></pre>
+
+<h4 id="Multimedia_Fallback">3.1.4 Multimedia Fallback</h4>
+
+<p>Provide alternative contents for multimedia.</p>
+
+<p>For multimedia, such as images, videos, animated objects via <code>canvas</code>, make sure
+to offer alternative access. For images that means use of meaningful alternative
+text (<code>alt</code>) and for video and audio transcripts and captions, if available.</p>
+
+<p>Providing alternative contents is important for accessibility reasons: A blind
+user has few cues to tell what an image is about without <code>@alt</code>, and other users
+may have no way of understanding what video or audio contents are about either.</p>
+
+<p>(For images whose <code>alt</code> attributes would introduce redundancy, and for images
+whose purpose is purely decorative which you cannot immediately use CSS for, use
+no alternative text, as in <code>alt=""</code>.)</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;img src="spreadsheet.png"&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;img src="spreadsheet.png" alt="Spreadsheet screenshot."&gt;
+</code></pre>
+
+<h4 id="Separation_of_Concerns">3.1.5 Separation of Concerns</h4>
+
+<p>Separate structure from presentation from behavior.</p>
+
+<p>Strictly keep structure (markup), presentation (styling), and behavior
+(scripting) apart, and try to keep the interaction between the three to an
+absolute minimum.</p>
+
+<p>That is, make sure documents and templates contain only HTML and HTML that is
+solely serving structural purposes. Move everything presentational into style
+sheets, and everything behavioral into scripts.</p>
+
+<p>In addition, keep the contact area as small as possible by linking as few style
+sheets and scripts as possible from documents and templates.</p>
+
+<p>Separating structure from presentation from behavior is important for
+maintenance reasons. It is always more expensive to change HTML documents and
+templates than it is to update style sheets and scripts.</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;title&gt;HTML sucks&lt;/title&gt;
+&lt;link rel="stylesheet" href="base.css" media="screen"&gt;
+&lt;link rel="stylesheet" href="grid.css" media="screen"&gt;
+&lt;link rel="stylesheet" href="print.css" media="print"&gt;
+&lt;h1 style="font-size: 1em;"&gt;HTML sucks&lt;/h1&gt;
+&lt;p&gt;I&#8217;ve read about this on a few sites but now I&#8217;m sure:
+  &lt;u&gt;HTML is stupid!!1&lt;/u&gt;
+&lt;center&gt;I can&#8217;t believe there&#8217;s no way to control the styling of
+  my website without doing everything all over again!&lt;/center&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;title&gt;My first CSS-only redesign&lt;/title&gt;
+&lt;link rel="stylesheet" href="default.css"&gt;
+&lt;h1&gt;My first CSS-only redesign&lt;/h1&gt;
+&lt;p&gt;I&#8217;ve read about this on a few sites but today I&#8217;m actually
+  doing it: separating concerns and avoiding anything in the HTML of
+  my website that is presentational.
+&lt;p&gt;It&#8217;s awesome!
+</code></pre>
+
+<h4 id="Entity_References">3.1.6 Entity References</h4>
+
+<p>Do not use entity references.</p>
+
+<p>There is no need to use entity references like <code>&amp;mdash;</code>, <code>&amp;rdquo;</code>, or
+<code>&amp;#x263a;</code>, assuming the same encoding (UTF-8) is used for files and editors
+as well as among teams.</p>
+
+<p>The only exceptions apply to characters with special meaning in HTML (like <code>&lt;</code>
+and <code>&amp;</code>) as well as control or &#8220;invisible&#8221; characters (like no-break spaces).</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+The currency symbol for the Euro is &amp;ldquo;&amp;eur;&amp;rdquo;.
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+The currency symbol for the Euro is &#8220;&#8364;&#8221;.
+</code></pre>
+
+<h4 id="Optional_Tags">3.1.7 Optional Tags</h4>
+
+<p>Omit optional tags (optional).</p>
+
+<p>For file size optimization and scannability purposes, consider omitting optional
+tags. The <a href="https://html.spec.whatwg.org/multipage/syntax.html#syntax-tag-omission">HTML5 specification</a>
+defines what tags can be omitted.</p>
+
+<p>(This approach may require a grace period to be established as a wider guideline
+as it&#8217;s significantly different from what web developers are typically taught.
+For consistency and simplicity reasons it&#8217;s best served omitting all optional
+tags, not just a selection.)</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Spending money, spending bytes&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p&gt;Sic.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;title&gt;Saving money, saving bytes&lt;/title&gt;
+&lt;p&gt;Qed.
+</code></pre>
+
+<h4 id="type_Attributes">3.1.8 <code>type</code> Attributes</h4>
+
+<p>Omit <code>type</code> attributes for style sheets and scripts.</p>
+
+<p>Do not use <code>type</code> attributes for style sheets (unless not using CSS) and scripts
+(unless not using JavaScript).</p>
+
+<p>Specifying <code>type</code> attributes in these contexts is not necessary as HTML5 implies
+<a href="https://html.spec.whatwg.org/multipage/obsolete.html#attr-style-type"><code>text/css</code></a>
+and <a href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type"><code>text/javascript</code></a>
+as defaults. This can be safely done even for older browsers.</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;link rel="stylesheet" href="https://www.google.com/css/maia.css"
+  type="text/css"&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;link rel="stylesheet" href="https://www.google.com/css/maia.css"&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;script src="https://www.google.com/js/gweb/analytics/autotrack.js"
+  type="text/javascript"&gt;&lt;/script&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;script src="https://www.google.com/js/gweb/analytics/autotrack.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<h3 id="HTML_Formatting_Rules">3.2 HTML Formatting Rules</h3>
+
+<h4 id="General_Formatting">3.2.1 General Formatting</h4>
+
+<p>Use a new line for every block, list, or table element, and indent every such
+child element.</p>
+
+<p>Independent of the styling of an element (as CSS allows elements to assume a
+different role per <code>display</code> property), put every block, list, or table element
+on a new line.</p>
+
+<p>Also, indent them if they are child elements of a block, list, or table element.</p>
+
+<p>(If you run into issues around whitespace between list items it&#8217;s acceptable to
+put all <code>li</code> elements in one line. A linter is encouraged to throw a warning
+instead of an error.)</p>
+
+<pre><code class="language-html prettyprint">&lt;blockquote&gt;
+  &lt;p&gt;&lt;em&gt;Space&lt;/em&gt;, the final frontier.&lt;/p&gt;
+&lt;/blockquote&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;ul&gt;
+  &lt;li&gt;Moe
+  &lt;li&gt;Larry
+  &lt;li&gt;Curly
+&lt;/ul&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th scope="col"&gt;Income
+      &lt;th scope="col"&gt;Taxes
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;$ 5.00
+      &lt;td&gt;$ 4.50
+&lt;/table&gt;
+</code></pre>
+
+<h4 id="HTML_Line-Wrapping">3.2.2 HTML Line-Wrapping</h4>
+
+<p>Break long lines (optional).</p>
+
+<p>While there is no column limit recommendation for HTML, you may consider
+wrapping long lines if it significantly improves readability.</p>
+
+<p>When line-wrapping, each continuation line should be indented at least 4
+additional spaces from the original line.</p>
+
+<pre><code class="language-html prettyprint">&lt;md-progress-circular md-mode="indeterminate" class="md-accent"
+    ng-show="ctrl.loading" md-diameter="35"&gt;
+&lt;/md-progress-circular&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;md-progress-circular
+    md-mode="indeterminate"
+    class="md-accent"
+    ng-show="ctrl.loading"
+    md-diameter="35"&gt;
+&lt;/md-progress-circular&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;md-progress-circular md-mode="indeterminate"
+                      class="md-accent"
+                      ng-show="ctrl.loading"
+                      md-diameter="35"&gt;
+&lt;/md-progress-circular&gt;
+</code></pre>
+
+<h4 id="HTML_Quotation_Marks">3.2.3 HTML Quotation Marks</h4>
+
+<p>When quoting attributes values, use double quotation marks.</p>
+
+<p>Use double (<code>""</code>) rather than single quotation marks (<code>''</code>) around attribute
+values.</p>
+
+<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+&lt;a class='maia-button maia-button-secondary'&gt;Sign in&lt;/a&gt;
+</code></pre>
+
+<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+&lt;a class="maia-button maia-button-secondary"&gt;Sign in&lt;/a&gt;
+</code></pre>
+
+<h2 id="CSS">4 CSS</h2>
+
+<h3 id="CSS_Style_Rules">4.1 CSS Style Rules</h3>
+
+<h4 id="CSS_Validity">4.1.1 CSS Validity</h4>
+
+<p>Use valid CSS where possible.</p>
+
+<p>Unless dealing with CSS validator bugs or requiring proprietary syntax, use
+valid CSS code.</p>
+
+<p>
+
+Use tools such as the <a href="https://jigsaw.w3.org/css-validator/">W3C CSS validator</a>
+to test.
+</p>
+
+<p>Using valid CSS is a measurable baseline quality attribute that allows to spot
+CSS code that may not have any effect and can be removed, and that ensures
+proper CSS usage.</p>
+
+<h4 id="ID_and_Class_Naming">4.1.2 ID and Class Naming</h4>
+
+<p>Use meaningful or generic ID and class names.</p>
+
+<p>Instead of presentational or cryptic names, always use ID and class names that
+reflect the purpose of the element in question, or that are otherwise generic.</p>
+
+<p>Names that are specific and reflect the purpose of the element should be
+preferred as these are most understandable and the least likely to change.</p>
+
+<p>Generic names are simply a fallback for elements that have no particular or no
+meaning different from their siblings. They are typically needed as &#8220;helpers.&#8221;</p>
+
+<p>Using functional or generic names reduces the probability of unnecessary
+document or template changes.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended: meaningless */
+#yee-1901 {}
+
+/* Not recommended: presentational */
+.button-green {}
+.clear {}
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended: specific */
+#gallery {}
+#login {}
+.video {}
+
+/* Recommended: generic */
+.aux {}
+.alt {}
+</code></pre>
+
+<h4 id="ID_and_Class_Name_Style">4.1.3 ID and Class Name Style</h4>
+
+<p>Use ID and class names that are as short as possible but as long as necessary.</p>
+
+<p>Try to convey what an ID or class is about while being as brief as possible.</p>
+
+<p>Using ID and class names this way contributes to acceptable levels of
+understandability and code efficiency.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended */
+#navigation {}
+.atr {}
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+#nav {}
+.author {}
+</code></pre>
+
+<h4 id="Type_Selectors">4.1.4 Type Selectors</h4>
+
+<p>Avoid qualifying ID and class names with type selectors.</p>
+
+<p>Unless necessary (for example with helper classes), do not use element names in
+conjunction with IDs or classes.</p>
+
+<p>Avoiding unnecessary ancestor selectors is useful for <a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">performance reasons</a>.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended */
+ul#example {}
+div.error {}
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+#example {}
+.error {}
+</code></pre>
+
+<h4 id="Shorthand_Properties">4.1.5 Shorthand Properties</h4>
+
+<p>Use shorthand properties where possible.</p>
+
+<p>CSS offers a variety of <a href="https://www.w3.org/TR/CSS21/about.html#shorthand">shorthand</a>
+properties (like <code>font</code>) that should be used whenever possible, even in cases
+where only one value is explicitly set.</p>
+
+<p>Using shorthand properties is useful for code efficiency and understandability.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended */
+border-top-style: none;
+font-family: palatino, georgia, serif;
+font-size: 100%;
+line-height: 1.6;
+padding-bottom: 2em;
+padding-left: 1em;
+padding-right: 1em;
+padding-top: 0;
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+border-top: 0;
+font: 100%/1.6 palatino, georgia, serif;
+padding: 0 1em 2em;
+</code></pre>
+
+<h4 id="0_and_Units">4.1.6 0 and Units</h4>
+
+<p>Omit unit specification after &#8220;0&#8221; values, unless required.</p>
+
+<p>Do not use units after <code>0</code> values unless they are required.</p>
+
+<pre><code class="language-css prettyprint">flex: 0px; /* This flex-basis component requires a unit. */
+flex: 1 1 0px; /* Not ambiguous without the unit, but needed in IE11. */
+margin: 0;
+padding: 0;
+</code></pre>
+
+<h4 id="Leading_0s">4.1.7 Leading 0s</h4>
+
+<p>Omit leading &#8220;0&#8221;s in values.</p>
+
+<p>Do not put <code>0</code>s in front of values or lengths between -1 and 1.</p>
+
+<pre><code class="language-css prettyprint">font-size: .8em;
+</code></pre>
+
+<h4 id="Hexadecimal_Notation">4.1.8 Hexadecimal Notation</h4>
+
+<p>Use 3 character hexadecimal notation where possible.</p>
+
+<p>For color values that permit it, 3 character hexadecimal notation is shorter and
+more succinct.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended */
+color: #eebbcc;
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+color: #ebc;
+</code></pre>
+
+<h4 id="Prefixes">4.1.9 Prefixes</h4>
+
+<p>Prefix selectors with an application-specific prefix (optional).</p>
+
+<p>In large projects as well as for code that gets embedded in other projects or on
+external sites use prefixes (as namespaces) for ID and class names. Use short,
+unique identifiers followed by a dash.</p>
+
+<p>Using namespaces helps preventing naming conflicts and can make maintenance
+easier, for example in search and replace operations.</p>
+
+<pre><code class="language-css prettyprint">.adw-help {} /* AdWords */
+#maia-note {} /* Maia */
+</code></pre>
+
+<h4 id="ID_and_Class_Name_Delimiters">4.1.10 ID and Class Name Delimiters</h4>
+
+<p>Separate words in ID and class names by a hyphen.</p>
+
+<p>Do not concatenate words and abbreviations in selectors by any characters
+(including none at all) other than hyphens, in order to improve understanding
+and scannability.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended: does not separate the words &#8220;demo&#8221; and &#8220;image&#8221; */
+.demoimage {}
+
+/* Not recommended: uses underscore instead of hyphen */
+.error_status {}
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+#video-id {}
+.ads-sample {}
+</code></pre>
+
+<h4 id="Hacks">4.1.11 Hacks</h4>
+
+<p>Avoid user agent detection as well as CSS &#8220;hacks&#8221;&#8212;try a different approach
+first.</p>
+
+<p>It&#8217;s tempting to address styling differences over user agent detection or
+special CSS filters, workarounds, and hacks. Both approaches should be
+considered last resort in order to achieve and maintain an efficient and
+manageable code base. Put another way, giving detection and hacks a free pass
+will hurt projects in the long run as projects tend to take the way of least
+resistance. That is, allowing and making it easy to use detection and hacks
+means using detection and hacks more frequently&#8212;and more frequently is too
+frequently.</p>
+
+<h3 id="CSS_Formatting_Rules">4.2 CSS Formatting Rules</h3>
+
+<h4 id="Declaration_Order">4.2.1 Declaration Order</h4>
+
+<p>Alphabetize declarations.</p>
+
+<p>Put declarations in alphabetical order in order to achieve consistent code in a
+way that is easy to remember and maintain.</p>
+
+<p>Ignore vendor-specific prefixes for sorting purposes. However, multiple
+vendor-specific prefixes for a certain CSS property should be kept sorted (e.g.
+-moz prefix comes before -webkit).</p>
+
+<pre><code class="language-css prettyprint">background: fuchsia;
+border: 1px solid;
+-moz-border-radius: 4px;
+-webkit-border-radius: 4px;
+border-radius: 4px;
+color: black;
+text-align: center;
+text-indent: 2em;
+</code></pre>
+
+<h4 id="Block_Content_Indentation">4.2.2 Block Content Indentation</h4>
+
+<p>Indent all block content.</p>
+
+<p>Indent all <a href="https://www.w3.org/TR/CSS21/syndata.html#block">block content</a>,
+that is rules within rules as well as declarations, so to reflect hierarchy and
+improve understanding.</p>
+
+<pre><code class="language-css prettyprint">@media screen, projection {
+
+  html {
+    background: #fff;
+    color: #444;
+  }
+
+}
+</code></pre>
+
+<h4 id="Declaration_Stops">4.2.3 Declaration Stops</h4>
+
+<p>Use a semicolon after every declaration.</p>
+
+<p>End every declaration with a semicolon for consistency and extensibility
+reasons.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended */
+.test {
+  display: block;
+  height: 100px
+}
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+.test {
+  display: block;
+  height: 100px;
+}
+</code></pre>
+
+<h4 id="Property_Name_Stops">4.2.4 Property Name Stops</h4>
+
+<p>Use a space after a property name&#8217;s colon.</p>
+
+<p>Always use a single space between property and value (but no space between
+property and colon) for consistency reasons.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended */
+h3 {
+  font-weight:bold;
+}
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+h3 {
+  font-weight: bold;
+}
+</code></pre>
+
+<h4 id="Declaration_Block_Separation">4.2.5 Declaration Block Separation</h4>
+
+<p>Use a space between the last selector and the declaration block.</p>
+
+<p>Always use a single space between the last selector and the opening brace that
+begins the <a href="https://www.w3.org/TR/CSS21/syndata.html#rule-sets">declaration block</a>.</p>
+
+<p>The opening brace should be on the same line as the last selector in a given
+rule.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended: missing space */
+#video{
+  margin-top: 1em;
+}
+
+/* Not recommended: unnecessary line break */
+#video
+{
+  margin-top: 1em;
+}
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+#video {
+  margin-top: 1em;
+}
+</code></pre>
+
+<h4 id="Selector_and_Declaration_Separation">4.2.6 Selector and Declaration Separation</h4>
+
+<p>Separate selectors and declarations by new lines.</p>
+
+<p>Always start a new line for each selector and declaration.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended */
+a:focus, a:active {
+  position: relative; top: 1px;
+}
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+h1,
+h2,
+h3 {
+  font-weight: normal;
+  line-height: 1.2;
+}
+</code></pre>
+
+<h4 id="Rule_Separation">4.2.7 Rule Separation</h4>
+
+<p>Separate rules by new lines.</p>
+
+<p>Always put a blank line (two line breaks) between rules.</p>
+
+<pre><code class="language-css prettyprint">html {
+  background: #fff;
+}
+
+body {
+  margin: auto;
+  width: 50%;
+}
+</code></pre>
+
+<h4 id="CSS_Quotation_Marks">4.2.8 CSS Quotation Marks</h4>
+
+<p>Use single (<code>''</code>) rather than double (<code>""</code>) quotation marks for attribute
+selectors and property values.</p>
+
+<p>Do not use quotation marks in URI values (<code>url()</code>).</p>
+
+<p>Exception: If you do need to use the <code>@charset</code> rule, use double quotation
+marks&#8212;<a href="https://www.w3.org/TR/CSS21/syndata.html#charset">single quotation marks are not permitted</a>.</p>
+
+<pre><code class="language-css prettyprint badcode">/* Not recommended */
+@import url("https://www.google.com/css/maia.css");
+
+html {
+  font-family: "open sans", arial, sans-serif;
+}
+</code></pre>
+
+<pre><code class="language-css prettyprint">/* Recommended */
+@import url(https://www.google.com/css/maia.css);
+
+html {
+  font-family: 'open sans', arial, sans-serif;
+}
+</code></pre>
+
+<h3 id="CSS_Meta_Rules">4.3 CSS Meta Rules</h3>
+
+<h4 id="Section_Comments">4.3.1 Section Comments</h4>
+
+<p>Group sections by a section comment (optional).</p>
+
+<p>If possible, group style sheet sections together by using comments. Separate
+sections with new lines.</p>
+
+<pre><code class="language-css prettyprint">/* Header */
+
+#adw-header {}
+
+/* Footer */
+
+#adw-footer {}
+
+/* Gallery */
+
+.adw-gallery {}
+</code></pre>
+
+<h2 id="Parting_Words">Parting Words</h2>
+
+<p><em>Be consistent.</em></p>
+
+<p>If you&#8217;re editing code, take a few minutes to look at the code around you and
+determine its style. If they use spaces around all their arithmetic operators,
+you should too. If their comments have little boxes of hash marks around them,
+make your comments have little boxes of hash marks around them too.</p>
+
+<p>The point of having style guidelines is to have a common vocabulary of coding so
+people can concentrate on what you&#8217;re saying rather than on how you&#8217;re saying
+it. We present global style rules here so people know the vocabulary, but local
+style is also important. If code you add to a file looks drastically different
+from the existing code around it, it throws readers out of their rhythm when
+they go to read it. Avoid this.</p>
+</div>
+</body>
+</html>

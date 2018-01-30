@@ -1,0 +1,393 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd">
+<html>
+<head>
+    <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <base target="_blank">
+    <link rel="stylesheet" type="text/css" href="styleguide.css">
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <script language="javascript" src="/eng/doc/devguide/include/styleguide.js"></script>
+    <title>Google's AngularJS Style Guide</title>
+    <style type="text/css"><!--
+    th { background-color: #ddd; }
+    //--></style>
+</head>
+<body onload="prettyPrint();initStyleGuide();">
+<h1 class="external">An AngularJS Style Guide for Closure Users at Google</h1>
+
+<p class="external">This is the external version of a document that was primarily written for Google
+    engineers. It describes a recommended style for AngularJS apps that use Closure, as used
+    internally at Google. Members of the broader AngularJS community should feel free to apply
+    (or not apply) these recommendations, as relevant to their own use cases.</p>
+
+<p class="external">This document describes style for AngularJS apps in google3. This guide
+    supplements and extends the <a href="https://google.github.io/styleguide/jsguide.html">
+        Google JavaScript Style Guide</a>.
+</p>
+
+<p><b>Style Note</b>: Examples on the AngularJS external webpage, and many external apps, are
+    written in a style that freely uses closures, favors functional inheritance, and does not often use
+    <a class="external"
+                               href="https://github.com/google/closure-compiler/wiki/Types-in-the-Closure-Type-System">
+        JavaScript types</a>. Google follows a more rigorous Javascript style to support JSCompiler
+    optimizations and large code bases - see the javascript-style mailing list.
+    This is not an Angular-specific issue, and is not discussed further in this style guide.
+    (But if you want further reading:
+    <a  href="http://martinfowler.com/bliki/Lambda.html">Martin Fowler on closures</a>,
+    <a href="http://jibbering.com/faq/notes/closures/">much longer description</a>, appendix A of the
+    <a href="https://books.google.com/books/about/Closure_The_Definitive_Guide.html?id=p7uyWPcVGZsC">
+        closure book</a> has a good description of inheritance patterns and why it prefers
+    pseudoclassical,
+    <a href="https://books.google.com/books/about/JavaScript.html?id=PXa2bby0oQ0C">
+        Javascript, the Good Parts</a> as a counter.)</p>
+
+<h5>1 Angular Language Rules</h5>
+<ul>
+    <li> <a target="_self" href="#googprovide">Manage dependencies with Closure's goog.require and
+        goog.provide</a>
+    <li> <a target="_self" href="#modules"> Modules</a>
+    <li> <a target="_self" href="#moduledeps"> Modules should reference other modules using the
+        "name" property</a>
+    <li> <a target="_self" href="#externs">Use the provided Angular externs file</a>
+    <li> <a target="_self" href="#compilerflags">JSCompiler Flags</a>
+    <li> <a target="_self" href="#controllers">Controllers and Scopes</a>
+    <li> <a target="_self" href="#directives">Directives</a>
+    <li> <a target="_self" href="#services">Services</a>
+</ul>
+<h5>2 Angular Style Rules</h5>
+<ul>
+    <li><a target="_self" href="#dollarsign">Reserve $ for Angular properties and services
+    </a>
+    <li><a target="_self" href="#customelements">Custom elements.</a>
+</ul>
+<h5>3 Angular Tips, Tricks, and Best Practices</h5>
+<ul>
+    <li><a target="_self" href="#testing">Testing</a>
+    <li><a target="_self" href="#appstructure">Consider using the Best Practices for App Structure</a>
+    <li><a target="_self" href="#scopeinheritance">Be aware of how scope inheritance works</a>
+    <li><a target="_self" href="#nginject">Use @ngInject for easy dependency injection compilation</a>
+</ul>
+
+<h5><a target="_self" href="#bestpractices">4 Best practices links and docs</a></h5>
+
+<h2>1 Angular Language Rules</h2>
+
+<h3 id="googprovide">Manage dependencies with Closure's goog.require and goog.provide</h3>
+<p>Choose a namespace for your project, and use goog.provide and goog.require.</p>
+<pre class="prettyprint lang-js">
+goog.provide('hello.about.AboutCtrl');
+goog.provide('hello.versions.Versions');
+</pre>
+
+<p><b>Why?</b>
+    Google BUILD rules integrate nicely with closure provide/require.</p>
+
+<h3 id="modules">Modules</h3>
+
+<p>Your main application module should be in your root client directory. A module should never be
+    altered other than the one where it is defined.</p>
+
+<p>Modules may either be defined in the same file as their components (this works well for a module
+    that contains exactly one service) or in a separate file for wiring pieces together.</p>
+
+<p><b>Why?</b>
+    A module should be consistent for anyone that wants to include it as a reusable component.
+    If a module can mean different things depending on which files are included, it is not consistent.
+</p>
+
+<h3 id="moduledeps">
+    Modules should reference other modules using the Angular Module's "name" property
+</h3>
+
+<p>For example:</p>
+
+<pre class="prettyprint lang-js">
+// file submodulea.js:
+  goog.provide('my.submoduleA');
+
+  my.submoduleA = angular.module('my.submoduleA', []);
+  // ...
+
+// file app.js
+  goog.require('my.submoduleA');
+
+  Yes: my.application.module = angular.module('hello', [my.submoduleA.name]);
+  <font color="red">
+      No: my.application.module = angular.module('hello', ['my.submoduleA']);
+  </font></pre>
+
+<p><b>Why?</b>
+    Using a property of my.submoduleA prevents Closure presubmit failures complaining that the file is
+    required but never used. Using the .name property avoids duplicating strings.</p>
+
+<h3 id="externs">Use a common externs file</h3>
+
+<p>This maximally allows the JS compiler to enforce type safety in the presence of externally
+    provided types from Angular, and means you don't have to worry about Angular vars being obfuscated
+    in a confusing way. </p>
+
+<p>Note to readers outside Google: the current externs file is located in an internal-to-Google
+    directory, but an example can be found on github <a href="https://github.com/angular/angular.js/pull/4722">
+        here</a>.</p>
+
+<h3 id="compilerflags">JSCompiler Flags</h3>
+<p><b>Reminder</b>: According to the JS style guide, customer facing code must be compiled.</p>
+
+<p><b>Recommended</b>: Use the JSCompiler (the closure compiler that works with js_binary by
+    default) and ANGULAR_COMPILER_FLAGS_FULL from //javascript/angular/build_defs/build_defs for
+    your base flags.
+</p>
+
+<p>Note - if you are using @export for methods, you will need to add the compiler flag</p>
+<pre>
+"--generate_exports",
+</pre>
+
+<p>If you are using @export for properties, you will need to add the flags:</p>
+<pre>
+"--generate_exports",
+"--remove_unused_prototype_props_in_externs=false",
+"--export_local_property_definitions",
+</pre>
+
+<h3 id="controllers">Controllers and Scopes</h3>
+<p>Controllers are classes. Methods should be defined on MyCtrl.prototype.</p>
+
+<p>Google Angular applications should use the <b>'controller as'</b> style to export the controller
+    onto the scope. This is fully implemented in Angular 1.2 and can be mimicked in pre-Angular 1.2
+    builds.
+</p>
+
+<p>Pre Angular 1.2, this looks like:</p>
+<pre class="prettyprint lang-js">
+/**
+ * Home controller.
+ *
+ * @param {!angular.Scope} $scope
+ * @constructor
+ * @ngInject
+ * @export
+ */
+hello.mainpage.HomeCtrl = function($scope) {
+  /** @export */
+  $scope.homeCtrl = this; // This is a bridge until Angular 1.2 controller-as
+
+  /**
+   * @type {string}
+   * @export
+   */
+  this.myColor = 'blue';
+};
+
+
+/**
+ * @param {number} a
+ * @param {number} b
+ * @export
+ */
+hello.mainpage.HomeCtrl.prototype.add = function(a, b) {
+  return a + b;
+};
+</pre>
+
+<p>And the template:</p>
+
+<pre>
+&lt;div ng-controller="hello.mainpage.HomeCtrl"/&gt;
+  &lt;span ng-class="homeCtrl.myColor"&gt;I'm in a color!&lt;/span&gt;
+  &lt;span&gt;{{homeCtrl.add(5, 6)}}&lt;/span&gt;
+&lt;/div&gt;
+</pre>
+
+<p>After Angular 1.2, this looks like:</p>
+
+<pre class="prettyprint lang-js">
+/**
+ * Home controller.
+ *
+ * @constructor
+ * @ngInject
+ * @export
+ */
+hello.mainpage.HomeCtrl = function() {
+  /**
+   * @type {string}
+   * @export
+   */
+  this.myColor = 'blue';
+};
+
+
+/**
+ * @param {number} a
+ * @param {number} b
+ * @export
+ */
+hello.mainpage.HomeCtrl.prototype.add = function(a, b) {
+  return a + b;
+};
+</pre>
+
+<p>If you are compiling with property renaming, expose properties and methods using the @export
+    annotation. Remember to @export the constructor as well.</p>
+
+<p>And in the template:</p>
+
+<pre>
+&lt;div ng-controller="hello.mainpage.HomeCtrl as homeCtrl"/&gt;
+  &lt;span ng-class="homeCtrl.myColor"&gt;I'm in a color!&lt;/span&gt;
+  &lt;span&gt;{{homeCtrl.add(5, 6)}}&lt;/span&gt;
+&lt;/div&gt;
+</pre>
+
+<p><b>Why?</b>
+    Putting methods and properties directly onto the controller, instead of building up a scope
+    object, fits better with the Google Closure class style. Additionally, using 'controller as'
+    makes it obvious which controller you are accessing when multiple controllers apply to an element.
+    Since there is always a '.' in the bindings, you don't have to worry about prototypal inheritance
+    masking primitives.</p>
+
+<h3 id="directives">Directives</h3>
+
+<p>All DOM manipulation should be done inside directives. Directives should be kept small and use
+    composition. Files defining directives should goog.provide a static function which returns the
+    directive definition object.</p>
+
+<pre class="prettyprint lang-js">
+goog.provide('hello.pane.paneDirective');
+
+/**
+ * Description and usage
+ * @return {angular.Directive} Directive definition object.
+ */
+hello.pane.paneDirective = function() {
+  // ...
+};
+</pre>
+
+<p><b>Exception</b>: DOM manipulation may occur in services for DOM elements disconnected from the
+    rest of the view, e.g. dialogs or keyboard shortcuts.</p>
+
+<h3 id="services">Services</h3>
+
+<p>Services registered on the module with <code>module.service</code> are classes.
+    Use <code>module.service</code> instead of <code>module.provider</code> or
+    <code>module.factory</code> unless you need to do initialization beyond just creating a
+    new instance of the class.</p>
+
+<pre class="prettyprint lang-js">
+/**
+ * @param {!angular.$http} $http The Angular http service.
+ * @constructor
+ */
+hello.request.Request = function($http) {
+  /** @type {!angular.$http} */
+  this.http_ = $http;
+};
+
+hello.request.Request.prototype.get = function() {/*...*/};
+</pre>
+
+<p>In the module:</p>
+
+<pre class="prettyprint lang-js">
+module.service('request', hello.request.Request);
+</pre>
+
+
+<h2>2 Angular Style Rules</h2>
+
+<h3 id="dollarsign">Reserve $ for Angular properties and services</h3>
+<p>Do not use $ to prepend your own object properties and service identifiers. Consider this style
+    of naming reserved by AngularJS and jQuery.</p>
+
+<p>Yes:</p>
+<pre class="prettyprint lang-js">
+  $scope.myModel = { value: 'foo' }
+  myModule.service('myService', function() { /*...*/ });
+  var MyCtrl = function($http) {this.http_ = $http;};
+</pre>
+
+<p><font color="red">No:</font></p>
+<pre class="prettyprint">
+  $scope.$myModel = { value: 'foo' } // BAD
+  $scope.myModel = { $value: 'foo' } // BAD
+  myModule.service('$myService', function() { ... }); // BAD
+  var MyCtrl = function($http) {this.$http_ = $http;}; // BAD
+</pre>
+
+<p><b>Why?</b>
+    It's useful to distinguish between Angular / jQuery builtins and things you add yourself.
+    In addition, $ is not an acceptable character for variables names in the JS style guide.
+</p>
+
+<h3 id="customelements">Custom elements</h3>
+
+<p>For custom elements (e.g. <code>&lt;ng-include src="template"&gt;&lt;/ng-include&gt;</code>), IE8
+    requires special support (html5shiv-like hacks) to enable css styling.  Be aware of this
+    restriction in apps targeting old versions of IE.</p>
+
+<h2>3 Angular Tips, Tricks, and Best Practices</h2>
+
+<p>These are not strict style guide rules, but are placed here as reference for folks getting
+    started with Angular at Google.</p>
+
+<h3 id="testing">Testing</h3>
+
+<p>Angular is designed for test-driven development.</p>
+
+<p>The recommended unit testing setup is Jasmine + Karma (though you could use closure tests
+    or js_test)</p>
+
+<p>Angular provides easy adapters to load modules and use the injector in Jasmine tests.
+<ul>
+    <li><a href = "https://docs.angularjs.org/api/angular.mock.module">module</a>
+    <li><a href="https://docs.angularjs.org/api/angular.mock.inject">inject</a>
+</ul>
+</p>
+
+
+<h3 id="appstructure">Consider using the Best Practices for App Structure</h3>
+<p>
+    This  <a href="https://docs.google.com/document/d/1XXMvReO8-Awi1EZXAXS4PzDzdNvV6pGcuaF4Q9821Es/pub">directory structure doc</a> describes how to structure your application with controllers in
+    nested subdirectories and all components (e.g. services and directives) in a 'components' dir.
+</p>
+
+
+<h3 id="scopeinheritance">Be aware of how scope inheritance works</h3>
+
+<p>See <a href="https://github.com/angular/angular.js/wiki/Understanding-Scopes#wiki-JSproto">
+    The Nuances of Scope Prototypal Inheritance</a></p>
+
+<h3 id="nginject">Use @ngInject for easy dependency injection compilation</h3>
+<p>This removes the need to add <code>myCtrl['$inject'] = ...</code> to prevent minification from
+    messing up Angular's dependency injection.</p>
+
+<p>Usage:</p>
+<pre class="prettyprint lang-js">
+/**
+ * My controller.
+ * @param {!angular.$http} $http
+ * @param {!my.app.myService} myService
+ * @constructor
+ * @export
+ * @ngInject
+ */
+my.app.MyCtrl = function($http, myService) {
+  //...
+};
+</pre>
+
+<h2 id="bestpractices">4 Best practices links and docs</h2>
+
+<ul>
+    <li><a href="https://github.com/angular/angular.js/wiki/Best-Practices">
+        Best Practices</a> from Angular on GitHub</li>
+    <li><a href="https://www.youtube.com/watch?v=ZhfUv0spHCY">
+        Meetup video</a> (not Google specific)</li>
+</ul>
+<address>
+    Last modified Feb 07 2013
+</address>
+</body>
+<html>

@@ -1,0 +1,261 @@
+/* General CSS */
+
+body {
+  background-color: #fff;
+  color: #333;
+  font-family: sans-serif;
+  font-size: 10pt;
+  margin-right: 100px;
+  margin-left: 100px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 18pt;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #06c;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  padding: 25px;
+  font-weight:bold;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top:1.5em;
+  margin-bottom:.75em;
+}
+
+h1 {font-size:200%;}
+h2 {font-size:167%;}
+h3 {font-size:133%;}
+h4 {font-size:120%;}
+h5 {font-size:110%;}
+
+
+table {
+  border: 1px solid #bbb;
+  border-spacing: 0;
+  border-collapse: collapse;
+  margin: 0 0 1.5em;
+  vertical-align: middle;
+  width: 100%
+}
+
+td, th {
+  border: 1px solid #ccc;
+  padding: 2px 12px;
+  font-size: 10pt;
+}
+
+code, samp, var {
+  background-color:#FAFAFA;
+  white-space: nowrap
+}
+
+pre {
+  padding:6px 10px;
+  background-color:#FAFAFA;
+  border:1px solid #bbb;
+  overflow:auto;
+}
+
+pre.prettyprint {
+  padding:6px 10px !important;
+  border:1px solid #bbb !important;
+}
+
+code.bad, code.badcode {
+  color: magenta;
+}
+
+pre.bad, pre.badcode {
+  background-color:#ffe6d8;
+  border-top:1px inset #a03;
+  border-left:1px inset #a03;
+}
+
+hr {
+  margin-top: 3.5em;
+  border-width: 1px;
+  color: #fff;
+}
+
+/* TOC CSS */
+
+table.columns {
+  border: none;
+}
+
+td.two_columns {
+  -webkit-column-count: 2;
+  column-count: 2;
+}
+
+.toc_category {
+  font-size: 10pt;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  border-left-width: 2px;
+  border-right-width: 2px;
+  border-color: grey;
+}
+
+.toc_stylepoint {
+  font-size: 10pt;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+li.toc_entry {
+  padding-right: 1em;
+  display: inline;
+  list-style-type: none;
+}
+
+/*
+ * This space is required to trigger the linewrap on the links
+ * at href boundaries
+ */
+li.toc_entry::after {
+    content: " ";
+  }
+
+li.toc_entry a {
+  white-space: nowrap;
+}
+
+/* Horizontal TOC */
+.toc td, .toc th {
+  border-width: 1px 5px;
+  overflow: hidden;
+}
+
+/* Vertical TOC */
+
+.toc td.two_columns {
+  border-width: 0px;
+}
+
+/* Special Sections */
+
+address {
+  text-align: right;
+}
+
+.revision {
+  text-align: right;
+}
+
+.headerbox {
+  margin-left: 50%;
+  font-size: 75%;
+}
+
+.legend {
+  padding-top: 1em;
+  margin-left: 50%;
+  font-size: 10pt;
+}
+
+.link_button {
+  float: left;
+  display: none;
+  background-color: #f8f8ff;
+  border-color: #f0f0ff;
+  border-style: solid;
+  border-width: 1px;
+  font-size: 75%;
+  margin-top: 0;
+  margin-left: -50px;
+  padding: 24px;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.ignoreLink {
+  padding: 0px;
+}
+
+.divider{
+    width:5px;
+    height:auto;
+    display:inline-block;
+}
+
+/* Style Guide semantic CSS */
+
+.summary {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.stylebody {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.stylepoint_section {
+  display: block;
+  margin-bottom: 1em;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+.stylepoint_subsection {
+  display: block;
+  margin-bottom: 1em;
+}
+
+.stylepoint_subsubsection {
+  display: block;
+  margin-bottom: 1em;
+}
+
+.definition:before {
+  content: "Definition: ";
+  font-weight: bold;
+  display: block;
+  margin-bottom: 1em;
+}
+
+.pros:before {
+  content: "Pros: ";
+  font-weight: bold;
+  display: block;
+  margin-bottom: 1em;
+}
+
+.cons:before {
+  content: "Cons: ";
+  font-weight: bold;
+  display: block;
+  margin-bottom: 1em;
+}
+
+.decision:before {
+  content: "Decision: ";
+  font-weight: bold;
+  display: block;
+  margin-bottom: 1em;
+}
+
+.exception:before {
+  content: "Exception: ";
+  font-weight: bold;
+  display: block;
+  margin-bottom: 1em;
+}
+
+.note:before {
+  content: "Note: ";
+  font-weight: bold;
+  display: block;
+  margin-bottom: 1em;
+}
