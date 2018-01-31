@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="https://www.google.com/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link rel="stylesheet" type="text/css" href="styleguide.css"/>
     <title>Google's R Style Guide</title>
   </head>
