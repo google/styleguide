@@ -423,8 +423,8 @@ _YB_THIRD_PARTY_HEADER_PREFIXES_USING_ANGLE_BRACKETS = tuple([
     'glog',
     'gmock',
     'gtest',
-    'rapidjson'
-    ])
+    'rapidjson',
+    'cpp_redis'])
 
 # Type names
 _TYPES = re.compile(
@@ -4431,9 +4431,9 @@ def _ClassifyInclude(fileinfo, include, is_system):
   # We include some third-party headers using angle brackets, so don't treat those as C system
   # headers. These headers should be included after C++ system headers.
   if is_system and (
-      include in _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS or
-      include.startswith(_YB_THIRD_PARTY_HEADER_PREFIXES_USING_ANGLE_BRACKETS)
-      ):
+          include in _YB_THIRD_PARTY_HEADERS_INCLUDED_USING_ANGLE_BRACKETS or
+          include.startswith(tuple(
+              s + '/' for s in _YB_THIRD_PARTY_HEADER_PREFIXES_USING_ANGLE_BRACKETS))):
     is_system = False
 
   # This is a list of all standard c++ header files, except
