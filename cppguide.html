@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="include/styleguide.css">
 <script language="javascript" src="include/styleguide.js"></script>
 <link rel="shortcut icon" type="image/x-icon" href="https://www.google.com/favicon.ico" />
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </head>
 <body onload="initStyleGuide();">
 <div id="content">
@@ -235,7 +236,7 @@ example, the file <code>foo/src/bar/baz.h</code> in
 project <code>foo</code> should have the following
 guard:</p>
 
-<pre>#ifndef FOO_BAR_BAZ_H_
+<pre class="prettyprint lang-cpp">#ifndef FOO_BAR_BAZ_H_
 #define FOO_BAR_BAZ_H_
 
 ...
@@ -296,7 +297,7 @@ function, or template without an associated definition.</p>
   Replacing an <code>#include</code> with a forward
   declaration can silently change the meaning of
   code:
-      <pre>      // b.h:
+      <pre class="prettyprint lang-cpp">      // b.h:
       struct B {};
       struct D : B {};
 
@@ -415,7 +416,7 @@ directory without use of UNIX directory shortcuts
 <code>google-awesome-project/src/base/logging.h</code>
 should be included as:</p>
 
-<pre>#include "base/logging.h"
+<pre class="prettyprint lang-cpp">#include "base/logging.h"
 </pre>
 
 <p>In <code><var>dir/foo</var>.cc</code> or
@@ -476,7 +477,7 @@ rely on <code>foo.h</code>'s includes).</p>
 might look like this:</p>
 
 
-<pre>#include "foo/server/fooserver.h"
+<pre class="prettyprint lang-cpp">#include "foo/server/fooserver.h"
 
 #include &lt;sys/types.h&gt;
 #include &lt;unistd.h&gt;
@@ -494,7 +495,7 @@ conditional includes. Such code can put conditional
 includes after other includes. Of course, keep your
 system-specific code small and localized. Example:</p>
 
-<pre>#include "foo/public/fooserver.h"
+<pre class="prettyprint lang-cpp">#include "foo/public/fooserver.h"
 
 #include "base/port.h"  // For LANG_CXX11.
 
@@ -545,7 +546,7 @@ can continue to refer to <code>Foo</code> without the prefix.</p>
 the enclosing scope. Consider the following snippet, for
 example:</p>
 
-<pre>namespace X {
+<pre class="prettyprint lang-cpp">namespace X {
 inline namespace Y {
   void foo();
 }  // namespace Y
@@ -589,7 +590,7 @@ namespaces, this can add a lot of clutter.</p>
   gflags</a> definitions/declarations
   and forward declarations of classes from other namespaces.</p>
 
-<pre>// In the .h file
+<pre class="prettyprint lang-cpp">// In the .h file
 namespace mynamespace {
 
 // All declarations are within the namespace scope.
@@ -603,7 +604,7 @@ class MyClass {
 }  // namespace mynamespace
 </pre>
 
-<pre>// In the .cc file
+<pre class="prettyprint lang-cpp">// In the .cc file
 namespace mynamespace {
 
 // Definition of functions is within scope of the namespace.
@@ -617,7 +618,7 @@ void MyClass::Foo() {
   <p>More complex <code>.cc</code> files might have additional details,
   like flags or using-declarations.</p>
 
-<pre>#include "a.h"
+<pre class="prettyprint lang-cpp">#include "a.h"
 
 DEFINE_FLAG(bool, someflag, false, "dummy flag");
 
@@ -643,7 +644,7 @@ using ::foo::bar;
   <li><p>You may not use a <i>using-directive</i>
   to make all names from a namespace available.</p>
 
-<pre class="badcode">// Forbidden -- This pollutes the namespace.
+<pre class="prettyprint lang-cpp badcode">// Forbidden -- This pollutes the namespace.
 using namespace foo;
 </pre>
   </li>
@@ -654,11 +655,11 @@ using namespace foo;
   in a header file becomes part of the public
   API exported by that file.</p>
 
-<pre>// Shorten access to some commonly used names in .cc files.
+<pre class="prettyprint lang-cpp">// Shorten access to some commonly used names in .cc files.
 namespace baz = ::foo::bar::baz;
 </pre>
 
-<pre>// Shorten access to some commonly used names (in a .h file).
+<pre class="prettyprint lang-cpp">// Shorten access to some commonly used names (in a .h file).
 namespace librarian {
 namespace impl {  // Internal, not part of the API.
 namespace sidetable = ::pipeline_diagnostics::sidetable;
@@ -706,7 +707,7 @@ Do not use internal linkage in <code>.h</code> files.</p>
 <p>Format unnamed namespaces like named namespaces. In the
   terminating comment, leave the namespace name empty:</p>
 
-<pre>namespace {
+<pre class="prettyprint lang-cpp">namespace {
 ...
 }  // namespace
 </pre>
@@ -747,7 +748,7 @@ Rather than creating classes only to group static member
 functions which do not share static data, use
 <a href="#Namespaces">namespaces</a> instead. For a header
 <code>myproject/foo_bar.h</code>, for example, write</p>
-<pre>namespace myproject {
+<pre class="prettyprint lang-cpp">namespace myproject {
 namespace foo_bar {
 void Function1();
 void Function2();
@@ -755,7 +756,7 @@ void Function2();
 }  // namespace myproject
 </pre>
 <p>instead of</p>
-<pre class="badcode">namespace myproject {
+<pre class="prettyprint lang-cpp badcode">namespace myproject {
 class FooBar {
  public:
   static void Function1();
@@ -789,19 +790,19 @@ declaration and see what type the variable is and what it
 was initialized to. In particular, initialization should
 be used instead of declaration and assignment, e.g.:</p>
 
-<pre class="badcode">int i;
+<pre class="prettyprint lang-cpp badcode">int i;
 i = f();      // Bad -- initialization separate from declaration.
 </pre>
 
-<pre>int j = g();  // Good -- declaration has initialization.
+<pre class="prettyprint lang-cpp">int j = g();  // Good -- declaration has initialization.
 </pre>
 
-<pre class="badcode">std::vector&lt;int&gt; v;
+<pre class="prettyprint lang-cpp badcode">std::vector&lt;int&gt; v;
 v.push_back(1);  // Prefer initializing using brace initialization.
 v.push_back(2);
 </pre>
 
-<pre>std::vector&lt;int&gt; v = {1, 2};  // Good -- v starts initialized.
+<pre class="prettyprint lang-cpp">std::vector&lt;int&gt; v = {1, 2};  // Good -- v starts initialized.
 </pre>
 
 <p>Variables needed for <code>if</code>, <code>while</code>
@@ -809,7 +810,7 @@ and <code>for</code> statements should normally be declared
 within those statements, so that such variables are confined
 to those scopes.  E.g.:</p>
 
-<pre>while (const char* p = strchr(str, '/')) str = p + 1;
+<pre class="prettyprint lang-cpp">while (const char* p = strchr(str, '/')) str = p + 1;
 </pre>
 
 <p>There is one caveat: if the variable is an object, its
@@ -817,7 +818,7 @@ constructor is invoked every time it enters scope and is
 created, and its destructor is invoked every time it goes
 out of scope.</p>
 
-<pre class="badcode">// Inefficient implementation:
+<pre class="prettyprint lang-cpp badcode">// Inefficient implementation:
 for (int i = 0; i &lt; 1000000; ++i) {
   Foo f;  // My ctor and dtor get called 1000000 times each.
   f.DoSomething(i);
@@ -827,7 +828,7 @@ for (int i = 0; i &lt; 1000000; ++i) {
 <p>It may be more efficient to declare such a variable
 used in a loop outside that loop:</p>
 
-<pre>Foo f;  // My ctor and dtor get called once each.
+<pre class="prettyprint lang-cpp">Foo f;  // My ctor and dtor get called once each.
 for (int i = 0; i &lt; 1000000; ++i) {
   f.DoSomething(i);
 }
@@ -1020,14 +1021,14 @@ or (since C++11) a conversion operator, to ensure that it can only be
 used when the destination type is explicit at the point of use,
 e.g. with a cast. This applies not only to implicit conversions, but to
 C++11's list initialization syntax:</p>
-<pre>class Foo {
+<pre class="prettyprint lang-cpp">class Foo {
   explicit Foo(int x, double y);
   ...
 };
 
 void Func(Foo f);
 </pre>
-<pre class="badcode">Func({42, 3.14});  // Error
+<pre class="prettyprint lang-cpp badcode">Func({42, 3.14});  // Error
 </pre>
 This kind of code isn't technically an implicit conversion, but the
 language treats it as one as far as <code>explicit</code> is concerned.
@@ -1185,7 +1186,7 @@ Remember to review the correctness of any defaulted operations as you would any
 other code, and to document that your class is copyable and/or cheaply movable
 if that's an API guarantee.</p>
 
-<pre class="badcode">class Foo {
+<pre class="prettyprint lang-cpp badcode">class Foo {
  public:
   Foo(Foo&amp;&amp; other) : field_(other.field) {}
   // Bad, defines only move constructor, but not operator=.
@@ -1724,7 +1725,7 @@ but pointer semantics.</p>
 <p>Within function parameter lists all references must be
 <code>const</code>:</p>
 
-<pre>void Foo(const string &amp;in, string *out);
+<pre class="prettyprint lang-cpp">void Foo(const string &amp;in, string *out);
 </pre>
 
 <p>In fact it is a very strong convention in Google code
@@ -1775,7 +1776,7 @@ which overload is being called.</p>
 string&amp;</code> and overload it with another that
 takes <code>const char*</code>.</p>
 
-<pre>class MyClass {
+<pre class="prettyprint lang-cpp">class MyClass {
  public:
   void Analyze(const string &amp;text);
   void Analyze(const char *text, size_t textlen);
@@ -1881,13 +1882,13 @@ doubt, use overloads.</p>
 <div class="definition">
 <p>C++ allows two different forms of function declarations. In the older
   form, the return type appears before the function name. For example:</p>
-<pre>int foo(int x);
+<pre class="prettyprint lang-cpp">int foo(int x);
 </pre>
 <p>The new form, introduced in C++11, uses the <code>auto</code>
   keyword before the function name and a trailing return type after
   the argument list. For example, the declaration above could
   equivalently be written:</p>
-<pre>auto foo(int x) -&gt; int;
+<pre class="prettyprint lang-cpp">auto foo(int x) -&gt; int;
 </pre>
 <p>The trailing return type is in the function's scope. This doesn't
   make a difference for a simple case like <code>int</code> but it matters
@@ -1907,9 +1908,9 @@ doubt, use overloads.</p>
   after the function's parameter list has already appeared. This is
   particularly true when the return type depends on template parameters.
   For example:</p>
-  <pre>template &lt;class T, class U&gt; auto add(T t, U u) -&gt; decltype(t + u);</pre>
+  <pre class="prettyprint lang-cpp">template &lt;class T, class U&gt; auto add(T t, U u) -&gt; decltype(t + u);</pre>
   versus
-  <pre>template &lt;class T, class U&gt; decltype(declval&lt;T&amp;&gt;() + declval&lt;U&amp;&gt;()) add(T t, U u);</pre>
+  <pre class="prettyprint lang-cpp">template &lt;class T, class U&gt; decltype(declval&lt;T&amp;&gt;() + declval&lt;U&amp;&gt;()) add(T t, U u);</pre>
 </div>
 
 <div class="cons">
@@ -2061,7 +2062,7 @@ or passing a pointer or reference without transferring
 ownership. Prefer to use <code>std::unique_ptr</code> to
 make ownership transfer explicit. For example:</p>
 
-<pre>std::unique_ptr&lt;Foo&gt; FooFactory();
+<pre class="prettyprint lang-cpp">std::unique_ptr&lt;Foo&gt; FooFactory();
 void FooConsumer(std::unique_ptr&lt;Foo&gt; ptr);
 </pre>
 
@@ -2377,7 +2378,7 @@ relationship between objects and their mocks.</p>
 <p>RTTI is useful when considering multiple abstract
 objects. Consider</p>
 
-<pre>bool Base::Equal(Base* other) = 0;
+<pre class="prettyprint lang-cpp">bool Base::Equal(Base* other) = 0;
 bool Derived::Equal(Base* other) {
   Derived* that = dynamic_cast&lt;Derived*&gt;(other);
   if (that == NULL)
@@ -2420,7 +2421,7 @@ such situations.</p>
 <p>Decision trees based on type are a strong indication
 that your code is on the wrong track.</p>
 
-<pre class="badcode">if (typeid(*data) == typeid(D1)) {
+<pre class="prettyprint lang-cpp badcode">if (typeid(*data) == typeid(D1)) {
   ...
 } else if (typeid(*data) == typeid(D2)) {
   ...
@@ -2910,7 +2911,7 @@ self-documentation. However, in C, the advantages of such
 documentation are outweighed by the real bugs it can
 introduce. Consider:</p>
 
-<pre>for (unsigned int i = foo.Length()-1; i &gt;= 0; --i) ...
+<pre class="prettyprint lang-cpp">for (unsigned int i = foo.Length()-1; i &gt;= 0; --i) ...
 </pre>
 
 <p>This code will never terminate! Sometimes gcc will
@@ -2949,7 +2950,7 @@ problems of printing, comparisons, and structure alignment.</p>
   <code>inttypes.h</code>):</p>
 
   <div>
-  <pre>// printf macros for size_t, in the style of inttypes.h
+  <pre class="prettyprint lang-cpp">// printf macros for size_t, in the style of inttypes.h
 #ifdef _LP64
 #define __PRIS_PREFIX "z"
 #else
@@ -3068,7 +3069,7 @@ problems of printing, comparisons, and structure alignment.</p>
   example:</p>
 
 
-<pre>int64_t my_value = 0x123456789LL;
+<pre class="prettyprint lang-cpp">int64_t my_value = 0x123456789LL;
 uint64_t my_mask = 3ULL &lt;&lt; 48;
 </pre>
   </li>
@@ -3101,7 +3102,7 @@ time updating the interface. As a consequence, we
 specifically disallow using macros in this way.
 For example, avoid patterns like:</p>
 
-<pre class="badcode">class WOMBAT_TYPE(Foo) {
+<pre class="prettyprint lang-cpp badcode">class WOMBAT_TYPE(Foo) {
   // ...
 
  public:
@@ -3214,14 +3215,14 @@ to any particular variable, such as code that manages an
 external or internal data format where a variable of an
 appropriate C++ type is not convenient.</p>
 
-<pre>Struct data;
+<pre class="prettyprint lang-cpp">Struct data;
 memset(&amp;data, 0, sizeof(data));
 </pre>
 
-<pre class="badcode">memset(&amp;data, 0, sizeof(Struct));
+<pre class="prettyprint lang-cpp badcode">memset(&amp;data, 0, sizeof(Struct));
 </pre>
 
-<pre>if (raw_size &lt; sizeof(int)) {
+<pre class="prettyprint lang-cpp">if (raw_size &lt; sizeof(int)) {
   LOG(ERROR) &lt;&lt; "compressed record not big enough for count: " &lt;&lt; raw_size;
   return false;
 }
@@ -3259,7 +3260,7 @@ especially when a variable's initialization depends on
 things that were declared far away. In expressions
 like:</p>
 
-<pre class="badcode">auto foo = x.add_foo();
+<pre class="prettyprint lang-cpp badcode">auto foo = x.add_foo();
 auto i = y.Find(key);
 </pre>
 
@@ -3332,7 +3333,7 @@ and <code>.second</code> (often const-ref).
 <p>In C++03, aggregate types (arrays and structs with no
 constructor) could be initialized with braced initializer lists.</p>
 
-<pre>struct Point { int x; int y; };
+<pre class="prettyprint lang-cpp">struct Point { int x; int y; };
 Point p = {1, 2};
 </pre>
 
@@ -3341,7 +3342,7 @@ be created with a braced initializer list, known as a
 <i>braced-init-list</i> in the C++ grammar. Here are a few examples
 of its use.</p>
 
-<pre>// Vector takes a braced-init-list of elements.
+<pre class="prettyprint lang-cpp">// Vector takes a braced-init-list of elements.
 std::vector&lt;string&gt; v{"foo", "bar"};
 
 // Basically the same, ignoring some small technicalities.
@@ -3369,7 +3370,7 @@ TestFunction2({1, 2, 3});
 that take <code>std::initializer_list&lt;T&gt;</code>, which is automatically
 created from <i>braced-init-list</i>:</p>
 
-<pre>class MyType {
+<pre class="prettyprint lang-cpp">class MyType {
  public:
   // std::initializer_list references the underlying init list.
   // It should be passed by value.
@@ -3388,7 +3389,7 @@ MyType m{2, 3, 5, 7};
 constructors of data types, even if they do not have
 <code>std::initializer_list&lt;T&gt;</code> constructors.</p>
 
-<pre>double d{1.23};
+<pre class="prettyprint lang-cpp">double d{1.23};
 // Calls ordinary constructor as long as MyOtherType has no
 // std::initializer_list constructor.
 class MyOtherType {
@@ -3405,10 +3406,10 @@ MyOtherType m{"b"};
 local variable. In the single element case, what this
 means can be confusing.</p>
 
-<pre class="badcode">auto d = {1.23};        // d is a std::initializer_list&lt;double&gt;
+<pre class="prettyprint lang-cpp badcode">auto d = {1.23};        // d is a std::initializer_list&lt;double&gt;
 </pre>
 
-<pre>auto d = double{1.23};  // Good -- d is a double, not a std::initializer_list.
+<pre class="prettyprint lang-cpp">auto d = double{1.23};  // Good -- d is a double, not a std::initializer_list.
 </pre>
 
 <p>See <a href="#Braced_Initializer_List_Format">Braced_Initializer_List_Format</a> for formatting.</p>
@@ -3430,7 +3431,7 @@ when the lambda will escape the current scope.</p>
 function objects. They're often useful when passing
 functions as arguments. For example:</p>
 
-<pre>std::sort(v.begin(), v.end(), [](int x, int y) {
+<pre class="prettyprint lang-cpp">std::sort(v.begin(), v.end(), [](int x, int y) {
   return Weight(x) &lt; Weight(y);
 });
 </pre>
@@ -3440,7 +3441,7 @@ explicitly by name, or implicitly using a default capture. Explicit captures
 require each variable to be listed, as
 either a value or reference capture:</p>
 
-<pre>int weight = 3;
+<pre class="prettyprint lang-cpp">int weight = 3;
 int sum = 0;
 // Captures `weight` by value and `sum` by reference.
 std::for_each(v.begin(), v.end(), [weight, &amp;sum](int x) {
@@ -3452,7 +3453,7 @@ std::for_each(v.begin(), v.end(), [weight, &amp;sum](int x) {
 Default captures implicitly capture any variable referenced in the
 lambda body, including <code>this</code> if any members are used:
 
-<pre>const std::vector&lt;int&gt; lookup_table = ...;
+<pre class="prettyprint lang-cpp">const std::vector&lt;int&gt; lookup_table = ...;
 std::vector&lt;int&gt; indices = ...;
 // Captures `lookup_table` by reference, sorts `indices` by the value
 // of the associated element in `lookup_table`.
@@ -3510,7 +3511,7 @@ wrapper <code>std::function</code>.
 described <a href="#Formatting_Lambda_Expressions">below</a>.</li>
 <li>Prefer explicit captures if the lambda may escape the current scope.
 For example, instead of:
-<pre class="badcode">{
+<pre class="prettyprint lang-cpp badcode">{
   Foo foo;
   ...
   executor-&gt;Schedule([&amp;] { Frobnicate(foo); })
@@ -3523,7 +3524,7 @@ For example, instead of:
 // and the enclosing object could have been destroyed.
 </pre>
 prefer to write:
-<pre>{
+<pre class="prettyprint lang-cpp">{
   Foo foo;
   ...
   executor-&gt;Schedule([&amp;foo] { Frobnicate(foo); })
@@ -3828,7 +3829,7 @@ which is unaffected by this prohibition.</p>
 
 <p>If you want to use the standard hash containers anyway, you will
 need to specify a custom hasher for the key type, e.g.</p>
-<pre>std::unordered_map&lt;MyKeyType, Value, MyKeyTypeHasher&gt; my_map;
+<pre class="prettyprint lang-cpp">std::unordered_map&lt;MyKeyType, Value, MyKeyTypeHasher&gt; my_map;
 </pre><p>
 Consult with the type's owners to see if there is an existing hasher
 that you can use; otherwise work with them to provide one,
@@ -3981,7 +3982,7 @@ guide, the following C++11 features may not be used:</p>
 <div class="stylebody">
 <div class="definition">
 <p>There are several ways to create names that are aliases of other entities:</p>
-<pre>typedef Foo Bar;
+<pre class="prettyprint lang-cpp">typedef Foo Bar;
 using Bar = Foo;
 using other_namespace::Foo;
 </pre>
@@ -4031,7 +4032,7 @@ implementation retain some degree of freedom to change the alias.</p>
 </p>
 
 <p>For example, these aliases document how they are intended to be used in client code:</p>
-<pre>namespace a {
+<pre class="prettyprint lang-cpp">namespace a {
 // Used to store field measurements. DataPoint may change from Bar* to some internal type.
 // Client code should treat it as an opaque pointer.
 using DataPoint = foo::bar::Bar*;
@@ -4043,7 +4044,7 @@ using TimeSeries = std::unordered_set&lt;DataPoint, std::hash&lt;DataPoint&gt;, 
 
 <p>These aliases don't document intended use, and half of them aren't meant for client use:</p>
 
-<pre class="badcode">namespace a {
+<pre class="prettyprint lang-cpp badcode">namespace a {
 // Bad: none of these say how they should be used.
 using DataPoint = foo::bar::Bar*;
 using std::unordered_set;  // Bad: just for local convenience
@@ -4055,7 +4056,7 @@ typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&g
 <p>However, local convenience aliases are fine in function definitions, private sections of
   classes, explicitly marked internal namespaces, and in .cc files:</p>
 
-<pre>// In a .cc file
+<pre class="prettyprint lang-cpp">// In a .cc file
 using std::unordered_set;
 </pre>
 
@@ -4093,12 +4094,12 @@ that are ambiguous or unfamiliar to readers outside your
 project, and do not abbreviate by deleting letters within
 a word.</p>
 
-<pre>int price_count_reader;    // No abbreviation.
+<pre class="prettyprint lang-cpp">int price_count_reader;    // No abbreviation.
 int num_errors;            // "num" is a widespread convention.
 int num_dns_connections;   // Most people know what "DNS" stands for.
 </pre>
 
-<pre class="badcode">int n;                     // Meaningless.
+<pre class="prettyprint lang-cpp badcode">int n;                     // Meaningless.
 int nerr;                  // Ambiguous abbreviation.
 int n_comp_conns;          // Ambiguous abbreviation.
 int wgc_connections;       // Only your group knows what this stands for.
@@ -4176,7 +4177,7 @@ enums, and type template parameters &#8212; have the same naming convention.
 Type names should start with a capital letter and have a capital letter
 for each new word. No underscores. For example:</p>
 
-<pre>// classes and structs
+<pre class="prettyprint lang-cpp">// classes and structs
 class UrlTable { ...
 class UrlTableTester { ...
 struct UrlTableProperties { ...
@@ -4209,11 +4210,11 @@ structs) additionally have trailing underscores. For instance:
 
 <p>For example:</p>
 
-<pre>string table_name;  // OK - uses underscore.
+<pre class="prettyprint lang-cpp">string table_name;  // OK - uses underscore.
 string tablename;   // OK - all lowercase.
 </pre>
 
-<pre class="badcode">string tableName;   // Bad - mixed case.
+<pre class="prettyprint lang-cpp badcode">string tableName;   // Bad - mixed case.
 </pre>
 
 <h4 class="stylepoint_subsection">Class Data Members</h4>
@@ -4222,7 +4223,7 @@ string tablename;   // OK - all lowercase.
 named like ordinary nonmember variables, but with a
 trailing underscore.</p>
 
-<pre>class TableInfo {
+<pre class="prettyprint lang-cpp">class TableInfo {
   ...
  private:
   string table_name_;  // OK - underscore at end.
@@ -4237,7 +4238,7 @@ trailing underscore.</p>
 are named like ordinary nonmember variables. They do not have
 the trailing underscores that data members in classes have.</p>
 
-<pre>struct UrlTableProperties {
+<pre class="prettyprint lang-cpp">struct UrlTableProperties {
   string name;
   int num_entries;
   static Pool&lt;UrlTableProperties&gt;* pool;
@@ -4259,7 +4260,7 @@ versus a class.</p>
   by mixed case.  For example:</p>
 </div>
 
-<pre>const int kDaysInAWeek = 7;
+<pre class="prettyprint lang-cpp">const int kDaysInAWeek = 7;
 </pre>
 
 <div class="stylebody">
@@ -4288,7 +4289,7 @@ Case</a>" or "Pascal case"). Such names should not have
 underscores. Prefer to capitalize acronyms as single words
 (i.e. <code>StartRpc()</code>, not <code>StartRPC()</code>).</p>
 
-<pre>AddTableEntry()
+<pre class="prettyprint lang-cpp">AddTableEntry()
 DeleteUrl()
 OpenFileOrDie()
 </pre>
@@ -4368,7 +4369,7 @@ is also acceptable to name them like
 <code>AlternateUrlTableErrors</code>), is a type, and
 therefore mixed case.</p>
 
-<pre>enum UrlTableErrors {
+<pre class="prettyprint lang-cpp">enum UrlTableErrors {
   kOK = 0,
   kErrorOutOfMemory,
   kErrorMalformedInput,
@@ -4408,7 +4409,7 @@ of macros</a>; in general macros should <em>not</em> be used.
 However, if they are absolutely needed, then they should be
 named with all capitals and underscores.</p>
 
-<pre>#define ROUND(x) ...
+<pre class="prettyprint lang-cpp">#define ROUND(x) ...
 #define PI_ROUNDED 3.0
 </pre>
 
@@ -4524,7 +4525,7 @@ comment that describes what it is for and how it should be used.</p>
 
 <div class="stylebody">
 
-<pre>// Iterates over the contents of a GargantuanTable.
+<pre class="prettyprint lang-cpp">// Iterates over the contents of a GargantuanTable.
 // Example:
 //    GargantuanTableIterator* iter = table-&gt;NewIterator();
 //    for (iter-&gt;Seek("foo"); !iter-&gt;done(); iter-&gt;Next()) {
@@ -4601,7 +4602,7 @@ declaration:</p>
 
 <p>Here is an example:</p>
 
-<pre>// Returns an iterator for this table.  It is the client's
+<pre class="prettyprint lang-cpp">// Returns an iterator for this table.  It is the client's
 // responsibility to delete the iterator when it is done with it,
 // and it must not use the iterator once the GargantuanTable object
 // on which the iterator was created has been deleted.
@@ -4623,7 +4624,7 @@ completely obvious. Notice below that it is not necessary
  to say "returns false otherwise" because this is
 implied.</p>
 
-<pre>// Returns true if the table cannot hold any more entries.
+<pre class="prettyprint lang-cpp">// Returns true if the table cannot hold any more entries.
 bool IsTableFull();
 </pre>
 
@@ -4687,7 +4688,7 @@ num_events_;</code>), no comment is needed.</p>
 of sentinel values, such as nullptr or -1, when they are not
 obvious. For example:</p>
 
-<pre>private:
+<pre class="prettyprint lang-cpp">private:
  // Used to bounds-check table accesses. -1 means
  // that we don't yet know how many entries the table has.
  int num_total_entries_;
@@ -4699,7 +4700,7 @@ obvious. For example:</p>
 are, what they are used for, and (if unclear) why it needs to be
 global. For example:</p>
 
-<pre>// The total number of tests cases that we run through in this regression test.
+<pre class="prettyprint lang-cpp">// The total number of tests cases that we run through in this regression test.
 const int kNumTestCases = 6;
 </pre>
 
@@ -4719,7 +4720,7 @@ non-obvious, interesting, or important parts of your code.</p>
 <p>Tricky or complicated code blocks should have comments
 before them. Example:</p>
 
-<pre>// Divide result by two, taking into account that x
+<pre class="prettyprint lang-cpp">// Divide result by two, taking into account that x
 // contains the carry from the add.
 for (int i = 0; i &lt; result-&gt;size(); i++) {
   x = (x &lt;&lt; 8) + (*result)[i];
@@ -4734,7 +4735,7 @@ for (int i = 0; i &lt; result-&gt;size(); i++) {
 at the end of the line. These end-of-line comments should
 be separated from the code by 2 spaces. Example:</p>
 
-<pre>// If we have enough memory, mmap the data portion too.
+<pre class="prettyprint lang-cpp">// If we have enough memory, mmap the data portion too.
 mmap_budget = max&lt;int64&gt;(0, mmap_budget - index_-&gt;length());
 if (mmap_budget &gt;= data_size_ &amp;&amp; !MmapData(mmap_chunk_bytes, mlock))
   return;  // Error already logged.
@@ -4748,7 +4749,7 @@ returns.</p>
 <p>If you have several comments on subsequent lines, it
 can often be more readable to line them up:</p>
 
-<pre>DoSomething();                  // Comment here so the comments line up.
+<pre class="prettyprint lang-cpp">DoSomething();                  // Comment here so the comments line up.
 DoSomethingElseThatIsLonger();  // Two spaces between the code and the comment.
 { // One space before comment when opening a new scope is allowed,
   // thus the comment lines up with the following comments and code.
@@ -4796,13 +4797,13 @@ one of the following remedies:</p>
 
 Consider the following example:
 
-<pre class="badcode">// What are these arguments?
+<pre class="prettyprint lang-cpp badcode">// What are these arguments?
 const DecimalNumber product = CalculateProduct(values, 7, false, nullptr);
 </pre>
 
 <p>versus:</p>
 
-<pre>ProductOptions options;
+<pre class="prettyprint lang-cpp">ProductOptions options;
 options.set_precision_decimals(7);
 options.set_use_cache(ProductOptions::kDontUseCache);
 const DecimalNumber product =
@@ -4818,7 +4819,7 @@ the code does what it does, or make the code self describing.</p>
 
 Compare this:
 
-<pre class="badcode">// Find the element in the vector.  &lt;-- Bad: obvious!
+<pre class="prettyprint lang-cpp badcode">// Find the element in the vector.  &lt;-- Bad: obvious!
 auto iter = std::find(v.begin(), v.end(), element);
 if (iter != v.end()) {
   Process(element);
@@ -4827,7 +4828,7 @@ if (iter != v.end()) {
 
 To this:
 
-<pre>// Process "element" unless it was already processed.
+<pre class="prettyprint lang-cpp">// Process "element" unless it was already processed.
 auto iter = std::find(v.begin(), v.end(), element);
 if (iter != v.end()) {
   Process(element);
@@ -4837,7 +4838,7 @@ if (iter != v.end()) {
 Self-describing code doesn't need a comment. The comment from
 the example above would be obvious:
 
-<pre>if (!IsAlreadyProcessed(element)) {
+<pre class="prettyprint lang-cpp">if (!IsAlreadyProcessed(element)) {
   Process(element);
 }
 </pre>
@@ -4896,7 +4897,7 @@ name that is given.</p>
 
 
 <div>
-<pre>// TODO(kl@gmail.com): Use a "*" here for concatenation operator.
+<pre class="prettyprint lang-cpp">// TODO(kl@gmail.com): Use a "*" here for concatenation operator.
 // TODO(Zeke) change this to use relations.
 // TODO(bug 12345): remove the "Last visitors" feature
 </pre>
@@ -5104,7 +5105,7 @@ not fit on a single line as you would wrap arguments in a
 <p>Functions look like this:</p>
 
 
-<pre>ReturnType ClassName::FunctionName(Type par_name1, Type par_name2) {
+<pre class="prettyprint lang-cpp">ReturnType ClassName::FunctionName(Type par_name1, Type par_name2) {
   DoSomething();
   ...
 }
@@ -5112,7 +5113,7 @@ not fit on a single line as you would wrap arguments in a
 
 <p>If you have too much text to fit on one line:</p>
 
-<pre>ReturnType ClassName::ReallyLongFunctionName(Type par_name1, Type par_name2,
+<pre class="prettyprint lang-cpp">ReturnType ClassName::ReallyLongFunctionName(Type par_name1, Type par_name2,
                                              Type par_name3) {
   DoSomething();
   ...
@@ -5121,7 +5122,7 @@ not fit on a single line as you would wrap arguments in a
 
 <p>or if you cannot fit even the first parameter:</p>
 
-<pre>ReturnType LongClassName::ReallyReallyReallyLongFunctionName(
+<pre class="prettyprint lang-cpp">ReturnType LongClassName::ReallyReallyReallyLongFunctionName(
     Type par_name1,  // 4 space indent
     Type par_name2,
     Type par_name3) {
@@ -5171,7 +5172,7 @@ not fit on a single line as you would wrap arguments in a
 
 <p>Unused parameters that are obvious from context may be omitted:</p>
 
-<pre>class Foo {
+<pre class="prettyprint lang-cpp">class Foo {
  public:
   Foo(Foo&amp;&amp;);
   Foo(const Foo&amp;);
@@ -5183,7 +5184,7 @@ not fit on a single line as you would wrap arguments in a
 <p>Unused parameters that might not be obvious should comment out the variable
 name in the function definition:</p>
 
-<pre>class Shape {
+<pre class="prettyprint lang-cpp">class Shape {
  public:
   virtual void Rotate(double radians) = 0;
 };
@@ -5196,7 +5197,7 @@ class Circle : public Shape {
 void Circle::Rotate(double /*radians*/) {}
 </pre>
 
-<pre class="badcode">// Bad - if someone wants to implement later, it's not clear what the
+<pre class="prettyprint lang-cpp badcode">// Bad - if someone wants to implement later, it's not clear what the
 // variable means.
 void Circle::Rotate(double) {}
 </pre>
@@ -5204,7 +5205,7 @@ void Circle::Rotate(double) {}
 <p>Attributes, and macros that expand to attributes, appear at the very
 beginning of the function declaration or definition, before the
 return type:</p>
-<pre>MUST_USE_RESULT bool IsOK();
+<pre class="prettyprint lang-cpp">MUST_USE_RESULT bool IsOK();
 </pre>
 
 </div> 
@@ -5219,11 +5220,11 @@ lists like other comma-separated lists.</p>
 <div class="stylebody">
 <p>For by-reference captures, do not leave a space between the
 ampersand (&amp;) and the variable name.</p>
-<pre>int x = 0;
+<pre class="prettyprint lang-cpp">int x = 0;
 auto x_plus_n = [&amp;x](int n) -&gt; int { return x + n; }
 </pre>
 <p>Short lambdas may be written inline as function arguments.</p>
-<pre>std::set&lt;int&gt; blacklist = {7, 8, 9};
+<pre class="prettyprint lang-cpp">std::set&lt;int&gt; blacklist = {7, 8, 9};
 std::vector&lt;int&gt; digits = {3, 9, 1, 8, 4, 7, 1};
 digits.erase(std::remove_if(digits.begin(), digits.end(), [&amp;blacklist](int i) {
                return blacklist.find(i) != blacklist.end();
@@ -5247,7 +5248,7 @@ on each line where appropriate.</p>
 <div class="stylebody">
 
 <p>Function calls have the following format:</p>
-<pre>bool result = DoSomething(argument1, argument2, argument3);
+<pre class="prettyprint lang-cpp">bool result = DoSomething(argument1, argument2, argument3);
 </pre>
 
 <p>If the arguments do not all fit on one line, they
@@ -5255,13 +5256,13 @@ should be broken up onto multiple lines, with each
 subsequent line aligned with the first argument. Do not
 add spaces after the open paren or before the close
 paren:</p>
-<pre>bool result = DoSomething(averyveryveryverylongargument1,
+<pre class="prettyprint lang-cpp">bool result = DoSomething(averyveryveryverylongargument1,
                           argument2, argument3);
 </pre>
 
 <p>Arguments may optionally all be placed on subsequent
 lines with a four space indent:</p>
-<pre>if (...) {
+<pre class="prettyprint lang-cpp">if (...) {
   ...
   ...
   if (...) {
@@ -5285,13 +5286,13 @@ better addressed with the following techniques.</p>
 readability due to the complexity or confusing nature of the
 expressions that make up some arguments, try creating
 variables that capture those arguments in a descriptive name:</p>
-<pre>int my_heuristic = scores[x] * y + bases[x];
+<pre class="prettyprint lang-cpp">int my_heuristic = scores[x] * y + bases[x];
 bool result = DoSomething(my_heuristic, x, y, z);
 </pre>
 
 <p>Or put the confusing argument on its own line with
 an explanatory comment:</p>
-<pre>bool result = DoSomething(scores[x] * y + bases[x],  // Score heuristic.
+<pre class="prettyprint lang-cpp">bool result = DoSomething(scores[x] * y + bases[x],  // Score heuristic.
                           x, y, z);
 </pre>
 
@@ -5303,7 +5304,7 @@ which is made more readable rather than a general policy.</p>
 <p>Sometimes arguments form a structure that is important
 for readability. In those cases, feel free to format the
 arguments according to that structure:</p>
-<pre>// Transform the widget by a 3x3 matrix.
+<pre class="prettyprint lang-cpp">// Transform the widget by a 3x3 matrix.
 my_widget.Transform(x1, x2, x3,
                     y1, y2, y3,
                     z1, z2, z3);
@@ -5325,7 +5326,7 @@ variable name), format as if the <code>{}</code> were the
 parentheses of a function call with that name. If there
 is no name, assume a zero-length name.</p>
 
-<pre>// Examples of braced init list on a single line.
+<pre class="prettyprint lang-cpp">// Examples of braced init list on a single line.
 return {foo, bar};
 functioncall({foo, bar});
 std::pair&lt;int, int&gt; p{foo, bar};
@@ -5374,7 +5375,7 @@ writing new code, use the format that the other files in
 that directory or project use. If in doubt and you have
 no personal preference, do not add the spaces.</p>
 
-<pre>if (condition) {  // no spaces inside parentheses
+<pre class="prettyprint lang-cpp">if (condition) {  // no spaces inside parentheses
   ...  // 2 space indent.
 } else if (...) {  // The else goes on the same line as the closing brace.
   ...
@@ -5386,7 +5387,7 @@ no personal preference, do not add the spaces.</p>
 <p>If you prefer you may add spaces inside the
 parentheses:</p>
 
-<pre>if ( condition ) {  // spaces inside parentheses - rare
+<pre class="prettyprint lang-cpp">if ( condition ) {  // spaces inside parentheses - rare
   ...  // 2 space indent.
 } else {  // The else goes on the same line as the closing brace.
   ...
@@ -5398,12 +5399,12 @@ the <code>if</code> and the open parenthesis. You must
 also have a space between the close parenthesis and the
 curly brace, if you're using one.</p>
 
-<pre class="badcode">if(condition) {   // Bad - space missing after IF.
+<pre class="prettyprint lang-cpp badcode">if(condition) {   // Bad - space missing after IF.
 if (condition){   // Bad - space missing before {.
 if(condition){    // Doubly bad.
 </pre>
 
-<pre>if (condition) {  // Good - proper space after IF and before {.
+<pre class="prettyprint lang-cpp">if (condition) {  // Good - proper space after IF and before {.
 </pre>
 
 <p>Short conditional statements may be written on one
@@ -5411,14 +5412,14 @@ line if this enhances readability. You may use this only
 when the line is brief and the statement does not use the
 <code>else</code> clause.</p>
 
-<pre>if (x == kFoo) return new Foo();
+<pre class="prettyprint lang-cpp">if (x == kFoo) return new Foo();
 if (x == kBar) return new Bar();
 </pre>
 
 <p>This is not allowed when the if statement has an
 <code>else</code>:</p>
 
-<pre class="badcode">// Not allowed - IF statement on one line when there is an ELSE clause
+<pre class="prettyprint lang-cpp badcode">// Not allowed - IF statement on one line when there is an ELSE clause
 if (x) DoThis();
 else DoThat();
 </pre>
@@ -5432,7 +5433,7 @@ projects require that an
 <code>if</code> must always always have an accompanying
 brace.</p>
 
-<pre>if (condition)
+<pre class="prettyprint lang-cpp">if (condition)
   DoSomething();  // 2 space indent.
 
 if (condition) {
@@ -5444,7 +5445,7 @@ if (condition) {
 <code>if</code>-<code>else</code> statement uses curly
 braces, the other part must too:</p>
 
-<pre class="badcode">// Not allowed - curly on IF but not ELSE
+<pre class="prettyprint lang-cpp badcode">// Not allowed - curly on IF but not ELSE
 if (condition) {
   foo;
 } else
@@ -5458,7 +5459,7 @@ else {
 }
 </pre>
 
-<pre>// Curly braces around both IF and ELSE required because
+<pre class="prettyprint lang-cpp">// Curly braces around both IF and ELSE required because
 // one of the clauses used braces.
 if (condition) {
   foo;
@@ -5495,7 +5496,7 @@ case should never execute, simply
  
 
 <div>
-<pre>switch (var) {
+<pre class="prettyprint lang-cpp">switch (var) {
   case 0: {  // 2 space indent
     ...      // 4 space indent
     break;
@@ -5517,7 +5518,7 @@ case should never execute, simply
 
 <p> Braces are optional for single-statement loops.</p>
 
-<pre>for (int i = 0; i &lt; kSomeNumber; ++i)
+<pre class="prettyprint lang-cpp">for (int i = 0; i &lt; kSomeNumber; ++i)
   printf("I love you\n");
 
 for (int i = 0; i &lt; kSomeNumber; ++i) {
@@ -5529,14 +5530,14 @@ for (int i = 0; i &lt; kSomeNumber; ++i) {
 <p>Empty loop bodies should use an empty pair of braces or <code>continue</code>,
 but not a single semicolon.</p>
 
-<pre>while (condition) {
+<pre class="prettyprint lang-cpp">while (condition) {
   // Repeat test until it returns false.
 }
 for (int i = 0; i &lt; kSomeNumber; ++i) {}  // Good - one newline is also OK.
 while (condition) continue;  // Good - continue indicates no logic.
 </pre>
 
-<pre class="badcode">while (condition);  // Bad - looks like part of do/while loop.
+<pre class="prettyprint lang-cpp badcode">while (condition);  // Bad - looks like part of do/while loop.
 </pre>
 
 </div> 
@@ -5553,7 +5554,7 @@ have trailing spaces.</p>
 <p>The following are examples of correctly-formatted
 pointer and reference expressions:</p>
 
-<pre>x = *p;
+<pre class="prettyprint lang-cpp">x = *p;
 p = &amp;x;
 x = r.y;
 x = r-&gt;y;
@@ -5573,7 +5574,7 @@ x = r-&gt;y;
 place the asterisk adjacent to either the type or to the
 variable name:</p>
 
-<pre>// These are fine, space preceding.
+<pre class="prettyprint lang-cpp">// These are fine, space preceding.
 char *c;
 const string &amp;str;
 
@@ -5585,10 +5586,10 @@ const string&amp; str;
 It is allowed (if unusual) to declare multiple variables in the same
 declaration, but it is disallowed if any of those have pointer or
 reference decorations. Such declarations are easily misread.
-<pre>// Fine if helpful for readability.
+<pre class="prettyprint lang-cpp">// Fine if helpful for readability.
 int x, y;
 </pre>
-<pre class="badcode">int x, *y;  // Disallowed - no &amp; or * in multiple declaration
+<pre class="prettyprint lang-cpp badcode">int x, *y;  // Disallowed - no &amp; or * in multiple declaration
 char * c;  // Bad - spaces on both sides of *
 const string &amp; str;  // Bad - spaces on both sides of &amp;
 </pre>
@@ -5613,7 +5614,7 @@ consistent in how you break up the lines.</p>
 <p>In this example, the logical AND operator is always at
 the end of the lines:</p>
 
-<pre>if (this_one_thing &gt; this_other_thing &amp;&amp;
+<pre class="prettyprint lang-cpp">if (this_one_thing &gt; this_other_thing &amp;&amp;
     a_third_thing == a_fourth_thing &amp;&amp;
     yet_another &amp;&amp; last_one) {
   ...
@@ -5647,13 +5648,13 @@ expression with parentheses.</p>
 <p>Use parentheses in <code>return expr;</code> only
 where you would use them in <code>x = expr;</code>.</p>
 
-<pre>return result;                  // No parentheses in the simple case.
+<pre class="prettyprint lang-cpp">return result;                  // No parentheses in the simple case.
 // Parentheses OK to make a complex expression more readable.
 return (some_long_condition &amp;&amp;
         another_condition);
 </pre>
 
-<pre class="badcode">return (value);                // You wouldn't write var = (value);
+<pre class="prettyprint lang-cpp badcode">return (value);                // You wouldn't write var = (value);
 return(result);                // return is not a function!
 </pre>
 
@@ -5674,7 +5675,7 @@ return(result);                // return is not a function!
 <code>()</code>, and <code>{}</code>; the following are
 all correct:</p>
 
-<pre>int x = 3;
+<pre class="prettyprint lang-cpp">int x = 3;
 int x(3);
 int x{3};
 string name = "Some Name";
@@ -5691,7 +5692,7 @@ will call a default constructor if available. To force the
 non-<code>std::initializer_list</code> constructor, use parentheses
 instead of braces.</p>
 
-<pre>std::vector&lt;int&gt; v(100, 1);  // A vector of 100 1s.
+<pre class="prettyprint lang-cpp">std::vector&lt;int&gt; v(100, 1);  // A vector of 100 1s.
 std::vector&lt;int&gt; v{100, 1};  // A vector of 100, 1.
 </pre>
 
@@ -5699,7 +5700,7 @@ std::vector&lt;int&gt; v{100, 1};  // A vector of 100, 1.
 types. This can prevent some types of programming
 errors.</p>
 
-<pre>int pi(3.14);  // OK -- pi == 3.
+<pre class="prettyprint lang-cpp">int pi(3.14);  // OK -- pi == 3.
 int pi{3.14};  // Compile error: narrowing conversion.
 </pre>
 
@@ -5718,7 +5719,7 @@ always be at the beginning of the line.</p>
 of indented code, the directives should start at the
 beginning of the line.</p>
 
-<pre>// Good - directives at beginning of line
+<pre class="prettyprint lang-cpp">// Good - directives at beginning of line
   if (lopsided_score) {
 #if DISASTER_PENDING      // Correct -- Starts at beginning of line
     DropEverything();
@@ -5730,7 +5731,7 @@ beginning of the line.</p>
   }
 </pre>
 
-<pre class="badcode">// Bad - indented directives
+<pre class="prettyprint lang-cpp badcode">// Bad - indented directives
   if (lopsided_score) {
     #if DISASTER_PENDING  // Wrong!  The "#if" should be at beginning of line
     DropEverything();
@@ -5755,7 +5756,7 @@ comments, see <a href="#Class_Comments">Class
 Comments</a> for a discussion of what comments are
 needed) is:</p>
 
-<pre>class MyClass : public OtherClass {
+<pre class="prettyprint lang-cpp">class MyClass : public OtherClass {
  public:      // Note the 1 space indent!
   MyClass();  // Regular 2 space indent.
   explicit MyClass(int var);
@@ -5815,7 +5816,7 @@ with subsequent lines indented four spaces.</p>
 
 <p>The acceptable formats for initializer lists are:</p>
 
-<pre>// When everything fits on one line:
+<pre class="prettyprint lang-cpp">// When everything fits on one line:
 MyClass::MyClass(int var) : some_var_(var) {
   DoSomething();
 }
@@ -5854,7 +5855,7 @@ MyClass::MyClass(int var)
 <p><a href="#Namespaces">Namespaces</a> do not add an
 extra level of indentation. For example, use:</p>
 
-<pre>namespace {
+<pre class="prettyprint lang-cpp">namespace {
 
 void foo() {  // Correct.  No extra indentation within namespace.
   ...
@@ -5865,7 +5866,7 @@ void foo() {  // Correct.  No extra indentation within namespace.
 
 <p>Do not indent within a namespace:</p>
 
-<pre class="badcode">namespace {
+<pre class="prettyprint lang-cpp badcode">namespace {
 
   // Wrong.  Indented when it should not be.
   void foo() {
@@ -5878,7 +5879,7 @@ void foo() {  // Correct.  No extra indentation within namespace.
 <p>When declaring nested namespaces, put each namespace
 on its own line.</p>
 
-<pre>namespace foo {
+<pre class="prettyprint lang-cpp">namespace foo {
 namespace bar {
 </pre>
 
@@ -5895,7 +5896,7 @@ trailing whitespace at the end of a line.</p>
 
 <h4 class="stylepoint_subsection">General</h4>
 
-<pre>void f(bool b) {  // Open braces should always have a space before them.
+<pre class="prettyprint lang-cpp">void f(bool b) {  // Open braces should always have a space before them.
   ...
 int i = 0;  // Semicolons usually have no space before them.
 // Spaces inside braces for braced-init-list are optional.  If you use them,
@@ -5924,7 +5925,7 @@ else is working on the file).</p>
 
 <h4 class="stylepoint_subsection">Loops and Conditionals</h4>
 
-<pre>if (b) {          // Space after the keyword in conditions and loops.
+<pre class="prettyprint lang-cpp">if (b) {          // Space after the keyword in conditions and loops.
 } else {          // Spaces around else.
 }
 while (test) {}   // There is usually no space inside parentheses.
@@ -5952,7 +5953,7 @@ switch (i) {
 
 <h4 class="stylepoint_subsection">Operators</h4>
 
-<pre>// Assignment operators always have spaces around them.
+<pre class="prettyprint lang-cpp">// Assignment operators always have spaces around them.
 x = 0;
 
 // Other binary operators usually have spaces around them, but it's
@@ -5971,7 +5972,7 @@ if (x &amp;&amp; !y)
 
 <h4 class="stylepoint_subsection">Templates and Casts</h4>
 
-<pre>// No spaces inside the angle brackets (&lt; and &gt;), before
+<pre class="prettyprint lang-cpp">// No spaces inside the angle brackets (&lt; and &gt;), before
 // &lt;, or between &gt;( in a cast
 std::vector&lt;string&gt; x;
 y = static_cast&lt;char*&gt;(x);
