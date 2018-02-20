@@ -640,7 +640,14 @@ using ::foo::bar;
 </pre>
   </li>
 
+  <li>To place generated protocol
+  message code in a namespace, use the
+  <code>package</code> specifier in the
+  <code>.proto</code> file. See
   
+  <a href="https://developers.google.com/protocol-buffers/docs/reference/cpp-generated#package">
+  Protocol Buffer Packages</a>
+  for details.</li>
 
   <li>Do not declare anything in namespace
   <code>std</code>, including forward declarations of
@@ -955,7 +962,11 @@ Foo a[] = { Foo(1), Foo(2), Foo(3) };  // fine</pre>
 
 <p>Constant initialization is always allowed. Constant initialization of
 static storage duration variables should be marked with <code>constexpr</code>
-where possible. Any non-local static storage
+or where possible the
+
+<a href="https://github.com/abseil/abseil-cpp/blob/03c1513538584f4a04d666be5eb469e3979febba/absl/base/attributes.h#L540">
+<code>ABSL_CONST_INIT</code></a>
+attribute. Any non-local static storage
 duration variable that is not so marked should be presumed to have
 dynamic initialization, and reviewed very carefully.</p>
 
@@ -1021,7 +1032,12 @@ does not make an observable difference. For example:</p>
 
 <div class="summary">
 <p><code>thread_local</code> variables that aren't declared inside a function
-must be initialized with a true compile-time constant. Prefer
+must be initialized with a true compile-time constant,
+and this must be enforced by using the
+
+<a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/attributes.h">
+<code>ABSL_CONST_INIT</code></a>
+attribute. Prefer
 <code>thread_local</code> over other ways of defining thread-local data.</p>
 </div>
 
@@ -1093,9 +1109,16 @@ variables.</p>
 
   <p><code>thread_local</code> variables at class or namespace scope must be
     initialized with a true compile-time constant (i.e. they must have no
-    dynamic initialization). </p>
+    dynamic initialization). To enforce this,
+    <code>thread_local</code> variables at class or namespace scope must be
+    annotated with
+    
+    <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/attributes.h">
+    <code>ABSL_CONST_INIT</code></a>
+    (or <code>constexpr</code>, but that should be rare):</p>
 
-  
+<pre>ABSL_CONST_INIT thread_local Foo foo = ...;
+</pre>
 
   <p><code>thread_local</code> should be preferred over other mechanisms for
     defining thread-local data.</p>
@@ -1166,7 +1189,12 @@ for your code
 ,
 terminating the program may be an appropriate error handling
 response. Otherwise, consider a factory function
-or <code>Init()</code> method. Avoid <code>Init()</code> methods on objects with
+or <code>Init()</code> method as described in
+
+
+<a href="https://abseil.io/tips/42">TotW #42</a>
+.
+Avoid <code>Init()</code> methods on objects with
 no other states that affect which public methods may be called
 (semi-constructed objects of this form are particularly hard to work
 with correctly).</p>
@@ -1226,7 +1254,10 @@ language treats it as one as far as <code>explicit</code> is concerned.
     expressive by eliminating the need to explicitly name a type
     when it's obvious.</li>
 <li>Implicit conversions can be a simpler alternative to
-    overloading.</li>
+    overloading, such as when a single
+    function with a <code>string_view</code> parameter takes the
+    place of separate overloads for <code>string</code> and
+    <code>const char*</code>.</li>
 <li>List initialization syntax is a concise and expressive
     way of initializing objects.</li>
 </ul>
@@ -2924,7 +2955,15 @@ This is typically the case when the I/O is ad-hoc, local,
 human-readable, and targeted at other developers rather than
 end-users. Be consistent with the code around you, and with the
 codebase as a whole; if there's an established tool for
-your problem, use that tool instead. </p>
+your problem, use that tool instead.
+In particular,
+logging libraries are usually a better
+choice than <code>std::cerr</code> or <code>std::clog</code>
+for diagnostic output, and the libraries in
+
+<code>absl/strings</code>
+or the equivalent are usually a
+better choice than <code>std::stringstream</code>.</p>
 
 <p>Avoid using streams for I/O that faces external users or
 handles untrusted data. Instead, find and use the appropriate
@@ -2934,7 +2973,10 @@ localization, and security hardening.</p>
 <p>If you do use streams, avoid the stateful parts of the
 streams API (other than error state), such as <code>imbue()</code>,
 <code>xalloc()</code>, and <code>register_callback()</code>.
-Use explicit formatting functions  rather than
+Use explicit formatting functions (see e.g.
+
+<code>absl/strings</code>)
+rather than
 stream manipulators or formatting flags to control formatting
 details such as number base, precision, or padding.</p>
 
@@ -3271,8 +3313,14 @@ problems of printing, comparisons, and structure alignment.</p>
   for your particular case, try to avoid or even upgrade APIs that rely on the
   <code>printf</code> family. Instead use a library supporting typesafe numeric
   formatting, such as
+    
+    <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/strings/str_cat.h"><code>StrCat</code></a>
+    or
+    
+    <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/strings/substitute.h"><code>Substitute</code></a>
+    for fast simple conversions,
   
-  <a href="#Streams"><code>std::ostream</code></a>.</p>
+  or <a href="#Streams"><code>std::ostream</code></a>.</p>
 
   <p>Unfortunately, the <code>PRI</code> macros are the only portable way to
   specify a conversion for the standard bitwidth typedefs (e.g.
@@ -3531,7 +3579,8 @@ instance).</li>
 <li>(Allowed) When the type is clear from local context (in the same expression
 or within a few lines).  Initialization of a pointer or smart pointer
 with calls
-to <code>new</code> 
+to <code>new</code> and 
+<code>std::make_unique</code>
 commonly falls into this category, as does use of <code>auto</code> in
 a range-based loop over a container whose type is spelled out
 nearby.</li>
@@ -5760,9 +5809,37 @@ case should never execute, treat this as an error. For example:
 </pre>
 </div> 
 
+<p>Fall-through from one case label to
+another must be annotated using the
+<code>ABSL_FALLTHROUGH_INTENDED;</code> macro (defined in
 
+<code>absl/base/macros.h</code>).
+<code>ABSL_FALLTHROUGH_INTENDED;</code> should be placed at a
+point of execution where a fall-through to the next case
+label occurs. A common exception is consecutive case
+labels without intervening code, in which case no
+annotation is needed.</p>
 
-
+<div>
+<pre>switch (x) {
+  case 41:  // No annotation needed here.
+  case 43:
+    if (dont_be_picky) {
+      // Use this instead of or along with annotations in comments.
+      ABSL_FALLTHROUGH_INTENDED;
+    } else {
+      CloseButNoCigar();
+      break;
+    }
+  case 42:
+    DoSomethingSpecial();
+    ABSL_FALLTHROUGH_INTENDED;
+  default:
+    DoSomethingGeneric();
+    break;
+}
+</pre>
+</div>
 
 <p> Braces are optional for single-statement loops.</p>
 
