@@ -51,6 +51,7 @@ import sre_compile
 import string
 import sys
 import unicodedata
+import locale
 
 
 _USAGE = """
@@ -5430,6 +5431,7 @@ def FilesBelongToSameModule(filename_cc, filename_h):
   fileinfo = FileInfo(filename_cc)
   if not fileinfo.IsSource():
     return (False, '')
+  filename_cc = filename_cc.decode(locale.getpreferredencoding())
   filename_cc = filename_cc[:-len(fileinfo.Extension())]
   matched_test_suffix = Search(_TEST_FILE_SUFFIX, fileinfo.BaseName())
   if matched_test_suffix:
