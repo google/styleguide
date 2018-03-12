@@ -43,6 +43,11 @@ import unittest
 
 import cpplint
 
+try:
+  xrange          # Python 2
+except NameError:
+  xrange = range  # Python 3
+
 
 # This class works as an error collector and replaces cpplint.Error
 # function for the unit tests.  We also verify each category we see
