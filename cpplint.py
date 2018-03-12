@@ -58,6 +58,12 @@ import xml.etree.ElementTree
 # if empty, use defaults
 _valid_extensions = set([])
 
+try:
+  xrange
+except NameError:
+  #  -- pylint: disable=redefined-builtin
+  xrange = range
+
 
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
@@ -634,12 +640,6 @@ _quiet = False
 # The allowed line length of files.
 # This is set by --linelength flag.
 _line_length = 80
-
-try:
-  xrange(1, 0)
-except NameError:
-  #  -- pylint: disable=redefined-builtin
-  xrange = range
 
 try:
   unicode
