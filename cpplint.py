@@ -59,10 +59,10 @@ import xml.etree.ElementTree
 _valid_extensions = set([])
 
 try:
-  xrange
+  xrange          # Python 2
 except NameError:
   #  -- pylint: disable=redefined-builtin
-  xrange = range
+  xrange = range  # Python 3
 
 
 _USAGE = """
