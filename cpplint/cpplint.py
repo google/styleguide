@@ -52,6 +52,11 @@ import string
 import sys
 import unicodedata
 
+try:
+  xrange
+except NameError:
+  xrange = range
+
 
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
