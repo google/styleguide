@@ -53,9 +53,9 @@ import sys
 import unicodedata
 
 try:
-  xrange
+  xrange          # Python 2
 except NameError:
-  xrange = range
+  xrange = range  # Python 3
 
 
 _USAGE = """
