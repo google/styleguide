@@ -48,7 +48,10 @@ Catches easy-to-miss errors like typos, using-vars-before-assignment, etc.
 #### 2.1.3 Cons
 
 `pylint` isn't perfect. To take advantage of it, we'll need to sometimes: a)
-Write around it b) Suppress its warnings or c) Improve it.
+Write around it b) Suppress its warnings or c) Improve it.  `pylint` does
+not find Python syntax errors (like `print` without the parens in Python 3)
+or undefined names (like `unicode()` and `xrange()` in Python 3).  Use
+`python3 -m flake8 . --select=E9,F82 --show-source` as a workaround.
 
 <a id="s2.1.4-decision"></a>
 #### 2.1.4 Decision
