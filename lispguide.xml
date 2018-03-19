@@ -3038,7 +3038,7 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="Identity, Equality and Comparisons">
     <SUMMARY>
-      You should the appropriate predicates when comparing objects.
+      You should use the appropriate predicates when comparing objects.
     </SUMMARY>
     <BODY>
       <p>
