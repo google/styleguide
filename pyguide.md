@@ -477,26 +477,26 @@ No:   for key in adict.keys(): ...
 
 Use generators as needed.
 
-<a id="s2.9.1-definition">
+<a id="s2.9.1-definition"></a>
 #### 2.9.1 Definition
 
 A generator function returns an iterator that yields a value each time it
 executes a yield statement. After it yields a value, the runtime state of the
 generator function is suspended until the next value is needed.
 
-<a id="s2.9.2-pros">
+<a id="s2.9.2-pros"></a>
 #### 2.9.2 Pros
 
 Simpler code, because the state of local variables and control flow are
 preserved for each call. A generator uses less memory than a function that
 creates an entire list of values at once.
 
-<a id="s2.9.3-cons">
+<a id="s2.9.3-cons"></a>
 #### 2.9.3 Cons
 
 None.
 
-<a id="s2.9.4-decision">
+<a id="s2.9.4-decision"></a>
 #### 2.9.4 Decision
 
 Fine. Use "Yields:" rather than "Returns:" in the docstring for generator
@@ -508,26 +508,26 @@ functions.
 
 Okay for one-liners.
 
-<a id="s2.10.1-definition">
+<a id="s2.10.1-definition"></a>
 #### 2.10.1 Definition
 
 Lambdas define anonymous functions in an expression, as opposed to a statement.
 They are often used to define callbacks or operators for higher-order functions
 like `map()` and `filter()`.
 
-<a id="s2.10.2-pros">
+<a id="s2.10.2-pros"></a>
 #### 2.10.2 Pros
 
 Convenient.
 
-<a id="s2.10.3-cons">
+<a id="s2.10.3-cons"></a>
 #### 2.10.3 Cons
 
 Harder to read and debug than local functions. The lack of names means stack
 traces are more difficult to understand. Expressiveness is limited because the
 function may only contain an expression.
 
-<a id="s2.10.4-decision">
+<a id="s2.10.4-decision"></a>
 #### 2.10.4 Decision
 
 Okay to use them for one-liners. If the code inside the lambda function is any
@@ -544,25 +544,25 @@ module instead of lambda functions. For example, prefer `operator.mul` to
 
 Okay for one-liners.
 
-<a id="s2.11.1-definition">
+<a id="s2.11.1-definition"></a>
 #### 2.11.1 Definition
 
 Conditional expressions (sometimes called a “ternary operator”) are mechanisms
 that provide a shorter syntax for if statements. For example:
 `x = 1 if cond else 2`.
 
-<a id="s2.11.2-pros">
+<a id="s2.11.2-pros"></a>
 #### 2.11.2 Pros
 
 Shorter and more convenient than an if statement.
 
-<a id="s2.11.3-cons">
+<a id="s2.11.3-cons"></a>
 #### 2.11.3 Cons
 
 May be harder to read than an if statement. The condition may be difficult to
 locate if the expression is long.
 
-<a id="s2.11.4-decision">
+<a id="s2.11.4-decision"></a>
 #### 2.11.4 Decision
 
 Okay to use for one-liners. In other cases prefer to use a complete if
@@ -574,7 +574,7 @@ statement.
 
 Okay in most cases.
 
-<a id="s2.12.1-definition">
+<a id="s2.12.1-definition"></a>
 #### 2.12.1 Definition
 
 You can specify values for variables at the end of a function's parameter list,
@@ -582,7 +582,7 @@ e.g., `def foo(a, b=0):`.  If `foo` is called with only one argument,
 `b` is set to 0. If it is called with two arguments, `b` has the value of the
 second argument.
 
-<a id="s2.12.2-pros">
+<a id="s2.12.2-pros"></a>
 #### 2.12.2 Pros
 
 Often you have a function that uses lots of default values, but-rarely-you want
@@ -591,7 +591,7 @@ this, without having to define lots of functions for the rare exceptions. Also,
 Python does not support overloaded methods/functions and default arguments are
 an easy way of "faking" the overloading behavior.
 
-<a id="s2.12.3-cons">
+<a id="s2.12.3-cons"></a>
 #### 2.12.3 Cons
 
 Default arguments are evaluated once at module load time. This may cause
@@ -599,7 +599,7 @@ problems if the argument is a mutable object such as a list or a dictionary. If
 the function modifies the object (e.g., by appending an item to a list), the
 default value is modified.
 
-<a id="s2.12.4-decision">
+<a id="s2.12.4-decision"></a>
 #### 2.12.4 Decision
 
 Okay to use with the following caveat:
@@ -632,13 +632,13 @@ No:  def foo(a, b=FLAGS.my_thing):  # sys.argv has not yet been parsed...
 Use properties for accessing or setting data where you would normally have used
 simple, lightweight accessor or setter methods.
 
-<a id="s2.13.1-definition">
+<a id="s2.13.1-definition"></a>
 #### 2.13.1 Definition
 
 A way to wrap method calls for getting and setting an attribute as a standard
 attribute access when the computation is lightweight.
 
-<a id="s2.13.2-pros">
+<a id="s2.13.2-pros"></a>
 #### 2.13.2 Pros
 
 Readability is increased by eliminating explicit get and set method calls for
@@ -648,13 +648,13 @@ properties bypasses needing trivial accessor methods when a direct variable
 access is reasonable. This also allows accessor methods to be added in the
 future without breaking the interface.
 
-<a id="s2.13.3-cons">
+<a id="s2.13.3-cons"></a>
 #### 2.13.3 Cons
 
 Must inherit from `object` in Python 2. Can hide side-effects much like operator
 overloading. Can be confusing for subclasses.
 
-<a id="s2.13.4-decision">
+<a id="s2.13.4-decision"></a>
 #### 2.13.4 Decision
 
 Use properties in new code to access or set data where you would normally have
@@ -716,25 +716,25 @@ Yes: import math
 
 Use the "implicit" false if at all possible.
 
-<a id="s2.14.1-definition">
+<a id="s2.14.1-definition"></a>
 #### 2.14.1 Definition
 
 Python evaluates certain values as `False` when in a boolean context. A quick
 "rule of thumb" is that all "empty" values are considered false, so
 `0, None, [], {}, ''` all evaluate as false in a boolean context.
 
-<a id="s2.14.2-pros">
+<a id="s2.14.2-pros"></a>
 #### 2.14.2 Pros
 
 Conditions using Python booleans are easier to read and less error-prone. In
 most cases, they're also faster.
 
-<a id="s2.14.3-cons">
+<a id="s2.14.3-cons"></a>
 #### 2.14.3 Cons
 
 May look strange to C/C++ developers.
 
-<a id="s2.14.4-decision">
+<a id="s2.14.4-decision"></a>
 #### 2.14.4 Decision
 
 Use the "implicit" false if at all possible, e.g., `if foo:` rather than
@@ -801,13 +801,13 @@ call syntax instead of `apply`. Use list comprehensions and `for` loops instead
 of `filter` and `map` when the function argument would have been an inlined
 lambda anyway. Use `for` loops instead of `reduce`.
 
-<a id="s2.15.1-definition">
+<a id="s2.15.1-definition"></a>
 #### 2.15.1 Definition
 
 Current versions of Python provide alternative constructs that people find
 generally preferable.
 
-<a id="s2.15.2-decision">
+<a id="s2.15.2-decision"></a>
 #### 2.15.2 Decision
 
 We do not use any Python version which does not support these features, so there
@@ -837,7 +837,7 @@ No:  words = string.split(foo, ':')
 
 Okay to use.
 
-<a id="s2.16.1-definition">
+<a id="s2.16.1-definition"></a>
 #### 2.16.1 Definition
 
 A nested Python function can refer to variables defined in enclosing functions,
@@ -858,13 +858,13 @@ def get_adder(summand1):
     return adder
 ```
 
-<a id="s2.16.2-pros">
+<a id="s2.16.2-pros"></a>
 #### 2.16.2 Pros
 
 Often results in clearer, more elegant code. Especially comforting to
 experienced Lisp and Scheme (and Haskell and ML and ...) programmers.
 
-<a id="s2.16.3-cons">
+<a id="s2.16.3-cons"></a>
 #### 2.16.3 Cons
 
 Can lead to confusing bugs. Such as this example based on
@@ -886,7 +886,7 @@ def foo(x):
 So `foo([1, 2, 3])` will print `1 2 3 3`, not `1 2 3
 4`.
 
-<a id="s2.16.4-decision">
+<a id="s2.16.4-decision"></a>
 #### 2.16.4 Decision
 
 Okay to use.
@@ -898,7 +898,7 @@ Okay to use.
 Use decorators judiciously when there is a clear advantage. Avoid
 `@staticmethod` and limit use of `@classmethod`.
 
-<a id="s2.17.1-definition">
+<a id="s2.17.1-definition"></a>
 #### 2.17.1 Definition
 
 [Decorators for Functions and
@@ -924,13 +924,13 @@ class C(object):
     Methodmethod = MyDecoratormy_decorator(Methodmethod)
 ```
 
-<a id="s2.17.2-pros">
+<a id="s2.17.2-pros"></a>
 #### 2.17.2 Pros
 
 Elegantly specifies some transformation on a method; the transformation might
 eliminate some repetitive code, enforce invariants, etc.
 
-<a id="s2.17.3-cons">
+<a id="s2.17.3-cons"></a>
 #### 2.17.3 Cons
 
 Decorators can perform arbitrary operations on a function's arguments or return
@@ -938,7 +938,7 @@ values, resulting in surprising implicit behavior. Additionally, decorators
 execute at import time. Failures in decorator code are pretty much impossible to
 recover from.
 
-<a id="s2.17.4-decision">
+<a id="s2.17.4-decision"></a>
 #### 2.17.4 Decision
 
 Use decorators judiciously when there is a clear advantage. Decorators should
@@ -984,7 +984,7 @@ primitives. Learn about the proper use of condition variables so you can use
 
 Avoid these features.
 
-<a id="s2.19.1-definition">
+<a id="s2.19.1-definition"></a>
 #### 2.19.1 Definition
 
 Python is an extremely flexible language and gives you many fancy features such
@@ -992,12 +992,12 @@ as custom metaclasses, access to bytecode, on-the-fly compilation, dynamic
 inheritance, object reparenting, import hacks, reflection, modification of
 system internals, etc.
 
-<a id="s2.19.2-pros">
+<a id="s2.19.2-pros"></a>
 #### 2.19.2 Pros
 
 These are powerful language features. They can make your code more compact.
 
-<a id="s2.19.3-cons">
+<a id="s2.19.3-cons"></a>
 #### 2.19.3 Cons
 
 It's very tempting to use these "cool" features when they're not absolutely
@@ -1006,7 +1006,7 @@ features underneath. It doesn't seem that way at first (to the original author),
 but when revisiting the code, it tends to be more difficult than code that is
 longer but is straightforward.
 
-<a id="s2.19.4-decision">
+<a id="s2.19.4-decision"></a>
 #### 2.19.4 Decision
 
 Avoid these features in your code.
@@ -1020,7 +1020,7 @@ to use (for example, `abc.ABCMeta`, `collections.namedtuple`, and `enum`).
 
 Python 3 is here. While not every project is ready to use it yet, all code should be written with an eye towards the future.
 
-<a id="s2.20.1-definition">
+<a id="s2.20.1-definition"></a>
 #### 2.20.1 Definition
 
 Python 3 is a significant change in the Python language. While existing code is
@@ -1028,13 +1028,13 @@ often written with 2.7 in mind there are some simple things to do to make code
 more explicit about its intentions and thus better prepared for use under Python
 3 without modification.
 
-<a id="s2.20.2-pros">
+<a id="s2.20.2-pros"></a>
 #### 2.20.2 Pros
 
 Code written with Python 3 in mind is more explicit and easier to get running
 under Python 3 once all of the dependencies of your project are ready.
 
-<a id="s2.20.3-cons">
+<a id="s2.20.3-cons"></a>
 #### 2.20.3 Cons
 
 Some people find the additional boilerplate to be ugly. Others say "but I don't
@@ -1042,7 +1042,7 @@ use that feature in this file" and want to clean-up. Please don't. It is better
 to always have the future imports in all files so that they are not forgotten
 during later edits when someone starts using such a feature.
 
-<a id="s2.20.4-decision">
+<a id="s2.20.4-decision"></a>
 #### 2.20.4 Decision
 
 ##### from \_\_future\_\_ imports
@@ -1090,7 +1090,7 @@ annotations should be in the source. Use pyi files for third-party or extension
 modules.
 
 
-<a id="s2.21.1-definition">
+<a id="s2.21.1-definition"></a>
 #### 2.21.1 Definition
 
 Type annotations (or "type hints") are for function or method arguments and
@@ -1106,20 +1106,20 @@ You can also declare the type of a variable using a special comment:
 a = SomeFunc()  # type: SomeType
 ```
 
-<a id="s2.21.2-pros">
+<a id="s2.21.2-pros"></a>
 #### 2.21.2 Pros
 
 Type annotations improve the readability and maintainability of your code. The
 type checker will convert many runtime errors to build-time errors, and reduce
 your ability to use [Power Features](#power-features).
 
-<a id="s2.21.3-cons">
+<a id="s2.21.3-cons"></a>
 #### 2.21.3 Cons
 
 You will have to keep the type declarations up to date. You might see type errors that you think are valid code. Use of a [type checker](https://github.com/google/pytype)
 may reduce your ability to use [Power Features](#power-features).
 
-<a id="s2.21.4-decision">
+<a id="s2.21.4-decision"></a>
 #### 2.21.4 Decision
 
 This highly depends on the complexity of your project. Give it a try.
