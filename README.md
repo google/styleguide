@@ -1,8 +1,6 @@
 Google Guies d'estil
 ====================
 
-Aquesta guia també està disponible en altres idiomes. Vegeu [Traducció] (#translation)
-
 Tots els principals projectes de codi obert tenen la seva pròpia guia d'estil: un conjunt de convencions (de vegades arbitràries) sobre com escriure codi per a aquest projecte. És molt més senzill comprendre una gran base de codis quan tot el codi es troba en un estil coherent.
 
 "Estil" cobreix molta terra, des de "utilitzar camelCase per a noms de variables" per "no utilitzar mai variables globals" per "mai utilitzar excepcions". Aquest projecte ([google/styleguide](https://github.com/google/styleguide)) vincula a les pautes d'estil que utilitzem per al codi de Google. Si esteu modificant un projecte originat a Google, podeu assenyalar aquesta pàgina per veure les guies d'estil que s'apliquen a aquest projecte. 
@@ -40,10 +38,3 @@ Les següents guies d'estil de Google viuen fora d'aquest projecte: [Go Code Rev
 [go]: https://golang.org/wiki/CodeReviewComments
 [dart]: https://www.dartlang.org/guides/language/effective-dart
 [ccl]: https://creativecommons.org/licenses/by/3.0/
-
-
-## Translation
-
-  This style guide is also available in other languages:
-
-  - ![ca](https://raw.githubusercontent.com/fpmweb/styleguide/gh-pages/img/catala.png) **Catalan**: [fpmweb/styleguide](https://github.com/fpmweb/styleguide)
