@@ -1,6 +1,8 @@
 Google Style Guides
 ===================
 
+This guide is available in other languages too. See [Translation](#translation)
+
 Every major open-source project has its own style guide: a set of conventions
 (sometimes arbitrary) about how to write code for that project. It is much
 easier to understand a large codebase when all the code in it is in a
@@ -52,3 +54,10 @@ The following Google style guides live outside of this project:
 [go]: https://golang.org/wiki/CodeReviewComments
 [dart]: https://www.dartlang.org/guides/language/effective-dart
 [ccl]: https://creativecommons.org/licenses/by/3.0/
+
+
+## Translation
+
+  This style guide is also available in other languages:
+
+  - ![ca](https://raw.githubusercontent.com/fpmweb/styleguide/master/img/catala.png) **Catalan**: [fpmweb/styleguide](https://github.com/fpmweb/styleguide)
