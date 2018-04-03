@@ -1,39 +1,25 @@
-Google Style Guides
-===================
+Google Guies d'estil
+====================
 
-This guide is available in other languages too. See [Translation](#translation)
+Aquesta guia també està disponible en altres idiomes. Vegeu [Traducció] (#translation)
 
-Every major open-source project has its own style guide: a set of conventions
-(sometimes arbitrary) about how to write code for that project. It is much
-easier to understand a large codebase when all the code in it is in a
-consistent style.
+Tots els principals projectes de codi obert tenen la seva pròpia guia d'estil: un conjunt de convencions (de vegades arbitràries) sobre com escriure codi per a aquest projecte. És molt més senzill comprendre una gran base de codis quan tot el codi es troba en un estil coherent.
 
-“Style” covers a lot of ground, from “use camelCase for variable names” to
-“never use global variables” to “never use exceptions.” This project
-([google/styleguide](https://github.com/google/styleguide)) links to the
-style guidelines we use for Google code. If you are modifying a project that
-originated at Google, you may be pointed to this page to see the style guides
-that apply to that project.
+"Estil" cobreix molta terra, des de "utilitzar camelCase per a noms de variables" per "no utilitzar mai variables globals" per "mai utilitzar excepcions". Aquest projecte ([google/styleguide](https://github.com/google/styleguide)) vincula a les pautes d'estil que utilitzem per al codi de Google. Si esteu modificant un projecte originat a Google, podeu assenyalar aquesta pàgina per veure les guies d'estil que s'apliquen a aquest projecte. 
 
-This project holds the [C++ Style Guide][cpp], [Objective-C Style Guide][objc],
+Aquest projecte conté [C++ Style Guide][cpp], [Objective-C Style Guide][objc],
 [Java Style Guide][java], [Python Style Guide][py], [R Style Guide][r],
 [Shell Style Guide][sh], [HTML/CSS Style Guide][htmlcss],
 [JavaScript Style Guide][js], [AngularJS Style Guide][angular],
-[Common Lisp Style Guide][cl], and [Vimscript Style Guide][vim]. This project
-also contains [cpplint][cpplint], a tool to assist with style guide compliance,
-and [google-c-style.el][emacs], an Emacs settings file for Google style.
+[Common Lisp Style Guide][cl], i [Vimscript Style Guide][vim]. Aquest projecte també conté [cpplint][cpplint], una eina per ajudar amb el compliment de la guia d'estil, i [google-c-style.el][emacs], un fitxer de configuració d'Emacs per a l'estil de Google.
 
-If your project requires that you create a new XML document format, the [XML
-Document Format Style Guide][xml] may be helpful. In addition to actual style
-rules, it also contains advice on designing your own vs. adapting an existing
-format, on XML instance document formatting, and on elements vs. attributes.
+Si el vostre projecte requereix que creeu un nou format de document XML, la [XML
+Document Format Style Guide][xml] pot ser útil. A més de les regles d'estil real, també conté consells sobre com dissenyar el vostre propi versus adaptar un format existent, en format de document d'instància XML, i en elements contra atributs. 
 
-The style guides in this project are licensed under the CC-By 3.0 License,
-which encourages you to share these documents.
-See [https://creativecommons.org/licenses/by/3.0/][ccl] for more details.
+Les guies d'estil d'aquest projecte estan autoritzades sota la llicència CC-BY 3.0, que us encoratja a compartir aquests documents. 
+Per obtenir més informació, consulteu [https://creativecommons.org/licenses/by/3.0/][ccl].  
 
-The following Google style guides live outside of this project:
-[Go Code Review Comments][go] and [Effective Dart][dart].
+Les següents guies d'estil de Google viuen fora d'aquest projecte: [Go Code Review Comments][go] i [Effective Dart][dart].
 
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
