@@ -60,4 +60,4 @@ The following Google style guides live outside of this project:
 
   This style guide is also available in other languages:
 
-  - ![ca](https://raw.githubusercontent.com/fpmweb/styleguide/master/img/catala.png) **Catalan**: [fpmweb/styleguide](https://github.com/fpmweb/styleguide)
+  - ![ca](https://raw.githubusercontent.com/fpmweb/styleguide/gh-pages/img/catala.png) **Catalan**: [fpmweb/styleguide](https://github.com/fpmweb/styleguide)
