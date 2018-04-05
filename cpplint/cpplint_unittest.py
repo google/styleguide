@@ -321,6 +321,8 @@ class CpplintTest(CpplintTestBase):
     self.assertEquals(0, cpplint.GetLineWidth(''))
     self.assertEquals(10, cpplint.GetLineWidth(u'x' * 10))
     self.assertEquals(16, cpplint.GetLineWidth(u'都|道|府|県|支庁'))
+    self.assertEquals(5 + 13 + 9, cpplint.GetLineWidth(
+        u'd𝐱/dt' + u'f : t ⨯ 𝐱 → ℝ' + u't ⨯ 𝐱 → ℝ'))
 
   def testGetTextInside(self):
     self.assertEquals('', cpplint._GetTextInside('fun()', r'fun\('))
