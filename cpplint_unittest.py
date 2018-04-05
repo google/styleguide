@@ -349,6 +349,9 @@ class CpplintTest(CpplintTestBase):
     self.assertEqual(0, cpplint.GetLineWidth(''))
     self.assertEqual(10, cpplint.GetLineWidth(unicode('x') * 10))
     self.assertEqual(16, cpplint.GetLineWidth(unicode_escape_decode('\u90fd|\u9053|\u5e9c|\u770c|\u652f\u5e81')))
+    self.assertEqual(16, cpplint.GetLineWidth(u'都|道|府|県|支庁'))
+    self.assertEqual(5 + 13 + 9, cpplint.GetLineWidth(
+        u'd𝐱/dt' + u'f : t ⨯ 𝐱 → ℝ' + u't ⨯ 𝐱 → ℝ'))
 
   def testGetTextInside(self):
     self.assertEqual('', cpplint._GetTextInside('fun()', r'fun\('))
