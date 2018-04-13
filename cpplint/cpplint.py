@@ -1852,8 +1852,8 @@ def GetHeaderGuardCPPVariable(filename):
                                  PathSplitToList(_root))
 
     if _root_debug:
-      sys.stderr.write("_root lstrip (maybe_path=%s, file_path_from_root=%s," +
-          " _root=%s)\n" %(maybe_path, file_path_from_root, _root))
+      sys.stderr.write(("_root lstrip (maybe_path=%s, file_path_from_root=%s," +
+          " _root=%s)\n") %(maybe_path, file_path_from_root, _root))
 
     if maybe_path:
       return os.path.join(*maybe_path)
@@ -1866,8 +1866,8 @@ def GetHeaderGuardCPPVariable(filename):
                                  PathSplitToList(root_abspath))
 
     if _root_debug:
-      sys.stderr.write("_root prepend (maybe_path=%s, full_path=%s, " +
-          "root_abspath=%s)\n" %(maybe_path, full_path, root_abspath))
+      sys.stderr.write(("_root prepend (maybe_path=%s, full_path=%s, " +
+          "root_abspath=%s)\n") %(maybe_path, full_path, root_abspath))
 
     if maybe_path:
       return os.path.join(*maybe_path)
