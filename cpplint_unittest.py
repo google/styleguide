@@ -4605,9 +4605,11 @@ class CpplintTest(CpplintTestBase):
       self.assertEqual('CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
 
-      nested_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                      os.path.join('nested',
-                                                   'cpplint_test_header.h'))
+      nested_header_directory = os.path.join(header_directory, "nested")
+      nested_file_path = os.path.join(nested_header_directory, 'cpplint_test_header.h')
+      os.makedirs(nested_header_directory)
+      open(nested_file_path, 'a').close()
+
       cpplint._root = os.path.join('cpplint', 'nested')
       actual = cpplint.GetHeaderGuardCPPVariable(nested_file_path)
       self.assertEquals('CPPLINT_TEST_HEADER_H_',
@@ -4615,15 +4617,11 @@ class CpplintTest(CpplintTestBase):
 
       # absolute directory
       # (note that CPPLINT.cfg root=setting is always made absolute)
-      cpplint._root = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+      cpplint._root = header_directory
       self.assertEquals('CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
 
-      nested_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                      os.path.join('nested',
-                                                   'cpplint_test_header.h'))
-      cpplint._root = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                   'nested')
+      cpplint._root = nested_header_directory
       self.assertEquals('CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(nested_file_path))
 
@@ -4637,7 +4635,7 @@ class CpplintTest(CpplintTestBase):
 
       # (using absolute paths)
       # (note that CPPLINT.cfg root=setting is always made absolute)
-      this_files_path = os.path.dirname(os.path.abspath(__file__))
+      this_files_path = os.path.dirname(os.path.abspath(header_directory))
       (styleguide_path, this_files_dir) = os.path.split(this_files_path)
       (styleguide_parent_path, _) = os.path.split(styleguide_path)
       # parent dir of styleguide
