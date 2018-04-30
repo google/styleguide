@@ -360,9 +360,21 @@ Revision 1.26
   <STYLEPOINT title="Loops">
     <SUMMARY>
       Put <code>; do</code> and <code>; then</code> on the same line as the
-      <code>while</code>, <code>for</code> or <code>if</code>.
+      <code>while</code>, <code>for</code> or <code>if</code>, unless the line
+      exceeds the maximum line length.
     </SUMMARY>
     <BODY>
+      <p>
+        Example:
+        <CODE_SNIPPET>
+          if [[ -d "${LONG_PATH_TO_DIRECTORY}" &amp;&amp; \
+                -f "${LONG_PATH_TO_FILE}" &amp;&amp; \
+                ! check_something ]]
+          then
+            delete_all_oracle_databases
+          fi
+        </CODE_SNIPPET>
+      </p>
       <p>
         Loops in shell are a bit different, but we follow the same principles
         as with braces when declaring functions. That is: <code>; then</code>
