@@ -68,7 +68,7 @@ _valid_extensions = set([])
 # option (also supported in CPPLINT.cfg)
 def GetHeaderExtensions():
   if not _header_extensions:
-    return set(['h', 'hpp', 'hxx', 'h++', 'cuh'])
+    return set(['h', 'hh', 'hpp', 'hxx', 'h++', 'cuh'])
   return _header_extensions
 
 # The allowed extensions for file names
