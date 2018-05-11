@@ -367,8 +367,8 @@ Revision 1.26
       <p>
         Example:
         <CODE_SNIPPET>
-          if [[ -d "${LONG_PATH_TO_DIRECTORY}" &amp;&amp; \
-                -f "${LONG_PATH_TO_FILE}" &amp;&amp; \
+          if [[ -d "${LONG_PATH_TO_DIRECTORY}" &amp;&amp;
+                -f "${LONG_PATH_TO_FILE}" &amp;&amp;
                 ! check_something ]]
           then
             delete_all_oracle_databases
