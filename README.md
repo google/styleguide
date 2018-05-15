@@ -17,9 +17,10 @@ This project holds the [C++ Style Guide][cpp], [Objective-C Style Guide][objc],
 [Java Style Guide][java], [Python Style Guide][py], [R Style Guide][r],
 [Shell Style Guide][sh], [HTML/CSS Style Guide][htmlcss],
 [JavaScript Style Guide][js], [AngularJS Style Guide][angular],
-[Common Lisp Style Guide][cl], and [Vimscript Style Guide][vim]. This project
-also contains [cpplint][cpplint], a tool to assist with style guide compliance,
-and [google-c-style.el][emacs], an Emacs settings file for Google style.
+[Common Lisp Style Guide][cl], [Shell Style Guide][sh], and [Vimscript Style
+Guide][vim]. This project also contains [cpplint][cpplint], a tool to assist
+with style guide compliance, and [google-c-style.el][emacs], an Emacs settings
+file for Google style.
 
 If your project requires that you create a new XML document format, the [XML
 Document Format Style Guide][xml] may be helpful. In addition to actual style
@@ -52,3 +53,4 @@ The following Google style guides live outside of this project:
 [go]: https://golang.org/wiki/CodeReviewComments
 [dart]: https://www.dartlang.org/guides/language/effective-dart
 [ccl]: https://creativecommons.org/licenses/by/3.0/
+[sh]: https://google.github.io/styleguide/shell.xml
