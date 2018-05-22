@@ -459,7 +459,7 @@ previous lines.</p>
 
 <h4 id="s4.6.1-vertical-whitespace">4.6.1 Vertical Whitespace</h4>
 
-<p>A single blank line appears:</p>
+<p>A single blank line always appears:</p>
 
 <ol>
   <li><em>Between</em> consecutive members or initializers of a class: fields, constructors,
@@ -473,17 +473,17 @@ previous lines.</p>
   </ul>
   </li>
 
-  <li>Between statements, <em>as needed</em> to organize the code into logical subsections.
-  
-  </li><li><em>Optionally</em> before the first member or initializer, or after the last member or
-  initializer of the class (neither encouraged nor discouraged).</li>
-
   <li>As required by other sections of this document (such as Section 3,
   <a href="#s3-source-file-structure">Source file structure</a>, and Section 3.3,
   <a href="#s3.3-import-statements">Import statements</a>).</li>
 </ol>
 
-<p><em>Multiple</em> consecutive blank lines are permitted, but never required (or encouraged).</p>
+<p>A single blank line may also appear anywhere it improves readability, for example between
+statements to organize the code into logical subsections. A blank line before the first member or
+initializer, or after the last member or initializer of the class, is neither encouraged nor
+discouraged.
+
+</p><p><em>Multiple</em> consecutive blank lines are permitted, but never required (or encouraged).</p>
 
 <h4 id="s4.6.2-horizontal-whitespace">4.6.2 Horizontal whitespace</h4>
 
@@ -553,10 +553,13 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
     <code class="prettyprint lang-java">new int[] { 5, 6 }</code> are both valid</li>
   </ul>
   </li>
+
+  <li>Between a type annotation and <code class="prettyprint lang-java">[]</code> or
+  <code class="prettyprint lang-java">...</code>.</li>
 </ol>
 
-This rule is never interpreted as requiring or forbidding additional space at the start or
-end of a line; it addresses only <em>interior</em> space.
+<p>This rule is never interpreted as requiring or forbidding additional space at the start or
+end of a line; it addresses only <em>interior</em> space.</p>
 
 <h4 id="s4.6.3-horizontal-alignment">4.6.3 Horizontal alignment: never required</h4>
 
@@ -809,10 +812,9 @@ rather than <code class="badcode">3000000000l</code>.</p>
 underscores. Thus each valid identifier name is matched by the regular expression
 <code>\w+</code> .</p>
 
-<p>In Google Style special prefixes or
-suffixes, like those seen in the examples <code class="badcode">name_</code>,
-<code class="badcode">mName</code>, <code class="badcode">s_name</code> and
-<code class="badcode">kName</code>, are <strong>not</strong> used.</p>
+<p>In Google Style, special prefixes or suffixes are <strong>not</strong> used. For example, these
+names are not Google Style: <code class="badcode">name_</code>, <code class="badcode">mName</code>,
+<code class="badcode">s_name</code> and <code class="badcode">kName</code>.</p>
 
 <h3 id="s5.2-specific-identifier-names">5.2 Rules by identifier type</h3>
 
