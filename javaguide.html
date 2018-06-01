@@ -15,44 +15,39 @@
 
 <div class="main_body">
 
-<h2 id="s1-introduction">1 Introduction</h2>
+<h2 id="s1-introduction">1 소개</h2>
 
-<p>This document serves as the <strong>complete</strong> definition of Google's coding standards for
-source code in the Java&#8482; Programming Language. A Java source file is described as being <em>in
-Google Style</em> if and only if it adheres to the rules herein.</p>
+<p>이 문서는 자바&#8482; 프로그래밍 언어의 소스코드를 위한 구글의 
+<strong>완전한</strong> 코딩 표준의 역할을 합니다.
+자바 소스 파일은 이곳에 나와 있는 규칙들을 준수한 경우에만 <em>구글 스타일</em>로 표시됩니다.
 
-<p>Like other programming style guides, the issues covered span not only aesthetic issues of
-formatting, but other types of conventions or coding standards as well. However, this document
-focuses primarily on the <strong>hard-and-fast rules</strong> that we follow universally, and
-avoids giving <em>advice</em> that isn't clearly enforceable (whether by human or tool).
-</p>
+<p>다른 프로그래밍 스타일 가이드처럼, 서식의 미적인 부분 뿐만 아니라 
+다른 형식의 관례나 코딩 표준 또한 문제에 포함됩니다. 하지만, 이 문서는 우리가 
+보편적으로 따르는 명확한 규칙에 초점을 맞추고 (인간이나 도구에 의해)명확하게 
+시행할 수 없는 조언은 피합니다.</p>
 
+<h3 id="s1.1-terminology">1.1 용어 노트</h3>
 
-
-<h3 id="s1.1-terminology">1.1 Terminology notes</h3>
-
-<p>In this document, unless otherwise clarified:</p>
-
+<p>이 문서에서는 달리 명시되지 않는 한 다음과 같습니다:</p>
 <ol>
-  <li>The term <em>class</em> is used inclusively to mean an "ordinary" class, enum class,
-  interface or annotation type (<code class="prettyprint lang-java">@interface</code>).</li>
+	<li><em>클래스</em>는 "보통의" 클래스, 열거(enum) 클래스, 인터페이스나 
+	어노테이션 타입(<code class="prettyprint lang-java">@interface</code>)을 
+	통틀어 의미합니다.</li>
 
-  <li>The term <em>member</em> (of a class) is used inclusively to mean a nested class, field,
-  method, <em>or constructor</em>; that is, all top-level contents of a class except initializers
-  and comments.
+	<li>(클래스의) <em>멤버</em>는 중첩 클래스, 필드, 메서드, 
+	<em>혹은 생성자</em>를 통틀어 이릅니다. 즉, 초기자(initializer)와 주석을 
+	제외한 클래스의 모든 최상위 요소를 의미합니다.</li>
 
-  </li><li>The term <em>comment</em> always refers to <em>implementation</em> comments. We do not
-  use the phrase "documentation comments", instead using the common term "Javadoc."</li>
+	<li><em>주석</em>은 언제나 <em>구현</em> 주석을 의미합니다. 
+	일반적인 용어인 "Javadoc"을 사용하는 대신, "문서화 주석"이라는 말을 사용하지 않습니다. </li>
 </ol>
 
-<p>Other "terminology notes" will appear occasionally throughout the document.</p>
+<p>다른 "용어 노트"는 종종 문서 중간에 나올 것입니다.</p>
 
-<h3 id="s1.2-guide-notes">1.2 Guide notes</h3>
 
-<p>Example code in this document is <strong>non-normative</strong>. That is, while the examples
-are in Google Style, they may not illustrate the <em>only</em> stylish way to represent the
-code. Optional formatting choices made in examples should not be enforced as rules.</p>
+<h3 id="s1.2-guide-notes">1.2 가이드 노트</h3>
 
+<p>이 문서의 예시 코드는 <strong>비 규범적</strong>입니다. 이는 예시들이 구글 스타일이라 하더라도, 세련된 코드를 작성하는 유일한 방법을 설명하는 것이 아닐 수 있음을 의미합니다. 예시들에 적용된 선택적 서식은 규칙으로 강제되지 않습니다.</p>
 
 <h2 id="s2-source-file-basics">2 Source file basics</h2>
 
