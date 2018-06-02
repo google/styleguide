@@ -49,100 +49,100 @@
 
 <p>이 문서의 예시 코드는 <strong>비 규범적</strong>입니다. 이는 예시들이 구글 스타일이라 하더라도, 세련된 코드를 작성하는 유일한 방법을 설명하는 것이 아닐 수 있음을 의미합니다. 예시들에 적용된 선택적 서식은 규칙으로 강제되지 않습니다.</p>
 
-<h2 id="s2-source-file-basics">2 Source file basics</h2>
+<h2 id="s2-source-file-basics">2 소스 파일 기본</h2>
 
-<h3 id="s2.1-file-name">2.1 File name</h3>
+<h3 id="s2.1-file-name">2.1 파일명</h3>
 
-<p>The source file name consists of the case-sensitive name of the top-level class it contains
-(of which there is <a href="#s3.4.1-one-top-level-class">exactly one</a>), plus the
-<code>.java</code> extension.</p>
+<p>소스 파일명은 포함하고 있는 최상위 클래스의 대소문자를 구분하는 이름에 
+<code>.java</code>확장자를 더한 이름으로 구성됩니다.</p>
 
-<h3 id="s2.2-file-encoding">2.2 File encoding: UTF-8</h3>
+<h3 id="s2.2-file-encoding">2.2 파일 인코딩: UTF-8</h3>
 
-<p>Source files are encoded in <strong>UTF-8</strong>.</p>
+<p>소스파일은 <strong>UTF-8</strong>로 인코딩됩니다.</p>
 
-<h3 id="s2.3-special-characters">2.3 Special characters</h3>
+<h3 id="s2.3-special-characters">2.3 특수 문자</h3>
 
-<h4 id="s2.3.1-whitespace-characters">2.3.1 Whitespace characters</h4>
+<h4 id="s2.3.1-whitespace-characters">2.3.1 공백 문자</h4>
 
-<p>Aside from the line terminator sequence, the <strong>ASCII horizontal space
-character</strong> (<strong>0x20</strong>) is the only whitespace character that appears
-anywhere in a source file. This implies that:</p>
+<p>라인 종결 시퀀스와는 달리, <strong>ASCII 수평 공백 문자</strong>
+(<strong>0x20</strong>)은 소스 파일 어디서나 나타나는 유일한 공백 
+문자입니다. 이는 다음을 의미합니다:</p>
 
 <ol>
-  <li>All other whitespace characters in string and character literals are escaped.</li>
+	<li>문자열과 문자 리터럴의 모든 다른 공백 문자는 이스케이프됩니다.</li>
 
-  <li>Tab characters are <strong>not</strong> used for indentation.</li>
+	<li>탭 문자는 들여쓰기에 <strong>사용되지 않</strong>습니다.</li>
 </ol>
 
-<h4 id="s2.3.2-special-escape-sequences">2.3.2 Special escape sequences</h4>
+<h4 id="s2.3.2-special-escape-sequences">2.3.2 특수 이스케이프 시퀀스</h4>
 
 <p>For any character that has a
 <a href="http://docs.oracle.com/javase/tutorial/java/data/characters.html">
-  special escape sequence</a>
+  특수 이스케이프 시퀀스</a>를 가진 문자에서
 (<code class="prettyprint lang-java">\b</code>,
 <code class="prettyprint lang-java">\t</code>,
 <code class="prettyprint lang-java">\n</code>,
 <code class="prettyprint lang-java">\f</code>,
 <code class="prettyprint lang-java">\r</code>,
 <code class="prettyprint lang-java">\"</code>,
-<code class="prettyprint lang-java">\'</code> and
-<code class="prettyprint lang-java">\\</code>), that sequence
-is used rather than the corresponding octal
-(e.g.&#160;<code class="badcode">\012</code>) or Unicode
-(e.g.&#160;<code class="badcode">\u000a</code>) escape.</p>
+<code class="prettyprint lang-java">\'</code> 와
+<code class="prettyprint lang-java">\\</code>), 이 시퀀스는 대응되는 8진수
+(e.g.&#160;<code class="badcode">\012</code>) 혹은 유니코드
+(e.g.&#160;<code class="badcode">\u000a</code>) 이스케이프 보다 많이 
+사용됩니다..</p>
 
-<h4 id="s2.3.3-non-ascii-characters">2.3.3 Non-ASCII characters</h4>
+<h4 id="s2.3.3-non-ascii-characters">2.3.3 비 아스키 문자</h4>
 
-<p>For the remaining non-ASCII characters, either the actual Unicode character
-(e.g.&#160;<code class="prettyprint lang-java">&#8734;</code>) or the equivalent Unicode escape
-(e.g.&#160;<code class="prettyprint lang-java">\u221e</code>) is used. The choice depends only on
-which makes the code <strong>easier to read and understand</strong>, although Unicode escapes
-outside string literals and comments are strongly discouraged.</p>
+<p>나머지 비 아스키 문자의 경우, 실제 유니코드 문자
+(e.g.&#160;<code class="prettyprint lang-java">&#8734;</code>) 혹은 동등한 
+유니코드 이스케이프 (e.g.&#160;<code class="prettyprint 
+lang-java">\u221e</code>) 중의 하나가 사용됩니다. 문자열 리터럴과 주석 외부의 
+유니코드 이스케이프가 좋지 않다고 하더라도, 선택은 오로지 어느 쪽이 코드를 
+<strong>읽고 이해하기에 더 쉬운가</strong>에 달렸습니다.</p>
 
-<p class="tip"><strong>Tip:</strong> In the Unicode escape case, and occasionally even when actual
-Unicode characters are used, an explanatory comment can be very helpful.</p>
+<p class="tip"><strong>팁:</strong> 유니코드 이스케이프를 사용하는 경우에 실제 유니코드 문자가 사용되면, 설명 주석은 매우 유용할 수 있습니다.</p>
 
-<p>Examples:</p>
+<p>예시:</p>
 
 <table>
   <tbody><tr>
-    <th>Example</th>
-    <th>Discussion</th>
+    <th>예시</th>
+    <th>논의</th>
   </tr>
 
   <tr>
     <td><code class="prettyprint lang-java">String unitAbbrev = "&#956;s";</code></td>
-    <td>Best: perfectly clear even without a comment.</td>
+    <td>최선: 주석이 없어도 완벅합니다.</td>
   </tr>
 
   <tr>
     <td><code class="prettyprint lang-java">String unitAbbrev = "\u03bcs"; // "&#956;s"</code></td>
-    <td>Allowed, but there's no reason to do this.</td>
+    <td>쓸 수는 있지만 굳이 이렇게 할 이유는 없습니다.</td>
   </tr>
 
   <tr>
     <td><code class="prettyprint lang-java">String unitAbbrev = "\u03bcs";
       // Greek letter mu, "s"</code></td>
-    <td>Allowed, but awkward and prone to mistakes.</td>
+    <td>쓸 수는 있지만 어색하고 실수를 유발할 수 있습니다.</td>
   </tr>
 
   <tr>
     <td><code class="badcode">String unitAbbrev = "\u03bcs";</code></td>
-    <td>Poor: the reader has no idea what this is.</td>
+    <td>최악: 읽는 사람은 이게 뭔지 모를 겁니다.</td>
   </tr>
 
   <tr>
      <td><code class="prettyprint lang-java">return '\ufeff' + content;
        // byte order mark</code></td>
-     <td>Good: use escapes for non-printable characters, and comment if necessary.</td>
+     <td>양호: 비 출력 문자에 대해 이스케이프를 사용합니다, 필요한 경우 주석도 
+		답니다.</td>
   </tr>
 </tbody></table>
 
-<p class="tip"><strong>Tip:</strong> Never make your code less readable simply out of fear that
-some programs might not handle non-ASCII characters properly. If that should happen, those
-programs are <strong>broken</strong> and they must be <strong>fixed</strong>.</p>
-
+<p class="tip"><strong>팁 :</strong> 일부 프로그램은 비 아스키 문자를 적절하게 
+처리하지 못할 수 있으므로 코드를 일긱 어렵게 만들지 마십시오. 만약 발생한다면, 
+프로그램은 <strong>이상</strong>이 생길 것이고 <strong>고쳐져</strong>야 
+합니다.</p>
 
 <a name="filestructure"></a>
 <h2 id="s3-source-file-structure">3 Source file structure</h2>
