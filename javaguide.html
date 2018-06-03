@@ -145,94 +145,92 @@ lang-java">\u221e</code>) 중의 하나가 사용됩니다. 문자열 리터럴�
 합니다.</p>
 
 <a name="filestructure"></a>
-<h2 id="s3-source-file-structure">3 Source file structure</h2>
+<h2 id="s3-source-file-structure">3 소스 파일 구조</h2>
 
 <div>
-<p>A source file consists of, <strong>in order</strong>:</p>
-
+<p>소스 파일은 <strong>다음과 같이</strong> 구성됩니다:</p>
 <ol>
-  <li>License or copyright information, if present</li>
-  <li>Package statement</li>
-  <li>Import statements</li>
-  <li>Exactly one top-level class</li>
+  <li>라이센스나 저작권이 있는 경우, 이에 대한 정보</li>
+  <li>Package문</li>
+  <li>Import문</li>
+  <li>정확히 하나의 최상위 클래스</li>
 </ol>
 </div>
 
-<p><strong>Exactly one blank line</strong> separates each section that is present.</p>
+<p><strong>정확히 하나의 빈 행</strong>은 각 영역을 분리합니다.</p>
 
-<h3 id="s3.1-copyright-statement">3.1 License or copyright information, if present</h3>
+<h3 id="s3.1-copyright-statement">3.1 라이센스나 저작권이 있는 경우, 이에 대한 정보</h3>
 
-<p>If license or copyright information belongs in a file, it belongs here.</p>
+<p>파일에 라이센스나 저작권이 있는 경우, 여기에 위치합니다.</p>
 
 
 
-<h3 id="s3.2-package-statement">3.2 Package statement</h3>
+<h3 id="s3.2-package-statement">3.2 Package문</h3>
 
-<p>The package statement is <strong>not line-wrapped</strong>. The column limit (Section 4.4,
-<a href="#s4.4-column-limit">Column limit: 100</a>) does not apply to package statements.</p>
+<p>package문은 <strong>line-wrap</strong>(줄이 꽉찬 경우 다음 줄로 넘어가는 것)
+하지 않습니다. 행 제한 (Section 4.4,
+<a href="#s4.4-column-limit">행 제한: 100</a>)은 package문에 적용하지 
+않습니다.</p>
 
 <a name="imports"></a>
-<h3 id="s3.3-import-statements">3.3 Import statements</h3>
+<h3 id="s3.3-import-statements">3.3 Import문</h3>
 
-<h4 id="s3.3.1-wildcard-imports">3.3.1 No wildcard imports</h4>
+<h4 id="s3.3.1-wildcard-imports">3.3.1 와일드카드(*) import는 사용하지 않습니다</h4>
 
-<p><strong>Wildcard imports</strong>, static or otherwise, <strong>are not used</strong>.</p>
+<p>static 또는 기타 <strong>와일드카드 import</strong>는 <strong>사용되지 않습니다</strong>.</p>
 
-<h4 id="s3.3.2-import-line-wrapping">3.3.2 No line-wrapping</h4>
+<h4 id="s3.3.2-import-line-wrapping">3.3.2 line-wrapping 금지</h4>
 
-<p>Import statements are <strong>not line-wrapped</strong>. The column limit (Section 4.4,
-<a href="#s4.4-column-limit">Column limit: 100</a>) does not apply to import
-statements.</p>
+<p>Import 문은 <strong>line-wrap</strong>하지 않습니다. 행 제한(Section 4.4,
+<a href="#s4.4-column-limit">행 제한: 100</a>)은 import문에 적용하지 않습니다.</p>
 
-<h4 id="s3.3.3-import-ordering-and-spacing">3.3.3 Ordering and spacing</h4>
+<h4 id="s3.3.3-import-ordering-and-spacing">3.3.3 순서 및 간격</h4>
 
-<p>Imports are ordered as follows:</p>
+<p>Import는 다음 순서를 따릅니다:</p>
 
 <ol>
-  <li>All static imports in a single block.</li>
-  <li>All non-static imports in a single block.</li>
-</ol>
+  <li>단일 블럭의 모든 static import.</li>
+  <li>단일 블럭의 모든 non-static import.</li>
+</p>ol>
 
-<p>If there are both static and non-static imports, a single blank line separates the two
-blocks. There are no other blank lines between import statements.</p>
+<p>만일 static 과 non-static import 둘 다 있는 경우, 한 개의 빈 줄로 
+두 개의 블럭으로 나눕니다. import문 사이에 다른 공백은 없습니다.</p>
 
-<p>Within each block the imported names appear in ASCII sort order. (<strong>Note:</strong>
-this is not the same as the import <em>statements</em> being in ASCII sort order, since '.'
-sorts before ';'.)</p>
-
+<p>각 블록 안의 import 이름은 ASCII 순서로 정렬됩니다. (<strong>Note:</strong>
+'.' 이후부터 ';' 전까지를 정렬하므로, import<em>문</em>이 ASCII 순서인 것과는 다릅니다.)</p>
 
 
-<h4 id="s3.3.4-import-class-not-static">3.3.4 No static import for classes</h4>
 
-<p>Static import is not used for static nested classes. They are imported with
-normal imports.</p>
+<h4 id="s3.3.4-import-class-not-static">3.3.4 클래스에 대한 static import 금지</h4>
 
-<h3 id="s3.4-class-declaration">3.4 Class declaration</h3>
+<p>Static import 는 중첩 클래스에 사용되지 않습니다. 이들은 일반 import로 
+임포트됩니다.</p>
+
+<h3 id="s3.4-class-declaration">3.4 클래스 선언</h3>
 
 <a name="oneclassperfile"></a>
-<h4 id="s3.4.1-one-top-level-class">3.4.1 Exactly one top-level class declaration</h4>
+<h4 id="s3.4.1-one-top-level-class">3.4.1 정확히 하나의 최상위 클래스 선언</h4>
 
-<p>Each top-level class resides in a source file of its own.</p>
+<p>소스 파일에는 각각 하나의 고유한 최상위 클래스가 위치합니다.</p>
 
 <a name="s3.4.2-class-member-ordering"></a>
-<h4 id="s3.4.2-ordering-class-contents">3.4.2 Ordering of class contents</h4>
+<h4 id="s3.4.2-ordering-class-contents">3.4.2 클래스 내용의 순서</h4>
 
-<p>The order you choose for the members and initializers of your class can have a great effect on
-learnability. However, there's no single correct recipe for how to do it; different classes may
-order their contents in different ways.</p>
+<p>클래스의 멤버와 초기자(initializer)에 대해 여러분이 선택한 순서는 코드를 
+이해하는 데에 있어 큰 효과를 낼 수 있습니다. 하지만 이를 어떻게 할 지에 대한 
+하나의 명확한 방법은 없습니다. 서로 다른 클래스들은 각 내용들을 서로 다른 
+방법으로 정렬하고 있을 수 있습니다.</p>
 
-<p>What is important is that each class uses <strong><em>some</em> logical order</strong>, which its
-maintainer could explain if asked. For example, new methods are not just habitually added to the end
-of the class, as that would yield "chronological by date added" ordering, which is not a logical
-ordering.</p>
-
-
+<p>중요한 것은 각 클래스가 클래스의 작성자가 설명할 수 있는 
+<strong><em>어떤</em></strong> 논리적인 순서를 사용한다는 것입니다. 예를 들어,
+ 새로운 메서드를 습관적으로 클래스의 마지막에 추가하는 것은 "추가된 날짜의 시간 순서"라는 논리적이지 않은 순서를 만들게 됩니다.</p>
 
 <a name="overloads"></a>
-<h5 id="s3.4.2.1-overloads-never-split">3.4.2.1 Overloads: never split</h5>
+<h5 id="s3.4.2.1-overloads-never-split">3.4.2.1 오버로드: 나누기 절대 금지</h5>
 
-<p>When a class has multiple constructors, or multiple methods with the same name, these appear
-sequentially, with no other code in between (not even private members).</p>
+<p>클래스가 복수의 생성자 혹은 같은 이름의 복수의 메서드를 가질 때, 이들은 
+순서대로 나열하며, (private 멤버라고 하더라도) 그 사이에 다른 코드는 없습니다.
+</p>
 
 <h2 id="s4-formatting">4 Formatting</h2>
 
