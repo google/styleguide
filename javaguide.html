@@ -2,24 +2,24 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Google Java Style Guide</title>
+<title>Move Digital Java Style Guide</title>
 <link rel="stylesheet" type="text/css" href="javaguide.css">
 <script language="javascript" src="include/styleguide.js"></script>
-<link rel="shortcut icon" type="image/x-icon" href="https://www.google.com/favicon.ico" />
+<link rel="shortcut icon" type="image/png" href="https://move-digital-production.s3.amazonaws.com/static/images/favicons/favicon-32x32.png">
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </head>
 <body onload="initStyleGuide();">
 <div id="content">
-<h1>Google Java Style Guide</h1>
+<h1>Move Digital Java Style Guide</h1>
 <div class="vertical_toc" id="tocDiv"></div>
 
 <div class="main_body">
 
 <h2 id="s1-introduction">1 Introduction</h2>
 
-<p>This document serves as the <strong>complete</strong> definition of Google's coding standards for
+<p>This document serves as the <strong>complete</strong> definition of Move Digital's coding standards for
 source code in the Java&#8482; Programming Language. A Java source file is described as being <em>in
-Google Style</em> if and only if it adheres to the rules herein.</p>
+Move Digital Style</em> if and only if it adheres to the rules herein.</p>
 
 <p>Like other programming style guides, the issues covered span not only aesthetic issues of
 formatting, but other types of conventions or coding standards as well. However, this document
@@ -50,7 +50,7 @@ avoids giving <em>advice</em> that isn't clearly enforceable (whether by human o
 <h3 id="s1.2-guide-notes">1.2 Guide notes</h3>
 
 <p>Example code in this document is <strong>non-normative</strong>. That is, while the examples
-are in Google Style, they may not illustrate the <em>only</em> stylish way to represent the
+are in Move Digital Style, they may not illustrate the <em>only</em> stylish way to represent the
 code. Optional formatting choices made in examples should not be enforced as rules.</p>
 
 
@@ -332,9 +332,9 @@ after it is opened, with no characters or line break in between
   } catch (Exception e) {}
 </pre>
 
-<h3 id="s4.2-block-indentation">4.2 Block indentation: +2 spaces</h3>
+<h3 id="s4.2-block-indentation">4.2 Block indentation: +4 spaces</h3>
 
-<p>Each time a new block or block-like construct is opened, the indent increases by two
+<p>Each time a new block or block-like construct is opened, the indent increases by four
 spaces. When the block ends, the indent returns to the previous indent level. The indent level
 applies to both code and comments throughout the block. (See the example in Section 4.1.2,
 <a href="#s4.1.2-blocks-k-r-style">Nonempty blocks: K &amp; R Style</a>.)</p>
@@ -393,8 +393,7 @@ without the need to line-wrap.</p>
 
 <ol>
   <li>When a line is broken at a <em>non-assignment</em> operator the break comes <em>before</em>
-  the symbol. (Note that this is not the same practice used in Google style for other languages,
-  such as C++ and JavaScript.)
+  the symbol.
     <ul>
       <li>This also applies to the following "operator-like" symbols:
         <ul>
@@ -442,12 +441,12 @@ Predicate&lt;String&gt; predicate = str -&gt;
 code, <em>not necessarily</em> code that fits in the smallest number of lines.</p>
 
 <a name="indentation"></a>
-<h4 id="s4.5.2-line-wrapping-indent">4.5.2 Indent continuation lines at least +4 spaces</h4>
+<h4 id="s4.5.2-line-wrapping-indent">4.5.2 Indent continuation lines at least +8 spaces</h4>
 
 <p>When line-wrapping, each line after the first (each <em>continuation line</em>) is indented
-at least +4 from the original line.</p>
+at least +8 from the original line.</p>
 
-<p>When there are multiple continuation lines, indentation may be varied beyond +4 as
+<p>When there are multiple continuation lines, indentation may be varied beyond +8 as
 desired. In general, two continuation lines use the same indentation level if and only if they
 begin with syntactically parallel elements.</p>
 
@@ -567,7 +566,7 @@ end of a line; it addresses only <em>interior</em> space.</p>
 practice of adding a variable number of additional spaces in your code with the goal of making
 certain tokens appear directly below certain other tokens on previous lines.</p>
 
-<p>This practice is permitted, but is <strong>never required</strong> by Google Style. It is not
+<p>This practice is permitted, but is <strong>never required</strong> by Move Digital Style. It is not
 even required to <em>maintain</em> horizontal alignment in places where it was already used.</p>
 
 <p>Here is an example without alignment, then using alignment:</p>
@@ -678,9 +677,9 @@ the <em>last</em> statement group, <em>zero</em> or more statements).</p>
 
 <h5 id="s4.8.4.1-switch-indentation">4.8.4.1 Indentation</h5>
 
-<p>As with any other block, the contents of a switch block are indented +2.</p>
+<p>As with any other block, the contents of a switch block are indented +4.</p>
 
-<p>After a switch label, there is a line break, and the indentation level is increased +2, exactly
+<p>After a switch label, there is a line break, and the indentation level is increased +4, exactly
 as if a block were being opened. The following switch label returns to the previous indentation
 level, as if a block had been closed.</p>
 
@@ -812,8 +811,8 @@ rather than <code class="badcode">3000000000l</code>.</p>
 underscores. Thus each valid identifier name is matched by the regular expression
 <code>\w+</code> .</p>
 
-<p>In Google Style, special prefixes or suffixes are <strong>not</strong> used. For example, these
-names are not Google Style: <code class="badcode">name_</code>, <code class="badcode">mName</code>,
+<p>In Move Digital Style, special prefixes or suffixes are <strong>not</strong> used. For example, these
+names are not Move Digital Style: <code class="badcode">name_</code>, <code class="badcode">mName</code>,
 <code class="badcode">s_name</code> and <code class="badcode">kName</code>.</p>
 
 <h3 id="s5.2-specific-identifier-names">5.2 Rules by identifier type</h3>
@@ -935,7 +934,7 @@ be styled as constants.</p>
 
 <p>Sometimes there is more than one reasonable way to convert an English phrase into camel case,
 such as when acronyms or unusual constructs like "IPv6" or "iOS" are present. To improve
-predictability, Google Style specifies the following (nearly) deterministic scheme.</p>
+predictability, Move Digital Style specifies the following (nearly) deterministic scheme.</p>
 
 <p>Beginning with the prose form of the name:</p>
 
@@ -1119,7 +1118,7 @@ with no space after.</p>
 <p>Any of the standard "block tags" that are used appear in the order <code>@param</code>,
 <code>@return</code>, <code>@throws</code>, <code>@deprecated</code>, and these four types never
 appear with an empty description. When a block tag doesn't fit on a single line, continuation lines
-are indented four (or more) spaces from the position of the <code>@</code>.
+are indented eight (or more) spaces from the position of the <code>@</code>.
 </p>
 
 <h3 id="s7.2-summary-fragment">7.2 The summary fragment</h3>
