@@ -191,7 +191,7 @@ lang-java">\u221e</code>) 중의 하나가 사용됩니다. 문자열 리터럴�
 <ol>
   <li>단일 블럭의 모든 static import.</li>
   <li>단일 블럭의 모든 non-static import.</li>
-</p>ol>
+</ol>
 
 <p>만일 static 과 non-static import 둘 다 있는 경우, 한 개의 빈 줄로 
 두 개의 블럭으로 나눕니다. import문 사이에 다른 공백은 없습니다.</p>
@@ -232,46 +232,45 @@ lang-java">\u221e</code>) 중의 하나가 사용됩니다. 문자열 리터럴�
 순서대로 나열하며, (private 멤버라고 하더라도) 그 사이에 다른 코드는 없습니다.
 </p>
 
-<h2 id="s4-formatting">4 Formatting</h2>
+<h2 id="s4-formatting">4 서식</h2>
 
-<p class="terminology"><strong>Terminology Note:</strong> <em>block-like construct</em> refers to
-the body of a class, method or constructor. Note that, by Section 4.8.3.1 on
-<a href="#s4.8.3.1-array-initializers">array initializers</a>, any array initializer
-<em>may</em> optionally be treated as if it were a block-like construct.</p>
+<p class="terminology"><strong>용어 노트:</strong> <em>블럭같은 구조</em>는 
+클래스의 본문, 메서드 혹은 생성자를 의미합니다. 주목할 점은, Section 4.8.3.1 의
+<a href="#s4.8.3.1-array-initializers">배열 초기자</a>에서, 임의의 배열 
+초기자는 선택적으로 블럭같은 구조로 취급될 <em>수</em> 있습니다.</p>
 
 <a name="braces"></a>
-<h3 id="s4.1-braces">4.1 Braces</h3>
+<h3 id="s4.1-braces">4.1 중괄호</h3>
 
-<h4 id="s4.1.1-braces-always-used">4.1.1 Braces are used where optional</h4>
+<h4 id="s4.1.1-braces-always-used">4.1.1 중괄호는 선택 사항에서 사용</h4>
 
-<p>Braces are used with
+<p>중괄호는 
 <code class="prettyprint lang-java">if</code>,
 <code class="prettyprint lang-java">else</code>,
 <code class="prettyprint lang-java">for</code>,
-<code class="prettyprint lang-java">do</code> and
-<code class="prettyprint lang-java">while</code> statements, even when the
-body is empty or contains only a single statement.</p>
+<code class="prettyprint lang-java">do</code> 그리고
+<code class="prettyprint lang-java">while</code>문에서 사용되며, 내용이 비어 있거나 단 한줄만 포함하고 있더라도 사용합니다.</p>
 
-<h4 id="s4.1.2-blocks-k-r-style">4.1.2 Nonempty blocks: K &amp; R style</h4>
+<h4 id="s4.1.2-blocks-k-r-style">4.1.2 비어 있지 않은 블록: K &amp; R 
+스타일</h4>
 
-<p>Braces follow the Kernighan and Ritchie style
-("<a href="http://www.codinghorror.com/blog/2012/07/new-programming-jargon.html">Egyptian brackets</a>")
-for <em>nonempty</em> blocks and block-like constructs:</p>
+<p><em>비어있지 않은</em> 블럭과 블럭같은 구조에 대해, 괄호는 Kernighan and Ritchie 스타일을 따릅니다
+("<a href="http://www.codinghorror.com/blog/2012/07/new-programming-jargon.html">이집트식 괄호</a>"):</p>
 
 <ul>
-  <li>No line break before the opening brace.</li>
+  <li>여는 괄호 앞에 개행을 하지 않는다.</li>
 
-  <li>Line break after the opening brace.</li>
+  <li>여는 괄호 뒤에 개행한다.</li>
 
-  <li>Line break before the closing brace.</li>
+  <li>닫는 괄호 앞에 개행한다.</li>
 
-  <li>Line break after the closing brace, <em>only if</em> that brace terminates a statement or
-  terminates the body of a method, constructor, or <em>named</em> class.
-  For example, there is <em>no</em> line break after the brace if it is followed by
-  <code class="prettyprint lang-java">else</code> or a comma.</li>
+  <li>괄호가 문(statement) 혹은 메서드 내용, 생성자, 혹은 <em>명명된</em> 
+  클래스를 끝내는 <em>경우에만</em> 닫는 괄호 뒤에 개행한다.
+  예를 들어, 
+  <code class="prettyprint lang-java">else</code> 나 쉼표가 뒤에 오는 경우에는 괄호 뒤에 개행하지 <em>않는다</em>.</li>
 </ul>
 
-<p>Examples:</p>
+<p>예시:</p>
 
 <pre class="prettyprint lang-java">return () -&gt; {
   while (condition()) {
@@ -296,21 +295,24 @@ return new MyClass() {
 };
 </pre>
 
-<p>A few exceptions for enum classes are given in Section 4.8.1,
+<p>열거(enum) 클래스에 대한 몇몇 예외 사항이 Section 4.8.1에 있습니다,
 <a href="#s4.8.1-enum-classes">Enum classes</a>.</p>
 
 <a name="emptyblocks"></a>
-<h4 id="s4.1.3-braces-empty-blocks">4.1.3 Empty blocks: may be concise</h4>
+<h4 id="s4.1.3-braces-empty-blocks">4.1.3 빈 블록: 간결하게</h4>
 
-<p>An empty block or block-like construct may be in K &amp; R style (as described in
-<a href="#s4.1.2-blocks-k-r-style">Section 4.1.2</a>). Alternatively, it may be closed immediately
-after it is opened, with no characters or line break in between
-(<code class="prettyprint lang-java">{}</code>), <strong>unless</strong> it is part of a
-<em>multi-block statement</em> (one that directly contains multiple blocks:
+<p>빈 블럭이나 블럭같은 구조는 아마 K &amp; R 스타일 (
+<a href="#s4.1.2-blocks-k-r-style">Section 4.1.2</a>에 설명된 대로)을 따를 
+것입니다. 대신, <em>멀티 블럭문</em>(직접적으로 복수의 블럭을 포함하는 경우:
 <code class="prettyprint lang-java">if/else</code> or
-<code class="prettyprint lang-java">try/catch/finally</code>).</p>
+<code class="prettyprint lang-java">try/catch/finally</code>)의 일부가 
+<strong>아닌 한</strong>,
+사이에 어떤 문자나 개행도 없이 여는 괄호 다음에 바로 닫는 
+괄호가 옵니다
+(<code class="prettyprint lang-java">{}</code>)
+.</p>
 
-<p>Examples:</p>
+<p>예시:</p>
 
 <pre class="prettyprint lang-java">  // This is acceptable
   void doNothing() {}
@@ -325,42 +327,39 @@ after it is opened, with no characters or line break in between
   } catch (Exception e) {}
 </pre>
 
-<h3 id="s4.2-block-indentation">4.2 Block indentation: +2 spaces</h3>
+<h3 id="s4.2-block-indentation">4.2 블럭 들여쓰기: +2 칸</h3>
 
-<p>Each time a new block or block-like construct is opened, the indent increases by two
-spaces. When the block ends, the indent returns to the previous indent level. The indent level
-applies to both code and comments throughout the block. (See the example in Section 4.1.2,
+<p>매번 새 블럭이나 블럭같은 구조가 열릴 때, 들여쓰기는 2 칸씩 증가합니다. 블럭이 끝날 때, 들여쓰기는 이전 수준으로 돌아옵니다. 들여쓰기 수준은 코드와 주석 모두 블럭 안에서 계속 적용합니다. (Section 4.1.2의 예시를 보세요,
 <a href="#s4.1.2-blocks-k-r-style">Nonempty blocks: K &amp; R Style</a>.)</p>
 
-<h3 id="s4.3-one-statement-per-line">4.3 One statement per line</h3>
+<h3 id="s4.3-one-statement-per-line">4.3 라인당 하나의 문(statement)</h3>
 
-<p>Each statement is followed by a line break.</p>
+<p>각 문(statement)는 개행 뒤에 옵니다.</p>
 
 <a name="columnlimit"></a>
-<h3 id="s4.4-column-limit">4.4 Column limit: 100</h3>
+<h3 id="s4.4-column-limit">4.4 행 제한: 100</h3>
 
-<p>Java code has a column limit of 100 characters. A "character" means any Unicode code point.
-Except as noted below, any line that would exceed this limit must be line-wrapped, as explained in
-Section 4.5, <a href="#s4.5-line-wrapping">Line-wrapping</a>.
+<p>자바 코드는 100문자로 행을 제한합니다. "문자"는 임의의 유니코드 코드 
+포인트를 의미합니다. 아래의 경우를 제외하고, 제한을 초과할 수 있는 경우 
+Section 4.5, <a href="#s4.5-line-wrapping">Line-wrapping</a>에서 설명한 대로 
+line-wrap 돼야 합니다.
 </p>
 
-<p class="tip">Each Unicode code point counts as one character, even if its display width is
-greater or less. For example, if using
-<a href="https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms">fullwidth characters</a>,
-you may choose to wrap the line earlier than where this rule strictly requires.</p>
+<p class="tip">각 유니코드 코드 포인트는 실제 표시되는 너비가 더 크거나 
+작더라도 하나의 문자로 셉니다. 예를 들어, <a href="https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms">전폭 문자</a>를 사용하는 경우, 이 규칙이 적용되는 곳에서보다 먼저 개행할 수 있습니다.</p>
 
-<p><strong>Exceptions:</strong></p>
+<p><strong>예외:</strong></p>
 
 <ol>
-  <li>Lines where obeying the column limit is not possible (for example, a long URL in Javadoc,
-  or a long JSNI method reference).</li>
+  <li>행 제한을 따르는 것이 불가한 줄(예를 들어, Javadoc의 긴 URL,
+  혹은 긴 JSNI 메서드 레퍼런스).</li>
 
-  <li><code class="prettyprint lang-java">package</code> and
-  <code class="prettyprint lang-java">import</code> statements (see Sections
-  3.2 <a href="#s3.2-package-statement">Package statement</a> and
-  3.3 <a href="#s3.3-import-statements">Import statements</a>).</li>
+  <li><code class="prettyprint lang-java">package</code> 와
+  <code class="prettyprint lang-java">import</code>문 (Sections
+  3.2 <a href="#s3.2-package-statement">Package문</a> 와
+  3.3 <a href="#s3.3-import-statements">Import문</a>을 보세요).</li>
 
-  <li>Command lines in a comment that may be cut-and-pasted into a shell.</li>
+  <li>주석에서, 쉘에 복사-붙여넣기 될 수 있는 커맨드라인.</li>
 </ol>
 
 <h3 id="s4.5-line-wrapping">4.5 Line-wrapping</h3>
