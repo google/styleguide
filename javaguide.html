@@ -34,21 +34,11 @@ avoids giving <em>advice</em> that isn't clearly enforceable (whether by human o
 <p><a href="https://raw.githubusercontent.com/amanaadvisors/styleguide/gh-pages/eclipse-java-style.xml">
 Eclipse</a> and
 <a href="https://raw.githubusercontent.com/amanaadvisors/styleguide/gh-pages/intellij-java-style.xml">
-IntelliJ</a></p> code style profiles are available to be imported into your IDE of choice,
+IntelliJ</a> code style profiles are available to be imported into your IDE of choice,
 allowing for quick code formatting (and writing of properly formatted code to begin with). Note,
 however that these code style IDE profiles will not necessarily produce 100% compliant code (or
 the only compliant code formatting, for that matter) so indiscriminately applying them on existing
 code is not necessarily the best way forward.</p>
-
-<p>Regarding existing, non-conformant code a couple of rules of thumb apply:</p>
-<ol>
-  <li>Try to not mix file-wide reformatting and functional changes into the same commit.</li>
-
-  <li>It is OK (and many times preferable) to follow the style of the surrounding (non-conformant) code
-  when making changes to existing code rather than enforce strict adherence to this style guide.
-  E.g. if the existing code uses +2 indentation, adding a few lines with +4 indentation is not
-  going to help with readability.</li>
-</ol>
 
 <h3 id="s1.1-terminology">1.1 Terminology notes</h3>
 
@@ -73,6 +63,18 @@ code is not necessarily the best way forward.</p>
 <p>Example code in this document is <strong>non-normative</strong>. That is, while the examples
 are in Move Digital Style, they may not illustrate the <em>only</em> stylish way to represent the
 code. Optional formatting choices made in examples should not be enforced as rules.</p>
+
+<h3 id="s1.3-legacy-code">1.3 Legacy code</h3>
+
+<p>Regarding existing, non-conformant code a couple of rules of thumb apply:</p>
+<ol>
+  <li>Try to not mix file-wide reformatting and functional changes into the same commit.</li>
+
+  <li>It is OK (and many times preferable) to follow the style of the surrounding (non-conformant) code
+  when making changes to existing code rather than enforce strict adherence to this style guide.
+  E.g. if the existing code uses +2 indentation, adding a few lines with +4 indentation is not
+  going to help with readability.</li>
+</ol>
 
 
 <h2 id="s2-source-file-basics">2 Source file basics</h2>
