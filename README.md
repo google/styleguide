@@ -44,6 +44,15 @@ The style guides in this project are licensed under the CC-By 3.0 License,
 which encourages you to share these documents.
 See [https://creativecommons.org/licenses/by/3.0/][ccl] for more details.
 
+
+**How to integrate Java style settings in Intellij IDEA?**
+
+1. Make sure you have intellij-java-style.xml locally.
+2. In IDEA menu, follow
+Intellij IDEA -> Preferences -> (In opened window expand) Editor -> Code Style -> Java -> Find _"Scheme"_ label and next to the value of it find the gear icon.
+3. Click on the icon -> Import Scheme -> Intellij Idea Code Style XML -> Find and select intellij-java-style.xml on the local disk.
+
+
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
 [java]: https://amanaadvisors.github.io/styleguide/javaguide.html
