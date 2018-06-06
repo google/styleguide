@@ -12,9 +12,9 @@
 <div id="content">
 <h1>Move Digital Java Style Guide</h1>
 
-<p><em>[Shamelessly ripped from the Google Java Style guide, with only 3 changes: +4 instead of +2
-indentation; 120 instead of 100 column limit; and (of course) replaced Google with Move 
-Digital.]</em></p>
+<p><em>[Shamelessly ripped from the <a href="https://google.github.io/styleguide/javaguide.html">
+Google Java Style Guide</a>, with 3 changes only: +4 instead of +2 indentation; 120 instead of
+100 column limit; and (of course) replacement of "Google" with "Move Digital" throughout.]</em></p>
 <div class="vertical_toc" id="tocDiv"></div>
 
 <div class="main_body">
@@ -31,7 +31,24 @@ focuses primarily on the <strong>hard-and-fast rules</strong> that we follow uni
 avoids giving <em>advice</em> that isn't clearly enforceable (whether by human or tool).
 </p>
 
+<p><a href="https://raw.githubusercontent.com/amanaadvisors/styleguide/gh-pages/eclipse-java-style.xml">
+Eclipse</a> and
+<a href="https://raw.githubusercontent.com/amanaadvisors/styleguide/gh-pages/intellij-java-style.xml">
+IntelliJ</a></p> code style profiles are available to be imported into your IDE of choice,
+allowing for quick code formatting (and writing of properly formatted code to begin with). Note,
+however that these code style IDE profiles will not necessarily produce 100% compliant code (or
+the only compliant code formatting, for that matter) so indiscriminately applying them on existing
+code is not necessarily the best way forward.</p>
 
+<p>Regarding existing, non-conformant code a couple of rules of thumb apply:</p>
+<ol>
+  <li>Try to not mix file-wide reformatting and functional changes into the same commit.</li>
+
+  <li>It is OK (and many times preferable) to follow the style of the surrounding (non-conformant) code
+  when making changes to existing code rather than enforce strict adherence to this style guide.
+  E.g. if the existing code uses +2 indentation, adding a few lines with +4 indentation is not
+  going to help with readability.</li>
+</ol>
 
 <h3 id="s1.1-terminology">1.1 Terminology notes</h3>
 
