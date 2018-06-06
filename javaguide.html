@@ -364,61 +364,58 @@ line-wrap 돼야 합니다.
 
 <h3 id="s4.5-line-wrapping">4.5 Line-wrapping</h3>
 
-<p class="terminology"><strong>Terminology Note:</strong> When code that might otherwise legally
-occupy a single line is divided into multiple lines, this activity is called
-<em>line-wrapping</em>.</p>
+<p class="terminology"><strong>용어 노트:</strong> 한 줄만 차지할 수 없는 
+코드를 여러 줄로 나눌 때, 이를 <em>line-wrapping</em>이라고 부릅니다.</p>
 
-<p>There is no comprehensive, deterministic formula showing <em>exactly</em> how to line-wrap in
-every situation. Very often there are several valid ways to line-wrap the same piece of code.</p>
+<p>모든 상황에서 line-wrapping을 어떻게 하는지 <em>정확히</em> 보여줄 수 있는 
+포괄적이고 결정적인 공식은 없습니다. 때때로 같은 코드 조각을 line-wrap 하는 몇 
+가지 방법은 있습니다.</p>
 
-<p class="note"><strong>Note:</strong> While the typical reason for line-wrapping is to avoid
-overflowing the column limit, even code that would in fact fit within the column limit <em>may</em>
-be line-wrapped at the author's discretion.</p>
+<p class="note"><strong>Note:</strong> line-wrapping은 일반적으로 행 제한의 
+초과를 피하기 위해 사용하지만, 행 제한을 넘지 않는 코드도 작성자의 재량에 따라 
+wrap<em>될 수</em> 있습니다.</p>
 
-<p class="tip"><strong>Tip:</strong> Extracting a method or local variable may solve the problem
-without the need to line-wrap.</p>
+<p class="tip"><strong>팁:</strong> 메서드나 지역 변수를 뽑아내는 것이 
+line-wrap할 필요 없이 문제를 해결할 수도 있습니다.</p>
 
-<h4 id="s4.5.1-line-wrapping-where-to-break">4.5.1 Where to break</h4>
+<h4 id="s4.5.1-line-wrapping-where-to-break">4.5.1 개행 위치</h4>
 
-<p>The prime directive of line-wrapping is: prefer to break at a
-<strong>higher syntactic level</strong>. Also:</p>
+<p>line-wrapping의 가장 중요한 점은 
+<strong>더 높은 구문 레벨</strong>에서 개행하는 것을 선호한다는 것입니다. 
+또한:</p>
 
 <ol>
-  <li>When a line is broken at a <em>non-assignment</em> operator the break comes <em>before</em>
-  the symbol. (Note that this is not the same practice used in Google style for other languages,
-  such as C++ and JavaScript.)
+  <li>줄이 <em>대입이 아닌</em> 연산자에서 개행되는 경우 기호 <em>앞에서</em> 
+  개행이 이뤄집니다. (이는 C++와 Javascript와 같은 다른 언어의 Google 스타일과 동일한 관례가 아니라는 점을 알아두시기 바랍니다)
     <ul>
-      <li>This also applies to the following "operator-like" symbols:
+      <li>이는 다음의 "연산자 같은" 기호에도 적용합니다:
         <ul>
-          <li>the dot separator (<code class="prettyprint lang-java">.</code>)</li>
-          <li>the two colons of a method reference
+          <li>점 구분자 (<code class="prettyprint lang-java">.</code>)</li>
+          <li>메서드 참조의 콜론 두 개
           (<code class="prettyprint lang-java">::</code>)</li>
-          <li>an ampersand in a type bound
+          <li>타입 경계의 앰퍼샌드
           (<code class="prettyprint lang-java">&lt;T extends Foo &amp; Bar&gt;</code>)</li>
-          <li>a pipe in a catch block
+          <li>catch 블럭의 파이프
           (<code class="prettyprint lang-java">catch (FooException | BarException e)</code>).</li>
         </ul>
       </li>
     </ul>
   </li>
 
-  <li>When a line is broken at an <em>assignment</em> operator the break typically comes
-  <em>after</em> the symbol, but either way is acceptable.
+  <li>줄이 When a line is broken at an <em>대입</em> 연산자에서 개행되는 경우
+  보통 기호 <em>다음에</em> 개행이 이뤄지지만, 두 방법 모두 사용 가능합니다.
     <ul>
-      <li>This also applies to the "assignment-operator-like" colon in an enhanced
-      <code class="prettyprint lang-java">for</code> ("foreach") statement.</li>
+      <li>이는 개선된 
+      <code class="prettyprint lang-java">for</code> ("foreach")문의 "대입 연산자 같은" 콜론에도 적용합니다..</li>
     </ul>
   </li>
 
-  <li>A method or constructor name stays attached to the open parenthesis
-  (<code class="prettyprint lang-java">(</code>) that follows it.</li>
+  <li>메서드나 생성자 이름은 여는 괄호
+  (<code class="prettyprint lang-java">(</code>) 와 붙어있도록 합니다.</li>
 
-  <li>A comma (<code class="prettyprint lang-java">,</code>) stays attached to the token that
-  precedes it.</li>
+  <li>쉼표 (<code class="prettyprint lang-java">,</code>)는 앞서는 토큰과 붙어있도록 합니다.</li>
 
-  <li>A line is never broken adjacent to the arrow in a lambda, except that a
-  break may come immediately after the arrow if the body of the lambda consists
-  of a single unbraced expression. Examples:
+  <li>람다의 내용이 괄호 없는 단일 식(expression)이어서 화살표 직후에 개행하는 경우를 제외하고, 람다의 화살표 근처에서는 절대 개행하지 않습니다. 예시:
 <pre class="prettyprint lang-java">MyLambda&lt;String, Long, Object&gt; lambda =
     (String label, Long value, Object obj) -&gt; {
         ...
@@ -430,22 +427,21 @@ Predicate&lt;String&gt; predicate = str -&gt;
   </li>
 </ol>
 
-<p class="note"><strong>Note:</strong> The primary goal for line wrapping is to have clear
-code, <em>not necessarily</em> code that fits in the smallest number of lines.</p>
+<p class="note"><strong>Note:</strong> line wrapping의 주 목적은 
+<em>불필요하게</em> 최소한의 라인에 코드를 맞추는 것이 아니라 코드를 깔끔하게 
+하는 데에 있습니다.</p>
 
 <a name="indentation"></a>
-<h4 id="s4.5.2-line-wrapping-indent">4.5.2 Indent continuation lines at least +4 spaces</h4>
+<h4 id="s4.5.2-line-wrapping-indent">4.5.2 계속되는 행에는 최소한 4 칸 들여쓸 
+것</h4>
 
-<p>When line-wrapping, each line after the first (each <em>continuation line</em>) is indented
-at least +4 from the original line.</p>
+<p>line wrapping할 때, 첫 번째 이후의 각 라인(각각 <em>계속되는 라인</em>)은 원래 라인으로부터 최소한 4 칸씩 들여씁니다.</p>
 
-<p>When there are multiple continuation lines, indentation may be varied beyond +4 as
-desired. In general, two continuation lines use the same indentation level if and only if they
-begin with syntactically parallel elements.</p>
+<p>계속되는 라인이 여럿인 경우, 필요에 따라 들여쓰기는 4 칸 이상이 될 수도 있습니다. 일반적으로, 두 개의 계속되는 라인이 문법적으로 평행한 요소로 시작한다면, 동일한 들여쓰기 수준을 사용합니다.</p>
 
-<p>Section 4.6.3 on <a href="#s4.6.3-horizontal-alignment">Horizontal alignment</a> addresses
-the discouraged practice of using a variable number of spaces to align certain tokens with
-previous lines.</p>
+<p>Section 4.6.3 <a href="#s4.6.3-horizontal-alignment">수평 정렬</a>에서 
+특정 토큰을 이전 라인과 맞추기 위하여 가변적인 공백을 사용하는 관례에 대해 
+다룹니다.</p>
 
 <h3 id="s4.6-whitespace">4.6 Whitespace</h3>
 
