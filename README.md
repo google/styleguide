@@ -44,14 +44,19 @@ The style guides in this project are licensed under the CC-By 3.0 License,
 which encourages you to share these documents.
 See [https://creativecommons.org/licenses/by/3.0/][ccl] for more details.
 
+**Importing the Java code style profile into Intellij IDEA**
 
-**How to integrate Java style settings in Intellij IDEA?**
-
-1. Make sure you have intellij-java-style.xml locally.
+1. Download [intellij-java-style.xml][java_intellij] to your local disk.
 2. In IDEA menu, follow
 Intellij IDEA -> Preferences -> (In opened window expand) Editor -> Code Style -> Java -> Find _"Scheme"_ label and next to the value of it find the gear icon.
 3. Click on the icon -> Import Scheme -> Intellij Idea Code Style XML -> Find and select intellij-java-style.xml on the local disk.
 
+**Importing the Java code style profile into Eclipse**
+
+1. Download [eclipse-java-style.xml][java_eclipse] to your local disk.
+2. In the Eclipse menu, click on *Window* -> *Preferences*, then navigate to *Java* -> *Code Style* -> *Formatter*.
+3. In the right panel click on *Import...*, select intellij-java-style.xml from the local disk and click "OK".
+4. Back in the *Preferences* dialog, click *Apply and Close*.
 
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
