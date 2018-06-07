@@ -443,56 +443,49 @@ Predicate&lt;String&gt; predicate = str -&gt;
 특정 토큰을 이전 라인과 맞추기 위하여 가변적인 공백을 사용하는 관례에 대해 
 다룹니다.</p>
 
-<h3 id="s4.6-whitespace">4.6 Whitespace</h3>
+<h3 id="s4.6-whitespace">4.6 공백</h3>
 
-<h4 id="s4.6.1-vertical-whitespace">4.6.1 Vertical Whitespace</h4>
+<h4 id="s4.6.1-vertical-whitespace">4.6.1 수직 공백</h4>
 
-<p>A single blank line always appears:</p>
+<p>빈 줄 하나는 다음과 같은 경우에 사용합니다:</p>
 
 <ol>
-  <li><em>Between</em> consecutive members or initializers of a class: fields, constructors,
-  methods, nested classes, static initializers, and instance initializers.
+  <li>필드, 생성자, 메서드, 중첩 클래스, 정적 초기자, 인스턴스 초기자와 같이 클래스의 멤버 혹은 초기자가 <em>연속</em>되는 경우.
   <ul>
-    <li><span class="exception"><strong>Exception:</strong> A blank line between two consecutive
-    fields (having no other code between them) is optional. Such blank lines are used as needed to
-    create <em>logical groupings</em> of fields.</span></li>
-    <li><span class="exception"><strong>Exception:</strong> Blank lines between enum constants are
-    covered in <a href="#s4.8.1-enum-classes">Section 4.8.1</a>.</span></li>
+    <li><span class="exception"><strong>예외:</strong> 연이은 두 필드 사이에( 다른 코드 없이도) 선택적으로 빈 줄을 삽입할 수 있습니다. 이러한 빈 줄은 필드들의 <em>논리적 그룹</em>을 만드는 데에 사용될 수 있습니다.</span></li>
+    <li><span class="exception"><strong>예외:</strong> 열거 상수(enum constants) 사이의 빈 줄에 대해서는 <a href="#s4.8.1-enum-classes">Section 4.8.1</a>에서 다룹니다.</span></li>
   </ul>
   </li>
 
-  <li>As required by other sections of this document (such as Section 3,
-  <a href="#s3-source-file-structure">Source file structure</a>, and Section 3.3,
-  <a href="#s3.3-import-statements">Import statements</a>).</li>
+  <li>본 문서의 다른 영역에서 요구되는 경우(Section 3,
+  <a href="#s3-source-file-structure">소스 파일 구조</a>, 그리고 Section 3.3,
+  <a href="#s3.3-import-statements">Import문</a> 등).</li>
 </ol>
 
-<p>A single blank line may also appear anywhere it improves readability, for example between
-statements to organize the code into logical subsections. A blank line before the first member or
-initializer, or after the last member or initializer of the class, is neither encouraged nor
-discouraged.
+<p>예를 들어 두 개의 문(statement) 사이에 코드의 논리적인 세부사항을 정리하기 
+위한 경우 처럼, 하나의 빈 줄은 가독성을 높이기 위해 어디서든 나타날 수 
+있습니다. 클래스의 첫 번째 멤버나 초기자 앞에 혹은 마지막 멤버나 초기자 뒤에 빈 
+줄을 삽입하는 것은 권장하는 것은 아니지만 금지하는 것도 아닙니다.
 
-</p><p><em>Multiple</em> consecutive blank lines are permitted, but never required (or encouraged).</p>
+</p><p><em>복수의</em> 연속된 빈 줄도 허용되지만, 필수(혹은 권장)는 아닙니다.</p>
 
-<h4 id="s4.6.2-horizontal-whitespace">4.6.2 Horizontal whitespace</h4>
+<h4 id="s4.6.2-horizontal-whitespace">4.6.2 수평 공백</h4>
 
-<p>Beyond where required by the language or other style rules, and apart from literals, comments and
-Javadoc, a single ASCII space also appears in the following places <strong>only</strong>.</p>
+<p>언어 또는 다른 스타일 규칙에 의해 요구되는 경우를 넘어서, 문자, 주석 및 
+Javadoc을 제외한 하나의 ASCII공간도 다음 위치에<strong>만</strong> 
+나타납니다.</p>
 
 <ol>
-  <li>Separating any reserved word, such as
+  <li>행에 이어지는 열린 괄호(<code class="prettyprint lang-java">(</code>)와
   <code class="prettyprint lang-java">if</code>,
-  <code class="prettyprint lang-java">for</code> or
-  <code class="prettyprint lang-java">catch</code>, from an open parenthesis
-  (<code class="prettyprint lang-java">(</code>)
-  that follows it on that line</li>
+  <code class="prettyprint lang-java">for</code> 혹은
+  <code class="prettyprint lang-java">catch</code>와 같은 예약어의 구분.</li>
 
-  <li>Separating any reserved word, such as
-  <code class="prettyprint lang-java">else</code> or
-  <code class="prettyprint lang-java">catch</code>, from a closing curly brace
-  (<code class="prettyprint lang-java">}</code>) that precedes it on that line</li>
+  <li>행의 앞에 있는 닫는 중괄호(<code class="prettyprint lang-java">}</code>)와 
+  <code class="prettyprint lang-java">else</code> 혹은
+  <code class="prettyprint lang-java">catch</code> 와 같은 예약어의 구분.</li>
 
-  <li>Before any open curly brace
-  (<code class="prettyprint lang-java">{</code>), with two exceptions:
+  <li>여는 중괄호(<code class="prettyprint lang-java">{</code>)에 대해서는 다음의 예외를 적용합니다:
   <ul>
     <li><code class="prettyprint lang-java">@SomeAnnotation({a, b})</code> (no space is used)</li>
 
@@ -501,53 +494,53 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
   </ul>
   </li>
 
-  <li>On both sides of any binary or ternary operator. This also applies to the following
-  "operator-like" symbols:
+  <li>이항 또는 삼항 연산자의 양 쪽. 또한 이는 다음과 같은 "연산자 같은" 기호에도 적용합니다:
   <ul>
-    <li>the ampersand in a conjunctive type bound:
+    <li>결합 타입 경계의 앰퍼샌드:
     <code class="prettyprint lang-java">&lt;T extends Foo &amp; Bar&gt;</code></li>
 
-    <li>the pipe for a catch block that handles multiple exceptions:
+    <li>여러 예외를 처리하는 catch 블럭의 파이프:
     <code class="prettyprint lang-java">catch (FooException | BarException e)</code></li>
 
-    <li>the colon (<code class="prettyprint lang-java">:</code>) in an enhanced
-    <code class="prettyprint lang-java">for</code> ("foreach") statement</li>
+    <li>개선된 <code class="prettyprint lang-java">for</code> ("foreach")문의
+    콜론 (<code class="prettyprint lang-java">:</code>)
+    </li>
 
-    <li>the arrow in a lambda expression:
+    <li>람다식의 화살표:
     <code class="prettyprint lang-java">(String str) -&gt; str.length()</code></li>
   </ul>
-    but not
+    다만, 다음의 경우는 사용하지 않습니다
 
   <ul>
-    <li>the two colons (<code class="prettyprint lang-java">::</code>) of a method reference, which
-    is written like <code class="prettyprint lang-java">Object::toString</code></li>
-    <li>the dot separator (<code class="prettyprint lang-java">.</code>), which is written like
-    <code class="prettyprint lang-java">object.toString()</code></li>
+    <li><code class="prettyprint lang-java">Object::toString</code>와 같은
+    메서드 참조의 콜론 두 개 (<code class="prettyprint lang-java">::</code>.
+  </li>
+    <li><code class="prettyprint lang-java">object.toString()</code>와 같은 점 구분자(<code class="prettyprint lang-java">.</code>).
+    </li>
   </ul>
   </li>
 
-  <li>After <code class="prettyprint lang-java">,:;</code> or the closing parenthesis
-  (<code class="prettyprint lang-java">)</code>) of a cast</li>
+  <li><code class="prettyprint lang-java">,:;</code> 혹은 캐스팅의 닫는 괄호
+  (<code class="prettyprint lang-java">)</code>)의 뒤</li>
 
-  <li>On both sides of the double slash (<code class="prettyprint lang-java">//</code>) that
-  begins an end-of-line comment. Here, multiple spaces are allowed, but not required.</li>
+  <li>주석이 시작되는 더블 슬래시(<code class="prettyprint lang-java">//</code>
+  의 양 쪽. 이곳에는 복수의 공백이 허용됩니다만, 필수는 아닙니다.</li>
 
-  <li>Between the type and variable of a declaration:
+  <li>선언에서 타입과 변수의 사이:
   <code class="prettyprint lang-java">List&lt;String&gt; list</code></li>
 
-  <li><em>Optional</em> just inside both braces of an array initializer
+  <li><em>선택적으로</em> 배열 초기자의 양 대괄호 바로 안쪽
   <ul>
     <li><code class="prettyprint lang-java">new int[] {5, 6}</code> and
     <code class="prettyprint lang-java">new int[] { 5, 6 }</code> are both valid</li>
   </ul>
   </li>
 
-  <li>Between a type annotation and <code class="prettyprint lang-java">[]</code> or
-  <code class="prettyprint lang-java">...</code>.</li>
+  <li>타입 어노테이션과 <code class="prettyprint lang-java">[]</code> 혹은
+  <code class="prettyprint lang-java">...</code>의 사이.</li>
 </ol>
 
-<p>This rule is never interpreted as requiring or forbidding additional space at the start or
-end of a line; it addresses only <em>interior</em> space.</p>
+<p>이 규칙은 절대 행의 시작이나 끝에 공백을 추가하는 것을 요구하거나 금지하는 것으로 해석될 수 없습니다. 오직 <em>내부</em> 공백에 대해서만 다룹니다.</p>
 
 <h4 id="s4.6.3-horizontal-alignment">4.6.3 Horizontal alignment: never required</h4>
 
