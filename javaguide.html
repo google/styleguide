@@ -542,16 +542,13 @@ Javadoc을 제외한 하나의 ASCII공간도 다음 위치에<strong>만</stron
 
 <p>이 규칙은 절대 행의 시작이나 끝에 공백을 추가하는 것을 요구하거나 금지하는 것으로 해석될 수 없습니다. 오직 <em>내부</em> 공백에 대해서만 다룹니다.</p>
 
-<h4 id="s4.6.3-horizontal-alignment">4.6.3 Horizontal alignment: never required</h4>
+<h4 id="s4.6.3-horizontal-alignment">4.6.3 수평 정렬: 불필요</h4>
 
-<p class="terminology"><strong>Terminology Note:</strong> <em>Horizontal alignment</em> is the
-practice of adding a variable number of additional spaces in your code with the goal of making
-certain tokens appear directly below certain other tokens on previous lines.</p>
+<p class="terminology"><strong>용어 노트:</strong> <em>수평 정렬</em>은 특정 토큰이 이전 라인의 다른 특정 토큰의 바로 아래에 위치하도록 코드에 몇 개의 공백을 추가하는 관례입니다.</p>
 
-<p>This practice is permitted, but is <strong>never required</strong> by Google Style. It is not
-even required to <em>maintain</em> horizontal alignment in places where it was already used.</p>
+<p>이 관례는 허용되지만 구글 스타일에서 <strong>절대 필수는 아닙니다</strong>. 이미 수평 정렬이 사용된 곳에서 이를 <em>유지</em>할 필요도 없습니다.</p>
 
-<p>Here is an example without alignment, then using alignment:</p>
+<p>정렬이 사용하지 않는 경우와, 사용하는 경우에 대한 예시입니다:</p>
 
 <pre class="prettyprint lang-java">private int x; // this is fine
 private Color color; // this too
@@ -560,13 +557,15 @@ private int   x;      // permitted, but future edits
 private Color color;  // may leave it unaligned
 </pre>
 
-<p class="tip"><strong>Tip:</strong> Alignment can aid readability, but it creates problems for
-future maintenance.  Consider a future change that needs to touch just one line. This change may
-leave the formerly-pleasing formatting mangled, and that is <strong>allowed</strong>. More often
-it prompts the coder (perhaps you) to adjust whitespace on nearby lines as well, possibly
-triggering a cascading series of reformattings. That one-line change now has a "blast radius."
-This can at worst result in pointless busywork, but at best it still corrupts version history
-information, slows down reviewers and exacerbates merge conflicts.</p>
+<p class="tip"><strong>팁:</strong> 정렬은 가독성 향상에 도움이 될 수 있지만, 
+이후에 유지보수에서 문제를 만듭니다. 미래에 한 라인을 수정해야 하는 경우가 
+생기는 경우를 생각해 보십시오. 이 변경이 이전에 만들어진 형식을 손상시킬 수 
+있는데, 이것이 허용됩니다. 이는 종종 코드 작성자(아마도 여러분)가 주변 라인의 
+공백 또한 조정하도록 만듭니다, 어쩌면 이로 인해 다른 코드를 수정해야 하는 
+상황이 연이어 발생할 수도 있습니다. 이 한 줄의 변경이 이젠 "폭발 반경"을 갖게 
+되는 것입니다. 이는 최악의 경우 무의미한 업무를 만들 수 있지만, 기껏해야 버전 
+히스토리 손상, 코드 리뷰 지체와 코드 병합 충돌(merge confilict)을 악화시키는 
+정도로 끝날 수도 있습니다.</p>
 
 <a name="parentheses"></a>
 <h3 id="s4.7-grouping-parentheses">4.7 Grouping parentheses: recommended</h3>
