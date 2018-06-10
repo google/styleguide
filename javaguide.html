@@ -572,12 +572,11 @@ private Color color;  // may leave it unaligned
 
 <p>선택적인 그룹핑 괄호는 작성자와 리뷰어가 괄호 없이도 코드가 잘못 해석될 여지가 없거나 코드를 더 읽기 쉽게 만드는 경우에만 생략돼야 합니다. 코드를 읽는 모든 사람이 자바의 연산자 우선순위를 모두 외우고 있다고 가정하는 것은 합리적이지 <em>않</em>습니다.</p>
 
-<h3 id="s4.8-specific-constructs">4.8 Specific constructs</h3>
+<h3 id="s4.8-specific-constructs">4.8 명확한 구조</h3>
 
-<h4 id="s4.8.1-enum-classes">4.8.1 Enum classes</h4>
+<h4 id="s4.8.1-enum-classes">4.8.1 열거 클래스</h4>
 
-<p>After each comma that follows an enum constant, a line break is optional. Additional blank
-lines (usually just one) are also allowed. This is one possibility:
+<p>열거 상수에 따라오는 각 콤마의 뒤에는 선택적으로 개행을 사용합니다. 추가적으로 빈 라인(보통 하나만)도 허용됩니다.:
 
 </p><pre class="prettyprint lang-java">private enum Answer {
   YES {
@@ -591,32 +590,32 @@ lines (usually just one) are also allowed. This is one possibility:
 }
 </pre>
 
-<p>An enum class with no methods and no documentation on its constants may optionally be formatted
-as if it were an array initializer (see Section 4.8.3.1 on
-<a href="#s4.8.3.1-array-initializers">array initializers</a>).</p>
+<p>상수에 메서드도 없고 문서도 없는 열거 클래스는 선택적으로 배열 초기자와 같은 서식을 사용할 수도 있습니다. (Section 4.8.3.1 
+<a href="#s4.8.3.1-array-initializers">array initializers</a>을 보세요).</p>
 
 <pre class="prettyprint lang-java">private enum Suit { CLUBS, HEARTS, SPADES, DIAMONDS }
 </pre>
 
-<p>Since enum classes <em>are classes</em>, all other rules for formatting classes apply.</p>
+<p>열거 클래스는 <em>클래스이므로</em>, 클래스에 적용하는 다른 모든 서식 규칙을 적용합니다.</p>
 
 <a name="localvariables"></a>
-<h4 id="s4.8.2-variable-declarations">4.8.2 Variable declarations</h4>
+<h4 id="s4.8.2-variable-declarations">4.8.2 변수 선언</h4>
 
-<h5 id="s4.8.2.1-variables-per-declaration">4.8.2.1 One variable per declaration</h5>
+<h5 id="s4.8.2.1-variables-per-declaration">4.8.2.1 선언 당 하나의 변수</h5>
 
-<p>Every variable declaration (field or local) declares only one variable: declarations such as
-<code class="badcode">int a, b;</code> are not used.</p>
+<p>모든 변수 선언(필드 혹은 지역)은 단 하나의 변수만을 선언합니다: 
+<code class="badcode">int a, b;</code> 와 같은 선언은 사용되지 않습니다.</p>
 
-<p><strong>Exception:</strong> Multiple variable declarations are acceptable in the header of a
-<code class="prettyprint lang-java">for</code> loop.</p>
+<p><strong>예외:</strong> 
+<code class="prettyprint lang-java">for</code> 루프의 헤더에서는 복수의 변수 
+선언이 허용될 수 있습니다.</p>
 
-<h5 id="s4.8.2.2-variables-limited-scope">4.8.2.2 Declared when needed</h5>
+<h5 id="s4.8.2.2-variables-limited-scope">4.8.2.2 필요할 때 선언하세요</h5>
 
-<p>Local variables are <strong>not</strong> habitually declared at the start of their containing
-block or block-like construct. Instead, local variables are declared close to the point they are
-first used (within reason), to minimize their scope. Local variable declarations typically have
-initializers, or are initialized immediately after declaration.</p>
+<p>지역 변수는 블럭이나 블럭같은 구조의 처음에 습관적으로 선언되지 
+<strong>않습니다</strong>. 대신, 스코프를 최소화하기 위해 지역 변수는 처음으로 
+사용되는(타당하게) 지점과 가까운 곳에 선언됩니다. 지역 변수 선언은 일반적으로 
+초기자를 갖거나 선언 직후에 초기화됩니다.</p>
 
 <h4 id="s4.8.3-arrays">4.8.3 Arrays</h4>
 
