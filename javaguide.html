@@ -617,13 +617,11 @@ private Color color;  // may leave it unaligned
 사용되는(타당하게) 지점과 가까운 곳에 선언됩니다. 지역 변수 선언은 일반적으로 
 초기자를 갖거나 선언 직후에 초기화됩니다.</p>
 
-<h4 id="s4.8.3-arrays">4.8.3 Arrays</h4>
+<h4 id="s4.8.3-arrays">4.8.3 배열</h4>
 
-<h5 id="s4.8.3.1-array-initializers">4.8.3.1 Array initializers: can be "block-like"</h5>
+<h5 id="s4.8.3.1-array-initializers">4.8.3.1 배열 초기자: "블럭 같이" 될 수 있음</h5>
 
-<p>Any array initializer may <em>optionally</em> be formatted as if it were a "block-like
-construct." For example, the following are all valid (<strong>not</strong> an exhaustive
-list):</p>
+<p>임의의 배열 초기자는 <em>선택적으로</em> "블럭 같은 구조"로 포매팅될 수 있습니다. 예를 들어, 다음은 모두 유효(엄밀히는 아니지만)합니다:</p>
 
 <pre class="prettyprint lang-java">new int[] {           new int[] {
   0, 1, 2, 3            0,
@@ -636,41 +634,36 @@ new int[] {             3,
                           {0, 1, 2, 3}
 </pre>
 
-<h5 id="s4.8.3.2-array-declarations">4.8.3.2 No C-style array declarations</h5>
+<h5 id="s4.8.3.2-array-declarations">4.8.3.2 C 스타일 배열 선언을 사용하지 말 것</h5>
 
-<p>The square brackets form a part of the <em>type</em>, not the variable:
-<code class="prettyprint lang-java">String[] args</code>, not
-<code class="badcode">String args[]</code>.</p>
+<p>대괄호는 변수가 아닌 <em>타입</em>의 일부가 되도록 합니다:
+<code class="badcode">String args[]</code>가 아닌, 
+<code class="prettyprint lang-java">String[] args</code>.</p>
 
-<h4 id="s4.8.4-switch">4.8.4 Switch statements</h4>
+<h4 id="s4.8.4-switch">4.8.4 Switch문</h4>
 
 
 
-<p class="terminology"><strong>Terminology Note:</strong> Inside the braces of a
-<em>switch block</em> are one or more <em>statement groups</em>. Each statement group consists of
-one or more <em>switch labels</em> (either <code class="prettyprint lang-java">case FOO:</code> or
-<code class="prettyprint lang-java">default:</code>), followed by one or more statements (or, for
-the <em>last</em> statement group, <em>zero</em> or more statements).</p>
+<p class="terminology"><strong>용어 노트:</strong> <em>switch 블럭</em>의 
+중괄호 내부에는 하나 이상의 <em>문(statement) 그룹</em>이 있습니다. 각 문(statement) 그룹은 하나 이상의 문(statement)이 따르는(혹은 <em>마지막</em> 문(statement) 그룹은 문(statement)이 없을 수 있음) 하나 이상의 <em>switch 레이블</em>(<code class="prettyprint lang-java">case FOO:</code> 혹은
+<code class="prettyprint lang-java">default:</code> 중 하나)로 구성됩니다.</p>
 
-<h5 id="s4.8.4.1-switch-indentation">4.8.4.1 Indentation</h5>
+<h5 id="s4.8.4.1-switch-indentation">4.8.4.1 들여쓰기</h5>
 
-<p>As with any other block, the contents of a switch block are indented +2.</p>
+<p>다른 블럭과 마찬가지로, switch 블럭의 내용은 2칸 들여쓰기됩니다.</p>
 
-<p>After a switch label, there is a line break, and the indentation level is increased +2, exactly
-as if a block were being opened. The following switch label returns to the previous indentation
-level, as if a block had been closed.</p>
+<p>switch 레이블 뒤에 개행을 하고, 블럭을 열 때와 마찬가지로 들여쓰기 수준은 
+2칸 증가합니다. 다음 switch 레이블은 블럭이 닫힐 때 처럼 이전 들여쓰기 수준으로 
+돌아갑니다.</p>
 
 <a name="fallthrough"></a>
-<h5 id="s4.8.4.2-switch-fall-through">4.8.4.2 Fall-through: commented</h5>
+<h5 id="s4.8.4.2-switch-fall-through">4.8.4.2 완료되지 않은 부분(fall-through): 주석</h5>
 
-<p>Within a switch block, each statement group either terminates abruptly (with a
+<p>switch 블럭 안에서, 각 문(statement) 그룹은 갑자기 끝날 수 있습니다 (
 <code class="prettyprint lang-java">break</code>,
 <code class="prettyprint lang-java">continue</code>,
-<code class="prettyprint lang-java">return</code> or thrown exception), or is marked with a comment
-to indicate that execution will or <em>might</em> continue into the next statement group. Any
-comment that communicates the idea of fall-through is sufficient (typically
-<code class="prettyprint lang-java">// fall through</code>). This special comment is not required in
-the last statement group of the switch block. Example:</p>
+<code class="prettyprint lang-java">return</code> 혹은 예외 등으로), 혹은 실행이 계속될지 또는 다음 문(statement) 그룹으로 넘어갈지를 나타내는 주석으로 표시될 수 있습니다. 완료되지 않았음(fall-through)을 알리는 어떤 주석이든 좋습니다 (형식적으로
+<code class="prettyprint lang-java">// fall through</code>). 이 특별한 주석은 switch 블럭의 마지막 문(statement) 그룹에서는 필요치 않습니다. 예시:</p>
 
 <pre class="prettyprint lang-java">switch (input) {
   case 1:
@@ -685,19 +678,14 @@ the last statement group of the switch block. Example:</p>
 }
 </pre>
 
-<p>Notice that no comment is needed after <code class="prettyprint lang-java">case 1:</code>, only
-at the end of the statement group.</p>
+<p><code class="prettyprint lang-java">case 1:</code> 뒤에는 주석이 필요 없다는 점을 기억하세요, 오직 문 그룹의 끝에만 적용합니다.</p>
 
-<h5 id="s4.8.4.3-switch-default">4.8.4.3 The <code>default</code> case is present</h5>
+<h5 id="s4.8.4.3-switch-default">4.8.4.3 <code>default</code> case를 사용할 것</h5>
 
-<p>Each switch statement includes a <code class="prettyprint lang-java">default</code> statement
-group, even if it contains no code.</p>
+<p>각 switch 문은 코드가 없더라도 <code class="prettyprint lang-java">default</code> 문 그룹을 포함합니다.</p>
 
-<p><strong>Exception:</strong> A switch statement for an <code>enum</code> type <em>may</em> omit
-the <code class="prettyprint lang-java">default</code> statement group, <em>if</em> it includes
-explicit cases covering <em>all</em> possible values of that type. This enables IDEs or other static
-analysis tools to issue a warning if any cases were missed.
-
+<p><strong>예외:</strong> <code>enum</code> 타입에 대한 switch 문은 명시적으로 
+<em>모든</em> 가능한 값들을 커버하고 <em>있다면</em> <code class="prettyprint lang-java">default</code> 문 그룹을 생략할 <em>수도</em> 있습니다. IDE또는 기타 정적 분석 도구는 case 누락 시 경고를 발생시킬 수 있습니다. 
 </p>
 
 <a name="annotations"></a>
