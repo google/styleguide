@@ -689,33 +689,27 @@ new int[] {             3,
 </p>
 
 <a name="annotations"></a>
-<h4 id="s4.8.5-annotations">4.8.5 Annotations</h4>
+<h4 id="s4.8.5-annotations">4.8.5 어노테이션</h4>
 
-<p>Annotations applying to a class, method or constructor appear immediately after the
-documentation block, and each annotation is listed on a line of its own (that is, one annotation
-per line). These line breaks do not constitute line-wrapping (Section
-4.5, <a href="#s4.5-line-wrapping">Line-wrapping</a>), so the indentation level is not
-increased. Example:</p>
+<p>클래스, 메서드 혹은 생성자에 적용하는 어노테이션은 문서 블럭 바로 다음에 위치하며, 각 어노테이션은 고유한 행에 나열됩니다(즉, 행마다 하나의 어노테이션). 여기서의 개행은 line-wrapping으로 보지 않습니다 (Section
+4.5, <a href="#s4.5-line-wrapping">Line-wrapping</a>), 즉 들여쓰기 수준은 증가하지 않습니다. 예시:</p>
 
 <pre class="prettyprint lang-java">@Override
 @Nullable
 public String getNameIfPresent() { ... }
 </pre>
 
-<p class="exception"><strong>Exception:</strong> A <em>single</em> parameterless annotation
-<em>may</em> instead appear together with the first line of the signature, for example:</p>
+<p class="exception"><strong>예외:</strong> <em>하나의</em> 파라미터 없는 어노테이션은 시그니처의 첫 행에 함께 올 <em>수도</em> 있습니다, 예를 들어:</p>
 
 <pre class="prettyprint lang-java">@Override public int hashCode() { ... }
 </pre>
 
-<p>Annotations applying to a field also appear immediately after the documentation block, but in
-this case, <em>multiple</em> annotations (possibly parameterized) may be listed on the same line;
-for example:</p>
+<p>필드에 적용하는 어노테이션 또한 문서 블럭 바로 다음에 위치하지만 이 경우, <em>여러 개의</em> 어노테이션(파라미터가 있을 수도 있는)이 같은 라인에 나열됩니다. 예시:</p>
 
 <pre class="prettyprint lang-java">@Partial @Mock DataLoader loader;
 </pre>
 
-<p>There are no specific rules for formatting annotations on parameters, local variables, or types.
+<p>매개 변수, 지역 변수, 혹은 타입에 어노테이션의 서식을 지정하는 특정한 규칙은 없습니다.
 </p>
 
 <a name="comments"></a>
