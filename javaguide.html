@@ -713,21 +713,19 @@ public String getNameIfPresent() { ... }
 </p>
 
 <a name="comments"></a>
-<h4 id="s4.8.6-comments">4.8.6 Comments</h4>
+<h4 id="s4.8.6-comments">4.8.6 주석</h4>
 
-<p>This section addresses <em>implementation comments</em>. Javadoc is addressed separately in
-Section 7, <a href="#s7-javadoc">Javadoc</a>.</p>
+<p>여기서는 <em>구현 주석</em>에 대해 다룹니다. Javadoc은 별도로 Section 7, <a href="#s7-javadoc">Javadoc</a>에서 다룹니다.</p>
 
-<p>Any line break may be preceded by arbitrary whitespace followed by an implementation comment.
-Such a comment renders the line non-blank.</p>
+<p>임의의 개행 전에 임의의 공백 문자와 그 뒤에 구현 주석이 올 수 있습니다.
+이러한 주석은 행을 비어 있지 않게 합니다.</p>
 
-<h5 id="s4.8.6.1-block-comment-style">4.8.6.1 Block comment style</h5>
+<h5 id="s4.8.6.1-block-comment-style">4.8.6.1 블럭 주석 스타일</h5>
 
-<p>Block comments are indented at the same level as the surrounding code. They may be in
-<code class="prettyprint lang-java">/* ... */</code> style or
-<code class="prettyprint lang-java">// ...</code> style. For multi-line
-<code class="prettyprint lang-java">/* ... */</code> comments, subsequent lines must start with
-<code>*</code> aligned with the <code>*</code> on the previous line.</p>
+<p>블럭 주석은 감싸는 코드와 동일한 들여쓰기 수준으로 작성됩니다. 아마
+<code class="prettyprint lang-java">/* ... */</code> 스타일 혹은
+<code class="prettyprint lang-java">// ...</code> 스타일일 수 있습니다. 다중 행
+<code class="prettyprint lang-java">/* ... */</code> 주석에서, 이후의 라인은 이전 줄의<code>*</code>과 정렬된 <code>*</code>로 시작해야 합니다.</p>
 
 <pre class="prettyprint lang-java">/*
  * This is          // And so           /* Or you can
@@ -736,12 +734,10 @@ Such a comment renders the line non-blank.</p>
 </pre>
 
 
-<p>Comments are not enclosed in boxes drawn with asterisks or other characters.</p>
+<p>주석은 별표(*) 혹은 다른 문자로 그려진 상자 안에 넣지 않습니다.</p>
 
-<p class="tip"><strong>Tip:</strong> When writing multi-line comments, use the
-<code class="prettyprint lang-java">/* ... */</code> style if you want automatic code formatters to
-re-wrap the lines when necessary (paragraph-style). Most formatters don't re-wrap lines in
-<code class="prettyprint lang-java">// ...</code> style comment blocks.</p>
+<p class="tip"><strong>팁:</strong> 다중 행 주석을 작성할 때, 필요한(단락 
+스타일) 경우에 자동 코드 포매터가 라인을 다시 감싸기를 원한다면 <code class="prettyprint lang-java">/* ... */</code> 스타일을 사용하십시오. 대부분의 포매터는 <code class="prettyprint lang-java">// ...</code> 스타일 주석 블럭을 다시 감싸지 않습니다.</p>
 
  
 
