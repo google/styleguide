@@ -2064,7 +2064,7 @@ containing `exec "$0.py" "$@"`.
     <td></td>
   </tr>
 
-    <tr>
+  <tr>
     <td>Functions</td>
     <td><code>lower_with_under()</code></td>
     <td><code>_lower_with_under()</code></td>
@@ -2088,7 +2088,7 @@ containing `exec "$0.py" "$@"`.
     <td><code>_lower_with_under</code> (protected)</td>
   </tr>
 
-    <tr>
+  <tr>
     <td>Method Names</td>
     <td><code>lower_with_under()</code></td>
     <td><code>_lower_with_under()</code> (protected)</td>
