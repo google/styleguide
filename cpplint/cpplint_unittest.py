@@ -2567,6 +2567,10 @@ class CpplintTest(CpplintTestBase):
     # Avoid false positives with operator[]
     self.TestLint('table_to_children[&*table].push_back(dependent);', '')
 
+  def testStructuredBinding(self):
+    self.TestLint('auto [a, b] = pair;', '')
+    self.TestLint('auto& [a, b] = pair;', '')
+
   def testBraceInitializerList(self):
     self.TestLint('MyStruct p = {1, 2};', '')
     self.TestLint('MyStruct p{1, 2};', '')
@@ -3853,13 +3857,13 @@ class CpplintTest(CpplintTestBase):
       self.assertEqual(['foo.h'],
                        cpplint.ParseArguments(['--extensions=hpp,cpp,cpp', 'foo.h']))
       self.assertEqual(set(['hpp', 'cpp']), cpplint._valid_extensions)
-      
+
       self.assertEqual(set(['h']), cpplint._hpp_headers)  # Default value
       self.assertEqual(['foo.h'],
                        cpplint.ParseArguments(['--extensions=cpp,cpp', '--headers=hpp,h', 'foo.h']))
       self.assertEqual(set(['hpp', 'h']), cpplint._hpp_headers)
       self.assertEqual(set(['hpp', 'h', 'cpp']), cpplint._valid_extensions)
-      
+
     finally:
       cpplint._USAGE = old_usage
       cpplint._ERROR_CATEGORIES = old_error_categories

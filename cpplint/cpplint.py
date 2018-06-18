@@ -3283,8 +3283,8 @@ def CheckSpacing(filename, clean_lines, linenum, nesting_state, error):
   line = clean_lines.elided[linenum]
 
   # You shouldn't have spaces before your brackets, except maybe after
-  # 'delete []' or 'return []() {};'
-  if Search(r'\w\s+\[', line) and not Search(r'(?:delete|return)\s+\[', line):
+  # 'delete []' or 'return []() {};' or 'auto [x, y] = pair;'
+  if Search(r'\w\s+\[', line) and not Search(r'(?:delete|return|auto)\s+\[', line):
     error(filename, linenum, 'whitespace/braces', 5,
           'Extra space before [')
 
@@ -4301,7 +4301,7 @@ def GetLineWidth(line):
           is_low_surrogate = 0xDC00 <= ord(uc) <= 0xDFFF
           if not is_wide_build and is_low_surrogate:
             width -= 1
-          
+
         width += 1
     return width
   else:
