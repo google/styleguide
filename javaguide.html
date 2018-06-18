@@ -758,26 +758,24 @@ public String getNameIfPresent() { ... }
 사용합니다.</p>
 
 <a name="naming"></a>
-<h2 id="s5-naming">5 Naming</h2>
+<h2 id="s5-naming">5 네이밍</h2>
 
-<h3 id="s5.1-identifier-names">5.1 Rules common to all identifiers</h3>
+<h3 id="s5.1-identifier-names">5.1 모든 식별자에 대한 공통 규칙</h3>
 
-<p>Identifiers use only ASCII letters and digits, and, in a small number of cases noted below,
-underscores. Thus each valid identifier name is matched by the regular expression
-<code>\w+</code> .</p>
+<p>식별자는 ASCII 글자와 숫자만을 사용하며, 아래에 명시된 일부 경우에는 언더스코어(_)를 사용합니다. 따라서 각 유효한 식별자 이름은 정규식
+<code>\w+</code>와 매치됩니다.</p>
 
-<p>In Google Style, special prefixes or suffixes are <strong>not</strong> used. For example, these
-names are not Google Style: <code class="badcode">name_</code>, <code class="badcode">mName</code>,
+<p>구글 스타일에서는, 특별한 접두사 혹은 접미사는 사용되지 <strong>않</strong>습니다. 예를 들어 이러한 이름들은 구글 스타일이 아닙니다: <code class="badcode">name_</code>, <code class="badcode">mName</code>,
 <code class="badcode">s_name</code> and <code class="badcode">kName</code>.</p>
 
-<h3 id="s5.2-specific-identifier-names">5.2 Rules by identifier type</h3>
+<h3 id="s5.2-specific-identifier-names">5.2 식별자 타입에 따른 규칙</h3>
 
-<h4 id="s5.2.1-package-names">5.2.1 Package names</h4>
+<h4 id="s5.2.1-package-names">5.2.1 패키지명</h4>
 
-<p>Package names are all lowercase, with consecutive words simply concatenated together (no
-underscores). For example, <code>com.example.deepspace</code>, not
-<code class="badcode">com.example.deepSpace</code> or
-<code class="badcode">com.example.deep_space</code>.</p>
+<p>패키지명은 (언더스코어 없이) 연속으로 이어진 단어로, 모두 소문자입니다. 예를 들어, 
+<code class="badcode">com.example.deepSpace</code> 혹은 
+<code class="badcode">com.example.deep_space</code>가 아닌 
+<code>com.example.deepspace</code>와 같이 사용합니다.</p>
 
 <h4 id="s5.2.2-class-names">5.2.2 Class names</h4>
 
