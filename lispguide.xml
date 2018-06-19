@@ -738,7 +738,7 @@ Robert Brown
       </p>
       <p>
         After that description, every file should start the code itself with an
-        <code>(in-package :<em>package-name</em>)</code> form.
+        <code>(in-package #:<em>package-name</em>)</code> form.
       </p>
       <p>
         After that <code>in-package</code> form,
@@ -3038,7 +3038,7 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="Identity, Equality and Comparisons">
     <SUMMARY>
-      You should the appropriate predicates when comparing objects.
+      You should use the appropriate predicates when comparing objects.
     </SUMMARY>
     <BODY>
       <p>
