@@ -781,7 +781,7 @@ public String getNameIfPresent() { ... }
 
 <p>클래스명은 <a href="#s5.3-camel-case">UpperCamelCase</a>과 같이 씁니다.</p>
 
-<p>클래스명은 일반적인 명사 혹은 명사구입니다. 예를 들어,
+<p>클래스명은 일반적으로 명사 혹은 명사구입니다. 예를 들어,
 <code class="prettyprint lang-java">Character</code> 혹은
 <code class="prettyprint lang-java">ImmutableList</code>. 인터페이스명 또한 
 명사 혹은 명사구(예를 들어, <code class="prettyprint lang-java">List</code>)일 
@@ -794,19 +794,17 @@ public String getNameIfPresent() { ... }
 <code class="prettyprint lang-java">HashTest</code> 혹은
 <code class="prettyprint lang-java">HashIntegrationTest</code>.</p>
 
-<h4 id="s5.2.3-method-names">5.2.3 Method names</h4>
+<h4 id="s5.2.3-method-names">5.2.3 메서드명</h4>
 
-<p>Method names are written in <a href="#s5.3-camel-case">lowerCamelCase</a>.</p>
+<p>메서드명은 <a href="#s5.3-camel-case">lowerCamelCase</a>와 같이 씁니다.</p>
 
-<p>Method names are typically verbs or verb phrases. For example,
-<code class="prettyprint lang-java">sendMessage</code> or
+<p>메서드명은 일반적으로 동사 혹은 동사구입니다. 예를 들어, 
+<code class="prettyprint lang-java">sendMessage</code> 혹은
 <code class="prettyprint lang-java">stop</code>.</p>
 
-<p>Underscores may appear in JUnit <em>test</em> method names to separate logical components of the
-name, with <em>each</em> component written in <a href="#s5.3-camel-case">lowerCamelCase</a>.
-One typical pattern is <code><i>&lt;methodUnderTest&gt;</i>_<i>&lt;state&gt;</i></code>,
-for example <code class="prettyprint lang-java">pop_emptyStack</code>. There is no One Correct
-Way to name test methods.</p>
+<p>언더스코어는 이름의 <em>각</em> 구성 요소가 <a href="#s5.3-camel-case">lowerCamelCase</a>로 작성됐을 때 이름의 논리적 구성 요소를 분리하기 위해 Junit <em>테스트</em> 메서드명에 나타날 수 있습니다.
+전형적인 한 가지 패턴은 <code><i>&lt;methodUnderTest&gt;</i>_<i>&lt;state&gt;</i></code>입니다,
+예를 들어 <code class="prettyprint lang-java">pop_emptyStack</code>. 테스트 메서드의 이름을 정하는 단 하나의 올바른 방법은 없습니다.</p>
 
 <a name="constants"></a>
 <h4 id="s5.2.4-constant-names">5.2.4 Constant names</h4>
