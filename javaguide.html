@@ -807,16 +807,13 @@ public String getNameIfPresent() { ... }
 예를 들어 <code class="prettyprint lang-java">pop_emptyStack</code>. 테스트 메서드의 이름을 정하는 단 하나의 올바른 방법은 없습니다.</p>
 
 <a name="constants"></a>
-<h4 id="s5.2.4-constant-names">5.2.4 Constant names</h4>
+<h4 id="s5.2.4-constant-names">5.2.4 상수 이름</h4>
 
-<p>Constant names use <code class="prettyprint lang-java">CONSTANT_CASE</code>: all uppercase
-letters, with each word separated from the next by a single underscore. But what <em>is</em> a
-constant, exactly?</p>
+<p>상수 이름은 <code class="prettyprint lang-java">CONSTANT_CASE</code>와 같이
+ 씁니다: 모두 대문자이며 각 단어는 하나의 언더스코어로 구분합니다. 하지만, 
+상수란 정확히 무엇 <em>일까요</em>?</p>
 
-<p>Constants are static final fields whose contents are deeply immutable and whose methods have no
-detectable side effects. This includes primitives, Strings, immutable types, and immutable
-collections of immutable types. If any of the instance's observable state can change, it is not a
-constant. Merely <em>intending</em> to never mutate the object is not enough. Examples:</p>
+<p>상수는 그 내용이 깊게(deeply) 불변(immutable)인 static final 필드 이며 메서드의 경우 발견할 수 있는 부수 효과(side effect)가 없는 메서드입니다. 이는 기본(primitive) 타입, 문자열, 불변 타입, 불변 타입의 불변 컬렉션을 포함합니다. 만약 인스턴스의 관측 가능한 상태가 어느 하나라도 바뀔 수 있다면, 이는 상수가 아닙니다. 단순히 그 객체를 변경하지 않으려는 <em>의도</em>만으로는 충분하지 않습니다. 예시:</p>
 
 <pre class="prettyprint lang-java">// Constants
 static final int NUMBER = 5;
@@ -837,7 +834,7 @@ static final Logger logger = Logger.getLogger(MyClass.getName());
 static final String[] nonEmptyArray = {"these", "can", "change"};
 </pre>
 
-<p>These names are typically nouns or noun phrases.</p>
+<p>이러한 이름들은 일반적으로 명사 혹은 명사구입니다.</p>
 
 <h4 id="s5.2.5-non-constant-field-names">5.2.5 Non-constant field names</h4>
 
