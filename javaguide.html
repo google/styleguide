@@ -878,45 +878,40 @@ in <a href="#s5.3-camel-case">lowerCamelCase</a>와 같이 씁니다.</p>
 <a name="camelcase"></a>
 <h3 id="s5.3-camel-case">5.3 Camel case: defined</h3>
 
-<p>Sometimes there is more than one reasonable way to convert an English phrase into camel case,
-such as when acronyms or unusual constructs like "IPv6" or "iOS" are present. To improve
-predictability, Google Style specifies the following (nearly) deterministic scheme.</p>
+<p>때로는 영어 구를 카멜 케이스로 바꿀 하나 이상의 합리적인 이유가 있습니다,
+"IPv6" 혹은 "iOS"와 같은 약어나 흔치않은 구조가 바로 그렇습니다. 예측을 용이하게 하기 위해, 구글 스타일은 다음의 (거의) 결정적인 스키마를 정합니다.</p>
 
-<p>Beginning with the prose form of the name:</p>
+<p>산문 형태의 이름으로 시작합니다:</p>
 
 <ol>
-  <li>Convert the phrase to plain ASCII and remove any apostrophes. For example, "M&#252;ller's
-  algorithm" might become "Muellers algorithm".</li>
+  <li>구(phrase)를 평문 ASCII로 바꾸고 아포스트로피(')를 제거합니다. 예를 들어, "M&#252;ller's
+  algorithm" 은 "Muellers algorithm"이 될 것입니다.</li>
 
   <li>Divide this result into words, splitting on spaces and any remaining punctuation (typically
   hyphens).
 
   <ul>
-    <li><em>Recommended:</em> if any word already has a conventional camel-case appearance in common
-    usage, split this into its constituent parts (e.g., "AdWords" becomes "ad&#160;words"). Note
-    that a word such as "iOS" is not really in camel case <em>per se</em>; it defies <em>any</em>
-    convention, so this recommendation does not apply.</li>
+    <li><em>권고:</em> 만약 임의의 단어가 이미 관례적으로 카멜 케이스로 사용된다면, 이를 구성 요소로 나눕니다(예를 들어, "AdWords"는 "ad&#160;words"가 됩니다). "iOS"와 같은 단어는 <em>본질적으로</em> 진짜 카멜 케이스가 아니라는 점을 알아두십시오. 이는 <em>어떤</em> 관례에도 반하기 때문에, 이 권고사항을 적용하지 않습니다.</li>
   </ul>
   </li>
 
-  <li>Now lowercase <em>everything</em> (including acronyms), then uppercase only the first
-  character of:
+  <li>이제 <em>모두</em> 소문자이고 (두문자를 포함하여), 다음의 경우 첫 번째 글자만 대문자입니다:
   <ul>
-    <li>... each word, to yield <em>upper camel case</em>, or</li>
-    <li>... each word except the first, to yield <em>lower camel case</em></li>
+    <li>... 각 단어를 <em>대문자로 시작하는 카멜 케이스</em>로 만들거나</li>
+    <li>... 첫번째를 제외한 각 단어를 <em>소문자로 시작하는 카멜 케이스</em> 로 만듭니다</li>
   </ul>
   </li>
 
-  <li>Finally, join all the words into a single identifier.</li>
+  <li>마지막으로, 모든 단어를 하나의 식별자로 합칩니다.</li>
 </ol>
 
-<p>Note that the casing of the original words is almost entirely disregarded. Examples:</p>
+<p>원래 단어들의 대소문자 구분은 거의 무시된다는 점에 유의하십시오. 예시:</p>
 
 <table>
   <tbody><tr>
-    <th>Prose form</th>
-    <th>Correct</th>
-    <th>Incorrect</th>
+    <th>산문체</th>
+    <th>올바른 경우</th>
+    <th>올바르지 않은 경우</th>
   </tr>
   <tr>
     <td>"XML HTTP request"</td>
@@ -946,12 +941,11 @@ predictability, Google Style specifies the following (nearly) deterministic sche
   </tr>
 </tbody></table>
 
-<p>*Acceptable, but not recommended.</p>
+<p>*허용할 수 있지만, 권장은 아닙니다.</p>
 
-<p class="note"><strong>Note:</strong> Some words are ambiguously hyphenated in the English
-language: for example "nonempty" and "non-empty" are both correct, so the method names
-<code class="prettyprint lang-java">checkNonempty</code> and
-<code class="prettyprint lang-java">checkNonEmpty</code> are likewise both correct.</p>
+<p class="note"><strong>Note:</strong> 어떤 영어 단어는 모호하게 하이픈이 사용되기도 합니다: 예를 들어 "nonempty"와 "non-empty"는 둘다 맞습니다, 따라서 메서드 이름은
+<code class="prettyprint lang-java">checkNonempty</code> 와
+<code class="prettyprint lang-java">checkNonEmpty</code> 모두 마찬가지로 맞습니다.</p>
 
 
 <h2 id="s6-programming-practices">6 Programming Practices</h2>
