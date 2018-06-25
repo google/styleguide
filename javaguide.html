@@ -947,18 +947,15 @@ in <a href="#s5.3-camel-case">lowerCamelCase</a>와 같이 씁니다.</p>
 <code class="prettyprint lang-java">checkNonEmpty</code> 모두 마찬가지로 맞습니다.</p>
 
 
-<h2 id="s6-programming-practices">6 Programming Practices</h2>
+<h2 id="s6-programming-practices">6 프로그래밍 관례</h2>
 
-<h3 id="s6.1-override-annotation">6.1 <code>@Override</code>: always used</h3>
+<h3 id="s6.1-override-annotation">6.1 <code>@Override</code>: 항상 사용됨</h3>
 
-<p>A method is marked with the <code class="prettyprint lang-java">@Override</code> annotation
-whenever it is legal.  This includes a class method overriding a superclass method, a class method
-implementing an interface method, and an interface method respecifying a superinterface
-method.</p>
+<p>부모 클래스 메서드를 오버라이딩 하는 클래스 메서드, 인터페이스 메서드를 구현하는 클래스 메서드, 그리고 부모 인터페이스를 재정의(respecifying)하는 인터페이스 메서드를 포함하여, 메서드에 <code class="prettyprint lang-java">@Override</code> 어노테이션을 사용할 수 있다면 사용합니다.</p>
 
-<p class="exception"><strong>Exception:</strong>
-<code class="prettyprint lang-java">@Override</code> may be omitted when the parent method is
-<code class="prettyprint lang-java">@Deprecated</code>.</p>
+<p class="exception"><strong>예외:</strong>
+부모 메서드가 <code class="prettyprint lang-java">@Deprecated</code>인 경우
+<code class="prettyprint lang-java">@Override</code>는 생략될 수 있습니다.</p>
 
 <a name="caughtexceptions"></a>
 <h3 id="s6.2-caught-exceptions">6.2 Caught exceptions: not ignored</h3>
