@@ -1,0 +1,212 @@
+# A pylint configuration for use with Google Python Style guide.
+#  https://github.com/google/styleguide/blob/gh-pages/pyguide.md
+
+[MASTER]
+
+# Pickle collected data for later comparisons.
+persistent=yes
+
+# Set the cache size for astng objects.
+cache-size=500
+
+
+[REPORTS]
+
+# Set the output format.
+output-format=text
+
+# Put messages in a separate file for each module / package specified on the
+# command line instead of printing them on stdout. Reports (if any) will be
+# written in a file name "pylint_global.[txt|html]".
+files-output=no
+
+# Tells whether to display a full report or only the messages.
+reports=no
+
+# Disable the report(s) with the given id(s).
+# All non-Google reports are disabled by default.
+disable-report=R0001,R0002,R0003,R0004,R0101,R0102,R0201,R0202,R0220,R0401,R0402,R0701,R0801,R0901,R0902,R0903,R0904,R0911,R0912,R0913,R0914,R0915,R0921,R0922,R0923
+
+
+[MESSAGES CONTROL]
+# List of checkers and warnings to enable.
+enable=indexing-exception,old-raise-syntax
+
+# List of checkers and warnings to disable.
+# Disabled 1.8's unsubscriptable-object due to frequent false triggering.
+# Disabled 1.8's misplaced-comparison-constant as it seems overly pedantic.
+disable=design,similarities,no-self-use,attribute-defined-outside-init,locally-disabled,star-args,pointless-except,bad-option-value,global-statement,fixme,suppressed-message,useless-suppression,locally-enabled,file-ignored,multiple-imports,c-extension-no-member,trailing-newlines,unsubscriptable-object,misplaced-comparison-constant
+
+[BASIC]
+
+# Required attributes for module, separated by a comma
+required-attributes=
+
+# Regular expression which should only match the name
+# of functions or classes which do not require a docstring.
+no-docstring-rgx=(__.*__|main)
+
+# Min length in lines of a function that requires a docstring.
+docstring-min-length=10
+
+# Regular expression which should only match correct module names. The
+# leading underscore is sanctioned for private modules by Google's style
+# guide.
+#
+# There are exceptions to the basic rule (_?[a-z][a-z0-9_]*) to cover
+# requirements of Python's module system.
+module-rgx=^(_?[a-z][a-z0-9_]*)|__init__$
+
+# Regular expression which should only match correct module level names
+const-rgx=^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*)$
+
+# Regular expression which should only match correct class attribute
+class-attribute-rgx=^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*)$
+
+# Regular expression which should only match correct class names
+class-rgx=^_?[A-Z][a-zA-Z0-9]*$
+
+# Regular expression which should only match correct function names.
+# 'exempt' indicates a name which is consistent with all naming styles.
+function-rgx=^(?:(?P<exempt>setUp|tearDown|setUpModule|tearDownModule)|(?P<snake_case>_?[a-z][a-z0-9_]*))$
+
+
+# Regular expression which should only match correct method names.
+# 'exempt' indicates a name which is consistent with all naming styles.
+method-rgx=(?x)
+  ^(?:(?P<exempt>_[a-z0-9_]+__|runTest|setUp|tearDown|setUpTestCase
+         |tearDownTestCase|setupSelf|tearDownClass|setUpClass
+         |(test|assert)_*[A-Z0-9][a-zA-Z0-9_]*|next)
+     |(?P<snake_case>_{0,2}[a-z][a-z0-9_]*))$
+
+
+# Regular expression which should only match correct instance attribute names
+attr-rgx=^_{0,2}[a-z][a-z0-9_]*$
+
+# Regular expression which should only match correct argument names
+argument-rgx=^[a-z][a-z0-9_]*$
+
+# Regular expression which should only match correct variable names
+variable-rgx=^[a-z][a-z0-9_]*$
+
+# Regular expression which should only match correct list comprehension /
+# generator expression variable names
+inlinevar-rgx=^[a-z][a-z0-9_]*$
+
+# Good variable names which should always be accepted, separated by a comma
+good-names=main,_
+
+# Bad variable names which should always be refused, separated by a comma
+bad-names=
+
+# List of builtins function names that should not be used, separated by a comma
+# See #Deprecated_Language_Features in our Python style guide.
+bad-functions=input,apply,reduce
+
+# List of decorators that define properties, such as abc.abstractproperty.
+property-classes=abc.abstractproperty
+
+
+[TYPECHECK]
+
+# Tells whether missing members accessed in mixin class should be ignored. A
+# mixin class is detected if its name ends with "mixin" (case insensitive).
+ignore-mixin-members=yes
+
+# List of decorators that create context managers from functions, such as
+# contextlib.contextmanager.
+contextmanager-decorators=contextlib.contextmanager,contextlib2.contextmanager
+
+
+[VARIABLES]
+
+# Tells whether we should check for unused import in __init__ files.
+init-import=no
+
+# A regular expression matching names used for dummy variables (i.e. not used).
+dummy-variables-rgx=^\*{0,2}(_$|unused_|dummy_)
+
+# List of additional names supposed to be defined in builtins. Remember that
+# you should avoid to define new builtins when possible.
+additional-builtins=
+
+
+[CLASSES]
+
+# List of method names used to declare (i.e. assign) instance attributes.
+defining-attr-methods=__init__,__new__,setUp
+
+
+[EXCEPTIONS]
+
+overgeneral-exceptions=StandardError,Exception,BaseException
+
+
+[IMPORTS]
+
+# Deprecated modules which should not be used, separated by a comma
+deprecated-modules=regsub,TERMIOS,Bastion,rexec,sets
+
+
+[FORMAT]
+
+# Maximum number of characters on a single line.
+max-line-length=80
+
+# Regexp for a line that is allowed to be longer than the limit.
+# This "ignore" regex is today composed of several independent parts:
+#  *  Long import lines
+#  *  URLs in comments or pydocs. Detecting URLs by regex is a hard problem and
+#     no amount of tweaking will make a perfect regex AFAICT. This one is a good
+#     compromise.
+#  *  Constant string literals at the start of files don't need to be broken
+#     across lines. Allowing long paths, streamz and urls to be on a single
+#     line. Also requires that the string not be a triplequoted string.
+#  *  PEP-484 inline type annotations.
+ignore-long-lines=(?x)
+  (^\s*(import|from)\s
+   |^\s*(\#\ )?<?(https?|ftp):\/\/[^\s\/$.?#].[^\s]*>?$
+   |^[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*("[^"]\S+"|'[^']\S+')
+   |^[^#]*\#\ type:\ [a-zA-Z_][a-zA-Z0-9_.,[\] ]*$
+   )
+
+# Maximum number of lines in a module
+max-module-lines=99999
+
+# Do not warn about multiple statements on a single line for constructs like
+#   if test: stmt
+single-line-if-stmt=y
+
+# Make sure : in dicts and trailing commas are checked for whitespace.
+no-space-check=
+
+
+[LOGGING]
+
+logging-modules=logging,absl.logging
+
+
+[GOOGLE AST]
+
+# Maximum line length for lambdas
+short-func-length=1
+
+# List of module members that should be marked as deprecated.
+# All of the string functions are listed in 4.1.4 Deprecated string functions
+# in the Python 2.4 docs.
+deprecated-members=string.atof,string.atoi,string.atol,string.capitalize,string.expandtabs,string.find,string.rfind,string.index,string.rindex,string.count,string.lower,string.split,string.rsplit,string.splitfields,string.join,string.joinfields,string.lstrip,string.rstrip,string.strip,string.swapcase,string.translate,string.upper,string.ljust,string.rjust,string.center,string.zfill,string.replace,sys.exitfunc,sys.maxint
+
+
+[DOCSTRING]
+
+# List of exceptions that do not need to be mentioned in the Raises section of
+# a docstring.
+ignore-exceptions=AssertionError,NotImplementedError,StopIteration,TypeError
+
+
+[LINES]
+
+# Regexp for a proper copyright notice.
+### Google OSS project?  Uncomment and modify this as appropriate.
+###copyright=Copyright \d{4} Google Inc\. +All [Rr]ights [Rr]eserved\.
+
