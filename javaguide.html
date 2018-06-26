@@ -890,7 +890,11 @@ in <a href="#s5.3-camel-case">lowerCamelCase</a>와 같이 씁니다.</p>
   <li>이 결과를 단어들로 나누고, 공백과 남은 문장 부호(일반적으로 하이픈)로 나눕니다.
 
   <ul>
-    <li><em>권고:</em> 만약 임의의 단어가 이미 관례적으로 카멜 케이스로 사용된다면, 이를 구성 요소로 나눕니다(예를 들어, "AdWords"는 "ad&#160;words"가 됩니다). "iOS"와 같은 단어는 <em>본질적으로</em> 진짜 카멜 케이스가 아니라는 점을 알아두십시오. 이는 <em>어떤</em> 관례에도 반하기 때문에, 이 권고사항을 적용하지 않습니다.</li>
+	<li><em>권고:</em> 만약 임의의 단어가 이미 관례적으로 카멜 케이스로 
+	사용된다면, 이를 구성 요소로 나눕니다(예를 들어, "AdWords"는 "ad&#160;
+	words"가 됩니다). "iOS"와 같은 단어는 <em>본질적으로</em> 진짜 카멜 
+	케이스가 아니라는 점을 알아두십시오. 이는 <em>어떤</em> 관례에도 반하기 
+	때문에, 이 권고사항을 적용하지 않습니다.</li>
   </ul>
   </li>
 
@@ -942,30 +946,34 @@ in <a href="#s5.3-camel-case">lowerCamelCase</a>와 같이 씁니다.</p>
 
 <p>*허용할 수 있지만, 권장은 아닙니다.</p>
 
-<p class="note"><strong>Note:</strong> 어떤 영어 단어는 모호하게 하이픈이 사용되기도 합니다: 예를 들어 "nonempty"와 "non-empty"는 둘다 맞습니다, 따라서 메서드 이름은
+<p class="note"><strong>Note:</strong> 어떤 영어 단어는 모호하게 하이픈이 
+사용되기도 합니다: 예를 들어 "nonempty"와 "non-empty"는 둘다 맞습니다, 따라서 
+메서드 이름은
 <code class="prettyprint lang-java">checkNonempty</code> 와
 <code class="prettyprint lang-java">checkNonEmpty</code> 모두 마찬가지로 맞습니다.</p>
 
 
 <h2 id="s6-programming-practices">6 프로그래밍 관례</h2>
 
-<h3 id="s6.1-override-annotation">6.1 <code>@Override</code>: 항상 사용됨</h3>
+<h3 id="s6.1-override-annotation">6.1 <code>@Override</code>: 항상 사용할 것</h3>
 
-<p>부모 클래스 메서드를 오버라이딩 하는 클래스 메서드, 인터페이스 메서드를 구현하는 클래스 메서드, 그리고 부모 인터페이스를 재정의(respecifying)하는 인터페이스 메서드를 포함하여, 메서드에 <code class="prettyprint lang-java">@Override</code> 어노테이션을 사용할 수 있다면 사용합니다.</p>
+<p>부모 클래스 메서드를 오버라이딩 하는 클래스 메서드, 인터페이스 메서드를 
+구현하는 클래스 메서드, 그리고 부모 인터페이스를 재정의(respecifying)하는
+인터페이스 메서드를 포함하여, 메서드에 <code class="prettyprint lang-java">@Override</code> 어노테이션을 사용할 수 있다면 사용합니다.</p>
 
 <p class="exception"><strong>예외:</strong>
 부모 메서드가 <code class="prettyprint lang-java">@Deprecated</code>인 경우
 <code class="prettyprint lang-java">@Override</code>는 생략될 수 있습니다.</p>
 
 <a name="caughtexceptions"></a>
-<h3 id="s6.2-caught-exceptions">6.2 Caught exceptions: not ignored</h3>
+<h3 id="s6.2-caught-exceptions">6.2 예외 처리: 무시하지 말 것</h3>
 
-<p>Except as noted below, it is very rarely correct to do nothing in response to a caught
-exception. (Typical responses are to log it, or if it is considered "impossible", rethrow it as an
-<code class="prettyprint lang-java">AssertionError</code>.)</p>
+<p>아래의 경우를 제외하고, 대부분의 경우에는 예외 처리의 응답(catch)에 아무것도 
+없는 것은 좋지 않습니다. (로그에 기록하거나, 혹은 "불가능"하다고 판단되는 경우 
+<code class="prettyprint lang-java">AssertionError</code>로 다시 throw하는 것이 
+형식적인 응답에 속합니다.)</p>
 
-<p>When it truly is appropriate to take no action whatsoever in a catch block, the reason this is
-justified is explained in a comment.</p>
+<p>만약 catch 블럭에서 아무런 동작도 하지 않는 것이 정말로 적절하다면, 이에 대한 이유가 주석에서 설명되어야 합니다.</p>
 
 <pre class="prettyprint lang-java">try {
   int i = Integer.parseInt(response);
@@ -976,10 +984,10 @@ justified is explained in a comment.</p>
 return handleTextResponse(response);
 </pre>
 
-<p class="exception"><strong>Exception:</strong> In tests, a caught exception may be ignored
-without comment <em>if</em> its name is or begins with <code class="prettyprint lang-java">expected</code>. The
-following is a very common idiom for ensuring that the code under test <em>does</em> throw an
-exception of the expected type, so a comment is unnecessary here.</p>
+<p class="exception"><strong>예외:</strong> 테스트에서 이름이 <code class="prettyprint lang-java">expected</code>거나 이것으로 시작하는 
+<em>경우</em>, 예외처리는 주석 없이 무시될 수 있습니다. 다음은 테스트 대상 
+코드가 예상되는 유형의 예외를 발생시키는지 확인하기 위한 매우 일반적인 
+관용어입니다, 따라서 이곳에서는 주석이 필요치 않습니다.</p>
 
 <pre class="prettyprint lang-java">try {
   emptyStack.pop();
