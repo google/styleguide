@@ -1061,21 +1061,18 @@ public int method(String p1) { ... }
 계속되는 줄에서는 <code>@</code>의 위치로부터 4(혹은 그 이상)칸 들여씁니다.
 </p>
 
-<h3 id="s7.2-summary-fragment">7.2 The summary fragment</h3>
+<h3 id="s7.2-summary-fragment">7.2 요약 조각</h3>
 
-<p>Each Javadoc block begins with a brief <strong>summary fragment</strong>. This
-fragment is very important: it is the only part of the text that appears in certain contexts such as
-class and method indexes.</p>
+<p>각 Javadoc 블럭은 짧은 <strong>요약 조각</strong>으로 시작합니다. 클래스와 메서드 인덱스 같은 특정한 컨텍스트에 나타나는 텍스트의 유일한 부분이기 때문에 이 조각은 매우 중요합니다.</p>
 
-<p>This is a fragment&#8212;a noun phrase or verb phrase, not a complete sentence. It does
-<strong>not</strong> begin with <code class="badcode">A {@code Foo} is a...</code>, or
-<code class="badcode">This method returns...</code>, nor does it form a complete imperative sentence
-like <code class="badcode">Save the record.</code>. However, the fragment is capitalized and
-punctuated as if it were a complete sentence.</p>
+<p>명사구 혹은 동사구로, 완전한 문장이 아닌 조각입니다. 
+<code class="badcode">A {@code Foo} is a...</code> 혹은 
+<code class="badcode">This method returns...</code>로 시작하지 않으며, 
+<code class="badcode">Save the record.</code>처럼 완전한 명령문을 형성하지도 
+않습니다. 하지만, 조각은 완전한 문장처럼 대문자로 표시하고 축약됩니다.</p>
 
-<p class="tip"><strong>Tip:</strong> A common mistake is to write simple Javadoc in the form
-<code class="badcode">/** @return the customer ID */</code>. This is incorrect, and should be
-changed to <code class="prettyprint lang-java">/** Returns the customer ID. */</code>.</p>
+<p class="tip"><strong>팁:</strong> 흔히 하는 실수는 간단한 Javadoc을 
+<code class="badcode">/** @return the customer ID */</code>과 같은 형태로 작성하는 것입니다. 이는 올바르지 않은 것으로, <code class="prettyprint lang-java">/** Returns the customer ID. */</code>로 바뀌어야 합니다.</p>
 
 <a name="s7.3.3-javadoc-optional"></a> 
 <h3 id="s7.3-javadoc-where-required">7.3 Where Javadoc is used</h3>
