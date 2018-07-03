@@ -1085,18 +1085,15 @@ public int method(String p1) { ... }
 
 <p>Section 7.3.4, <a href="#s7.3.4-javadoc-non-required">Non-required Javadoc</a>에서 설명하는 내용들이 추가로 등장할 수 있습니다.</p>
 
-<h4 id="s7.3.1-javadoc-exception-self-explanatory">7.3.1 Exception: self-explanatory methods</h4>
+<h4 id="s7.3.1-javadoc-exception-self-explanatory">7.3.1 예외: 설명이 필요 없는 메서드</h4>
 
-<p>Javadoc is optional for "simple, obvious" methods like
-<code class="prettyprint lang-java">getFoo</code>, in cases where there <em>really and truly</em> is
-nothing else worthwhile to say but "Returns the foo".</p>
+<p>Javadoc은 <code class="prettyprint lang-java">getFoo</code>메서드가 
+<em>진정으로</em> "foo를 반환한다" 이외에는 말할 필요도 없는 것 처럼 "간단 명료"한 메서드를 위한 선택사항입니다.</p>
 
-<p class="note"><strong>Important:</strong> it is not appropriate to cite this exception to justify
-omitting relevant information that a typical reader might need to know. For example, for a method
-named <code class="prettyprint lang-java">getCanonicalName</code>, don't omit its documentation
-(with the rationale that it would say only
-<code class="badcode">/** Returns the canonical name. */</code>) if a typical reader may have no idea
-what the term "canonical name" means!</p>
+<p class="note"><strong>중요:</strong> 일반적으로 이를 읽는 사람이 알아야 할 관련 정보를 누락시키는 데에 이 예외를 인용하는 것은 적절치 않습니다. 예를 들어, For example, for a method
+named <code class="prettyprint lang-java">getCanonicalName</code>라는 이름의 메서드에 대해, 일반적으로 이를 읽는 사람이 "canonical name"이라는 용어에 대해 모를 수도 있는 경우 
+(<code class="badcode">/** Returns the canonical name. */</code>뿐이라는 이유로)
+ 문서를 생략하지 마십시오!</p>
 
 <h4 id="s7.3.2-javadoc-exception-overrides">7.3.2 Exception: overrides</h4>
 
