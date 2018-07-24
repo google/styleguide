@@ -1376,8 +1376,7 @@ No:  dict ['key'] = list [index]
 Surround binary operators with a single space on either side for assignment
 (`=`), comparisons (`==, <, >, !=, <>, <=, >=, in, not in, is, is not`), and
 Booleans (`and, or, not`). Use your better judgment for the insertion of spaces
-around arithmetic operators but always be consistent about whitespace on either
-side of a binary operator.
+around arithmetic operators (`+`, `-`, `*`, `\`,  `%`, `**`).
 
 ```python {.good}
 Yes: x == 1
