@@ -921,7 +921,7 @@ is equivalent to:
 class C(object):
     def Methodmethod(self):
         # method body ...
-    Methodmethod = MyDecoratormy_decorator(Methodmethod)
+    Methodmethod = MyDecoratory_decorator(Methodmethod)
 ```
 
 <a id="s2.17.2-pros"></a>
