@@ -118,7 +118,7 @@ body {
   font-family:'Arial', sans-serif;
   font-size:81.25%;
   color:#222;
-  background-color:#fff;
+  background-color:#cce6ff ;
   line-height:1.67;
   overflow: auto;
 }
@@ -139,11 +139,13 @@ h4,
 h5,
 h6 {
   font-weight:bold;
+  text-transform: uppercase;
 }
 
 h1 {
   margin-bottom:.50em;
-  text-align: center
+  text-align: center; 
+  text-shadow: 3px 3px  #339cff;
 }
 
 h2,
