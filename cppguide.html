@@ -10,8 +10,6 @@
 <body onload="initStyleGuide();">
 <div id="content">
 <h1>Google C++ Style Guide</h1>
-<div class="horizontal_toc" id="tocDiv"></div>
-
 <div class="main_body">
 
 <h2 class="ignoreLink" id="Background">Background</h2>
@@ -161,6 +159,22 @@ input.</p>
 </div>
 
  
+
+<h2 id="C++_Version">C++ Version</h2>
+
+<p>
+Currently, code should target C++11, i.e., should not use C++14 or
+C++17 features. The C++ version targeted by this guide will advance
+(aggressively) over time.</p>
+
+<p>
+Code should avoid features that have been removed from
+the latest language version (currently C++17), as well as the rare
+cases where code has a different meaning in that latest version.
+Use of some C++ features is restricted or disallowed.  Do not use
+<a href="#Nonstandard_Extensions">non-standard extensions</a>.</p>
+
+
 
 <h2 id="Header_Files">Header Files</h2>
 
@@ -972,10 +986,12 @@ dynamic initialization, and reviewed very carefully.</p>
 
 <p>By contrast, the following initializations are problematic:</p>
 
-<pre class="neutralcode">time_t time(time_t*);      // not constexpr!
+<pre class="badcode">// Some declarations used below.
+time_t time(time_t*);      // not constexpr!
 int f();                   // not constexpr!
 struct Bar { Bar() {} };
 
+// Problematic initializations.
 time_t m = time(nullptr);  // initializing expression not a constant expression
 Foo y(f());                // ditto
 Bar b;                     // chosen constructor Bar::Bar() not constexpr</pre>
@@ -1514,6 +1530,7 @@ functors and traits.</p>
 
 </div> 
 
+<a id="Multiple_Inheritance"></a>
 <h3 id="Inheritance">Inheritance</h3>
 
 <div class="summary">
@@ -1522,16 +1539,14 @@ When using inheritance, make it <code>public</code>.</p>
 </div>
 
 <div class="stylebody">
-
 <div class="definition">
 <p> When a sub-class
 inherits from a base class, it includes the definitions
-of all the data and operations that the parent base class
-defines. In practice, inheritance is used in two major
-ways in C++: implementation inheritance, in which actual
-code is inherited by the child, and
-<a href="#Interfaces">interface inheritance</a>, in which
-only method names are inherited.</p>
+of all the data and operations that the base class
+defines. "Interface inheritance" is inheritance from a
+pure abstract base class (one with no state or defined
+methods); all other inheritance is "implementation
+inheritance".</p>
 </div>
 
 <div class="pros">
@@ -1553,6 +1568,14 @@ the sub-class, it can be more difficult to understand an
 implementation. The sub-class cannot override functions
 that are not virtual, so the sub-class cannot change
 implementation.</p>
+
+<p>Multiple inheritance is especially problematic, because
+it often imposes a higher performance overhead (in fact,
+the performance drop from single inheritance to multiple
+inheritance can often be greater than the performance
+drop from ordinary to virtual dispatch), and because
+it risks leading to "diamond" inheritance patterns,
+which are prone to ambiguity, confusion, and outright bugs.</p>
 </div>
 
 <div class="decision">
@@ -1585,119 +1608,9 @@ specifiers serve as documentation; if no specifier is
 present, the reader has to check all ancestors of the
 class in question to determine if the function or
 destructor is virtual or not.</p>
-</div>
 
-</div> 
-
-<h3 id="Multiple_Inheritance">Multiple Inheritance</h3>
-
-<div class="summary">
-<p>Only very rarely is multiple implementation inheritance
-actually useful. We allow multiple inheritance only when at
-most one of the base classes has an implementation; all
-other base classes must be <a href="#Interfaces">pure
-interface</a> classes tagged with the
-<code>Interface</code> suffix.</p>
-</div>
-
-<div class="stylebody">
-
-<div class="definition">
-<p>Multiple inheritance allows a sub-class to have more than
-one base class. We distinguish between base classes that are
-<em>pure interfaces</em> and those that have an
-<em>implementation</em>.</p>
-</div>
-
-<div class="pros">
-<p>Multiple implementation inheritance may let you re-use
-even more code than single inheritance (see <a href="#Inheritance">Inheritance</a>).</p>
-</div>
-
-<div class="cons">
-<p>Only very rarely is multiple <em>implementation</em>
-inheritance actually useful. When multiple implementation
-inheritance seems like the solution, you can usually find
-a different, more explicit, and cleaner solution.</p>
-</div>
-
-<div class="decision">
-<p> Multiple inheritance is allowed only when all
-superclasses, with the possible exception of the first one,
-are <a href="#Interfaces">pure interfaces</a>. In order to
-ensure that they remain pure interfaces, they must end with
-the <code>Interface</code> suffix.</p>
-</div>
-
-<div class="note">
-<p>There is an <a href="#Windows_Code">exception</a> to
-this rule on Windows.</p>
-</div>
-
-</div> 
-
-<h3 id="Interfaces">Interfaces</h3>
-
-<div class="summary">
-<p>Classes that satisfy certain conditions are allowed, but
-not required, to end with an <code>Interface</code> suffix.</p>
-</div>
-
-<div class="stylebody">
-
-<div class="definition">
-<p>A class is a pure interface if it meets the following
-requirements:</p>
-
-<ul>
-  <li>It has only public pure virtual ("<code>=
-  0</code>") methods and static methods (but see below
-  for destructor).</li>
-
-  <li>It may not have non-static data members.</li>
-
-  <li>It need not have any constructors defined. If a
-  constructor is provided, it must take no arguments and
-  it must be protected.</li>
-
-  <li>If it is a subclass, it may only be derived from
-  classes that satisfy these conditions and are tagged
-  with the <code>Interface</code> suffix.</li>
-</ul>
-
-<p>An interface class can never be directly instantiated
-because of the pure virtual method(s) it declares. To
-make sure all implementations of the interface can be
-destroyed correctly, the interface must also declare a
-virtual destructor (in an exception to the first rule,
-this should not be pure). See Stroustrup, <cite>The C++
-Programming Language</cite>, 3rd edition, section 12.4
-for details.</p>
-</div>
-
-<div class="pros">
-<p>Tagging a class with the <code>Interface</code> suffix
-lets others know that they must not add implemented
-methods or non static data members. This is particularly
-important in the case of <a href="#Multiple_Inheritance">multiple inheritance</a>.
-Additionally, the interface concept is already
-well-understood by Java programmers.</p>
-</div>
-
-<div class="cons">
-<p>The <code>Interface</code> suffix lengthens the class
-name, which can make it harder to read and understand.
-Also, the interface property may be considered an
-implementation detail that shouldn't be exposed to
-clients.</p>
-</div>
-
-<div class="decision">
-<p>A class may end
-with <code>Interface</code> only if it meets the above
-requirements. We do not require the converse, however:
-classes that meet the above requirements are not required
-to end with <code>Interface</code>.</p>
+  <p>Multiple inheritance is permitted, but multiple <em>implementation</em>
+inheritance is strongly discouraged.</p>
 </div>
 
 </div> 
@@ -1840,7 +1753,7 @@ apply to operator overloading as well.</p>
 <h3 id="Access_Control">Access Control</h3>
 
 <div class="summary">
-<p> Make data members <code>private</code>, unless they are
+<p>Make classes' data members <code>private</code>, unless they are
 <code>static const</code> (and follow the <a href="#Constant_Names">
 naming convention for constants</a>).</p>
 </div>
@@ -1848,7 +1761,7 @@ naming convention for constants</a>).</p>
 <div class="stylebody">
 
 <p>For technical
-reasons, we allow data members of a test fixture class to
+reasons, we allow data members of a test fixture class in a .cc file to
 be <code>protected</code> when using
 
 
@@ -1956,7 +1869,7 @@ the function into smaller and more manageable pieces.</p>
 <h3 id="Reference_Arguments">Reference Arguments</h3>
 
 <div class="summary">
-<p>All parameters passed by reference must be labeled
+<p>All parameters passed by lvalue reference must be labeled
 <code>const</code>.</p>
 </div>
 
@@ -2053,6 +1966,11 @@ std::string_view
 identically-named function to take different arguments.
 It may be necessary for templatized code, and it can be
 convenient for Visitors.</p>
+<p>Overloading based on const or ref qualification may make utility
+  code more usable, more efficient, or both.
+  
+  (See <a href="http://abseil.io/tips/148">TotW 148</a> for more.)
+</p>
 </div>
 
 <div class="cons">
@@ -2065,15 +1983,13 @@ function.</p>
 </div>
 
 <div class="decision">
-<p>You may overload a function when there are no semantic
-differences between variants, or when the differences are
-clear at the callsite.</p>
-
-<p>If you are overloading a function to support variable
-number of arguments of the same type, consider making it
-take a <code>std::vector</code> so that the user can use an
-<a href="#Braced_Initializer_List">initializer list
-</a> to specify the arguments.</p>
+<p>You may overload a function when there are no semantic differences
+between variants. These overloads may vary in types, qualifiers, or
+argument count. However, a reader of such a call must not need to know
+which member of the overload set is chosen, only that <b>something</b>
+from the set is being called. If you can document all entries in the
+overload set with a single comment in the header, that is a good sign
+that it is a well-designed overload set.</p>
 </div>
 
 </div> 
@@ -2183,7 +2099,7 @@ doubt, use overloads.</p>
 
 <div class="cons">
 <p>Trailing return type syntax is relatively new and it has no
-  analogue in C++-like languages like C and Java, so some readers may
+  analogue in C++-like languages such as C and Java, so some readers may
   find it unfamiliar.</p>
 <p>Existing code bases have an enormous number of function
   declarations that aren't going to get changed to use the new syntax,
@@ -2385,9 +2301,19 @@ you can download
 <h3 id="Rvalue_references">Rvalue References</h3>
 
 <div class="summary">
-<p>Use rvalue references only to define move constructors and move assignment
-operators, or for perfect forwarding.
-</p>
+<p>Use rvalue references to:</p>
+<ul>
+  <li>Define move constructors and move assignment operators.</li>
+
+  <li>Define <a href="#Function_Overloading">overload sets</a> with
+  const&amp; and &amp;&amp; variants if you have evidence that this
+  provides meaningfully better performance than passing by value,
+  or if you're writing low-overhead generic code that needs to support
+  arbitrary types. Beware combinatorial overload sets, that is, seldom
+  overload more than one parameter.</li>
+
+  <li>Support 'perfect forwarding' in generic code.</li>
+</ul>
 </div>
 
 <div class="stylebody">
@@ -2399,6 +2325,11 @@ objects. The syntax is similar to traditional reference
 syntax. For example, <code>void f(string&amp;&amp;
 s);</code> declares a function whose argument is an
 rvalue reference to a string.</p>
+
+<p id="Forwarding_references"> When the token '&amp;&amp;' is applied to
+an unqualified template argument in a function
+parameter, special template argument deduction
+rules apply. Such a reference is called forwarding reference.</p>
 </div>
 
 <div class="pros">
@@ -2410,14 +2341,8 @@ rvalue reference to a string.</p>
   for example, then <code>auto v2(std::move(v1))</code>
   will probably just result in some simple pointer
   manipulation instead of copying a large amount of data.
-  In some cases this can result in a major performance
+  In many cases this can result in a major performance
   improvement.</li>
-
-  <li>Rvalue references make it possible to write a
-  generic function wrapper that forwards its arguments to
-  another function, and works whether or not its
-  arguments are temporary objects. (This is sometimes called
-  "perfect forwarding".)</li>
 
   <li>Rvalue references make it possible to implement
   types that are movable but not copyable, which can be
@@ -2428,25 +2353,45 @@ rvalue reference to a string.</p>
   <li><code>std::move</code> is necessary to make
   effective use of some standard-library types, such as
   <code>std::unique_ptr</code>.</li>
+
+  <li><a href="#Forwarding_references">Forwarding references</a> which
+  use the rvalue reference token, make it possible to write a
+  generic function wrapper that forwards its arguments to
+  another function, and works whether or not its
+  arguments are temporary objects and/or const.
+  This is called 'perfect forwarding'.</li>
 </ul>
 </div>
 
 <div class="cons">
 <ul>
-  <li>Rvalue references are a relatively new feature
-  (introduced as part of C++11), and not yet widely
-  understood. Rules like reference collapsing, and
-  automatic synthesis of move constructors, are
-  complicated.</li>
+  <li>Rvalue references are not yet widely
+  understood. Rules like automatic synthesis of move constructors and reference
+  collapsing (the latter refers to the special rules that apply to a T&amp;&amp;
+  parameter in a function template) are somewhat obscure.</li>
+
+  <li>Rvalue references are often misused. Using rvalue
+  references is counter-intuitive in signatures where the argument is expected
+  to have a valid specified state after the function call, or where no move
+  operation is performed.</li>
 </ul>
 </div>
 
 <div class="decision">
-  <p>Use rvalue references only to define move constructors and move assignment
-  operators (as described in <a href="#Copyable_Movable_Types">Copyable and
-  Movable Types</a>) and, in conjunction with <code><a href="http://en.cppreference.com/w/cpp/utility/forward">std::forward</a></code>,
-to support perfect forwarding.  You may use <code>std::move</code> to express
-moving a value from one object to another rather than copying it. </p>
+  <p>You may use rvalue references to define move constructors and move
+  assignment operators (as described in <a href="#Copyable_Movable_Types">Copyable and Movable Types</a>). See the <a href="primer#copying_moving">C++ Primer</a> for more information about
+  move semantics and <code>std::move</code>.</p>
+
+  <p>You may use rvalue references to define pairs of overloads, one taking
+  Foo&amp;&amp; and the other taking const Foo&amp;. Usually the preferred
+  solution is just to pass by value, but an overloaded pair of functions
+  sometimes yields better performance and is sometimes necessary in generic code
+  that needs to support a wide variety of types. As always: if you're writing
+  more complicated code for the sake of performance, make sure you have evidence
+  that it actually helps.</p>
+
+  <p>You may use forwarding references in conjunction with <code><a href="http://en.cppreference.com/w/cpp/utility/forward">std::forward</a></code>,
+  to support perfect forwarding.</p>
 </div>
 
 </div> 
@@ -2957,6 +2902,7 @@ end-users. Be consistent with the code around you, and with the
 codebase as a whole; if there's an established tool for
 your problem, use that tool instead.
 In particular,
+
 logging libraries are usually a better
 choice than <code>std::cerr</code> or <code>std::clog</code>
 for diagnostic output, and the libraries in
@@ -3467,9 +3413,8 @@ name (but upper case). </p>
 
 <p>Use <code>0</code> for integers and <code>0.0</code> for reals.</p>
 
-<p>For pointers (address values), there is a choice between <code>0</code>,
-<code>NULL</code>, and <code>nullptr</code>. For projects that allow C++11
-features, use <code>nullptr</code>, as this provides type-safety.</p>
+<p>For pointers (address values), use <code>nullptr</code>, as this
+provides type-safety.</p>
 
 <p>For C++03 projects, prefer <code>NULL</code> to <code>0</code>. While the
 values are equivalent, <code>NULL</code> looks more like a pointer to the
@@ -3830,9 +3775,6 @@ few variables for a short lambda, where the set of captured
 variables is obvious at a glance. Prefer not to write long or
 complex lambdas with default capture by value.
 </li>
-<li>Keep unnamed lambdas short.  If a lambda body is more than
-maybe five lines long, prefer to give the lambda a name, or to
-use a named function instead of a lambda.</li>
 <li>Specify the return type of the lambda explicitly if that will
 make it more obvious to readers, as with
 <a href="#auto"><code>auto</code></a>.</li>
@@ -4147,7 +4089,7 @@ libraries. </p>
 </div>
 
 <div class="pros">
-<p>C++11 was the official standard until august 2014, and
+<p>C++11 was the official standard until 2014, and
 is supported by most C++ compilers. It standardizes
 some common C++ extensions that we use already, allows
 shorthands for some operations, and has some performance
@@ -4199,10 +4141,6 @@ guide, the following C++11 features may not be used:</p>
   <li>The <code>&lt;cfenv&gt;</code> and
   <code>&lt;fenv.h&gt;</code> headers, because many
   compilers do not support those features reliably.</li>
-
-  <li>Ref-qualifiers on member functions, such as <code>void X::Foo()
-    &amp;</code> or <code>void X::Foo() &amp;&amp;</code>, because of concerns
-    that they're an overly obscure feature.</li>
 
   
 
@@ -4412,9 +4350,9 @@ template parameter.</p>
 <p>For some symbols, this style guide recommends names to start with a capital
 letter and to have a capital letter for each new word (a.k.a.
 "<a href="https://en.wikipedia.org/wiki/Camel_case">Camel Case</a>"
-or "Pascal case"). When abbreviations appear in such names, prefer to
-capitalize the abbreviations as single words (i.e. <code>StartRpc()</code>,
-not <code>StartRPC()</code>).</p>
+or "Pascal case"). When abbreviations or acronyms appear in such
+names, prefer to capitalize the abbreviations or acronyms as single words (i.e
+<code>StartRpc()</code>, not <code>StartRPC()</code>).</p>
 
 <p>Template parameters should follow the naming style for their
 category: type template parameters should follow the rules for
@@ -4460,10 +4398,6 @@ example, use <code>http_server_logs.h</code> rather than
 of files called, e.g., <code>foo_bar.h</code> and
 <code>foo_bar.cc</code>, defining a class called
 <code>FooBar</code>.</p>
-
-<p>Inline functions must be in a <code>.h</code> file. If
-your inline functions are very short, they should go
-directly into your <code>.h</code> file. </p>
 
 </div> 
 
@@ -4562,10 +4496,12 @@ versus a class.</p>
 <div class="summary">
   <p>Variables declared constexpr or const, and whose value is fixed for
   the duration of the program, are named with a leading "k" followed
-  by mixed case.  For example:</p>
+  by mixed case. Underscores can be used as separators in the rare cases
+  where capitalization cannot be used for separation. For example:</p>
 </div>
 
 <pre>const int kDaysInAWeek = 7;
+const int kAndroid8_0_0 = 24;  // Android 8.0.0
 </pre>
 
 <div class="stylebody">
@@ -5018,7 +4954,7 @@ non-obvious, interesting, or important parts of your code.</p>
 <p>Tricky or complicated code blocks should have comments
 before them. Example:</p>
 
-<pre>// Divide result by two, taking into account that x
+<pre>// Divides result by two, taking into account that x
 // contains the carry from the add.
 for (int i = 0; i &lt; result-&gt;size(); i++) {
   x = (x &lt;&lt; 8) + (*result)[i];
@@ -5061,7 +4997,7 @@ std::vector&lt;string&gt; list{
 DoSomething(); /* For trailing block comments, one space is fine. */
 </pre>
 
-<h4 class="stylepoint_subsection">Function Argument Comments</h4>
+<h4 class="stylepoint_subsection" id="Function_Argument_Comments">Function Argument Comments</h4>
 
 <p>When the meaning of a function argument is nonobvious, consider
 one of the following remedies:</p>
@@ -5309,22 +5245,23 @@ can easily show longer lines.</p>
 <div class="decision">
 <p> 80 characters is the maximum.</p>
 
-<p class="exception">Comment lines can be longer than 80
-characters if it is not feasible to split them without
-harming readability, ease of cut and paste or auto-linking
--- e.g. if a line contains an example command or a literal
-URL longer than 80 characters.</p>
+<p>A line may exceed 80 characters if it is</p>
 
-<p class="exception">A raw-string literal may have content
-that exceeds 80 characters.  Except for test code, such literals
-should appear near the top of a file.</p>
+<ul>
+  <li>a comment line which is not feasible to split without harming
+  readability, ease of cut and paste or auto-linking -- e.g. if a line
+  contains an example command or a literal URL longer than 80 characters.</li>
 
-<p class="exception">An <code>#include</code> statement with a
-long path may exceed 80 columns.</p>
+  <li>a raw-string literal with content that exceeds 80 characters.  Except for
+  test code, such literals should appear near the top of a file.</li>
 
-<p class="exception">You needn't be concerned about
-<a href="#The__define_Guard">header guards</a> that exceed
-the maximum length. </p>
+  <li>an include statement.</li>
+
+  <li>a <a href="#The__define_Guard">header guard</a></li>
+
+  <li>a using-declaration</li>
+</ul>
+
 </div>
 
 </div> 
@@ -6316,29 +6253,33 @@ std::vector&lt;char *&gt; x;
 
 <div class="stylebody">
 
-<p>This is more a principle than a rule: don't use blank
-lines when you don't have to. In particular, don't put
-more than one or two blank lines between functions,
-resist starting functions with a blank line, don't end
-functions with a blank line, and be discriminating with
-your use of blank lines inside functions.</p>
+<p>This is more a principle than a rule: don't use blank lines when
+you don't have to. In particular, don't put more than one or two blank
+lines between functions, resist starting functions with a blank line,
+don't end functions with a blank line, and be sparing with your use of
+blank lines. A blank line within a block of code serves like a
+paragraph break in prose: visually separating two thoughts.</p>
 
-<p>The basic principle is: The more code that fits on one
-screen, the easier it is to follow and understand the
-control flow of the program. Of course, readability can
-suffer from code being too dense as well as too spread
-out, so use your judgement. But in general, minimize use
-of vertical whitespace.</p>
+<p>The basic principle is: The more code that fits on one screen, the
+easier it is to follow and understand the control flow of the
+program. Use whitespace purposefully to provide separation in that
+flow.</p>
 
 <p>Some rules of thumb to help when blank lines may be
 useful:</p>
 
 <ul>
   <li>Blank lines at the beginning or end of a function
-  very rarely help readability.</li>
+  do not help readability.</li>
 
   <li>Blank lines inside a chain of if-else blocks may
   well help readability.</li>
+
+  <li>A blank line before a comment line usually helps
+  readability &#8212; the introduction of a new comment suggests
+  the start of a new thought, and the blank line makes it clear
+  that the comment goes with the following thing instead of the
+  preceding.</li>
 </ul>
 
 </div> 
