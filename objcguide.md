@@ -102,11 +102,11 @@ for an `@interface` declaration.
 + (instancetype)fooWithBar:(Bar *)bar;
 
 /**
- * Designated initializer.
+ * Initializes and returns a Foo object using the provided Bar instance.
  *
  * @param bar A string that represents a thing that does a thing.
  */
-- (instancetype)initWithBar:(Bar *)bar;
+- (instancetype)initWithBar:(Bar *)bar NS_DESIGNATED_INITIALIZER;
 
 /**
  * Does some work with @c blah.
@@ -163,320 +163,16 @@ An example source file, demonstrating the correct commenting and spacing for the
 @end
 ```
 
-## Spacing and Formatting 
-
-### Spaces vs. Tabs 
-
-Use only spaces, and indent 2 spaces at a time. We use spaces for indentation.
-Do not use tabs in your code.
-
-You should set your editor to emit spaces when you hit the tab key, and to trim
-trailing spaces on lines.
-
-### Line Length 
-
-The maximum line length for Objective-C files is 100 columns.
-
-You can make violations easier to spot by enabling *Preferences > Text Editing >
-Page guide at column: 100* in Xcode.
-
-### Method Declarations and Definitions 
-
-One space should be used between the `-` or `+` and the return type, and no
-spacing in the parameter list except between parameters.
-
-Methods should look like this:
-
-```objectivec 
-// GOOD:
-
-- (void)doSomethingWithString:(NSString *)theString {
-  ...
-}
-```
-
-The spacing before the asterisk is optional. When adding new code, be consistent
-with the surrounding file's style.
-
-If you have too many parameters to fit on one line, giving each its own line is
-preferred. If multiple lines are used, align each using the colon before the
-parameter.
-
-```objectivec 
-// GOOD:
-
-- (void)doSomethingWithFoo:(GTMFoo *)theFoo
-                      rect:(NSRect)theRect
-                  interval:(float)theInterval {
-  ...
-}
-```
-
-When the second or later parameter name is longer than the first, indent the
-second and later lines by at least four spaces, maintaining colon alignment:
-
-```objectivec 
-// GOOD:
-
-- (void)short:(GTMFoo *)theFoo
-          longKeyword:(NSRect)theRect
-    evenLongerKeyword:(float)theInterval
-                error:(NSError **)theError {
-  ...
-}
-```
-
-### Conditionals 
-
-Include a space after `if`, `while`, `for`, and `switch`, and around comparison
-operators.
-
-```objectivec 
-// GOOD:
-
-for (int i = 0; i < 5; ++i) {
-}
-
-while (test) {};
-```
-
-Braces may be omitted when a loop body or conditional statement fits on a single
-line.
-
-```objectivec 
-// GOOD:
-
-if (hasSillyName) LaughOutLoud();
-
-for (int i = 0; i < 10; i++) {
-  BlowTheHorn();
-}
-```
-
-```objectivec 
-// AVOID:
-
-if (hasSillyName)
-  LaughOutLoud();               // AVOID.
-
-for (int i = 0; i < 10; i++)
-  BlowTheHorn();                // AVOID.
-```
-
-If an `if` clause has an `else` clause, both clauses should use braces.
-
-```objectivec 
-// GOOD:
-
-if (hasBaz) {
-  foo();
-} else {
-  bar();
-}
-```
-
-```objectivec 
-// AVOID:
-
-if (hasBaz) foo();
-else bar();        // AVOID.
-
-if (hasBaz) {
-  foo();
-} else bar();      // AVOID.
-```
-
-Intentional fall-through to the next case should be documented with a comment
-unless the case has no intervening code before the next case.
-
-```objectivec 
-// GOOD:
-
-switch (i) {
-  case 1:
-    ...
-    break;
-  case 2:
-    j++;
-    // Falls through.
-  case 3: {
-    int k;
-    ...
-    break;
-  }
-  case 4:
-  case 5:
-  case 6: break;
-}
-```
-
-### Expressions 
-
-Use a space around binary operators and assignments. Omit a space for a unary
-operator. Do not add spaces inside parentheses.
-
-```objectivec 
-// GOOD:
-
-x = 0;
-v = w * x + y / z;
-v = -y * (x + z);
-```
-
-Factors in an expression may omit spaces.
-
-```objectivec 
-// GOOD:
-
-v = w*x + y/z;
-```
-
-### Method Invocations 
-
-Method invocations should be formatted much like method declarations.
-
-When there's a choice of formatting styles, follow the convention already used
-in a given source file. Invocations should have all arguments on one line:
-
-```objectivec 
-// GOOD:
-
-[myObject doFooWith:arg1 name:arg2 error:arg3];
-```
-
-or have one argument per line, with colons aligned:
-
-```objectivec 
-// GOOD:
-
-[myObject doFooWith:arg1
-               name:arg2
-              error:arg3];
-```
-
-Don't use any of these styles:
-
-```objectivec 
-// AVOID:
-
-[myObject doFooWith:arg1 name:arg2  // some lines with >1 arg
-              error:arg3];
-
-[myObject doFooWith:arg1
-               name:arg2 error:arg3];
-
-[myObject doFooWith:arg1
-          name:arg2  // aligning keywords instead of colons
-          error:arg3];
-```
-
-As with declarations and definitions, when the first keyword is shorter than the
-others, indent the later lines by at least four spaces, maintaining colon
-alignment:
-
-```objectivec 
-// GOOD:
-
-[myObj short:arg1
-          longKeyword:arg2
-    evenLongerKeyword:arg3
-                error:arg4];
-```
-
-Invocations containing multiple inlined blocks may have their parameter names
-left-aligned at a four space indent.
-
-### Function Calls 
-
-Function calls should include as many parameters as fit on each line, except
-where shorter lines are needed for clarity or documentation of the parameters.
-
-Continuation lines for function parameters may be indented to align with the
-opening parenthesis, or may have a four-space indent.
-
-```objectivec 
-// GOOD:
-
-CFArrayRef array = CFArrayCreate(kCFAllocatorDefault, objects, numberOfObjects,
-                                 &kCFTypeArrayCallBacks);
-
-NSString *string = NSLocalizedStringWithDefaultValue(@"FEET", @"DistanceTable",
-    resourceBundle,  @"%@ feet", @"Distance for multiple feet");
-
-UpdateTally(scores[x] * y + bases[x],  // Score heuristic.
-            x, y, z);
-
-TransformImage(image,
-               x1, x2, x3,
-               y1, y2, y3,
-               z1, z2, z3);
-```
-
-Use local variables with descriptive names to shorten function calls and reduce
-nesting of calls.
-
-```objectivec 
-// GOOD:
-
-double scoreHeuristic = scores[x] * y + bases[x];
-UpdateTally(scoreHeuristic, x, y, z);
-```
-
-### Exceptions 
-
-Format exceptions with `@catch` and `@finally` labels on the same line as the
-preceding `}`. Add a space between the `@` label and the opening brace (`{`), as
-well as between the `@catch` and the caught object declaration. If you must use
-Objective-C exceptions, format them as follows. However, see Avoid Throwing
-Exceptions for reasons why you should not be using exceptions.
-
-```objectivec 
-// GOOD:
-
-@try {
-  foo();
-} @catch (NSException *ex) {
-  bar(ex);
-} @finally {
-  baz();
-}
-```
-
-### Function Length 
-
-Prefer small and focused functions.
-
-Long functions and methods are occasionally appropriate, so no hard limit is
-placed on function length. If a function exceeds about 40 lines, think about
-whether it can be broken up without harming the structure of the program.
-
-Even if your long function works perfectly now, someone modifying it in a few
-months may add new behavior. This could result in bugs that are hard to find.
-Keeping your functions short and simple makes it easier for other people to read
-and modify your code.
-
-When updating legacy code, consider also breaking long functions into smaller
-and more manageable pieces.
-
-### Vertical Whitespace 
-
-Use vertical whitespace sparingly.
-
-To allow more code to be easily viewed on a screen, avoid putting blank lines
-just inside the braces of functions.
-
-Limit blank lines to one or two between functions and between logical groups of
-code.
-
 ## Naming 
 
 Names should be as descriptive as possible, within reason. Follow standard
 [Objective-C naming
 rules](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html).
 
-Avoid non-standard abbreviations. Don't worry about saving horizontal space as
-it is far more important to make your code immediately understandable by a new
-reader. For example:
+Avoid non-standard abbreviations (including non-standard acronyms and
+initialisms). Don't worry about saving horizontal space as it is far more
+important to make your code immediately understandable by a new reader. For
+example:
 
 ```objectivec 
 // GOOD:
@@ -529,32 +225,60 @@ Extension | Type
 
 Files containing code that may be shared across projects or used in a large
 project should have a clearly unique name, typically including the project or
-class prefix.
+class [prefix](#prefixes).
 
 File names for categories should include the name of the class being extended,
 like GTMNSString+Utils.h or NSTextView+GTMAutocomplete.h
+
+### Prefixes
+
+Prefixes are commonly required in Objective-C to avoid naming collisions in a
+global namespace. Classes, protocols, global functions, and global constants
+should generally be named with a prefix that begins with a capital letter
+followed by one or more capital letters or numbers.
+
+WARNING: Apple reserves two-letter prefixes—see
+[Conventions in Programming with Objective-C](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Conventions/Conventions.html)—so
+prefixes with a minimum of three characters are considered best practice.
+
+```objectivec 
+// GOOD:
+
+/** An example error domain. */
+extern NSString *GTMExampleErrorDomain;
+
+/** Gets the default time zone. */
+extern NSTimeZone *GTMGetDefaultTimeZone(void);
+
+/** An example delegate. */
+@protocol GTMExampleDelegate <NSObject>
+@end
+
+/** An example class. */
+@interface GTMExample : NSObject
+@end
+
+```
 
 ### Class Names 
 
 Class names (along with category and protocol names) should start as uppercase
 and use mixed case to delimit words.
 
-When designing code to be shared across multiple applications, prefixes are
-acceptable and recommended (e.g. GTMSendMessage). Prefixes are also recommended
-for classes of large applications that depend on external libraries.
+Classes and protocols in code shared across multiple applications must have an
+appropriate [prefix](#prefixes) (e.g. GTMSendMessage). Prefixes are recommended,
+but not required, for other classes and protocols.
 
-### Category Names 
+### Category Naming 
 
-Category names should start with a 3 character prefix identifying the category
-as part of a project or open for general use.
+Category names should start with an appropriate [prefix](#prefixes) identifying
+the category as part of a project or open for general use.
 
-The category name should incorporate the name of the class it's extending. For
-example, if we want to create a category on `NSString` for parsing, we would put
-the category in a file named `NSString+GTMParsing.h`, and the category itself
-would be named `GTMNSStringParsingAdditions`. The file name and the category may
-not match, as this file could have many separate categories related to parsing.
-Methods in that category should share the prefix
-(`gtm_myCategoryMethodOnAString:`) in order to prevent collisions in
+Category source file names should begin with the class being extended followed
+by a plus sign and the name of the category, e.g., `NSString+GTMParsing.h`.
+Methods in a category should be prefixed with a lowercase version of the prefix
+used for the category name followed by an underscore (e.g.,
+`gtm_myCategoryMethodOnAString:`) in order to prevent collisions in
 Objective-C's global namespace.
 
 There should be a single space between the class name and the opening
@@ -563,9 +287,29 @@ parenthesis of the category.
 ```objectivec 
 // GOOD:
 
-/** A category that adds parsing functionality to NSString. */
-@interface NSString (GTMNSStringParsingAdditions)
-- (NSString *)gtm_parsedString;
+// UIViewController+GTMCrashReporting.h
+
+/** A category that adds metadata to include in crash reports to UIViewController. */
+@interface UIViewController (GTMCrashReporting)
+
+/** A unique identifier to represent the view controller in crash reports. */
+@property(nonatomic, setter=gtm_setUniqueIdentifier:) int gtm_uniqueIdentifier;
+
+/** Returns an encoded representation of the view controller's current state. */
+- (nullable NSData *)gtm_encodedState;
+
+@end
+```
+
+If a class is not shared with other projects, categories extending it may omit
+name prefixes and method name prefixes.
+
+```objectivec 
+// GOOD:
+
+/** This category extends a class that is not shared with other projects. */
+@interface XYZDataObject (Storage)
+- (NSString *)storageIdentifier;
 @end
 ```
 
@@ -672,26 +416,24 @@ follow the rules set in the C++ style guide.
 
 ### Function Names 
 
-Regular functions have mixed case.
-
-Ordinarily, functions should start with a capital letter and have a capital
-letter for each new word (a.k.a. "[Camel
-Case](https://en.wikipedia.org/wiki/Camel_case)" or "Pascal case").
+Function names should start with a capital letter and have a capital letter for
+each new word (a.k.a. "[camel case](https://en.wikipedia.org/wiki/Camel_case)"
+or "Pascal case").
 
 ```objectivec 
 // GOOD:
 
 static void AddTableEntry(NSString *tableEntry);
-static BOOL DeleteFile(char *filename);
+static BOOL DeleteFile(const char *filename);
 ```
 
 Because Objective-C does not provide namespacing, non-static functions should
-have a prefix that minimizes the chance of a name collision.
+have a [prefix](#prefixes) that minimizes the chance of a name collision.
 
 ```objectivec 
 // GOOD:
 
-extern NSTimeZone *GTMGetDefaultTimeZone();
+extern NSTimeZone *GTMGetDefaultTimeZone(void);
 extern NSString *GTMGetURLScheme(NSURL *URL);
 ```
 
@@ -735,7 +477,7 @@ class.
 Constant symbols (const global and static variables and constants created
 with #define) should use mixed case to delimit words.
 
-Global and file scope constants should have an appropriate prefix.
+Global and file scope constants should have an appropriate [prefix](#prefixes).
 
 ```objectivec 
 // GOOD:
@@ -764,7 +506,8 @@ typedef NS_ENUM(NSInteger, DisplayTinge) {
 };
 ```
 
-Constants may use a lowercase k prefix when appropriate:
+A lowercase k can be used as a standalone prefix for constants of static storage
+duration declared within implementation files:
 
 ```objectivec 
 // GOOD:
@@ -773,7 +516,18 @@ static const int kFileCount = 12;
 static NSString *const kUserKey = @"kUserKey";
 ```
 
+NOTE: Previous convention was for public constant names to begin with a
+lowercase k followed by a project-specific [prefix](#prefixes). This practice is
+no longer recommended.
+
 ## Types and Declarations 
+
+### Method Declarations 
+
+As shown in the [example](#Example), the recommended order
+for declarations in an `@interface` declaration are: properties, class methods,
+initializers, and then finally instance methods. The class methods section
+should begin with any convenience constructors.
 
 ### Local Variables 
 
@@ -804,9 +558,13 @@ for (meters = 1; meters < 10; meters++) {
 }
 ```
 
-Under Automatic Reference Counting, pointers to Objective-C objects are by
-default initialized to `nil`, so explicit initialization to `nil` is not
-required.
+Under Automatic Reference Counting, strong and weak pointers to Objective-C
+objects are automatically initialized to `nil`, so explicit initialization to
+`nil` is not required for those common cases. However, automatic initialization
+does *not* occur for many Objective-C pointer types, including object pointers
+declared with the `__unsafe_unretained` ownership qualifier and CoreFoundation
+object pointer types. When in doubt, prefer to initialize all Objective-C
+local variables.
 
 ### Unsigned Integers 
 
@@ -1145,8 +903,7 @@ Nonstandard extensions to C/Objective-C may not be used unless otherwise
 specified.
 
 Compilers support various extensions that are not part of standard C. Examples
-include compound statement expressions (e.g. `foo = ({ int x; Bar(&x); x }))`
-and variable-length arrays.
+include compound statement expressions (e.g. `foo = ({ int x; Bar(&x); x })`).
 
 `__attribute__` is an approved exception, as it is used in Objective-C API
 specifications.
@@ -1215,14 +972,11 @@ should be marked `@protected` or `@private`.
 @end
 ```
 
-### Avoid +new 
+### Do Not Use +new 
 
 Do not invoke the `NSObject` class method `new`, nor override it in a subclass.
-Instead, use `alloc` and `init` methods to instantiate retained objects.
-
-Modern Objective-C code explicitly calls `alloc` and an `init` method to create
-and retain an object. As the `new` class method is rarely used, it makes
-reviewing code for correct memory management more difficult.
+`+new` is rarely used and contrasts greatly with initializer usage. Instead, use
+`+alloc` and `-init` methods to instantiate retained objects.
 
 ### Keep the Public API Simple 
 
@@ -1245,13 +999,10 @@ prevent subclasses from unintentionally overriding them.
 
 `#import` Objective-C and Objective-C++ headers, and `#include` C/C++ headers.
 
-Choose between `#import` and `#include` based on the language of the header that
-you are including.
-
-
-When including a header that uses Objective-C or Objective-C++, use `#import`.
-When including a standard C or C++ header, use `#include`.
-The header should provide its own `#define` guard.
+C/C++ headers include other C/C++ headers using `#include`. Using `#import`
+on C/C++ headers prevents future inclusions using `#include` and could result in
+unintended compilation behavior.
+C/C++ headers should provide their own `#define` guard.
 
 ### Order of Includes 
 
@@ -1264,6 +1015,8 @@ For implementation files the related header is the header file.
 For test files the related header is the header containing the tested interface.
 
 A blank line may separate logically distinct groups of included headers.
+
+Within each group the includes should be ordered alphabetically.
 
 Import headers using their path relative to the project's source directory.
 
@@ -1451,13 +1204,25 @@ document exactly which methods you expect to throw.
 
 ### `nil` Checks 
 
-Use `nil` checks for logic flow only.
-
-Use `nil` pointer checks for logic flow of the application, not for preventing
-crashes when sending messages. Sending a message to `nil` [reliably
+Avoid `nil` pointer checks that exist only to prevent sending messages to `nil`.
+Sending a message to `nil` [reliably
 returns](http://www.sealiesoftware.com/blog/archive/2012/2/29/objc_explain_return_value_of_message_to_nil.html)
 `nil` as a pointer, zero as an integer or floating-point value, structs
 initialized to `0`, and `_Complex` values equal to `{0, 0}`.
+
+```objectivec 
+// AVOID:
+
+if (dataSource) {  // AVOID.
+  [dataSource moveItemAtIndex:1 toIndex:0];
+}
+```
+
+```objectivec 
+// GOOD:
+
+[dataSource moveItemAtIndex:1 toIndex:0];  // GOOD.
+```
 
 Note that this applies to `nil` as a message target, not as a parameter value.
 Individual methods may or may not safely handle `nil` parameter values.
@@ -1466,6 +1231,54 @@ Note too that this is distinct from checking C/C++ pointers and block pointers
 against `NULL`, which the runtime does not handle and will cause your
 application to crash. You still need to make sure you do not dereference a
 `NULL` pointer.
+
+### Nullability
+
+Interfaces can be decorated with nullability annotations to describe how the
+interface should be used and how it behaves. Use of nullability regions (e.g.,
+`NS_ASSUME_NONNULL_BEGIN` and `NS_ASSUME_NONNULL_END`) and explicit nullability
+annotations are both accepted. Prefer using the `_Nullable` and `_Nonnull`
+keywords over the `__nullable` and `__nonnull` keywords. For Objective-C methods
+and properties prefer using the context-sensitive, non-underscored keywords,
+e.g., `nonnull` and `nullable`.
+
+```objectivec 
+// GOOD:
+
+/** A class representing an owned book. */
+@interface GTMBook : NSObject
+
+/** The title of the book. */
+@property(readonly, copy, nonnull) NSString *title;
+
+/** The author of the book, if one exists. */
+@property(readonly, copy, nullable) NSString *author;
+
+/** The owner of the book. Setting nil resets to the default owner. */
+@property(copy, null_resettable) NSString *owner;
+
+/** Initializes a book with a title and an optional author. */
+- (nonnull instancetype)initWithTitle:(nonnull NSString *)title
+                               author:(nullable NSString *)author
+    NS_DESIGNATED_INITIALIZER;
+
+/** Returns nil because a book is expected to have a title. */
+- (nullable instancetype)init;
+
+@end
+
+/** Loads books from the file specified by the given path. */
+NSArray<GTMBook *> *_Nullable GTMLoadBooksFromFile(NSString *_Nonnull path);
+```
+
+```objectivec 
+// AVOID:
+
+NSArray<GTMBook *> *__nullable GTMLoadBooksFromTitle(NSString *__nonnull path);
+```
+
+Be careful assuming that a pointer is not null based on a non-null qualifier
+because the compiler may not guarantee that the pointer is not null.
 
 ### BOOL Pitfalls 
 
@@ -1479,7 +1292,7 @@ general integral values directly to `BOOL`.
 Common mistakes include casting or converting an array's size, a pointer value,
 or the result of a bitwise logic operation to a `BOOL` that could, depending on
 the value of the last byte of the integer value, still result in a `NO` value.
-When converting a general integral value to a `BOOL` use ternary operators to
+When converting a general integral value to a `BOOL`, use ternary operators to
 return a `YES` or `NO` value.
 
 You can safely interchange and convert `BOOL`, `_Bool` and `bool` (see C++ Std
@@ -1610,7 +1423,7 @@ class CrossPlatformAPI {
 // file: mac_implementation.mm
 #include "cross_platform_header.h"
 
-// A typical Objective-C class, using Objective-C naming.
+/** A typical Objective-C class, using Objective-C naming. */
 @interface MyDelegate : NSObject {
  @private
   int _instanceVar;
@@ -1632,8 +1445,7 @@ class CrossPlatformAPI {
 
 @end
 
-// The platform-specific implementation of the C++ class, using
-// C++ naming.
+/** The platform-specific implementation of the C++ class, using C++ naming. */
 int CrossPlatformAPI::DoSomethingPlatformSpecific() {
   NSString* temp_string = [NSString stringWithFormat:@"%d", an_instance_var_];
   NSLog(@"%@", temp_string);
@@ -1643,6 +1455,356 @@ int CrossPlatformAPI::DoSomethingPlatformSpecific() {
 
 Projects may opt to use an 80 column line length limit for consistency with
 Google's C++ style guide.
+
+## Spacing and Formatting 
+
+### Spaces vs. Tabs 
+
+Use only spaces, and indent 2 spaces at a time. We use spaces for indentation.
+Do not use tabs in your code.
+
+You should set your editor to emit spaces when you hit the tab key, and to trim
+trailing spaces on lines.
+
+### Line Length 
+
+The maximum line length for Objective-C files is 100 columns.
+
+You can make violations easier to spot by enabling *Preferences > Text Editing >
+Page guide at column: 100* in Xcode.
+
+### Method Declarations and Definitions 
+
+One space should be used between the `-` or `+` and the return type, and no
+spacing in the parameter list except between parameters.
+
+Methods should look like this:
+
+```objectivec 
+// GOOD:
+
+- (void)doSomethingWithString:(NSString *)theString {
+  ...
+}
+```
+
+The spacing before the asterisk is optional. When adding new code, be consistent
+with the surrounding file's style.
+
+If a method declaration does not fit on a single line, put each parameter on its
+own line. All lines except the first should be indented at least four spaces.
+Colons before parameters should be aligned on all lines. If the colon before the
+parameter on the first line of a method declaration is positioned such that
+colon alignment would cause indentation on a subsequent line to be less than
+four spaces, then colon alignment is only required for all lines except the
+first.
+
+```objectivec 
+// GOOD:
+
+- (void)doSomethingWithFoo:(GTMFoo *)theFoo
+                      rect:(NSRect)theRect
+                  interval:(float)theInterval {
+  ...
+}
+
+- (void)shortKeyword:(GTMFoo *)theFoo
+            longerKeyword:(NSRect)theRect
+    someEvenLongerKeyword:(float)theInterval
+                    error:(NSError **)theError {
+  ...
+}
+
+- (id<UIAdaptivePresentationControllerDelegate>)
+    adaptivePresentationControllerDelegateForViewController:(UIViewController *)viewController;
+
+- (void)presentWithAdaptivePresentationControllerDelegate:
+    (id<UIAdaptivePresentationControllerDelegate>)delegate;
+```
+
+### Function Declarations and Definitions
+
+Prefer putting the return type on the same line as the function name and append
+all parameters on the same line if they will fit. Wrap parameter lists which do
+not fit on a single line as you would wrap arguments in a [function
+call](#Function_Calls).
+
+```objectivec 
+// GOOD:
+
+NSString *GTMVersionString(int majorVersion, minorVersion) {
+  ...
+}
+
+void GTMSerializeDictionaryToFileOnDispatchQueue(
+    NSDictionary<NSString *, NSString *> *dictionary,
+    NSString *filename,
+    dispatch_queue_t queue) {
+  ...
+}
+```
+
+Function declarations and definitions should also satisfy the following
+conditions:
+
+*   The opening parenthesis must always be on the same line as the function
+    name.
+*   If you cannot fit the return type and the function name on a single line,
+    break between them and do not indent the function name.
+*   There should never be a space before the opening parenthesis.
+*   There should never be a space between function parentheses and parameters.
+*   The open curly brace is always on the end of the last line of the function
+    declaration, not the start of the next line.
+*   The close curly brace is either on the last line by itself or on the same
+    line as the open curly brace.
+*   There should be a space between the close parenthesis and the open curly
+    brace.
+*   All parameters should be aligned if possible.
+*   Function scopes should be indented 2 spaces.
+*   Wrapped parameters should have a 4 space indent.
+
+### Conditionals 
+
+Include a space after `if`, `while`, `for`, and `switch`, and around comparison
+operators.
+
+```objectivec 
+// GOOD:
+
+for (int i = 0; i < 5; ++i) {
+}
+
+while (test) {};
+```
+
+Braces may be omitted when a loop body or conditional statement fits on a single
+line.
+
+```objectivec 
+// GOOD:
+
+if (hasSillyName) LaughOutLoud();
+
+for (int i = 0; i < 10; i++) {
+  BlowTheHorn();
+}
+```
+
+```objectivec 
+// AVOID:
+
+if (hasSillyName)
+  LaughOutLoud();               // AVOID.
+
+for (int i = 0; i < 10; i++)
+  BlowTheHorn();                // AVOID.
+```
+
+If an `if` clause has an `else` clause, both clauses should use braces.
+
+```objectivec 
+// GOOD:
+
+if (hasBaz) {
+  foo();
+} else {  // The else goes on the same line as the closing brace.
+  bar();
+}
+```
+
+```objectivec 
+// AVOID:
+
+if (hasBaz) foo();
+else bar();        // AVOID.
+
+if (hasBaz) {
+  foo();
+} else bar();      // AVOID.
+```
+
+Intentional fall-through to the next case should be documented with a comment
+unless the case has no intervening code before the next case.
+
+```objectivec 
+// GOOD:
+
+switch (i) {
+  case 1:
+    ...
+    break;
+  case 2:
+    j++;
+    // Falls through.
+  case 3: {
+    int k;
+    ...
+    break;
+  }
+  case 4:
+  case 5:
+  case 6: break;
+}
+```
+
+### Expressions 
+
+Use a space around binary operators and assignments. Omit a space for a unary
+operator. Do not add spaces inside parentheses.
+
+```objectivec 
+// GOOD:
+
+x = 0;
+v = w * x + y / z;
+v = -y * (x + z);
+```
+
+Factors in an expression may omit spaces.
+
+```objectivec 
+// GOOD:
+
+v = w*x + y/z;
+```
+
+### Method Invocations 
+
+Method invocations should be formatted much like method declarations.
+
+When there's a choice of formatting styles, follow the convention already used
+in a given source file. Invocations should have all arguments on one line:
+
+```objectivec 
+// GOOD:
+
+[myObject doFooWith:arg1 name:arg2 error:arg3];
+```
+
+or have one argument per line, with colons aligned:
+
+```objectivec 
+// GOOD:
+
+[myObject doFooWith:arg1
+               name:arg2
+              error:arg3];
+```
+
+Don't use any of these styles:
+
+```objectivec 
+// AVOID:
+
+[myObject doFooWith:arg1 name:arg2  // some lines with >1 arg
+              error:arg3];
+
+[myObject doFooWith:arg1
+               name:arg2 error:arg3];
+
+[myObject doFooWith:arg1
+          name:arg2  // aligning keywords instead of colons
+          error:arg3];
+```
+
+As with declarations and definitions, when the first keyword is shorter than the
+others, indent the later lines by at least four spaces, maintaining colon
+alignment:
+
+```objectivec 
+// GOOD:
+
+[myObj short:arg1
+          longKeyword:arg2
+    evenLongerKeyword:arg3
+                error:arg4];
+```
+
+Invocations containing multiple inlined blocks may have their parameter names
+left-aligned at a four space indent.
+
+### Function Calls 
+
+Function calls should include as many parameters as fit on each line, except
+where shorter lines are needed for clarity or documentation of the parameters.
+
+Continuation lines for function parameters may be indented to align with the
+opening parenthesis, or may have a four-space indent.
+
+```objectivec 
+// GOOD:
+
+CFArrayRef array = CFArrayCreate(kCFAllocatorDefault, objects, numberOfObjects,
+                                 &kCFTypeArrayCallBacks);
+
+NSString *string = NSLocalizedStringWithDefaultValue(@"FEET", @"DistanceTable",
+    resourceBundle,  @"%@ feet", @"Distance for multiple feet");
+
+UpdateTally(scores[x] * y + bases[x],  // Score heuristic.
+            x, y, z);
+
+TransformImage(image,
+               x1, x2, x3,
+               y1, y2, y3,
+               z1, z2, z3);
+```
+
+Use local variables with descriptive names to shorten function calls and reduce
+nesting of calls.
+
+```objectivec 
+// GOOD:
+
+double scoreHeuristic = scores[x] * y + bases[x];
+UpdateTally(scoreHeuristic, x, y, z);
+```
+
+### Exceptions 
+
+Format exceptions with `@catch` and `@finally` labels on the same line as the
+preceding `}`. Add a space between the `@` label and the opening brace (`{`), as
+well as between the `@catch` and the caught object declaration. If you must use
+Objective-C exceptions, format them as follows. However, see [Avoid Throwing
+Exceptions](#Avoid_Throwing_Exceptions) for reasons why you should not be using
+exceptions.
+
+```objectivec 
+// GOOD:
+
+@try {
+  foo();
+} @catch (NSException *ex) {
+  bar(ex);
+} @finally {
+  baz();
+}
+```
+
+### Function Length 
+
+Prefer small and focused functions.
+
+Long functions and methods are occasionally appropriate, so no hard limit is
+placed on function length. If a function exceeds about 40 lines, think about
+whether it can be broken up without harming the structure of the program.
+
+Even if your long function works perfectly now, someone modifying it in a few
+months may add new behavior. This could result in bugs that are hard to find.
+Keeping your functions short and simple makes it easier for other people to read
+and modify your code.
+
+When updating legacy code, consider also breaking long functions into smaller
+and more manageable pieces.
+
+### Vertical Whitespace 
+
+Use vertical whitespace sparingly.
+
+To allow more code to be easily viewed on a screen, avoid putting blank lines
+just inside the braces of functions.
+
+Limit blank lines to one or two between functions and between logical groups of
+code.
 
 ## Objective-C Style Exceptions 
 
