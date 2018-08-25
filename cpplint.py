@@ -477,6 +477,18 @@ _CPP_HEADERS = frozenset([
     'utility',
     'valarray',
     'vector',
+    # 17.6.1.2 C++14 headers
+    'shared_mutex',
+    # 17.6.1.2 C++17 headers
+    'any',
+    'charconv',
+    'codecvt',
+    'execution',
+    'filesystem',
+    'memory_resource',
+    'optional',
+    'string_view',
+    'variant',
     # 17.6.1.2 C++ headers for C library facilities
     'cassert',
     'ccomplex',
