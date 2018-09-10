@@ -840,7 +840,7 @@ Property Value Type: object / string<br />Parent: <code>data</code>
 {
   "data": {
     "previous": { },
-    "previousLink": "https://www.google.com/feeds/album/1234/next"
+    "previousLink": "https://www.google.com/feeds/album/1234/previous"
   }
 }
 
