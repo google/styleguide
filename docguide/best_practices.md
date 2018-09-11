@@ -57,7 +57,7 @@ docs are in bad shape:
 ## Prefer the good over the perfect
 
 Your documentation should be as good as possible within a reasonable time frame.
-The standards for an documentation review are different from the
+The standards for a documentation review are different from the
 standards for code reviews. Reviewers can and should ask for improvements, but
 in general, the author should always be able to invoke the "Good Over Perfect
 Rule". It's preferable to allow authors to quickly submit changes that improve
@@ -102,12 +102,12 @@ to detailed prose:
         overview of what the class / file does and often gives a few short
         examples of how you might use the class / file.
 
-        Examples are particularly relevant when there's several distinct ways to
+        Examples are particularly relevant when there're several distinct ways to
         use the class (some advanced, some simple). Always list the simplest
         use case first.
 
 3.  **README.md**: A good README.md orients the new user to the directory and
-    points to more detailed explanation and user guides:
+    points to more detailed explanations and user guides:
     * What is this directory intended to hold?
     * Which files should the developer look at first? Are some files an API?
     * Who maintains this directory and where I can learn more?
