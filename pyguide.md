@@ -106,7 +106,7 @@ latter does not enforce that the arguments are actually unused.
 <a id="imports"></a>
 ### 2.2 Imports
 
-Use `import`s for packages and modules only, not for individual classes or
+Use `import` statements for packages and modules only, not for individual classes or
 functions.
 
 <a id="s2.2.1-definition"></a>
@@ -1816,7 +1816,7 @@ with contextlib.closing(urllib.urlopen("http://www.python.org/")) as front_page:
 Use `TODO` comments for code that is temporary, a short-term solution, or
 good-enough but not perfect.
 
-`TODO`s should include the string `TODO` in all caps, followed by the
+`TODO` items should include the string `TODO` in all caps, followed by the
 name, e-mail address, or other identifier
 of the person or issue with the best context about the problem referenced by the
 `TODO`, in parentheses. A comment explaining what there is to do is required.
