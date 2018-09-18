@@ -106,7 +106,7 @@ latter does not enforce that the arguments are actually unused.
 <a id="imports"></a>
 ### 2.2 Imports
 
-Use `import`s for packages and modules only, not for individual classes or
+Use `import` statements for packages and modules only, not for individual classes or
 functions.
 
 <a id="s2.2.1-definition"></a>
