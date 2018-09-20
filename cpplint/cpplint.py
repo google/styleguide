@@ -161,6 +161,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       filter=+filter1,-filter2,...
       exclude_files=regex
       linelength=80
+      access_indent=1
       root=subdir
       headers=x,y,...
 
@@ -177,6 +178,9 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
     through liner.
 
     "linelength" allows to specify the allowed line length for the project.
+
+    "access_indent" allows to specify indentation levels for access modifiers
+    such as public, private, and protected.
 
     The "root" option is similar in function to the --root flag (see example
     above). Paths are relative to the directory of the CPPLINT.cfg.
@@ -555,6 +559,9 @@ _root_debug = False
 # The allowed line length of files.
 # This is set by --linelength flag.
 _line_length = 80
+
+# The indentation level for access modifiers (i.e. public/private)
+_access_indent = 1
 
 # The allowed extensions for file names
 # This is set by --extensions flag.
@@ -2691,7 +2698,7 @@ class NestingState(object):
         # Check that access keywords are indented +1 space.  Skip this
         # check if the keywords are not preceded by whitespaces.
         indent = access_match.group(1)
-        if (len(indent) != classinfo.class_indent + 1 and
+        if (len(indent) != classinfo.class_indent + _access_indent and
             Match(r'^\s*$', indent)):
           if classinfo.is_struct:
             parent = 'struct ' + classinfo.name
@@ -2701,8 +2708,8 @@ class NestingState(object):
           if access_match.group(3):
             slots = access_match.group(3)
           error(filename, linenum, 'whitespace/indent', 3,
-                '%s%s: should be indented +1 space inside %s' % (
-                    access_match.group(2), slots, parent))
+                '%s%s: should be indented +%i space inside %s' % (
+                    access_match.group(2), slots, _access_indent, parent))
 
     # Consume braces or semicolons from what's left of the line
     while True:
@@ -6004,6 +6011,12 @@ def ProcessConfigOverrides(filename):
                 _line_length = int(val)
             except ValueError:
                 sys.stderr.write('Line length must be numeric.')
+          elif name == 'access_indent':
+            global _access_indent
+            try:
+                _access_indent = int(val)
+            except ValueError:
+                sys.stderr.write('Access indent must be numeric.')
           elif name == 'root':
             global _root
             # root directories are specified relative to CPPLINT.cfg dir.
