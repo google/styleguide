@@ -40,6 +40,17 @@ The modifications in this branch are minor fixes and cosmetic changes:
 * Support ``#pragma once`` as an alternative to header include guards
 * Add quiet option to suppress non error-related output
 
+Development
+-----------
+
+.. code-block:: bash
+
+    pip install --user -e .[dev]
+    ./setup.py lint
+    ./setup.py style
+    ./setup.py test
+    ./setup.py ci # all the above
+
 Maintaining
 -----------
 

@@ -1,0 +1,5 @@
+[style]
+based_on_style = chromium
+dedent_closing_brackets = True
+coalesce_brackets = True
+continuation_indent_width = 2

@@ -1,0 +1,39 @@
+[flake8]
+ignore =
+    # indentation is not a multiple of four,
+    E111,E114,
+    # visually indented line with same indent as next logical line,
+    E129,
+    # line too long
+    E501,
+    # expected 2 blank lines, found 1
+    E302,E305,
+    # closing bracket does not match indentation of opening bracket's line
+    E123,
+    # multiple spaces before operator
+    E221,
+    # line break before binary operator
+    W503,
+    # line break after binary operator
+    W504,
+    # multiple statements on one line
+    E701,
+    # continuation line under-indented for hanging indent
+    E121,
+    # closing bracket does not match visual indentation
+    E124,
+    # continuation line with same indent as next logical line
+    E125,
+    # continuation line over-indented for visual indent
+    E127,
+    # continuation line under-indented for visual indent
+    E128,
+    # unexpected indentation
+    E116,
+    # too many blank lines
+    E303,
+    # missing whitespace around arithmetic operator
+    E226,
+    # test for membership should be 'not in'
+    E713,
+max-line-length=80
