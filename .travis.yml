@@ -1,6 +1,5 @@
 language: python
 
-# use container infra for linux
 sudo: false
 
 python:
@@ -18,18 +17,22 @@ matrix:
       sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 install:
+  - pip install --upgrade pip
   - pip install --upgrade setuptools
-  - pip install pylint flake8
-# command to install dependencies, e.g. pip install -r requirements.txt
-# install: "sudo apt-get install"
-# command to run tests, e.g. python setup.py test
+  - pip install -e .[dev]
+
 script:
-  - python cpplint_unittest.py
-  - python cpplint_clitest.py
-  - python cpplint.py --help
+  - ./setup.py test
 
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then flake8 --max-line-length=100 cpplint_unittest.py cpplint_clitest.py cpplint.py; fi
+jobs:
+  include:
+    - stage: lint
+      script: ./setup.py lint
+      name: "pylint"
+    - stage: lint
+      script: ./setup.py style
+      name: "flake8"
 
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then pylint --max-locals=25 --max-line-length=100 --max-attributes=10 -d bad-indentation,invalid-name,too-many-statements,multiple-statements,global-statement,missing-docstring,too-many-branches,too-many-return-statements,too-many-arguments,fixme,bad-continuation,bad-option-value,redefined-builtin,too-few-public-methods,no-self-use,too-many-lines,too-many-function-args,unused-argument,anomalous-unicode-escape-in-string,too-many-boolean-expressions   cpplint.py; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then pylint --max-locals=25 --max-line-length=100 --max-attributes=10 -d bad-indentation,invalid-name,too-many-statements,multiple-statements,global-statement,missing-docstring,too-many-branches,too-many-return-statements,too-many-arguments,fixme,bad-continuation,bad-option-value,redefined-builtin,too-few-public-methods,no-self-use,too-many-lines,too-many-function-args,unused-argument,anomalous-unicode-escape-in-string,too-many-boolean-expressions   cpplint_clitest.py; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then pylint --max-locals=25 --max-line-length=120 --max-attributes=10 --max-public-methods=200 -d bad-indentation,invalid-name,too-many-statements,multiple-statements,global-statement,missing-docstring,too-many-branches,too-many-return-statements,too-many-arguments,fixme,bad-continuation,bad-option-value,redefined-builtin,too-few-public-methods,no-self-use,too-many-lines,too-many-function-args,unused-argument,protected-access,unused-variable,global-at-module-level,anomalous-unicode-escape-in-string   cpplint_unittest.py; fi
+stages:
+  - lint
+  - test
