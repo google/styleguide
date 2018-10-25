@@ -18,6 +18,7 @@ matrix:
       sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 install:
+  - pip install --upgrade setuptools
   - pip install pylint flake8
 # command to install dependencies, e.g. pip install -r requirements.txt
 # install: "sudo apt-get install"
