@@ -30,4 +30,11 @@ setup(name='cpplint',
                    'Topic :: Software Development :: Quality Assurance',
                    'License :: Freely Distributable'],
       description='An automated checker to make sure a C++ file follows Google\'s C++ style guide',
-      long_description=open('README.rst').read())
+      long_description=open('README.rst').read(),
+      extras_require={
+        'dev': [
+            'pylint',
+            'flake8',
+            'yapf',
+        ]
+      })
