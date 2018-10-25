@@ -1,5 +1,6 @@
-from setuptools import setup
+#! /usr/bin/env python
 
+from setuptools import setup
 
 setup(name='cpplint',
       version='1.3.0',
