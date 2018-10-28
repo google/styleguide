@@ -20,18 +20,10 @@ install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools
   - pip install -e .[dev]
+  - pip install tox-travis
 
 script:
-  - ./setup.py test
-
-jobs:
-  include:
-    - stage: lint
-      script: ./setup.py lint
-      name: "pylint"
-    - stage: lint
-      script: ./setup.py style
-      name: "flake8"
+  - tox
 
 stages:
   - lint

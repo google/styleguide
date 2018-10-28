@@ -94,6 +94,37 @@ Development
 Maintaining
 -----------
 
+Checkout here and upstream google:
+
+    git clone git@github.com:cpplint/cpplint.git
+    cd cpplint
+    git remote add google https://github.com/google/styleguide
+
+Setup fetching of pull requests in .git/config:
+
+    [remote "origin"]
+    	url = git@github.com:cpplint/cpplint.git
+    	fetch = +refs/heads/*:refs/remotes/origin/*
+    # following line should be new, fetches PRs from cpplint
+    	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+    [remote "google"]
+    	url = https://github.com/google/styleguide
+    	fetch = +refs/heads/*:refs/remotes/google/*
+    # following line should be new, fetches PRs from google/styleguides
+    	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+
+
+To compare this for with upstream (after git fetch):
+
+    git diff google/gh-pages:cpplint/cpplint.py master:cpplint.py
+    
+
+Testing and checking on multiple python versions:
+
+.. code-block:: bash
+
+    tox
+
 To release a new version:
 
 .. code-block:: bash
@@ -114,7 +145,10 @@ To incorporate google's changes:
 
     git fetch google gh-pages
     git checkout -b updates FETCH_HEAD
-    git rebase master
+    git rebase master # this will have a lot of conflicts, most of which can be solved with the next command (run repeatedly)
+    # solve conflicts with files deleted in our fork (this is idempotent and safe to be called. when cpplint.py has conflicts, it will do nothing)
+    git status | grep 'new file:' | awk '{print $3}' | xargs -r git rm --cached ; git status | grep 'deleted by us' | awk '{print $4}' | xargs -r git rm ; git status --untracked-files=no | grep 'nothing to commit' && git rebase --skip
+
     git push -u origin updates
     # check travis
     git push origin --delete updates
