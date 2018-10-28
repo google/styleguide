@@ -1432,8 +1432,8 @@ def Error(filename, linenum, category, confidence, message):
       sys.stderr.write('%s:%s: warning: %s  [%s] [%d]\n' % (
           filename, linenum, message, category, confidence))
     elif _cpplint_state.output_format == 'junit':
-        _cpplint_state.AddJUnitFailure(filename, linenum, message, category,
-            confidence)
+      _cpplint_state.AddJUnitFailure(filename, linenum, message, category,
+          confidence)
     else:
       final_message = '%s:%s:  %s  [%s] [%d]\n' % (
           filename, linenum, message, category, confidence)
@@ -2114,22 +2114,22 @@ def CheckHeaderFileIncluded(filename, include_state, error):
     return
 
   for ext in GetHeaderExtensions():
-      basefilename = filename[0:len(filename) - len(fileinfo.Extension())]
-      headerfile = basefilename + '.' + ext
-      if not os.path.exists(headerfile):
-        continue
-      headername = FileInfo(headerfile).RepositoryName()
-      first_include = None
-      for section_list in include_state.include_list:
-        for f in section_list:
-          if headername in f[0] or f[0] in headername:
-            return
-          if not first_include:
-            first_include = f[1]
+    basefilename = filename[0:len(filename) - len(fileinfo.Extension())]
+    headerfile = basefilename + '.' + ext
+    if not os.path.exists(headerfile):
+      continue
+    headername = FileInfo(headerfile).RepositoryName()
+    first_include = None
+    for section_list in include_state.include_list:
+      for f in section_list:
+        if headername in f[0] or f[0] in headername:
+          return
+        if not first_include:
+          first_include = f[1]
 
-      error(filename, first_include, 'build/include', 5,
-            '%s should include its header file %s' % (fileinfo.RepositoryName(),
-                                                      headername))
+    error(filename, first_include, 'build/include', 5,
+          '%s should include its header file %s' % (fileinfo.RepositoryName(),
+                                                    headername))
 
 
 def CheckForBadCharacters(filename, lines, error):
@@ -4624,7 +4624,7 @@ def _ClassifyInclude(fileinfo, include, is_system):
 
   # Headers with C++ extensions shouldn't be considered C system headers
   if is_system and os.path.splitext(include)[1] in ['.hpp', '.hxx', '.h++']:
-      is_system = False
+    is_system = False
 
   if is_system:
     if is_cpp_h:
@@ -6146,18 +6146,18 @@ def ProcessConfigOverrides(filename):
           elif name == 'linelength':
             global _line_length
             try:
-                _line_length = int(val)
+              _line_length = int(val)
             except ValueError:
-                _cpplint_state.PrintError('Line length must be numeric.')
+              _cpplint_state.PrintError('Line length must be numeric.')
           elif name == 'extensions':
-              global _valid_extensions
-              try:
-                  extensions = [ext.strip() for ext in val.split(',')]
-                  _valid_extensions = set(extensions)
-              except ValueError:
-                  sys.stderr.write('Extensions should be a comma-separated list of values;'
-                                   'for example: extensions=hpp,cpp\n'
-                                   'This could not be parsed: "%s"' % (val,))
+            global _valid_extensions
+            try:
+              extensions = [ext.strip() for ext in val.split(',')]
+              _valid_extensions = set(extensions)
+            except ValueError:
+              sys.stderr.write('Extensions should be a comma-separated list of values;'
+                               'for example: extensions=hpp,cpp\n'
+                               'This could not be parsed: "%s"' % (val,))
           elif name == 'root':
             global _root
             _root = val
@@ -6176,7 +6176,7 @@ def ProcessConfigOverrides(filename):
   # Apply all the accumulated filters in reverse order (top-level directory
   # config options having the least priority).
   for cfg_filter in reversed(cfg_filters):
-     _AddFilters(cfg_filter)
+    _AddFilters(cfg_filter)
 
   return True
 
@@ -6367,7 +6367,7 @@ def ParseArguments(args):
       try:
         _valid_extensions = set(val.split(','))
       except ValueError:
-          PrintUsage('Extensions must be comma seperated list.')
+        PrintUsage('Extensions must be comma seperated list.')
     elif opt == '--headers':
       ProcessHppHeadersOption(val)
     elif opt == '--recursive':
@@ -6406,21 +6406,21 @@ def _ExpandDirectories(filenames):
   """
   expanded = set()
   for filename in filenames:
-      if not os.path.isdir(filename):
-        expanded.add(filename)
-        continue
+    if not os.path.isdir(filename):
+      expanded.add(filename)
+      continue
 
-      for root, _, files in os.walk(filename):
-        for loopfile in files:
-          fullname = os.path.join(root, loopfile)
-          if fullname.startswith('.' + os.path.sep):
-            fullname = fullname[len('.' + os.path.sep):]
-          expanded.add(fullname)
+    for root, _, files in os.walk(filename):
+      for loopfile in files:
+        fullname = os.path.join(root, loopfile)
+        if fullname.startswith('.' + os.path.sep):
+          fullname = fullname[len('.' + os.path.sep):]
+        expanded.add(fullname)
 
   filtered = []
   for filename in expanded:
-      if os.path.splitext(filename)[1][1:] in GetAllExtensions():
-          filtered.append(filename)
+    if os.path.splitext(filename)[1][1:] in GetAllExtensions():
+      filtered.append(filename)
 
   return filtered
 
