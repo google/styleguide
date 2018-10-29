@@ -60,14 +60,13 @@ The modifications in this fork are minor fixes and cosmetic changes:
 
 * more default extensions
 * python 3 compatibility
-* customizable file extensions with the --extensions and --headers arguments
+* customizable file extensions with the --extensions argument
 * continuous integration on travis
 * support for recursive file discovery via the --recursive argument
 * support for excluding files via --exclude
 * JUnit XML output format
 * Overriding repository root auto-detection via --repository
 * Support ``#pragma once`` as an alternative to header include guards
-* Add quiet option to suppress non error-related output
 
 
 Acknowledgements
