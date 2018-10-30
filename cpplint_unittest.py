@@ -6139,13 +6139,18 @@ class NestingStateTest(unittest.TestCase):
 class QuietTest(unittest.TestCase):
 
   def setUp(self):
-    self.this_dir_path = os.path.dirname(os.path.abspath(__file__))
+    self.temp_dir = tempfile.mkdtemp()
+    self.this_dir_path = os.path.abspath(self.temp_dir)
     self.python_executable = sys.executable or 'python'
     self.cpplint_test_h = os.path.join(self.this_dir_path,
                                        'cpplint_test_header.h')
+    open(self.cpplint_test_h, 'w').close()
+
+  def tearDown(self):
+    shutil.rmtree(self.temp_dir)
 
   def _runCppLint(self, *args):
-    cpplint_abspath = os.path.join(self.this_dir_path, 'cpplint.py')
+    cpplint_abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cpplint.py')
 
     cmd_line = [self.python_executable, cpplint_abspath] +                     \
         list(args) +                                                           \
@@ -6158,7 +6163,8 @@ class QuietTest(unittest.TestCase):
     except subprocess.CalledProcessError as err:
       return_code = err.returncode
       output = err.output
-
+    if isinstance(output, bytes):
+        output = output.decode('utf-8')
     return (return_code, output)
 
   def testNonQuietWithErrors(self):
@@ -6191,10 +6197,9 @@ class QuietTest(unittest.TestCase):
     # No cpplint errors are printed since there were no errors.
     self.assertNotIn("[legal/copyright]", output)
     self.assertNotIn("[build/header_guard]", output)
-    # Print 'Done processing' and 'Total errors found' since
+    # Print 'Done processing' since
     # --quiet was not specified.
     self.assertIn("Done processing", output)
-    self.assertIn("Total errors found:", output)
 
   def testQuietWithoutErrors(self):
     # This will succeed. We filtered out all the known errors for that file.
