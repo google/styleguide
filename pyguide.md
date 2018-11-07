@@ -919,9 +919,9 @@ is equivalent to:
 
 ```python {.good}
 class C(object):
-    def Methodmethod(self):
+    def method(self):
         # method body ...
-    Methodmethod = MyDecoratormy_decorator(Methodmethod)
+    method = my_decorator(method)
 ```
 
 <a id="s2.17.2-pros"></a>
