@@ -1564,7 +1564,7 @@ def fetch_bigtable_rows(big_table, keys, other_silly_variable=None):
 #### 3.8.4 Classes
 
 Classes should have a docstring below the class definition describing the class.
-If your class has public attributes, they should be documented here in an
+If your class has public instance attributes, they should be documented here in an
 Attributes section and follow the same formatting as a function's Args section.
 
 ```python {.good}
