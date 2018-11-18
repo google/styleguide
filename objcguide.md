@@ -453,7 +453,7 @@ Hungarian notation for syntactic attributes, such as the static type of a
 variable (int or pointer).
 
 File scope or global variables (as opposed to constants) declared outside the
-scope of a method or function should be rare, and should have the prefix g.
+scope of a method or function should be rare, and should have the prefix `g`.
 
 ```objectivec 
 // GOOD:
