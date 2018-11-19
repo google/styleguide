@@ -649,7 +649,7 @@ except NameError:
   basestring = unicode = str
 
 try:
-  long(2)
+  long
 except NameError:
   #  -- pylint: disable=redefined-builtin
   long = int
