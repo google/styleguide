@@ -1119,6 +1119,19 @@ class CpplintTest(CpplintTestBase):
         """,
         'Add #include <utility> for swap'
         '  [build/include_what_you_use] [4]')
+    # False positive for std::set
+    self.TestIncludeWhatYouUse(
+        """
+        #include <string>
+        struct Foo {
+            template <typename T>
+            void set(const std::string& name, const T& value);
+        };
+        Foo bar;
+        Foo* pbar = &bar;
+        bar.set<int>("int", 5);
+        pbar->set<bool>("bool", false);""",
+        '')
 
     # Test the UpdateIncludeState code path.
     mock_header_contents = ['#include "blah/foo.h"', '#include "blah/bar.h"']
