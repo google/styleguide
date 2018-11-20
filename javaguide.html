@@ -294,10 +294,12 @@ return new MyClass() {
       } catch (ProblemException e) {
         recover();
       }
-    } else if (otherCondition()) {
-      somethingElse();
     } else {
-      lastThing();
+      if (otherCondition()) {
+        somethingElse();
+      } else {
+        lastThing();
+      }
     }
   }
 };
