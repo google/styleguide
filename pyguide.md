@@ -161,13 +161,14 @@ Import each module using the full pathname location of the module.
 <a id="s2.3.1-pros"></a>
 #### 2.3.1 Pros
 
-Avoids conflicts in module names. Makes it easier to find modules.
+Avoids conflicts in module names or incorrect imports due to the module search
+path not being what the author expected.  Makes it easier to find modules.
 
 <a id="S2.3.2-cons"></a>
 #### 2.3.2 Cons
 
 Makes it harder to deploy code because you have to replicate the package
-hierarchy.
+hierarchy.  Not really a problem with modern deployment mechanisms.
 
 <a id="s2.3.3-decision"></a>
 #### 2.3.3 Decision
@@ -176,13 +177,37 @@ All new code should import each module by its full package name.
 
 Imports should be as follows:
 
-```python
-# Reference in code with complete name.
-import absl.flags
+Yes:
 
-# Reference in code with just module name (preferred).
-from absl import flags
+```python
+# Reference absl.flags in code with the complete name (verbose).
+import absl.flags
+from doctor.who import jodie
+
+FLAGS = absl.flags.FLAGS
 ```
+
+```python
+# Reference flags in code with just the module name (common).
+from absl import flags
+from doctor.who import jodie
+
+FLAGS = flags.FLAGS
+```
+
+No: _(assume this file lives in `doctor/who/` where `jodie.py` also exists)_
+
+```python
+# Unclear what module the author wanted and what will be imported.  The actual
+# import behavior depends on external factors controlling sys.path.
+# Which possible jodie module did the author intend to import?
+import jodie
+```
+
+The directory the main binary is located in should not be assumed to be in
+`sys.path` despite that happening in some environments.  This being the case,
+code should assume that `import jodie` refers to a third party or top level
+package named `jodie`, not a local `jodie.py`.
 
 <a id="s2.4-exceptions"></a>
 <a id="exceptions"></a>
@@ -1049,7 +1074,7 @@ and `enum`).
 
 <a id="s2.20-modern-python"></a>
 <a id="modern-python"></a>
-### 2.20 Modern Python: Python 3 and from \_\_future\_\_ imports {#modern-python}
+### 2.20 Modern Python: Python 3 and from \_\_future\_\_ imports
 
 Python 3 is here! While not every project is ready to
 use it yet, all code should be written to be 3 compatible (and tested under
@@ -1385,8 +1410,8 @@ No:    golomb4 = [
 
 Two blank lines between top-level definitions, be they function or class
 definitions. One blank line between method definitions and between the `class`
-line and the first method. Use single blank lines as you judge appropriate
-within functions or methods.
+line and the first method. No blank line following a `def` line. Use single
+blank lines as you judge appropriate within functions or methods.
 
 <a id="s3.6-whitespace"></a>
 <a id="whitespace"></a>
@@ -1572,24 +1597,27 @@ Certain aspects of a function should be documented in special sections, listed
 below. Each section begins with a heading line, which ends with a colon.
 Sections should be indented two spaces, except for the heading.
 
-[*Args:*](#doc-function-args) {#doc-function-args}
-: List each parameter by name. A description should follow the name, and be
-: separated by a colon and a space. If the description is too long to fit on a
-: single 80-character line, use a hanging indent of 2 or 4 spaces (be
-: consistent with the rest of the file).<br/>
-: The description should include required type(s) if the code does not contain
-: a corresponding type annotation.<br/>
-: If a function accepts `*foo` (variable length argument lists) and/or `**bar`
-: (arbitrary keyword arguments), they should be listed as `*foo` and `**bar`.
+<a id="doc-function-args"></a>
+[*Args:*](#doc-function-args)
+:   List each parameter by name. A description should follow the name, and be
+separated by a colon and a space. If the description is too long to fit on a
+single 80-character line, use a hanging indent of 2 or 4 spaces (be
+consistent with the rest of the file).<br>
+The description should include required type(s) if the code does not contain
+a corresponding type annotation.<br>
+If a function accepts `*foo` (variable length argument lists) and/or `**bar`
+(arbitrary keyword arguments), they should be listed as `*foo` and `**bar`.
 
-[*Returns:* (or *Yields:* for generators)](#doc-function-returns) {#doc-function-returns}
+<a id="doc-function-returns"></a>
+[*Returns:* (or *Yields:* for generators)](#doc-function-returns)
 :   Describe the type and semantics of the return value. If the function only
-:   returns None, this section is not required. It may also be omitted if the
-:   docstring starts with Returns (or Yields) (e.g.
-:   `"""Returns row from Bigtable as a tuple of strings."""`) and the opening
-:   sentence is sufficient to describe return value.
+returns None, this section is not required. It may also be omitted if the
+docstring starts with Returns or Yields (e.g.
+`"""Returns row from Bigtable as a tuple of strings."""`) and the opening
+sentence is sufficient to describe return value.
 
-[*Raises:*](#doc-function-raises) {#doc-function-raises}
+<a id="doc-function-raises"></a>
+[*Raises:*](#doc-function-raises)
 :   List all exceptions that are relevant to the interface.
 
 ```python
@@ -2098,7 +2126,7 @@ Always use a `.py` filename extension. Never use dashes.
 
 <a id="s3.16.3-file-naming"></a>
 <a id="file-naming"></a>
-#### 3.16.3 File Naming {#s3.16.3-file-naming}
+#### 3.16.3 File Naming
 
 Python filenames must have a `.py` extension and must not contain dashes (`-`).
 This allows them to be imported and unittested. If you want an executable to be
@@ -2422,14 +2450,14 @@ def implicit_optional(a: Text = None) -> Text:
 #### 3.19.6 Type Aliases
 
 You can declare aliases of complex types. The name of an alias should be
-CapWorded; try to describe the composed type and end with "Type" (or "Types" for
-returned tuples). If the alias is used only in this module, it should be
+CapWorded. If the alias is used only in this module, it should be
 \_Private.
 
 For example, if the name of module together with the type is too long:
 
 ```python
-SomeType = module_with_long_name.TypeWithLongName
+_ShortName = module_with_long_name.TypeWithLongName
+ComplexMap = Mapping[Text, List[Tuple[int, int]]]
 ```
 
 Other examples are complex nested types and multiple return variables from a
