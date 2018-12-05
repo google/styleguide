@@ -106,9 +106,9 @@ last does not enforce that the arguments are actually unused.
 <a id="imports"></a>
 ### 2.2 Imports
 
-Use `import`s for packages and modules only, not for individual classes or
-functions. Note that there is an explicit exemption for imports from the
-[typing module](#typing-imports).
+Use `import` statements for packages and modules only, not for individual
+classes or functions. Note that there is an explicit exemption for imports from
+the [typing module](#typing-imports).
 
 <a id="s2.2.1-definition"></a>
 #### 2.2.1 Definition
@@ -509,20 +509,23 @@ means a dictionary). This is also an advantage.
 Use default iterators and operators for types that support them, like lists,
 dictionaries, and files. The built-in types define iterator methods, too. Prefer
 these methods to methods that return lists, except that you should not mutate a
-container while iterating over it.
+container while iterating over it. Never use Python 2 specific iteration
+methods such as `dict.iter*()` unless necessary.
 
 ```python
 Yes:  for key in adict: ...
       if key not in adict: ...
       if obj in alist: ...
       for line in afile: ...
-      for k, v in dict.iteritems(): ...
+      for k, v in adict.items(): ...
+      for k, v in six.iteritems(adict): ...
 ```
 
 ```python
 No:   for key in adict.keys(): ...
       if not adict.has_key(key): ...
       for line in afile.readlines(): ...
+      for k, v in dict.iteritems(): ...
 ```
 
 <a id="s2.9-generators"></a>
@@ -584,9 +587,9 @@ function may only contain an expression.
 <a id="s2.10.4-decision"></a>
 #### 2.10.4 Decision
 
-Okay to use them for one-liners. If the code inside the lambda function is any
-longer than 60-80 chars, it's probably better to define it as a regular (nested)
-function.
+Okay to use them for one-liners. If the code inside the lambda function is
+longer than 60-80 chars, it's probably better to define it as a regular [nested
+function](#lexical-scoping).
 
 For common operations like multiplication, use the functions from the `operator`
 module instead of lambda functions. For example, prefer `operator.mul` to
@@ -1084,7 +1087,7 @@ use it yet, all code should be written to be 3 compatible (and tested under
 #### 2.20.1 Definition
 
 Python 3 is a significant change in the Python language. While existing code is
-often written with 2.7 in mind there are some simple things to do to make code
+often written with 2.7 in mind, there are some simple things to do to make code
 more explicit about its intentions and thus better prepared for use under Python
 3 without modification.
 
@@ -1197,7 +1200,7 @@ This highly depends on the complexity of your project. Give it a try.
 <a id="semicolons"></a>
 ### 3.1 Semicolons
 
-Do not terminate your lines with semi-colons and do not use semi-colons to put
+Do not terminate your lines with semicolons, and do not use semicolons to put
 two statements on the same line.
 
 <a id="s3.2-line-length"></a>
@@ -1430,7 +1433,7 @@ No:  spam( ham[ 1 ], { eggs: 2 }, [ ] )
 ```
 
 No whitespace before a comma, semicolon, or colon. Do use whitespace after a
-comma, semicolon, or colon except at the end of the line.
+comma, semicolon, or colon, except at the end of the line.
 
 ```python
 Yes: if x == 4:
@@ -1477,10 +1480,10 @@ Yes: x == 1
 No:  x<1
 ```
 
-Never use spaces around the '=' sign when passing keyword arguments.
-Only use spaces around the '=' sign defining a default parameter value
-[when a type annotation is present](#typing-default-values),
-do not use spaces around '=' for default parameter values otherwise.
+Never use spaces around `=` when passing keyword arguments or defining a default
+parameter value, with one exception: [when a type annotation is
+present](#typing-default-values), _do_ use spaces around the `=` for the default
+parameter value.
 
 ```python
 Yes: def complex(real, imag=0.0): return Magic(r=real, i=imag)
@@ -1543,7 +1546,7 @@ inline comments.
 <a id="comments-in-doc-strings"></a>
 #### 3.8.1 Docstrings
 
-Python uses docstrings for commenting code. A doc string is a string that is the
+Python uses _docstrings_ to document code. A docstring is a string that is the
 first statement in a package, module, class or function. These strings can be
 extracted automatically through the `__doc__` member of the object and are used
 by `pydoc`.
@@ -1568,8 +1571,7 @@ LGPL, GPL)
 <a id="functions-and-methods"></a>
 #### 3.8.3 Functions and Methods
 
-As used in this section "function" applies to methods, functions, and
-generators.
+In this section, "function" means a method, function, or generator.
 
 A function must have a docstring, unless it meets all of the following criteria:
 
@@ -1585,13 +1587,13 @@ function's calling syntax and its semantics, not its implementation. For tricky
 code, comments alongside the code are more appropriate than using docstrings.
 
 A method that overrides a method from a base class may have a simple docstring
-sending the reader to its overridden method's docstring, such as
-`"""See base class."""`. The rationale is that there is no need to repeat in
-many places documentation that is already present in the base method's
-docstring. However, if the overriding method's behavior is substantially
-different than that of the overridden method or details need to be provided
-about it (e.g., documenting additional side-effects), a docstring is required on
-the overriding method, with at least those differences.
+sending the reader to its overridden method's docstring, such as `"""See base
+class."""`. The rationale is that there is no need to repeat in many places
+documentation that is already present in the base method's docstring. However,
+if the overriding method's behavior is substantially different from the
+overridden method, or details need to be provided (e.g., documenting additional
+side effects), a docstring with at least those differences is required on the
+overriding method.
 
 Certain aspects of a function should be documented in special sections, listed
 below. Each section begins with a heading line, which ends with a colon.
@@ -1764,9 +1766,9 @@ No: class SampleClass:
             pass
 ```
 
-Inheriting from `object` is needed to make properties work properly in Python 2,
-and can protect your code from some potential incompatibility with Python 3. It
-also defines special methods that implement the default semantics of objects
+Inheriting from `object` is needed to make properties work properly in Python 2
+and can protect your code from potential incompatibility with Python 3. It also
+defines special methods that implement the default semantics of objects
 including `__new__`, `__init__`, `__delattr__`, `__getattribute__`,
 `__setattr__`, `__hash__`, `__repr__`, and `__str__`.
 
@@ -1860,28 +1862,28 @@ Don't do this.
 Explicitly close files and sockets when done with them.
 
 Leaving files, sockets or other file-like objects open unnecessarily has many
-downsides, including:
+downsides:
 
 -   They may consume limited system resources, such as file descriptors. Code
     that deals with many such objects may exhaust those resources unnecessarily
     if they're not returned to the system promptly after use.
--   Holding files open may prevent other actions being performed on them, such
-    as moves or deletion.
+-   Holding files open may prevent other actions such as moving or deleting
+    them.
 -   Files and sockets that are shared throughout a program may inadvertently be
     read from or written to after logically being closed. If they are actually
     closed, attempts to read or write from them will throw exceptions, making
     the problem known sooner.
 
 Furthermore, while files and sockets are automatically closed when the file
-object is destructed, tying the life-time of the file object to the state of the
-file is poor practice, for several reasons:
+object is destructed, tying the lifetime of the file object to the state of the
+file is poor practice:
 
 -   There are no guarantees as to when the runtime will actually run the file's
     destructor. Different Python implementations use different memory management
     techniques, such as delayed Garbage Collection, which may increase the
     object's lifetime arbitrarily and indefinitely.
--   Unexpected references to the file may keep it around longer than intended
-    (e.g. in tracebacks of exceptions, inside globals, etc).
+-   Unexpected references to the file, e.g. in globals or exception tracebacks,
+    may keep it around longer than intended.
 
 The preferred way to manage files is using the ["with"
 statement](http://docs.python.org/reference/compound_stmts.html#the-with-statement):
@@ -1910,13 +1912,16 @@ with contextlib.closing(urllib.urlopen("http://www.python.org/")) as front_page:
 Use `TODO` comments for code that is temporary, a short-term solution, or
 good-enough but not perfect.
 
-`TODO`s should include the string `TODO` in all caps, followed by the
+A `TODO` comment begins with the string `TODO` in all caps and a parenthesized
 name, e-mail address, or other identifier
-of the person or issue with the best context about the problem referenced by the
-`TODO`, in parentheses. A comment explaining what there is to do is required.
-The main purpose is to have a consistent `TODO` format that can be searched to
-find out how to get more details upon request. A `TODO` is not a commitment that
-the person referenced will fix the problem. Thus when you create a `TODO`, it is almost always your name that is given.
+of the person or issue with the best context about the problem. This is followed
+by an explanation of what there is to do.
+
+The purpose is to have a consistent `TODO` format that can be searched to find
+out how to get more details. A `TODO` is not a commitment that the person
+referenced will fix the problem. Thus when you create a
+`TODO`, it is almost always your name
+that is given.
 
 ```python
 # TODO(kl@gmail.com): Use a "*" here for string repetition.
@@ -1947,7 +1952,7 @@ No:  import os, sys
 
 Imports are always put at the top of the file, just after any module comments
 and docstrings and before module globals and constants. Imports should be
-grouped with the order being most generic to least generic:
+grouped from most generic to least generic:
 
 1.  Python standard library imports. For example:
 
@@ -2049,10 +2054,10 @@ No:
 <a id="access-control"></a>
 ### 3.15 Access Control
 
-If an accessor function would be trivial you should use public variables instead
-of accessor functions to avoid the extra cost of function calls in Python. When
-more functionality is added you can use `property` to keep the syntax
-consistent.
+If an accessor function would be trivial, you should use public variables
+instead of accessor functions to avoid the extra cost of function calls in
+Python. When more functionality is added you can use `property` to keep the
+syntax consistent.
 
 On the other hand, if access is more complex, or the cost of accessing the
 variable is significant, you should use function calls (following the
@@ -2098,7 +2103,7 @@ Always use a `.py` filename extension. Never use dashes.
 <a id="naming-conventions"></a>
 #### 3.16.2 Naming Convention
 
--   "Internal" means internal to a module or protected or private within a
+-   "Internal" means internal to a module, or protected or private within a
     class.
 
 -   Prepending a single underscore (`_`) has some support for protecting module
@@ -2115,8 +2120,8 @@ Always use a `.py` filename extension. Never use dashes.
 -   Use CapWords for class names, but lower\_with\_under.py for module names.
     Although there are some old modules named CapWords.py, this is now
     discouraged because it's confusing when the module happens to be named after
-    a class. ("wait -- did I write `import StringIO` or
-    `from StringIO import StringIO`?")
+    a class. ("wait -- did I write `import StringIO` or `from StringIO import
+    StringIO`?")
 
 -   Underscores may appear in *unittest* method names starting with `test` to
     separate logical components of the name, even if those components use
@@ -2215,9 +2220,9 @@ containing `exec "$0.py" "$@"`.
 </table>
 
 While Python supports making things private by using a leading double underscore
-`__` (aka. "dunder") prefix on a name their use is discouraged. Prefer the use
-of a single underscore. They are much easier to type, read, and to access from
-small unittests. Lint warnings take care of invalid access to protected members.
+`__` (aka. "dunder") prefix on a name, this is discouraged. Prefer the use of a
+single underscore. They are easier to type, read, and to access from small
+unittests. Lint warnings take care of invalid access to protected members.
 
 
 <a id="s3.17-main"></a>
@@ -2400,10 +2405,10 @@ class MyClass(object):
 <a id="typing-default-values"></a>
 #### 3.19.4 Default Values
 
-As per [PEP-008](https://www.python.org/dev/peps/pep-0008/#other-recommendations)
-when combining an argument annotation with a default value, use spaces around
-the = sign (but only for those arguments that have both an annotation and a
-default).
+As per
+[PEP-008](https://www.python.org/dev/peps/pep-0008/#other-recommendations), use
+spaces around the `=` _only_ for arguments that have both a type annotation and
+a default value.
 
 ```python
 Yes:
@@ -2540,7 +2545,8 @@ def check_length(x: AnyStr) -> AnyStr:
 
 <a id="s3.19.11-strings"></a>
 <a id="typing-strings"></a>
-#### 3.19.11 Strings types
+
+#### 3.19.11 String types
 
 The proper type for annotating strings depends on what versions of Python the
 code is intended for.
@@ -2626,10 +2632,10 @@ from typing import Any as AnyType
 <a id="typing-conditional-imports"></a>
 #### 3.19.13 Conditional Imports
 
-Use conditional imports only in exceptional cases, when the additional imports
-needed for type checking must be avoided at runtime. This pattern is discouraged
-and alternatives such as refactoring the code to allow top level imports should
-be preferred.
+Use conditional imports only in exceptional cases where the additional imports
+needed for type checking must be avoided at runtime. This pattern is
+discouraged; alternatives such as refactoring the code to allow top level
+imports should be preferred.
 
 Imports that are needed only for type annotations can be placed within an
 `if TYPE_CHECKING:` block.
@@ -2728,4 +2734,5 @@ it. We present global style rules here so people know the vocabulary, but local
 style is also important. If code you add to a file looks drastically different
 from the existing code around it, it throws readers out of their rhythm when
 they go to read it. Avoid this.
+
 
