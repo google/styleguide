@@ -38,7 +38,7 @@ The following Google style guides live outside of this project:
 [cpp]: https://google.github.io/styleguide/cppguide.html
 [objc]: objcguide.md
 [java]: https://google.github.io/styleguide/javaguide.html
-[py]: https://github.com/google/styleguide/blob/gh-pages/pyguide.md
+[py]: https://google.github.io/styleguide/pyguide.html
 [r]: https://google.github.io/styleguide/Rguide.xml
 [sh]: https://google.github.io/styleguide/shell.xml
 [htmlcss]: https://google.github.io/styleguide/htmlcssguide.html
