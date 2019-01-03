@@ -1,5 +1,11 @@
 src/*
 1
+5
+Done processing src/descriptor.pb.cc
+Done processing src/descriptor.pb.h
+Done processing src/descriptor_unittest.cc
+Total errors found: 2656
+
 src/descriptor.pb.cc:0:  No copyright message found.  You should have a line: "Copyright [year] <Copyright Owner>"  [legal/copyright] [5]
 src/descriptor.pb.cc:9:  Found C system header after C++ system header. Should be: descriptor.pb.h, c system, c++ system, other.  [build/include_order] [4]
 src/descriptor.pb.cc:10:  Found C system header after C++ system header. Should be: descriptor.pb.h, c system, c++ system, other.  [build/include_order] [4]
@@ -1630,7 +1636,6 @@ src/descriptor.pb.cc:15146:  Lines should be <= 80 characters long  [whitespace/
 src/descriptor.pb.cc:15150:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
 src/descriptor.pb.cc:15155:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
 src/descriptor.pb.cc:5:  samples/protobuf-sample/src/descriptor.pb.cc should include its header file samples/protobuf-sample/src/descriptor.pb.h  [build/include] [5]
-Done processing src/descriptor.pb.cc
 src/descriptor.pb.h:0:  No copyright message found.  You should have a line: "Copyright [year] <Copyright Owner>"  [legal/copyright] [5]
 src/descriptor.pb.h:4:  #ifndef header guard has wrong style, please use: SAMPLES_PROTOBUF_SAMPLE_SRC_DESCRIPTOR_PB_H_  [build/header_guard] [5]
 src/descriptor.pb.h:7714:  #endif line should be "#endif  // SAMPLES_PROTOBUF_SAMPLE_SRC_DESCRIPTOR_PB_H_"  [build/header_guard] [5]
@@ -2462,7 +2467,6 @@ src/descriptor.pb.h:7697:  Lines should be <= 80 characters long  [whitespace/li
 src/descriptor.pb.h:7699:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
 src/descriptor.pb.h:7702:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
 src/descriptor.pb.h:7704:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
-Done processing src/descriptor.pb.h
 src/descriptor_unittest.cc:40:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/descriptor_unittest.cc:43:  Found C system header after C++ system header. Should be: descriptor_unittest.h, c system, c++ system, other.  [build/include_order] [4]
 src/descriptor_unittest.cc:44:  Found C system header after C++ system header. Should be: descriptor_unittest.h, c system, c++ system, other.  [build/include_order] [4]
@@ -2658,6 +2662,4 @@ src/descriptor_unittest.cc:5125:  Closing ) should be moved to the previous line
 src/descriptor_unittest.cc:5929:  Single-parameter constructors should be marked explicit.  [runtime/explicit] [5]
 src/descriptor_unittest.cc:5968:  Single-parameter constructors should be marked explicit.  [runtime/explicit] [5]
 src/descriptor_unittest.cc:6486:  Redundant blank line at the end of a code block should be deleted.  [whitespace/blank_line] [3]
-Done processing src/descriptor_unittest.cc
-Total errors found: 2656
 

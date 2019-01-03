@@ -1,5 +1,12 @@
 --counting=toplevel --filter=-whitespace,-build/include_what_you_use src/*.cpp
 1
+6
+Done processing src/sillycode.cpp
+Category 'legal' errors found: 1
+Category 'readability' errors found: 5
+Category 'runtime' errors found: 12
+Total errors found: 18
+
 src/sillycode.cpp:0:  No copyright message found.  You should have a line: "Copyright [year] <Copyright Owner>"  [legal/copyright] [5]
 src/sillycode.cpp:9:  Is this a non-const reference? If so, make const or use a pointer: vector<string>& v  [runtime/references] [2]
 src/sillycode.cpp:35:  If/else bodies with multiple statements require braces  [readability/braces] [4]
@@ -18,9 +25,4 @@ src/sillycode.cpp:203:  Static/global string variables are not permitted.  [runt
 src/sillycode.cpp:222:  Static/global string variables are not permitted.  [runtime/string] [4]
 src/sillycode.cpp:223:  Using C-style cast.  Use reinterpret_cast<double*>(...) instead  [readability/casting] [4]
 src/sillycode.cpp:238:  Using C-style cast.  Use reinterpret_cast<derived2*>(...) instead  [readability/casting] [4]
-Done processing src/sillycode.cpp
-Category 'legal' errors found: 1
-Category 'readability' errors found: 5
-Category 'runtime' errors found: 12
-Total errors found: 18
 

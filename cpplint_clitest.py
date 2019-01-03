@@ -105,24 +105,26 @@ class SignatureTests(unittest.TestCase):
         self.assertEqual(count, expectedDefs)
 
     def checkDef(self, path):
+        """runs command and compares to expected output from def file"""
         # self.maxDiff = None # to see full diff
         with open(path, 'rb') as filehandle:
             datalines = filehandle.readlines()
+            stdoutLines = int(datalines[2])
             self.runAndCheck(os.path.dirname(path),
                              datalines[0].decode('utf8').strip(),
                              int(datalines[1]),
-                             b'',
-                             [line.decode('utf8').strip() for line in datalines[2:]])
+                             [line.decode('utf8').strip() for line in datalines[3:3 + stdoutLines]],
+                             [line.decode('utf8').strip() for line in datalines[3 + stdoutLines:]])
 
     def runAndCheck(self, cwd, args, expectedStatus, expectedOut, expectedErr):
         cmd = BASE_CMD + ' ' + args
         # command to reproduce, do not forget first two lines have special meaning
-        print("cd " + cwd + ";" + cmd + " 2> <filename>")
+        print("\ncd " + cwd + ";" + cmd + " 2> <filename>")
         (status, out, err) = RunShellCommand(cmd, cwd)
         try:
             self.assertEqual(expectedStatus, status)
             self.assertEqual(expectedErr, err.decode('utf8').split('\n'))
-            self.assertEqual(expectedOut, out)
+            self.assertEqual(expectedOut, out.decode('utf8').split('\n'))
         except AssertionError as e:
             print('Failed check in ' + cwd)
             print('for command: ' + cmd)

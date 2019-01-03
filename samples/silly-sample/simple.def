@@ -1,5 +1,9 @@
 src/*.cpp
 1
+3
+Done processing src/sillycode.cpp
+Total errors found: 106
+
 src/sillycode.cpp:0:  No copyright message found.  You should have a line: "Copyright [year] <Copyright Owner>"  [legal/copyright] [5]
 src/sillycode.cpp:3:  public: should be indented +1 space inside class Date  [whitespace/indent] [3]
 src/sillycode.cpp:9:  Is this a non-const reference? If so, make const or use a pointer: vector<string>& v  [runtime/references] [2]
@@ -106,6 +110,4 @@ src/sillycode.cpp:252:  Tab found; better to use spaces  [whitespace/tab] [1]
 src/sillycode.cpp:252:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 src/sillycode.cpp:255:  Empty loop bodies should use {} or continue  [whitespace/empty_loop_body] [5]
 src/sillycode.cpp:255:  At least two spaces is best between code and comments  [whitespace/comments] [2]
-Done processing src/sillycode.cpp
-Total errors found: 106
 

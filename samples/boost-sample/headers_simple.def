@@ -1,5 +1,9 @@
 src/tr1/*
 1
+3
+Done processing src/tr1/c_policy.hpp
+Total errors found: 68
+
 src/tr1/c_policy.hpp:0:  No #ifndef header guard found, suggested CPP variable is: SAMPLES_BOOST_SAMPLE_SRC_TR1_C_POLICY_HPP_  [build/header_guard] [5]
 src/tr1/c_policy.hpp:9:  Missing space before {  [whitespace/braces] [5]
 src/tr1/c_policy.hpp:13:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
@@ -68,6 +72,4 @@ src/tr1/c_policy.hpp:109:  Namespace should be terminated with "// namespace boo
 src/tr1/c_policy.hpp:109:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 src/tr1/c_policy.hpp:111:  Missing space before {  [whitespace/braces] [5]
 src/tr1/c_policy.hpp:131:  Namespace should be terminated with "// namespace c_policies"  [readability/namespace] [5]
-Done processing src/tr1/c_policy.hpp
-Total errors found: 68
 

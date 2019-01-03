@@ -1,5 +1,12 @@
 src/*
 1
+6
+Done processing src/chrome_content_renderer_client.cc
+Done processing src/chrome_content_renderer_client.h
+Done processing src/io_thread.cc
+Done processing src/io_thread.h
+Total errors found: 108
+
 src/chrome_content_renderer_client.cc:113:  Include the directory when naming .h files  [build/include_subdir] [4]
 src/chrome_content_renderer_client.cc:118:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/chrome_content_renderer_client.cc:127:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
@@ -57,7 +64,6 @@ src/chrome_content_renderer_client.cc:1397:  Uncommented text after #endif is no
 src/chrome_content_renderer_client.cc:1406:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/chrome_content_renderer_client.cc:1418:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/chrome_content_renderer_client.cc:5:  samples/chromium-sample/src/chrome_content_renderer_client.cc should include its header file samples/chromium-sample/src/chrome_content_renderer_client.h  [build/include] [5]
-Done processing src/chrome_content_renderer_client.cc
 src/chrome_content_renderer_client.h:5:  #ifndef header guard has wrong style, please use: SAMPLES_CHROMIUM_SAMPLE_SRC_CHROME_CONTENT_RENDERER_CLIENT_H_  [build/header_guard] [5]
 src/chrome_content_renderer_client.h:225:  #endif line should be "#endif  // SAMPLES_CHROMIUM_SAMPLE_SRC_CHROME_CONTENT_RENDERER_CLIENT_H_"  [build/header_guard] [5]
 src/chrome_content_renderer_client.h:26:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
@@ -73,7 +79,6 @@ src/chrome_content_renderer_client.h:209:  Uncommented text after #endif is non-
 src/chrome_content_renderer_client.h:215:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/chrome_content_renderer_client.h:218:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/chrome_content_renderer_client.h:222:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
-Done processing src/chrome_content_renderer_client.h
 src/io_thread.cc:112:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/io_thread.cc:116:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/io_thread.cc:123:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
@@ -103,7 +108,6 @@ src/io_thread.cc:1155:  Uncommented text after #endif is non-standard.  Use a co
 src/io_thread.cc:1547:  Missing space around colon in range-based for loop  [whitespace/forcolon] [2]
 src/io_thread.cc:1749:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/io_thread.cc:5:  samples/chromium-sample/src/io_thread.cc should include its header file samples/chromium-sample/src/io_thread.h  [build/include] [5]
-Done processing src/io_thread.cc
 src/io_thread.h:5:  #ifndef header guard has wrong style, please use: SAMPLES_CHROMIUM_SAMPLE_SRC_IO_THREAD_H_  [build/header_guard] [5]
 src/io_thread.h:565:  #endif line should be "#endif  // SAMPLES_CHROMIUM_SAMPLE_SRC_IO_THREAD_H_"  [build/header_guard] [5]
 src/io_thread.h:177:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
@@ -111,6 +115,4 @@ src/io_thread.h:467:  Uncommented text after #endif is non-standard.  Use a comm
 src/io_thread.h:490:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/io_thread.h:526:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/io_thread.h:532:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
-Done processing src/io_thread.h
-Total errors found: 108
 

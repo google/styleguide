@@ -1,5 +1,11 @@
 src/*
 1
+5
+Done processing src/libvlc.c
+Done processing src/libvlc.h
+Done processing src/missing.c
+Total errors found: 619
+
 src/libvlc.c:37:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/libvlc.c:41:  Found C system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
 src/libvlc.c:47:  Found C system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
@@ -371,7 +377,6 @@ src/libvlc.c:627:  Missing space before ( in if(  [whitespace/parens] [5]
 src/libvlc.c:629:  Extra space after ( in function call  [whitespace/parens] [4]
 src/libvlc.c:629:  Extra space before )  [whitespace/parens] [2]
 src/libvlc.c:640:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
-Done processing src/libvlc.c
 src/libvlc.h:0:  No #ifndef header guard found, suggested CPP variable is: SAMPLES_VLC_SAMPLE_SRC_LIBVLC_H_  [build/header_guard] [5]
 src/libvlc.h:34:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:35:  Extra space before ( in function call  [whitespace/parens] [4]
@@ -427,7 +432,6 @@ src/libvlc.h:223:  Extra space before ( in function call  [whitespace/parens] [4
 src/libvlc.h:224:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:224:  Extra space before )  [whitespace/parens] [2]
 src/libvlc.h:229:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
-Done processing src/libvlc.h
 src/missing.c:36:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/missing.c:44:  Extra space before ( in function call  [whitespace/parens] [4]
 src/missing.c:45:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
@@ -621,6 +625,4 @@ src/missing.c:399:  Extra space before ( in function call  [whitespace/parens] [
 src/missing.c:400:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/missing.c:401:  Extra space before ( in function call  [whitespace/parens] [4]
 src/missing.c:404:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
-Done processing src/missing.c
-Total errors found: 619
 
