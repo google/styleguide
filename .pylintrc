@@ -22,7 +22,8 @@ disable=
   unused-argument,
   useless-object-inheritance,
   consider-using-dict-comprehension,
-  consider-using-in
+  consider-using-in,
+  unnecessary-pass
 
 [REPORTS]
 output-format=colorized
