@@ -1207,7 +1207,7 @@ two statements on the same line.
 <a id="line-length"></a>
 ### 3.2 Line length
 
-Maximum line length is *80 characters*.
+Maximum line length is *120 characters*.
 
 Exceptions:
 
