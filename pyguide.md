@@ -1556,8 +1556,7 @@ double-quote `"""` format for docstrings (per [PEP
 A docstring should be organized as a summary line (one physical line) terminated
 by a period, question mark, or exclamation point, followed by a blank line,
 followed by the rest of the docstring starting at the same cursor position as
-the first quote of the first line. There are more formatting guidelines for
-docstrings below.
+the first quote of the first line. We recommend using reStructuredText format.
 
 <a id="s3.8.2-comments-in-modules"></a>
 <a id="comments-in-modules"></a>
@@ -1630,27 +1629,23 @@ def fetch_bigtable_rows(big_table, keys, other_silly_variable=None):
     represented by big_table.  Silly things may happen if
     other_silly_variable is not None.
 
-    Args:
-        big_table: An open Bigtable Table instance.
-        keys: A sequence of strings representing the key of each table row
-            to fetch.
-        other_silly_variable: Another optional variable, that has a much
-            longer name than the other args, and which does nothing.
+    :param big_table: An open Bigtable Table instance.
+    :param keys: A sequence of strings representing the key of each table row to fetch.
+    :param other_silly_variable: Another optional variable, that has a much longer 
+    name than the other args, and which does nothing.
 
-    Returns:
-        A dict mapping keys to the corresponding table row data
-        fetched. Each row is represented as a tuple of strings. For
-        example:
+    :return: A dict mapping keys to the corresponding table row data
+    fetched. Each row is represented as a tuple of strings. For
+    example:
 
-        {'Serak': ('Rigel VII', 'Preparer'),
-         'Zim': ('Irk', 'Invader'),
-         'Lrrr': ('Omicron Persei 8', 'Emperor')}
+    {'Serak': ('Rigel VII', 'Preparer'),
+     'Zim': ('Irk', 'Invader'),
+     'Lrrr': ('Omicron Persei 8', 'Emperor')}
 
-        If a key from the keys argument is missing from the dictionary,
-        then that row was not found in the table.
+    If a key from the keys argument is missing from the dictionary,
+    then that row was not found in the table.
 
-    Raises:
-        IOError: An error occurred accessing the bigtable.Table object.
+    :raises IOError: An error occurred accessing the bigtable.Table object.
     """
 ```
 
