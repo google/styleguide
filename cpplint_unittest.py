@@ -506,7 +506,7 @@ class CpplintTest(CpplintTestBase):
                             error_collector)
     self.assertEqual('', error_collector.Results())
     # LINT_C_FILE silences cast warnings for entire file.
-    error_collector = ErrorCollector(self.assert_)
+    error_collector = ErrorCollector(self.assertTrue)
     cpplint.ProcessFileData('test.h', 'h',
                             ['// Copyright 2014 Your Company.',
                              '// NOLINT(build/header_guard)',
@@ -540,7 +540,7 @@ class CpplintTest(CpplintTestBase):
                      'vim: se filetype=c :',
                      'vim: se sw=8 filetype=c :',
                      'vim: se sw=8 filetype=c ts=8 :']:
-      error_collector = ErrorCollector(self.assert_)
+      error_collector = ErrorCollector(self.assertTrue)
       cpplint.ProcessFileData('test.h', 'h',
                               ['// Copyright 2014 Your Company.',
                                '// NOLINT(build/header_guard)',
@@ -552,7 +552,7 @@ class CpplintTest(CpplintTestBase):
                               error_collector)
       self.assertEqual('', error_collector.Results())
     # LINT_KERNEL_FILE silences whitespace/tab warnings for entire file.
-    error_collector = ErrorCollector(self.assert_)
+    error_collector = ErrorCollector(self.assertTrue)
     cpplint.ProcessFileData('test.h', 'h',
                             ['// Copyright 2014 Your Company.',
                              '// NOLINT(build/header_guard)',
@@ -564,7 +564,7 @@ class CpplintTest(CpplintTestBase):
                             error_collector)
     self.assertEqual('', error_collector.Results())
     # NOLINT, NOLINTNEXTLINE silences the readability/braces warning for "};".
-    error_collector = ErrorCollector(self.assert_)
+    error_collector = ErrorCollector(self.assertTrue)
     cpplint.ProcessFileData('test.cc', 'cc',
                             ['// Copyright 2014 Your Company.',
                              'for (int i = 0; i != 100; ++i) {',
@@ -4920,7 +4920,7 @@ class Cxx14Test(CpplintTestBase):
 
   def TestCxx14Feature(self, code, expected_error):
     lines = code.split('\n')
-    collector = ErrorCollector(self.assert_)
+    collector = ErrorCollector(self.assertTrue)
     cpplint.RemoveMultiLineComments('foo.h', lines, collector)
     clean_lines = cpplint.CleansedLines(lines)
     cpplint.FlagCxx14Features('foo.cc', clean_lines, 0, collector)
