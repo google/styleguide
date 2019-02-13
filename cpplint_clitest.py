@@ -53,6 +53,7 @@ def RunShellCommand(cmd, cwd='.'):
                             stdout=stdout_target,
                             stderr=stderr_target)
     out, err = proc.communicate()
+    # print(err) # to get the output at time of test
     return (proc.returncode, out, err)
 
 
@@ -104,6 +105,7 @@ class SignatureTests(unittest.TestCase):
         self.assertEqual(count, expectedDefs)
 
     def checkDef(self, path):
+        # self.maxDiff = None # to see full diff
         with open(path, 'rb') as filehandle:
             datalines = filehandle.readlines()
             self.runAndCheck(os.path.dirname(path),

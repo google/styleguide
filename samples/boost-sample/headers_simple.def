@@ -20,6 +20,7 @@ src/tr1/c_policy.hpp:27:  Weird number of spaces at line-start.  Are you using a
 src/tr1/c_policy.hpp:28:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:30:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:32:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
+src/tr1/c_policy.hpp:33:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/tr1/c_policy.hpp:34:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:35:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:36:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
@@ -46,6 +47,7 @@ src/tr1/c_policy.hpp:60:  Weird number of spaces at line-start.  Are you using a
 src/tr1/c_policy.hpp:61:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:63:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:65:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
+src/tr1/c_policy.hpp:66:  Uncommented text after #endif is non-standard.  Use a comment.  [build/endif_comment] [5]
 src/tr1/c_policy.hpp:67:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:68:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
 src/tr1/c_policy.hpp:69:  Weird number of spaces at line-start.  Are you using a 2-space indent?  [whitespace/indent] [3]
@@ -67,5 +69,5 @@ src/tr1/c_policy.hpp:109:  At least two spaces is best between code and comments
 src/tr1/c_policy.hpp:111:  Missing space before {  [whitespace/braces] [5]
 src/tr1/c_policy.hpp:131:  Namespace should be terminated with "// namespace c_policies"  [readability/namespace] [5]
 Done processing src/tr1/c_policy.hpp
-Total errors found: 66
+Total errors found: 68
 
