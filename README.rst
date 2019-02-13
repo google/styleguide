@@ -104,4 +104,10 @@ To incorporate google's changes:
     git branch -D updates
     git push
 
-Thanks to `tkruse <https://github.com/tkruse>`_ for putting cpplint on PyPI and maintaining the PyPI version for many years!
+Acknowledgements
+----------------
+
+Thanks to
+
+* `tkruse <https://github.com/tkruse>`_
+* `mattyclarkson https://github.com/mattyclarkson`_
