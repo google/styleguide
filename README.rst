@@ -25,7 +25,26 @@ cpplint - static code checker for C++
 .. image:: https://img.shields.io/pypi/dm/cpplint.svg
     :target: https://pypi.python.org/pypi/cpplint
 
-This project continues the work of cpplint, a C++ style checker following `Google's C++ style guide <http://google.github.io/styleguide/cppguide.html>`_. It provides cpplint as a PyPI package and adds a few features and fixes. It is maintained as a fork of `google/styleguide <https://github.com/google/styleguide>`_ in hopes that it can be merged in the future.
+Cpplint is a command-line tool to check C/C++ files for style issues following `Google's C++ style guide <http://google.github.io/styleguide/cppguide.html>`_.
+Cpplint is developed and maintained by Google Inc. at `google/styleguide <https://github.com/google/styleguide>`_
+
+While Google maintains cpplint, Google is not (very) responsive to issues and pull requests, this fork aims to be (somewhat) more open to add fixes to cpplint to enable fixes, when those fixes make cpplint usable in wider contexts.
+
+Goals
+-----
+
+* Provides cpplint as a PyPI package for multiple python versions
+* Add a few features and fixes aimed at usages outside Google
+
+Non-Goals
+---------
+
+* Become an independent fork adding major features
+* Fix python style issues in cpplint
+
+Installation
+============
+
 
 To install cpplint from PyPI, run:
 
@@ -107,7 +126,9 @@ To incorporate google's changes:
 Acknowledgements
 ----------------
 
-Thanks to
+Thanks to Google Inc. for open-sourcing their in-house tool.
+Thanks to maintainers of the fork
 
-* `tkruse <https://github.com/tkruse>`_
-* `mattyclarkson https://github.com/mattyclarkson`_
+* `tkruse <https://github.com/tkruse>`_  
+* `mattyclarkson <https://github.com/mattyclarkson>`_
+* `theandrewdavis <https://github.com/theandrewdavis>`_

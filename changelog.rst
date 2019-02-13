@@ -1,10 +1,19 @@
 Changelog
 ---------
 
+1.3.1
+-----
+
+* Incorporate cpplint updates from google (62385582b847, 2017-08-16)
+  * Fix the `build/endif_comment` check (https://github.com/google/styleguide/pull/169)
+  * Teach the explicit constructor check about constexpr (#56)
+  * Changed vs7 output format (#57)
+  * Remove presubmit check for DISALLOW_* macros (#54)
+
 1.3.0
 -----
 
-* Incorporate cpplint updates from google.
+* Incorporate cpplint updates from google (6d3a7d8a2, 2016-07-14)
 * Add --headers flag to choose which extensions are header files.
 * Add regression testsing.
 
