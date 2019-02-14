@@ -65,7 +65,7 @@ setup(name='cpplint',
         ]
       },
       install_requires=[],
-      url='http://en.wikipedia.org/wiki/Cpplint',
+      url='https://github.com/cpplint/cpplint',
       download_url='https://github.com/cpplint/cpplint',
       keywords=['lint', 'python', 'c++'],
       maintainer='cpplint Developers',
@@ -83,7 +83,7 @@ setup(name='cpplint',
                    'Environment :: Console',
                    'Topic :: Software Development :: Quality Assurance',
                    'License :: Freely Distributable'],
-      description='An automated checker to make sure a C++ file follows Google\'s C++ style guide',
+      description='An automated checker to make sure a C++ file follows Google\'s C++ style guide, see http://en.wikipedia.org/wiki/Cpplint',
       long_description=open('README.rst').read(),
       extras_require={
         'dev': [
