@@ -4,7 +4,10 @@ Contributing guide
 Thanks for your interest in contributing to cpplint.
 
 Any kinds of contributions are welcome: Bug reports, Documentation, Patches.
+
 However cpplint is a bit special as a project because it aims to closely follow what Google does in the upstream repository.
+That means Google remains the source of all major requirements and functinoality of cpplint, where as this fork adds extensions to cpplint run on more environments and in more companies.
+The difference between this cpplint and Google should remain so small that anyone can at a glance see there is no added change that could be regarded as a security vulnerability.
 
 Here are some tips to make best use of your time:
 
@@ -51,8 +54,23 @@ To release a new version:
     git tag 0.0.6
     git push
     git push --tags
-    python setup.py sdist register -r pypi
-    python setup.py sdist upload -r pypi
+    pip install --upgrade setuptools wheels twine
+    python3 setup.py sdist
+    twine upload  dist/*
+
+
+Catching up with Upstream
+-------------------------
+
+For maintainers, it is a regular duty to look at what cpplint changes were merged upstream, to include them in this fork.
+
+Checkout here and upstream google:
+
+.. code-block:: bash
+
+    git clone git@github.com:cpplint/cpplint.git
+    cd cpplint
+    git remote add google https://github.com/google/styleguide
 
 To incorporate google's changes:
 
@@ -71,20 +89,7 @@ To incorporate google's changes:
     git rebase updates master
     git branch -D updates
     git push
-
-Catching up with Upstream
--------------------------
-
-For maintainers, it is a regular duty to look at what cpplint changes were merged upstream, to include them in this fork.
-
-Checkout here and upstream google:
-
-.. code-block:: bash
-
-    git clone git@github.com:cpplint/cpplint.git
-    cd cpplint
-    git remote add google https://github.com/google/styleguide
-
+    
 Setup fetching of pull requests in .git/config:
 
 .. code-block:: bash
