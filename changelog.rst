@@ -1,7 +1,7 @@
 Changelog
 ---------
 
-1.3.1
+1.4.0
 -----
 
 * Incorporate cpplint updates from google (62385582b847, 2017-08-16)
@@ -9,6 +9,9 @@ Changelog
   * Teach the explicit constructor check about constexpr (#56)
   * Changed vs7 output format (#57)
   * Remove presubmit check for DISALLOW_* macros (#54)
+  * add `--quiet` flag as in upstream (https://github.com/google/styleguide/pull/293)
+  * support `--root` argument to run in different folder (https://github.com/google/styleguide/pull/291)
+  * Fix 16bit Unicode issue (https://github.com/google/styleguide/issues/337)
 
 1.3.0
 -----
