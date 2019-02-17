@@ -55,7 +55,7 @@ To release a new version:
     git push
     git push --tags
     pip install --upgrade setuptools wheels twine
-    python3 setup.py sdist
+    python3 setup.py sdist bdist_wheel
     twine upload  dist/*
 
 

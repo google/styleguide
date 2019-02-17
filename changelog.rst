@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+1.4.1
+-----
+
+* Cleanup release, only adds test support files to source dist
+
 1.4.0
 -----
 
