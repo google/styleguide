@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+1.4.2
+-----
+
+* Cleanup release, fixes further issues with tests and source distribution
+
 1.4.1
 -----
 
