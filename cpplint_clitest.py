@@ -36,7 +36,7 @@ import sys
 import subprocess
 import unittest
 
-BASE_CMD = sys.executable + ' ' + os.path.abspath('./cpplint.py')
+BASE_CMD = sys.executable + ' ' + os.path.abspath('./cpplint.py ')
 
 def RunShellCommand(cmd, cwd='.'):
     """
@@ -118,7 +118,7 @@ class SignatureTests(unittest.TestCase):
                              [line.decode('utf8').strip() for line in datalines[3 + stdoutLines:]])
 
     def runAndCheck(self, cwd, args, expectedStatus, expectedOut, expectedErr):
-        cmd = BASE_CMD + ' ' + args
+        cmd = BASE_CMD + ' --repository ' + cwd + ' ' + args
         # command to reproduce, do not forget first two lines have special meaning
         print("\ncd " + cwd + ";" + cmd + " 2> <filename>")
         (status, out, err) = RunShellCommand(cmd, cwd)
