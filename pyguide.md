@@ -1597,7 +1597,7 @@ overriding method.
 
 Certain aspects of a function should be documented in special sections, listed
 below. Each section begins with a heading line, which ends with a colon.
-Sections should be indented two spaces, except for the heading.
+Sections should be indented four spaces, except for the heading.
 
 <a id="doc-function-args"></a>
 [*Args:*](#doc-function-args)
