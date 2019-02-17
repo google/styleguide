@@ -56,7 +56,7 @@ class Format(Cmd):
 
 
 setup(name='cpplint',
-      version='1.4.2',
+      version='1.4.3',
       py_modules=['cpplint'],
       # generate platform specific start script
       entry_points={
