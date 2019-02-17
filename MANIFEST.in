@@ -1,5 +1,6 @@
 # MANIFEST.in file required to deliver test files with source tar
 include *.py
+include LICENSE
 
 # all samples for clitest
 graft samples
