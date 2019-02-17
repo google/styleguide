@@ -32,10 +32,11 @@
 """Command Line interface integration test for cpplint.py."""
 
 import os
+import sys
 import subprocess
 import unittest
 
-BASE_CMD = 'python ' + os.path.abspath('./cpplint.py')
+BASE_CMD = sys.executable + ' ' + os.path.abspath('./cpplint.py')
 
 def RunShellCommand(cmd, cwd='.'):
     """
