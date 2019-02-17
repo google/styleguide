@@ -10,7 +10,7 @@ Changelog
 -----
 
 * Incorporate cpplint updates from google (62385582b847, 2017-08-16)
-  * Fix the `build/endif_comment` check (https://github.com/google/styleguide/pull/169)
+  * Fix the `build/endif_comment` check (https://github.com/google/styleguide/pull/169): This will flagging `#endif` without comment unless the rule `build/endif_comment` is disabled.
   * Teach the explicit constructor check about constexpr (#56)
   * Changed vs7 output format (#57)
   * Remove presubmit check for DISALLOW_* macros (#54)
