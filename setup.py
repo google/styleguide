@@ -85,6 +85,7 @@ setup(name='cpplint',
                    'License :: Freely Distributable'],
       description='An automated checker to make sure a C++ file follows Google\'s C++ style guide, see http://en.wikipedia.org/wiki/Cpplint',
       long_description=open('README.rst').read(),
+      license='BSD-3-Clause',
       extras_require={
         'dev': [
             'pylint',
