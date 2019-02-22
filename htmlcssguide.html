@@ -25,16 +25,16 @@ quality is maintained.</p>
 
 <h4 id="Protocol">2.1.1 Protocol</h4>
 
-<p>Use the HTTPS protocol for embedded resources where possible.</p>
+<p>Use HTTPS for embedded resources where possible.</p>
 
-<p>Always use the HTTPS protocol (<code>https:</code>) for images and other media
+<p>Always use HTTPS (<code>https:</code>) for images and other media
 files, style sheets, and scripts, unless the respective files are not available
 over HTTPS.</p>
 
 <pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended: omits the protocol --&gt;
 &lt;script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"&gt;&lt;/script&gt;
 
-&lt;!-- Not recommended: uses the HTTP protocol --&gt;
+&lt;!-- Not recommended: uses HTTP --&gt;
 &lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"&gt;&lt;/script&gt;
 </code></pre>
 
@@ -45,7 +45,7 @@ over HTTPS.</p>
 <pre><code class="language-css prettyprint badcode">/* Not recommended: omits the protocol */
 @import '//fonts.googleapis.com/css?family=Open+Sans';
 
-/* Not recommended: uses the HTTP protocol */
+/* Not recommended: uses HTTP */
 @import 'http://fonts.googleapis.com/css?family=Open+Sans';
 </code></pre>
 
