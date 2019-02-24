@@ -268,18 +268,21 @@ class CpplintTestBase(unittest.TestCase):
 
   def TestBlankLinesCheck(self, lines, start_errors, end_errors):
     for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
-      error_collector = ErrorCollector(self.assert_)
-      cpplint.ProcessFileData('foo.' + extension, extension, lines, error_collector)
-      self.assertEquals(
-          start_errors,
-          error_collector.Results().count(
-                'Redundant blank line at the start of a code block '
-                'should be deleted.  [whitespace/blank_line] [2]'))
-      self.assertEquals(
-          end_errors,
-          error_collector.Results().count(
-              'Redundant blank line at the end of a code block '
-              'should be deleted.  [whitespace/blank_line] [3]'))
+      self.doTestBlankLinesCheck(lines, start_errors, end_errors, extension)
+
+  def doTestBlankLinesCheck(self, lines, start_errors, end_errors, extension):
+    error_collector = ErrorCollector(self.assert_)
+    cpplint.ProcessFileData('foo.' + extension, extension, lines, error_collector)
+    self.assertEquals(
+        start_errors,
+        error_collector.Results().count(
+            'Redundant blank line at the start of a code block '
+            'should be deleted.  [whitespace/blank_line] [2]'))
+    self.assertEquals(
+        end_errors,
+        error_collector.Results().count(
+            'Redundant blank line at the end of a code block '
+            'should be deleted.  [whitespace/blank_line] [3]'))
 
 
 class CpplintTest(CpplintTestBase):
@@ -4244,19 +4247,24 @@ class CpplintTest(CpplintTestBase):
 
   def testUnnamedNamespacesInHeaders(self):
     for extension in ['h', 'hpp', 'hxx', 'h++', 'cuh']:
-        self.TestLanguageRulesCheck(
-            'foo.' + extension, 'namespace {',
-            'Do not use unnamed namespaces in header files.  See'
-            ' https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
-            ' for more information.  [build/namespaces] [4]')
-        # namespace registration macros are OK.
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace {  \\', '')
-        # named namespaces are OK.
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace foonamespace {', '')
+      self.doTestUnnamedNamespacesInHeaders(extension)
+
+  def doTestUnnamedNamespacesInHeaders(self, extension):
+    self.TestLanguageRulesCheck(
+        'foo.' + extension, 'namespace {',
+        'Do not use unnamed namespaces in header files.  See'
+        ' https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
+        ' for more information.  [build/namespaces] [4]')
+    # namespace registration macros are OK.
+    self.TestLanguageRulesCheck('foo.' + extension, 'namespace {  \\', '')
+    # named namespaces are OK.
+    self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
+    self.TestLanguageRulesCheck('foo.' + extension, 'namespace foonamespace {', '')
+
+  def testUnnamedNamespacesInNonHeaders(self):
     for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace {', '')
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
+      self.TestLanguageRulesCheck('foo.' + extension, 'namespace {', '')
+      self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
 
   def testBuildClass(self):
     # Test that the linter can parse to the end of class definitions,
@@ -4564,92 +4572,103 @@ class CpplintTest(CpplintTestBase):
       os.makedirs(os.path.join(test_directory, ".svn"))
       header_directory = os.path.join(test_directory, "cpplint")
       os.makedirs(header_directory)
-      # note: Tested file paths must be real, otherwise
-      # the repository name lookup will fail.
-      file_path = os.path.join(header_directory, 'cpplint_test_header.h')
-      open(file_path, 'a').close()
-      file_info = cpplint.FileInfo(file_path)
-      if file_info.FullName() == file_info.RepositoryName():
-        # When FileInfo cannot deduce the root directory of the repository,
-        # FileInfo.RepositoryName returns the same value as FileInfo.FullName.
-        # This can happen when this source file was obtained without .svn or
-        # .git directory. (e.g. using 'svn export' or 'git archive').
-        # Skip this test in such a case because --root flag makes sense only
-        # when the root directory of the repository is properly deduced.
-        return
-
-      self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-      #
-      # test --root flags:
-      #   this changes the cpp header guard prefix
-      #
-
-      # left-strip the header guard by using a root dir inside of the repo dir.
-      # relative directory
-      cpplint._root = 'cpplint'
-      self.assertEquals('CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      nested_header_directory = os.path.join(header_directory, "nested")
-      nested_file_path = os.path.join(nested_header_directory, 'cpplint_test_header.h')
-      os.makedirs(nested_header_directory)
-      open(nested_file_path, 'a').close()
-
-      cpplint._root = os.path.join('cpplint', 'nested')
-      actual = cpplint.GetHeaderGuardCPPVariable(nested_file_path)
-      self.assertEquals('CPPLINT_TEST_HEADER_H_',
-                        actual)
-
-      # absolute directory
-      # (note that CPPLINT.cfg root=setting is always made absolute)
-      cpplint._root = header_directory
-      self.assertEquals('CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      cpplint._root = nested_header_directory
-      self.assertEquals('CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(nested_file_path))
-
-      # --root flag is ignored if an non-existent directory is specified.
-      cpplint._root = 'NON_EXISTENT_DIR'
-      self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      # prepend to the header guard by using a root dir that is more outer
-      # than the repo dir
-
-      # (using absolute paths)
-      # (note that CPPLINT.cfg root=setting is always made absolute)
-      this_files_path = os.path.dirname(os.path.abspath(file_path))
-      (styleguide_path, this_files_dir) = os.path.split(this_files_path)
-      (styleguide_parent_path, styleguide_dir_name) = os.path.split(styleguide_path)
-      # parent dir of styleguide
-      cpplint._root = styleguide_parent_path
-      self.assertIsNotNone(styleguide_parent_path)
-      # do not hardcode the 'styleguide' repository name, it could be anything.
-      expected_prefix = re.sub(r'[^a-zA-Z0-9]', '_', styleguide_dir_name).upper() + '_'
-      # do not have 'styleguide' repo in '/'
-      self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      # To run the 'relative path' tests, we must be in the directory of this test file.
-      cur_dir = os.getcwd()
-      os.chdir(this_files_path)
-
-      # (using relative paths)
-      styleguide_rel_path = os.path.relpath(styleguide_parent_path,
-                                            this_files_path) # '../..'
-      cpplint._root = styleguide_rel_path
-      self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      cpplint._root = None
-
-      # Restore previous CWD.
-      os.chdir(cur_dir)
+      self.doTestBuildHeaderGuardWithRoot(header_directory)
     finally:
       shutil.rmtree(temp_directory)
+
+  def doTestBuildHeaderGuardWithRoot(self, header_directory):
+
+    # note: Tested file paths must be real, otherwise
+    # the repository name lookup will fail.
+    file_path = os.path.join(header_directory,
+                             'cpplint_test_header.h')
+    open(file_path, 'a').close()
+    file_info = cpplint.FileInfo(file_path)
+    if file_info.FullName() == file_info.RepositoryName():
+      # When FileInfo cannot deduce the root directory of the repository,
+      # FileInfo.RepositoryName returns the same value as FileInfo.FullName.
+      # This can happen when this source file was obtained without .svn or
+      # .git directory. (e.g. using 'svn export' or 'git archive').
+      # Skip this test in such a case because --root flag makes sense only
+      # when the root directory of the repository is properly deduced.
+      return
+
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+    #
+    # test --root flags:
+    #   this changes the cpp header guard prefix
+    #
+
+    # left-strip the header guard by using a root dir inside of the repo dir.
+    # relative directory
+    cpplint._root = 'cpplint'
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    nested_header_directory = os.path.join(header_directory, "nested")
+    nested_file_path = os.path.join(nested_header_directory, 'cpplint_test_header.h')
+    os.makedirs(nested_header_directory)
+    open(nested_file_path, 'a').close()
+
+    cpplint._root = os.path.join('cpplint', 'nested')
+    actual = cpplint.GetHeaderGuardCPPVariable(nested_file_path)
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      actual)
+
+    # absolute directory
+    # (note that CPPLINT.cfg root=setting is always made absolute)
+    cpplint._root = header_directory
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    cpplint._root = nested_header_directory
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(nested_file_path))
+
+    # --root flag is ignored if an non-existent directory is specified.
+    cpplint._root = 'NON_EXISTENT_DIR'
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    # prepend to the header guard by using a root dir that is more outer
+    # than the repo dir
+
+    # (using absolute paths)
+    # (note that CPPLINT.cfg root=setting is always made absolute)
+    this_files_path = os.path.dirname(os.path.abspath(file_path))
+    (styleguide_path, this_files_dir) = os.path.split(this_files_path)
+    (styleguide_parent_path, styleguide_dir_name) = os.path.split(styleguide_path)
+    # parent dir of styleguide
+    cpplint._root = styleguide_parent_path
+    self.assertIsNotNone(styleguide_parent_path)
+    # do not hardcode the 'styleguide' repository name, it could be anything.
+    expected_prefix = re.sub(r'[^a-zA-Z0-9]', '_', styleguide_dir_name).upper() + '_'
+    # do not have 'styleguide' repo in '/'
+    self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    # To run the 'relative path' tests, we must be in the directory of this test file.
+    cur_dir = os.getcwd()
+    os.chdir(this_files_path)
+
+    # (using relative paths)
+    styleguide_rel_path = os.path.relpath(styleguide_path, this_files_path)
+    # '..'
+    cpplint._root = styleguide_rel_path
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    styleguide_rel_path = os.path.relpath(styleguide_parent_path,
+                                          this_files_path) # '../..'
+    cpplint._root = styleguide_rel_path
+    self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    cpplint._root = None
+
+    # Restore previous CWD.
+    os.chdir(cur_dir)
 
   def testPathSplitToList(self):
     self.assertEquals([''],

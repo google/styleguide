@@ -89,7 +89,7 @@ To incorporate google's changes:
     git rebase updates master
     git branch -D updates
     git push
-    
+
 Setup fetching of pull requests in .git/config:
 
 .. code-block:: bash
@@ -109,5 +109,6 @@ Setup fetching of pull requests in .git/config:
 To compare this for with upstream (after git fetch):
 
 .. code-block:: bash
-                
+
     git diff google/gh-pages:cpplint/cpplint.py master:cpplint.py
+    git diff google/gh-pages:cpplint/cpplint_unittest.py master:cpplint_unittest.py
