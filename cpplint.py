@@ -5641,7 +5641,7 @@ _re_pattern_headers_maybe_templates = []
 for _header, _templates in _HEADERS_MAYBE_TEMPLATES:
   for _template in _templates:
     # Match max<type>(..., ...), max(..., ...), but not foo->max, foo.max or
-    # type::max().
+    # 'type::max()'.
     _re_pattern_headers_maybe_templates.append(
         (re.compile(r'[^>.]\b' + _template + r'(<.*?>)?\([^\)]'),
             _template,

@@ -47,10 +47,10 @@ import unittest
 import cpplint
 
 try:
-  xrange
+  xrange          # Python 2
 except NameError:
   #  -- pylint: disable=redefined-builtin
-  xrange = range
+  xrange = range  # Python 3
 
 try:
   unicode
@@ -152,7 +152,7 @@ class CpplintTestBase(unittest.TestCase):
 
   # Perform lint on single line of input and return the error message.
   def PerformSingleLineLint(self, code):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     lines = code.split('\n')
     cpplint.RemoveMultiLineComments('foo.h', lines, error_collector)
     clean_lines = cpplint.CleansedLines(lines)
@@ -170,7 +170,7 @@ class CpplintTestBase(unittest.TestCase):
 
   # Perform lint over multiple lines and return the error message.
   def PerformMultiLineLint(self, code):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     lines = code.split('\n')
     cpplint.RemoveMultiLineComments('foo.h', lines, error_collector)
     lines = cpplint.CleansedLines(lines)
@@ -187,7 +187,7 @@ class CpplintTestBase(unittest.TestCase):
   # Similar to PerformMultiLineLint, but calls CheckLanguage instead of
   # CheckForNonStandardConstructs
   def PerformLanguageRulesCheck(self, file_name, code):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     include_state = cpplint._IncludeState()
     nesting_state = cpplint.NestingState()
     lines = code.split('\n')
@@ -215,7 +215,7 @@ class CpplintTestBase(unittest.TestCase):
       The accumulated errors.
     """
     file_name = 'foo.cc'
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     function_state = cpplint._FunctionState()
     lines = code.split('\n')
     cpplint.RemoveMultiLineComments(file_name, lines, error_collector)
@@ -227,7 +227,7 @@ class CpplintTestBase(unittest.TestCase):
 
   def PerformIncludeWhatYouUse(self, code, filename='foo.h', io=codecs):
     # First, build up the include state.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     include_state = cpplint._IncludeState()
     nesting_state = cpplint.NestingState()
     lines = code.split('\n')
@@ -247,10 +247,10 @@ class CpplintTestBase(unittest.TestCase):
 
   # Perform lint and compare the error message with "expected_message".
   def TestLint(self, code, expected_message):
-    self.assertEqual(expected_message, self.PerformSingleLineLint(code))
+    self.assertEquals(expected_message, self.PerformSingleLineLint(code))
 
   def TestMultiLineLint(self, code, expected_message):
-    self.assertEqual(expected_message, self.PerformMultiLineLint(code))
+    self.assertEquals(expected_message, self.PerformMultiLineLint(code))
 
   def TestMultiLineLintRE(self, code, expected_message_re):
     message = self.PerformMultiLineLint(code)
@@ -259,33 +259,36 @@ class CpplintTestBase(unittest.TestCase):
                 expected_message_re + '"')
 
   def TestLanguageRulesCheck(self, file_name, code, expected_message):
-    self.assertEqual(expected_message,
+    self.assertEquals(expected_message,
                       self.PerformLanguageRulesCheck(file_name, code))
 
   def TestIncludeWhatYouUse(self, code, expected_message):
-    self.assertEqual(expected_message,
+    self.assertEquals(expected_message,
                       self.PerformIncludeWhatYouUse(code))
 
   def TestBlankLinesCheck(self, lines, start_errors, end_errors):
     for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
-      error_collector = ErrorCollector(self.assertTrue)
-      cpplint.ProcessFileData('foo.' + extension, extension, lines, error_collector)
-      self.assertEqual(
-          start_errors,
-          error_collector.Results().count(
-                'Redundant blank line at the start of a code block '
-                'should be deleted.  [whitespace/blank_line] [2]'))
-      self.assertEqual(
-          end_errors,
-          error_collector.Results().count(
-              'Redundant blank line at the end of a code block '
-              'should be deleted.  [whitespace/blank_line] [3]'))
+      self.doTestBlankLinesCheck(lines, start_errors, end_errors, extension)
+
+  def doTestBlankLinesCheck(self, lines, start_errors, end_errors, extension):
+    error_collector = ErrorCollector(self.assert_)
+    cpplint.ProcessFileData('foo.' + extension, extension, lines, error_collector)
+    self.assertEquals(
+        start_errors,
+        error_collector.Results().count(
+            'Redundant blank line at the start of a code block '
+            'should be deleted.  [whitespace/blank_line] [2]'))
+    self.assertEquals(
+        end_errors,
+        error_collector.Results().count(
+            'Redundant blank line at the end of a code block '
+            'should be deleted.  [whitespace/blank_line] [3]'))
 
 
 class CpplintTest(CpplintTestBase):
 
   def GetNamespaceResults(self, lines):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.RemoveMultiLineComments('foo.h', lines, error_collector)
     lines = cpplint.CleansedLines(lines)
     nesting_state = cpplint.NestingState()
@@ -302,7 +305,7 @@ class CpplintTest(CpplintTestBase):
              '}  // namespace Test']
 
     results = self.GetNamespaceResults(lines)
-    self.assertEqual(results, 'Do not indent within a namespace '
+    self.assertEquals(results, 'Do not indent within a namespace '
                       ' [runtime/indentation_namespace] [4]')
 
   def testNameSpaceIndentationForClass(self):
@@ -313,7 +316,7 @@ class CpplintTest(CpplintTestBase):
              '}  // namespace Test']
 
     results = self.GetNamespaceResults(lines)
-    self.assertEqual(results, 'Do not indent within a namespace '
+    self.assertEquals(results, 'Do not indent within a namespace '
                       ' [runtime/indentation_namespace] [4]')
 
   def testNameSpaceIndentationNoError(self):
@@ -322,7 +325,7 @@ class CpplintTest(CpplintTestBase):
              '}  // namespace Test']
 
     results = self.GetNamespaceResults(lines)
-    self.assertEqual(results, '')
+    self.assertEquals(results, '')
 
   def testWhitespaceBeforeNamespace(self):
     lines = ['  namespace Test {',
@@ -330,7 +333,7 @@ class CpplintTest(CpplintTestBase):
              '  }  // namespace Test']
 
     results = self.GetNamespaceResults(lines)
-    self.assertEqual(results, '')
+    self.assertEquals(results, '')
 
   def testFalsePositivesNoError(self):
     lines = ['namespace Test {',
@@ -341,35 +344,35 @@ class CpplintTest(CpplintTestBase):
              '}  // namespace Test']
 
     results = self.GetNamespaceResults(lines)
-    self.assertEqual(results, '')
+    self.assertEquals(results, '')
 
 
   # Test get line width.
   def testGetLineWidth(self):
-    self.assertEqual(0, cpplint.GetLineWidth(''))
-    self.assertEqual(10, cpplint.GetLineWidth(unicode('x') * 10))
-    self.assertEqual(16, cpplint.GetLineWidth(unicode_escape_decode('\u90fd|\u9053|\u5e9c|\u770c|\u652f\u5e81')))
-    self.assertEqual(16, cpplint.GetLineWidth(u'都|道|府|県|支庁'))
-    self.assertEqual(5 + 13 + 9, cpplint.GetLineWidth(
+    self.assertEquals(0, cpplint.GetLineWidth(''))
+    self.assertEquals(10, cpplint.GetLineWidth(unicode('x') * 10))
+    self.assertEquals(16, cpplint.GetLineWidth(unicode_escape_decode('\u90fd|\u9053|\u5e9c|\u770c|\u652f\u5e81')))
+    self.assertEquals(16, cpplint.GetLineWidth(u'都|道|府|県|支庁'))
+    self.assertEquals(5 + 13 + 9, cpplint.GetLineWidth(
         u'd𝐱/dt' + u'f : t ⨯ 𝐱 → ℝ' + u't ⨯ 𝐱 → ℝ'))
 
   def testGetTextInside(self):
-    self.assertEqual('', cpplint._GetTextInside('fun()', r'fun\('))
-    self.assertEqual('x, y', cpplint._GetTextInside('f(x, y)', r'f\('))
-    self.assertEqual('a(), b(c())', cpplint._GetTextInside(
+    self.assertEquals('', cpplint._GetTextInside('fun()', r'fun\('))
+    self.assertEquals('x, y', cpplint._GetTextInside('f(x, y)', r'f\('))
+    self.assertEquals('a(), b(c())', cpplint._GetTextInside(
         'printf(a(), b(c()))', r'printf\('))
-    self.assertEqual('x, y{}', cpplint._GetTextInside('f[x, y{}]', r'f\['))
-    self.assertEqual(None, cpplint._GetTextInside('f[a, b(}]', r'f\['))
-    self.assertEqual(None, cpplint._GetTextInside('f[x, y]', r'f\('))
-    self.assertEqual('y, h(z, (a + b))', cpplint._GetTextInside(
+    self.assertEquals('x, y{}', cpplint._GetTextInside('f[x, y{}]', r'f\['))
+    self.assertEquals(None, cpplint._GetTextInside('f[a, b(}]', r'f\['))
+    self.assertEquals(None, cpplint._GetTextInside('f[x, y]', r'f\('))
+    self.assertEquals('y, h(z, (a + b))', cpplint._GetTextInside(
         'f(x, g(y, h(z, (a + b))))', r'g\('))
-    self.assertEqual('f(f(x))', cpplint._GetTextInside('f(f(f(x)))', r'f\('))
+    self.assertEquals('f(f(x))', cpplint._GetTextInside('f(f(f(x)))', r'f\('))
     # Supports multiple lines.
-    self.assertEqual('\n  return loop(x);\n',
+    self.assertEquals('\n  return loop(x);\n',
                       cpplint._GetTextInside(
                           'int loop(int x) {\n  return loop(x);\n}\n', r'\{'))
     # '^' matches the beginning of each line.
-    self.assertEqual('x, y',
+    self.assertEquals('x, y',
                       cpplint._GetTextInside(
                           '#include "inl.h"  // skip #define\n'
                           '#define A2(x, y) a_inl_(x, y, __LINE__)\n'
@@ -377,23 +380,23 @@ class CpplintTest(CpplintTestBase):
                           r'^\s*#define\s*\w+\('))
 
   def testFindNextMultiLineCommentStart(self):
-    self.assertEqual(1, cpplint.FindNextMultiLineCommentStart([''], 0))
+    self.assertEquals(1, cpplint.FindNextMultiLineCommentStart([''], 0))
 
     lines = ['a', 'b', '/* c']
-    self.assertEqual(2, cpplint.FindNextMultiLineCommentStart(lines, 0))
+    self.assertEquals(2, cpplint.FindNextMultiLineCommentStart(lines, 0))
 
     lines = ['char a[] = "/*";']  # not recognized as comment.
-    self.assertEqual(1, cpplint.FindNextMultiLineCommentStart(lines, 0))
+    self.assertEquals(1, cpplint.FindNextMultiLineCommentStart(lines, 0))
 
   def testFindNextMultiLineCommentEnd(self):
-    self.assertEqual(1, cpplint.FindNextMultiLineCommentEnd([''], 0))
+    self.assertEquals(1, cpplint.FindNextMultiLineCommentEnd([''], 0))
     lines = ['a', 'b', ' c */']
-    self.assertEqual(2, cpplint.FindNextMultiLineCommentEnd(lines, 0))
+    self.assertEquals(2, cpplint.FindNextMultiLineCommentEnd(lines, 0))
 
   def testRemoveMultiLineCommentsFromRange(self):
     lines = ['a', '  /* comment ', ' * still comment', ' comment */   ', 'b']
     cpplint.RemoveMultiLineCommentsFromRange(lines, 1, 4)
-    self.assertEqual(['a', '/**/', '/**/', '/**/', 'b'], lines)
+    self.assertEquals(['a', '/**/', '/**/', '/**/', 'b'], lines)
 
   def testSpacesAtEndOfLine(self):
     self.TestLint(
@@ -501,16 +504,16 @@ class CpplintTest(CpplintTestBase):
         'Use int16/int64/etc, rather than the C type long'
         '  [runtime/int] [4]')
     # NOLINTNEXTLINE silences warning for the next line instead of current line
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('test.cc', 'cc',
                             ['// Copyright 2014 Your Company.',
                              '// NOLINTNEXTLINE(whitespace/line_length)',
                              '//  ./command' + (' -verbose' * 80),
                              ''],
                             error_collector)
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
     # LINT_C_FILE silences cast warnings for entire file.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('test.h', 'h',
                             ['// Copyright 2014 Your Company.',
                              '// NOLINT(build/header_guard)',
@@ -518,7 +521,7 @@ class CpplintTest(CpplintTestBase):
                              '//  LINT_C_FILE',
                              ''],
                             error_collector)
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
     # Vim modes silence cast warnings for entire file.
     for modeline in ['vi:filetype=c',
                      'vi:sw=8 filetype=c',
@@ -544,7 +547,7 @@ class CpplintTest(CpplintTestBase):
                      'vim: se filetype=c :',
                      'vim: se sw=8 filetype=c :',
                      'vim: se sw=8 filetype=c ts=8 :']:
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData('test.h', 'h',
                               ['// Copyright 2014 Your Company.',
                                '// NOLINT(build/header_guard)',
@@ -554,9 +557,9 @@ class CpplintTest(CpplintTestBase):
                                '*/',
                                ''],
                               error_collector)
-      self.assertEqual('', error_collector.Results())
+      self.assertEquals('', error_collector.Results())
     # LINT_KERNEL_FILE silences whitespace/tab warnings for entire file.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('test.h', 'h',
                             ['// Copyright 2014 Your Company.',
                              '// NOLINT(build/header_guard)',
@@ -566,9 +569,9 @@ class CpplintTest(CpplintTestBase):
                              '//  LINT_KERNEL_FILE',
                              ''],
                             error_collector)
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
     # NOLINT, NOLINTNEXTLINE silences the readability/braces warning for "};".
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('test.cc', 'cc',
                             ['// Copyright 2014 Your Company.',
                              'for (int i = 0; i != 100; ++i) {',
@@ -581,7 +584,7 @@ class CpplintTest(CpplintTestBase):
                              '//  LINT_KERNEL_FILE',
                              ''],
                             error_collector)
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
 
   # Test Variable Declarations.
   def testVariableDeclarations(self):
@@ -823,7 +826,7 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('std::function< int(bool) >', '')
     self.TestLint('mfunction<int(bool)>', '')
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         'test.cc', 'cc',
         ['// Copyright 2014 Your Company. All Rights Reserved.',
@@ -831,7 +834,7 @@ class CpplintTest(CpplintTestBase):
          '    bool(int)> F;',
          ''],
         error_collector)
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
 
     # Return types for function pointers
     self.TestLint('typedef bool(FunctionPointer)();', '')
@@ -862,7 +865,7 @@ class CpplintTest(CpplintTestBase):
         'MOCK_CONST_METHOD1(method, SomeType(int));',
         '')
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('mock.cc', 'cc',
                             ['MOCK_METHOD1(method1,',
                              '             bool(int));',
@@ -875,13 +878,13 @@ class CpplintTest(CpplintTestBase):
                              'MOCK_METHOD1(method4, int(bool));',
                              'const int kConstant = int(42);'],  # true positive
                             error_collector)
-    self.assertEqual(
+    self.assertEquals(
         0,
         error_collector.Results().count(
             ('Using deprecated casting style.  '
              'Use static_cast<bool>(...) instead  '
              '[readability/casting] [4]')))
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.Results().count(
             ('Using deprecated casting style.  '
@@ -927,11 +930,11 @@ class CpplintTest(CpplintTestBase):
   def testIncludeWhatYouUseNoImplementationFiles(self):
     code = 'std::vector<int> foo;'
     for extension in ['h', 'hpp', 'hxx', 'h++', 'cuh']:
-      self.assertEqual('Add #include <vector> for vector<>'
+      self.assertEquals('Add #include <vector> for vector<>'
                        '  [build/include_what_you_use] [4]',
                        self.PerformIncludeWhatYouUse(code, 'foo.' + extension))
     for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
-      self.assertEqual('',
+      self.assertEquals('',
                        self.PerformIncludeWhatYouUse(code, 'foo.' + extension))
 
   def testIncludeWhatYouUse(self):
@@ -1123,7 +1126,7 @@ class CpplintTest(CpplintTestBase):
         '#include "blah/a.h"',
         filename='blah/a.cc',
         io=MockIo(mock_header_contents))
-    self.assertEqual(message, '')
+    self.assertEquals(message, '')
 
     mock_header_contents = ['#include <set>']
     message = self.PerformIncludeWhatYouUse(
@@ -1131,7 +1134,7 @@ class CpplintTest(CpplintTestBase):
            std::set<int> foo;""",
         filename='blah/a.cc',
         io=MockIo(mock_header_contents))
-    self.assertEqual(message, '')
+    self.assertEquals(message, '')
 
     # Make sure we can find the correct header file if the cc file seems to be
     # a temporary file generated by Emacs's flymake.
@@ -1141,7 +1144,7 @@ class CpplintTest(CpplintTestBase):
            std::set<int> foo;""",
         filename='blah/a_flymake.cc',
         io=MockIo(mock_header_contents))
-    self.assertEqual(message, 'Add #include <set> for set<>  '
+    self.assertEquals(message, 'Add #include <set> for set<>  '
                       '[build/include_what_you_use] [4]')
 
     # If there's just a cc and the header can't be found then it's ok.
@@ -1149,7 +1152,7 @@ class CpplintTest(CpplintTestBase):
         """#include "blah/a.h"
            std::set<int> foo;""",
         filename='blah/a.cc')
-    self.assertEqual(message, '')
+    self.assertEquals(message, '')
 
     # Make sure we find the headers with relative paths.
     mock_header_contents = ['']
@@ -1158,45 +1161,46 @@ class CpplintTest(CpplintTestBase):
            std::set<int> foo;""" % os.path.basename(os.getcwd()),
         filename='a.cc',
         io=MockIo(mock_header_contents))
-    self.assertEqual(message, 'Add #include <set> for set<>  '
+    self.assertEquals(message, 'Add #include <set> for set<>  '
                       '[build/include_what_you_use] [4]')
 
   def testFilesBelongToSameModule(self):
     f = cpplint.FilesBelongToSameModule
-    self.assertEqual((True, ''), f('a.cc', 'a.h'))
-    self.assertEqual((True, ''), f('base/google.cc', 'base/google.h'))
-    self.assertEqual((True, ''), f('base/google_test.c', 'base/google.h'))
-    self.assertEqual((True, ''), f('base/google_test.cc', 'base/google.hpp'))
-    self.assertEqual((True, ''), f('base/google_test.cxx', 'base/google.hxx'))
-    self.assertEqual((True, ''), f('base/google_test.cpp', 'base/google.hpp'))
-    self.assertEqual((True, ''), f('base/google_test.c++', 'base/google.h++'))
-    self.assertEqual((True, ''), f('base/google_test.cu', 'base/google.cuh'))
-    self.assertEqual((True, ''),
+    self.assertEquals((True, ''), f('a.cc', 'a.h'))
+    self.assertEquals((True, ''), f('base/google.cc', 'base/google.h'))
+    self.assertEquals((True, ''), f('base/google_test.c', 'base/google.h'))
+    self.assertEquals((True, ''), f('base/google_test.cc', 'base/google.h'))
+    self.assertEquals((True, ''), f('base/google_test.cc', 'base/google.hpp'))
+    self.assertEquals((True, ''), f('base/google_test.cxx', 'base/google.hxx'))
+    self.assertEquals((True, ''), f('base/google_test.cpp', 'base/google.hpp'))
+    self.assertEquals((True, ''), f('base/google_test.c++', 'base/google.h++'))
+    self.assertEquals((True, ''), f('base/google_test.cu', 'base/google.cuh'))
+    self.assertEquals((True, ''),
                       f('base/google_unittest.cc', 'base/google.h'))
-    self.assertEqual((True, ''),
+    self.assertEquals((True, ''),
                       f('base/internal/google_unittest.cc',
                         'base/public/google.h'))
-    self.assertEqual((True, 'xxx/yyy/'),
+    self.assertEquals((True, 'xxx/yyy/'),
                       f('xxx/yyy/base/internal/google_unittest.cc',
                         'base/public/google.h'))
-    self.assertEqual((True, 'xxx/yyy/'),
+    self.assertEquals((True, 'xxx/yyy/'),
                       f('xxx/yyy/base/google_unittest.cc',
                         'base/public/google.h'))
-    self.assertEqual((True, ''),
+    self.assertEquals((True, ''),
                       f('base/google_unittest.cc', 'base/google-inl.h'))
-    self.assertEqual((True, '/home/build/google3/'),
+    self.assertEquals((True, '/home/build/google3/'),
                       f('/home/build/google3/base/google.cc', 'base/google.h'))
 
-    self.assertEqual((False, ''),
+    self.assertEquals((False, ''),
                       f('/home/build/google3/base/google.cc', 'basu/google.h'))
-    self.assertEqual((False, ''), f('a.cc', 'b.h'))
+    self.assertEquals((False, ''), f('a.cc', 'b.h'))
 
   def testCleanseLine(self):
-    self.assertEqual('int foo = 0;',
+    self.assertEquals('int foo = 0;',
                       cpplint.CleanseComments('int foo = 0;  // danger!'))
-    self.assertEqual('int o = 0;',
+    self.assertEquals('int o = 0;',
                       cpplint.CleanseComments('int /* foo */ o = 0;'))
-    self.assertEqual('foo(int a, int b);',
+    self.assertEquals('foo(int a, int b);',
                       cpplint.CleanseComments('foo(int a /* abc */, int b);'))
     self.assertEqual('f(a, b);',
                      cpplint.CleanseComments('f(a, /* name */ b);'))
@@ -1330,12 +1334,12 @@ class CpplintTest(CpplintTestBase):
     for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
       file_path = 'mydir/foo.' + extension
 
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData(file_path, extension,
                               ['const char* str = "This is a\\',
                                ' multiline string.";'],
                               error_collector)
-      self.assertEqual(
+      self.assertEquals(
           2,  # One per line.
           error_collector.ResultList().count(multiline_string_error_message))
 
@@ -1663,48 +1667,48 @@ class CpplintTest(CpplintTestBase):
           };""",
           '')
       # Special case for variadic arguments
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData('foo.cc', 'cc',
           ['class Foo {',
           '  template<typename... Args>',
           '  explicit Foo(const int arg, Args&&... args) {}',
           '};'],
           error_collector)
-      self.assertEqual(0, error_collector.ResultList().count(
+      self.assertEquals(0, error_collector.ResultList().count(
         'Constructors that require multiple arguments should not be marked '
         'explicit.  [runtime/explicit] [0]'))
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData('foo.cc', 'cc',
           ['class Foo {',
           '  template<typename... Args>',
           '  explicit Foo(Args&&... args) {}',
           '};'],
           error_collector)
-      self.assertEqual(0, error_collector.ResultList().count(
+      self.assertEquals(0, error_collector.ResultList().count(
         'Constructors that require multiple arguments should not be marked '
         'explicit.  [runtime/explicit] [0]'))
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData('foo.cc', 'cc',
           ['class Foo {',
           '  template<typename... Args>',
           '  Foo(const int arg, Args&&... args) {}',
           '};'],
           error_collector)
-      self.assertEqual(1, error_collector.ResultList().count(
+      self.assertEquals(1, error_collector.ResultList().count(
         'Constructors callable with one argument should be marked explicit.'
         '  [runtime/explicit] [5]'))
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData('foo.cc', 'cc',
           ['class Foo {',
           '  template<typename... Args>',
           '  Foo(Args&&... args) {}',
           '};'],
           error_collector)
-      self.assertEqual(1, error_collector.ResultList().count(
+      self.assertEquals(1, error_collector.ResultList().count(
         'Constructors callable with one argument should be marked explicit.'
         '  [runtime/explicit] [5]'))
       # Anything goes inside an assembly block
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData('foo.cc', 'cc',
                               ['void Func() {',
                                '  __asm__ (',
@@ -1715,16 +1719,16 @@ class CpplintTest(CpplintTestBase):
                                '  }',
                                '}'],
                               error_collector)
-      self.assertEqual(
+      self.assertEquals(
           0,
           error_collector.ResultList().count(
               'Extra space before ( in function call  [whitespace/parens] [4]'))
-      self.assertEqual(
+      self.assertEquals(
           0,
           error_collector.ResultList().count(
               'Closing ) should be moved to the previous line  '
               '[whitespace/parens] [2]'))
-      self.assertEqual(
+      self.assertEquals(
           0,
           error_collector.ResultList().count(
               'Extra space before [  [whitespace/braces] [5]'))
@@ -1814,7 +1818,7 @@ class CpplintTest(CpplintTestBase):
       self.TestLint('virtual int F() %s;' % virt_specifier, error_message)
       self.TestLint('virtual int F() %s {' % virt_specifier, error_message)
 
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData(
           'foo.cc', 'cc',
           ['// Copyright 2014 Your Company.',
@@ -1827,7 +1831,7 @@ class CpplintTest(CpplintTestBase):
            '    LOCKS_EXCLUDED(lock) ' + virt_specifier + ';',
            ''],
           error_collector)
-      self.assertEqual(
+      self.assertEquals(
           [error_message, error_message, error_message],
           error_collector.Results())
 
@@ -1839,7 +1843,7 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('int F() final override;', error_message)
     self.TestLint('int F() final override {}', error_message)
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         'foo.cc', 'cc',
         ['// Copyright 2014 Your Company.',
@@ -1853,7 +1857,7 @@ class CpplintTest(CpplintTestBase):
          '}',
          ''],
         error_collector)
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
 
     self.TestLint('void Finalize(AnnotationProto *final) override;', '')
 
@@ -2014,7 +2018,7 @@ class CpplintTest(CpplintTestBase):
     for macro_name in (
         'DISALLOW_COPY_AND_ASSIGN',
         'DISALLOW_IMPLICIT_CONSTRUCTORS'):
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData(
           'foo.cc', 'cc',
           ['// Copyright 2014 Your Company.',
@@ -2025,12 +2029,12 @@ class CpplintTest(CpplintTestBase):
            '};',
            ''],
           error_collector)
-      self.assertEqual(
+      self.assertEquals(
           ('%s should be the last thing in the class' % macro_name) +
           '  [readability/constructors] [3]',
           error_collector.Results())
 
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData(
           'foo.cc', 'cc',
           ['// Copyright 2014 Your Company.',
@@ -2044,12 +2048,12 @@ class CpplintTest(CpplintTestBase):
            '};',
            ''],
           error_collector)
-      self.assertEqual(
+      self.assertEquals(
           ('%s should be the last thing in the class' % macro_name) +
           '  [readability/constructors] [3]',
           error_collector.Results())
 
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData(
           'foo.cc', 'cc',
           ['// Copyright 2014 Your Company.',
@@ -2081,7 +2085,7 @@ class CpplintTest(CpplintTestBase):
            '}',
            ''],
           error_collector)
-      self.assertEqual('', error_collector.Results())
+      self.assertEquals('', error_collector.Results())
 
   # Brace usage
   def testBraces(self):
@@ -2382,7 +2386,7 @@ class CpplintTest(CpplintTestBase):
 
     # Don't warn on out-of-line method definitions.
     self.TestLint('void NS::Func(X& x) {', '')
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         'foo.cc', 'cc',
         ['// Copyright 2014 Your Company. All Rights Reserved.',
@@ -2390,13 +2394,13 @@ class CpplintTest(CpplintTestBase):
          'void f(int& q) {}',
          ''],
         error_collector)
-    self.assertEqual(
+    self.assertEquals(
         operand_error_message % 'int& q',
         error_collector.Results())
 
     # Other potential false positives.  These need full parser
     # state to reproduce as opposed to just TestLint.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         'foo.cc', 'cc',
         ['// Copyright 2014 Your Company. All Rights Reserved.',
@@ -2436,10 +2440,10 @@ class CpplintTest(CpplintTestBase):
          '      initializer2_(a6 & b6) {}',
          ''],
         error_collector)
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
 
     # Multi-line references
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         'foo.cc', 'cc',
         ['// Copyright 2014 Your Company. All Rights Reserved.',
@@ -2458,14 +2462,14 @@ class CpplintTest(CpplintTestBase):
          '}',
          ''],
         error_collector)
-    self.assertEqual(
+    self.assertEquals(
         [operand_error_message % 'Outer::Inner& nonconst_x',
          operand_error_message % 'Outer::Inner& nonconst_y',
          operand_error_message % 'Outer<int>::Inner& nonconst_z'],
         error_collector.Results())
 
     # A peculiar false positive due to bad template argument parsing
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         'foo.cc', 'cc',
         ['// Copyright 2014 Your Company. All Rights Reserved.',
@@ -2478,14 +2482,14 @@ class CpplintTest(CpplintTestBase):
          '}',
          ''],
         error_collector.Results())
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
 
   def testBraceAtBeginOfLine(self):
     self.TestLint('{',
                   '{ should almost always be at the end of the previous line'
                   '  [whitespace/braces] [4]')
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['int function()',
                              '{',  # warning here
@@ -2507,7 +2511,7 @@ class CpplintTest(CpplintTestBase):
                              '}',
                              '#endif'],
                             error_collector)
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         '{ should almost always be at the end of the previous line'
         '  [whitespace/braces] [4]'))
 
@@ -2989,7 +2993,7 @@ class CpplintTest(CpplintTestBase):
                   '}\n', '')
 
     # Check multiline cases.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['// Copyright 2014 Your Company.',
                              'string Class',
@@ -3012,7 +3016,7 @@ class CpplintTest(CpplintTestBase):
                              'static_member_variable5;',
                              ''],
                             error_collector)
-    self.assertEqual(error_collector.Results(),
+    self.assertEquals(error_collector.Results(),
                       [error_msg % 'const char Class::static_member_variable1',
                        error_msg % 'const char Class::static_member_variable2',
                        error_msg % 'const char Class::static_member_variable3',
@@ -3140,10 +3144,10 @@ class CpplintTest(CpplintTestBase):
   # 1' line was also causing the issue.
   def testLinePrecededByEmptyOrCommentLines(self):
     def DoTest(self, lines):
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData('foo.cc', 'cc', lines, error_collector)
       # The warning appears only once.
-      self.assertEqual(
+      self.assertEquals(
           1,
           error_collector.Results().count(
               'Do not use namespace using-directives.  '
@@ -3163,11 +3167,11 @@ class CpplintTest(CpplintTestBase):
 
   def testNewlineAtEOF(self):
     def DoTest(self, data, is_missing_eof):
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData('foo.cc', 'cc', data.split('\n'),
                               error_collector)
       # The warning appears only once.
-      self.assertEqual(
+      self.assertEquals(
           int(is_missing_eof),
           error_collector.Results().count(
               'Could not find a newline character at the end of the file.'
@@ -3178,7 +3182,7 @@ class CpplintTest(CpplintTestBase):
 
   def testInvalidUtf8(self):
     def DoTest(self, raw_bytes, has_invalid_utf8):
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       if sys.version_info < (3,):
           unidata = unicode(raw_bytes, 'utf8', 'replace').split('\n')
       else:
@@ -3188,7 +3192,7 @@ class CpplintTest(CpplintTestBase):
           unidata,
           error_collector)
       # The warning appears only once.
-      self.assertEqual(
+      self.assertEquals(
           int(has_invalid_utf8),
           error_collector.Results().count(
               'Line contains invalid UTF-8'
@@ -3204,17 +3208,17 @@ class CpplintTest(CpplintTestBase):
 
   def testBadCharacters(self):
     # Test for NUL bytes only
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('nul.cc', 'cc',
                             ['// Copyright 2014 Your Company.',
                              '\0', ''], error_collector)
-    self.assertEqual(
+    self.assertEquals(
         error_collector.Results(),
         'Line contains NUL byte.  [readability/nul] [5]')
 
     # Make sure both NUL bytes and UTF-8 are caught if they appear on
     # the same line.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     raw_bytes = codecs_latin_encode('\xe9x\0')
     if sys.version_info < (3,):
           unidata = unicode(raw_bytes, 'utf8', 'replace')
@@ -3226,18 +3230,18 @@ class CpplintTest(CpplintTestBase):
          unidata,
          ''],
         error_collector)
-    self.assertEqual(
+    self.assertEquals(
         error_collector.Results(),
         ['Line contains invalid UTF-8 (or Unicode replacement character).'
          '  [readability/utf8] [5]',
          'Line contains NUL byte.  [readability/nul] [5]'])
 
   def testIsBlankLine(self):
-    self.assertTrue(cpplint.IsBlankLine(''))
-    self.assertTrue(cpplint.IsBlankLine(' '))
-    self.assertTrue(cpplint.IsBlankLine(' \t\r\n'))
-    self.assertTrue(not cpplint.IsBlankLine('int a;'))
-    self.assertTrue(not cpplint.IsBlankLine('{'))
+    self.assert_(cpplint.IsBlankLine(''))
+    self.assert_(cpplint.IsBlankLine(' '))
+    self.assert_(cpplint.IsBlankLine(' \t\r\n'))
+    self.assert_(not cpplint.IsBlankLine('int a;'))
+    self.assert_(not cpplint.IsBlankLine('{'))
 
   def testBlankLinesCheck(self):
     self.TestBlankLinesCheck(['{\n', '\n', '\n', '}\n'], 1, 1)
@@ -3256,7 +3260,7 @@ class CpplintTest(CpplintTestBase):
         ['int x(\n', '   int a) {\n', '\n', 'return 0;\n', '}'], 1, 0)
 
   def testAllowBlankLineBeforeClosingNamespace(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['namespace {',
                              '',
@@ -3276,12 +3280,12 @@ class CpplintTest(CpplintTestBase):
                              '', '', '', '',
                              '}'],
                             error_collector)
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'Redundant blank line at the end of a code block should be deleted.'
         '  [whitespace/blank_line] [3]'))
 
   def testAllowBlankLineBeforeIfElseChain(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['if (hoge) {',
                              '',  # No warning
@@ -3293,12 +3297,12 @@ class CpplintTest(CpplintTestBase):
                              '',  # Warning on this line
                              '}'],
                             error_collector)
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         'Redundant blank line at the end of a code block should be deleted.'
         '  [whitespace/blank_line] [3]'))
 
   def testAllowBlankLineAfterExtern(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['extern "C" {',
                              '',
@@ -3306,15 +3310,15 @@ class CpplintTest(CpplintTestBase):
                              '',
                              '}'],
                             error_collector)
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'Redundant blank line at the start of a code block should be deleted.'
         '  [whitespace/blank_line] [2]'))
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'Redundant blank line at the end of a code block should be deleted.'
         '  [whitespace/blank_line] [3]'))
 
   def testBlankLineBeforeSectionKeyword(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['class A {',
                              ' public:',
@@ -3342,15 +3346,15 @@ class CpplintTest(CpplintTestBase):
                              '  int a;\\',
                              '};'],
                             error_collector)
-    self.assertEqual(2, error_collector.Results().count(
+    self.assertEquals(2, error_collector.Results().count(
         '"private:" should be preceded by a blank line'
         '  [whitespace/blank_line] [3]'))
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         '"protected:" should be preceded by a blank line'
         '  [whitespace/blank_line] [3]'))
 
   def testNoBlankLineAfterSectionKeyword(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['class A {',
                              ' public:',
@@ -3363,18 +3367,18 @@ class CpplintTest(CpplintTestBase):
                              '  };',
                              '};'],
                             error_collector)
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         'Do not leave a blank line after "public:"'
         '  [whitespace/blank_line] [3]'))
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         'Do not leave a blank line after "protected:"'
         '  [whitespace/blank_line] [3]'))
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         'Do not leave a blank line after "private:"'
         '  [whitespace/blank_line] [3]'))
 
   def testAllowBlankLinesInRawStrings(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['// Copyright 2014 Your Company.',
                              'static const char *kData[] = {R"(',
@@ -3384,10 +3388,10 @@ class CpplintTest(CpplintTestBase):
                              ')"};',
                              ''],
                             error_collector)
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
 
   def testElseOnSameLineAsClosingBraces(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['if (hoge) {',
                              '}',
@@ -3397,11 +3401,11 @@ class CpplintTest(CpplintTestBase):
                              '',
                              '}'],
                             error_collector)
-    self.assertEqual(2, error_collector.Results().count(
+    self.assertEquals(2, error_collector.Results().count(
         'An else should appear on the same line as the preceding }'
         '  [whitespace/newline] [4]'))
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['if (hoge) {',
                              '',
@@ -3411,23 +3415,23 @@ class CpplintTest(CpplintTestBase):
                              '',
                              '}'],
                             error_collector)
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         'An else should appear on the same line as the preceding }'
         '  [whitespace/newline] [4]'))
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['if (hoge) {',
                              '',
                              '}',
                              'else_function();'],
                             error_collector)
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'An else should appear on the same line as the preceding }'
         '  [whitespace/newline] [4]'))
 
   def testMultipleStatementsOnSameLine(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['for (int i = 0; i < 1; i++) {}',
                              'switch (x) {',
@@ -3435,7 +3439,7 @@ class CpplintTest(CpplintTestBase):
                              '}',
                              'sum += MathUtil::SafeIntRound(x); x += 0.1;'],
                             error_collector)
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'More than one command on the same line  [whitespace/newline] [0]'))
 
     old_verbose_level = cpplint._cpplint_state.verbose_level
@@ -3446,7 +3450,7 @@ class CpplintTest(CpplintTestBase):
     cpplint._cpplint_state.verbose_level = old_verbose_level
 
   def testLambdasOnSameLine(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     old_verbose_level = cpplint._cpplint_state.verbose_level
     cpplint._cpplint_state.verbose_level = 0
     cpplint.ProcessFileData('foo.cc', 'cc',
@@ -3454,10 +3458,10 @@ class CpplintTest(CpplintTestBase):
                               '[](const int i) { return i; };'],
                             error_collector)
     cpplint._cpplint_state.verbose_level = old_verbose_level
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'More than one command on the same line  [whitespace/newline] [0]'))
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     old_verbose_level = cpplint._cpplint_state.verbose_level
     cpplint._cpplint_state.verbose_level = 0
     cpplint.ProcessFileData('foo.cc', 'cc',
@@ -3466,10 +3470,10 @@ class CpplintTest(CpplintTestBase):
                               '[](const int i) { return i > 0; });'],
                             error_collector)
     cpplint._cpplint_state.verbose_level = old_verbose_level
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'More than one command on the same line  [whitespace/newline] [0]'))
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     old_verbose_level = cpplint._cpplint_state.verbose_level
     cpplint._cpplint_state.verbose_level = 0
     cpplint.ProcessFileData('foo.cc', 'cc',
@@ -3478,10 +3482,10 @@ class CpplintTest(CpplintTestBase):
                               'this->ReadUnlock(); });'],
                             error_collector)
     cpplint._cpplint_state.verbose_level = old_verbose_level
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'More than one command on the same line  [whitespace/newline] [0]'))
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     old_verbose_level = cpplint._cpplint_state.verbose_level
     cpplint._cpplint_state.verbose_level = 0
     cpplint.ProcessFileData('foo.cc', 'cc',
@@ -3490,11 +3494,11 @@ class CpplintTest(CpplintTestBase):
                               'this->ReadUnlock(); }, object);'],
                             error_collector)
     cpplint._cpplint_state.verbose_level = old_verbose_level
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'More than one command on the same line  [whitespace/newline] [0]'))
 
   def testEndOfNamespaceComments(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
                             ['namespace {',
                              '',
@@ -3537,26 +3541,26 @@ class CpplintTest(CpplintTestBase):
                             ['}  /* namespace c_style. */ \\',
                              ';'],
                             error_collector)
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         'Namespace should be terminated with "// namespace expected"'
         '  [readability/namespace] [5]'))
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         'Namespace should be terminated with "// namespace outer"'
         '  [readability/namespace] [5]'))
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         'Namespace should be terminated with "// namespace nested"'
         '  [readability/namespace] [5]'))
-    self.assertEqual(3, error_collector.Results().count(
+    self.assertEquals(3, error_collector.Results().count(
         'Anonymous namespace should be terminated with "// namespace"'
         '  [readability/namespace] [5]'))
-    self.assertEqual(2, error_collector.Results().count(
+    self.assertEquals(2, error_collector.Results().count(
         'Anonymous namespace should be terminated with "// namespace" or'
         ' "// anonymous namespace"'
         '  [readability/namespace] [5]'))
-    self.assertEqual(1, error_collector.Results().count(
+    self.assertEquals(1, error_collector.Results().count(
         'Namespace should be terminated with "// namespace missing_comment"'
         '  [readability/namespace] [5]'))
-    self.assertEqual(0, error_collector.Results().count(
+    self.assertEquals(0, error_collector.Results().count(
         'Namespace should be terminated with "// namespace no_warning"'
         '  [readability/namespace] [5]'))
 
@@ -3978,38 +3982,38 @@ class CpplintTest(CpplintTestBase):
                         ['--filter=+a,b,-c'])
       self.assertRaises(SystemExit, cpplint.ParseArguments, ['--headers'])
 
-      self.assertEqual(['foo.cc'], cpplint.ParseArguments(['foo.cc']))
-      self.assertEqual(old_output_format, cpplint._cpplint_state.output_format)
-      self.assertEqual(old_verbose_level, cpplint._cpplint_state.verbose_level)
+      self.assertEquals(['foo.cc'], cpplint.ParseArguments(['foo.cc']))
+      self.assertEquals(old_output_format, cpplint._cpplint_state.output_format)
+      self.assertEquals(old_verbose_level, cpplint._cpplint_state.verbose_level)
 
-      self.assertEqual(['foo.cc'],
+      self.assertEquals(['foo.cc'],
                         cpplint.ParseArguments(['--v=1', 'foo.cc']))
-      self.assertEqual(1, cpplint._cpplint_state.verbose_level)
-      self.assertEqual(['foo.h'],
+      self.assertEquals(1, cpplint._cpplint_state.verbose_level)
+      self.assertEquals(['foo.h'],
                         cpplint.ParseArguments(['--v=3', 'foo.h']))
-      self.assertEqual(3, cpplint._cpplint_state.verbose_level)
-      self.assertEqual(['foo.cpp'],
+      self.assertEquals(3, cpplint._cpplint_state.verbose_level)
+      self.assertEquals(['foo.cpp'],
                         cpplint.ParseArguments(['--verbose=5', 'foo.cpp']))
-      self.assertEqual(5, cpplint._cpplint_state.verbose_level)
+      self.assertEquals(5, cpplint._cpplint_state.verbose_level)
       self.assertRaises(ValueError,
                         cpplint.ParseArguments, ['--v=f', 'foo.cc'])
 
-      self.assertEqual(['foo.cc'],
+      self.assertEquals(['foo.cc'],
                         cpplint.ParseArguments(['--output=emacs', 'foo.cc']))
-      self.assertEqual('emacs', cpplint._cpplint_state.output_format)
-      self.assertEqual(['foo.h'],
+      self.assertEquals('emacs', cpplint._cpplint_state.output_format)
+      self.assertEquals(['foo.h'],
                         cpplint.ParseArguments(['--output=vs7', 'foo.h']))
-      self.assertEqual('vs7', cpplint._cpplint_state.output_format)
+      self.assertEquals('vs7', cpplint._cpplint_state.output_format)
       self.assertRaises(SystemExit,
                         cpplint.ParseArguments, ['--output=blah', 'foo.cc'])
 
       filt = '-,+whitespace,-whitespace/indent'
-      self.assertEqual(['foo.h'],
+      self.assertEquals(['foo.h'],
                         cpplint.ParseArguments(['--filter='+filt, 'foo.h']))
-      self.assertEqual(['-', '+whitespace', '-whitespace/indent'],
+      self.assertEquals(['-', '+whitespace', '-whitespace/indent'],
                         cpplint._cpplint_state.filters)
 
-      self.assertEqual(['foo.cc', 'foo.h'],
+      self.assertEquals(['foo.cc', 'foo.h'],
                         cpplint.ParseArguments(['foo.cc', 'foo.h']))
 
       self.assertEqual(['foo.h'],
@@ -4050,7 +4054,7 @@ class CpplintTest(CpplintTestBase):
       expected = ['one.cpp', os.path.join('src', 'two.cpp'),
                   os.path.join('src', 'nested', 'three.cpp')]
       actual = cpplint.ParseArguments(['--recursive', 'one.cpp', 'src'])
-      self.assertEqual(set(expected), set(actual))
+      self.assertEquals(set(expected), set(actual))
     finally:
         os.chdir(working_dir)
         shutil.rmtree(temp_dir)
@@ -4068,7 +4072,7 @@ class CpplintTest(CpplintTestBase):
       expected = ['one.cpp', os.path.join('src', 'two.cpp')]
       actual = cpplint.ParseArguments(['--recursive', '--extensions=cpp',
           'one.cpp', 'src'])
-      self.assertEqual(set(expected), set(actual))
+      self.assertEquals(set(expected), set(actual))
     finally:
         os.chdir(working_dir)
         shutil.rmtree(temp_dir)
@@ -4089,12 +4093,12 @@ class CpplintTest(CpplintTestBase):
       expected = [os.path.join('src', 'one.cc')]
       actual = cpplint.ParseArguments(['--recursive',
           '--exclude=src{0}t*'.format(os.sep), 'src'])
-      self.assertEqual(set(expected), set(actual))
+      self.assertEquals(set(expected), set(actual))
 
       expected = [os.path.join('src', 'one.cc')]
       actual = cpplint.ParseArguments(['--recursive',
           '--exclude=src/two.cc', '--exclude=src/three.cc', 'src'])
-      self.assertEqual(set(expected), set(actual))
+      self.assertEquals(set(expected), set(actual))
 
     finally:
         os.chdir(working_dir)
@@ -4108,7 +4112,7 @@ class CpplintTest(CpplintTestBase):
           '<testsuite errors="0" failures="0" name="cpplint" tests="1">'
           '<testcase name="passed" />'
           '</testsuite>')
-      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+      self.assertEquals(expected, cpplint._cpplint_state.FormatJUnitXML())
 
       cpplint._cpplint_state._junit_errors = ['ErrMsg1']
       cpplint._cpplint_state._junit_failures = []
@@ -4116,7 +4120,7 @@ class CpplintTest(CpplintTestBase):
           '<testsuite errors="1" failures="0" name="cpplint" tests="1">'
           '<testcase name="errors"><error>ErrMsg1</error></testcase>'
           '</testsuite>')
-      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+      self.assertEquals(expected, cpplint._cpplint_state.FormatJUnitXML())
 
       cpplint._cpplint_state._junit_errors = ['ErrMsg1', 'ErrMsg2']
       cpplint._cpplint_state._junit_failures = []
@@ -4124,7 +4128,7 @@ class CpplintTest(CpplintTestBase):
           '<testsuite errors="2" failures="0" name="cpplint" tests="2">'
           '<testcase name="errors"><error>ErrMsg1\nErrMsg2</error></testcase>'
           '</testsuite>')
-      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+      self.assertEquals(expected, cpplint._cpplint_state.FormatJUnitXML())
 
       cpplint._cpplint_state._junit_errors = ['ErrMsg']
       cpplint._cpplint_state._junit_failures = [
@@ -4134,7 +4138,7 @@ class CpplintTest(CpplintTestBase):
           '<testcase name="errors"><error>ErrMsg</error></testcase>'
           '<testcase name="File"><failure>5: FailMsg [category/subcategory] '
           '[3]</failure></testcase></testsuite>')
-      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+      self.assertEquals(expected, cpplint._cpplint_state.FormatJUnitXML())
 
       cpplint._cpplint_state._junit_errors = []
       cpplint._cpplint_state._junit_failures = [
@@ -4147,7 +4151,7 @@ class CpplintTest(CpplintTestBase):
           ' [3]\n19: FailMsg3 [category/subcategory] [3]</failure></testcase>'
           '<testcase name="File2"><failure>99: FailMsg2 '
           '[category/subcategory] [3]</failure></testcase></testsuite>')
-      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+      self.assertEquals(expected, cpplint._cpplint_state.FormatJUnitXML())
 
       cpplint._cpplint_state._junit_errors = ['&</error>']
       cpplint._cpplint_state._junit_failures = [
@@ -4158,16 +4162,16 @@ class CpplintTest(CpplintTestBase):
           '</testcase><testcase name="File1"><failure>5: '
           '&amp;&lt;/failure&gt; [category/subcategory] [3]</failure>'
           '</testcase></testsuite>')
-      self.assertEqual(expected, cpplint._cpplint_state.FormatJUnitXML())
+      self.assertEquals(expected, cpplint._cpplint_state.FormatJUnitXML())
 
     finally:
       cpplint._cpplint_state._junit_errors = []
       cpplint._cpplint_state._junit_failures = []
 
   def testQuiet(self):
-    self.assertEqual(cpplint._cpplint_state.quiet, False)
+    self.assertEquals(cpplint._cpplint_state.quiet, False)
     cpplint.ParseArguments(['--quiet', 'one.cpp'])
-    self.assertEqual(cpplint._cpplint_state.quiet, True)
+    self.assertEquals(cpplint._cpplint_state.quiet, True)
 
   def testLineLength(self):
     old_line_length = cpplint._line_length
@@ -4223,7 +4227,7 @@ class CpplintTest(CpplintTestBase):
       cpplint._DEFAULT_FILTERS = default_filters
 
   def testDuplicateHeader(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('path/self.cc', 'cc',
                             ['// Copyright 2014 Your Company. All Rights Reserved.',
                              '#include "path/self.h"',
@@ -4236,26 +4240,31 @@ class CpplintTest(CpplintTestBase):
                              '#endif',
                              ''],
                             error_collector)
-    self.assertEqual(
+    self.assertEquals(
         ['"path/duplicate.h" already included at path/self.cc:3  '
          '[build/include] [4]'],
         error_collector.ResultList())
 
   def testUnnamedNamespacesInHeaders(self):
     for extension in ['h', 'hpp', 'hxx', 'h++', 'cuh']:
-        self.TestLanguageRulesCheck(
-            'foo.' + extension, 'namespace {',
-            'Do not use unnamed namespaces in header files.  See'
-            ' https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
-            ' for more information.  [build/namespaces] [4]')
-        # namespace registration macros are OK.
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace {  \\', '')
-        # named namespaces are OK.
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace foonamespace {', '')
+      self.doTestUnnamedNamespacesInHeaders(extension)
+
+  def doTestUnnamedNamespacesInHeaders(self, extension):
+    self.TestLanguageRulesCheck(
+        'foo.' + extension, 'namespace {',
+        'Do not use unnamed namespaces in header files.  See'
+        ' https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
+        ' for more information.  [build/namespaces] [4]')
+    # namespace registration macros are OK.
+    self.TestLanguageRulesCheck('foo.' + extension, 'namespace {  \\', '')
+    # named namespaces are OK.
+    self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
+    self.TestLanguageRulesCheck('foo.' + extension, 'namespace foonamespace {', '')
+
+  def testUnnamedNamespacesInNonHeaders(self):
     for extension in ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']:
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace {', '')
-        self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
+      self.TestLanguageRulesCheck('foo.' + extension, 'namespace {', '')
+      self.TestLanguageRulesCheck('foo.' + extension, 'namespace foo {', '')
 
   def testBuildClass(self):
     # Test that the linter can parse to the end of class definitions,
@@ -4322,7 +4331,7 @@ class CpplintTest(CpplintTestBase):
 
   def GetBuildHeaderGuardPreprocessorSymbol(self, file_path):
     # Figure out the expected header guard by processing an empty file.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h', [], error_collector)
     for error in error_collector.ResultList():
       matched = re.search(
@@ -4338,9 +4347,9 @@ class CpplintTest(CpplintTestBase):
     self.assertTrue(re.search('MYDIR_FOO_H_$', expected_guard))
 
     # No guard at all: expect one error.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h', [], error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             'No #ifndef header guard found, suggested CPP variable is: %s'
@@ -4348,18 +4357,18 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
     # No header guard, but the error is suppressed.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['// Copyright 2014 Your Company.',
                              '// NOLINT(build/header_guard)', ''],
                             error_collector)
-    self.assertEqual([], error_collector.ResultList())
+    self.assertEquals([], error_collector.ResultList())
 
     # Wrong guard
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef FOO_H', '#define FOO_H'], error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             '#ifndef header guard has wrong style, please use: %s'
@@ -4367,10 +4376,10 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
     # No define
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef %s' % expected_guard], error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             'No #ifndef header guard found, suggested CPP variable is: %s'
@@ -4378,12 +4387,12 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
     # Mismatched define
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef %s' % expected_guard,
                              '#define FOO_H'],
                             error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             'No #ifndef header guard found, suggested CPP variable is: %s'
@@ -4391,13 +4400,13 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
     # No endif
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef %s' % expected_guard,
                              '#define %s' % expected_guard,
                              ''],
                             error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             '#endif line should be "#endif  // %s"'
@@ -4405,13 +4414,13 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
     # Commentless endif
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef %s' % expected_guard,
                              '#define %s' % expected_guard,
                              '#endif'],
                             error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             '#endif line should be "#endif  // %s"'
@@ -4419,13 +4428,13 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
     # Commentless endif for old-style guard
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef %s_' % expected_guard,
                              '#define %s_' % expected_guard,
                              '#endif'],
                             error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             '#endif line should be "#endif  // %s"'
@@ -4433,7 +4442,7 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
     # No header guard errors
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef %s' % expected_guard,
                              '#define %s' % expected_guard,
@@ -4444,7 +4453,7 @@ class CpplintTest(CpplintTestBase):
         self.fail('Unexpected error: %s' % line)
 
     # No header guard errors for old-style guard
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef %s_' % expected_guard,
                              '#define %s_' % expected_guard,
@@ -4458,13 +4467,13 @@ class CpplintTest(CpplintTestBase):
     try:
       cpplint._cpplint_state.verbose_level = 0
       # Warn on old-style guard if verbosity is 0.
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData(file_path, 'h',
                               ['#ifndef %s_' % expected_guard,
                                '#define %s_' % expected_guard,
                                '#endif  // %s_' % expected_guard],
                               error_collector)
-      self.assertEqual(
+      self.assertEquals(
           1,
           error_collector.ResultList().count(
               '#ifndef header guard has wrong style, please use: %s'
@@ -4474,19 +4483,19 @@ class CpplintTest(CpplintTestBase):
       cpplint._cpplint_state.verbose_level = old_verbose_level
 
     # Completely incorrect header guard
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef FOO',
                              '#define FOO',
                              '#endif  // FOO'],
                             error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             '#ifndef header guard has wrong style, please use: %s'
             '  [build/header_guard] [5]' % expected_guard),
         error_collector.ResultList())
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             '#endif line should be "#endif  // %s"'
@@ -4494,19 +4503,19 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
     # incorrect header guard with nolint
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'h',
                             ['#ifndef FOO  // NOLINT',
                              '#define FOO',
                              '#endif  // FOO NOLINT'],
                             error_collector)
-    self.assertEqual(
+    self.assertEquals(
         0,
         error_collector.ResultList().count(
             '#ifndef header guard has wrong style, please use: %s'
             '  [build/header_guard] [5]' % expected_guard),
         error_collector.ResultList())
-    self.assertEqual(
+    self.assertEquals(
         0,
         error_collector.ResultList().count(
             '#endif line should be "#endif  // %s"'
@@ -4515,11 +4524,11 @@ class CpplintTest(CpplintTestBase):
 
     # Special case for flymake
     for test_file in ['mydir/foo_flymake.h', 'mydir/.flymake/foo.h']:
-      error_collector = ErrorCollector(self.assertTrue)
+      error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData(test_file, 'h',
                               ['// Copyright 2014 Your Company.', ''],
                               error_collector)
-      self.assertEqual(
+      self.assertEquals(
           1,
           error_collector.ResultList().count(
               'No #ifndef header guard found, suggested CPP variable is: %s'
@@ -4529,19 +4538,19 @@ class CpplintTest(CpplintTestBase):
     # Cuda guard
     file_path = 'mydir/foo.cuh'
     expected_guard = self.GetBuildHeaderGuardPreprocessorSymbol(file_path)
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'cuh',
                             ['#ifndef FOO',
                              '#define FOO',
                              '#endif  // FOO'],
                             error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             '#ifndef header guard has wrong style, please use: %s'
             '  [build/header_guard] [5]' % expected_guard),
         error_collector.ResultList())
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(
             '#endif line should be "#endif  // %s"'
@@ -4549,11 +4558,11 @@ class CpplintTest(CpplintTestBase):
         error_collector.ResultList())
 
   def testPragmaOnce(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('mydir/foo.h', 'h',
         ['// Copyright 2014 Your Company.', '#pragma once', ''],
         error_collector)
-    self.assertEqual([], error_collector.ResultList())
+    self.assertEquals([], error_collector.ResultList())
 
   def testBuildHeaderGuardWithRoot(self):
     temp_directory = tempfile.mkdtemp()
@@ -4563,92 +4572,103 @@ class CpplintTest(CpplintTestBase):
       os.makedirs(os.path.join(test_directory, ".svn"))
       header_directory = os.path.join(test_directory, "cpplint")
       os.makedirs(header_directory)
-      # note: Tested file paths must be real, otherwise
-      # the repository name lookup will fail.
-      file_path = os.path.join(header_directory, 'cpplint_test_header.h')
-      open(file_path, 'a').close()
-      file_info = cpplint.FileInfo(file_path)
-      if file_info.FullName() == file_info.RepositoryName():
-        # When FileInfo cannot deduce the root directory of the repository,
-        # FileInfo.RepositoryName returns the same value as FileInfo.FullName.
-        # This can happen when this source file was obtained without .svn or
-        # .git directory. (e.g. using 'svn export' or 'git archive').
-        # Skip this test in such a case because --root flag makes sense only
-        # when the root directory of the repository is properly deduced.
-        return
-
-      self.assertEqual('CPPLINT_CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-      #
-      # test --root flags:
-      #   this changes the cpp header guard prefix
-      #
-
-      # left-strip the header guard by using a root dir inside of the repo dir.
-      # relative directory
-      cpplint._root = 'cpplint'
-      self.assertEqual('CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      nested_header_directory = os.path.join(header_directory, "nested")
-      nested_file_path = os.path.join(nested_header_directory, 'cpplint_test_header.h')
-      os.makedirs(nested_header_directory)
-      open(nested_file_path, 'a').close()
-
-      cpplint._root = os.path.join('cpplint', 'nested')
-      actual = cpplint.GetHeaderGuardCPPVariable(nested_file_path)
-      self.assertEquals('CPPLINT_TEST_HEADER_H_',
-                        actual)
-
-      # absolute directory
-      # (note that CPPLINT.cfg root=setting is always made absolute)
-      cpplint._root = header_directory
-      self.assertEquals('CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      cpplint._root = nested_header_directory
-      self.assertEquals('CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(nested_file_path))
-
-      # --root flag is ignored if an non-existent directory is specified.
-      cpplint._root = 'NON_EXISTENT_DIR'
-      self.assertEqual('CPPLINT_CPPLINT_TEST_HEADER_H_',
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      # prepend to the header guard by using a root dir that is more outer
-      # than the repo dir
-
-      # (using absolute paths)
-      # (note that CPPLINT.cfg root=setting is always made absolute)
-      this_files_path = os.path.dirname(os.path.abspath(file_path))
-      (styleguide_path, this_files_dir) = os.path.split(this_files_path)
-      (styleguide_parent_path, styleguide_dir_name) = os.path.split(styleguide_path)
-      # parent dir of styleguide
-      cpplint._root = styleguide_parent_path
-      self.assertIsNotNone(styleguide_parent_path)
-      # do not hardcode the 'styleguide' repository name, it could be anything.
-      expected_prefix = re.sub(r'[^a-zA-Z0-9]', '_', styleguide_dir_name).upper() + '_'
-      # do not have 'styleguide' repo in '/'
-      self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      # To run the 'relative path' tests, we must be in the directory of this test file.
-      cur_dir = os.getcwd()
-      os.chdir(this_files_path)
-
-      # (using relative paths)
-      styleguide_rel_path = os.path.relpath(styleguide_parent_path,
-                                            this_files_path) # '../..'
-      cpplint._root = styleguide_rel_path
-      self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
-                        cpplint.GetHeaderGuardCPPVariable(file_path))
-
-      cpplint._root = None
-
-      # Restore previous CWD.
-      os.chdir(cur_dir)
+      self.doTestBuildHeaderGuardWithRoot(header_directory)
     finally:
       shutil.rmtree(temp_directory)
+
+  def doTestBuildHeaderGuardWithRoot(self, header_directory):
+
+    # note: Tested file paths must be real, otherwise
+    # the repository name lookup will fail.
+    file_path = os.path.join(header_directory,
+                             'cpplint_test_header.h')
+    open(file_path, 'a').close()
+    file_info = cpplint.FileInfo(file_path)
+    if file_info.FullName() == file_info.RepositoryName():
+      # When FileInfo cannot deduce the root directory of the repository,
+      # FileInfo.RepositoryName returns the same value as FileInfo.FullName.
+      # This can happen when this source file was obtained without .svn or
+      # .git directory. (e.g. using 'svn export' or 'git archive').
+      # Skip this test in such a case because --root flag makes sense only
+      # when the root directory of the repository is properly deduced.
+      return
+
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+    #
+    # test --root flags:
+    #   this changes the cpp header guard prefix
+    #
+
+    # left-strip the header guard by using a root dir inside of the repo dir.
+    # relative directory
+    cpplint._root = 'cpplint'
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    nested_header_directory = os.path.join(header_directory, "nested")
+    nested_file_path = os.path.join(nested_header_directory, 'cpplint_test_header.h')
+    os.makedirs(nested_header_directory)
+    open(nested_file_path, 'a').close()
+
+    cpplint._root = os.path.join('cpplint', 'nested')
+    actual = cpplint.GetHeaderGuardCPPVariable(nested_file_path)
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      actual)
+
+    # absolute directory
+    # (note that CPPLINT.cfg root=setting is always made absolute)
+    cpplint._root = header_directory
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    cpplint._root = nested_header_directory
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(nested_file_path))
+
+    # --root flag is ignored if an non-existent directory is specified.
+    cpplint._root = 'NON_EXISTENT_DIR'
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    # prepend to the header guard by using a root dir that is more outer
+    # than the repo dir
+
+    # (using absolute paths)
+    # (note that CPPLINT.cfg root=setting is always made absolute)
+    this_files_path = os.path.dirname(os.path.abspath(file_path))
+    (styleguide_path, this_files_dir) = os.path.split(this_files_path)
+    (styleguide_parent_path, styleguide_dir_name) = os.path.split(styleguide_path)
+    # parent dir of styleguide
+    cpplint._root = styleguide_parent_path
+    self.assertIsNotNone(styleguide_parent_path)
+    # do not hardcode the 'styleguide' repository name, it could be anything.
+    expected_prefix = re.sub(r'[^a-zA-Z0-9]', '_', styleguide_dir_name).upper() + '_'
+    # do not have 'styleguide' repo in '/'
+    self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    # To run the 'relative path' tests, we must be in the directory of this test file.
+    cur_dir = os.getcwd()
+    os.chdir(this_files_path)
+
+    # (using relative paths)
+    styleguide_rel_path = os.path.relpath(styleguide_path, this_files_path)
+    # '..'
+    cpplint._root = styleguide_rel_path
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    styleguide_rel_path = os.path.relpath(styleguide_parent_path,
+                                          this_files_path) # '../..'
+    cpplint._root = styleguide_rel_path
+    self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    cpplint._root = None
+
+    # Restore previous CWD.
+    os.chdir(cur_dir)
 
   def testPathSplitToList(self):
     self.assertEquals([''],
@@ -4679,31 +4699,31 @@ class CpplintTest(CpplintTestBase):
       open(file_path, 'a').close()
 
       # search for .svn if _repository is not specified
-      self.assertEqual('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
+      self.assertEquals('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
 
       # use the provided repository root for header guards
       cpplint._repository = os.path.relpath(trunk_dir)
-      self.assertEqual('CPPLINT_CPPLINT_TEST_HEADER_H_',
+      self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
       cpplint._repository = os.path.abspath(trunk_dir)
-      self.assertEqual('CPPLINT_CPPLINT_TEST_HEADER_H_',
+      self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
 
       # ignore _repository if it doesnt exist
       cpplint._repository = os.path.join(temp_directory, 'NON_EXISTANT')
-      self.assertEqual('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
+      self.assertEquals('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
 
       # ignore _repository if it exists but file isn't in it
       cpplint._repository = os.path.relpath(temp_directory2)
-      self.assertEqual('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
+      self.assertEquals('TRUNK_CPPLINT_CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
 
       # _root should be relative to _repository
       cpplint._repository = os.path.relpath(trunk_dir)
       cpplint._root = 'cpplint'
-      self.assertEqual('CPPLINT_TEST_HEADER_H_',
+      self.assertEquals('CPPLINT_TEST_HEADER_H_',
                         cpplint.GetHeaderGuardCPPVariable(file_path))
 
     finally:
@@ -4728,7 +4748,7 @@ class CpplintTest(CpplintTestBase):
     self.TestLanguageRulesCheck('foo.h', code, '')
 
   def testBuildPrintfFormat(self):
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         'foo.cc', 'cc',
         [r'printf("\%%d", value);',
@@ -4736,13 +4756,13 @@ class CpplintTest(CpplintTestBase):
          r'fprintf(file, "\(%d", value);',
          r'vsnprintf(buffer, sizeof(buffer), "\\\{%d", ap);'],
         error_collector)
-    self.assertEqual(
+    self.assertEquals(
         4,
         error_collector.Results().count(
             '%, [, (, and { are undefined character escapes.  Unescape them.'
             '  [build/printf_format] [3]'))
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         'foo.cc', 'cc',
         ['// Copyright 2014 Your Company.',
@@ -4751,7 +4771,7 @@ class CpplintTest(CpplintTestBase):
          r'printf(R"(\[%s)", R"(\])");',
          ''],
         error_collector)
-    self.assertEqual('', error_collector.Results())
+    self.assertEquals('', error_collector.Results())
 
   def testRuntimePrintfFormat(self):
     self.TestLint(
@@ -4861,29 +4881,29 @@ class CpplintTest(CpplintTestBase):
     file_path = 'mydir/googleclient/foo.cc'
 
     # There should be a copyright message in the first 10 lines
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'cc', [], error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(legal_copyright_message))
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         file_path, 'cc',
         ['' for unused_i in range(10)] + [copyright_line],
         error_collector)
-    self.assertEqual(
+    self.assertEquals(
         1,
         error_collector.ResultList().count(legal_copyright_message))
 
     # Test that warning isn't issued if Copyright line appears early enough.
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(file_path, 'cc', [copyright_line], error_collector)
     for message in error_collector.ResultList():
       if message.find('legal/copyright') != -1:
         self.fail('Unexpected error: %s' % message)
 
-    error_collector = ErrorCollector(self.assertTrue)
+    error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(
         file_path, 'cc',
         ['' for unused_i in range(9)] + [copyright_line],
@@ -4919,18 +4939,18 @@ class Cxx11Test(CpplintTestBase):
     lines.append('')
 
     # Process the file and check resulting error count.
-    collector = ErrorCollector(self.assertTrue)
+    collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData(filename, extension, lines, collector)
     error_list = collector.ResultList()
-    self.assertEqual(count, len(error_list), error_list)
+    self.assertEquals(count, len(error_list), error_list)
 
   def TestCxx11Feature(self, code, expected_error):
     lines = code.split('\n')
-    collector = ErrorCollector(self.assertTrue)
+    collector = ErrorCollector(self.assert_)
     cpplint.RemoveMultiLineComments('foo.h', lines, collector)
     clean_lines = cpplint.CleansedLines(lines)
     cpplint.FlagCxx11Features('foo.cc', clean_lines, 0, collector)
-    self.assertEqual(expected_error, collector.Results())
+    self.assertEquals(expected_error, collector.Results())
 
   def testBlockedHeaders(self):
     self.TestCxx11Feature('#include <tr1/regex>',
@@ -4984,11 +5004,11 @@ class Cxx14Test(CpplintTestBase):
 
   def TestCxx14Feature(self, code, expected_error):
     lines = code.split('\n')
-    collector = ErrorCollector(self.assertTrue)
+    collector = ErrorCollector(self.assert_)
     cpplint.RemoveMultiLineComments('foo.h', lines, collector)
     clean_lines = cpplint.CleansedLines(lines)
     cpplint.FlagCxx14Features('foo.cc', clean_lines, 0, collector)
-    self.assertEqual(expected_error, collector.Results())
+    self.assertEquals(expected_error, collector.Results())
 
   def testBlockedHeaders(self):
     self.TestCxx14Feature('#include <scoped_allocator>',
@@ -5009,17 +5029,17 @@ class CleansedLinesTest(unittest.TestCase):
              'Line 5 "foo"']
 
     clean_lines = cpplint.CleansedLines(lines)
-    self.assertEqual(lines, clean_lines.raw_lines)
-    self.assertEqual(5, clean_lines.NumLines())
+    self.assertEquals(lines, clean_lines.raw_lines)
+    self.assertEquals(5, clean_lines.NumLines())
 
-    self.assertEqual(['Line 1',
+    self.assertEquals(['Line 1',
                        'Line 2',
                        'Line 3',
                        'Line 4',
                        'Line 5 "foo"'],
                       clean_lines.lines)
 
-    self.assertEqual(['Line 1',
+    self.assertEquals(['Line 1',
                        'Line 2',
                        'Line 3',
                        'Line 4',
@@ -5028,48 +5048,48 @@ class CleansedLinesTest(unittest.TestCase):
 
   def testInitEmpty(self):
     clean_lines = cpplint.CleansedLines([])
-    self.assertEqual([], clean_lines.raw_lines)
-    self.assertEqual(0, clean_lines.NumLines())
+    self.assertEquals([], clean_lines.raw_lines)
+    self.assertEquals(0, clean_lines.NumLines())
 
   def testCollapseStrings(self):
     collapse = cpplint.CleansedLines._CollapseStrings
-    self.assertEqual('""', collapse('""'))             # ""     (empty)
-    self.assertEqual('"""', collapse('"""'))           # """    (bad)
-    self.assertEqual('""', collapse('"xyz"'))          # "xyz"  (string)
-    self.assertEqual('""', collapse('"\\\""'))         # "\""   (string)
-    self.assertEqual('""', collapse('"\'"'))           # "'"    (string)
-    self.assertEqual('"\"', collapse('"\"'))           # "\"    (bad)
-    self.assertEqual('""', collapse('"\\\\"'))         # "\\"   (string)
-    self.assertEqual('"', collapse('"\\\\\\"'))        # "\\\"  (bad)
-    self.assertEqual('""', collapse('"\\\\\\\\"'))     # "\\\\" (string)
+    self.assertEquals('""', collapse('""'))             # ""     (empty)
+    self.assertEquals('"""', collapse('"""'))           # """    (bad)
+    self.assertEquals('""', collapse('"xyz"'))          # "xyz"  (string)
+    self.assertEquals('""', collapse('"\\\""'))         # "\""   (string)
+    self.assertEquals('""', collapse('"\'"'))           # "'"    (string)
+    self.assertEquals('"\"', collapse('"\"'))           # "\"    (bad)
+    self.assertEquals('""', collapse('"\\\\"'))         # "\\"   (string)
+    self.assertEquals('"', collapse('"\\\\\\"'))        # "\\\"  (bad)
+    self.assertEquals('""', collapse('"\\\\\\\\"'))     # "\\\\" (string)
 
-    self.assertEqual('\'\'', collapse('\'\''))         # ''     (empty)
-    self.assertEqual('\'\'', collapse('\'a\''))        # 'a'    (char)
-    self.assertEqual('\'\'', collapse('\'\\\'\''))     # '\''   (char)
-    self.assertEqual('\'', collapse('\'\\\''))         # '\'    (bad)
-    self.assertEqual('', collapse('\\012'))            # '\012' (char)
-    self.assertEqual('', collapse('\\xfF0'))           # '\xfF0' (char)
-    self.assertEqual('', collapse('\\n'))              # '\n' (char)
-    self.assertEqual(r'\#', collapse('\\#'))           # '\#' (bad)
+    self.assertEquals('\'\'', collapse('\'\''))         # ''     (empty)
+    self.assertEquals('\'\'', collapse('\'a\''))        # 'a'    (char)
+    self.assertEquals('\'\'', collapse('\'\\\'\''))     # '\''   (char)
+    self.assertEquals('\'', collapse('\'\\\''))         # '\'    (bad)
+    self.assertEquals('', collapse('\\012'))            # '\012' (char)
+    self.assertEquals('', collapse('\\xfF0'))           # '\xfF0' (char)
+    self.assertEquals('', collapse('\\n'))              # '\n' (char)
+    self.assertEquals(r'\#', collapse('\\#'))           # '\#' (bad)
 
-    self.assertEqual('"" + ""', collapse('"\'" + "\'"'))
-    self.assertEqual("'', ''", collapse("'\"', '\"'"))
-    self.assertEqual('""[0b10]', collapse('"a\'b"[0b1\'0]'))
+    self.assertEquals('"" + ""', collapse('"\'" + "\'"'))
+    self.assertEquals("'', ''", collapse("'\"', '\"'"))
+    self.assertEquals('""[0b10]', collapse('"a\'b"[0b1\'0]'))
 
-    self.assertEqual('42', collapse("4'2"))
-    self.assertEqual('0b0101', collapse("0b0'1'0'1"))
-    self.assertEqual('1048576', collapse("1'048'576"))
-    self.assertEqual('0X100000', collapse("0X10'0000"))
-    self.assertEqual('0004000000', collapse("0'004'000'000"))
-    self.assertEqual('1.602176565e-19', collapse("1.602'176'565e-19"))
-    self.assertEqual('\'\' + 0xffff', collapse("'i' + 0xf'f'f'f"))
-    self.assertEqual('sizeof\'\' == 1', collapse("sizeof'x' == 1"))
-    self.assertEqual('0x.03p100', collapse('0x.0\'3p1\'0\'0'))
-    self.assertEqual('123.45', collapse('1\'23.4\'5'))
+    self.assertEquals('42', collapse("4'2"))
+    self.assertEquals('0b0101', collapse("0b0'1'0'1"))
+    self.assertEquals('1048576', collapse("1'048'576"))
+    self.assertEquals('0X100000', collapse("0X10'0000"))
+    self.assertEquals('0004000000', collapse("0'004'000'000"))
+    self.assertEquals('1.602176565e-19', collapse("1.602'176'565e-19"))
+    self.assertEquals('\'\' + 0xffff', collapse("'i' + 0xf'f'f'f"))
+    self.assertEquals('sizeof\'\' == 1', collapse("sizeof'x' == 1"))
+    self.assertEquals('0x.03p100', collapse('0x.0\'3p1\'0\'0'))
+    self.assertEquals('123.45', collapse('1\'23.4\'5'))
 
-    self.assertEqual('StringReplace(body, "", "");',
+    self.assertEquals('StringReplace(body, "", "");',
                       collapse('StringReplace(body, "\\\\", "\\\\\\\\");'))
-    self.assertEqual('\'\' ""',
+    self.assertEquals('\'\' ""',
                       collapse('\'"\' "foo"'))
 
 
@@ -5138,7 +5158,7 @@ class OrderOfIncludesTest(CpplintTestBase):
                      classify_include(file_info('foo/foo.cc'),
                                       'string',
                                       False))
-    self.assertEqual(cpplint._OTHER_HEADER,
+    self.assertEquals(cpplint._OTHER_HEADER,
                      classify_include(file_info('foo/foo.cc'),
                                       'boost/any.hpp',
                                       True))
@@ -5355,7 +5375,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
       code: C++ source code expected to generate a warning message.
       expected_message: Message expected to be generated by the C++ code.
     """
-    self.assertEqual(expected_message,
+    self.assertEquals(expected_message,
                       self.PerformFunctionLengthsCheck(code))
 
   def TriggerLines(self, error_level):
@@ -5733,7 +5753,7 @@ class CloseExpressionTest(unittest.TestCase):
                  (18, 47, 20, 1)]
     for p in positions:
       (_, line, column) = cpplint.CloseExpression(self.lines, p[0], p[1])
-      self.assertEqual((p[2], p[3]), (line, column))
+      self.assertEquals((p[2], p[3]), (line, column))
 
   def testReverseCloseExpression(self):
     # List of positions to test:
@@ -5753,14 +5773,14 @@ class CloseExpressionTest(unittest.TestCase):
                  (20, 0, 18, 47)]
     for p in positions:
       (_, line, column) = cpplint.ReverseCloseExpression(self.lines, p[0], p[1])
-      self.assertEqual((p[2], p[3]), (line, column))
+      self.assertEquals((p[2], p[3]), (line, column))
 
 
 class NestingStateTest(unittest.TestCase):
 
   def setUp(self):
     self.nesting_state = cpplint.NestingState()
-    self.error_collector = ErrorCollector(self.assertTrue)
+    self.error_collector = ErrorCollector(self.assert_)
 
   def UpdateWithLines(self, lines):
     clean_lines = cpplint.CleansedLines(lines)
@@ -5770,135 +5790,135 @@ class NestingStateTest(unittest.TestCase):
 
   def testEmpty(self):
     self.UpdateWithLines([])
-    self.assertEqual(self.nesting_state.stack, [])
+    self.assertEquals(self.nesting_state.stack, [])
 
   def testNamespace(self):
     self.UpdateWithLines(['namespace {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0],
                                cpplint._NamespaceInfo))
     self.assertTrue(self.nesting_state.stack[0].seen_open_brace)
-    self.assertEqual(self.nesting_state.stack[0].name, '')
+    self.assertEquals(self.nesting_state.stack[0].name, '')
 
     self.UpdateWithLines(['namespace outer { namespace inner'])
-    self.assertEqual(len(self.nesting_state.stack), 3)
+    self.assertEquals(len(self.nesting_state.stack), 3)
     self.assertTrue(self.nesting_state.stack[0].seen_open_brace)
     self.assertTrue(self.nesting_state.stack[1].seen_open_brace)
     self.assertFalse(self.nesting_state.stack[2].seen_open_brace)
-    self.assertEqual(self.nesting_state.stack[0].name, '')
-    self.assertEqual(self.nesting_state.stack[1].name, 'outer')
-    self.assertEqual(self.nesting_state.stack[2].name, 'inner')
+    self.assertEquals(self.nesting_state.stack[0].name, '')
+    self.assertEquals(self.nesting_state.stack[1].name, 'outer')
+    self.assertEquals(self.nesting_state.stack[2].name, 'inner')
 
     self.UpdateWithLines(['{'])
     self.assertTrue(self.nesting_state.stack[2].seen_open_brace)
 
     self.UpdateWithLines(['}', '}}'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
   def testClass(self):
     self.UpdateWithLines(['class A {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'A')
+    self.assertEquals(self.nesting_state.stack[0].name, 'A')
     self.assertFalse(self.nesting_state.stack[0].is_derived)
-    self.assertEqual(self.nesting_state.stack[0].class_indent, 0)
+    self.assertEquals(self.nesting_state.stack[0].class_indent, 0)
 
     self.UpdateWithLines(['};',
                           'struct B : public A {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'B')
+    self.assertEquals(self.nesting_state.stack[0].name, 'B')
     self.assertTrue(self.nesting_state.stack[0].is_derived)
 
     self.UpdateWithLines(['};',
                           'class C',
                           ': public A {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'C')
+    self.assertEquals(self.nesting_state.stack[0].name, 'C')
     self.assertTrue(self.nesting_state.stack[0].is_derived)
 
     self.UpdateWithLines(['};',
                           'template<T>'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
     self.UpdateWithLines(['class D {', '  class E {'])
-    self.assertEqual(len(self.nesting_state.stack), 2)
+    self.assertEquals(len(self.nesting_state.stack), 2)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'D')
+    self.assertEquals(self.nesting_state.stack[0].name, 'D')
     self.assertFalse(self.nesting_state.stack[0].is_derived)
     self.assertTrue(isinstance(self.nesting_state.stack[1], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[1].name, 'E')
+    self.assertEquals(self.nesting_state.stack[1].name, 'E')
     self.assertFalse(self.nesting_state.stack[1].is_derived)
-    self.assertEqual(self.nesting_state.stack[1].class_indent, 2)
-    self.assertEqual(self.nesting_state.InnermostClass().name, 'E')
+    self.assertEquals(self.nesting_state.stack[1].class_indent, 2)
+    self.assertEquals(self.nesting_state.InnermostClass().name, 'E')
 
     self.UpdateWithLines(['}', '}'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
   def testClassAccess(self):
     self.UpdateWithLines(['class A {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].access, 'private')
+    self.assertEquals(self.nesting_state.stack[0].access, 'private')
 
     self.UpdateWithLines([' public:'])
-    self.assertEqual(self.nesting_state.stack[0].access, 'public')
+    self.assertEquals(self.nesting_state.stack[0].access, 'public')
     self.UpdateWithLines([' protracted:'])
-    self.assertEqual(self.nesting_state.stack[0].access, 'public')
+    self.assertEquals(self.nesting_state.stack[0].access, 'public')
     self.UpdateWithLines([' protected:'])
-    self.assertEqual(self.nesting_state.stack[0].access, 'protected')
+    self.assertEquals(self.nesting_state.stack[0].access, 'protected')
     self.UpdateWithLines([' private:'])
-    self.assertEqual(self.nesting_state.stack[0].access, 'private')
+    self.assertEquals(self.nesting_state.stack[0].access, 'private')
 
     self.UpdateWithLines(['  struct B {'])
-    self.assertEqual(len(self.nesting_state.stack), 2)
+    self.assertEquals(len(self.nesting_state.stack), 2)
     self.assertTrue(isinstance(self.nesting_state.stack[1], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[1].access, 'public')
-    self.assertEqual(self.nesting_state.stack[0].access, 'private')
+    self.assertEquals(self.nesting_state.stack[1].access, 'public')
+    self.assertEquals(self.nesting_state.stack[0].access, 'private')
 
     self.UpdateWithLines(['   protected  :'])
-    self.assertEqual(self.nesting_state.stack[1].access, 'protected')
-    self.assertEqual(self.nesting_state.stack[0].access, 'private')
+    self.assertEquals(self.nesting_state.stack[1].access, 'protected')
+    self.assertEquals(self.nesting_state.stack[0].access, 'private')
 
     self.UpdateWithLines(['  }', '}'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
   def testStruct(self):
     self.UpdateWithLines(['struct A {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'A')
+    self.assertEquals(self.nesting_state.stack[0].name, 'A')
     self.assertFalse(self.nesting_state.stack[0].is_derived)
 
     self.UpdateWithLines(['}',
                           'void Func(struct B arg) {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertFalse(isinstance(self.nesting_state.stack[0],
                                 cpplint._ClassInfo))
 
     self.UpdateWithLines(['}'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
   def testPreprocessor(self):
-    self.assertEqual(len(self.nesting_state.pp_stack), 0)
+    self.assertEquals(len(self.nesting_state.pp_stack), 0)
     self.UpdateWithLines(['#if MACRO1'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 1)
+    self.assertEquals(len(self.nesting_state.pp_stack), 1)
     self.UpdateWithLines(['#endif'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 0)
+    self.assertEquals(len(self.nesting_state.pp_stack), 0)
 
     self.UpdateWithLines(['#ifdef MACRO2'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 1)
+    self.assertEquals(len(self.nesting_state.pp_stack), 1)
     self.UpdateWithLines(['#else'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 1)
+    self.assertEquals(len(self.nesting_state.pp_stack), 1)
     self.UpdateWithLines(['#ifdef MACRO3'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 2)
+    self.assertEquals(len(self.nesting_state.pp_stack), 2)
     self.UpdateWithLines(['#elif MACRO4'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 2)
+    self.assertEquals(len(self.nesting_state.pp_stack), 2)
     self.UpdateWithLines(['#endif'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 1)
+    self.assertEquals(len(self.nesting_state.pp_stack), 1)
     self.UpdateWithLines(['#endif'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 0)
+    self.assertEquals(len(self.nesting_state.pp_stack), 0)
 
     self.UpdateWithLines(['#ifdef MACRO5',
                           'class A {',
@@ -5907,162 +5927,162 @@ class NestingStateTest(unittest.TestCase):
                           '#else',
                           'class C {',
                           '#endif'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 0)
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.pp_stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'A')
+    self.assertEquals(self.nesting_state.stack[0].name, 'A')
     self.UpdateWithLines(['};'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
     self.UpdateWithLines(['class D',
                           '#ifdef MACRO7'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 1)
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.pp_stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'D')
+    self.assertEquals(self.nesting_state.stack[0].name, 'D')
     self.assertFalse(self.nesting_state.stack[0].is_derived)
 
     self.UpdateWithLines(['#elif MACRO8',
                           ': public E'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[0].name, 'D')
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[0].name, 'D')
     self.assertTrue(self.nesting_state.stack[0].is_derived)
     self.assertFalse(self.nesting_state.stack[0].seen_open_brace)
 
     self.UpdateWithLines(['#else',
                           '{'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[0].name, 'D')
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[0].name, 'D')
     self.assertFalse(self.nesting_state.stack[0].is_derived)
     self.assertTrue(self.nesting_state.stack[0].seen_open_brace)
 
     self.UpdateWithLines(['#endif'])
-    self.assertEqual(len(self.nesting_state.pp_stack), 0)
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[0].name, 'D')
+    self.assertEquals(len(self.nesting_state.pp_stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[0].name, 'D')
     self.assertFalse(self.nesting_state.stack[0].is_derived)
     self.assertFalse(self.nesting_state.stack[0].seen_open_brace)
 
     self.UpdateWithLines([';'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
   def testTemplate(self):
     self.UpdateWithLines(['template <T,',
                           '          class Arg1 = tmpl<T> >'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
     self.UpdateWithLines(['class A {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'A')
+    self.assertEquals(self.nesting_state.stack[0].name, 'A')
 
     self.UpdateWithLines(['};',
                           'template <T,',
                           '  template <typename, typename> class B>',
                           'class C'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'C')
+    self.assertEquals(self.nesting_state.stack[0].name, 'C')
     self.UpdateWithLines([';'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
     self.UpdateWithLines(['class D : public Tmpl<E>'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'D')
+    self.assertEquals(self.nesting_state.stack[0].name, 'D')
 
     self.UpdateWithLines(['{', '};'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
     self.UpdateWithLines(['template <class F,',
                           '          class G,',
                           '          class H,',
                           '          typename I>',
                           'static void Func() {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertFalse(isinstance(self.nesting_state.stack[0],
                                 cpplint._ClassInfo))
     self.UpdateWithLines(['}',
                           'template <class J> class K {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'K')
+    self.assertEquals(self.nesting_state.stack[0].name, 'K')
 
   def testTemplateDefaultArg(self):
     self.UpdateWithLines([
       'template <class T, class D = default_delete<T>> class unique_ptr {',])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(self.nesting_state.stack[0], isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
 
   def testTemplateInnerClass(self):
     self.UpdateWithLines(['class A {',
                           ' public:'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
 
     self.UpdateWithLines(['  template <class B>',
                           '  class C<alloc<B> >',
                           '      : public A {'])
-    self.assertEqual(len(self.nesting_state.stack), 2)
+    self.assertEquals(len(self.nesting_state.stack), 2)
     self.assertTrue(isinstance(self.nesting_state.stack[1], cpplint._ClassInfo))
 
   def testArguments(self):
     self.UpdateWithLines(['class A {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'A')
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 0)
+    self.assertEquals(self.nesting_state.stack[0].name, 'A')
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 0)
 
     self.UpdateWithLines(['  void Func(',
                           '    struct X arg1,'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 1)
     self.UpdateWithLines(['    struct X *arg2);'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 0)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 0)
 
     self.UpdateWithLines(['};'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
     self.UpdateWithLines(['struct B {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
     self.assertTrue(isinstance(self.nesting_state.stack[0], cpplint._ClassInfo))
-    self.assertEqual(self.nesting_state.stack[0].name, 'B')
+    self.assertEquals(self.nesting_state.stack[0].name, 'B')
 
     self.UpdateWithLines(['#ifdef MACRO',
                           '  void Func(',
                           '    struct X arg1'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 1)
     self.UpdateWithLines(['#else'])
 
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 0)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 0)
     self.UpdateWithLines(['  void Func(',
                           '    struct X arg1'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 1)
 
     self.UpdateWithLines(['#endif'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 1)
     self.UpdateWithLines(['    struct X *arg2);'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 0)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 0)
 
     self.UpdateWithLines(['};'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
   def testInlineAssembly(self):
     self.UpdateWithLines(['void CopyRow_SSE2(const uint8* src, uint8* dst,',
                           '                  int count) {'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 0)
-    self.assertEqual(self.nesting_state.stack[-1].inline_asm, cpplint._NO_ASM)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 0)
+    self.assertEquals(self.nesting_state.stack[-1].inline_asm, cpplint._NO_ASM)
 
     self.UpdateWithLines(['  asm volatile ('])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 1)
-    self.assertEqual(self.nesting_state.stack[-1].inline_asm,
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 1)
+    self.assertEquals(self.nesting_state.stack[-1].inline_asm,
                       cpplint._INSIDE_ASM)
 
     self.UpdateWithLines(['    "sub        %0,%1                         \\n"',
@@ -6079,40 +6099,40 @@ class NestingStateTest(unittest.TestCase):
                           '    "+r"(count)  // %2',
                           '  :',
                           '  : "memory", "cc"'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 1)
-    self.assertEqual(self.nesting_state.stack[-1].inline_asm,
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 1)
+    self.assertEquals(self.nesting_state.stack[-1].inline_asm,
                       cpplint._INSIDE_ASM)
 
     self.UpdateWithLines(['#if defined(__SSE2__)',
                           '    , "xmm0", "xmm1"'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 1)
-    self.assertEqual(self.nesting_state.stack[-1].inline_asm,
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 1)
+    self.assertEquals(self.nesting_state.stack[-1].inline_asm,
                       cpplint._INSIDE_ASM)
 
     self.UpdateWithLines(['#endif'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 1)
-    self.assertEqual(self.nesting_state.stack[-1].inline_asm,
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 1)
+    self.assertEquals(self.nesting_state.stack[-1].inline_asm,
                       cpplint._INSIDE_ASM)
 
     self.UpdateWithLines(['  );'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 0)
-    self.assertEqual(self.nesting_state.stack[-1].inline_asm, cpplint._END_ASM)
+    self.assertEquals(len(self.nesting_state.stack), 1)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 0)
+    self.assertEquals(self.nesting_state.stack[-1].inline_asm, cpplint._END_ASM)
 
     self.UpdateWithLines(['__asm {'])
-    self.assertEqual(len(self.nesting_state.stack), 2)
-    self.assertEqual(self.nesting_state.stack[-1].open_parentheses, 0)
-    self.assertEqual(self.nesting_state.stack[-1].inline_asm,
+    self.assertEquals(len(self.nesting_state.stack), 2)
+    self.assertEquals(self.nesting_state.stack[-1].open_parentheses, 0)
+    self.assertEquals(self.nesting_state.stack[-1].inline_asm,
                       cpplint._BLOCK_ASM)
 
     self.UpdateWithLines(['}'])
-    self.assertEqual(len(self.nesting_state.stack), 1)
+    self.assertEquals(len(self.nesting_state.stack), 1)
 
     self.UpdateWithLines(['}'])
-    self.assertEqual(len(self.nesting_state.stack), 0)
+    self.assertEquals(len(self.nesting_state.stack), 0)
 
 
 class QuietTest(unittest.TestCase):
