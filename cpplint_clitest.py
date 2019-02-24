@@ -35,6 +35,8 @@ import os
 import sys
 import subprocess
 import unittest
+import shutil
+import tempfile
 
 BASE_CMD = sys.executable + ' ' + os.path.abspath('./cpplint.py ')
 
@@ -66,8 +68,7 @@ class UsageTest(unittest.TestCase):
         self.assertEqual(b'', out)
         self.assertTrue(err.startswith(b'\nSyntax: cpplint'))
 
-
-class SignatureTests(unittest.TestCase):
+class TemporaryFolderClassSetup(object):
     """
     Regression tests: The test starts a filetreewalker scanning for files name *.def
     Such files are expected to have as first line the argument
@@ -75,6 +76,79 @@ class SignatureTests(unittest.TestCase):
     expected status code, and all other lines the expected systemerr output (two blank
     lines at end).
     """
+
+    @classmethod
+    def setUpClass(cls):
+        """setup tmp folder for testing with samples and custom additions by subclasses"""
+        try:
+            cls._root = tempfile.mkdtemp()
+            shutil.copytree('samples', os.path.join(cls._root, 'samples'))
+            cls.prepare_directory(cls._root)
+        except Exception as e:
+            try:
+                cls.tearDownClass()
+            except Exception as e2:
+                pass
+            raise
+
+    @classmethod
+    def tearDownClass(cls):
+        if (cls._root):
+            # pass
+            shutil.rmtree(cls._root)
+
+    @classmethod
+    def prepare_directory(cls, root):
+        """Override in subclass to manipulate temporary samples root folder before tests"""
+        pass
+
+    def get_extra_command_args(self, cwd):
+        """Override in subclass to add arguments to command"""
+        return ''
+
+    def checkAllInFolder(self, foldername, expectedDefs):
+        # uncomment to show complete diff
+        # self.maxDiff = None
+        count = 0
+        for dirpath, _, fnames in os.walk(foldername):
+            for f in fnames:
+                if f.endswith('.def'):
+                    count += 1
+                    self._checkDef(os.path.join(dirpath, f))
+        self.assertEqual(count, expectedDefs)
+
+    def _checkDef(self, path):
+        """runs command and compares to expected output from def file"""
+        # self.maxDiff = None # to see full diff
+        with open(path, 'rb') as filehandle:
+            datalines = filehandle.readlines()
+            stdoutLines = int(datalines[2])
+            self._runAndCheck(os.path.dirname(path),
+                             datalines[0].decode('utf8').strip(),
+                             int(datalines[1]),
+                             [line.decode('utf8').strip() for line in datalines[3:3 + stdoutLines]],
+                             [line.decode('utf8').strip() for line in datalines[3 + stdoutLines:]])
+
+    def _runAndCheck(self, rel_cwd, args, expectedStatus, expectedOut, expectedErr):
+        cmd = BASE_CMD + self.get_extra_command_args(rel_cwd) + args
+        cwd = os.path.join(self._root, rel_cwd)
+        # command to reproduce, do not forget first two lines have special meaning
+        print("\ncd " + cwd + " && " + cmd + " 2> <filename>")
+        (status, out, err) = RunShellCommand(cmd, cwd)
+        try:
+            self.assertEqual(expectedStatus, status, 'bad command status %s' % status)
+            self.assertEqual(expectedErr, err.decode('utf8').split('\n'))
+            self.assertEqual(expectedOut, out.decode('utf8').split('\n'))
+        except AssertionError as e:
+            e.args += ('Failed check in %s for command: %s' % (cwd, cmd),)
+            raise e
+
+
+class NoRepoSignatureTests(TemporaryFolderClassSetup, unittest.TestCase):
+    """runs in a temporary folder (under /tmp in linux) without any .git/.hg/.svn file"""
+
+    def get_extra_command_args(self, cwd):
+        return (' --repository %s ' % self._root)
 
     def testChromiumSample(self):
         self.checkAllInFolder('./samples/chromium-sample', 1)
@@ -94,43 +168,39 @@ class SignatureTests(unittest.TestCase):
     def testCodeliteSample(self):
         self.checkAllInFolder('./samples/codelite-sample', 1)
 
-    def checkAllInFolder(self, foldername, expectedDefs):
-        # uncomment to show complete diff
-        # self.maxDiff = None
-        count = 0
-        for dirpath, _, fnames in os.walk(foldername):
-            for f in fnames:
-                if f.endswith('.def'):
-                    count += 1
-                    self.checkDef(os.path.join(dirpath, f))
-        self.assertEqual(count, expectedDefs)
 
-    def checkDef(self, path):
-        """runs command and compares to expected output from def file"""
-        # self.maxDiff = None # to see full diff
-        with open(path, 'rb') as filehandle:
-            datalines = filehandle.readlines()
-            stdoutLines = int(datalines[2])
-            self.runAndCheck(os.path.dirname(path),
-                             datalines[0].decode('utf8').strip(),
-                             int(datalines[1]),
-                             [line.decode('utf8').strip() for line in datalines[3:3 + stdoutLines]],
-                             [line.decode('utf8').strip() for line in datalines[3 + stdoutLines:]])
+class GitRepoSignatureTests(TemporaryFolderClassSetup, unittest.TestCase):
+    """runs in a temporary folder with .git file"""
 
-    def runAndCheck(self, cwd, args, expectedStatus, expectedOut, expectedErr):
-        cmd = BASE_CMD + ' --repository ' + cwd + ' ' + args
-        # command to reproduce, do not forget first two lines have special meaning
-        print("\ncd " + cwd + ";" + cmd + " 2> <filename>")
-        (status, out, err) = RunShellCommand(cmd, cwd)
-        try:
-            self.assertEqual(expectedStatus, status)
-            self.assertEqual(expectedErr, err.decode('utf8').split('\n'))
-            self.assertEqual(expectedOut, out.decode('utf8').split('\n'))
-        except AssertionError as e:
-            print('Failed check in ' + cwd)
-            print('for command: ' + cmd)
-            raise e
+    @classmethod
+    def prepare_directory(cls, root):
+        with open(os.path.join(root, '.git'), 'a'):
+            pass
 
+    def testCodeliteSample(self):
+        self.checkAllInFolder('./samples/codelite-sample', 1)
+
+class MercurialRepoSignatureTests(TemporaryFolderClassSetup, unittest.TestCase):
+    """runs in a temporary folder with .hg file"""
+
+    @classmethod
+    def prepare_directory(cls, root):
+        with open(os.path.join(root, '.hg'), 'a'):
+            pass
+
+    def testCodeliteSample(self):
+        self.checkAllInFolder('./samples/codelite-sample', 1)
+
+class SvnRepoSignatureTests(TemporaryFolderClassSetup, unittest.TestCase):
+    """runs in a temporary folder with .svn file"""
+
+    @classmethod
+    def prepare_directory(cls, root):
+        with open(os.path.join(root, '.svn'), 'a'):
+            pass
+
+    def testCodeliteSample(self):
+        self.checkAllInFolder('./samples/codelite-sample', 1)
 
 if __name__ == '__main__':
-  unittest.main()
+    unittest.main()
