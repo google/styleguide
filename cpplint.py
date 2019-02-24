@@ -59,6 +59,8 @@ import xml.etree.ElementTree
 # if empty, use defaults
 _valid_extensions = set([])
 
+__VERSION__ = '1.4.4'
+
 try:
   xrange          # Python 2
 except NameError:
@@ -76,7 +78,11 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
                    [--exclude=path]
                    [--extensions=hpp,cpp,...]
                    [--quiet]
+                   [--version]
         <file> [file] ...
+
+  Style checker for C/C++ source files.
+  This is a fork of the Google style checker with minor extensions.
 
   The style guidelines this tries to follow are those in
     https://google.github.io/styleguide/cppguide.html
@@ -6393,6 +6399,11 @@ def PrintUsage(message):
   else:
     sys.exit(0)
 
+def PrintVersion():
+  print('Cpplint fork (https://github.com/cpplint/cpplint)')
+  print('cpplint ' + __VERSION__)
+  print('Python ' + sys.version)
+  sys.exit(0)
 
 def PrintCategories():
   """Prints a list of all the error-categories used by error messages.
@@ -6416,6 +6427,8 @@ def ParseArguments(args):
   """
   try:
     (opts, filenames) = getopt.getopt(args, '', ['help', 'output=', 'verbose=',
+                                                 'v=',
+                                                 'version',
                                                  'counting=',
                                                  'filter=',
                                                  'root=',
@@ -6439,6 +6452,8 @@ def ParseArguments(args):
   for (opt, val) in opts:
     if opt == '--help':
       PrintUsage(None)
+    if opt == '--version':
+      PrintVersion()
     elif opt == '--output':
       if val not in ('emacs', 'vs7', 'eclipse', 'junit'):
         PrintUsage('The only allowed output formats are emacs, vs7, eclipse '
@@ -6446,7 +6461,7 @@ def ParseArguments(args):
       output_format = val
     elif opt == '--quiet':
       quiet = True
-    elif opt == '--verbose':
+    elif opt == '--verbose' or opt == '--v':
       verbosity = int(val)
     elif opt == '--filter':
       filters = val

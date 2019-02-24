@@ -5,7 +5,7 @@ from setuptools.command.test import test as TestCommand
 from subprocess import check_call
 from multiprocessing import cpu_count
 from distutils.spawn import find_executable
-
+import cpplint as cpplint
 
 class Test(TestCommand):
     def run_tests(self):
@@ -56,7 +56,7 @@ class Format(Cmd):
 
 
 setup(name='cpplint',
-      version='1.4.3',
+      version=cpplint.__VERSION__,
       py_modules=['cpplint'],
       # generate platform specific start script
       entry_points={

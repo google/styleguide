@@ -3974,6 +3974,7 @@ class CpplintTest(CpplintTestBase):
       self.assertRaises(SystemExit, cpplint.ParseArguments, [])
       self.assertRaises(SystemExit, cpplint.ParseArguments, ['--badopt'])
       self.assertRaises(SystemExit, cpplint.ParseArguments, ['--help'])
+      self.assertRaises(SystemExit, cpplint.ParseArguments, ['--version'])
       self.assertRaises(SystemExit, cpplint.ParseArguments, ['--v=0'])
       self.assertRaises(SystemExit, cpplint.ParseArguments, ['--filter='])
       # This is illegal because all filters must start with + or -
