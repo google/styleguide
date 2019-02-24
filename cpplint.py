@@ -97,10 +97,10 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
   Flags:
 
     output=emacs|eclipse|vs7|junit
-      By default, the output is formatted to ease emacs parsing.  Output
-      compatible with eclipse (eclipse), Visual Studio (vs7), and JUnit
-      XML parsers such as those used in Jenkins and Bamboo may also be
-      used.  Other formats are unsupported.
+      By default, the output is formatted to ease emacs parsing.  Visual Studio
+      compatible output (vs7) may also be used.  Further support exists for
+      eclipse (eclipse), and JUnit (junit). XML parsers such as those used
+      in Jenkins and Bamboo may also be used.  Other formats are unsupported.
 
     verbose=#
       Specify a number 0-5 to restrict errors to certain verbosity levels.
@@ -157,11 +157,11 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
         Bob   => SRC_CHROME_BROWSER_UI_BROWSER_H_
 
     root=subdir
-      The root directory used for deriving header guard CPP variables. This
-      directory is relative to the top level directory of the repository which
-      by default is determined by searching for a directory that contains .git,
-      .hg, or .svn but can also be controlled with the --repository flag. If
-      the specified directory does not exist, this flag is ignored.
+      The root directory used for deriving header guard CPP variable.
+      This directory is relative to the top level directory of the repository
+      which by default is determined by searching for a directory that contains
+      .git, .hg, or .svn but can also be controlled with the --repository flag.
+      If the specified directory does not exist, this flag is ignored.
 
       Examples:
         Assuming that src is the top level directory of the repository (and
@@ -236,7 +236,7 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
     a file name. If the expression matches, the file is skipped and not run
     through the linter.
 
-    "linelength" specifies the allowed line length for the project.
+    "linelength" allows to specify the allowed line length for the project.
 
     The "root" option is similar in function to the --root flag (see example
     above). Paths are relative to the directory of the CPPLINT.cfg.
@@ -245,7 +245,7 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
     (see example above).
 
     CPPLINT.cfg has an effect on files in the same directory and all
-    subdirectories, unless overridden by a nested configuration file.
+    sub-directories, unless overridden by a nested configuration file.
 
       Example file:
         filter=-build/include_order,+build/include_alpha
@@ -254,7 +254,7 @@ Syntax: cpplint.py [--verbose=#] [--output=emacs|eclipse|vs7|junit]
     The above example disables build/include_order warning and enables
     build/include_alpha as well as excludes all .cc from being
     processed by linter, in the current directory (where the .cfg
-    file is located) and all subdirectories.
+    file is located) and all sub-directories.
 """
 
 # We categorize each error message we print.  Here are the categories.
@@ -1968,7 +1968,7 @@ def CheckForCopyright(filename, lines, error):
 
   # We'll say it should occur by line 10. Don't forget there's a
   # dummy line at the front.
-  for line in range(1, min(len(lines), 11)):
+  for line in xrange(1, min(len(lines), 11)):
     if re.search(r'Copyright', lines[line], re.I): break
   else:                       # means no copyright line was found
     error(filename, 0, 'legal/copyright', 5,
@@ -3304,7 +3304,7 @@ def CheckForFunctionLengths(filename, clean_lines, linenum,
 
   if starting_func:
     body_found = False
-    for start_linenum in range(linenum, clean_lines.NumLines()):
+    for start_linenum in xrange(linenum, clean_lines.NumLines()):
       start_line = lines[start_linenum]
       joined_line += ' ' + start_line.lstrip()
       if Search(r'(;|})', start_line):  # Declarations and trivial functions
@@ -5640,7 +5640,8 @@ _RE_PATTERN_STRING = re.compile(r'\bstring\b')
 _re_pattern_headers_maybe_templates = []
 for _header, _templates in _HEADERS_MAYBE_TEMPLATES:
   for _template in _templates:
-    # Match max<type>(..., ...), max(..., ...), but not foo->max, foo.max or type::max().
+    # Match max<type>(..., ...), max(..., ...), but not foo->max, foo.max or
+    # type::max().
     _re_pattern_headers_maybe_templates.append(
         (re.compile(r'[^>.]\b' + _template + r'(<.*?>)?\([^\)]'),
             _template,
@@ -5762,7 +5763,7 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
   required = {}  # A map of header name to linenumber and the template entity.
                  # Example of required: { '<functional>': (1219, 'less<>') }
 
-  for linenum in range(clean_lines.NumLines()):
+  for linenum in xrange(clean_lines.NumLines()):
     line = clean_lines.elided[linenum]
     if not line or line[0] == '#':
       continue
@@ -6171,7 +6172,7 @@ def ProcessFileData(filename, file_extension, lines, error,
   if IsHeaderExtension(file_extension):
     CheckForHeaderGuard(filename, clean_lines, error)
 
-  for line in range(clean_lines.NumLines()):
+  for line in xrange(clean_lines.NumLines()):
     ProcessLine(filename, file_extension, clean_lines, line,
                 include_state, function_state, nesting_state, error,
                 extra_check_functions)
