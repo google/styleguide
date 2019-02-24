@@ -1,6 +1,15 @@
 Changelog
 ---------
 
+1.4.4
+-----
+
+Another cleanup release
+
+* NOBUG: fix unit/cli tests for source release
+* NOBUG: reduce diff to upstream by intentionally using deprecated functions where upstream uses them
+* add `--version` command (https://github.com/cpplint/cpplint/issues/27)
+
 1.4.3
 -----
 
@@ -20,7 +29,7 @@ Changelog
 1.4.0
 -----
 
-* Incorporate cpplint updates from google (62385582b847, 2017-08-16)
+* Incorporate cpplint updates from google (e5d807c6a0d,  2018-05-03)
   * Fix the `build/endif_comment` check (https://github.com/google/styleguide/pull/169)
   * Teach the explicit constructor check about constexpr (#56)
   * Changed vs7 output format (#57)
