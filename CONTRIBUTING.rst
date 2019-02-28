@@ -108,7 +108,7 @@ Setup fetching of pull requests in .git/config:
     	url = https://github.com/google/styleguide
     	fetch = +refs/heads/*:refs/remotes/google/*
     # following line should be new, fetches PRs from google/styleguides
-    	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+    	fetch = +refs/pull/*/head:refs/remotes/google/pr/*
 
 
 To compare this for with upstream (after git fetch):
