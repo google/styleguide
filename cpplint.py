@@ -4815,7 +4815,19 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
               'Do not include .' + extension + ' files from other packages')
         return
 
-    if not _THIRD_PARTY_HEADERS_PATTERN.match(include):
+    # We DO want to include a 3rd party looking header if it matches the
+    # filename. Otherwise we get an erroneous error "...should include its
+    # header" error later.
+    third_src_header = False
+    for ext in GetHeaderExtensions():
+      basefilename = filename[0:len(filename) - len(fileinfo.Extension())]
+      headerfile = basefilename + '.' + ext
+      headername = FileInfo(headerfile).RepositoryName()
+      if headername in include or include in headername:
+        third_src_header = True
+        break
+
+    if third_src_header or not _THIRD_PARTY_HEADERS_PATTERN.match(include):
       include_state.include_list[-1].append((include, linenum))
 
       # We want to ensure that headers appear in the right order:

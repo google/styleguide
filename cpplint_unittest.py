@@ -4700,6 +4700,74 @@ class CpplintTest(CpplintTestBase):
     # Restore previous CWD.
     os.chdir(cur_dir)
 
+  def testIncludeItsHeader(self):
+    temp_directory = tempfile.mkdtemp()
+    cur_dir = os.getcwd()
+    try:
+      test_directory = os.path.join(temp_directory, "test")
+      os.makedirs(test_directory)
+      file_path = os.path.join(test_directory, 'foo.h')
+      open(file_path, 'a').close()
+      file_path = os.path.join(test_directory, 'Bar.h')
+      open(file_path, 'a').close()
+
+      os.chdir(temp_directory)
+
+      error_collector = ErrorCollector(self.assertTrue)
+      cpplint.ProcessFileData(
+        'test/foo.cc', 'cc',
+        [''],
+        error_collector)
+      expected = "{dir}/{fn}.cc should include its header file {dir}/{fn}.h  [build/include] [5]".format(
+          fn="foo",
+          dir=test_directory)
+      self.assertEqual(
+        1,
+        error_collector.Results().count(expected))
+
+      error_collector = ErrorCollector(self.assertTrue)
+      cpplint.ProcessFileData(
+        'test/foo.cc', 'cc',
+        [r'#include "test/foo.h"',
+         ''
+         ],
+        error_collector)
+      self.assertEqual(
+        0,
+        error_collector.Results().count(expected))
+
+      # This should continue to work
+      error_collector = ErrorCollector(self.assertTrue)
+      cpplint.ProcessFileData(
+        'test/Bar.cc', 'cc',
+        [r'#include "test/Bar.h"',
+         ''
+         ],
+        error_collector)
+      expected = "{dir}/{fn}.cc should include its header file {dir}/{fn}.h  [build/include] [5]".format(
+          fn="Bar",
+          dir=test_directory)
+      self.assertEqual(
+        0,
+        error_collector.Results().count(expected))
+
+      # Since Bar.cc & Bar.h look 3rd party-ish, it should be ok without the include dir
+      error_collector = ErrorCollector(self.assertTrue)
+      cpplint.ProcessFileData(
+        'test/Bar.cc', 'cc',
+        [r'#include "Bar.h"',
+         ''
+         ],
+        error_collector)
+      self.assertEqual(
+        0,
+        error_collector.Results().count(expected))
+
+    finally:
+      # Restore previous CWD.
+      os.chdir(cur_dir)
+      shutil.rmtree(temp_directory)
+
   def testPathSplitToList(self):
     self.assertEquals([''],
                       cpplint.PathSplitToList(os.path.join('')))
