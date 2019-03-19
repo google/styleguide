@@ -935,7 +935,7 @@ Property Value Type: string<br />Parent: <code>error.errors</code>
 <CODE_SNIPPET>
 {
   "error":{
-    "code": 404
+    "code": 404,
     "message": "File Not Found",
     "errors": [{"message": "File Not Found"}]
   }
