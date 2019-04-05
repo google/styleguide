@@ -145,7 +145,7 @@ Revision 1.26
         information is recommended.
         <CODE_SNIPPET>
           err() {
-            echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $@" &gt;&amp;2
+            echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]:" "$@" &gt;&amp;2
           }
 
           if ! do_something; then
