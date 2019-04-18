@@ -1528,7 +1528,7 @@ No:
 
 Most `.py` files do not need to start with a `#!` line. Start the main file of a
 program with
-`#!/usr/bin/python` with an optional single digit `2` or `3` suffix per
+`#!/usr/bin/env python` with an optional single digit `2` or `3` suffix per
 [PEP-394](https://www.google.com/url?sa=D&q=http://www.python.org/dev/peps/pep-0394/).
 
 This line is used by the kernel to find the Python interpreter, but is ignored
