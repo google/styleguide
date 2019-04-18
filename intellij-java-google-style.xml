@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<code_scheme name="Default">
+<code_scheme name="GoogleStyle">
   <JavaCodeStyleSettings>
     <option name="INSERT_INNER_CLASS_IMPORTS" value="true" />
     <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999999" />
