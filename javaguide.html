@@ -167,7 +167,9 @@ programs are <strong>broken</strong> and they must be <strong>fixed</strong>.</p
 
 <h3 id="s3.1-copyright-statement">3.1 License or copyright information, if present</h3>
 
-<p>If license or copyright information belongs in a file, it belongs here.</p>
+<p>If license or copyright information belongs in a file, it belongs here.
+  If the IDE automatically updates copyright info due to moving the file around or
+any other reason it may have chosen to update the copyright info, that's OK.</p>
 
 
 
@@ -190,7 +192,7 @@ programs are <strong>broken</strong> and they must be <strong>fixed</strong>.</p
 statements.</p>
 
 <h4 id="s3.3.3-import-ordering-and-spacing">3.3.3 Ordering and spacing</h4>
-
+(TODO(UDAY): UPDATE THIS SECTION FOLLOW WHATEVER THE AUTOFORMATTER DOES)
 <p>Imports are ordered as follows:</p>
 
 <ol>
@@ -221,7 +223,7 @@ normal imports.</p>
 
 <a name="s3.4.2-class-member-ordering"></a>
 <h4 id="s3.4.2-ordering-class-contents">3.4.2 Ordering of class contents</h4>
-
+(TODO(UDAY, ALAN) COME BACK TO THIS ONE)
 <p>The order you choose for the members and initializers of your class can have a great effect on
 learnability. However, there's no single correct recipe for how to do it; different classes may
 order their contents in different ways.</p>
@@ -260,7 +262,7 @@ the body of a class, method or constructor. Note that, by Section 4.8.3.1 on
 body is empty or contains only a single statement.</p>
 
 <h4 id="s4.1.2-blocks-k-r-style">4.1.2 Nonempty blocks: K &amp; R style</h4>
-
+(TODO(ALAN): ADD A NOTE ABOUT WHETHER WHEN DOING EQUALITY CHECKS CONSTS SHOULD COME FIRST OR SECOND)
 <p>Braces follow the Kernighan and Ritchie style
 ("<a href="http://www.codinghorror.com/blog/2012/07/new-programming-jargon.html">Egyptian brackets</a>")
 for <em>nonempty</em> blocks and block-like constructs:</p>
@@ -332,7 +334,7 @@ after it is opened, with no characters or line break in between
   } catch (Exception e) {}
 </pre>
 
-<h3 id="s4.2-block-indentation">4.2 Block indentation: +2 spaces</h3>
+<h3 id="s4.2-block-indentation">4.2 Block indentation: +4 spaces</h3>
 
 <p>Each time a new block or block-like construct is opened, the indent increases by two
 spaces. When the block ends, the indent returns to the previous indent level. The indent level
@@ -785,7 +787,7 @@ Such a comment renders the line non-blank.</p>
 re-wrap the lines when necessary (paragraph-style). Most formatters don't re-wrap lines in
 <code class="prettyprint lang-java">// ...</code> style comment blocks.</p>
 
- 
+
 
 <a name="modifiers"></a>
 <h4 id="s4.8.7-modifiers">4.8.7 Modifiers</h4>
@@ -1138,7 +1140,7 @@ punctuated as if it were a complete sentence.</p>
 <code class="badcode">/** @return the customer ID */</code>. This is incorrect, and should be
 changed to <code class="prettyprint lang-java">/** Returns the customer ID. */</code>.</p>
 
-<a name="s7.3.3-javadoc-optional"></a> 
+<a name="s7.3.3-javadoc-optional"></a>
 <h3 id="s7.3-javadoc-where-required">7.3 Where Javadoc is used</h3>
 
 <p>At the <em>minimum</em>, Javadoc is present for every
@@ -1181,9 +1183,9 @@ class or member, that comment is written as Javadoc instead (using <code>/**</co
 <p>Non-required Javadoc is not strictly required to follow the formatting rules of Sections
 7.1.2, 7.1.3, and 7.2, though it is of course recommended.</p>
 
- 
 
-</div> 
+
+</div>
 </div>
 </body>
 </html>
