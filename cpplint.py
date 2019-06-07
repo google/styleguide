@@ -1313,7 +1313,7 @@ class FileInfo(object):
     If we have a real absolute path name here we can try to do something smart:
     detecting the root of the checkout and truncating /path/to/checkout from
     the name so that we get header guards that don't include things like
-    "C:\Documents and Settings\..." or "/home/username/..." in them and thus
+    "C:\\Documents and Settings\\..." or "/home/username/..." in them and thus
     people on different computers who have checked the source out to different
     locations won't see bogus errors.
     """
