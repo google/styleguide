@@ -256,39 +256,39 @@ Exceptions must follow certain conditions:
     ```python
     Yes:
       def connect_to_next_port(self, minimum):
-        """Connects to the next available port.
+          """Connects to the next available port.
 
-        Args:
-          minimum: A port value greater or equal to 1024.
-        Raises:
-          ValueError: If the minimum port specified is less than 1024.
-          ConnectionError: If no available port is found.
-        Returns:
-          The new minimum port.
-        """
-        if minimum < 1024:
-          raise ValueError('Minimum port must be at least 1024, not %d.' % (minimum,))
-        port = self._find_next_open_port(minimum)
-        if not port:
-          raise ConnectionError('Could not connect to service on %d or higher.' % (minimum,))
-        assert port >= minimum, 'Unexpected port %d when minimum was %d.' % (port, minimum)
-        return port
+          Args:
+              minimum: A port value greater or equal to 1024.
+          Raises:
+              ValueError: If the minimum port specified is less than 1024.
+              ConnectionError: If no available port is found.
+          Returns:
+              The new minimum port.
+          """
+          if minimum < 1024:
+              raise ValueError('Minimum port must be at least 1024, not %d.' % (minimum,))
+          port = self._find_next_open_port(minimum)
+          if not port:
+              raise ConnectionError('Could not connect to service on %d or higher.' % (minimum,))
+          assert port >= minimum, 'Unexpected port %d when minimum was %d.' % (port, minimum)
+          return port
     ```
 
     ```python
     No:
       def connect_to_next_port(self, minimum):
-        """Connects to the next available port.
+          """Connects to the next available port.
 
-        Args:
-          minimum: A port value greater or equal to 1024.
-        Returns:
-          The new minimum port.
-        """
-        assert minimum >= 1024, 'Minimum port must be at least 1024.'
-        port = self._find_next_open_port(minimum)
-        assert port is not None
-        return port
+          Args:
+              minimum: A port value greater or equal to 1024.
+          Returns:
+              The new minimum port.
+          """
+          assert minimum >= 1024, 'Minimum port must be at least 1024.'
+          port = self._find_next_open_port(minimum)
+          assert port is not None
+          return port
     ```
 
 -   Libraries or packages may define their own exceptions. When doing so they
@@ -316,9 +316,9 @@ Exceptions must follow certain conditions:
     
     ```python
     try:
-      raise Error()
+        raise Error()
     except Error as error:
-      pass
+        pass
     ```
 
 <a id="s2.5-global-variables"></a>
