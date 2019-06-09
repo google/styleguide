@@ -2397,8 +2397,8 @@ class that is defined below -- use a string for the class name.
 ```python
 class MyClass(object):
 
-  def __init__(self,
-               stack: List["MyClass"]) -> None:
+    def __init__(self,
+                 stack: List["MyClass"]) -> None:
 ```
 
 <a id="s3.19.4-default-values"></a>
