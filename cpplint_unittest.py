@@ -42,7 +42,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-
+import pytest
 
 import cpplint
 
@@ -6270,6 +6270,13 @@ def tearDown():
     # If nobody set the global _run_verifyallcategoriesseen, then
     # we assume we should silently not run the test
     pass
+
+
+@pytest.fixture(autouse=True)
+def run_around_tests():
+  setUp()
+  yield
+  tearDown()
 
 
 if __name__ == '__main__':

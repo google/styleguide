@@ -1,0 +1,12 @@
+# requirements to run development steps
+
+# also change in tox.ini
+flake8>=3.7.8
+pylint>=1.8.4
+tox>=3.0.0
+tox-pyenv
+
+# Below only run with python3, installed in tox.ini
+# mypy
+# coala
+# coala-bears

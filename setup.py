@@ -1,17 +1,9 @@
 #! /usr/bin/env python
 
 from setuptools import setup, Command
-from setuptools.command.test import test as TestCommand
 from subprocess import check_call
-from multiprocessing import cpu_count
 from distutils.spawn import find_executable
 import cpplint as cpplint
-
-class Test(TestCommand):
-    def run_tests(self):
-        check_call(('./cpplint_unittest.py'))
-        check_call(('./cpplint_clitest.py'))
-
 
 class Cmd(Command):
     user_options = [
@@ -35,24 +27,12 @@ class Lint(Cmd):
     ]
     executable = 'pylint'
 
-    def initialize_options(self):
-        self.jobs = cpu_count()
-
-    def finalize_options(self):
-        self.jobs = int(self.jobs)
-        if self.jobs < 1:
-            raise ValueError('Jobs must be one or larger')
-
     def run(self):
-        self.execute('-j', str(self.jobs), 'cpplint.py')
+        self.execute('cpplint.py')
 
 
-class Format(Cmd):
-    description = 'Formats the code'
-    executable = 'yapf'
-
-    def run(self):
-        self.execute('--parallel', '--in-place', 'cpplint.py')
+with open('test-requirements') as f:
+    test_required = f.read().splitlines()
 
 
 setup(name='cpplint',
@@ -60,9 +40,9 @@ setup(name='cpplint',
       py_modules=['cpplint'],
       # generate platform specific start script
       entry_points={
-        'console_scripts': [
-            'cpplint = cpplint:main'
-        ]
+          'console_scripts': [
+              'cpplint = cpplint:main'
+          ]
       },
       install_requires=[],
       url='https://github.com/cpplint/cpplint',
@@ -86,15 +66,15 @@ setup(name='cpplint',
       description='Automated checker to ensure C++ files follow Google\'s style guide',
       long_description=open('README.rst').read(),
       license='BSD-3-Clause',
+      setup_requires=[
+          "pytest-runner"
+      ],
+      tests_require=test_required,
+      # extras_require allow pip install .[dev]
       extras_require={
-        'dev': [
-            'pylint',
-            'flake8',
-            'yapf',
-        ]
+          'test': test_required,
+          'dev': open('dev-requirements').read().splitlines() + test_required
       },
       cmdclass={
-        'test': Test,
-        'lint': Lint,
-        'format': Format
+          'lint': Lint
       })
