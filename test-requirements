@@ -1,4 +1,4 @@
-flake8>=3.7.7
+flake8>=3.7.8
 radon>=2.4.0
 pylint>=1.8.4
 tox>=3.0.0
