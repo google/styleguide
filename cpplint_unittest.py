@@ -1132,6 +1132,22 @@ class CpplintTest(CpplintTestBase):
         bar.set<int>("int", 5);
         pbar->set<bool>("bool", false);""",
         '')
+    # False positive for std::map
+    self.TestIncludeWhatYouUse(
+        """
+        template <typename T>
+        struct Foo {
+            T t;
+        };
+        template <typename T>
+        Foo<T> map(T t) {
+            return Foo<T>{ t };
+        }
+        struct Bar {
+        };
+        auto res = map<Bar>();
+        """,
+        '')
 
     # Test the UpdateIncludeState code path.
     mock_header_contents = ['#include "blah/foo.h"', '#include "blah/bar.h"']

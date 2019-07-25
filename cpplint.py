@@ -5614,7 +5614,7 @@ _HEADERS_CONTAINING_TEMPLATES = (
                      )),
     ('<limits>', ('numeric_limits',)),
     ('<list>', ('list',)),
-    ('<map>', ('map', 'multimap',)),
+    ('<map>', ('multimap',)),
     ('<memory>', ('allocator', 'make_shared', 'make_unique', 'shared_ptr',
                   'unique_ptr', 'weak_ptr')),
     ('<queue>', ('queue', 'priority_queue',)),
@@ -5657,6 +5657,11 @@ _re_pattern_headers_maybe_templates.append(
     (re.compile(r'[^>.]\bset\s*\<'),
         'set<>',
         '<set>'))
+# Match 'map<type> var' and 'std::map<type>(...)', but not 'map<type>(...)''
+_re_pattern_headers_maybe_templates.append(
+    (re.compile(r'(std\b::\bmap\s*\<)|(^(std\b::\b)map\b\(\s*\<)'),
+        'map<>',
+        '<map>'))
 
 # Other scripts may reach in and modify this pattern.
 _re_pattern_templates = []
