@@ -7,6 +7,79 @@ See README.md for details.
 # Google Python Style Guide
 
 
+- [1 Background](#s1-background)
+- [2 Python Language Rules](#s2-python-language-rules)
+  * [2.1 Lint](#s2.1-lint)
+  * [2.2 Imports](#s2.2-imports)
+  * [2.3 Packages](#s2.3-packages)
+  * [2.4 Exceptions](#s2.4-exceptions)
+  * [2.5 Global variables](#s2.5-global-variables)
+  * [2.6 Nested/Local/Inner Classes and Functions](#s2.6-nested)
+  * [2.7 Comprehensions & Generator Expressions](#s2.7-list-comprehensions)
+  * [2.8 Default Iterators and Operators](#s2.8-default-iterators-and-operators)
+  * [2.9 Generators](#s2.9-generators)
+  * [2.10 Lambda Functions](#s2.10-lambda-functions)
+  * [2.11 Conditional Expressions](#s2.11-conditional-expressions)
+  * [2.12 Default Argument Values](#s2.12-default-argument-values)
+  * [2.13 Properties](#s2.13-properties)
+  * [2.14 True/False evaluations](#s2.14-truefalse-evaluations)
+  * [2.15 Deprecated Language Features](#s2.15-deprecated-language-features)
+  * [2.16 Lexical Scoping](#s2.16-lexical-scoping)
+  * [2.17 Function and Method Decorators](#s2.17-function-and-method-decorators)
+  * [2.18 Threading](#218-threading)
+  * [2.19 Power Features](#219-power-features)
+  * [2.20 Modern Python: Python 3 and from \_\_future\_\_ imports](#s2.20-modern-python)
+  * [2.21 Type Annotated Code](#s2.21-typed-code)
+- [3 Python Style Rules](#s3-python-style-rules)
+  * [3.1 Semicolons](#s3.1-semicolons)
+  * [3.2 Line length](#s3.2-line-length)
+  * [3.3 Parentheses](#s3.3-parentheses)
+  * [3.4 Indentation](#s3.4-indentation)
+    + [3.4.1 Trailing commas in sequences of items?](#s3.4.1-trailing-comma)
+  * [3.5 Blank Lines](#s3.5-blank-lines)
+  * [3.6 Whitespace](#s3.6-whitespace)
+  * [3.7 Shebang Line](#s3.7-shebang-line)
+  * [3.8 Comments and Docstrings](#s3.8-comments)
+    + [3.8.1 Docstrings](#s3.8.1-comments-in-doc-strings)
+    + [3.8.2 Modules](#s3.8.2-comments-in-modules)
+    + [3.8.3 Functions and Methods](#s3.8.3-functions-and-methods)
+    + [3.8.4 Classes](#s3.8.4-comments-in-classes)
+    + [3.8.5 Block and Inline Comments](#s3.8.5-comments-in-block-and-inline)
+    + [3.8.6 Punctuation, Spelling and Grammar](#s3.8.6-punctuation-spelling-and-grammar)
+  * [3.9 Classes](#s3.9-classes)
+  * [3.10 Strings](#s3.10-strings)
+  * [3.11 Files and Sockets](#s3.11-files-and-sockets)
+  * [3.12 TODO Comments](#s3.12-todo-comments)
+  * [3.13 Imports formatting](#s3.13-imports-formatting)
+  * [3.14 Statements](#s3.14-statements)
+  * [3.15 Access Control](#s3.15-access-control)
+  * [3.16 Naming](#s3.16-naming)
+    + [3.16.1 Names to Avoid](#s3.16.1-names-to-avoid)
+    + [3.16.2 Naming Convention](#s3.16.2-naming-conventions)
+    + [3.16.3 File Naming](#s3.16.3-file-naming)
+    + [3.16.4 Guidelines derived from Guido's Recommendations](#s3.16.4-guidelines-derived-from-guidos-recommendations)
+  * [3.17 Main](#s3.17-main)
+  * [3.18 Function length](#s3.18-function-length)
+  * [3.19 Type Annotations](#s3.19-type-annotations)
+    + [3.19.1 General Rules](#s3.19.1-general)
+    + [3.19.2 Line Breaking](#s3.19.2-line-breaking)
+    + [3.19.3 Forward Declarations](#s3.19.3-forward-declarations)
+    + [3.19.4 Default Values](#s3.19.4-default-values)
+    + [3.19.5 NoneType](#s3.19.5-none-type)
+    + [3.19.6 Type Aliases](s3.19.6-aliases)
+    + [3.19.7 Ignoring Types](#s3.19.7-ignore)
+    + [3.19.8 Typing internal variables](#s3.19.8-comments)
+    + [3.19.9 Tuples vs Lists](#s3.19.9-tuples)
+    + [3.19.10 TypeVar](#s3.19.10-type-var)
+    + [3.19.11 String types](#s3.19.11-strings)
+    + [3.19.12 Imports For Typing](#s3.19.12-imports)
+    + [3.19.13 Conditional Imports](#s3.19.13-conditional-imports)
+    + [3.19.14 Circular Dependencies](#s3.19.14-circular-deps)
+    + [3.19.15 Generics](#s3.19.15-generics)
+- [4 Parting Words](#s4-parting-words)
+
+
+<a id="s1-background"></a>
 <a id="background"></a>
 ## 1 Background
 
@@ -394,8 +467,8 @@ of a module. Instead, prefix its name with an \_ at the module level so that it
 can still be accessed by tests.
 
 <a id="list-comprehensions"></a>
-<a id="s2.7-list_comprehensions"></a>
-<a id="list_comprehensions"></a>
+<a id="s2.7-list-comprehensions"></a>
+<a id="list-comprehensions"></a>
 ### 2.7 Comprehensions & Generator Expressions
 
 Okay to use for simple cases.
@@ -1377,8 +1450,8 @@ No:    # Stuff on first line forbidden
        }
 ```
 
-<a id="s3.4.1-trailing_comma"></a>
-<a id="trailing_comma"></a>
+<a id="s3.4.1-trailing-comma"></a>
+<a id="trailing-comma"></a>
 
 ### 3.4.1 Trailing commas in sequences of items?
 
@@ -2545,7 +2618,6 @@ def check_length(x: AnyStr) -> AnyStr:
 
 <a id="s3.19.11-strings"></a>
 <a id="typing-strings"></a>
-
 #### 3.19.11 String types
 
 The proper type for annotating strings depends on what versions of Python the
@@ -2683,7 +2755,6 @@ def my_method(self, var: some_mod.SomeType) -> None:
 
 <a id="typing-generics"></a>
 <a id="s3.19.15-generics"></a>
-
 #### 3.19.15 Generics
 
 When annotating, prefer to specify type parameters for generic types; otherwise,
@@ -2718,7 +2789,8 @@ def get_names(employee_ids: List[T]) -> Dict[T, Text]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
-
+<a id="s4-parting-words"></a>
+<a id="parting-words"></a>
 ## 4 Parting Words
 
 *BE CONSISTENT*.
@@ -2734,5 +2806,3 @@ it. We present global style rules here so people know the vocabulary, but local
 style is also important. If code you add to a file looks drastically different
 from the existing code around it, it throws readers out of their rhythm when
 they go to read it. Avoid this.
-
-
