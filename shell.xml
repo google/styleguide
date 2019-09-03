@@ -602,8 +602,8 @@ Revision 1.26
           #   being passed on.
           # (Consult 'man bash' for the nit-grits ;-)
 
-          set -- 1 "2 two" "3 three tres"; echo $# ; set -- "$*"; echo "$#, $@")
-          set -- 1 "2 two" "3 three tres"; echo $# ; set -- "$@"; echo "$#, $@")
+          set -- 1 "2 two" "3 three tres"; echo $#; set -- "$*"; echo "$#, $@")
+          set -- 1 "2 two" "3 three tres"; echo $#; set -- "$@"; echo "$#, $@")
         </CODE_SNIPPET>
       </p>
     </BODY>
@@ -1060,7 +1060,7 @@ Revision 1.26
       <p>
         Example:
         <CODE_SNIPPET>
-          if ! mv "${file_list}" "${dest_dir}/" ; then
+          if ! mv "${file_list}" "${dest_dir}/"; then
             echo "Unable to move ${file_list} to ${dest_dir}" &gt;&amp;2
             exit "${E_BAD_MOVE}"
           fi
