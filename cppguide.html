@@ -13,7 +13,7 @@
 <div class="horizontal_toc" id="tocDiv"></div>
 <div class="main_body">
 
-<h2 class="ignoreLink" id="Background">Background</h2>
+<h2 id="Background" class="ignoreLink">Background</h2>
 
 <p>C++ is one of the main development languages  used by
 many of Google's open-source projects. As every C++
@@ -22,8 +22,8 @@ this power brings with it complexity, which in turn can make
 code more bug-prone and harder to read and maintain.</p>
 
 <p>The goal of this guide is to manage this complexity by
-describing in detail the dos and don'ts of writing C++ code.
-These rules exist to
+describing in detail the dos and don'ts of writing C++ code
+. These rules exist to
 keep  the code base manageable while still allowing
 coders to use C++ language features productively.</p>
 
@@ -39,13 +39,11 @@ Google conform to the requirements in this guide.
 
 
 
-
-
 <p>Note that this guide is not a C++ tutorial: we assume that
 the reader is familiar with the language. </p>
 
 <h3 id="Goals">Goals of the Style Guide</h3>
-<div class="stylebody">
+
 <p>Why do we have this document?</p>
 
 <p>There are a few core goals that we believe this guide should
@@ -125,7 +123,7 @@ trickier language constructs, because any benefits of more complex
 implementation are multiplied widely by usage, and the cost in understanding
 the complexity does not need to be paid again when working with new
 portions of the codebase. When in doubt, waivers to rules of this type
-can be sought by asking 
+can be sought by asking
 your project leads. This is specifically
 important for our codebase because code ownership and team membership
 changes over time: even if everyone that works with some piece of code
@@ -157,9 +155,7 @@ same as a license to proceed.  Use your judgment, and if you are
 unsure, please don't hesitate to ask your project leads to get additional
 input.</p>
 
-</div>
 
- 
 
 <h2 id="C++_Version">C++ Version</h2>
 
@@ -194,13 +190,10 @@ pitfalls of using header files.</p>
 <a id="The_-inl.h_Files"></a>
 <h3 id="Self_contained_Headers">Self-contained Headers</h3>
 
-<div class="summary">
 <p>Header files should be self-contained (compile on their own) and
 end in <code>.h</code>.  Non-header files that are meant for inclusion
 should end in <code>.inc</code> and be used sparingly.</p>
-</div> 
 
-<div class="stylebody">
 <p>All header files should be self-contained. Users and refactoring
 tools should not have to adhere to special conditions to include the
 header. Specifically, a header should
@@ -229,26 +222,23 @@ their prerequisites.  Name such files with the <code>.inc</code>
 extension.  Use sparingly, and prefer self-contained headers when
 possible.</p>
 
-</div> 
-
 <h3 id="The__define_Guard">The #define Guard</h3>
 
-<div class="summary">
 <p>All header files should have <code>#define</code> guards to
 prevent multiple inclusion. The format of the symbol name
 should be
+
 <code><i>&lt;PROJECT&gt;</i>_<i>&lt;PATH&gt;</i>_<i>&lt;FILE&gt;</i>_H_</code>.</p>
-</div> 
-
-<div class="stylebody">
 
 
 
+<div>
 <p>To guarantee uniqueness, they should
 be based on the full path in a project's source tree. For
 example, the file <code>foo/src/bar/baz.h</code> in
 project <code>foo</code> should have the following
 guard:</p>
+</div>
 
 <pre>#ifndef FOO_BAR_BAZ_H_
 #define FOO_BAR_BAZ_H_
@@ -260,24 +250,16 @@ guard:</p>
 
 
 
-
-</div> 
-
 <h3 id="Forward_Declarations">Forward Declarations</h3>
 
-<div class="summary">
-  <p>Avoid using forward declarations where possible.
-  Just <code>#include</code> the headers you need.</p>
-</div>
+<p>Avoid using forward declarations where possible.
+Instead, <code>#include</code> the headers you need.</p>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>A "forward declaration" is a declaration of a class,
 function, or template without an associated definition.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <ul>
   <li>Forward declarations can save compile time, as
   <code>#include</code>s force the compiler to open
@@ -288,9 +270,8 @@ function, or template without an associated definition.</p>
   your code to be recompiled more often, due to unrelated
   changes in the header.</li>
 </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
   <li>Forward declarations can hide a dependency, allowing
   user code to skip necessary recompilation when headers
@@ -334,11 +315,10 @@ function, or template without an associated definition.</p>
   (e.g. using pointer members instead of object members)
   can make the code slower and more complex.</li>
 
-  
-</ul>
-</div>
 
-<div class="decision">
+</ul>
+
+<p class="decision"></p>
 <ul>
   <li>Try to avoid forward declarations of entities
   defined in another project.</li>
@@ -352,33 +332,24 @@ function, or template without an associated definition.</p>
 
 <p>Please see <a href="#Names_and_Order_of_Includes">Names and Order
 of Includes</a> for rules about when to #include a header.</p>
-</div>
-
-</div> 
 
 <h3 id="Inline_Functions">Inline Functions</h3>
 
-<div class="summary">
 <p>Define functions inline only when they are small, say, 10
 lines or fewer.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>You can declare functions in a way that allows the compiler to expand
 them inline rather than calling them through the usual
 function call mechanism.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Inlining a function can generate more efficient object
 code, as long as the inlined function is small. Feel free
 to inline accessors and mutators, and other short,
 performance-critical functions.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>Overuse of inlining can actually make programs slower.
 Depending on a function's size, inlining it can cause the
 code size to increase or decrease. Inlining a very small
@@ -386,9 +357,8 @@ accessor function will usually decrease code size while
 inlining a very large function can dramatically increase
 code size. On modern processors smaller code usually runs
 faster due to better use of the instruction cache.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>A decent rule of thumb is to not inline a function if
 it is more than 10 lines long. Beware of destructors,
 which are often longer than they appear because of
@@ -407,23 +377,18 @@ main reason for making a virtual function inline is to
 place its definition in the class, either for convenience
 or to document its behavior, e.g., for accessors and
 mutators.</p>
-</div> 
-
-</div> 
 
 <h3 id="Names_and_Order_of_Includes">Names and Order of Includes</h3>
 
-<div class="summary">
-<p>Use standard order for readability and to avoid hidden
-dependencies: Related header, C library, C++ library,  other libraries'
-<code>.h</code>, your project's <code>.h</code>.</p>
-</div>
+<p>Include headers in the following order: Related header, C system headers,
+C++ standard library headers,
+other libraries' headers, your project's
+headers.</p>
 
-<div class="stylebody">
 <p>
 All of a project's header files should be
 listed as descendants of the project's source
-directory without use of UNIX directory shortcuts
+directory without use of UNIX directory aliases
 <code>.</code> (the current directory) or <code>..</code>
 (the parent directory). For example,
 
@@ -444,23 +409,29 @@ as follows:</p>
 
   <li>A blank line</li>
 
-  <li>C system files.</li>
-
-  <li>C++ system files.</li>
+  <li>C system headers (more precisely: headers in angle brackets with the
+    <code>.h</code> extension), e.g. <code>&lt;unistd.h&gt;</code>,
+    <code>&lt;stdlib.h&gt;</code>.</li>
 
   <li>A blank line</li>
 
-  <li>Other libraries' <code>.h</code>
-  files.</li>
+  <li>C++ standard library headers (without file extension), e.g.
+    <code>&lt;algorithm&gt;</code>, <code>&lt;cstddef&gt;</code>.</li>
+
+  <li>A blank line</li>
+
+  <div>
+  <li>Other libraries' <code>.h</code> files.</li>
+  </div>
 
   <li>
   Your project's <code>.h</code>
   files.</li>
 </ol>
 
-<p>Note that any adjacent blank lines should be collapsed.</p>
+<p>Separate each non-empty group with one blank line.</p>
 
-<p>With the preferred ordering, if
+<p>With the preferred ordering, if the related header
 <code><var>dir2/foo2</var>.h</code> omits any necessary
 includes, the build of <code><var>dir/foo</var>.cc</code>
 or <code><var>dir/foo</var>_test.cc</code> will break.
@@ -476,9 +447,9 @@ directories too.</p>
 
 
 
-<p>Note that the C compatibility headers such as <code>stddef.h</code>
+<p>Note that the C headers such as <code>stddef.h</code>
 are essentially interchangeable with their C++ counterparts
-(<code>cstddef</code>)
+(<code>cstddef</code>).
 Either style is acceptable, but prefer consistency with existing code.</p>
 
 <p>Within each section the includes should be ordered
@@ -491,21 +462,19 @@ declaration</a>. If you rely on symbols from <code>bar.h</code>,
 don't count on the fact that you included <code>foo.h</code> which
 (currently) includes <code>bar.h</code>: include <code>bar.h</code>
 yourself, unless <code>foo.h</code> explicitly demonstrates its intent
-to provide you the symbols of <code>bar.h</code>.  However, any
-includes present in the related header do not need to be included
-again in the related <code>cc</code> (i.e., <code>foo.cc</code> can
-rely on <code>foo.h</code>'s includes).</p>
+to provide you the symbols of <code>bar.h</code>.</p>
 
 <p>For example, the includes in
 
 <code>google-awesome-project/src/foo/internal/fooserver.cc</code>
 might look like this:</p>
 
-
 <pre>#include "foo/server/fooserver.h"
 
 #include &lt;sys/types.h&gt;
 #include &lt;unistd.h&gt;
+
+#include &lt;string&gt;
 #include &lt;vector&gt;
 
 #include "base/basictypes.h"
@@ -513,7 +482,9 @@ might look like this:</p>
 #include "foo/server/bar.h"
 </pre>
 
-<p class="exception">Sometimes, system-specific code needs
+<p><b>Exception:</b></p>
+
+<p>Sometimes, system-specific code needs
 conditional includes. Such code can put conditional
 includes after other includes. Of course, keep your
 system-specific code small and localized. Example:</p>
@@ -527,13 +498,10 @@ system-specific code small and localized. Example:</p>
 #endif  // LANG_CXX11
 </pre>
 
-</div> 
-
 <h2 id="Scoping">Scoping</h2>
 
 <h3 id="Namespaces">Namespaces</h3>
 
-<div class="summary">
 <p>With few exceptions, place code in a namespace. Namespaces
 should have unique names based on the project name, and possibly
 its path. Do not use <i>using-directives</i> (e.g.
@@ -541,17 +509,13 @@ its path. Do not use <i>using-directives</i> (e.g.
 inline namespaces. For unnamed namespaces, see
 <a href="#Unnamed_Namespaces_and_Static_Variables">Unnamed Namespaces and
 Static Variables</a>.
-</p></div>
 
-<div class="stylebody">
-
-<div class="definition">
+</p><p class="definition"></p>
 <p>Namespaces subdivide the global scope
 into distinct, named scopes, and so are useful for preventing
 name collisions in the global scope.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 
 <p>Namespaces provide a method for preventing name conflicts
 in large programs while allowing most code to use reasonably
@@ -569,7 +533,7 @@ can continue to refer to <code>Foo</code> without the prefix.</p>
 the enclosing scope. Consider the following snippet, for
 example:</p>
 
-<pre>namespace outer {
+<pre class="neutralcode">namespace outer {
 inline namespace inner {
   void foo();
 }  // namespace inner
@@ -580,9 +544,8 @@ inline namespace inner {
 <code>outer::foo()</code> are interchangeable. Inline
 namespaces are primarily intended for ABI compatibility
 across versions.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 
 <p>Namespaces can be confusing, because they complicate
 the mechanics of figuring out what definition a name refers
@@ -596,9 +559,8 @@ some larger versioning policy.</p>
 <p>In some contexts, it's necessary to repeatedly refer to
 symbols by their fully-qualified names. For deeply-nested
 namespaces, this can add a lot of clutter.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 
 <p>Namespaces should be used as follows:</p>
 
@@ -608,7 +570,7 @@ namespaces, this can add a lot of clutter.</p>
   </li><li>
 
   <p>Namespaces wrap the entire source file after
-  includes,  
+  includes,
   <a href="https://gflags.github.io/gflags/">
   gflags</a> definitions/declarations
   and forward declarations of classes from other namespaces.</p>
@@ -643,11 +605,11 @@ void MyClass::Foo() {
 
 <pre>#include "a.h"
 
-DEFINE_FLAG(bool, someflag, false, "dummy flag");
+ABSL_FLAG(bool, someflag, false, "dummy flag");
 
 namespace mynamespace {
 
-using ::foo::bar;
+using ::foo::Bar;
 
 ...code for mynamespace...    // Code goes against the left margin.
 
@@ -659,7 +621,8 @@ using ::foo::bar;
   message code in a namespace, use the
   <code>package</code> specifier in the
   <code>.proto</code> file. See
-  
+
+
   <a href="https://developers.google.com/protocol-buffers/docs/reference/cpp-generated#package">
   Protocol Buffer Packages</a>
   for details.</li>
@@ -705,30 +668,23 @@ inline void my_inline_function() {
 
   </li><li>Do not use inline namespaces.</li>
 </ul>
-</div>
-</div>
 
 <h3 id="Unnamed_Namespaces_and_Static_Variables">Unnamed Namespaces and Static
 Variables</h3>
 
-<div class="summary">
 <p>When definitions in a <code>.cc</code> file do not need to be
 referenced outside that file, place them in an unnamed
 namespace or declare them <code>static</code>. Do not use either
 of these constructs in <code>.h</code> files.
-</p></div>
 
-<div class="stylebody">
-
-<div class="definition">
+</p><p class="definition"></p>
 <p>All declarations can be given internal linkage by placing them in unnamed
 namespaces. Functions and variables can also be given internal linkage by
 declaring them <code>static</code>. This means that anything you're declaring
 can't be accessed from another file. If a different file declares something with
 the same name, then the two entities are completely independent.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 
 <p>Use of internal linkage in <code>.cc</code> files is encouraged
 for all code that does not need to be referenced elsewhere.
@@ -741,33 +697,26 @@ Do not use internal linkage in <code>.h</code> files.</p>
 ...
 }  // namespace
 </pre>
-</div>
-</div>
 
 <h3 id="Nonmember,_Static_Member,_and_Global_Functions">Nonmember, Static Member, and Global Functions</h3>
 
-<div class="summary">
 <p>Prefer placing nonmember functions in a namespace; use completely global
 functions rarely. Do not use a class simply to group static functions. Static
 methods of a class should generally be closely related to instances of the
 class or the class's static data.</p>
-</div>
 
- <div class="stylebody">
 
- <div class="pros">
- <p>Nonmember and static member functions can be useful in
- some situations. Putting nonmember functions in a
- namespace avoids polluting the global namespace.</p>
- </div>
+<p class="pros"></p>
+<p>Nonmember and static member functions can be useful in
+some situations. Putting nonmember functions in a
+namespace avoids polluting the global namespace.</p>
 
-<div class="cons">
+<p class="cons"></p>
 <p>Nonmember and static member functions may make more sense
 as members of a new class, especially if they access
 external resources or have significant dependencies.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>Sometimes it is useful to define a
 function not bound to a class instance. Such a function
 can be either a static member or a nonmember function.
@@ -781,18 +730,11 @@ common prefix, and such grouping is usually unnecessary anyway.</p>
 needed in its <code>.cc</code> file, use
 <a href="#Unnamed_Namespaces_and_Static_Variables">internal linkage</a> to limit
 its scope.</p>
-</div>
-
-</div> 
 
 <h3 id="Local_Variables">Local Variables</h3>
 
-<div class="summary">
 <p>Place a function's variables in the narrowest scope
 possible, and initialize variables in the declaration.</p>
-</div>
-
-<div class="stylebody">
 
 <p>C++ allows you to declare variables anywhere in a
 function. We encourage you to declare them in as local a
@@ -846,11 +788,8 @@ for (int i = 0; i &lt; 1000000; ++i) {
 }
 </pre>
 
-</div> 
-
 <h3 id="Static_and_Global_Variables">Static and Global Variables</h3>
 
-<div class="summary">
 <p>Objects with
 <a href="http://en.cppreference.com/w/cpp/language/storage_duration#Storage_duration">
 static storage duration</a> are forbidden unless they are
@@ -866,11 +805,8 @@ for details.</p>
 
 <p>As a rule of thumb: a global variable satisfies these requirements if its
 declaration, considered in isolation, could be <code>constexpr</code>.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>Every object has a <dfn>storage duration</dfn>, which correlates with its
 lifetime. Objects with static storage duration live from the point of their
 initialization until the end of the program. Such objects appear as variables at
@@ -891,16 +827,14 @@ initialization <em>always</em> happens to objects with static storage duration
 (initializing the object either to a given constant or to a representation
 consisting of all bytes set to zero), whereas dynamic initialization happens
 after that, if required.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Global and static variables are very useful for a large number of
 applications: named constants, auxiliary data structures internal to some
 translation unit, command-line flags, logging, registration mechanisms,
 background infrastructure, etc.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>Global and static variables that use dynamic initialization or have
 non-trivial destructors create complexity that can easily lead to hard-to-find
 bugs. Dynamic initialization is not ordered across translation units, and
@@ -911,9 +845,8 @@ an object to be accessed before its lifetime has begun (or after its lifetime
 has ended). Moreover, when a program starts threads that are not joined at exit,
 those threads may attempt to access objects after their lifetime has ended if
 their destructor has already run.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <h4>Decision on destruction</h4>
 
 <p>When destructors are trivial, their execution is not subject to ordering at
@@ -935,11 +868,11 @@ void foo() {
 // allowed: constexpr guarantees trivial destructor
 constexpr std::array&lt;int, 3&gt; kArray = {{1, 2, 3}};</pre>
 <pre class="badcode">// bad: non-trivial destructor
-const string kFoo = "foo";
+const std::string kFoo = "foo";
 
 // bad for the same reason, even though kBar is a reference (the
 // rule also applies to lifetime-extended temporary objects)
-const string&amp; kBar = StrCat("a", "b", "c");
+const std::string&amp; kBar = StrCat("a", "b", "c");
 
 void bar() {
   // bad: non-trivial destructor
@@ -959,7 +892,8 @@ evaluation of the initializer:</p>
 <pre class="neutralcode">int n = 5;    // fine
 int m = f();  // ? (depends on f)
 Foo x;        // ? (depends on Foo::Foo)
-Bar y = g();  // ? (depends on g and on Bar::Bar)</pre>
+Bar y = g();  // ? (depends on g and on Bar::Bar)
+</pre>
 
 <p>All but the first statement expose us to indeterminate initialization
 ordering.</p>
@@ -978,6 +912,7 @@ Foo a[] = { Foo(1), Foo(2), Foo(3) };  // fine</pre>
 <p>Constant initialization is always allowed. Constant initialization of
 static storage duration variables should be marked with <code>constexpr</code>
 or where possible the
+
 
 <a href="https://github.com/abseil/abseil-cpp/blob/03c1513538584f4a04d666be5eb469e3979febba/absl/base/attributes.h#L540">
 <code>ABSL_CONST_INIT</code></a>
@@ -1008,7 +943,6 @@ does not make an observable difference. For example:</p>
 <p>Dynamic initialization of static local variables is allowed (and common).</p>
 
 
-</div>
 
 <h4>Common patterns</h4>
 
@@ -1024,10 +958,15 @@ does not make an observable difference. For example:</p>
     trivial types, e.g. an array of arrays of ints (for a "map from int to
     int"), or an array of pairs (e.g. pairs of <code>int</code> and <code>const
     char*</code>). For small collections, linear search is entirely sufficient
-    (and efficient, due to memory locality). If necessary, keep the collection in
-    sorted order and use a binary search algorithm. If you do really prefer a
-    dynamic container from the standard library, consider using a function-local
-    static pointer, as described below.</li>
+    (and efficient, due to memory locality); consider using the facilities from
+
+    <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/algorithm/container.h">absl/algorithm/container.h</a>
+
+
+    for the standard operations. If necessary, keep the collection in sorted
+    order and use a binary search algorithm. If you do really prefer a dynamic
+    container from the standard library, consider using a function-local static
+    pointer, as described below.</li>
   <li>Smart pointers (<code>unique_ptr</code>, <code>shared_ptr</code>): smart
     pointers execute cleanup during destruction and are therefore forbidden.
     Consider whether your use case fits into one of the other patterns described
@@ -1037,30 +976,23 @@ does not make an observable difference. For example:</p>
     a type that you need to define yourself, give the type a trivial destructor
     and a <code>constexpr</code> constructor.</li>
   <li>If all else fails, you can create an object dynamically and never delete
-    it by binding the pointer to a function-local static pointer variable:
-    <code>static const auto* const impl = new T(args...);</code> (If the
-    initialization is more complex, it can be moved into a function or lambda
-    expression.)</li>
+    it by using a function-local static pointer or reference (e.g. <code>static
+    const auto&amp; impl = *new T(args...);</code>).</li>
 </ul>
-
-</div> 
 
 <h3 id="thread_local">thread_local Variables</h3>
 
-<div class="summary">
 <p><code>thread_local</code> variables that aren't declared inside a function
 must be initialized with a true compile-time constant,
 and this must be enforced by using the
+
 
 <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/attributes.h">
 <code>ABSL_CONST_INIT</code></a>
 attribute. Prefer
 <code>thread_local</code> over other ways of defining thread-local data.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>Starting with C++11, variables can be declared with the
 <code>thread_local</code> specifier:</p>
 <pre>thread_local Foo foo = ...;
@@ -1083,9 +1015,8 @@ initialization-order issues as static variables (and more besides).</p>
 <p><code>thread_local</code> variable instances are destroyed when their thread
 terminates, so they do not have the destruction-order issues of static
 variables.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <ul>
   <li>Thread-local data is inherently safe from races (because only one thread
     can ordinarily access it), which makes <code>thread_local</code> useful for
@@ -1093,9 +1024,8 @@ variables.</p>
   <li><code>thread_local</code> is the only standard-supported way of creating
     thread-local data.</li>
 </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
   <li>Accessing a <code>thread_local</code> variable may trigger execution of
     an unpredictable and uncontrollable amount of other code.</li>
@@ -1109,9 +1039,8 @@ variables.</p>
   <li><code>thread_local</code> may not be as efficient as certain compiler
     intrinsics.</li>
 </ul>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
   <p><code>thread_local</code> variables inside a function have no safety
     concerns, so they can be used without restriction. Note that you can use
     a function-scope <code>thread_local</code> to simulate a class- or
@@ -1124,25 +1053,21 @@ variables.</p>
 }
 </pre>
 
-  <p><code>thread_local</code> variables at class or namespace scope must be
-    initialized with a true compile-time constant (i.e. they must have no
-    dynamic initialization). To enforce this,
-    <code>thread_local</code> variables at class or namespace scope must be
-    annotated with
-    
-    <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/attributes.h">
-    <code>ABSL_CONST_INIT</code></a>
-    (or <code>constexpr</code>, but that should be rare):</p>
+<p><code>thread_local</code> variables at class or namespace scope must be
+initialized with a true compile-time constant (i.e. they must have no
+dynamic initialization). To enforce this, <code>thread_local</code> variables
+at class or namespace scope must be annotated with
+
+
+<a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/attributes.h">
+<code>ABSL_CONST_INIT</code></a>
+(or <code>constexpr</code>, but that should be rare):</p>
 
 <pre>ABSL_CONST_INIT thread_local Foo foo = ...;
 </pre>
 
-  <p><code>thread_local</code> should be preferred over other mechanisms for
-    defining thread-local data.</p>
-</div>
-
-</div> 
-
+<p><code>thread_local</code> should be preferred over other mechanisms for
+defining thread-local data.</p>
 
 <h2 id="Classes">Classes</h2>
 
@@ -1152,19 +1077,14 @@ don'ts you should follow when writing a class.</p>
 
 <h3 id="Doing_Work_in_Constructors">Doing Work in Constructors</h3>
 
-<div class="summary">
 <p>Avoid virtual method calls in constructors, and avoid
 initialization that can fail if you can't signal an error.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>It is possible to perform arbitrary initialization in the body
 of the constructor.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <ul>
   <li>No need to worry about whether the class has been initialized or
   not.</li>
@@ -1174,9 +1094,7 @@ of the constructor.</p>
   or algorithms.</li>
 </ul>
 
-</div>
-
-<div class="cons">
+<p class="cons"></p>
 <ul>
   <li>If the work calls virtual functions, these calls
   will not get dispatched to the subclass
@@ -1197,40 +1115,28 @@ of the constructor.</p>
   is done in the constructor cannot easily be handed off to, for
   example, another thread.</li>
 </ul>
-</div>
 
-
-<div class="decision">
+<p class="decision"></p>
 <p>Constructors should never call virtual functions. If appropriate
-for your code
-,
+for your code ,
 terminating the program may be an appropriate error handling
 response. Otherwise, consider a factory function
 or <code>Init()</code> method as described in
-
-
 <a href="https://abseil.io/tips/42">TotW #42</a>
 .
 Avoid <code>Init()</code> methods on objects with
 no other states that affect which public methods may be called
 (semi-constructed objects of this form are particularly hard to work
 with correctly).</p>
-</div>
-
-</div> 
 
 <a id="Explicit_Constructors"></a>
 <h3 id="Implicit_Conversions">Implicit Conversions</h3>
 
-<div class="summary">
 <p>Do not define implicit conversions. Use the <code>explicit</code>
 keyword for conversion operators and single-argument
 constructors.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>Implicit conversions allow an
 object of one type (called the <dfn>source type</dfn>) to
 be used where a different type (called the <dfn>destination
@@ -1263,9 +1169,8 @@ void Func(Foo f);
 </pre>
 This kind of code isn't technically an implicit conversion, but the
 language treats it as one as far as <code>explicit</code> is concerned.
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <ul>
 <li>Implicit conversions can make a type more usable and
     expressive by eliminating the need to explicitly name a type
@@ -1273,14 +1178,13 @@ language treats it as one as far as <code>explicit</code> is concerned.
 <li>Implicit conversions can be a simpler alternative to
     overloading, such as when a single
     function with a <code>string_view</code> parameter takes the
-    place of separate overloads for <code>string</code> and
+    place of separate overloads for <code>std::string</code> and
     <code>const char*</code>.</li>
 <li>List initialization syntax is a concise and expressive
     way of initializing objects.</li>
 </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
 <li>Implicit conversions can hide type-mismatch bugs, where the
     destination type does not match the user's expectation, or
@@ -1306,9 +1210,8 @@ language treats it as one as far as <code>explicit</code> is concerned.
     the destination type is implicit, particularly if the
     list has only a single element.</li>
 </ul>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>Type conversion operators, and constructors that are
 callable with a single argument, must be marked
 <code>explicit</code> in the class definition. As an
@@ -1316,7 +1219,7 @@ exception, copy and move constructors should not be
 <code>explicit</code>, since they do not perform type
 conversion. Implicit conversions can sometimes be necessary and
 appropriate for types that are designed to transparently wrap other
-types. In that case, contact 
+types. In that case, contact
 your project leads to request
 a waiver of this rule.</p>
 
@@ -1325,21 +1228,15 @@ may omit <code>explicit</code>. Constructors that
 take a single <code>std::initializer_list</code> parameter should
 also omit <code>explicit</code>, in order to support copy-initialization
 (e.g. <code>MyType m = {1, 2};</code>).</p>
-</div>
-
-</div> 
 
 <h3 id="Copyable_Movable_Types">Copyable and Movable Types</h3>
 <a id="Copy_Constructors"></a>
-<div class="summary">
-<p>A class's public API should make explicit whether the class is copyable,
+
+<p>A class's public API must make clear whether the class is copyable,
 move-only, or neither copyable nor movable. Support copying and/or
 moving if these operations are clear and meaningful for your type.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>A movable type is one that can be initialized and assigned
 from temporaries.</p>
 
@@ -1349,9 +1246,9 @@ stipulation that the value of the source does not change.
 <code>std::unique_ptr&lt;int&gt;</code> is an example of a movable but not
 copyable type (since the value of the source
 <code>std::unique_ptr&lt;int&gt;</code> must be modified during assignment to
-the destination). <code>int</code> and <code>string</code> are examples of
+the destination). <code>int</code> and <code>std::string</code> are examples of
 movable types that are also copyable. (For <code>int</code>, the move and copy
-operations are the same; for <code>string</code>, there exists a move operation
+operations are the same; for <code>std::string</code>, there exists a move operation
 that is less expensive than a copy.)</p>
 
 <p>For user-defined types, the copy behavior is defined by the copy
@@ -1361,9 +1258,8 @@ copy constructor and the copy-assignment operator otherwise.</p>
 
 <p>The copy/move constructors can be implicitly invoked by the compiler
 in some situations, e.g. when passing objects by value.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Objects of copyable and movable types can be passed and returned by value,
 which makes APIs simpler, safer, and more general. Unlike when passing objects
 by pointer or reference, there's no risk of confusion over ownership,
@@ -1390,9 +1286,8 @@ copy elision</a>.</p>
 <p>Move operations allow the implicit and efficient transfer of
 resources out of rvalue objects. This allows a plainer coding style
 in some cases.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>Some types do not need to be copyable, and providing copy
 operations for such types can be confusing, nonsensical, or outright
 incorrect. Types representing singleton objects (<code>Registerer</code>),
@@ -1408,11 +1303,10 @@ resulting bugs can be confusing and difficult to diagnose.</p>
 invocation easy to miss. This may cause confusion for programmers used to
 languages where pass-by-reference is conventional or mandatory. It may also
 encourage excessive copying, which can cause performance problems.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 
-<p>Every class's public interface should make explicit which copy and move
+<p>Every class's public interface must make clear which copy and move
 operations the class supports. This should usually take the form of explicitly
 declaring and/or deleting the appropriate operations in the <code>public</code>
 section of the declaration.</p>
@@ -1426,16 +1320,16 @@ must also provide the corresponding constructor.</p>
 
 <pre>class Copyable {
  public:
-  Copyable(const Copyable&amp; rhs) = default;
-  Copyable&amp; operator=(const Copyable&amp; rhs) = default;
+  Copyable(const Copyable&amp; other) = default;
+  Copyable&amp; operator=(const Copyable&amp; other) = default;
 
   // The implicit move operations are suppressed by the declarations above.
 };
 
 class MoveOnly {
  public:
-  MoveOnly(MoveOnly&amp;&amp; rhs);
-  MoveOnly&amp; operator=(MoveOnly&amp;&amp; rhs);
+  MoveOnly(MoveOnly&amp;&amp; other);
+  MoveOnly&amp; operator=(MoveOnly&amp;&amp; other);
 
   // The copy operations are implicitly deleted, but you can
   // spell that out explicitly if you want:
@@ -1458,16 +1352,19 @@ class NotCopyableOrMovable {
 };
 </pre>
 
-<p>These declarations/deletions can be omitted only if they are obvious: for
-example, if a base class isn't copyable or movable, derived classes naturally
-won't be either. Similarly, a <a href="#Structs_vs._Classes">struct</a>'s
-copyability/movability is normally determined by the copyability/movability
-of its data members (this does not apply to classes because in Google code
-their data members are not public). Note that if you explicitly declare or
-delete any of the copy/move operations, the others are not obvious, and so
-this paragraph does not apply (in particular, the rules in this section
-that apply to "classes" also apply to structs that declare or delete any
-copy/move operations).</p>
+<p>These declarations/deletions can be omitted only if they are obvious:
+</p><ul>
+<li>If the class has no <code>private</code> section, like a
+    <a href="#Structs_vs._Classes">struct</a> or an interface-only base class,
+    then the copyability/movability can be determined by the
+    copyability/movability of any public data members.
+</li><li>If a base class clearly isn't copyable or movable, derived classes
+    naturally won't be either.  An interface-only base class that leaves these
+    operations implicit is not sufficient to make concrete subclasses clear.
+</li><li>Note that if you explicitly declare or delete either the constructor or
+    assignment operation for copy, the other copy operation is not obvious and
+    must be declared or deleted.  Likewise for move operations.
+</li></ul>
 
 <p>A type should not be copyable/movable if the meaning of
 copying/moving is unclear to a casual user, or if it incurs unexpected
@@ -1489,17 +1386,10 @@ can use to implement it.</p>
 
 
 
-</div> 
-</div> 
-
 <h3 id="Structs_vs._Classes">Structs vs. Classes</h3>
 
-<div class="summary">
 <p>Use a <code>struct</code> only for passive objects that
       carry data; everything else is a <code>class</code>.</p>
-</div>
-
-<div class="stylebody">
 
 <p>The <code>struct</code> and <code>class</code>
 keywords behave almost identically in C++. We add our own
@@ -1507,40 +1397,58 @@ semantic meanings to each keyword, so you should use the
 appropriate keyword for the data-type you're
 defining.</p>
 
-<p><code>structs</code> should be used for passive
-objects that carry data, and may have associated
-constants, but lack any functionality other than
-access/setting the data members. The accessing/setting of
-fields is done by directly accessing the fields rather
-than through method invocations. Methods should not
-provide behavior but should only be used to set up the
-data members, e.g., constructor, destructor,
-<code>Initialize()</code>, <code>Reset()</code>,
-<code>Validate()</code>.</p>
+<p><code>structs</code> should be used for passive objects that carry
+data, and may have associated constants, but lack any functionality
+other than access/setting the data members. All fields must be public,
+and accessed directly rather than through getter/setter methods. The
+struct must not have invariants that imply relationships between
+different fields, since direct user access to those fields may break
+those invariants. Methods should not provide behavior but should only
+be used to set up the data members, e.g., constructor, destructor,
+<code>Initialize()</code>, <code>Reset()</code>.</p>
 
-<p>If more functionality is required, a
+<p>If more functionality or invariants are required, a
 <code>class</code> is more appropriate. If in doubt, make
 it a <code>class</code>.</p>
 
 <p>For consistency with STL, you can use
 <code>struct</code> instead of <code>class</code> for
-functors and traits.</p>
+stateless types, such as traits,
+<a href="#Template_metaprogramming">template metafunctions</a>,
+and some functors.</p>
 
 <p>Note that member variables in structs and classes have
 <a href="#Variable_Names">different naming rules</a>.</p>
 
-</div> 
+<h3 id="Structs_vs._Tuples">Structs vs. Pairs and Tuples</h3>
+
+<p>Prefer to use a <code>struct</code> instead of a pair or a
+tuple whenever the elements can have meaningful names.</p>
+
+<p>
+  While using pairs and tuples can avoid the need to define a custom type,
+  potentially saving work when <em>writing</em> code, a meaningful field
+  name will almost always be much clearer when <em>reading</em> code than
+  <code>.first</code>, <code>.second</code>, or <code>std::get&lt;X&gt;</code>.
+  While C++14's introduction of <code>std::get&lt;Type&gt;</code> to access a
+  tuple element by type rather than index (when the type is unique) can
+  sometimes partially mitigate this, a field name is usually substantially
+  clearer and more informative than a type.
+</p>
+
+<p>
+  Pairs and tuples may be appropriate in generic code where there are not
+  specific meanings for the elements of the pair or tuple. Their use may
+  also be required in order to interoperate with existing code or APIs.
+</p>
 
 <a id="Multiple_Inheritance"></a>
 <h3 id="Inheritance">Inheritance</h3>
 
-<div class="summary">
 <p>Composition is often more appropriate than inheritance.
 When using inheritance, make it <code>public</code>.</p>
-</div>
 
-<div class="stylebody">
-<div class="definition">
+<p class="definition"></p>
 <p> When a sub-class
 inherits from a base class, it includes the definitions
 of all the data and operations that the base class
@@ -1548,9 +1456,8 @@ defines. "Interface inheritance" is inheritance from a
 pure abstract base class (one with no state or defined
 methods); all other inheritance is "implementation
 inheritance".</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Implementation inheritance reduces code size by re-using
 the base class code as it specializes an existing type.
 Because inheritance is a compile-time declaration, you
@@ -1560,9 +1467,8 @@ programmatically enforce that a class expose a particular
 API. Again, the compiler can detect errors, in this case,
 when a class does not define a necessary method of the
 API.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>For implementation inheritance, because the code
 implementing a sub-class is spread between the base and
 the sub-class, it can be more difficult to understand an
@@ -1577,9 +1483,8 @@ inheritance can often be greater than the performance
 drop from ordinary to virtual dispatch), and because
 it risks leading to "diamond" inheritance patterns,
 which are prone to ambiguity, confusion, and outright bugs.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 
 <p>All inheritance should be <code>public</code>. If you
 want to do private inheritance, you should be including
@@ -1610,21 +1515,14 @@ present, the reader has to check all ancestors of the
 class in question to determine if the function or
 destructor is virtual or not.</p>
 
-  <p>Multiple inheritance is permitted, but multiple <em>implementation</em>
+<p>Multiple inheritance is permitted, but multiple <em>implementation</em>
 inheritance is strongly discouraged.</p>
-</div>
-
-</div> 
 
 <h3 id="Operator_Overloading">Operator Overloading</h3>
 
-<div class="summary">
-<p>Overload operators judiciously. Do not create user-defined literals.</p>
-</div>
+<p>Overload operators judiciously. Do not use user-defined literals.</p>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>C++ permits user code to
 <a href="http://en.cppreference.com/w/cpp/language/operators">declare
 overloaded versions of the built-in operators</a> using the
@@ -1633,9 +1531,8 @@ is a user-defined type. The <code>operator</code> keyword also
 permits user code to define new kinds of literals using
 <code>operator""</code>, and to define type-conversion functions
 such as <code>operator bool()</code>.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Operator overloading can make code more concise and
 intuitive by enabling user-defined types to behave the same
 as built-in types. Overloaded operators are the idiomatic names
@@ -1647,9 +1544,8 @@ those names.</p>
 
 <p>User-defined literals are a very concise notation for
 creating objects of user-defined types.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
   <li>Providing a correct, consistent, and unsurprising
   set of operator overloads requires some care, and failure
@@ -1691,13 +1587,23 @@ creating objects of user-defined types.</p>
   in undefined behavior, which can manifest as subtle
   run-time bugs.</li>
 
-  <li>User-defined literals allow the creation of new
+  <li>User-defined literals (UDLs) allow the creation of new
   syntactic forms that are unfamiliar even to experienced C++
-  programmers.</li>
-</ul>
-</div>
+  programmers, such as <code>"Hello World"sv</code> as a
+  shorthand for <code>std::string_view("Hello World")</code>.
+  Existing notations are clearer, though less terse.</li>
 
-<div class="decision">
+  <li>Because they can't be namespace-qualified, uses of UDLs also require
+  use of either using-directives (which <a href="#Namespaces">we ban</a>) or
+  using-declarations (which <a href="#Aliases">we ban in header files</a> except
+  when the imported names are part of the interface exposed by the header
+  file in question).  Given that header files would have to avoid UDL
+  suffixes, we prefer to avoid having conventions for literals differ
+  between header files and source files.
+  </li>
+</ul>
+
+<p class="decision"></p>
 <p>Define overloaded operators only if their meaning is
 obvious, unsurprising, and consistent with the corresponding
 built-in operators. For example, use <code>|</code> as a
@@ -1737,7 +1643,8 @@ use a custom comparator rather than overloading
 <p>Do not overload <code>&amp;&amp;</code>, <code>||</code>,
 <code>,</code> (comma), or unary <code>&amp;</code>. Do not overload
 <code>operator""</code>, i.e. do not introduce user-defined
-literals.</p>
+literals.  Do not use any such literals provided by others
+(including the standard library).</p>
 
 <p>Type conversion operators are covered in the section on
 <a href="#Implicit_Conversions">implicit conversions</a>.
@@ -1747,19 +1654,12 @@ The <code>=</code> operator is covered in the section on
 section on <a href="#Streams">streams</a>. See also the rules on
 <a href="#Function_Overloading">function overloading</a>, which
 apply to operator overloading as well.</p>
-</div>
-
-</div> 
 
 <h3 id="Access_Control">Access Control</h3>
 
-<div class="summary">
 <p>Make classes' data members <code>private</code>, unless they are
-<code>static const</code> (and follow the <a href="#Constant_Names">
-naming convention for constants</a>).</p>
-</div>
-
-<div class="stylebody">
+<a href="#Constant_Names">constants</a>. This simplifies reasoning about invariants, at the cost
+of some easy boilerplate in the form of accessors (usually <code>const</code>) if necessary.</p>
 
 <p>For technical
 reasons, we allow data members of a test fixture class in a .cc file to
@@ -1769,16 +1669,10 @@ be <code>protected</code> when using
 <a href="https://github.com/google/googletest">Google
 Test</a>).</p>
 
-</div> 
-
 <h3 id="Declaration_Order">Declaration Order</h3>
 
-<div class="summary">
 <p>Group similar declarations together, placing public parts
 earlier.</p>
-</div>
-
-<div class="stylebody">
 
 <p>A class definition should usually start with a
 <code>public:</code> section, followed by
@@ -1798,26 +1692,18 @@ performance-critical, and very short, methods may be
 defined inline. See <a href="#Inline_Functions">Inline
 Functions</a> for more details.</p>
 
-</div> 
-
 <h2 id="Functions">Functions</h2>
 
 <a id="Function_Parameter_Ordering"></a>
 <h3 id="Output_Parameters">Output Parameters</h3>
 
-<div class="summary">
-<p>Prefer using return values rather than output parameters.
-If output-only parameters are used they should appear after
-input parameters.</p>
-</div>
-
-<div class="stylebody">
 <p>The output of a C++ function is naturally provided via
 a return value and sometimes via output parameters.</p>
 
-<p>Prefer using return values instead of output parameters
-since they improve readability and oftentimes provide the same
-or better performance.</p>
+<p>Prefer using return values over output parameters: they
+improve readability, and often provide the same or better
+performance.  If output-only parameters are used,
+they should appear after input parameters.</p>
 
 <p>Parameters are either input to the function, output from the
 function, or both. Input parameters are usually values or
@@ -1835,15 +1721,10 @@ both input and output (often classes/structs) muddy the
 waters, and, as always, consistency with related
 functions may require you to bend the rule.</p>
 
-</div> 
-
 <h3 id="Write_Short_Functions">Write Short Functions</h3>
 
-<div class="summary">
 <p>Prefer small and focused functions.</p>
-</div>
 
-<div class="stylebody">
 <p>We recognize that long functions are sometimes
 appropriate, so no hard limit is placed on functions
 length. If a function exceeds about 40 lines, think about
@@ -1854,10 +1735,11 @@ of the program.</p>
 someone modifying it in a few months may add new
 behavior. This could result in bugs that are hard to
 find. Keeping your functions short and simple makes it
-easier for other people to read and modify your code.</p>
+easier for other people to read and modify your code.
+Small functions are also easier to test.</p>
 
 <p>You could find long and complicated functions when
-working with 
+working with
 some code. Do not be
 intimidated by modifying existing code: if working with
 such a function proves to be difficult, you find that
@@ -1865,43 +1747,34 @@ errors are hard to debug, or you want to use a piece of
 it in several different contexts, consider breaking up
 the function into smaller and more manageable pieces.</p>
 
-</div> 
-
 <h3 id="Reference_Arguments">Reference Arguments</h3>
 
-<div class="summary">
 <p>All parameters passed by lvalue reference must be labeled
 <code>const</code>.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>In C, if a
 function needs to modify a variable, the parameter must
 use a pointer, eg <code>int foo(int *pval)</code>. In
 C++, the function can alternatively declare a reference
 parameter: <code>int foo(int &amp;val)</code>.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Defining a parameter as reference avoids ugly code like
 <code>(*pval)++</code>. Necessary for some applications
 like copy constructors. Makes it clear, unlike with
 pointers, that a null pointer is not a possible
 value.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>References can be confusing, as they have value syntax
 but pointer semantics.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>Within function parameter lists all references must be
 <code>const</code>:</p>
 
-<pre>void Foo(const string &amp;in, string *out);
+<pre>void Foo(const std::string &amp;in, std::string *out);
 </pre>
 
 <p>In fact it is a very strong convention in Google code
@@ -1932,58 +1805,47 @@ T*</code> rather than <code>const T&amp;</code>, do so
 for a concrete reason; otherwise it will likely confuse
 readers by making them look for an explanation that
 doesn't exist.</p>
-</div>
-
-</div> 
 
 <h3 id="Function_Overloading">Function Overloading</h3>
 
-<div class="summary">
 <p>Use overloaded functions (including constructors) only if a
 reader looking at a call site can get a good idea of what
 is happening without having to first figure out exactly
 which overload is being called.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>You may write a function that takes a <code>const
-string&amp;</code> and overload it with another that
+std::string&amp;</code> and overload it with another that
 takes <code>const char*</code>. However, in this case consider
 std::string_view
  instead.</p>
 
 <pre>class MyClass {
  public:
-  void Analyze(const string &amp;text);
+  void Analyze(const std::string &amp;text);
   void Analyze(const char *text, size_t textlen);
 };
 </pre>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Overloading can make code more intuitive by allowing an
 identically-named function to take different arguments.
 It may be necessary for templatized code, and it can be
 convenient for Visitors.</p>
 <p>Overloading based on const or ref qualification may make utility
   code more usable, more efficient, or both.
-  
   (See <a href="http://abseil.io/tips/148">TotW 148</a> for more.)
 </p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>If a function is overloaded by the argument types alone,
 a reader may have to understand C++'s complex matching
 rules in order to tell what's going on. Also many people
 are confused by the semantics of inheritance if a derived
 class overrides only some of the variants of a
 function.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>You may overload a function when there are no semantic differences
 between variants. These overloads may vary in types, qualifiers, or
 argument count. However, a reader of such a call must not need to know
@@ -1991,23 +1853,16 @@ which member of the overload set is chosen, only that <b>something</b>
 from the set is being called. If you can document all entries in the
 overload set with a single comment in the header, that is a good sign
 that it is a well-designed overload set.</p>
-</div>
-
-</div> 
 
 <h3 id="Default_Arguments">Default Arguments</h3>
 
-<div class="summary">
 <p>Default arguments are allowed on non-virtual functions
 when the default is guaranteed to always have the same
 value. Follow the same restrictions as for <a href="#Function_Overloading">function overloading</a>, and
 prefer overloaded functions if the readability gained with
 default arguments doesn't outweigh the downsides below.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="pros">
+<p class="pros"></p>
 <p>Often you have a function that uses default values, but
 occasionally you want to override the defaults. Default
 parameters allow an easy way to do this without having to
@@ -2016,9 +1871,8 @@ to overloading the function, default arguments have a
 cleaner syntax, with less boilerplate and a clearer
 distinction between 'required' and 'optional'
 arguments.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>Defaulted arguments are another way to achieve the
 semantics of overloaded functions, so all the <a href="#Function_Overloading">reasons not to overload
 functions</a> apply.</p>
@@ -2037,9 +1891,8 @@ of varying at each call.</p>
 default arguments, since the function signature often
 doesn't match the call signature. Adding
 function overloads avoids these problems.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>Default arguments are banned on virtual functions, where
 they don't work properly, and in cases where the specified
 default might not evaluate to the same value depending on
@@ -2050,17 +1903,13 @@ f(int n = counter++);</code>.)</p>
 readability of their function declarations enough to
 overcome the downsides above, so they are allowed. When in
 doubt, use overloads.</p>
-</div>
-
-</div> 
 
 <h3 id="trailing_return">Trailing Return Type Syntax</h3>
-<div class="summary">
+
 <p>Use trailing return types only where using the ordinary syntax (leading
   return types) is impractical or much less readable.</p>
-</div>
 
-<div class="definition">
+<p class="definition"></p>
 <p>C++ allows two different forms of function declarations. In the older
   form, the return type appears before the function name. For example:</p>
 <pre>int foo(int x);
@@ -2075,10 +1924,8 @@ doubt, use overloads.</p>
   make a difference for a simple case like <code>int</code> but it matters
   for more complicated cases, like types declared in class scope or
   types written in terms of the function parameters.</p>
-</div>
 
-<div class="stylebody">
-<div class="pros">
+<p class="pros"></p>
 <p>Trailing return types are the only way to explicitly specify the
   return type of a <a href="#Lambda_expressions">lambda expression</a>.
   In some cases the compiler is able to deduce a lambda's return type,
@@ -2096,9 +1943,8 @@ doubt, use overloads.</p>
   <pre>    template &lt;typename T, typename U&gt;
     decltype(declval&lt;T&amp;&gt;() + declval&lt;U&amp;&gt;()) add(T t, U u);
   </pre>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>Trailing return type syntax is relatively new and it has no
   analogue in C++-like languages such as C and Java, so some readers may
   find it unfamiliar.</p>
@@ -2106,9 +1952,8 @@ doubt, use overloads.</p>
   declarations that aren't going to get changed to use the new syntax,
   so the realistic choices are using the old syntax only or using a mixture
   of the two. Using a single version is better for uniformity of style.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>In most cases, continue to use the older style of function
   declaration where the return type goes before the function name.
   Use the new trailing-return-type form only in cases where it's
@@ -2118,30 +1963,26 @@ doubt, use overloads.</p>
   issue in fairly complicated template code, which is
   <a href="#Template_metaprogramming">discouraged in most cases</a>.</p>
 
-</div> 
-</div> 
 
 <h2 id="Google-Specific_Magic">Google-Specific Magic</h2>
 
 
 
+<div>
 <p>There are various tricks and utilities that
 we use to make C++ code more robust, and various ways we use
 C++ that may differ from what you see elsewhere.</p>
+</div>
 
- 
+
 
 <h3 id="Ownership_and_Smart_Pointers">Ownership and Smart Pointers</h3>
 
-<div class="summary">
 <p>Prefer to have single, fixed owners for dynamically
 allocated objects. Prefer to transfer ownership with smart
 pointers.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>"Ownership" is a bookkeeping technique for managing
 dynamically allocated memory (and other resources). The
 owner of a dynamically allocated object is an object or
@@ -2171,9 +2012,8 @@ a dynamically allocated object. <code>std::shared_ptr</code>s
 can be copied; ownership of the object is shared among
 all copies, and the object is deleted when the last
 <code>std::shared_ptr</code> is destroyed. </p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <ul>
   <li>It's virtually impossible to manage dynamically
   allocated memory without some sort of ownership
@@ -2198,9 +2038,8 @@ all copies, and the object is deleted when the last
   <li>For const objects, shared ownership can be a simple
   and efficient alternative to deep copying.</li>
 </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
   <li>Ownership must be represented and transferred via
   pointers (whether smart or plain). Pointer semantics
@@ -2237,9 +2076,8 @@ all copies, and the object is deleted when the last
   <li>Smart pointers are not perfect substitutes for
   plain pointers.</li>
 </ul>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>If dynamic allocation is necessary, prefer to keep
 ownership with the code that allocated it. If other code
 needs access to the object, consider passing it a copy,
@@ -2264,17 +2102,10 @@ do use shared ownership, prefer to use
 
 <p>Never use <code>std::auto_ptr</code>. Instead, use
 <code>std::unique_ptr</code>.</p>
-</div> 
-
-</div> 
 
 <h3 id="cpplint">cpplint</h3>
 
-<div class="summary">
 <p>Use <code>cpplint.py</code> to detect style errors.</p>
-</div>
-
-<div class="stylebody">
 
 <p><code>cpplint.py</code>
 is a tool that reads a source file and identifies many
@@ -2286,22 +2117,21 @@ NOLINT</code> at the end of the line or
 
 
 
+<div>
 <p>Some projects have instructions on
 how to run <code>cpplint.py</code> from their project
 tools. If the project you are contributing to does not,
 you can download
 <a href="https://raw.githubusercontent.com/google/styleguide/gh-pages/cpplint/cpplint.py">
 <code>cpplint.py</code></a> separately.</p>
+</div>
 
-</div> 
 
- 
 
 <h2 id="Other_C++_Features">Other C++ Features</h2>
 
 <h3 id="Rvalue_references">Rvalue References</h3>
 
-<div class="summary">
 <p>Use rvalue references to:</p>
 <ul>
   <li>Define move constructors and move assignment operators.</li>
@@ -2315,30 +2145,26 @@ you can download
 
   <li>Support 'perfect forwarding' in generic code.</li>
 </ul>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p> Rvalue references
 are a type of reference that can only bind to temporary
 objects. The syntax is similar to traditional reference
-syntax. For example, <code>void f(string&amp;&amp;
+syntax. For example, <code>void f(std::string&amp;&amp;
 s);</code> declares a function whose argument is an
-rvalue reference to a string.</p>
+rvalue reference to a std::string.</p>
 
 <p id="Forwarding_references"> When the token '&amp;&amp;' is applied to
 an unqualified template argument in a function
 parameter, special template argument deduction
 rules apply. Such a reference is called forwarding reference.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <ul>
   <li>Defining a move constructor (a constructor taking
   an rvalue reference to the class type) makes it
   possible to move a value instead of copying it. If
-  <code>v1</code> is a <code>std::vector&lt;string&gt;</code>,
+  <code>v1</code> is a <code>std::vector&lt;std::string&gt;</code>,
   for example, then <code>auto v2(std::move(v1))</code>
   will probably just result in some simple pointer
   manipulation instead of copying a large amount of data.
@@ -2362,49 +2188,42 @@ rules apply. Such a reference is called forwarding reference.</p>
   arguments are temporary objects and/or const.
   This is called 'perfect forwarding'.</li>
 </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
-  <li>Rvalue references are not yet widely
-  understood. Rules like automatic synthesis of move constructors and reference
-  collapsing (the latter refers to the special rules that apply to a T&amp;&amp;
-  parameter in a function template) are somewhat obscure.</li>
+  <li>Rvalue references are not yet widely understood. Rules like reference
+  collapsing and the special deduction rule for forwarding references
+  are somewhat obscure.</li>
 
   <li>Rvalue references are often misused. Using rvalue
   references is counter-intuitive in signatures where the argument is expected
   to have a valid specified state after the function call, or where no move
   operation is performed.</li>
 </ul>
-</div>
 
-<div class="decision">
-  <p>You may use rvalue references to define move constructors and move
-  assignment operators (as described in <a href="#Copyable_Movable_Types">Copyable and Movable Types</a>). See the <a href="primer#copying_moving">C++ Primer</a> for more information about
-  move semantics and <code>std::move</code>.</p>
+<p class="decision"></p>
+<p>You may use rvalue references to define move constructors and move
+assignment operators (as described in
+<a href="#Copyable_Movable_Types">Copyable and Movable Types</a>). See the
+<a href="primer#copying_moving">C++ Primer</a> for more information about
+move semantics and <code>std::move</code>.</p>
 
-  <p>You may use rvalue references to define pairs of overloads, one taking
-  Foo&amp;&amp; and the other taking const Foo&amp;. Usually the preferred
-  solution is just to pass by value, but an overloaded pair of functions
-  sometimes yields better performance and is sometimes necessary in generic code
-  that needs to support a wide variety of types. As always: if you're writing
-  more complicated code for the sake of performance, make sure you have evidence
-  that it actually helps.</p>
+<p>You may use rvalue references to define pairs of overloads, one taking
+<code>Foo&amp;&amp;</code> and the other taking <code>const Foo&amp;</code>.
+Usually the preferred solution is just to pass by value, but an overloaded pair
+of functions sometimes yields better performance and is sometimes necessary in
+generic code that needs to support a wide variety of types. As always: if
+you're writing more complicated code for the sake of performance, make sure you
+have evidence that it actually helps.</p>
 
-  <p>You may use forwarding references in conjunction with <code><a href="http://en.cppreference.com/w/cpp/utility/forward">std::forward</a></code>,
-  to support perfect forwarding.</p>
-</div>
-
-</div> 
+<p>You may use forwarding references in conjunction with <code>
+<a href="http://en.cppreference.com/w/cpp/utility/forward">std::forward</a></code>,
+to support perfect forwarding.</p>
 
 <h3 id="Friends">Friends</h3>
 
-<div class="summary">
 <p>We allow use of <code>friend</code> classes and functions,
 within reason.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Friends should usually be defined in the same file so
 that the reader does not have to look in another file to
@@ -2423,29 +2242,25 @@ other class access to it. However, most classes should
 interact with other classes solely through their public
 members.</p>
 
-</div> 
-
 <h3 id="Exceptions">Exceptions</h3>
 
-<div class="summary">
 <p>We do not use C++ exceptions.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="pros">
+<p class="pros"></p>
 <ul>
   <li>Exceptions allow higher levels of an application to
   decide how to handle "can't happen" failures in deeply
   nested functions, without the obscuring and error-prone
   bookkeeping of error codes.</li>
 
-  
 
+
+  <div>
   <li>Exceptions are used by most other
   modern languages. Using them in C++ would make it more
   consistent with Python, Java, and the C++ that others
   are familiar with.</li>
+  </div>
 
   <li>Some third-party C++ libraries use exceptions, and
   turning them off internally makes it harder to
@@ -2459,9 +2274,8 @@ members.</p>
   <li>Exceptions are really handy in testing
   frameworks.</li>
 </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
   <li>When you add a <code>throw</code> statement to an
   existing function, you must examine all of its
@@ -2505,9 +2319,8 @@ members.</p>
   to be thrown. We would need to make the style guide
   even longer to document these restrictions!</li>
 </ul>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>On their face, the benefits of using exceptions
 outweigh the costs, especially in new projects. However,
 for existing code, the introduction of exceptions has
@@ -2544,18 +2357,11 @@ features added in C++11, such as
 <p>There is an <a href="#Windows_Code">exception</a> to
 this rule (no pun intended) for Windows code.</p>
 
-</div>
-
-</div> 
-
 <h3 id="noexcept"><code>noexcept</code></h3>
 
-<div class="summary">
 <p>Specify <code>noexcept</code> when it is useful and correct.</p>
-</div>
 
-<div class="stylebody">
-<div class="definition">
+<p class="definition"></p>
 <p>The <code>noexcept</code> specifier is used to specify whether
 a function will throw exceptions or not. If an exception
 escapes from a function marked <code>noexcept</code>, the program
@@ -2565,9 +2371,7 @@ crashes via <code>std::terminate</code>.</p>
 check that returns true if an expression is declared to not
 throw any exceptions.</p>
 
-</div>
-
-<div class="pros">
+<p class="pros"></p>
 <ul>
   <li>Specifying move constructors as <code>noexcept</code>
   improves performance in some cases, e.g.
@@ -2582,12 +2386,11 @@ throw any exceptions.</p>
   that no exceptions can be thrown due to a
   <code>noexcept</code> specifier.</li>
 </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
   <li>
-  
+
   In projects following this guide
   that have exceptions disabled it is hard
   to ensure that <code>noexcept</code>
@@ -2598,9 +2401,8 @@ throw any exceptions.</p>
   because it eliminates a guarantee that callers may be relying
   on, in ways that are hard to detect.</li>
 </ul>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>You may use <code>noexcept</code> when it is useful for
 performance if it accurately reflects the intended semantics
 of your function, i.e. that if an exception is somehow thrown
@@ -2609,7 +2411,7 @@ You can assume that <code>noexcept</code> on move constructors
 has a meaningful performance benefit. If you think
 there is significant performance benefit from specifying
 <code>noexcept</code> on some other function, please discuss it
-with 
+with
 your project leads.</p>
 
 <p>Prefer unconditional <code>noexcept</code> if exceptions are
@@ -2637,39 +2439,18 @@ simply document that your component doesn&#8217;t support hash
 functions throwing and make it unconditionally
 <code>noexcept</code>.</p>
 
-</div>
-
-</div> 
-
 <h3 id="Run-Time_Type_Information__RTTI_">Run-Time Type
 Information (RTTI)</h3>
 
-<div class="summary">
 <p>Avoid using Run Time Type Information (RTTI).</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p> RTTI allows a
 programmer to query the C++ class of an object at run
 time. This is done by use of <code>typeid</code> or
 <code>dynamic_cast</code>.</p>
-</div>
 
-<div class="cons">
-<p>Querying the type of an object at run-time frequently
-means a design problem. Needing to know the type of an
-object at runtime is often an indication that the design
-of your class hierarchy is flawed.</p>
-
-<p>Undisciplined use of RTTI makes code hard to maintain.
-It can lead to type-based decision trees or switch
-statements scattered throughout the code, all of which
-must be examined when making further changes.</p>
-</div>
-
-<div class="pros">
+<p class="pros"></p>
 <p>The standard alternatives to RTTI (described below)
 require modification or redesign of the class hierarchy
 in question. Sometimes such modifications are infeasible
@@ -2693,9 +2474,19 @@ bool Derived::Equal(Base* other) {
   ...
 }
 </pre>
-</div>
 
-<div class="decision">
+<p class="cons"></p>
+<p>Querying the type of an object at run-time frequently
+means a design problem. Needing to know the type of an
+object at runtime is often an indication that the design
+of your class hierarchy is flawed.</p>
+
+<p>Undisciplined use of RTTI makes code hard to maintain.
+It can lead to type-based decision trees or switch
+statements scattered throughout the code, all of which
+must be examined when making further changes.</p>
+
+<p class="decision"></p>
 <p>RTTI has legitimate uses but is prone to abuse, so you
 must be careful when using it. You may use it freely in
 unittests, but avoid it when possible in other code. In
@@ -2745,13 +2536,9 @@ find and modify all the affected code segments.</p>
 arguments against RTTI apply just as much to workarounds
 like class hierarchies with type tags. Moreover,
 workarounds disguise your true intent.</p>
-</div>
-
-</div> 
 
 <h3 id="Casting">Casting</h3>
 
-<div class="summary">
 <p>Use C++-style casts
 like <code>static_cast&lt;float&gt;(double_value)</code>, or brace
 initialization for conversion of arithmetic types like
@@ -2759,17 +2546,13 @@ initialization for conversion of arithmetic types like
 cast formats like
 <code>int y = (int)x</code> or <code>int y = int(x)</code> (but the latter
 is okay when invoking a constructor of a class type).</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p> C++ introduced a
 different cast system from C that distinguishes the types
 of cast operations.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>The problem with C casts is the ambiguity of the operation;
 sometimes you are doing a <em>conversion</em>
 (e.g., <code>(int)3.5</code>) and sometimes you are doing
@@ -2777,13 +2560,11 @@ a <em>cast</em> (e.g., <code>(int)"hello"</code>). Brace
 initialization and C++ casts can often help avoid this
 ambiguity. Additionally, C++ casts are more visible when searching for
 them.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>The C++-style cast syntax is verbose and cumbersome.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>Do not use C-style casts. Instead, use these C++-style casts when
 explicit type conversion is necessary. </p>
 
@@ -2793,7 +2574,7 @@ explicit type conversion is necessary. </p>
   will not compile if conversion can result in information loss.  The
   syntax is also concise.</li>
 
-  
+
 
   <li>Use <code>static_cast</code> as the equivalent of a C-style cast
   that does value conversion, when you need to
@@ -2802,51 +2583,47 @@ explicit type conversion is necessary. </p>
   subclass.  In this last case, you must be sure your object is
   actually an instance of the subclass.</li>
 
-   
+
 
   <li>Use <code>const_cast</code> to remove the
   <code>const</code> qualifier (see <a href="#Use_of_const">const</a>).</li>
 
-  <li>Use <code>reinterpret_cast</code> to do unsafe
-  conversions of pointer types to and from integer and
-  other pointer types. Use this only if you know what you
-  are doing and you understand the aliasing issues.
-  </li>
+  <li>Use <code>reinterpret_cast</code> to do unsafe conversions of
+  pointer types to and from integer and other pointer
+  types. Use this
+  only if you know what you are doing and you understand the aliasing
+  issues. Also, consider the alternative
+  <code>absl::bit_cast</code>.</li>
 
-  
+  <li>Use <code>absl::bit_cast</code> to interpret the raw bits of a
+  value using a different type of the same size (a type pun), such as
+  interpreting the bits of a <code>double</code> as
+  <code>int64</code>.</li>
 </ul>
 
 <p>See the <a href="#Run-Time_Type_Information__RTTI_">
 RTTI section</a> for guidance on the use of
 <code>dynamic_cast</code>.</p>
-</div>
-
-</div> 
 
 <h3 id="Streams">Streams</h3>
 
-<div class="summary">
 <p>Use streams where appropriate, and stick to "simple"
 usages. Overload <code>&lt;&lt;</code> for streaming only for types
 representing values, and write only the user-visible value, not any
 implementation details.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>Streams are the standard I/O abstraction in C++, as
 exemplified by the standard header <code>&lt;iostream&gt;</code>.
-They are widely used in Google code, but only for debug logging
+They are widely used in Google code, mostly for debug logging
 and test diagnostics.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>The <code>&lt;&lt;</code> and <code>&gt;&gt;</code>
 stream operators provide an API for formatted I/O that
 is easily learned, portable, reusable, and extensible.
 <code>printf</code>, by contrast, doesn't even support
-<code>string</code>, to say nothing of user-defined types,
+<code>std::string</code>, to say nothing of user-defined types,
 and is very difficult to use portably.
 <code>printf</code> also obliges you to choose among the
 numerous slightly different versions of that function,
@@ -2857,9 +2634,8 @@ via <code>std::cin</code>, <code>std::cout</code>,
 <code>std::cerr</code>, and <code>std::clog</code>.
 The C APIs do as well, but are hampered by the need to
 manually buffer the input. </p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
 <li>Stream formatting can be configured by mutating the
 state of the stream. Such mutations are persistent, so
@@ -2893,9 +2669,8 @@ extremely costly for the compiler. When used pervasively in a
 large code base, it can consume as much as 20% of the parsing
 and semantic analysis time.</li>
 </ul>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>Use streams only when they are the best tool for the job.
 This is typically the case when the I/O is ad-hoc, local,
 human-readable, and targeted at other developers rather than
@@ -2935,30 +2710,22 @@ details in the output of <code>&lt;&lt;</code>; if you need to print
 object internals for debugging, use named functions instead
 (a method named <code>DebugString()</code> is the most common
 convention).</p>
-</div>
-
-</div> 
 
 <h3 id="Preincrement_and_Predecrement">Preincrement and Predecrement</h3>
 
-<div class="summary">
 <p>Use prefix form (<code>++i</code>) of the increment and
 decrement operators with iterators and other template
 objects.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p> When a variable
 is incremented (<code>++i</code> or <code>i++</code>) or
 decremented (<code>--i</code> or <code>i--</code>) and
 the value of the expression is not used, one must decide
 whether to preincrement (decrement) or postincrement
 (decrement).</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>When the return value is ignored, the "pre" form
 (<code>++i</code>) is never less efficient than the
 "post" form (<code>i++</code>), and is often more
@@ -2969,36 +2736,27 @@ iterator or other non-scalar type, copying <code>i</code>
 could be expensive. Since the two types of increment
 behave the same when the value is ignored, why not just
 always pre-increment?</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>The tradition developed, in C, of using post-increment
 when the expression value is not used, especially in
 <code>for</code> loops. Some find post-increment easier
 to read, since the "subject" (<code>i</code>) precedes
 the "verb" (<code>++</code>), just like in English.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p> For simple scalar
 (non-object) values there is no reason to prefer one form
 and we allow either. For iterators and other template
 types, use pre-increment.</p>
-</div>
-
-</div> 
 
 <h3 id="Use_of_const">Use of const</h3>
 
-<div class="summary">
-<p>Use <code>const</code> whenever it makes sense. With C++11,
+<p>In APIs, use <code>const</code> whenever it makes sense. With C++11,
 <code>constexpr</code> is a better choice for some uses of
 const.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p> Declared variables and parameters can be preceded
 by the keyword <code>const</code> to indicate the variables
 are not changed (e.g., <code>const int foo</code>). Class
@@ -3006,9 +2764,8 @@ functions can have the <code>const</code> qualifier to
 indicate the function does not change the state of the
 class member variables (e.g., <code>class Foo { int
 Bar(char c) const; };</code>).</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Easier for people to understand how variables are being
 used. Allows the compiler to do better type checking,
 and, conceivably, generate better code. Helps people
@@ -3017,23 +2774,24 @@ know the functions they call are limited in how they can
 modify your variables. Helps people know what functions
 are safe to use without locks in multi-threaded
 programs.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p><code>const</code> is viral: if you pass a
 <code>const</code> variable to a function, that function
 must have <code>const</code> in its prototype (or the
 variable will need a <code>const_cast</code>). This can
 be a particular problem when calling library
 functions.</p>
-</div>
 
-<div class="decision">
-<p><code>const</code> variables, data members, methods
-and arguments add a level of compile-time type checking;
-it is better to detect errors as soon as possible.
-Therefore we strongly recommend that you use
-<code>const</code> whenever it makes sense to do so:</p>
+<p class="decision"></p>
+<p>We strongly recommend using <code>const</code>
+in APIs (i.e. on function parameters, methods, and
+non-local variables) wherever it is meaningful and accurate. This
+provides consistent, mostly compiler-verified documentation
+of what objects an operation can mutate. Having
+a consistent and reliable way to distinguish reads from writes
+is critical to writing thread-safe code, and is useful in
+many other contexts as well. In particular:</p>
 
 <ul>
   <li>If a function guarantees that it will not modify an argument
@@ -3041,25 +2799,28 @@ Therefore we strongly recommend that you use
   should be a reference-to-const (<code>const T&amp;</code>) or
   pointer-to-const (<code>const T*</code>), respectively.</li>
 
-  <li>Declare methods to be <code>const</code> whenever
-  possible. Accessors should almost always be
-  <code>const</code>. Other methods should be const if
-  they do not modify any data members, do not call any
-  non-<code>const</code> methods, and do not return a
-  non-<code>const</code> pointer or
-  non-<code>const</code> reference to a data member.</li>
+  <li>For a function parameter passed by value, <code>const</code> has
+  no effect on the caller, thus is not recommended in function
+  declarations. See
 
-  <li>Consider making data members <code>const</code>
-  whenever they do not need to be modified after
-  construction.</li>
+
+  <a href="https://abseil.io/tips/109">TotW #109</a>.
+
+
+  </li><li>Declare methods to be <code>const</code> unless they
+  alter the logical state of the object (or enable the user to modify
+  that state, e.g. by returning a non-const reference, but that's
+  rare), or they can't safely be invoked concurrently.</li>
 </ul>
 
-<p>The <code>mutable</code> keyword is allowed but is
-unsafe when used with threads, so thread safety should be
-carefully considered first.</p>
-</div>
+<p>Using <code>const</code> on local variables is neither encouraged
+nor discouraged.</p>
 
-<div class="stylepoint_subsection">
+<p>All of a class's <code>const</code> operations should be safe
+to invoke concurrently with each other. If that's not feasible, the class must
+be clearly documented as "thread-unsafe".</p>
+
+
 <h4>Where to put the const</h4>
 
 <p>Some people favor the form <code>int const *foo</code>
@@ -3079,45 +2840,35 @@ putting the "adjective" (<code>const</code>) before the
 <p>That said, while we encourage putting
 <code>const</code> first, we do not require it. But be
 consistent with the code around you!</p>
-</div>
-
-</div> 
 
 <h3 id="Use_of_constexpr">Use of constexpr</h3>
 
-<div class="summary">
 <p>In C++11, use <code>constexpr</code> to define true
 constants or to ensure constant initialization.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p> Some variables can be declared <code>constexpr</code>
 to indicate the variables are true constants, i.e. fixed at
 compilation/link time. Some functions and constructors
 can be declared <code>constexpr</code> which enables them
 to be used in defining a <code>constexpr</code>
 variable.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Use of <code>constexpr</code> enables definition of
 constants with floating-point expressions rather than
 just literals; definition of constants of user-defined
 types; and definition of constants with function
 calls.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>Prematurely marking something as constexpr may cause
 migration problems if later on it has to be downgraded.
 Current restrictions on what is allowed in constexpr
 functions and constructors may invite obscure workarounds
 in these definitions.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p><code>constexpr</code> definitions enable a more
 robust specification of the constant parts of an
 interface. Use <code>constexpr</code> to specify true
@@ -3125,17 +2876,13 @@ constants and the functions that support their
 definitions. Avoid complexifying function definitions to
 enable their use with <code>constexpr</code>. Do not use
 <code>constexpr</code> to force inlining.</p>
-</div>
-
-</div> 
 
 <h3 id="Integer_Types">Integer Types</h3>
 
-<div class="summary">
 <p>Of the built-in C++ integer types, the only one used
  is
 <code>int</code>. If a program needs a variable of a
-different size, use 
+different size, use
 a precise-width integer type from
 <code>&lt;stdint.h&gt;</code>, such as
 <code>int16_t</code>. If your variable represents a
@@ -3146,31 +2893,25 @@ Keep in mind that even if your value won't ever be too large
 for an <code>int</code>, it may be used in intermediate
 calculations which may require a larger type. When in doubt,
 choose a larger type.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p> C++ does not specify the sizes of integer types
 like <code>int</code>. Typically people assume
 that <code>short</code> is 16 bits,
 <code>int</code> is 32 bits, <code>long</code> is 32 bits
 and <code>long long</code> is 64 bits.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Uniformity of declaration.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>The sizes of integral types in C++ can vary based on
 compiler and architecture.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 
 <p>
-<code>&lt;stdint.h&gt;</code> defines types
+<code>&lt;cstdint&gt;</code> defines types
 like <code>int16_t</code>, <code>uint32_t</code>,
 <code>int64_t</code>, etc. You should always use
 those in preference to <code>short</code>, <code>unsigned
@@ -3198,11 +2939,13 @@ or
 </p>
 
 <p>You should not use the unsigned integer types such as
+
 <code>uint32_t</code>, unless there is a valid
 reason such as representing a bit pattern rather than a
 number, or you need defined overflow modulo 2^N. In
 particular, do not use unsigned types to say a number
-will never be negative. Instead, use 
+will never be negative. Instead, use
+
 assertions for this.</p>
 
 
@@ -3215,9 +2958,6 @@ rather than a smaller type.</p>
 <p>Use care when converting integer types. Integer conversions and
 promotions can cause undefined behavior, leading to security bugs and
 other problems.</p>
-</div>
-
-<div class="stylepoint_subsection">
 
 <h4>On Unsigned Integers</h4>
 
@@ -3238,18 +2978,11 @@ to use iterators and containers rather than pointers and sizes, try
 not to mix signedness, and try to avoid unsigned types (except for
 representing bitfields or modular arithmetic). Do not use an unsigned
 type merely to assert that a variable is non-negative.</p>
-</div>
-
-</div> 
 
 <h3 id="64-bit_Portability">64-bit Portability</h3>
 
-<div class="summary">
 <p>Code should be 64-bit and 32-bit friendly. Bear in mind
 problems of printing, comparisons, and structure alignment.</p>
-</div>
-
-<div class="stylebody">
 
 <ul>
   <li>
@@ -3260,20 +2993,24 @@ problems of printing, comparisons, and structure alignment.</p>
   for your particular case, try to avoid or even upgrade APIs that rely on the
   <code>printf</code> family. Instead use a library supporting typesafe numeric
   formatting, such as
-    
+
+
     <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/strings/str_cat.h"><code>StrCat</code></a>
+
     or
-    
+
+
     <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/strings/substitute.h"><code>Substitute</code></a>
+
     for fast simple conversions,
-  
-  or <a href="#Streams"><code>std::ostream</code></a>.</p>
+
+    or <a href="#Streams"><code>std::ostream</code></a>.</p>
 
   <p>Unfortunately, the <code>PRI</code> macros are the only portable way to
   specify a conversion for the standard bitwidth typedefs (e.g.
   <code>int64_t</code>, <code>uint64_t</code>, <code>int32_t</code>,
   <code>uint32_t</code>, etc).
-  
+
   Where possible, avoid passing arguments of types specified by bitwidth
   typedefs to <code>printf</code>-based APIs. Note that it is acceptable
   to use typedefs for which printf has dedicated length modifiers, such as
@@ -3288,13 +3025,13 @@ problems of printing, comparisons, and structure alignment.</p>
 
   <li>You may need to be careful with structure
   alignments, particularly for structures being stored on
-  disk. Any class/structure with a 
+  disk. Any class/structure with a
   <code>int64_t</code>/<code>uint64_t</code>
   member will by default end up being 8-byte aligned on a
   64-bit system. If you have such structures being shared
   on disk between 32-bit and 64-bit code, you will need
   to ensure that they are packed the same on both
-  architectures. 
+  architectures.
   Most compilers offer a way to
   alter structure alignment. For gcc, you can use
   <code>__attribute__((packed))</code>. MSVC offers
@@ -3306,24 +3043,20 @@ problems of printing, comparisons, and structure alignment.</p>
   64-bit constants. For example:</p>
 
 
+<div>
 <pre>int64_t my_value{0x123456789};
 uint64_t my_mask{3ULL &lt;&lt; 48};
 </pre>
+</div>
   </li>
 </ul>
 
-</div> 
-
 <h3 id="Preprocessor_Macros">Preprocessor Macros</h3>
 
-<div class="summary">
 <p>Avoid defining macros, especially in headers; prefer
 inline functions, enums, and <code>const</code> variables.
 Name macros with a project-specific prefix. Do not use
 macros to define pieces of a C++ API.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Macros mean that the code you see is not the same as
 the code the compiler sees. This can introduce unexpected
@@ -3368,7 +3101,7 @@ lower-level libraries. And some of their special features
 available through the language proper. But before using a
 macro, consider carefully whether there's a non-macro way
 to achieve the same result. If you need to use a macro to
-define an interface, contact 
+define an interface, contact
 your project leads to request
 a waiver of this rule.</p>
 
@@ -3401,18 +3134,10 @@ header, it must have a globally unique name. To achieve this, it
 must be named with a prefix consisting of your project's namespace
 name (but upper case). </p>
 
-</div> 
-
 <h3 id="0_and_nullptr/NULL">0 and nullptr/NULL</h3>
 
-<div class="summary">
-<p>Use <code>0</code> for integers, <code>0.0</code> for reals,
-<code>nullptr</code> for pointers, and <code>'\0'</code> for chars.</p>
-</div>
-
-<div class="stylebody">
-
-<p>Use <code>0</code> for integers and <code>0.0</code> for reals.</p>
+<p>Use <code>nullptr</code> for pointers, and <code>'\0'</code> for chars (and
+not the <code>0</code> literal).</p>
 
 <p>For pointers (address values), use <code>nullptr</code>, as this
 provides type-safety.</p>
@@ -3420,21 +3145,16 @@ provides type-safety.</p>
 <p>For C++03 projects, prefer <code>NULL</code> to <code>0</code>. While the
 values are equivalent, <code>NULL</code> looks more like a pointer to the
 reader, and some C++ compilers provide special definitions of <code>NULL</code>
-which enable them to give useful warnings.</p>
+which enable them to give useful warnings. Never use <code>NULL</code> for
+numeric (integer or floating-point) values.</p>
 
 <p>Use <code>'\0'</code> for the null character. Using the correct type makes
 the code more readable.</p>
 
-</div> 
-
 <h3 id="sizeof">sizeof</h3>
 
-<div class="summary">
 <p>Prefer <code>sizeof(<var>varname</var>)</code> to
 <code>sizeof(<var>type</var>)</code>.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Use <code>sizeof(<var>varname</var>)</code> when you
 take the size of a particular variable.
@@ -3459,20 +3179,14 @@ memset(&amp;data, 0, sizeof(data));
 }
 </pre>
 
-</div> 
-
 <h3 id="auto">auto</h3>
 
-<div class="summary">
 <p>Use <code>auto</code> to avoid type names that are noisy, obvious,
 or unimportant - cases where the type doesn't aid in clarity for the
 reader. Continue to use manifest type declarations when it helps
 readability.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="pros">
+<p class="pros"></p>
 
 <ul>
 <li>C++ type names can be long and cumbersome, especially when they
@@ -3483,9 +3197,8 @@ small code region, the repetition may not be aiding readability.</li>
 the initialization expression, since that avoids the possibility of
 unintended copies or type conversions.</li>
 </ul>
-</div>
-<div class="cons">
 
+<p class="cons"></p>
 <p>Sometimes code is clearer when types are manifest,
 especially when a variable's initialization depends on
 things that were declared far away. In expressions
@@ -3508,10 +3221,8 @@ interface, e.g. as a constant in a header, then a
 programmer might change its type while only intending to
 change its value, leading to a more radical API change
 than intended.</p>
-</div>
 
-<div class="decision">
-
+<p class="decision"></p>
 <p><code>auto</code> is permitted when it increases readability,
 particularly as described below. Never initialize an <code>auto</code>-typed
 variable with a braced initializer list.</p>
@@ -3525,7 +3236,7 @@ instance).</li>
 <li>(Allowed) When the type is clear from local context (in the same expression
 or within a few lines).  Initialization of a pointer or smart pointer
 with calls
-to <code>new</code> and 
+to <code>new</code> and
 <code>std::make_unique</code>
 commonly falls into this category, as does use of <code>auto</code> in
 a range-based loop over a container whose type is spelled out
@@ -3539,7 +3250,7 @@ is <code>std::pair&lt;KeyType, ValueType&gt;</code> whereas it is actually
 particularly well paired with local <code>key</code>
 and <code>value</code> aliases for <code>.first</code>
 and <code>.second</code> (often const-ref).
-<pre class="code">for (const auto&amp; item : some_map) {
+<pre>for (const auto&amp; item : some_map) {
   const KeyType&amp; key = item.first;
   const ValType&amp; value = item.second;
   // The rest of the loop can now just refer to key and value,
@@ -3550,115 +3261,14 @@ and <code>.second</code> (often const-ref).
 </li>
 </ul>
 
-</div>
 
-</div> 
-
-<h3 id="Braced_Initializer_List">Braced Initializer List</h3>
-
-<div class="summary">
-<p>You may use braced initializer lists.</p>
-</div>
-
-<div class="stylebody">
-
-<p>In C++03, aggregate types (arrays and structs with no
-constructor) could be initialized with braced initializer lists.</p>
-
-<pre>struct Point { int x; int y; };
-Point p = {1, 2};
-</pre>
-
-<p>In C++11, this syntax was generalized, and any object type can now
-be created with a braced initializer list, known as a
-<i>braced-init-list</i> in the C++ grammar. Here are a few examples
-of its use.</p>
-
-<pre>// Vector takes a braced-init-list of elements.
-std::vector&lt;string&gt; v{"foo", "bar"};
-
-// Basically the same, ignoring some small technicalities.
-// You may choose to use either form.
-std::vector&lt;string&gt; v = {"foo", "bar"};
-
-// Usable with 'new' expressions.
-auto p = new std::vector&lt;string&gt;{"foo", "bar"};
-
-// A map can take a list of pairs. Nested braced-init-lists work.
-std::map&lt;int, string&gt; m = {{1, "one"}, {2, "2"}};
-
-// A braced-init-list can be implicitly converted to a return type.
-std::vector&lt;int&gt; test_function() { return {1, 2, 3}; }
-
-// Iterate over a braced-init-list.
-for (int i : {-1, -2, -3}) {}
-
-// Call a function using a braced-init-list.
-void TestFunction2(std::vector&lt;int&gt; v) {}
-TestFunction2({1, 2, 3});
-</pre>
-
-<p>A user-defined type can also define a constructor and/or assignment operator
-that take <code>std::initializer_list&lt;T&gt;</code>, which is automatically
-created from <i>braced-init-list</i>:</p>
-
-<pre>class MyType {
- public:
-  // std::initializer_list references the underlying init list.
-  // It should be passed by value.
-  MyType(std::initializer_list&lt;int&gt; init_list) {
-    for (int i : init_list) append(i);
-  }
-  MyType&amp; operator=(std::initializer_list&lt;int&gt; init_list) {
-    clear();
-    for (int i : init_list) append(i);
-  }
-};
-MyType m{2, 3, 5, 7};
-</pre>
-
-<p>Finally, brace initialization can also call ordinary
-constructors of data types, even if they do not have
-<code>std::initializer_list&lt;T&gt;</code> constructors.</p>
-
-<pre>double d{1.23};
-// Calls ordinary constructor as long as MyOtherType has no
-// std::initializer_list constructor.
-class MyOtherType {
- public:
-  explicit MyOtherType(string);
-  MyOtherType(int, string);
-};
-MyOtherType m = {1, "b"};
-// If the constructor is explicit, you can't use the "= {}" form.
-MyOtherType m{"b"};
-</pre>
-
-<p>Never assign a <i>braced-init-list</i> to an auto
-local variable. In the single element case, what this
-means can be confusing.</p>
-
-<pre class="badcode">auto d = {1.23};        // d is a std::initializer_list&lt;double&gt;
-</pre>
-
-<pre>auto d = double{1.23};  // Good -- d is a double, not a std::initializer_list.
-</pre>
-
-<p>See <a href="#Braced_Initializer_List_Format">Braced_Initializer_List_Format</a> for formatting.</p>
-
-</div> 
 
 <h3 id="Lambda_expressions">Lambda expressions</h3>
 
-<div class="summary">
 <p>Use lambda expressions where appropriate. Prefer explicit captures
 when the lambda will escape the current scope.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
-
+<p class="definition"></p>
 <p> Lambda expressions are a concise way of creating anonymous
 function objects. They're often useful when passing
 functions as arguments. For example:</p>
@@ -3698,9 +3308,8 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
 for working with function objects, such as the polymorphic
 wrapper <code>std::function</code>.
 </p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <ul>
   <li>Lambdas are much more concise than other ways of
    defining function objects to be passed to STL
@@ -3717,9 +3326,8 @@ wrapper <code>std::function</code>.
    to write functions that take bound functions as
    arguments.</li>
 </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <ul>
   <li>Variable capture in lambdas can be a source of dangling-pointer
   bugs, particularly if a lambda escapes the current scope.</li>
@@ -3735,9 +3343,8 @@ wrapper <code>std::function</code>.
   code harder to understand.</li>
 
 </ul>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <ul>
 <li>Use lambda expressions where appropriate, with formatting as
 described <a href="#Formatting_Lambda_Expressions">below</a>.</li>
@@ -3781,40 +3388,32 @@ make it more obvious to readers, as with
 <a href="#auto"><code>auto</code></a>.</li>
 
 </ul>
-</div>
-
-</div> 
 
 <h3 id="Template_metaprogramming">Template metaprogramming</h3>
-<div class="summary">
+
 <p>Avoid complicated template programming.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p>Template metaprogramming refers to a family of techniques that
 exploit the fact that the C++ template instantiation mechanism is
 Turing complete and can be used to perform arbitrary compile-time
 computation in the type domain.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Template metaprogramming allows extremely flexible interfaces that
 are type safe and high performance. Facilities like
 
 <a href="https://code.google.com/p/googletest/">Google Test</a>,
 <code>std::tuple</code>, <code>std::function</code>, and
 Boost.Spirit would be impossible without it.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>The techniques used in template metaprogramming are often obscure
 to anyone but language experts. Code that uses templates in
 complicated ways is often unreadable, and is hard to debug or
 maintain.</p>
 
-<p>Template metaprogramming often leads to extremely poor compiler
+<p>Template metaprogramming often leads to extremely poor compile
 time error messages: even if an interface is simple, the complicated
 implementation details become visible when the user does something
 wrong.</p>
@@ -3827,9 +3426,8 @@ tools work with an AST that only represents the structure of the code
 after template expansion. It can be difficult to automatically work
 back to the original source construct that needs to be
 rewritten.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>Template metaprogramming sometimes allows cleaner and easier-to-use
 interfaces than would be possible without it, but it's also often a
 temptation to be overly clever. It's best used in a small number of
@@ -3860,42 +3458,31 @@ error messages are part of your user interface, and your code should
 be tweaked as necessary so that the error messages are understandable
 and actionable from a user point of view.</p>
 
-</div> 
-</div> 
-
-
 <h3 id="Boost">Boost</h3>
 
-<div class="summary">
 <p>Use only approved libraries from the Boost library
 collection.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p> The
 <a href="https://www.boost.org/">
 Boost library collection</a> is a popular collection of
 peer-reviewed, free, open-source C++ libraries.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Boost code is generally very high-quality, is widely
 portable, and fills many important gaps in the C++
 standard library, such as type traits and better binders.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>Some Boost libraries encourage coding practices which can
 hamper readability, such as metaprogramming and other
 advanced template techniques, and an excessively
 "functional" style of programming. </p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 
- 
+
 
 <div>
 <p>In order to maintain a high level of readability for
@@ -3943,6 +3530,9 @@ Currently, the following libraries are permitted:</p>
   <li><a href="https://www.boost.org/libs/math/doc/html/special.html">
   Special Functions</a> from <code>boost/math/special_functions</code></li>
 
+  <li><a href="https://www.boost.org/libs/math/doc/html/root_finding.html">
+  Root Finding Functions</a> from <code>boost/math/tools</code></li>
+
   <li><a href="https://www.boost.org/libs/multi_index/">
   Multi-index</a> from <code>boost/multi_index</code></li>
 
@@ -3967,44 +3557,21 @@ Currently, the following libraries are permitted:</p>
 <p>We are actively considering adding other Boost
 features to the list, so this list may be expanded in
 the future.</p>
-</div> 
+</div>
 
-<p>The following libraries are permitted, but their use
-is discouraged because they've been superseded by
-standard libraries in C++11:</p>
 
-<ul>
-  <li><a href="https://www.boost.org/libs/array/">
-  Array</a> from <code>boost/array.hpp</code>: use
-  <a href="http://en.cppreference.com/w/cpp/container/array">
-   <code>std::array</code></a> instead.</li>
-
-   <li><a href="https://www.boost.org/libs/ptr_container/">
-   Pointer Container</a> from <code>boost/ptr_container</code>: use containers of
-   <a href="http://en.cppreference.com/w/cpp/memory/unique_ptr">
-   <code>std::unique_ptr</code></a> instead.</li>
-</ul>
-</div> 
-
-</div> 
-
- 
 
 <h3 id="std_hash">std::hash</h3>
 
-<div class="summary">
 <p>Do not define specializations of <code>std::hash</code>.</p>
-</div>
 
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p><code>std::hash&lt;T&gt;</code> is the function object that the
 C++11 hash containers use to hash keys of type <code>T</code>,
 unless the user explicitly specifies a different hash function. For
-example, <code>std::unordered_map&lt;int, string&gt;</code> is a hash
+example, <code>std::unordered_map&lt;int, std::string&gt;</code> is a hash
 map that uses <code>std::hash&lt;int&gt;</code> to hash its keys,
-whereas <code>std::unordered_map&lt;int, string, MyIntHash&gt;</code>
+whereas <code>std::unordered_map&lt;int, std::string, MyIntHash&gt;</code>
 uses <code>MyIntHash</code>.</p>
 
 <p><code>std::hash</code> is defined for all integral, floating-point,
@@ -4012,17 +3579,15 @@ pointer, and <code>enum</code> types, as well as some standard library
 types such as <code>string</code> and <code>unique_ptr</code>. Users
 can enable it to work for their own types by defining specializations
 of it for those types.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p><code>std::hash</code> is easy to use, and simplifies the code
 since you don't have to name it explicitly. Specializing
 <code>std::hash</code> is the standard way of specifying how to
 hash a type, so it's what outside resources will teach, and what
 new engineers will expect.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p><code>std::hash</code> is hard to specialize. It requires a lot
 of boilerplate code, and more importantly, it combines responsibility
 for identifying the hash inputs with responsibility for executing the
@@ -4046,9 +3611,8 @@ should not be done more than once.</p>
 <p>Due to exactly that issue, <code>std::hash</code> does not work
 with <code>std::pair</code> or <code>std::tuple</code>, and the
 language does not allow us to extend it to support them.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>You can use <code>std::hash</code> with the types that it supports
 "out of the box", but do not specialize it to support additional types.
 If you need a hash table with a key type that <code>std::hash</code>
@@ -4067,37 +3631,27 @@ that you can use; otherwise work with them to provide one,
 <p>We are planning to provide a hash function that can work with any type,
 using a new customization mechanism that doesn't have the drawbacks of
 <code>std::hash</code>.</p>
-</div>
-
-</div>  
 
 <h3 id="C++11">C++11</h3>
 
-<div class="summary">
 <p>Use libraries and language extensions from C++11 when appropriate.
 Consider portability to other environments
 before using C++11 features in your
 project. </p>
 
-</div>
-
-<div class="stylebody">
-
-<div class="definition">
+<p class="definition"></p>
 <p> C++11 contains <a href="https://en.wikipedia.org/wiki/C%2B%2B11">
 significant changes</a> both to the language and
 libraries. </p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>C++11 was the official standard until 2014, and
 is supported by most C++ compilers. It standardizes
 some common C++ extensions that we use already, allows
 shorthands for some operations, and has some performance
 and safety improvements.</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>The C++11 standard is substantially more complex than
 its predecessor (1,300 pages versus 800 pages), and is
 unfamiliar to many developers. The long-term effects of
@@ -4117,22 +3671,14 @@ available through existing mechanisms, which may lead to confusion
 and conversion costs.</p>
 
 
-</div>
 
-<div class="decision">
-
+<p class="decision"></p>
 <p>C++11 features may be used unless specified otherwise.
 In addition to what's described in the rest of the style
 guide, the following C++11 features may not be used:</p>
 
 <ul>
-  
 
-  
-
-  
-
-  
 
   <li>Compile-time rational numbers
   (<code>&lt;ratio&gt;</code>), because of concerns that
@@ -4143,21 +3689,14 @@ guide, the following C++11 features may not be used:</p>
   <code>&lt;fenv.h&gt;</code> headers, because many
   compilers do not support those features reliably.</li>
 
-  
 
-  
 </ul>
-</div>
-
-</div> 
 
 <h3 id="Nonstandard_Extensions">Nonstandard Extensions</h3>
 
-<div class="summary">
 <p>Nonstandard extensions to C++ may not be used unless otherwise specified.</p>
-</div>
-<div class="stylebody">
-<div class="definition">
+
+<p class="definition"></p>
 <p>Compilers support various extensions that are not part of standard C++. Such
   extensions include GCC's <code>__attribute__</code>, intrinsic functions such
   as <code>__builtin_prefetch</code>, designated initializers (e.g.
@@ -4166,9 +3705,8 @@ guide, the following C++11 features may not be used:</p>
   <code>foo = ({ int x; Bar(&amp;x); x })</code>, variable-length arrays and
   <code>alloca()</code>, and the "<a href="https://en.wikipedia.org/wiki/Elvis_operator">Elvis Operator</a>"
   <code>a?:b</code>.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
   <ul>
     <li>Nonstandard extensions may provide useful features that do not exist
       in standard C++. For example, some people think that designated
@@ -4177,9 +3715,8 @@ guide, the following C++11 features may not be used:</p>
     <li>Important performance guidance to the compiler can only be specified
       using extensions.</li>
   </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
   <ul>
     <li>Nonstandard extensions do not work in all compilers. Use of nonstandard
       extensions reduces portability of code.</li>
@@ -4189,24 +3726,19 @@ guide, the following C++11 features may not be used:</p>
     <li>Nonstandard extensions add to the language features that a reader must
       know to understand the code.</li>
   </ul>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>Do not use nonstandard extensions. You may use portability wrappers that
   are implemented using nonstandard extensions, so long as those wrappers
-  
+
   are provided by a designated project-wide
   portability header.</p>
-</div>
-</div> 
 
 <h3 id="Aliases">Aliases</h3>
 
-<div class="summary">
 <p>Public aliases are for the benefit of an API's user, and should be clearly documented.</p>
-</div>
-<div class="stylebody">
-<div class="definition">
+
+<p class="definition"></p>
 <p>There are several ways to create names that are aliases of other entities:</p>
 <pre>typedef Foo Bar;
 using Bar = Foo;
@@ -4222,18 +3754,16 @@ using other_namespace::Foo;
   or in an explicitly-marked internal namespace. Aliases in such areas or in .cc files are
   implementation details (because client code can't refer to them), and are not restricted by this
   rule.</p>
-</div>
 
-<div class="pros">
+<p class="pros"></p>
   <ul>
     <li>Aliases can improve readability by simplifying a long or complicated name.</li>
     <li>Aliases can reduce duplication by naming in one place a type used repeatedly in an API,
       which <em>might</em> make it easier to change the type later.
     </li>
   </ul>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
   <ul>
     <li>When placed in a header where client code can refer to them, aliases increase the
       number of entities in that header's API, increasing its complexity.</li>
@@ -4247,9 +3777,8 @@ using other_namespace::Foo;
       it is unclear whether the alias is guaranteed to be identical to the type it aliases,
       to have the same API, or only to be usable in specified narrow ways</li>
   </ul>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p>Don't put an alias in your public API just to save typing in the implementation;
   do so only if you intend it to be used by your clients.</p>
 <p>When defining a public alias, document the intent of
@@ -4290,9 +3819,6 @@ typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&g
 using foo::Bar;
 </pre>
 
-</div>
-</div> 
-
 <h2 id="Naming">Naming</h2>
 
 <p>The most important consistency rules are those that govern
@@ -4311,49 +3837,68 @@ the rules are the rules.</p>
 
 <h3 id="General_Naming_Rules">General Naming Rules</h3>
 
-<div class="summary">
-<p>Names should be descriptive; avoid abbreviation.</p>
-</div>
+<p>Optimize for readability using names that would be clear
+even to people on a different team.</p>
 
-<div class="stylebody">
-<p>Give as descriptive a name as possible, within reason.
+<p>Use names that describe the purpose or intent of the object.
 Do not worry about saving horizontal space as it is far
 more important to make your code immediately
-understandable by a new reader. Do not use abbreviations
-that are ambiguous or unfamiliar to readers outside your
-project, and do not abbreviate by deleting letters within
-a word. Abbreviations that would be familiar to someone
-outside your project with relevant domain knowledge are OK.
-As a rule of thumb, an abbreviation is probably OK if it's listed
-in
+understandable by a new reader. Minimize the use of
+abbreviations that would likely be unknown to someone outside
+your project (especially acronyms and initialisms). Do not
+abbreviate by deleting letters within a word. As a rule of thumb,
+an abbreviation is probably OK if it's listed in
+ Wikipedia. Generally speaking, descriptiveness should be
+proportional to the name's scope of visibility. For example,
+<code>n</code> may be a fine name within a 5-line function,
+but within the scope of a class, it's likely too vague.</p>
 
-Wikipedia.</p>
-
-<pre>int price_count_reader;    // No abbreviation.
-int num_errors;            // "num" is a widespread convention.
-int num_dns_connections;   // Most people know what "DNS" stands for.
-int lstm_size;             // "LSTM" is a common machine learning abbreviation.
+<pre>class MyClass {
+ public:
+  int CountFooErrors(const std::vector&lt;Foo&gt;&amp; foos) {
+    int n = 0;  // Clear meaning given limited scope and context
+    for (const auto&amp; foo : foos) {
+      ...
+      ++n;
+    }
+    return n;
+  }
+  void DoSomethingImportant() {
+    std::string fqdn = ...;  // Well-known abbreviation for Fully Qualified Domain Name
+  }
+ private:
+  const int kMaxAllowedConnections = ...;  // Clear meaning within context
+};
 </pre>
 
-<pre class="badcode">int n;                     // Meaningless.
-int nerr;                  // Ambiguous abbreviation.
-int n_comp_conns;          // Ambiguous abbreviation.
-int wgc_connections;       // Only your group knows what this stands for.
-int pc_reader;             // Lots of things can be abbreviated "pc".
-int cstmr_id;              // Deletes internal letters.
-FooBarRequestInfo fbri;    // Not even a word.
+<pre class="badcode">class MyClass {
+ public:
+  int CountFooErrors(const std::vector&lt;Foo&gt;&amp; foos) {
+    int total_number_of_foo_errors = 0;  // Overly verbose given limited scope and context
+    for (int foo_index = 0; foo_index &lt; foos.size(); ++foo_index) {  // Use idiomatic `i`
+      ...
+      ++total_number_of_foo_errors;
+    }
+    return total_number_of_foo_errors;
+  }
+  void DoSomethingImportant() {
+    int cstmr_id = ...;  // Deletes internal letters
+  }
+ private:
+  const int kNum = ...;  // Unclear meaning within broad scope
+};
 </pre>
 
 <p>Note that certain universally-known abbreviations are OK, such as
 <code>i</code> for an iteration variable and <code>T</code> for a
 template parameter.</p>
 
-<p>For some symbols, this style guide recommends names to start with a capital
-letter and to have a capital letter for each new word (a.k.a.
-"<a href="https://en.wikipedia.org/wiki/Camel_case">Camel Case</a>"
-or "Pascal case"). When abbreviations or acronyms appear in such
-names, prefer to capitalize the abbreviations or acronyms as single words (i.e
-<code>StartRpc()</code>, not <code>StartRPC()</code>).</p>
+<p>For the purposes of the naming rules below, a "word" is anything that you
+would write in English without internal spaces. This includes abbreviations and
+acronyms; e.g., for "<a href="https://en.wikipedia.org/wiki/Camel_case">camel
+case</a>" or "Pascal case," in which the first letter of each word is
+capitalized, use a name like <code>StartRpc()</code>, not
+<code>StartRPC()</code>.</p>
 
 <p>Template parameters should follow the naming style for their
 category: type template parameters should follow the rules for
@@ -4361,20 +3906,14 @@ category: type template parameters should follow the rules for
 parameters should follow the rules for <a href="#Variable_Names">
 variable names</a>.
 
-</p></div> 
+</p><h3 id="File_Names">File Names</h3>
 
-<h3 id="File_Names">File Names</h3>
-
-<div class="summary">
 <p>Filenames should be all lowercase and can include
 underscores (<code>_</code>) or dashes (<code>-</code>).
 Follow the convention that your
- 
+
 project uses. If there is no consistent
 local pattern to follow, prefer "_".</p>
-</div>
-
-<div class="stylebody">
 
 <p>Examples of acceptable file names:</p>
 
@@ -4400,17 +3939,11 @@ of files called, e.g., <code>foo_bar.h</code> and
 <code>foo_bar.cc</code>, defining a class called
 <code>FooBar</code>.</p>
 
-</div> 
-
 <h3 id="Type_Names">Type Names</h3>
 
-<div class="summary">
 <p>Type names start with a capital letter and have a capital
 letter for each new word, with no underscores:
 <code>MyExcitingClass</code>, <code>MyExcitingEnum</code>.</p>
-</div>
-
-<div class="stylebody">
 
 <p>The names of all types &#8212; classes, structs, type aliases,
 enums, and type template parameters &#8212; have the same naming convention.
@@ -4423,41 +3956,34 @@ class UrlTableTester { ...
 struct UrlTableProperties { ...
 
 // typedefs
-typedef hash_map&lt;UrlTableProperties *, string&gt; PropertiesMap;
+typedef hash_map&lt;UrlTableProperties *, std::string&gt; PropertiesMap;
 
 // using aliases
-using PropertiesMap = hash_map&lt;UrlTableProperties *, string&gt;;
+using PropertiesMap = hash_map&lt;UrlTableProperties *, std::string&gt;;
 
 // enums
 enum UrlTableErrors { ...
 </pre>
 
-</div> 
-
 <h3 id="Variable_Names">Variable Names</h3>
 
-<div class="summary">
 <p>The names of variables (including function parameters) and data members are
 all lowercase, with underscores between words. Data members of classes (but not
 structs) additionally have trailing underscores. For instance:
 <code>a_local_variable</code>, <code>a_struct_data_member</code>,
 <code>a_class_data_member_</code>.</p>
-</div>
 
-<div class="stylebody">
-
-<h4 class="stylepoint_subsection">Common Variable names</h4>
+<h4>Common Variable names</h4>
 
 <p>For example:</p>
 
-<pre>string table_name;  // OK - uses underscore.
-string tablename;   // OK - all lowercase.
+<pre>std::string table_name;  // OK - lowercase with underscore.
 </pre>
 
-<pre class="badcode">string tableName;   // Bad - mixed case.
+<pre class="badcode">std::string tableName;   // Bad - mixed case.
 </pre>
 
-<h4 class="stylepoint_subsection">Class Data Members</h4>
+<h4>Class Data Members</h4>
 
 <p>Data members of classes, both static and non-static, are
 named like ordinary nonmember variables, but with a
@@ -4466,20 +3992,19 @@ trailing underscore.</p>
 <pre>class TableInfo {
   ...
  private:
-  string table_name_;  // OK - underscore at end.
-  string tablename_;   // OK.
+  std::string table_name_;  // OK - underscore at end.
   static Pool&lt;TableInfo&gt;* pool_;  // OK.
 };
 </pre>
 
-<h4 class="stylepoint_subsection">Struct Data Members</h4>
+<h4>Struct Data Members</h4>
 
 <p>Data members of structs, both static and non-static,
 are named like ordinary nonmember variables. They do not have
 the trailing underscores that data members in classes have.</p>
 
 <pre>struct UrlTableProperties {
-  string name;
+  std::string name;
   int num_entries;
   static Pool&lt;UrlTableProperties&gt;* pool;
 };
@@ -4490,39 +4015,27 @@ the trailing underscores that data members in classes have.</p>
 Classes</a> for a discussion of when to use a struct
 versus a class.</p>
 
-</div> 
-
 <h3 id="Constant_Names">Constant Names</h3>
 
-<div class="summary">
-  <p>Variables declared constexpr or const, and whose value is fixed for
-  the duration of the program, are named with a leading "k" followed
-  by mixed case. Underscores can be used as separators in the rare cases
-  where capitalization cannot be used for separation. For example:</p>
-</div>
+<p>Variables declared constexpr or const, and whose value is fixed for
+the duration of the program, are named with a leading "k" followed
+by mixed case. Underscores can be used as separators in the rare cases
+where capitalization cannot be used for separation. For example:</p>
 
 <pre>const int kDaysInAWeek = 7;
 const int kAndroid8_0_0 = 24;  // Android 8.0.0
 </pre>
 
-<div class="stylebody">
-
-  <p>All such variables with static storage duration (i.e. statics and globals,
-  see <a href="http://en.cppreference.com/w/cpp/language/storage_duration#Storage_duration">
-    Storage Duration</a> for details) should be named this way.  This
-  convention is optional for variables of other storage classes, e.g. automatic
-  variables, otherwise the usual variable naming rules apply.</p>
-
-</div> 
+<p>All such variables with static storage duration (i.e. statics and globals,
+see <a href="http://en.cppreference.com/w/cpp/language/storage_duration#Storage_duration">
+Storage Duration</a> for details) should be named this way.  This
+convention is optional for variables of other storage classes, e.g. automatic
+variables, otherwise the usual variable naming rules apply.</p>
 
 <h3 id="Function_Names">Function Names</h3>
 
-<div class="summary">
 <p>Regular functions have mixed case; accessors and mutators may be named
 like variables.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Ordinarily, functions should start with a capital letter and have a
 capital letter for each new word.</p>
@@ -4542,25 +4055,18 @@ variables. These often correspond to actual member variables, but this is
 not required. For example, <code>int count()</code> and <code>void
 set_count(int count)</code>.</p>
 
-</div> 
-
 <h3 id="Namespace_Names">Namespace Names</h3>
 
-<div class="summary">
 Namespace names are all lower-case. Top-level namespace names are
 based on the project name
 . Avoid collisions
 between nested namespaces and well-known top-level namespaces.
-</div>
 
-<div class="stylebody">
 <p>The name of a top-level namespace should usually be the
 name of the project or team whose code is contained in that
 namespace. The code in that namespace should usually be in
 a directory whose basename matches the namespace name (or in
 subdirectories thereof).</p>
-
-
 
 
 
@@ -4586,18 +4092,12 @@ internal name is helpful
 (<code>websearch::index::frobber_internal</code> for use
 in <code>frobber.h</code>)</p>
 
-</div> 
-
 <h3 id="Enumerator_Names">Enumerator Names</h3>
 
-<div class="summary">
 <p>Enumerators (for both scoped and unscoped enums) should be named <i>either</i> like
 <a href="#Constant_Names">constants</a> or like
 <a href="#Macro_Names">macros</a>: either <code>kEnumName</code> or
 <code>ENUM_NAME</code>.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Preferably, the individual enumerators should be named
 like <a href="#Constant_Names">constants</a>. However, it
@@ -4608,7 +4108,7 @@ is also acceptable to name them like
 therefore mixed case.</p>
 
 <pre>enum UrlTableErrors {
-  kOK = 0,
+  kOk = 0,
   kErrorOutOfMemory,
   kErrorMalformedInput,
 };
@@ -4630,18 +4130,12 @@ names are actually causing a compile-time problem.</p>
 
 
 
-</div> 
-
 <h3 id="Macro_Names">Macro Names</h3>
 
-<div class="summary">
 <p>You're not really going to <a href="#Preprocessor_Macros">
 define a macro</a>, are you? If you do, they're like this:
 <code>MY_MACRO_THAT_SCARES_SMALL_CHILDREN_AND_ADULTS_ALIKE</code>.
 </p>
-</div>
-
-<div class="stylebody">
 
 <p>Please see the <a href="#Preprocessor_Macros">description
 of macros</a>; in general macros should <em>not</em> be used.
@@ -4652,17 +4146,11 @@ named with all capitals and underscores.</p>
 #define PI_ROUNDED 3.0
 </pre>
 
-</div> 
-
 <h3 id="Exceptions_to_Naming_Rules">Exceptions to Naming Rules</h3>
 
-<div class="summary">
 <p>If you are naming something that is analogous to an
 existing C or C++ entity then you can follow the existing
 naming convention scheme.</p>
-</div>
-
-<div class="stylebody">
 
 <dl>
   <dt><code>bigopen()</code></dt>
@@ -4682,69 +4170,58 @@ naming convention scheme.</p>
   <dd>a constant, as in <code>INT_MAX</code></dd>
 </dl>
 
-</div> 
-
 <h2 id="Comments">Comments</h2>
 
-<p>Though a pain to write, comments are absolutely vital to
-keeping our code readable. The following rules describe what
-you should comment and where. But remember: while comments are
-very important, the best code is self-documenting. Giving
-sensible names to types and variables is much better than using
-obscure names that you must then explain through comments.</p>
+<p>Comments are absolutely vital to keeping our code readable. The following rules describe what you
+should comment and where. But remember: while comments are very important, the best code is
+self-documenting. Giving sensible names to types and variables is much better than using obscure
+names that you must then explain through comments.</p>
 
 <p>When writing your comments, write for your audience: the
-next 
+next
 contributor who will need to
 understand your code. Be generous &#8212; the next
 one may be you!</p>
 
 <h3 id="Comment_Style">Comment Style</h3>
 
-<div class="summary">
 <p>Use either the <code>//</code> or <code>/* */</code>
 syntax, as long as you are consistent.</p>
-</div>
-
-<div class="stylebody">
 
 <p>You can use either the <code>//</code> or the <code>/*
 */</code> syntax; however, <code>//</code> is
 <em>much</em> more common. Be consistent with how you
 comment and what style you use where.</p>
 
-</div> 
-
 <h3 id="File_Comments">File Comments</h3>
 
-<div class="summary">
+<div>
 <p>Start each file with license boilerplate.</p>
+</div>
 
 <p>File comments describe the contents of a file. If a file declares,
 implements, or tests exactly one abstraction that is documented by a comment
 at the point of declaration, file comments are not required. All other files
 must have file comments.</p>
 
-</div>
-
-<div class="stylebody">
-
-<h4 class="stylepoint_subsection">Legal Notice and Author
+<h4>Legal Notice and Author
 Line</h4>
 
 
 
+<div>
 <p>Every file should contain license
 boilerplate. Choose the appropriate boilerplate for the
 license used by the project (for example, Apache 2.0,
 BSD, LGPL, GPL).</p>
+</div>
 
 <p>If you make significant changes to a file with an
 author line, consider deleting the author line.
 New files should usually not contain copyright notice or
 author line.</p>
 
-<h4 class="stylepoint_subsection">File Contents</h4>
+<h4>File Contents</h4>
 
 <p>If a <code>.h</code> declares multiple abstractions, the file-level comment
 should broadly describe the contents of the file, and how the abstractions are
@@ -4755,16 +4232,10 @@ not at the file level.</p>
 <p>Do not duplicate comments in both the <code>.h</code> and the
 <code>.cc</code>. Duplicated comments diverge.</p>
 
-</div> 
-
 <h3 id="Class_Comments">Class Comments</h3>
 
-<div class="summary">
 <p>Every non-obvious class declaration should have an accompanying
 comment that describes what it is for and how it should be used.</p>
-</div>
-
-<div class="stylebody">
 
 <pre>// Iterates over the contents of a GargantuanTable.
 // Example:
@@ -4793,29 +4264,24 @@ files), comments describing the use of the class should go together with its
 interface definition; comments about the class operation and implementation
 should accompany the implementation of the class's methods.</p>
 
-</div> 
-
 <h3 id="Function_Comments">Function Comments</h3>
 
-<div class="summary">
 <p>Declaration comments describe use of the function (when it is
 non-obvious); comments at the definition of a function describe
 operation.</p>
-</div>
 
-<div class="stylebody">
-
-<h4 class="stylepoint_subsection">Function Declarations</h4>
+<h4>Function Declarations</h4>
 
 <p>Almost every function declaration should have comments immediately
 preceding it that describe what the function does and how to use
 it. These comments may be omitted only if the function is simple and
 obvious (e.g. simple accessors for obvious properties of the
-class).  These comments should be descriptive ("Opens the file")
-rather than imperative ("Open the file"); the comment describes the
-function, it does not tell the function what to do. In general, these
-comments do not describe how the function performs its task. Instead,
-that should be left to comments in the function definition.</p>
+class).  These comments should open with descriptive verbs in the
+indicative mood ("Opens the file") rather than verbs in the imperative
+("Open the file"). The comment describes the function; it does not
+tell the function what to do. In general, these comments do not
+describe how the function performs its task. Instead, that should be
+left to comments in the function definition.</p>
 
 <p>Types of things to mention in comments at the function
 declaration:</p>
@@ -4879,7 +4345,7 @@ cleanup the destructor does. If this is trivial, just
 skip the comment. It is quite common for destructors not
 to have a header comment.</p>
 
-<h4 class="stylepoint_subsection">Function Definitions</h4>
+<h4>Function Definitions</h4>
 
 <p>If there is anything tricky about how a function does
 its job, the function definition should have an
@@ -4898,19 +4364,13 @@ given with the function declaration, in the
 recapitulate briefly what the function does, but the
 focus of the comments should be on how it does it.</p>
 
-</div> 
-
 <h3 id="Variable_Comments">Variable Comments</h3>
 
-<div class="summary">
 <p>In general the actual name of the variable should be
 descriptive enough to give a good idea of what the variable
 is used for. In certain cases, more comments are required.</p>
-</div>
 
-<div class="stylebody">
-
-<h4 class="stylepoint_subsection">Class Data Members</h4>
+<h4>Class Data Members</h4>
 
 <p>The purpose of each class data member (also called an instance
 variable or member variable) must be clear. If there are any
@@ -4929,7 +4389,7 @@ obvious. For example:</p>
  int num_total_entries_;
 </pre>
 
-<h4 class="stylepoint_subsection">Global Variables</h4>
+<h4>Global Variables</h4>
 
 <p>All global variables should have a comment describing what they
 are, what they are used for, and (if unclear) why it needs to be
@@ -4939,32 +4399,26 @@ global. For example:</p>
 const int kNumTestCases = 6;
 </pre>
 
-</div> 
-
 <h3 id="Implementation_Comments">Implementation Comments</h3>
 
-<div class="summary">
 <p>In your implementation you should have comments in tricky,
 non-obvious, interesting, or important parts of your code.</p>
-</div>
 
-<div class="stylebody">
-
-<h4 class="stylepoint_subsection">Explanatory Comments</h4>
+<h4>Explanatory Comments</h4>
 
 <p>Tricky or complicated code blocks should have comments
 before them. Example:</p>
 
-<pre>// Divides result by two, taking into account that x
+<pre>// Divide result by two, taking into account that x
 // contains the carry from the add.
-for (int i = 0; i &lt; result-&gt;size(); i++) {
+for (int i = 0; i &lt; result-&gt;size(); ++i) {
   x = (x &lt;&lt; 8) + (*result)[i];
   (*result)[i] = x &gt;&gt; 1;
   x &amp;= 1;
 }
 </pre>
 
-<h4 class="stylepoint_subsection">Line Comments</h4>
+<h4>Line-end Comments</h4>
 
 <p>Also, lines that are non-obvious should get a comment
 at the end of the line. These end-of-line comments should
@@ -4981,24 +4435,7 @@ the code is doing, and comments that mention that an
 error has already been logged when the function
 returns.</p>
 
-<p>If you have several comments on subsequent lines, it
-can often be more readable to line them up:</p>
-
-<pre>DoSomething();                  // Comment here so the comments line up.
-DoSomethingElseThatIsLonger();  // Two spaces between the code and the comment.
-{ // One space before comment when opening a new scope is allowed,
-  // thus the comment lines up with the following comments and code.
-  DoSomethingElse();  // Two spaces before line comments normally.
-}
-std::vector&lt;string&gt; list{
-                    // Comments in braced lists describe the next element...
-                    "First item",
-                    // .. and should be aligned appropriately.
-                    "Second item"};
-DoSomething(); /* For trailing block comments, one space is fine. */
-</pre>
-
-<h4 class="stylepoint_subsection" id="Function_Argument_Comments">Function Argument Comments</h4>
+<h4 id="Function_Argument_Comments" class="stylepoint_subsection">Function Argument Comments</h4>
 
 <p>When the meaning of a function argument is nonobvious, consider
 one of the following remedies:</p>
@@ -5045,7 +4482,7 @@ const DecimalNumber product =
     CalculateProduct(values, options, /*completion_callback=*/nullptr);
 </pre>
 
-<h4 class="stylepoint_subsection">Don'ts</h4>
+<h4 id="Implementation_Comment_Donts">Don'ts</h4>
 
 <p>Do not state the obvious. In particular, don't literally describe what
 code does, unless the behavior is nonobvious to a reader who understands
@@ -5078,17 +4515,11 @@ the example above would be obvious:
 }
 </pre>
 
-</div> 
+<h3 id="Punctuation,_Spelling_and_Grammar">Punctuation, Spelling, and Grammar</h3>
 
-<h3 id="Punctuation,_Spelling_and_Grammar">Punctuation, Spelling and Grammar</h3>
-
-<div class="summary">
 <p>Pay attention to punctuation, spelling, and grammar; it is
 easier to read well-written comments than badly written
 ones.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Comments should be as readable as narrative text, with
 proper capitalization and punctuation. In many cases,
@@ -5104,16 +4535,10 @@ maintain a high level of clarity and readability. Proper
 punctuation, spelling, and grammar help with that
 goal.</p>
 
-</div> 
-
 <h3 id="TODO_Comments">TODO Comments</h3>
 
-<div class="summary">
 <p>Use <code>TODO</code> comments for code that is temporary,
 a short-term solution, or good-enough but not perfect.</p>
-</div>
-
-<div class="stylebody">
 
 <p><code>TODO</code>s should include the string
 <code>TODO</code> in all caps, followed by the
@@ -5144,50 +4569,6 @@ very specific date ("Fix by November 2005") or a very
 specific event ("Remove this code when all clients can
 handle XML responses.").</p>
 
-</div> 
-
-<h3 id="Deprecation_Comments">Deprecation Comments</h3>
-
-<div class="summary">
-<p>Mark deprecated interface points with <code>DEPRECATED</code>
-comments.</p>
-</div>
-
-<div class="stylebody">
-
-<p>You can mark an interface as deprecated by writing a
-comment containing the word <code>DEPRECATED</code> in
-all caps. The comment goes either before the declaration
-of the interface or on the same line as the
-declaration.</p>
-
-
-
-<p>After the word
-<code>DEPRECATED</code>, write your name, e-mail address,
-or other identifier in parentheses.</p>
-
-<p>A deprecation comment must include simple, clear
-directions for people to fix their callsites. In C++, you
-can implement a deprecated function as an inline function
-that calls the new interface point.</p>
-
-<p>Marking an interface point <code>DEPRECATED</code>
-will not magically cause any callsites to change. If you
-want people to actually stop using the deprecated
-facility, you will have to fix the callsites yourself or
-recruit a crew to help you.</p>
-
-<p>New code should not contain calls to deprecated
-interface points. Use the new interface point instead. If
-you cannot understand the directions, find the person who
-created the deprecation and ask them for help using the
-new interface point.</p>
-
-
-
-</div> 
-
 <h2 id="Formatting">Formatting</h2>
 
 <p>Coding style and formatting are pretty arbitrary, but a
@@ -5198,33 +4579,32 @@ aspect of the formatting rules, and some of the rules may take
 some getting used to, but it is important that all
 
 project contributors follow the
-style rules so that 
+style rules so that
 they can all read and understand
 everyone's code easily.</p>
 
 
 
-<p>To help you format code correctly, we've
-created a
+<div>
+<p>To help you format code correctly, we've created a
 <a href="https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el">
 settings file for emacs</a>.</p>
+</div>
 
 <h3 id="Line_Length">Line Length</h3>
 
-<div class="summary">
 <p>Each line of text in your code should be at most 80
 characters long.</p>
-</div>
-
-<div class="stylebody">
 
 
 
- <p>We recognize that this rule is
+<div>
+<p>We recognize that this rule is
 controversial, but so much existing code already adheres
 to it, and we feel that consistency is important.</p>
+</div>
 
-<div class="pros">
+<p class="pros"></p>
 <p>Those who favor  this rule
 argue that it is rude to force them to resize
 their windows and there is no need for anything longer.
@@ -5234,16 +4614,14 @@ windows in any case. People set up their work environment
 assuming a particular maximum window width, and 80
 columns has been the traditional standard. Why change
 it?</p>
-</div>
 
-<div class="cons">
+<p class="cons"></p>
 <p>Proponents of change argue that a wider line can make
 code more readable. The 80-column limit is an hidebound
 throwback to 1960s mainframes;  modern equipment has wide screens that
 can easily show longer lines.</p>
-</div>
 
-<div class="decision">
+<p class="decision"></p>
 <p> 80 characters is the maximum.</p>
 
 <p>A line may exceed 80 characters if it is</p>
@@ -5263,18 +4641,10 @@ can easily show longer lines.</p>
   <li>a using-declaration</li>
 </ul>
 
-</div>
-
-</div> 
-
 <h3 id="Non-ASCII_Characters">Non-ASCII Characters</h3>
 
-<div class="summary">
 <p>Non-ASCII characters should be rare, and must use UTF-8
 formatting.</p>
-</div>
-
-<div class="stylebody">
 
 <p>You shouldn't hard-code user-facing text in source,
 even English, so use of non-ASCII characters should be
@@ -5311,32 +4681,20 @@ use <code>wchar_t</code> (unless you're writing code that
 interacts with the Windows API, which uses
 <code>wchar_t</code> extensively).</p>
 
-</div> 
-
 <h3 id="Spaces_vs._Tabs">Spaces vs. Tabs</h3>
 
-<div class="summary">
 <p>Use only spaces, and indent 2 spaces at a time.</p>
-</div>
-
-<div class="stylebody">
 
 <p>We use spaces for indentation. Do not use tabs in your
 code. You should set your editor to emit spaces when you
 hit the tab key.</p>
 
-</div> 
-
 <h3 id="Function_Declarations_and_Definitions">Function Declarations and Definitions</h3>
 
-<div class="summary">
 <p>Return type on the same line as function name, parameters
 on the same line if they fit. Wrap parameter lists which do
 not fit on a single line as you would wrap arguments in a
 <a href="#Function_Calls">function call</a>.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Functions look like this:</p>
 
@@ -5410,10 +4768,8 @@ not fit on a single line as you would wrap arguments in a
 
 <pre>class Foo {
  public:
-  Foo(Foo&amp;&amp;);
-  Foo(const Foo&amp;);
-  Foo&amp; operator=(Foo&amp;&amp;);
-  Foo&amp; operator=(const Foo&amp;);
+  Foo(const Foo&amp;) = delete;
+  Foo&amp; operator=(const Foo&amp;) = delete;
 };
 </pre>
 
@@ -5441,19 +4797,14 @@ void Circle::Rotate(double) {}
 <p>Attributes, and macros that expand to attributes, appear at the very
 beginning of the function declaration or definition, before the
 return type:</p>
-<pre>MUST_USE_RESULT bool IsOK();
+<pre>ABSL_MUST_USE_RESULT bool IsOk();
 </pre>
-
-</div> 
 
 <h3 id="Formatting_Lambda_Expressions">Lambda Expressions</h3>
 
-<div class="summary">
 <p>Format parameters and bodies as for any other function, and capture
 lists like other comma-separated lists.</p>
-</div>
 
-<div class="stylebody">
 <p>For by-reference captures, do not leave a space between the
 ampersand (&amp;) and the variable name.</p>
 <pre>int x = 0;
@@ -5468,20 +4819,38 @@ digits.erase(std::remove_if(digits.begin(), digits.end(), [&amp;blacklist](int i
              digits.end());
 </pre>
 
-</div> 
+<h3 id="Floating_Literals">Floating-point Literals</h3>
+
+<p>Floating-point literals should always have a radix point, with digits on both
+sides, even if they use exponential notation. Readability is improved if all
+floating-point literals take this familiar form, as this helps ensure that they
+are not mistaken for integer literals, and that the
+<code>E</code>/<code>e</code> of the exponential notation is not mistaken for a
+hexadecimal digit. It is fine to initialize a floating-point variable with an
+integer literal (assuming the variable type can exactly represent that integer),
+but note that a number in exponential notation is never an integer literal.
+</p>
+
+<pre class="badcode">float f = 1.f;
+long double ld = -.5L;
+double d = 1248e6;
+</pre>
+
+<pre class="goodcode">float f = 1.0f;
+float f2 = 1;   // Also OK
+long double ld = -0.5L;
+double d = 1248.0e6;
+</pre>
+
 
 <h3 id="Function_Calls">Function Calls</h3>
 
-<div class="summary">
 <p>Either write the call all on a single line, wrap the
 arguments at the parenthesis, or start the arguments on a new
 line indented by four spaces and continue at that 4 space
 indent. In the absence of other considerations, use the
 minimum number of lines, including placing multiple arguments
 on each line where appropriate.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Function calls have the following format:</p>
 <pre>bool result = DoSomething(argument1, argument2, argument3);
@@ -5546,16 +4915,10 @@ my_widget.Transform(x1, x2, x3,
                     z1, z2, z3);
 </pre>
 
-</div> 
-
 <h3 id="Braced_Initializer_List_Format">Braced Initializer List Format</h3>
 
-<div class="summary">
 <p>Format a <a href="#Braced_Initializer_List">braced initializer list</a>
 exactly like you would format a function call in its place.</p>
-</div>
-
-<div class="stylebody">
 
 <p>If the braced list follows a name (e.g. a type or
 variable name), format as if the <code>{}</code> were the
@@ -5589,16 +4952,10 @@ MyType m = {  // Here, you could also break before {.
      interiorwrappinglist2}};
 </pre>
 
-</div> 
-
 <h3 id="Conditionals">Conditionals</h3>
 
-<div class="summary">
 <p>Prefer no spaces inside parentheses. The <code>if</code>
 and <code>else</code> keywords belong on separate lines.</p>
-</div>
-
-<div class="stylebody">
 
 <p>There are two acceptable formats for a basic
 conditional statement. One includes spaces between the
@@ -5664,7 +5021,7 @@ else DoThat();
 single-line statements, but they are allowed if you like
 them; conditional or loop statements with complex
 conditions or statements may be more readable with curly
-braces. Some 
+braces. Some
 projects require that an
 <code>if</code> must always have an accompanying
 brace.</p>
@@ -5704,18 +5061,12 @@ if (condition) {
 }
 </pre>
 
-</div> 
-
 <h3 id="Loops_and_Switch_Statements">Loops and Switch Statements</h3>
 
-<div class="summary">
 <p>Switch statements may use braces for blocks. Annotate
 non-trivial fall-through between cases.
 Braces are optional for single-statement loops.
 Empty loop bodies should use either empty braces or <code>continue</code>.</p>
-</div>
-
-<div class="stylebody">
 
 <p><code>case</code> blocks in <code>switch</code>
 statements can have curly braces or not, depending on
@@ -5728,7 +5079,7 @@ statements should always have a <code>default</code> case
 warn you if any values are not handled). If the default
 case should never execute, treat this as an error. For example:
 
-</p> 
+</p>
 
 <div>
 <pre>switch (var) {
@@ -5745,7 +5096,7 @@ case should never execute, treat this as an error. For example:
   }
 }
 </pre>
-</div> 
+</div>
 
 <p>Fall-through from one case label to
 another must be annotated using the
@@ -5758,7 +5109,6 @@ label occurs. A common exception is consecutive case
 labels without intervening code, in which case no
 annotation is needed.</p>
 
-<div>
 <pre>switch (x) {
   case 41:  // No annotation needed here.
   case 43:
@@ -5777,7 +5127,6 @@ annotation is needed.</p>
     break;
 }
 </pre>
-</div>
 
 <p> Braces are optional for single-statement loops.</p>
 
@@ -5803,16 +5152,10 @@ while (condition) continue;  // Good - continue indicates no logic.
 <pre class="badcode">while (condition);  // Bad - looks like part of do/while loop.
 </pre>
 
-</div> 
-
 <h3 id="Pointer_and_Reference_Expressions">Pointer and Reference Expressions</h3>
 
-<div class="summary">
 <p>No spaces around period or arrow. Pointer operators do not
 have trailing spaces.</p>
-</div>
-
-<div class="stylebody">
 
 <p>The following are examples of correctly-formatted
 pointer and reference expressions:</p>
@@ -5839,11 +5182,11 @@ variable name:</p>
 
 <pre>// These are fine, space preceding.
 char *c;
-const string &amp;str;
+const std::string &amp;str;
 
 // These are fine, space following.
 char* c;
-const string&amp; str;
+const std::string&amp; str;
 </pre>
 
 <p>You should do this consistently within a single
@@ -5859,20 +5202,14 @@ int x, y;
 </pre>
 <pre class="badcode">int x, *y;  // Disallowed - no &amp; or * in multiple declaration
 char * c;  // Bad - spaces on both sides of *
-const string &amp; str;  // Bad - spaces on both sides of &amp;
+const std::string &amp; str;  // Bad - spaces on both sides of &amp;
 </pre>
-
-</div> 
 
 <h3 id="Boolean_Expressions">Boolean Expressions</h3>
 
-<div class="summary">
 <p>When you have a boolean expression that is longer than the
 <a href="#Line_Length">standard line length</a>, be
 consistent in how you break up the lines.</p>
-</div>
-
-<div class="stylebody">
 
 <p>In this example, the logical AND operator is always at
 the end of the lines:</p>
@@ -5897,16 +5234,10 @@ the punctuation operators, such as
 the word operators, such as <code>and</code> and
 <code>compl</code>.</p>
 
-</div> 
-
 <h3 id="Return_Values">Return Values</h3>
 
-<div class="summary">
 <p>Do not needlessly surround the <code>return</code>
 expression with parentheses.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Use parentheses in <code>return expr;</code> only
 where you would use them in <code>x = expr;</code>.</p>
@@ -5921,18 +5252,12 @@ return (some_long_condition &amp;&amp;
 return(result);                // return is not a function!
 </pre>
 
-</div> 
 
- 
 
 <h3 id="Variable_and_Array_Initialization">Variable and Array Initialization</h3>
 
-<div class="summary">
 <p>Your choice of <code>=</code>, <code>()</code>, or
 <code>{}</code>.</p>
-</div>
-
-<div class="stylebody">
 
 <p>You may choose between <code>=</code>,
 <code>()</code>, and <code>{}</code>; the following are
@@ -5941,9 +5266,9 @@ all correct:</p>
 <pre>int x = 3;
 int x(3);
 int x{3};
-string name = "Some Name";
-string name("Some Name");
-string name{"Some Name"};
+std::string name = "Some Name";
+std::string name("Some Name");
+std::string name{"Some Name"};
 </pre>
 
 <p>Be careful when using a braced initialization list <code>{...}</code>
@@ -5967,16 +5292,10 @@ errors.</p>
 int pi{3.14};  // Compile error: narrowing conversion.
 </pre>
 
-</div> 
-
 <h3 id="Preprocessor_Directives">Preprocessor Directives</h3>
 
-<div class="summary">
 <p>The hash mark that starts a preprocessor directive should
 always be at the beginning of the line.</p>
-</div>
-
-<div class="stylebody">
 
 <p>Even when preprocessor directives are within the body
 of indented code, the directives should start at the
@@ -6003,16 +5322,10 @@ beginning of the line.</p>
   }
 </pre>
 
-</div> 
-
 <h3 id="Class_Format">Class Format</h3>
 
-<div class="summary">
 <p>Sections in <code>public</code>, <code>protected</code> and
 <code>private</code> order, each indented one space.</p>
-</div>
-
-<div class="stylebody">
 
 <p>The basic format for a class definition (lacking the
 comments, see <a href="#Class_Comments">Class
@@ -6066,16 +5379,10 @@ needed) is:</p>
   each of these sections.</li>
 </ul>
 
-</div> 
-
 <h3 id="Constructor_Initializer_Lists">Constructor Initializer Lists</h3>
 
-<div class="summary">
 <p>Constructor initializer lists can be all on one line or
 with subsequent lines indented four spaces.</p>
-</div>
-
-<div class="stylebody">
 
 <p>The acceptable formats for initializer lists are:</p>
 
@@ -6105,15 +5412,9 @@ MyClass::MyClass(int var)
     : some_var_(var) {}
 </pre>
 
-</div> 
-
 <h3 id="Namespace_Formatting">Namespace Formatting</h3>
 
-<div class="summary">
 <p>The contents of namespaces are not indented.</p>
-</div>
-
-<div class="stylebody">
 
 <p><a href="#Namespaces">Namespaces</a> do not add an
 extra level of indentation. For example, use:</p>
@@ -6146,18 +5447,12 @@ on its own line.</p>
 namespace bar {
 </pre>
 
-</div> 
-
 <h3 id="Horizontal_Whitespace">Horizontal Whitespace</h3>
 
-<div class="summary">
 <p>Use of horizontal whitespace depends on location. Never put
 trailing whitespace at the end of a line.</p>
-</div>
 
-<div class="stylebody">
-
-<h4 class="stylepoint_subsection">General</h4>
+<h4>General</h4>
 
 <pre>void f(bool b) {  // Open braces should always have a space before them.
   ...
@@ -6182,11 +5477,11 @@ others editing the same file, when they merge, as can
 removing existing trailing whitespace. So: Don't
 introduce trailing whitespace. Remove it if you're
 already changing that line, or do it in a separate
-clean-up 
+clean-up
 operation (preferably when no-one
 else is working on the file).</p>
 
-<h4 class="stylepoint_subsection">Loops and Conditionals</h4>
+<h4>Loops and Conditionals</h4>
 
 <pre>if (b) {          // Space after the keyword in conditions and loops.
 } else {          // Spaces around else.
@@ -6214,7 +5509,7 @@ switch (i) {
   case 2: break;  // Use a space after a colon if there's code after it.
 </pre>
 
-<h4 class="stylepoint_subsection">Operators</h4>
+<h4>Operators</h4>
 
 <pre>// Assignment operators always have spaces around them.
 x = 0;
@@ -6233,26 +5528,20 @@ if (x &amp;&amp; !y)
   ...
 </pre>
 
-<h4 class="stylepoint_subsection">Templates and Casts</h4>
+<h4>Templates and Casts</h4>
 
 <pre>// No spaces inside the angle brackets (&lt; and &gt;), before
 // &lt;, or between &gt;( in a cast
-std::vector&lt;string&gt; x;
+std::vector&lt;std::string&gt; x;
 y = static_cast&lt;char*&gt;(x);
 
 // Spaces between type and pointer are OK, but be consistent.
 std::vector&lt;char *&gt; x;
 </pre>
 
-</div> 
-
 <h3 id="Vertical_Whitespace">Vertical Whitespace</h3>
 
-<div class="summary">
 <p>Minimize use of vertical whitespace.</p>
-</div>
-
-<div class="stylebody">
 
 <p>This is more a principle than a rule: don't use blank lines when
 you don't have to. In particular, don't put more than one or two blank
@@ -6283,25 +5572,19 @@ useful:</p>
   preceding.</li>
 </ul>
 
-</div> 
-
 <h2 id="Exceptions_to_the_Rules">Exceptions to the Rules</h2>
 
 <p>The coding conventions described above are mandatory.
 However, like all good rules, these sometimes have exceptions,
 which we discuss here.</p>
 
- 
+
 
 <div>
 <h3 id="Existing_Non-conformant_Code">Existing Non-conformant Code</h3>
 
-<div class="summary">
 <p>You may diverge from the rules when dealing with code that
 does not conform to this style guide.</p>
-</div>
-
-<div class="stylebody">
 
 <p>If you find yourself modifying code that was written
 to specifications other than those presented by this
@@ -6312,23 +5595,19 @@ original author or the person currently responsible for
 the code. Remember that <em>consistency</em> includes
 local consistency, too.</p>
 
-</div> 
-</div> 
+</div>
 
- 
+
 
 <h3 id="Windows_Code">Windows Code</h3>
 
-<div class="summary">
 <p> Windows
 programmers have developed their own set of coding
 conventions, mainly derived from the conventions in Windows
 headers and other Microsoft code. We want to make it easy
 for anyone to understand your code, so we have a single set
 of guidelines for everyone writing C++ on any platform.</p>
-</div>
 
-<div class="stylebody">
 <p>It is worth reiterating a few of the guidelines that
 you might forget if you are used to the prevalent Windows
 style:</p>
@@ -6372,7 +5651,7 @@ style:</p>
 occasionally need to break on Windows:</p>
 
 <ul>
-  <li>Normally we <a href="#Multiple_Inheritance">forbid
+  <li>Normally we <a href="#Multiple_Inheritance">strongly discourage
   the use of multiple implementation inheritance</a>;
   however, it is required when using COM and some ATL/WTL
   classes. You may use multiple implementation
@@ -6404,8 +5683,6 @@ occasionally need to break on Windows:</p>
   need to conform to these style guidelines.</li>
 </ul>
 
-</div> 
-
 <h2 id="Parting_Words">Parting Words</h2>
 
 <p>Use common sense and <em>BE CONSISTENT</em>.</p>
@@ -6431,8 +5708,6 @@ to avoid this.</p>
 more interesting. Have fun!</p>
 
 <hr>
-
-</div> 
 </div>
 </body>
 </html>
