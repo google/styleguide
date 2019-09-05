@@ -159,19 +159,18 @@ input.</p>
 
 <h2 id="C++_Version">C++ Version</h2>
 
-<p>
-Currently, code should target C++11, i.e., should not use C++14 or
-C++17 features. The C++ version targeted by this guide will advance
-(aggressively) over time.</p>
-
-<p>
-Code should avoid features that have been removed from
-the latest language version (currently C++17), as well as the rare
-cases where code has a different meaning in that latest version.
-Use of some C++ features is restricted or disallowed.  Do not use
-<a href="#Nonstandard_Extensions">non-standard extensions</a>.</p>
+<p>Currently, code should target C++17, i.e., should not use C++2x
+  features. The C++ version targeted by this guide will advance
+  (aggressively) over time.</p>
 
 
+
+<p>Do not use
+  <a href="#Nonstandard_Extensions">non-standard extensions</a>.</p>
+
+  <div>Consider portability to other environments
+before using features from C++14 and C++17 in your project.
+</div>
 
 <h2 id="Header_Files">Header Files</h2>
 
@@ -1914,7 +1913,7 @@ doubt, use overloads.</p>
   form, the return type appears before the function name. For example:</p>
 <pre>int foo(int x);
 </pre>
-<p>The new form, introduced in C++11, uses the <code>auto</code>
+<p>The newer form, introduced in C++11, uses the <code>auto</code>
   keyword before the function name and a trailing return type after
   the argument list. For example, the declaration above could
   equivalently be written:</p>
@@ -2752,7 +2751,7 @@ types, use pre-increment.</p>
 
 <h3 id="Use_of_const">Use of const</h3>
 
-<p>In APIs, use <code>const</code> whenever it makes sense. With C++11,
+<p>In APIs, use <code>const</code> whenever it makes sense.
 <code>constexpr</code> is a better choice for some uses of
 const.</p>
 
@@ -2843,7 +2842,7 @@ consistent with the code around you!</p>
 
 <h3 id="Use_of_constexpr">Use of constexpr</h3>
 
-<p>In C++11, use <code>constexpr</code> to define true
+<p>Use <code>constexpr</code> to define true
 constants or to ensure constant initialization.</p>
 
 <p class="definition"></p>
@@ -3166,7 +3165,7 @@ to any particular variable, such as code that manages an
 external or internal data format where a variable of an
 appropriate C++ type is not convenient.</p>
 
-<pre>Struct data;
+<pre>struct data;
 memset(&amp;data, 0, sizeof(data));
 </pre>
 
@@ -3179,89 +3178,303 @@ memset(&amp;data, 0, sizeof(data));
 }
 </pre>
 
-<h3 id="auto">auto</h3>
+<a name="auto"></a>
+<h3 id="Type_deduction">Type deduction</h3>
 
-<p>Use <code>auto</code> to avoid type names that are noisy, obvious,
-or unimportant - cases where the type doesn't aid in clarity for the
-reader. Continue to use manifest type declarations when it helps
-readability.</p>
+<p>Use type deduction only if it makes the code clearer to readers who aren't
+  familiar with the project, or if it makes the code safer. Do not use it
+  merely to avoid the inconvenience of writing an explicit type.</p>
+
+<p class="definition"></p>
+
+<p>There are several contexts in which C++ allows (or even requires) types to
+be deduced by the compiler, rather than spelled out explicitly in the code:</p>
+<dl>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/template_argument_deduction">Function template argument deduction</a></dt>
+  <dd>A function template can be invoked without explicit template arguments.
+    The compiler deduces those arguments from the types of the function
+    arguments:
+    <pre class="neutralcode">template &lt;typename T&gt;
+void f(T t);
+
+f(0);  // Invokes f&lt;int&gt;(0)</pre>
+  </dd>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/auto"><code>auto</code> variable declarations</a></dt>
+  <dd>A variable declaration can use the <code>auto</code> keyword in place
+    of the type. The compiler deduces the type from the variable's
+    initializer, following the same rules as function template argument
+    deduction with the same initializer (so long as you don't use curly braces
+    instead of parentheses).
+    <pre class="neutralcode">auto a = 42;  // a is an int
+auto&amp; b = a;  // b is an int&amp;
+auto c = b;   // c is an int
+auto d{42};   // d is an int, not a std::initializer_list&lt;int&gt;
+</pre>
+    <code>auto</code> can be qualified with <code>const</code>, and can be
+    used as part of a pointer or reference type, but it can't be used as a
+    template argument. A rare variant of this syntax uses
+    <code>decltype(auto)</code> instead of <code>auto</code>, in which case
+    the deduced type is the result of applying
+    <a href="https://en.cppreference.com/w/cpp/language/decltype"><code>decltype</code></a>
+    to the initializer.
+  </dd>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/function#Return_type_deduction">Function return type deduction</a></dt>
+  <dd><code>auto</code> (and <code>decltype(auto)</code>) can also be used in
+    place of a function return type. The compiler deduces the return type from
+    the <code>return</code> statements in the function body, following the same
+    rules as for variable declarations:
+    <pre class="neutralcode">auto f() { return 0; }  // The return type of f is int</pre>
+    <a href="#Lambda_expressions">Lambda expression</a> return types can be
+    deduced in the same way, but this is triggered by omitting the return type,
+    rather than by an explicit <code>auto</code>. Confusingly,
+    <a href="trailing_return">trailing return type</a> syntax for functions
+    also uses <code>auto</code> in the return-type position, but that doesn't
+    rely on type deduction; it's just an alternate syntax for an explicit
+    return type.
+  </dd>
+  <dt><a href="https://isocpp.org/wiki/faq/cpp14-language#generic-lambdas">Generic lambdas</a></dt>
+  <dd>A lambda expression can use the <code>auto</code> keyword in place of
+    one or more of its parameter types. This causes the lambda's call operator
+    to be a function template instead of an ordinary function, with a separate
+    template parameter for each <code>auto</code> function parameter:
+    <pre class="neutralcode">// Sort `vec` in increasing order
+std::sort(vec.begin(), vec.end(), [](auto lhs, auto rhs) { return lhs &gt; rhs; });</pre>
+  </dd>
+  <dt><a href="https://isocpp.org/wiki/faq/cpp14-language#lambda-captures">Lambda init captures</a></dt>
+  <dd>Lambda captures can have explicit initializers, which can be used to
+    declare wholly new variables rather than only capturing existing ones:
+    <pre class="neutralcode">[x = 42, y = "foo"] { ... }  // x is an int, and y is a const char*</pre>
+    This syntax doesn't allow the type to be specified; instead, it's deduced
+    using the rules for <code>auto</code> variables.
+  </dd>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/class_template_argument_deduction">Class template argument deduction</a></dt>
+  <dd>See <a href="#CTAD">below</a>.</dd>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/structured_binding">Structured bindings</a></dt>
+  <dd>When declaring a tuple, struct, or array using <code>auto</code>, you can
+    specify names for the individual elements instead of a name for the whole
+    object; these names are called "structured bindings", and the whole
+    declaration is called a "structured binding declaration". This syntax
+    provides no way of specifying the type of either the enclosing object
+    or the individual names:
+    <pre class="neutralcode">auto [iter, success] = my_map.insert({key, value});
+if (!success) {
+  iter-&gt;second = value;
+}</pre>
+    The <code>auto</code> can also be qualified with <code>const</code>,
+    <code>&amp;</code>, and <code>&amp;&amp;</code>, but note that these qualifiers
+    technically apply to the anonymous tuple/struct/array, rather than the
+    individual bindings. The rules that determine the types of the bindings
+    are quite complex; the results tend to be unsurprising, except that
+    the binding types typically won't be references even if the declaration
+    declares a reference (but they will usually behave like references anyway).
+  </dd>
+
+<p>(These summaries omit many details and caveats; see the links for further
+  information.)</p>
 
 <p class="pros"></p>
 
 <ul>
-<li>C++ type names can be long and cumbersome, especially when they
-involve templates or namespaces.</li>
-<li>When a C++ type name is repeated within a single declaration or a
-small code region, the repetition may not be aiding readability.</li>
-<li>It is sometimes safer to let the type be specified by the type of
-the initialization expression, since that avoids the possibility of
-unintended copies or type conversions.</li>
+  <li>C++ type names can be long and cumbersome, especially when they
+    involve templates or namespaces.</li>
+  <li>When a C++ type name is repeated within a single declaration or a
+    small code region, the repetition may not be aiding readability.</li>
+  <li>It is sometimes safer to let the type be deduced, since that avoids
+    the possibility of unintended copies or type conversions.</li>
 </ul>
 
 <p class="cons"></p>
-<p>Sometimes code is clearer when types are manifest,
-especially when a variable's initialization depends on
-things that were declared far away. In expressions
-like:</p>
+<p>C++ code is usually clearer when types are explicit,
+  especially when type deduction would depend on information from
+  distant parts of the code. In expressions like:</p>
 
 <pre class="badcode">auto foo = x.add_foo();
 auto i = y.Find(key);
 </pre>
 
 <p>it may not be obvious what the resulting types are if the type
-of <code>y</code> isn't very well known, or if <code>y</code> was
-declared many lines earlier.</p>
+  of <code>y</code> isn't very well known, or if <code>y</code> was
+  declared many lines earlier.</p>
 
-<p>Programmers have to understand the difference between
-<code>auto</code> and <code>const auto&amp;</code> or
-they'll get copies when they didn't mean to.</p>
+<p>Programmers have to understand when type deduction will or won't
+  produce a reference type, or they'll get copies when they didn't
+  mean to.</p>
 
-<p>If an <code>auto</code> variable is used as part of an
-interface, e.g. as a constant in a header, then a
-programmer might change its type while only intending to
-change its value, leading to a more radical API change
-than intended.</p>
+<p>If a deduced type is used as part of an interface, then a
+  programmer might change its type while only intending to
+  change its value, leading to a more radical API change
+  than intended.</p>
 
 <p class="decision"></p>
-<p><code>auto</code> is permitted when it increases readability,
-particularly as described below. Never initialize an <code>auto</code>-typed
-variable with a braced initializer list.</p>
 
-<p>Specific cases where <code>auto</code> is allowed or encouraged:
-</p><ul>
-<li>(Encouraged) For iterators and other long/cluttery type names, particularly
-when the type is clear from context (calls
-to <code>find</code>, <code>begin</code>, or <code>end</code> for
-instance).</li>
-<li>(Allowed) When the type is clear from local context (in the same expression
-or within a few lines).  Initialization of a pointer or smart pointer
-with calls
-to <code>new</code> and
-<code>std::make_unique</code>
-commonly falls into this category, as does use of <code>auto</code> in
-a range-based loop over a container whose type is spelled out
-nearby.</li>
-<li>(Allowed) When the type doesn't matter because it isn't being used for
-anything other than equality comparison.</li>
-<li>(Encouraged) When iterating over a map with a range-based loop
-(because it is often assumed that the correct type
-is <code>std::pair&lt;KeyType, ValueType&gt;</code> whereas it is actually
-<code>std::pair&lt;const KeyType, ValueType&gt;</code>). This is
-particularly well paired with local <code>key</code>
-and <code>value</code> aliases for <code>.first</code>
-and <code>.second</code> (often const-ref).
-<pre>for (const auto&amp; item : some_map) {
-  const KeyType&amp; key = item.first;
-  const ValType&amp; value = item.second;
-  // The rest of the loop can now just refer to key and value,
-  // a reader can see the types in question, and we've avoided
-  // the too-common case of extra copies in this iteration.
-}
-</pre>
-</li>
-</ul>
+<p>The fundamental rule is: use type deduction only to make the code
+  clearer or safer, and do not use it merely to avoid the
+  inconvenience of writing an explicit type. When judging whether the
+  code is clearer, keep in mind that your readers are not necessarily
+  on your team, or familiar with your project, so types that you and
+  your reviewer experience as as unnecessary clutter will very often
+  provide useful information to others. For example, you can assume that
+  the return type of <code>make_unique&lt;Foo&gt;()</code> is obvious,
+  but the return type of <code>MyWidgetFactory()</code> probably isn't.</p>
 
+  <p>These principles applies to all forms of type deduction, but the
+  details vary, as described in the following sections.</p>
 
+<h4>Function template argument deduction</h4>
+
+<p>Function template argument deduction is almost always OK. Type deduction
+  is the expected default way of interacting with function templates,
+  because it allows function templates to act like infinite sets of ordinary
+  function overloads. Consequently, function templates are almost always
+  designed so that template argument deduction is clear and safe, or
+  doesn't compile.</p>
+
+<h4>Local variable type deduction</h4>
+
+<p>For local variables, you can use type deduction to make the code clearer
+  by eliminating type information that is obvious or irrelevant, so that
+  the reader can focus on the meaningful parts of the code:
+  </p><pre class="neutralcode">std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt; widget_ptr =
+    absl::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
+absl::flat_hash_map&lt;std::string,
+                    std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt;&gt;::const_iterator
+    it = my_map_.find(key);
+std::array&lt;int, 0&gt; numbers = {4, 8, 15, 16, 23, 42};</pre>
+
+  <pre class="goodcode">auto widget_ptr = absl::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
+auto it = my_map_.find(key);
+std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
+
+<p>Types sometimes contain a mixture of useful information and boilerplate,
+  such as <code>it</code> in the example above: it's obvious that the
+  type is an iterator, and in many contexts the container type and even the
+  key type aren't relevant, but the type of the values is probably useful.
+  In such situations, it's often possible to define local variables with
+  explicit types that convey the relevant information:
+  </p><pre class="goodcode">auto it = my_map_.find(key);
+if (it != my_map_.end()) {
+  WidgetWithBellsAndWhistles&amp; widget = *it-&gt;second;
+  // Do stuff with `widget`
+}</pre>
+  If the type is a template instance, and the parameters are
+  boilerplate but the template itself is informative, you can use
+  class template argument deduction to suppress the boilerplate. However,
+  cases where this actually provides a meaningful benefit are quite rare.
+  Note that class template argument deduction is also subject to a
+  <a href="#CTAD">separate style rule</a>.
+
+<p>Do not use <code>decltype(auto)</code> if a simpler option will work,
+  because it's a fairly obscure feature, so it has a high cost in code
+  clarity.</p>
+
+<h4>Return type deduction</h4>
+
+<p>Use return type deduction (for both functions and lambdas) only if the
+  function body has a very small number of <code>return</code> statements,
+  and very little other code, because otherwise the reader may not be able
+  to tell at a glance what the return type is. Furthermore, use it only
+  if the function or lambda has a very narrow scope, because functions with
+  deduced return types don't define abstraction boundaries: the implementation
+  <em>is</em> the interface. In particular, public functions in header files
+  should almost never have deduced return types.</p>
+
+<h4>Parameter type deduction</h4>
+
+<p><code>auto</code> parameter types for lambdas should be used with caution,
+  because the actual type is determined by the code that calls the lambda,
+  rather than by the definition of the lambda. Consequently, an explicit
+  type will almost always be clearer unless the lambda is explicitly called
+  very close to where it's defined (so that the reader can easily see both),
+  or the lambda is passed to an interface so well-known that it's
+  obvious what arguments it will eventually be called with (e.g.
+  the <code>std::sort</code> example above).</p>
+
+<h4>Lambda init captures</h4>
+
+<p>Init captures are covered by a <a href="#Lambda_expressions">more specific
+    style rule</a>, which largely supersedes the general rules for
+  type deduction.</p>
+
+<h4>Structured bindings</h4>
+
+<p>Unlike other forms of type deduction, structured bindings can actually
+  give the reader additional information, by giving meaningful names to the
+  elements of a larger object. This means that a structured binding declaration
+  may provide a net readability improvement over an explicit type, even in cases
+  where <code>auto</code> would not. Structured bindings are especially
+  beneficial when the object is a pair or tuple (as in the <code>insert</code>
+  example above), because they don't have meaningful field names to begin with,
+  but note that you generally <a href="#Structs_vs._Tuples">shouldn't use
+    pairs or tuples</a> unless a pre-existing API like <code>insert</code>
+  forces you to.</p>
+
+<p>If the object being bound is a struct, it may sometimes be helpful to
+  provide names that are more specific to your usage, but keep in mind that
+  this may also mean the names are less recognizable to your reader than the
+  field names. We recommend using a comment to indicate the name of the
+  underlying field, if it doesn't match the name of the binding, using the
+  same syntax as for function parameter comments:
+  </p><pre>auto [/*field_name1=*/ bound_name1, /*field_name2=*/ bound_name2] = ...</pre>
+  As with function parameter comments, this can enable tools to detect if
+  you get the order of the fields wrong.
+
+<h3 id="CTAD">Class template argument deduction</h3>
+
+<p>Use class template argument deduction only with templates that have
+  explicitly opted into supporting it.</p>
+
+<p class="definition"></p>
+<p><a href="https://en.cppreference.com/w/cpp/language/class_template_argument_deduction">Class
+    template argument deduction</a> (often abbreviated "CTAD") occurs when
+  a variable is declared with a type that names a template, and the template
+  argument list is not provided (not even empty angle brackets):
+  </p><pre class="neutralcode">std::array a = {1, 2, 3};  // `a` is a std::array&lt;int, 3&gt;</pre>
+  The compiler deduces the arguments from the initializer using the
+  template's "deduction guides", which can be explicit or implicit.
+
+<p>Explicit deduction guides look like function declarations with trailing
+  return types, except that there's no leading <code>auto</code>, and the
+  function name is the name of the template. For example, the above example
+  relies on this deduction guide for <code>std::array</code>:
+  </p><pre class="neutralcode">namespace std {
+template &lt;class T, class... U&gt;
+array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
+}</pre>
+  Constructors in a primary template (as opposed to a template specialization)
+  also implicitly define deduction guides.
+
+<p>When you declare a variable that relies on CTAD, the compiler selects
+  a deduction guide using the rules of constructor overload resolution,
+  and that guide's return type becomes the type of the variable.</p>
+
+<p class="pros"></p>
+<p>CTAD can sometimes allow you to omit boilerplate from your code.</p>
+
+<p class="cons"></p>
+<p>The implicit deduction guides that are generated from constructors
+  may have undesirable behavior, or be outright incorrect. This is
+  particularly problematic for constructors written before CTAD was
+  introduced in C++17, because the authors of those constructors had no
+  way of knowing about (much less fixing) any problems that their
+  constructors would cause for CTAD. Furthermore, adding explicit deduction
+  guides to fix those problems might break any existing code that relies on
+  the implicit deduction guides.</p>
+
+<p>CTAD also suffers from many of the same drawbacks as <code>auto</code>,
+  because they are both mechanisms for deducing all or part of a variable's
+  type from its initializer. CTAD does give the reader more information
+  than <code>auto</code>, but it also doesn't give the reader an obvious
+  cue that information has been omitted.</p>
+
+<p class="decision"></p>
+<p>Do not use CTAD with a given template unless the template's maintainers
+  have opted into supporting use of CTAD by providing at least one explicit
+  deduction guide (all templates in the <code>std</code> namespace are
+  also presumed to have opted in). This should be enforced with a compiler
+  warning if available.</p>
+
+<p>Uses of CTAD must also follow the general rules on
+  <a href="#Type_deduction">Type deduction</a>.</p>
 
 <h3 id="Lambda_expressions">Lambda expressions</h3>
 
@@ -3292,8 +3505,8 @@ std::for_each(v.begin(), v.end(), [weight, &amp;sum](int x) {
 </pre>
 
 
-Default captures implicitly capture any variable referenced in the
-lambda body, including <code>this</code> if any members are used:
+<p>Default captures implicitly capture any variable referenced in the
+lambda body, including <code>this</code> if any members are used:</p>
 
 <pre>const std::vector&lt;int&gt; lookup_table = ...;
 std::vector&lt;int&gt; indices = ...;
@@ -3304,10 +3517,22 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
 });
 </pre>
 
-<p>Lambdas were introduced in C++11 along with a set of utilities
-for working with function objects, such as the polymorphic
-wrapper <code>std::function</code>.
-</p>
+<p>A variable capture can also have an explicit initializer, which can
+  be used for capturing move-only variables by value, or for other situations
+  not handled by ordinary reference or value captures:
+  </p><pre>std::unique_ptr&lt;Foo&gt; foo = ...;
+[foo = std::move(foo)] () {
+  ...
+}</pre>
+  Such captures (often called "init captures" or "generalized lambda captures")
+  need not actually "capture" anything from the enclosing scope, or even have
+  a name from the enclosing scope; this syntax is a fully general way to define
+  members of a lambda object:
+  <pre class="neutralcode">[foo = std::vector&lt;int&gt;({1, 2, 3})] () {
+  ...
+}</pre>
+  The type of a capture with an initializer is deduced using the same rules
+  as <code>auto</code>.
 
 <p class="pros"></p>
 <ul>
@@ -3337,6 +3562,18 @@ wrapper <code>std::function</code>.
   copy, so it often has the same lifetime issues as capture by reference.
   This is especially confusing when capturing 'this' by value, since the use
   of 'this' is often implicit.</li>
+
+  <li>Captures actually declare new variables (whether or not the captures have
+    initializers), but they look nothing like any other variable declaration
+    syntax in C++. In particular, there's no place for the variable's type,
+    or even an <code>auto</code> placeholder (although init captures can
+    indicate it indirectly, e.g. with a cast). This can make it difficult to
+    even recognize them as declarations.</li>
+
+  <li>Init captures inherently rely on <a href="#Type_deduction">type
+      deduction</a>, and suffer from many of the same drawbacks as
+    <code>auto</code>, with the additional problem that the syntax doesn't
+    even cue the reader that deduction is taking place.</li>
 
   <li>It's possible for use of lambdas to get out of
   hand; very long nested anonymous functions can make
@@ -3383,9 +3620,13 @@ few variables for a short lambda, where the set of captured
 variables is obvious at a glance. Prefer not to write long or
 complex lambdas with default capture by value.
 </li>
-<li>Specify the return type of the lambda explicitly if that will
-make it more obvious to readers, as with
-<a href="#auto"><code>auto</code></a>.</li>
+<li>Use captures only to actually capture variables from the enclosing scope.
+  Do not use captures with initializers to introduce new names, or
+  to substantially change the meaning of an existing name. Instead,
+  declare a new variable in the conventional way and then capture it,
+  or avoid the lambda shorthand and define a function object explicitly.</li>
+<li>See the section on <a href="#Type_deduction">type deduction</a>
+  for guidance on specifying the parameter and return types.</li>
 
 </ul>
 
@@ -3632,36 +3873,11 @@ that you can use; otherwise work with them to provide one,
 using a new customization mechanism that doesn't have the drawbacks of
 <code>std::hash</code>.</p>
 
-<h3 id="C++11">C++11</h3>
 
-<p>Use libraries and language extensions from C++11 when appropriate.
-Consider portability to other environments
-before using C++11 features in your
-project. </p>
 
-<p class="definition"></p>
-<p> C++11 contains <a href="https://en.wikipedia.org/wiki/C%2B%2B11">
-significant changes</a> both to the language and
-libraries. </p>
+<h3 id="Other_Features"><a name="C++11">Other C++ Features</a></h3>
 
-<p class="pros"></p>
-<p>C++11 was the official standard until 2014, and
-is supported by most C++ compilers. It standardizes
-some common C++ extensions that we use already, allows
-shorthands for some operations, and has some performance
-and safety improvements.</p>
-
-<p class="cons"></p>
-<p>The C++11 standard is substantially more complex than
-its predecessor (1,300 pages versus 800 pages), and is
-unfamiliar to many developers. The long-term effects of
-some features on code readability and maintenance are
-unknown. We cannot predict when its various features will
-be implemented uniformly by tools that may be of
-interest, particularly in the case of projects that are
-forced to use older versions of tools.</p>
-
-<p>As with <a href="#Boost">Boost</a>, some C++11
+<p>As with <a href="#Boost">Boost</a>, some modern C++
 extensions encourage coding practices that hamper
 readability&#8212;for example by removing
 checked redundancy (such as type names) that may be
@@ -3670,12 +3886,9 @@ metaprogramming. Other extensions duplicate functionality
 available through existing mechanisms, which may lead to confusion
 and conversion costs.</p>
 
-
-
 <p class="decision"></p>
-<p>C++11 features may be used unless specified otherwise.
-In addition to what's described in the rest of the style
-guide, the following C++11 features may not be used:</p>
+<p>In addition to what's described in the rest of the style
+guide, the following C++ features may not be used:</p>
 
 <ul>
 
@@ -3688,6 +3901,11 @@ guide, the following C++11 features may not be used:</p>
   <li>The <code>&lt;cfenv&gt;</code> and
   <code>&lt;fenv.h&gt;</code> headers, because many
   compilers do not support those features reliably.</li>
+
+  <li>The <code>&lt;filesystem&gt;</code> header, which
+
+  does not have sufficient support for testing, and suffers
+  from inherent security vulnerabilities.</li>
 
 
 </ul>
