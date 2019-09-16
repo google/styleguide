@@ -6,6 +6,10 @@ from distutils.spawn import find_executable
 import cpplint as cpplint
 
 class Cmd(Command):
+    '''
+    Superclass for other commands to run via setup.py, declared in setup.cfg.
+    These commands will auto-install setup_requires in a temporary folder.
+    '''
     user_options = [
       ('executable', 'e', 'The executable to use for the command')
     ]
@@ -21,6 +25,7 @@ class Cmd(Command):
 
 
 class Lint(Cmd):
+    '''run with python setup.py lint'''
     description = 'Run linting of the code'
     user_options = Cmd.user_options + [
       ('jobs', 'j', 'Use multiple processes to speed up the linting')
