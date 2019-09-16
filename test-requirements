@@ -1,3 +1,4 @@
 # minimal requirements to run python setup.py test
-pytest
+# 5.x requires python 3.5
+pytest>=4.6,<5.0
 pytest-cov
