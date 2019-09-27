@@ -256,39 +256,39 @@ Exceptions must follow certain conditions:
     ```python
     Yes:
       def connect_to_next_port(self, minimum):
-        """Connects to the next available port.
+          """Connects to the next available port.
 
-        Args:
-          minimum: A port value greater or equal to 1024.
-        Raises:
-          ValueError: If the minimum port specified is less than 1024.
-          ConnectionError: If no available port is found.
-        Returns:
-          The new minimum port.
-        """
-        if minimum < 1024:
-          raise ValueError('Minimum port must be at least 1024, not %d.' % (minimum,))
-        port = self._find_next_open_port(minimum)
-        if not port:
-          raise ConnectionError('Could not connect to service on %d or higher.' % (minimum,))
-        assert port >= minimum, 'Unexpected port %d when minimum was %d.' % (port, minimum)
-        return port
+          Args:
+              minimum: A port value greater or equal to 1024.
+          Raises:
+              ValueError: If the minimum port specified is less than 1024.
+              ConnectionError: If no available port is found.
+          Returns:
+              The new minimum port.
+          """
+          if minimum < 1024:
+              raise ValueError('Minimum port must be at least 1024, not %d.' % (minimum,))
+          port = self._find_next_open_port(minimum)
+          if not port:
+              raise ConnectionError('Could not connect to service on %d or higher.' % (minimum,))
+          assert port >= minimum, 'Unexpected port %d when minimum was %d.' % (port, minimum)
+          return port
     ```
 
     ```python
     No:
       def connect_to_next_port(self, minimum):
-        """Connects to the next available port.
+          """Connects to the next available port.
 
-        Args:
-          minimum: A port value greater or equal to 1024.
-        Returns:
-          The new minimum port.
-        """
-        assert minimum >= 1024, 'Minimum port must be at least 1024.'
-        port = self._find_next_open_port(minimum)
-        assert port is not None
-        return port
+          Args:
+              minimum: A port value greater or equal to 1024.
+          Returns:
+              The new minimum port.
+          """
+          assert minimum >= 1024, 'Minimum port must be at least 1024.'
+          port = self._find_next_open_port(minimum)
+          assert port is not None
+          return port
     ```
 
 -   Libraries or packages may define their own exceptions. When doing so they
@@ -316,9 +316,9 @@ Exceptions must follow certain conditions:
     
     ```python
     try:
-      raise Error()
+        raise Error()
     except Error as error:
-      pass
+        pass
     ```
 
 <a id="s2.5-global-variables"></a>
@@ -2307,7 +2307,7 @@ def my_method(self,
               first_var: int,
               second_var: Foo,
               third_var: Optional[Bar]) -> int:
-  ...
+    ...
 ```
 
 Always prefer breaking between variables, and not for example between variable
@@ -2316,7 +2316,7 @@ go for it.
 
 ```python
 def my_method(self, first_var: int) -> int:
-  ...
+    ...
 ```
 
 If the combination of the function name, the last parameter, and the return type
@@ -2325,7 +2325,7 @@ is too long, indent by 4 in a new line.
 ```python
 def my_method(
     self, first_var: int) -> Tuple[MyLongType1, MyLongType1]:
-  ...
+    ...
 ```
 
 When the return type does not fit on the same line as the last parameter, the
@@ -2337,7 +2337,7 @@ Yes:
 def my_method(
     self, **kw_args: Optional[MyLongType]
 ) -> Dict[OtherLongType, MyLongType]:
-  ...
+    ...
 ```
 
 `pylint` allows you to move the closing parenthesis to a new line and align
@@ -2348,7 +2348,7 @@ No:
 def my_method(self,
               **kw_args: Optional[MyLongType]
              ) -> Dict[OtherLongType, MyLongType]:
-  ...
+    ...
 ```
 
 As in the examples above, prefer not to break types. However, sometimes they are
@@ -2361,7 +2361,7 @@ def my_method(
                      List[MyLongType2]],
     second_var: List[Dict[
         MyLongType3, MyLongType4]]) -> None:
-  ...
+    ...
 ```
 
 If a single name and type is too long, consider using an
@@ -2374,7 +2374,7 @@ def my_function(
     long_variable_name:
         long_module_name.LongTypeName,
 ) -> None:
-  ...
+    ...
 ```
 
 ```python
@@ -2383,7 +2383,7 @@ def my_function(
     long_variable_name: long_module_name.
         LongTypeName,
 ) -> None:
-  ...
+    ...
 ```
 
 <a id="s3.19.3-forward-declarations"></a>
@@ -2397,8 +2397,8 @@ class that is defined below -- use a string for the class name.
 ```python
 class MyClass(object):
 
-  def __init__(self,
-               stack: List["MyClass"]) -> None:
+    def __init__(self,
+                 stack: List["MyClass"]) -> None:
 ```
 
 <a id="s3.19.4-default-values"></a>
@@ -2413,12 +2413,12 @@ a default value.
 ```python
 Yes:
 def func(a: int = 0) -> int:
-  ...
+    ...
 ```
 ```python
 No:
 def func(a:int=0) -> int:
-  ...
+    ...
 ```
 
 <a id="s3.19.5-none-type"></a>
@@ -2437,17 +2437,17 @@ but that is no longer the preferred behavior.
 ```python
 Yes:
 def func(a: Optional[Text], b: Optional[Text] = None) -> Text:
-  ...
+    ...
 def multiple_nullable_union(a: Union[None, Text, int]) -> Text
-  ...
+    ...
 ```
 
 ```python
 No:
 def nullable_union(a: Union[None, Text]) -> Text:
-  ...
+    ...
 def implicit_optional(a: Text = None) -> Text:
-  ...
+    ...
 ```
 
 <a id="s3.19.6-aliases"></a>
@@ -2520,7 +2520,7 @@ from typing import List, TypeVar
 T = TypeVar("T")
 ...
 def next(l: List[T]) -> T:
-  return l.pop()
+    return l.pop()
 ```
 
 A TypeVar can be constrained:
@@ -2528,7 +2528,7 @@ A TypeVar can be constrained:
 ```python
 AddableType = TypeVar("AddableType", int, float, Text)
 def add(a: AddableType, b: AddableType) -> AddableType:
-  return a + b
+    return a + b
 ```
 
 A common predefined type variable in the `typing` module is `AnyStr`. Use it for
@@ -2538,9 +2538,9 @@ type.
 ```python
 from typing import AnyStr
 def check_length(x: AnyStr) -> AnyStr:
-  if len(x) <= 42:
-    return x
-  raise ValueError()
+    if len(x) <= 42:
+        return x
+    raise ValueError()
 ```
 
 <a id="s3.19.11-strings"></a>
@@ -2565,14 +2565,14 @@ depending on the Python version.
 ```python
 No:
 def py2_code(x: str) -> unicode:
-  ...
+    ...
 ```
 
 For code that deals with binary data, use `bytes`.
 
 ```python
 def deals_with_binary_data(x: bytes) -> bytes:
-  ...
+    ...
 ```
 
 For Python 2 compatible code that processes text data (`str` or `unicode` in
@@ -2583,9 +2583,9 @@ text data, prefer `str`.
 from typing import Text
 ...
 def py2_compatible(x: Text) -> Text:
-  ...
+    ...
 def py3_only(x: str) -> str:
-  ...
+    ...
 ```
 
 If the type can be either bytes or text, use `Union`, with the appropriate text
@@ -2595,9 +2595,9 @@ type.
 from typing import Text, Union
 ...
 def py2_compatible(x: Union[bytes, Text]) -> Union[bytes, Text]:
-  ...
+    ...
 def py3_only(x: Union[bytes, str]) -> Union[bytes, str]:
-  ...
+    ...
 ```
 
 If all the string types of a function are always the same, for example if the
@@ -2653,7 +2653,7 @@ Imports that are needed only for type annotations can be placed within an
 ```python
 import typing
 if typing.TYPE_CHECKING:
-  import sketch
+    import sketch
 def f(x: "sketch.Sketch"): ...
 ```
 
@@ -2678,7 +2678,7 @@ some_mod = Any  # some_mod.py imports this module.
 ...
 
 def my_method(self, var: some_mod.SomeType) -> None:
-  ...
+    ...
 ```
 
 <a id="typing-generics"></a>
@@ -2691,16 +2691,16 @@ When annotating, prefer to specify type parameters for generic types; otherwise,
 
 ```python
 def get_names(employee_ids: List[int]) -> Dict[int, Any]:
-  ...
+    ...
 ```
 
 ```python
 # These are both interpreted as get_names(employee_ids: List[Any]) -> Dict[Any, Any]
 def get_names(employee_ids: list) -> Dict:
-  ...
+    ...
 
 def get_names(employee_ids: List) -> Dict:
-  ...
+    ...
 ```
 
 If the best type parameter for a generic is `Any`, make it explicit, but
@@ -2709,13 +2709,13 @@ appropriate:
 
 ```python
 def get_names(employee_ids: List[Any]) -> Dict[Any, Text]:
-  """Returns a mapping from employee ID to employee name for given IDs."""
+    """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
 ```python
 T = TypeVar('T')
 def get_names(employee_ids: List[T]) -> Dict[T, Text]:
-  """Returns a mapping from employee ID to employee name for given IDs."""
+    """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
 
