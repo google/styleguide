@@ -57,7 +57,7 @@ docs are in bad shape:
 ## Prefer the good over the perfect
 
 Your documentation should be as good as possible within a reasonable time frame.
-The standards for an documentation review are different from the
+The standards for a documentation review are different from the
 standards for code reviews. Reviewers can and should ask for improvements, but
 in general, the author should always be able to invoke the "Good Over Perfect
 Rule". It's preferable to allow authors to quickly submit changes that improve
