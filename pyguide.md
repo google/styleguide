@@ -642,7 +642,7 @@ second argument.
 <a id="s2.12.2-pros"></a>
 #### 2.12.2 Pros
 
-Often you have a function that uses lots of default values, but-rarely-you want
+Often you have a function that uses lots of default values, but - rarely - you want
 to override the defaults. Default argument values provide an easy way to do
 this, without having to define lots of functions for the rare exceptions. Also,
 Python does not support overloaded methods/functions and default arguments are
@@ -962,7 +962,7 @@ Use decorators judiciously when there is a clear advantage. Avoid
 
 [Decorators for Functions and
 Methods](https://docs.python.org/3/glossary.html#term-decorator)
-(a.k.a "the `@` notation"). One common decorator is `@property`, used for
+(a.k.a "the `pie` notation"). One common decorator is `@property`, used for
 converting ordinary methods into dynamically computed attributes. However, the
 decorator syntax allows for user-defined decorators as well. Specifically, for
 some function `my_decorator`, this:
@@ -1777,7 +1777,7 @@ including `__new__`, `__init__`, `__delattr__`, `__getattribute__`,
 ### 3.10 Strings
 
 Use the `format` method or the `%` operator for formatting strings, even when
-the parameters are all strings. Use your best judgement to decide between `+`
+the parameters are all strings. Use your best judgment to decide between `+`
 and `%` (or `format`) though.
 
 ```python
@@ -2555,11 +2555,11 @@ For Python 3 only code, prefer to use `str`. `Text` is also acceptable. Be
 consistent in using one or the other.
 
 For Python 2 compatible code, use `Text`. In some rare cases, `str` may make
-sense; typically to aid compatiblity when the return types aren't the same
+sense; typically to aid compatibility when the return types aren't the same
 between the two Python versions. Avoid using `unicode`: it doesn't exist in
 Python 3.
 
-The reason this discreprency exists is because `str` means different things
+The reason this discrepancy exists is because `str` means different things
 depending on the Python version.
 
 ```python
