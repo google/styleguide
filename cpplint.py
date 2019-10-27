@@ -3316,7 +3316,7 @@ def CheckForFunctionLengths(filename, clean_lines, linenum,
       if Search(r'(;|})', start_line):  # Declarations and trivial functions
         body_found = True
         break                              # ... ignore
-      elif Search(r'{', start_line):
+      if Search(r'{', start_line):
         body_found = True
         function = Search(r'((\w|:)*)\(', line).group(1)
         if Match(r'TEST', function):    # Handle TEST... macros
