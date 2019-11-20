@@ -585,10 +585,10 @@ No:
   result = [(x, y) for x in range(10) for y in range(5) if x * y > 10]
 
   return ((x, y, z)
-          for x in xrange(5)
-          for y in xrange(5)
+          for x in range(5)
+          for y in range(5)
           if x != y
-          for z in xrange(5)
+          for z in range(5)
           if y != z)
 ```
 
@@ -885,6 +885,8 @@ No:  def foo(a, b=[]):
 No:  def foo(a, b=time.time()):  # The time the module was loaded???
          ...
 No:  def foo(a, b=FLAGS.my_thing):  # sys.argv has not yet been parsed...
+         ...
+No:  def foo(a, b: Mapping = {}):  # Could still get passed to unchecked code
          ...
 ```
 
