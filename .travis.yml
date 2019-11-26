@@ -1,20 +1,13 @@
 language: python
 
-sudo: false
-
 python:
+  - "3.8"
+  - "3.7"
   - "3.6"
   - "3.5"
-  - "3.4"
   - "2.7"
   - "pypy"
   - "pypy3"
-
-matrix:
-  include:
-    - python: 3.7
-      dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
-      sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 install:
   - pip install --upgrade pip
