@@ -9,6 +9,10 @@ python:
   - "pypy"
   - "pypy3"
 
+jobs:
+  allow_failures:
+    - python: "3.8"
+
 install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools
