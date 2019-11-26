@@ -1,5 +1,29 @@
-Google Style Guides
-===================
+# NexTraq Style Guides
+
+This repo contains the NexTraq style guides, primarily based on the Google Style
+Guides for the relevant languages. It does, however, also include the Vue.js
+style guide. For more information on the NexTraq style guide, see the
+[Confluence doc](https://nextraq.atlassian.net/wiki/spaces/ENGMISC/pages/edit-v2/36995284).
+
+## Modifications
+
+### Java
+
+* Indent size will be 4. This may also imply
+  * Continuation indent size is 8
+  * Tab size is 4
+
+### JavaScript
+
+* no-multi-str: We have disabled the rule that disallows multiline strings
+
+### Vue.js
+
+* es-module-exports: We will set the rule enforcing that only symbols used in
+  other modules are exported to ‘warn’. In vanilla JS, this rule is important,
+  but it is fundamentally incompatible with Vue.js
+
+## Google Style Guides
 
 Every major open-source project has its own style guide: a set of conventions
 (sometimes arbitrary) about how to write code for that project. It is much
