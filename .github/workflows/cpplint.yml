@@ -1,0 +1,13 @@
+# GitHub Action to run cpplint recursively on all pushes and pull requests
+# https://github.com/cpplint/GitHub-Action-for-cpplint
+
+name: cpplint
+on: [push, pull_request]
+jobs:
+  cpplint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+    - run: pip install cpplint
+    - run: cpplint --recursive .
