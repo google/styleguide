@@ -3,21 +3,20 @@
 ## Table of Contents
 
 1.   [NexTraq](#nextraq)
-    1.   [Modifications](#modifications)
-         1.   [General](#general)
-         1.   [Java](#java)
-         1.   [JavaScript](#javascript)
-1.   [Vue.js](#vuejs)
-    1.   [Formatting Tools](#formatting-tools)
-        1.   [IDE Google Style Config](#ide-google-style-config)
-        1.   [google-java-format](#google-java-format)
-        1.   [ESLint](#eslint)
-        1.   [Markdown](#markdown)
-            1.   [markdownlint](#markdownlint)
-            1.   [remark](#remark)
-            1.   [Prettier](#prettier)
-            1.   [Markdown Navigator](#markdown-navigator)
-    1.   [Future Work](#future-work)
+     1.   [Modifications](#modifications)
+          1.   [General](#general)
+          1.   [Java](#java)
+          1.   [JavaScript](#javascript)
+     1.   [Formatting Tools](#formatting-tools)
+          1.   [IDE Google Style Config](#ide-google-style-config)
+          1.   [google-java-format](#google-java-format)
+          1.   [ESLint](#eslint)
+          1.   [Markdown](#markdown)
+               1.   [markdownlint](#markdownlint)
+               1.   [remark](#remark)
+               1.   [Prettier](#prettier)
+               1.   [Markdown Navigator](#markdown-navigator)
+     1.   [Future Work](#future-work)
 1.   [Google Style Guides](#google-style-guides)
 
 ## NexTraq
@@ -60,19 +59,16 @@ reviewer to ensure it is followed)
 
 #### Java
 
-*   Indent size will be 4. This may also imply:
+*   Indent size will be 4. This will also imply:
     *   Continuation indent size is 8
     *   Tab size is 4
 
 #### JavaScript
 
-no-multi-str: We have disabled the rule that disallows multiline strings
-
-#### Vue.js
-
-es-module-exports: We will set the rule enforcing that only symbols used in
-other modules are exported to ‘warn’. In vanilla JS, this rule is important, but
-it is fundamentally incompatible with Vue.js
+*   no-multi-str: We have disabled the rule that disallows multiline strings
+*   es-module-exports: We will set the rule enforcing that only symbols used in
+    other modules are exported to ‘warn’. In vanilla JS, this rule is important,
+    but it is fundamentally incompatible with Vue.js
 
 ### Formatting Tools
 
