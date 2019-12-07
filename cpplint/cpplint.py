@@ -424,7 +424,9 @@ _YB_THIRD_PARTY_HEADER_PREFIXES_USING_ANGLE_BRACKETS = tuple([
     'gmock',
     'gtest',
     'rapidjson',
-    'cpp_redis'])
+    'cpp_redis',
+    'cds',
+])
 
 # Type names
 _TYPES = re.compile(
