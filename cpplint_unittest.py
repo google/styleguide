@@ -1672,6 +1672,24 @@ class CpplintTest(CpplintTestBase):
       self.TestMultiLineLint(
           """
           class Foo {
+            Foo(volatile Foo&);
+          };""",
+          '')
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            Foo(volatile const Foo&);
+          };""",
+          '')
+      self.TestMultiLineLint(
+          """
+          class Foo {
+            Foo(const volatile Foo&);
+          };""",
+          '')
+      self.TestMultiLineLint(
+          """
+          class Foo {
             Foo(Foo const&);
           };""",
           '')

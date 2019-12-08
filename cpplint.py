@@ -3153,7 +3153,8 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
         Search(r'\bstd\s*::\s*initializer_list\b', constructor_args[0]))
     copy_constructor = bool(
         onearg_constructor and
-        Match(r'(const\s+)?%s(\s*<[^>]*>)?(\s+const)?\s*(?:<\w+>\s*)?&'
+        Match(r'((const\s+(volatile\s+)?)?|(volatile\s+(const\s+)?))?'
+              r'%s(\s*<[^>]*>)?(\s+const)?\s*(?:<\w+>\s*)?&'
               % re.escape(base_classname), constructor_args[0].strip()))
 
     if (not is_marked_explicit and
