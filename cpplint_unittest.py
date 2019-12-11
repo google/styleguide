@@ -4096,6 +4096,7 @@ class CpplintTest(CpplintTestBase):
       os.chdir(temp_dir)
       expected = ['one.cpp', os.path.join('src', 'two.cpp'),
                   os.path.join('src', 'nested', 'three.cpp')]
+      cpplint._excludes = None
       actual = cpplint.ParseArguments(['--recursive', 'one.cpp', 'src'])
       self.assertEquals(set(expected), set(actual))
     finally:
@@ -4113,6 +4114,7 @@ class CpplintTest(CpplintTestBase):
       open(os.path.join(src_dir, "three.cc"), 'w').close()
       os.chdir(temp_dir)
       expected = ['one.cpp', os.path.join('src', 'two.cpp')]
+      cpplint._excludes = None
       actual = cpplint.ParseArguments(['--recursive', '--extensions=cpp',
           'one.cpp', 'src'])
       self.assertEquals(set(expected), set(actual))
@@ -4122,27 +4124,56 @@ class CpplintTest(CpplintTestBase):
         cpplint._hpp_headers = set([])
         cpplint._valid_extensions = set([])
 
-  def testExclude(self):
+  def testRecursiveExclude(self):
     working_dir = os.getcwd()
     temp_dir = tempfile.mkdtemp()
     try:
       src_dir = os.path.join(temp_dir, 'src')
+      src2_dir = os.path.join(temp_dir, 'src2')
       os.makedirs(src_dir)
+      os.makedirs(src2_dir)
       open(os.path.join(src_dir, 'one.cc'), 'w').close()
       open(os.path.join(src_dir, 'two.cc'), 'w').close()
       open(os.path.join(src_dir, 'three.cc'), 'w').close()
+      open(os.path.join(src2_dir, 'one.cc'), 'w').close()
+      open(os.path.join(src2_dir, 'two.cc'), 'w').close()
+      open(os.path.join(src2_dir, 'three.cc'), 'w').close()
       os.chdir(temp_dir)
 
+      expected = [
+        os.path.join('src', 'one.cc'),
+        os.path.join('src', 'two.cc'),
+        os.path.join('src', 'three.cc')
+      ]
+      cpplint._excludes = None
+      actual = cpplint.ParseArguments(['src'])
+      self.assertEquals(set(['src']), set(actual))
+
+      cpplint._excludes = None
+      actual = cpplint.ParseArguments(['--recursive', 'src'])
+      self.assertEquals(set(expected), set(actual))
+
       expected = [os.path.join('src', 'one.cc')]
+      cpplint._excludes = None
       actual = cpplint.ParseArguments(['--recursive',
           '--exclude=src{0}t*'.format(os.sep), 'src'])
       self.assertEquals(set(expected), set(actual))
 
       expected = [os.path.join('src', 'one.cc')]
+      cpplint._excludes = None
       actual = cpplint.ParseArguments(['--recursive',
           '--exclude=src/two.cc', '--exclude=src/three.cc', 'src'])
       self.assertEquals(set(expected), set(actual))
 
+      expected = set([
+        os.path.join('src2', 'one.cc'),
+        os.path.join('src2', 'two.cc'),
+        os.path.join('src2', 'three.cc')
+      ])
+      cpplint._excludes = None
+      actual = cpplint.ParseArguments(['--recursive',
+          '--exclude=src', '.'])
+      self.assertEquals(expected, set(actual))
     finally:
         os.chdir(working_dir)
         shutil.rmtree(temp_dir)
@@ -6327,6 +6358,10 @@ class QuietTest(unittest.TestCase):
     self.assertNotIn("Total errors found:", output)
     # Output with no errors must be completely blank!
     self.assertEquals("", output)
+
+#class FileFilterTest(unittest.TestCase):
+#  def testFilterExcludedFiles(self):
+#    self.assertEquals([], _FilterExcludedFiles([]))
 
 # pylint: disable=C6409
 def setUp():

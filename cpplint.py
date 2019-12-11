@@ -6565,15 +6565,35 @@ def _ExpandDirectories(filenames):
   for filename in expanded:
     if os.path.splitext(filename)[1][1:] in GetAllExtensions():
       filtered.append(filename)
-
   return filtered
 
-def _FilterExcludedFiles(filenames):
+def _FilterExcludedFiles(fnames):
   """Filters out files listed in the --exclude command line switch. File paths
   in the switch are evaluated relative to the current working directory
   """
   exclude_paths = [os.path.abspath(f) for f in _excludes]
-  return [f for f in filenames if os.path.abspath(f) not in exclude_paths]
+  # because globbing does not work recursively, exclude all subpath of all excluded entries
+  return [f for f in fnames
+          if not any(e for e in exclude_paths
+                  if _IsParentOrSame(e, os.path.abspath(f)))]
+
+def _IsParentOrSame(parent, child):
+  """Return true if child is subdirectory of parent.
+  Assumes both paths are absolute and don't contain symlinks.
+  """
+  parent = os.path.normpath(parent)
+  child = os.path.normpath(child)
+  if parent == child:
+    return True
+
+  prefix = os.path.commonprefix([parent, child])
+  if prefix != parent:
+    return False
+  # Note: os.path.commonprefix operates on character basis, so
+  # take extra care of situations like '/foo/ba' and '/foo/bar/baz'
+  child_suffix = child[len(prefix):]
+  child_suffix = child_suffix.lstrip(os.sep)
+  return child == os.path.join(prefix, child_suffix)
 
 def main():
   filenames = ParseArguments(sys.argv[1:])
