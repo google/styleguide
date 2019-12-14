@@ -687,7 +687,7 @@ _global_error_suppressions = {}
 def ProcessHppHeadersOption(val):
   global _hpp_headers
   try:
-    _hpp_headers = set([ext.strip() for ext in val.split(',')])
+    _hpp_headers = {ext.strip() for ext in val.split(',')}
   except ValueError:
     PrintUsage('Header extensions must be comma separated list.')
 
@@ -698,13 +698,14 @@ def GetHeaderExtensions():
   if _hpp_headers:
     return _hpp_headers
   if _valid_extensions:
-    return set([h for h in _valid_extensions if 'h' in h])
+    return {h for h in _valid_extensions if 'h' in h}
   return set(['h', 'hh', 'hpp', 'hxx', 'h++', 'cuh'])
 
 # The allowed extensions for file names
 # This is set by --extensions flag
 def GetAllExtensions():
-  return GetHeaderExtensions().union(_valid_extensions or set(['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']))
+  return GetHeaderExtensions().union(_valid_extensions or set(
+    ['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']))
 
 def ProcessExtensionsOption(val):
   global _valid_extensions
