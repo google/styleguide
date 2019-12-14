@@ -4119,7 +4119,7 @@ class CpplintTest(CpplintTestBase):
     finally:
         os.chdir(working_dir)
         shutil.rmtree(temp_dir)
-        cpplint._header_extensions = set([])
+        cpplint._hpp_headers = set([])
         cpplint._valid_extensions = set([])
 
   def testExclude(self):
@@ -5300,7 +5300,7 @@ class OrderOfIncludesTest(CpplintTestBase):
                                       False))
 
   def testTryDropCommonSuffixes(self):
-    cpplint._header_extensions = set([])
+    cpplint._hpp_headers = set([])
     cpplint._valid_extensions = set([])
     self.assertEqual('foo/foo', cpplint._DropCommonSuffixes('foo/foo-inl.h'))
     self.assertEqual('foo/foo', cpplint._DropCommonSuffixes('foo/foo-inl.hxx'))
