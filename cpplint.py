@@ -678,7 +678,7 @@ def unicode_escape_decode(x):
 
 # Treat all headers starting with 'h' equally: .h, .hpp, .hxx etc.
 # This is set by --headers flag.
-_hpp_headers = set(['h', 'hh', 'hpp', 'hxx', 'h++', 'cuh'])
+_hpp_headers = set([])
 
 # {str, bool}: a map from error categories to booleans which indicate if the
 # category should be suppressed for every line.
@@ -687,29 +687,37 @@ _global_error_suppressions = {}
 def ProcessHppHeadersOption(val):
   global _hpp_headers
   try:
-    _hpp_headers = set(val.split(','))
-    # Automatically append to extensions list so it does not have to be set 2 times
-    _valid_extensions.update(_hpp_headers)
+    _hpp_headers = set([ext.strip() for ext in val.split(',')])
   except ValueError:
     PrintUsage('Header extensions must be comma separated list.')
 
 def IsHeaderExtension(file_extension):
-  return file_extension in _hpp_headers
+  return file_extension in GetHeaderExtensions()
 
 def GetHeaderExtensions():
-  return _hpp_headers or ['h']
+  if _hpp_headers:
+    return _hpp_headers
+  if _valid_extensions:
+    return set([h for h in _valid_extensions if 'h' in h])
+  return set(['h', 'hh', 'hpp', 'hxx', 'h++', 'cuh'])
 
 # The allowed extensions for file names
 # This is set by --extensions flag
 def GetAllExtensions():
-  if not _valid_extensions:
-    return GetHeaderExtensions().union(set(['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']))
-  return _valid_extensions
+  return GetHeaderExtensions().union(_valid_extensions or set(['c', 'cc', 'cpp', 'cxx', 'c++', 'cu']))
+
+def ProcessExtensionsOption(val):
+  global _valid_extensions
+  try:
+    extensions = [ext.strip() for ext in val.split(',')]
+    _valid_extensions = set(extensions)
+  except ValueError:
+    PrintUsage('Extensions should be a comma-separated list of values;'
+               'for example: extensions=hpp,cpp\n'
+               'This could not be parsed: "%s"' % (val,))
 
 def GetNonHeaderExtensions():
   return GetAllExtensions().difference(GetHeaderExtensions())
-
-
 
 def ParseNolintSuppressions(filename, raw_line, linenum, error):
   """Updates the global list of line error-suppressions.
@@ -6281,14 +6289,7 @@ def ProcessConfigOverrides(filename):
             except ValueError:
               _cpplint_state.PrintError('Line length must be numeric.')
           elif name == 'extensions':
-            global _valid_extensions
-            try:
-              extensions = [ext.strip() for ext in val.split(',')]
-              _valid_extensions = set(extensions)
-            except ValueError:
-              sys.stderr.write('Extensions should be a comma-separated list of values;'
-                               'for example: extensions=hpp,cpp\n'
-                               'This could not be parsed: "%s"' % (val,))
+            ProcessExtensionsOption(val)
           elif name == 'root':
             global _root
             # root directories are specified relative to CPPLINT.cfg dir.
@@ -6511,11 +6512,7 @@ def ParseArguments(args):
         _excludes = set()
       _excludes.update(glob.glob(val))
     elif opt == '--extensions':
-      global _valid_extensions
-      try:
-        _valid_extensions = set(val.split(','))
-      except ValueError:
-        PrintUsage('Extensions must be comma seperated list.')
+      ProcessExtensionsOption(val)
     elif opt == '--headers':
       ProcessHppHeadersOption(val)
     elif opt == '--recursive':

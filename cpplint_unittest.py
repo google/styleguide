@@ -4046,19 +4046,32 @@ class CpplintTest(CpplintTestBase):
       self.assertEquals(['foo.cc', 'foo.h'],
                         cpplint.ParseArguments(['foo.cc', 'foo.h']))
 
+      cpplint._hpp_headers = old_headers
+      cpplint._valid_extensions = old_valid_extensions
       self.assertEqual(['foo.h'],
                        cpplint.ParseArguments(['--linelength=120', 'foo.h']))
       self.assertEqual(120, cpplint._line_length)
+      self.assertEqual(set(['h', 'hh', 'hpp', 'hxx', 'h++', 'cuh']), cpplint.GetHeaderExtensions())  # Default value
 
+      cpplint._hpp_headers = old_headers
+      cpplint._valid_extensions = old_valid_extensions
+      self.assertEqual(['foo.h'],
+                       cpplint.ParseArguments(['--headers=h', 'foo.h']))
+      self.assertEqual(set(['h', 'c', 'cc', 'cpp', 'cxx', 'c++', 'cu']), cpplint.GetAllExtensions())
+
+      cpplint._hpp_headers = old_headers
+      cpplint._valid_extensions = old_valid_extensions
       self.assertEqual(['foo.h'],
                        cpplint.ParseArguments(['--extensions=hpp,cpp,cpp', 'foo.h']))
-      self.assertEqual(set(['hpp', 'cpp']), cpplint._valid_extensions)
+      self.assertEqual(set(['hpp', 'cpp']), cpplint.GetAllExtensions())
+      self.assertEqual(set(['hpp']), cpplint.GetHeaderExtensions())
 
-      self.assertEqual(set(['h', 'hh', 'hpp', 'hxx', 'h++', 'cuh']), cpplint._hpp_headers)  # Default value
+      cpplint._hpp_headers = old_headers
+      cpplint._valid_extensions = old_valid_extensions
       self.assertEqual(['foo.h'],
                        cpplint.ParseArguments(['--extensions=cpp,cpp', '--headers=hpp,h', 'foo.h']))
-      self.assertEqual(set(['hpp', 'h']), cpplint._hpp_headers)
-      self.assertEqual(set(['hpp', 'h', 'cpp']), cpplint._valid_extensions)
+      self.assertEqual(set(['hpp', 'h']), cpplint.GetHeaderExtensions())
+      self.assertEqual(set(['hpp', 'h', 'cpp']), cpplint.GetAllExtensions())
 
     finally:
       sys.stdout == sys.__stdout__
