@@ -3145,11 +3145,16 @@ Imports that are needed only for type annotations can be placed within an
 -   The block should be right after all the normal imports.
 -   There should be no empty lines in the typing imports list.
 -   Sort this list as if it were a regular imports list.
+-   For Python 3.7+ the following code can be simplified to just a line of import. 
+[PEP-0563](http://www.google.com/url?sa=D&q=https://www.python.org/dev/peps/pep-0563/):
 
 ```python
 import typing
 if typing.TYPE_CHECKING:
   import sketch
+def f(x: "sketch.Sketch"): ...
+
+from __future__ import annotations  # Python 3.7+
 def f(x: "sketch.Sketch"): ...
 ```
 
