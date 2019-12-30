@@ -585,10 +585,10 @@ No:
   result = [(x, y) for x in range(10) for y in range(5) if x * y > 10]
 
   return ((x, y, z)
-          for x in xrange(5)
-          for y in xrange(5)
+          for x in range(5)
+          for y in range(5)
           if x != y
-          for z in xrange(5)
+          for z in range(5)
           if y != z)
 ```
 
@@ -885,6 +885,8 @@ No:  def foo(a, b=[]):
 No:  def foo(a, b=time.time()):  # The time the module was loaded???
          ...
 No:  def foo(a, b=FLAGS.my_thing):  # sys.argv has not yet been parsed...
+         ...
+No:  def foo(a, b: Mapping = {}):  # Could still get passed to unchecked code
          ...
 ```
 
@@ -2113,7 +2115,7 @@ knows Python (though not what you're trying to do) better than you do.
 <a id="grammar"></a>
 
 <a id="punctuation-spelling-grammar"></a>
-#### 3.8.6 Punctuation, Spelling and Grammar 
+#### 3.8.6 Punctuation, Spelling, and Grammar 
 
 Pay attention to punctuation, spelling, and grammar; it is easier to read
 well-written comments than badly written ones.
@@ -2965,17 +2967,17 @@ specify its type in a couple ways.
 [*Type Comments:*](#type-comments)
 :   Use a `# type:` comment on the end of the line
 
-    ```python
-    a = SomeUndecoratedFunction()  # type: Foo
-    ```
+```python
+a = SomeUndecoratedFunction()  # type: Foo
+```
 
 [*Annotated Assignments*](#annotated-assignments)
 :   Use a colon and type between the variable name and value, as with function
     arguments.
 
-    ```python
-    a: Foo = SomeUndecoratedFunction()
-    ```
+```python
+a: Foo = SomeUndecoratedFunction()
+```
 
 <a id="s3.19.9-tuples"></a>
 <a id="3199-tuples-vs-lists"></a>
@@ -3136,16 +3138,15 @@ imports should be preferred.
 Imports that are needed only for type annotations can be placed within an
 `if TYPE_CHECKING:` block.
 
--   Conditionally imported types need to be referenced as strings, to be
-    forward compatible with Python 3.6 where the annotation expressions are
-    actually evaluated.
+-   Conditionally imported types need to be referenced as strings, to be forward
+    compatible with Python 3.6 where the annotation expressions are actually
+    evaluated.
 -   Only entities that are used solely for typing should be defined here; this
     includes aliases. Otherwise it will be a runtime error, as the module will
     not be imported at runtime.
 -   The block should be right after all the normal imports.
 -   There should be no empty lines in the typing imports list.
 -   Sort this list as if it were a regular imports list.
-
 ```python
 import typing
 if typing.TYPE_CHECKING:
