@@ -1126,9 +1126,9 @@ class _CppLintState(object):
     num_failures = len(self._junit_failures)
 
     testsuite = xml.etree.ElementTree.Element('testsuite')
-    testsuite.attrib['name'] = 'cpplint'
     testsuite.attrib['errors'] = str(num_errors)
     testsuite.attrib['failures'] = str(num_failures)
+    testsuite.attrib['name'] = 'cpplint'
 
     if num_errors == 0 and num_failures == 0:
       testsuite.attrib['tests'] = str(1)
