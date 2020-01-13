@@ -1,6 +1,18 @@
 Changelog
 ---------
 
+1.4.5
+-----
+
+* Avoid false positive for [build/include_what_you_use] in case of `foo.set<type>` and `foo->set<type>` usage.
+* Avoid false positive for [build/include_what_you_use] in case of `map` is user defined function
+* Escape backslashes in pydoc strings to get rid of DeprecationWarning.
+* Fix false positive "should include its header" for 3rd party headers
+* Add support for c++17 tuple destructuring
+* fix #123: Inconsistent behavior of --headers and --extensions
+* Fix #114: --exclude not working recursively
+* fix #112, identifying of copy constructors should allow combinations of volatile and const
+
 1.4.4
 -----
 
@@ -14,7 +26,6 @@ Another cleanup release
 -----
 
 * Revert "Fix the `build/endif_comment` check", same as reverted in upstream
-
 
 1.4.2
 -----
