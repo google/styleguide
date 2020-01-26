@@ -314,9 +314,9 @@ Exceptions must follow certain conditions:
     example:
 
     
-    ```python
     Yes:
-      def connect_to_next_port(self, minimum):
+    ```python
+    def connect_to_next_port(self, minimum):
         """Connects to the next available port.
 
         Args:
@@ -329,20 +329,20 @@ Exceptions must follow certain conditions:
           ConnectionError: If no available port is found.
         """
         if minimum < 1024:
-          # Note that this raising of ValueError is not mentioned in the doc
-          # string's "Raises:" section because it is not appropriate to
-          # guarantee this specific behavioral reaction to API misuse.
-          raise ValueError('Minimum port must be at least 1024, not %d.' % (minimum,))
+            # Note that this raising of ValueError is not mentioned in the doc
+            # string's "Raises:" section because it is not appropriate to
+            # guarantee this specific behavioral reaction to API misuse.
+            raise ValueError('Minimum port must be at least 1024, not %d.' % (minimum,))
         port = self._find_next_open_port(minimum)
         if not port:
-          raise ConnectionError('Could not connect to service on %d or higher.' % (minimum,))
+            raise ConnectionError('Could not connect to service on %d or higher.' % (minimum,))
         assert port >= minimum, 'Unexpected port %d when minimum was %d.' % (port, minimum)
         return port
     ```
 
-    ```python
     No:
-      def connect_to_next_port(self, minimum):
+    ```python
+    def connect_to_next_port(self, minimum):
         """Connects to the next available port.
 
         Args:
@@ -388,9 +388,9 @@ Exceptions must follow certain conditions:
     
     ```python
     try:
-      raise Error()
+        raise Error()
     except Error as error:
-      pass
+        pass
     ```
 
 <a id="s2.5-global-variables"></a>
