@@ -671,7 +671,7 @@ Use generators as needed.
 #### 2.9.1 Definition 
 
 A generator function returns an iterator that yields a value each time it
-executes a yield statement. After it yields a value, the runtime state of the
+executes a `yield` statement. After it yields a value, the runtime state of the
 generator function is suspended until the next value is needed.
 
 <a id="s2.9.2-pros"></a>
