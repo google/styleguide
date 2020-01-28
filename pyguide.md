@@ -1935,7 +1935,7 @@ examples.
   Typical usage example:
 
   foo = ClassFoo()
-  bar = foo.FunctionBar()
+  bar = foo.function_bar()
 """
 ```
 
