@@ -15,11 +15,68 @@ Revision 2.00
 
 Authored, revised and maintained by many Googlers.
 
-[TOC]
+<details>
+  <summary>Table of Contents</summary>
+
+-   [1 Background](#s1-background)
+    *   [1.1 Which Shell to Use](#s1.1-which-shell-to-use)
+-   [2 Shell Files and Interpreter Invocation](#s2-shell-files-and-interpreter-invocation)
+    *   [2.1 File Extensions](#s2.1-file-extensions)
+    *   [2.2 SUID/SGID](#s2.2-suid-sgid)
+-   [3 Environment](#s3-environment)
+    *   [3.1 STDOUT vs STDERR](#s3.1-stdout-vs-stderr)
+-   [4 Comments](#s4-comments)
+    *   [4.1 File Header](#s4.1-file-header)
+        +   [4.1.1 $Id$](#s4.1.1-id)
+        +   [4.1.2 $Id$ Pros](#s4.1.2-id-pros)
+        +   [4.1.3 $Id$ Cons](#s4.1.3-id-cons)
+        +   [4.1.4 $Id$ Decision](#s4.1.4-id-decision)
+    *   [4.2 Function Comments](#s4.2-function-comments)
+    *   [4.3 Implementation Comments](#s4.3-implementation-comments)
+    *   [4.4 TODO Comments](#s4.4-todo-comments)
+-   [5 Formatting](#s5-formatting)
+    *   [5.1 Indentation](#s5.1-indentation)
+    *   [5.2 Line Length and Long Strings](#s5.2-line-length-and-long-strings)
+    *   [5.3 Pipelines](#s5.3-pipelines)
+    *   [5.4 Loops](#s5.4-loops)
+    *   [5.5 Case statement](#s5.5-case-statement)
+    *   [5.6 Variable expansion](#s5.6-variable-expansion)
+    *   [5.7 Quoting](#s5.7-quoting)
+-   [6 Features and Bugs](#s6-features-and-bugs)
+       *   [6.1 ShellCheck](#s6.1-shellcheck)
+    *   [6.2 Command Substitution](#s6.2-command-substitution)
+    *   [6.3 Test, `[ … ]`, and `[[ … ]]`](#s6.3-tests)
+    *   [6.4 Testing Strings](#s6.4-testing-strings)
+    *   [6.5 Wildcard Expansion of Filenames](#s6.5-wildcard-expansion-of-filenames)
+    *   [6.6 Eval](#s6.6-eval)
+    *   [6.7 Arrays](#s6.7-arrays)
+        +   [6.7.1 Arrays Pros](#s6.7.1-arrays-pros)
+        +   [6.7.2 Arrays Cons](#s6.7.2-arrays-cons)
+        +   [6.7.3 Arrays Decision](#s6.7.3-arrays-decision)
+    *   [6.8 Pipes to While](#s6.8-pipes-to-while)
+    *   [6.9 Arithmetic](#s6.9-arithmetic)
+-   [7 Naming Conventions](#s7-naming-conventions)
+    *   [7.1 Function Names](#s7.1-function-names)
+    *   [7.2 Variable Names](#s7.2-variable-names)
+    *   [7.3 Constants and Environment Variable Names](#s7.3-constants-and-environment-variable-names)
+    *   [7.4 Source Filenames](#s7.4-source-filenames)
+    *   [7.5 Read-only Variables](#s7.5-read-only-variables)
+    *   [7.6 Use Local Variables](#s7.6-use-local-variables)
+    *   [7.7 Function Location](#s7.7-function-location)
+    *   [7.8 main](#s7.8-main)
+-   [8 Calling Commands](#s8-calling-commands)
+    *   [8.1 Checking Return Values](#s8.1-checking-return-values)
+    *   [8.2 Builtin Commands vs. External Commands](#s8.2-builtin-commands-vs-external-commands)
+-   [9 Conclusion](#s9-conclusion)
+
+</details>
+
+<a id="s1-background"></a>
 
 ## Background
 
 
+<a id="s1.1-which-shell-to-use"></a>
 
 ### Which Shell to Use
 
@@ -37,6 +94,8 @@ consistent shell language that's installed on all our machines.
 The only exception to this is where you're forced to by whatever
 you're coding for. One example of this is Solaris SVR4 packages
 which require plain Bourne shell for any scripts.
+
+<a id="s1.1-which-shell-to-use"></a>
 
 ### When to use Shell
 
@@ -62,7 +121,11 @@ Some guidelines:
     to switch languages) consider whether the code is easily
     maintainable by people other than its author.
 
+<a id="s2-shell-files-and-interpreter-invocation"></a>
+
 ## Shell Files and Interpreter Invocation
+
+<a id="s2.1-file-extensions"></a>
 
 ### File Extensions
 
@@ -80,6 +143,8 @@ languages. This allows library files with identical purposes but
 different languages to be identically named except for the
 language-specific suffix.
 
+<a id="s2.2-suid-sgid"></a>
+
 ### SUID/SGID
 
 SUID and SGID are *forbidden* on shell scripts.
@@ -91,8 +156,11 @@ which is why we're being explicit about banning it.
 
 Use `sudo` to provide elevated access if you need it.
 
+<a id="s3-environment"></a>
 
 ## Environment
+
+<a id="s3.1-stdout-vs-stderr"></a>
 
 ### STDOUT vs STDERR
 
@@ -114,8 +182,11 @@ if ! do_something; then
 fi
 ```
 
+<a id="s4-comments"></a>
 
 ## Comments
+
+<a id="s4.1-file-header"></a>
 
 ### File Header
 
@@ -134,6 +205,8 @@ Example:
 # Perform hot backups of Oracle databases.
 ```
 
+
+<a id="s4.2-function-comments"></a>
 
 ### Function Comments
 
@@ -194,6 +267,8 @@ function del_thing(arg) {
 }
 ```
 
+<a id="s4.3-implementation-comments"></a>
+
 ### Implementation Comments
 
 Comment tricky, non-obvious, interesting or important parts of your
@@ -202,6 +277,8 @@ code.
 This follows general Google coding comment practice. Don't comment
 everything. If there's a complex algorithm or you're doing something
 out of the ordinary, put a short comment in.
+
+<a id="s4.4-todo-comments"></a>
 
 ### TODO Comments
 
@@ -227,11 +304,14 @@ Examples:
 # TODO(mrmonkey): Handle the unlikely edge cases (bug ####)
 ```
 
+<a id="s5-formatting"></a>
 
 ## Formatting
 
 While you should follow the style that's already there for files that
 you're modifying, the following are required for any new code.
+
+<a id="s5.1-indentation"></a>
 
 ### Indentation
 
@@ -240,6 +320,8 @@ Indent 2 spaces. No tabs.
 Use blank lines between blocks to improve readability. Indentation is
 two spaces. Whatever you do, don't use tabs. For existing files, stay
 faithful to the existing indentation.
+
+<a id="s5.2-line-length-and-long-strings"></a>
 
 ### Line Length and Long Strings
 
@@ -263,6 +345,8 @@ long_string="I am an exceptionally
 long string."
 ```
 
+<a id="s5.3-pipelines"></a>
+
 ### Pipelines
 
 Pipelines should be split one per line if they don't all fit on one
@@ -285,6 +369,8 @@ command1 \
   | command3 \
   | command4
 ```
+
+<a id="s5.4-loops"></a>
 
 ### Loops
 
@@ -319,6 +405,8 @@ for dir in "${dirs_to_cleanup[@]}"; do
   fi
 done
 ```
+
+<a id="s5.5-case-statement"></a>
 
 ### Case statement
 
@@ -373,6 +461,8 @@ while getopts 'abf:v' flag; do
   esac
 done
 ```
+
+<a id="s5.6-variable-expansion"></a>
 
 ### Variable expansion
 
@@ -429,6 +519,8 @@ They are listed in order of precedence.
 
 NOTE: Using braces in `${var}` is *not* a form of quoting. "Double quotes" must
 be used *as well*.
+
+<a id="s5.7-quoting"></a>
 
 ### Quoting
 
@@ -516,13 +608,21 @@ grep -cP '([Ss]pecial|\|?characters*)$' ${1:+"$1"}
 (set -- 1 "2 two" "3 three tres"; echo $#; set -- "$@"; echo "$#, $@")
 ```
 
+<a id="s6-features-and-bugs"></a>
+
 ## Features and Bugs
+
+<a id="s6.1-shelllint"></a>
+
+<a id="s6.1-shellcheck"></a>
 
 ### ShellCheck
 
 The [ShellCheck project](https://www.shellcheck.net/) identifies common bugs and
 warnings for your shell scripts. It is recommended for all scripts, large or
 small.
+
+<a id="s6.2-command-substitution"></a>
 
 ### Command Substitution
 
@@ -543,6 +643,8 @@ var="$(command "$(command1)")"
 # This is not:
 var="`command \`command1\``"
 ```
+
+<a id="s6.3-tests"></a>
 
 <a id="tests"></a>
 ### Test, `[ … ]`, and `[[ … ]]` 
@@ -577,6 +679,8 @@ fi
 ```
 
 For the gory details, see E14 at http://tiswww.case.edu/php/chet/bash/FAQ
+
+<a id="s6.4-testing-strings"></a>
 
 ### Testing Strings
 
@@ -664,6 +768,8 @@ if [[ "${my_var}" > 3 ]]; then
 fi
 ```
 
+<a id="s6.5-wildcard-expansion-of-filenames"></a>
+
 ### Wildcard Expansion of Filenames
 
 Use an explicit path when doing wildcard expansion of filenames.
@@ -690,6 +796,8 @@ rm: cannot remove `./somedir': Is a directory
 removed `./somefile'
 ```
 
+<a id="s6.6-eval"></a>
+
 ### Eval
 
 `eval` should be avoided.
@@ -706,6 +814,8 @@ eval $(set_my_variables)
 # What happens if one of the returned values has a space in it?
 variable="$(eval some_function)"
 ```
+
+<a id="s6.7-arrays"></a>
 
 ### Arrays
 
@@ -747,6 +857,8 @@ declare -a files=($(ls /directory))
 mybinary $(get_arguments)
 ```
 
+<a id="s6.7.1-arrays-pros"></a>
+
 #### Arrays Pros
 
 *   Using Arrays allows lists of things without confusing quoting
@@ -755,9 +867,13 @@ mybinary $(get_arguments)
 *   Arrays make it possible to safely store sequences/lists of
     arbitrary strings, including strings containing whitespace.
 
+<a id="s6.7.2-arrays-cons"></a>
+
 #### Arrays Cons
 
 Using arrays can risk a script’s complexity growing.
+
+<a id="s6.7.3-arrays-decision"></a>
 
 #### Arrays Decision
 
@@ -767,6 +883,8 @@ avoid confusing quoting issues. Use quoted expansion –
 `"${array[@]}"` – to access arrays. However, if more
 advanced data manipulation is required, shell scripting should be
 avoided altogether; see [above](#when-to-use-shell).
+
+<a id="s6.8-pipes-to-while"></a>
 
 ### Pipes to While
 
@@ -832,6 +950,8 @@ while read src dest type opts rest; do
   fi
 done < /proc/mounts
 ```
+
+<a id="s6.9-arithmetic"></a>
 
 ### Arithmetic
 
@@ -915,8 +1035,11 @@ sec=30
 echo $(( hr * 3600 + min * 60 + sec )) # prints 7530 as expected
 ```
 
+<a id="s7-naming-conventions"></a>
 
 ## Naming Conventions
+
+<a id="s7.1-function-names"></a>
 
 ### Function Names
 
@@ -947,6 +1070,8 @@ The `function` keyword is extraneous when "()" is present
 after the function name, but enhances quick identification of
 functions.
 
+<a id="s7.2-variable-names"></a>
+
 ### Variable Names
 
 As for function names.
@@ -959,6 +1084,8 @@ for zone in "${zones[@]}"; do
   something_with "${zone}"
 done
 ```
+
+<a id="s7.3-constants-and-environment-variable-names"></a>
 
 ### Constants and Environment Variable Names
 
@@ -991,6 +1118,8 @@ done
 readonly VERBOSE
 ```
 
+<a id="s7.4-source-filenames"></a>
+
 ### Source Filenames
 
 Lowercase, with underscores to separate words if desired.
@@ -998,6 +1127,8 @@ Lowercase, with underscores to separate words if desired.
 This is for consistency with other code styles in Google:
 `maketemplate` or `make_template` but not
 `make-template`.
+
+<a id="s7.5-read-only-variables"></a>
 
 ### Read-only Variables
 
@@ -1016,6 +1147,8 @@ else
   readonly zip_version
 fi
 ```
+
+<a id="s7.6-use-local-variables"></a>
 
 ### Use Local Variables
 
@@ -1056,6 +1189,8 @@ my_func2() {
 }
 ```
 
+<a id="s7.7-function-location"></a>
+
 ### Function Location
 
 Put all functions together in the file just below constants. Don't hide
@@ -1067,6 +1202,8 @@ may be done before declaring functions.
 
 Don't hide executable code between functions. Doing so makes the code
 difficult to follow and results in nasty surprises when debugging.
+
+<a id="s7.8-main"></a>
 
 ### main
 
@@ -1087,8 +1224,11 @@ main "$@"
 Obviously, for short scripts where it's just a linear flow,
 `main` is overkill and so is not required.
 
+<a id="s8-calling-commands"></a>
 
 ## Calling Commands
+
+<a id="s8.1-checking-return-values"></a>
 
 ### Checking Return Values
 
@@ -1143,6 +1283,8 @@ if (( return_codes[1] != 0 )); then
 fi
 ```
 
+<a id="s8.2-builtin-commands-vs-external-commands"></a>
+
 ### Builtin Commands vs. External Commands
 
 Given the choice between invoking a shell builtin and invoking a
@@ -1166,6 +1308,7 @@ addition="$(expr ${X} + ${Y})"
 substitution="$(echo "${string}" | sed -e 's/^foo/bar/')"
 ```
 
+<a id="s9-conclusion"></a>
 
 ## Conclusion
 
