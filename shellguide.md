@@ -11,7 +11,7 @@ See README.md for details.
        1 = shell.xml
        2 = shell.md
      The major number is also hard-coded at the bottom of this file. -->
-Revision 2.00
+Revision 2.01
 
 Authored, revised and maintained by many Googlers.
 
@@ -220,7 +220,7 @@ function get_dir() {
 # Returns:
 #   0 if thing was deleted, non-zero on error.
 #######################################
-function del_thing(arg) {
+function del_thing() {
   rm "$1"
 }
 ```
@@ -1277,4 +1277,4 @@ of the
 [C++ Guide](https://google.github.io/styleguide/cppguide.html#Parting_Words).
 
 
-Revision 2.00
+Revision 2.01
