@@ -15,57 +15,19 @@ Revision 2.00
 
 Authored, revised and maintained by many Googlers.
 
-<details>
-  <summary>Table of Contents</summary>
+## Table of Contents
 
--   [1 Background](#s1-background)
-    *   [1.1 Which Shell to Use](#s1.1-which-shell-to-use)
--   [2 Shell Files and Interpreter Invocation](#s2-shell-files-and-interpreter-invocation)
-    *   [2.1 File Extensions](#s2.1-file-extensions)
-    *   [2.2 SUID/SGID](#s2.2-suid-sgid)
--   [3 Environment](#s3-environment)
-    *   [3.1 STDOUT vs STDERR](#s3.1-stdout-vs-stderr)
--   [4 Comments](#s4-comments)
-    *   [4.1 File Header](#s4.1-file-header)
-    *   [4.2 Function Comments](#s4.2-function-comments)
-    *   [4.3 Implementation Comments](#s4.3-implementation-comments)
-    *   [4.4 TODO Comments](#s4.4-todo-comments)
--   [5 Formatting](#s5-formatting)
-    *   [5.1 Indentation](#s5.1-indentation)
-    *   [5.2 Line Length and Long Strings](#s5.2-line-length-and-long-strings)
-    *   [5.3 Pipelines](#s5.3-pipelines)
-    *   [5.4 Loops](#s5.4-loops)
-    *   [5.5 Case statement](#s5.5-case-statement)
-    *   [5.6 Variable expansion](#s5.6-variable-expansion)
-    *   [5.7 Quoting](#s5.7-quoting)
--   [6 Features and Bugs](#s6-features-and-bugs)
-       *   [6.1 ShellCheck](#s6.1-shellcheck)
-    *   [6.2 Command Substitution](#s6.2-command-substitution)
-    *   [6.3 Test, `[ … ]`, and `[[ … ]]`](#s6.3-tests)
-    *   [6.4 Testing Strings](#s6.4-testing-strings)
-    *   [6.5 Wildcard Expansion of Filenames](#s6.5-wildcard-expansion-of-filenames)
-    *   [6.6 Eval](#s6.6-eval)
-    *   [6.7 Arrays](#s6.7-arrays)
-        +   [6.7.1 Arrays Pros](#s6.7.1-arrays-pros)
-        +   [6.7.2 Arrays Cons](#s6.7.2-arrays-cons)
-        +   [6.7.3 Arrays Decision](#s6.7.3-arrays-decision)
-    *   [6.8 Pipes to While](#s6.8-pipes-to-while)
-    *   [6.9 Arithmetic](#s6.9-arithmetic)
--   [7 Naming Conventions](#s7-naming-conventions)
-    *   [7.1 Function Names](#s7.1-function-names)
-    *   [7.2 Variable Names](#s7.2-variable-names)
-    *   [7.3 Constants and Environment Variable Names](#s7.3-constants-and-environment-variable-names)
-    *   [7.4 Source Filenames](#s7.4-source-filenames)
-    *   [7.5 Read-only Variables](#s7.5-read-only-variables)
-    *   [7.6 Use Local Variables](#s7.6-use-local-variables)
-    *   [7.7 Function Location](#s7.7-function-location)
-    *   [7.8 main](#s7.8-main)
--   [8 Calling Commands](#s8-calling-commands)
-    *   [8.1 Checking Return Values](#s8.1-checking-return-values)
-    *   [8.2 Builtin Commands vs. External Commands](#s8.2-builtin-commands-vs-external-commands)
--   [9 Conclusion](#s9-conclusion)
-
-</details>
+Section                                                                              | Contents
+------------------------------------------------------------------------------------ | --------
+[Background](#s1-background)                                                         | [Which Shell to Use](#s1.1-which-shell-to-use)
+[Shell Files and Interpreter Invocation](#s2-shell-files-and-interpreter-invocation) | [File Extensions](#s2.1-file-extensions) - [SUID/SGID](#s2.2-suid-sgid)
+[Environment](#s3-environment)                                                       | [STDOUT vs STDERR](#s3.1-stdout-vs-stderr)
+[Comments](#s4-comments)                                                             | [File Header](#s4.1-file-header) - [Function Comments](#s4.2-function-comments) - [Implementation Comments](#s4.3-implementation-comments) - [TODO Comments](#s4.4-todo-comments)
+[Formatting](#s5-formatting)                                                         | [Indentation](#s5.1-indentation) - [Line Length and Long Strings](#s5.2-line-length-and-long-strings) - [Pipelines](#s5.3-pipelines) - [Loops](#s5.4-loops) - [Case statement](#s5.5-case-statement) - [Variable expansion](#s5.6-variable-expansion) - [Quoting](#s5.7-quoting)
+[Features and Bugs](#s6-features-and-bugs)                                           |    [ShellCheck](#s6.1-shellcheck) [Command Substitution](#s6.2-command-substitution) - [Test, `[… ]`, and `[[… ]]`](#s6.3-tests) - [Testing Strings](#s6.4-testing-strings) - [Wildcard Expansion of Filenames](#s6.5-wildcard-expansion-of-filenames) - [Eval](#s6.6-eval) - [Arrays](#s6.7-arrays) - [Pipes to While](#s6.8-pipes-to-while) - [Arithmetic](#s6.9-arithmetic)
+[Naming Conventions](#s7-naming-conventions)                                         | [Function Names](#s7.1-function-names) - [Variable Names](#s7.2-variable-names) - [Constants and Environment Variable Names](#s7.3-constants-and-environment-variable-names) - [Source Filenames](#s7.4-source-filenames) - [Read-only Variables](#s7.5-read-only-variables) - [Use Local Variables](#s7.6-use-local-variables) - [Function Location](#s7.7-function-location) - [main](#s7.8-main)
+[Calling Commands](#s8-calling-commands)                                             | [Checking Return Values](#s8.1-checking-return-values) - [Builtin Commands vs. External Commands](#s8.2-builtin-commands-vs-external-commands)
+[Conclusion](#s9-conclusion)                                                         |
 
 <a id="s1-background"></a>
 
