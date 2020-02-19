@@ -11,7 +11,8 @@ See README.md for details.
        1 = shell.xml
        2 = shell.md
      The major number is also hard-coded at the bottom of this file. -->
-Revision 2.01
+
+Revision 2.02
 
 Authored, revised and maintained by many Googlers.
 
@@ -19,12 +20,12 @@ Authored, revised and maintained by many Googlers.
 
 Section                                                                              | Contents
 ------------------------------------------------------------------------------------ | --------
-[Background](#s1-background)                                                         | [Which Shell to Use](#s1.1-which-shell-to-use)
+[Background](#s1-background)                                                         | [Which Shell to Use](#s1.1-which-shell-to-use) - [When to use Shell](#s1.2-when-to-use-shell)
 [Shell Files and Interpreter Invocation](#s2-shell-files-and-interpreter-invocation) | [File Extensions](#s2.1-file-extensions) - [SUID/SGID](#s2.2-suid-sgid)
 [Environment](#s3-environment)                                                       | [STDOUT vs STDERR](#s3.1-stdout-vs-stderr)
 [Comments](#s4-comments)                                                             | [File Header](#s4.1-file-header) - [Function Comments](#s4.2-function-comments) - [Implementation Comments](#s4.3-implementation-comments) - [TODO Comments](#s4.4-todo-comments)
 [Formatting](#s5-formatting)                                                         | [Indentation](#s5.1-indentation) - [Line Length and Long Strings](#s5.2-line-length-and-long-strings) - [Pipelines](#s5.3-pipelines) - [Loops](#s5.4-loops) - [Case statement](#s5.5-case-statement) - [Variable expansion](#s5.6-variable-expansion) - [Quoting](#s5.7-quoting)
-[Features and Bugs](#s6-features-and-bugs)                                           |    [ShellCheck](#s6.1-shellcheck) [Command Substitution](#s6.2-command-substitution) - [Test, `[… ]`, and `[[… ]]`](#s6.3-tests) - [Testing Strings](#s6.4-testing-strings) - [Wildcard Expansion of Filenames](#s6.5-wildcard-expansion-of-filenames) - [Eval](#s6.6-eval) - [Arrays](#s6.7-arrays) - [Pipes to While](#s6.8-pipes-to-while) - [Arithmetic](#s6.9-arithmetic)
+[Features and Bugs](#s6-features-and-bugs)                                           |    [ShellCheck](#s6.1-shellcheck) - [Command Substitution](#s6.2-command-substitution) - [Test, `[… ]`, and `[[… ]]`](#s6.3-tests) - [Testing Strings](#s6.4-testing-strings) - [Wildcard Expansion of Filenames](#s6.5-wildcard-expansion-of-filenames) - [Eval](#s6.6-eval) - [Arrays](#s6.7-arrays) - [Pipes to While](#s6.8-pipes-to-while) - [Arithmetic](#s6.9-arithmetic)
 [Naming Conventions](#s7-naming-conventions)                                         | [Function Names](#s7.1-function-names) - [Variable Names](#s7.2-variable-names) - [Constants and Environment Variable Names](#s7.3-constants-and-environment-variable-names) - [Source Filenames](#s7.4-source-filenames) - [Read-only Variables](#s7.5-read-only-variables) - [Use Local Variables](#s7.6-use-local-variables) - [Function Location](#s7.7-function-location) - [main](#s7.8-main)
 [Calling Commands](#s8-calling-commands)                                             | [Checking Return Values](#s8.1-checking-return-values) - [Builtin Commands vs. External Commands](#s8.2-builtin-commands-vs-external-commands)
 [Conclusion](#s9-conclusion)                                                         |
@@ -53,7 +54,7 @@ The only exception to this is where you're forced to by whatever
 you're coding for. One example of this is Solaris SVR4 packages
 which require plain Bourne shell for any scripts.
 
-<a id="s1.1-which-shell-to-use"></a>
+<a id="s1.2-when-to-use-shell"></a>
 
 ### When to use Shell
 
@@ -162,7 +163,6 @@ Example:
 #
 # Perform hot backups of Oracle databases.
 ```
-
 
 <a id="s4.2-function-comments"></a>
 
@@ -457,7 +457,7 @@ They are listed in order of precedence.
 
     # Preferred style for other variables:
     echo "PATH=${PATH}, PWD=${PWD}, mine=${some_var}"
-    while read f; do
+    while read -r f; do
       echo "file=${f}"
     done < <(find /tmp)
     ```
@@ -569,8 +569,6 @@ grep -cP '([Ss]pecial|\|?characters*)$' ${1:+"$1"}
 <a id="s6-features-and-bugs"></a>
 
 ## Features and Bugs
-
-<a id="s6.1-shelllint"></a>
 
 <a id="s6.1-shellcheck"></a>
 
@@ -846,68 +844,64 @@ avoided altogether; see [above](#when-to-use-shell).
 
 ### Pipes to While
 
-Use process substitution or for loops in preference to piping to while.
-Variables modified in a while loop do not propagate to the parent
-because the loop's commands run in a subshell.
+Use process substitution or the `readarray` builtin (bash4+) in preference to
+piping to `while`. Pipes create a subshell, so any variables modified within a
+pipeline do not propagate to the parent shell.
 
-The implicit subshell in a pipe to while can make it difficult to
-track down bugs.
+The implicit subshell in a pipe to `while` can introduce subtle bugs that are
+hard to track down.
 
 ```shell
 last_line='NULL'
-your_command |
-  while read line; do
+your_command | while read -r line; do
+  if [[ -n "${line}" ]]; then
     last_line="${line}"
-  done
+  fi
+done
 
-# This will output 'NULL'
+# This will always output 'NULL'!
 echo "${last_line}"
 ```
 
-Use a for loop if you are confident that the input will not contain
-spaces or special characters (usually, this means not user input).
+Using process substitution also creates a subshell. However, it allows
+redirecting from a subshell to a `while` without putting the `while` (or any
+other command) in a subshell.
 
 ```shell
-declare -i total
-# Only do this if there are no spaces in return values.
-for value in $(command); do
-  total+="${value}"
-done
-```
-
-Using process substitution allows redirecting output but puts the
-commands in an explicit subshell rather than the implicit subshell
-that bash creates for the while loop.
-
-```shell
-total=0
-last_file=
-while read count filename; do
-  total+="${count}"
-  last_file="${filename}"
-done < <(your_command | uniq -c)
-
-# This will output the second field of the last line of output from
-# the command.
-echo "Total = ${total}"
-echo "Last one = ${last_file}"
-```
-
-Use while loops where it is not necessary to pass complex results to
-the parent shell - this is typically where some more complex "parsing"
-is required. Beware that simple examples are probably more easily done
-with a tool such as `awk`. This may also be useful where
-you specifically don't want to change the parent scope variables.
-
-```shell
-# Trivial implementation of awk expression:
-#   awk '$3 == "nfs" { print $2 " maps to " $1 }' /proc/mounts
-while read src dest type opts rest; do
-  if [[ ${type} == "nfs" ]]; then
-    echo "NFS ${dest} maps to ${src}"
+last_line='NULL'
+while read line; do
+  if [[ -n "${line}" ]]; then
+    last_line="${line}"
   fi
-done < /proc/mounts
+done < <(your_command)
+
+# This will output the last non-empty line from your_command
+echo "${last_line}"
 ```
+
+Alternatively, use the `readarray` builtin to read the file into an array, then
+loop over the array's contents. Notice that (for the same reason as above) you
+need to use a process substitution with `readarray` rather than a pipe, but with
+the advantage that the input generation for the loop is located before it,
+rather than after.
+
+```shell
+last_line='NULL'
+readarray -t lines < <(your_command)
+for line in "${lines[@]}"; do
+  if [[ -n "${line}" ]]; then
+    last_line="${line}"
+  fi
+done
+echo "${last_line}"
+```
+
+> Note: Be cautious using a for-loop to iterate over output, as in `for var in
+> $(...)`, as the output is split by whitespace, not by line. Sometimes you will
+> know this is safe because the output can't contain any unexpected whitespace,
+> but where this isn't obvious or doesn't improve readability (such as a long
+> command inside `$(...)`), a `while read` loop or `readarray` is often safer
+> and clearer.
 
 <a id="s6.9-arithmetic"></a>
 
@@ -1276,5 +1270,4 @@ Please take a few minutes to read the Parting Words section at the bottom
 of the
 [C++ Guide](https://google.github.io/styleguide/cppguide.html#Parting_Words).
 
-
-Revision 2.01
+Revision 2.02
