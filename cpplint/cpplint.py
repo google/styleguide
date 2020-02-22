@@ -1728,9 +1728,11 @@ def CheckForCopyright(filename, lines, error):
 
   # We'll say it should occur by line 10. Don't forget there's a
   # dummy line at the front.
-  YUGABYTE_COPYRIGHT = "// Copyright (c) YugaByte, Inc."
+  YUGABYTE_COPYRIGHT = "// Copyright (c) Yugabyte, Inc."
   ALLOWED_COPYRIGHT_LINES = [YUGABYTE_COPYRIGHT,
+                             "// Copyright (c) YugaByte, Inc.",
                              "// Portions Copyright (c) YugaByte, Inc.",
+                             "// Portions Copyright (c) Yugabyte, Inc.",
                              "// regarding copyright ownership. The ASF licenses this file",
                              "// Copyright (c) 20XX The Chromium Authors. All rights reserved",
                              "// Copyright (c) 20XX The LevelDB Authors. All rights reserved",
