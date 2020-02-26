@@ -1145,9 +1145,6 @@ my_func2() {
 
 ### Function Location
 
-Put all functions together in the file just below constants. Don't hide
-executable code between functions.
-
 If you've got functions, put them all together near the top of the
 file. Only includes, `set` statements and setting constants
 may be done before declaring functions.
