@@ -132,7 +132,7 @@ information is recommended.
 
 ```shell
 err() {
-  echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" > &2
+  echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&2
 }
 
 if ! do_something; then
@@ -758,6 +758,7 @@ removed `./somefile'
 
 `eval` should be avoided.
 
+
 Eval munges the input when used for assignment to variables and can
 set variables without making it possible to check what those variables
 were.
@@ -1146,14 +1147,12 @@ my_func2() {
 ### Function Location
 
 Put all functions together in the file just below constants. Don't hide
-executable code between functions.
+executable code between functions. Doing so makes the code difficult to follow
+and results in nasty surprises when debugging.
 
 If you've got functions, put them all together near the top of the
 file. Only includes, `set` statements and setting constants
 may be done before declaring functions.
-
-Don't hide executable code between functions. Doing so makes the code
-difficult to follow and results in nasty surprises when debugging.
 
 <a id="s7.8-main"></a>
 
@@ -1193,14 +1192,14 @@ Example:
 
 ```shell
 if ! mv "${file_list[@]}" "${dest_dir}/"; then
-  echo "Unable to move ${file_list[*]} to ${dest_dir}" > &2
+  echo "Unable to move ${file_list[*]} to ${dest_dir}" >&2
   exit 1
 fi
 
 # Or
 mv "${file_list[@]}" "${dest_dir}/"
 if (( $? != 0 )); then
-  echo "Unable to move ${file_list[*]} to ${dest_dir}" > &2
+  echo "Unable to move ${file_list[*]} to ${dest_dir}" >&2
   exit 1
 fi
 ```
@@ -1213,7 +1212,7 @@ following is acceptable:
 ```shell
 tar -cf - ./* | ( cd "${dir}" && tar -xf - )
 if (( PIPESTATUS[0] != 0 || PIPESTATUS[1] != 0 )); then
-  echo "Unable to tar files to ${dir}" > &2
+  echo "Unable to tar files to ${dir}" >&2
 fi
 ```
 
