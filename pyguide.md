@@ -1982,15 +1982,39 @@ aptly described using a one-line docstring.
 
 <a id="doc-function-args"></a>
 [*Args:*](#doc-function-args)
-:   List each parameter by name. A description should follow the name, and be
-    separated by a colon and a space. If the description is too long to fit on a
-    single 80-character line, use a hanging indent of 2 or 4 spaces (be
-    consistent with the rest of the file).
+:   List each parameter by name. A description should follow the name on the
+    same line and be separated by a colon and a space. A description can also
+    follow on the next line. If the description is too long to fit on a single
+    80-character line, use a hanging indent of 2 or 4 spaces (be consistent with
+    the rest of the file).
 
     The description should include required type(s) if the code does not contain
     a corresponding type annotation. If a function accepts `*foo` (variable
     length argument lists) and/or `**bar` (arbitrary keyword arguments), they
     should be listed as `*foo` and `**bar`.
+
+    Both examples below are valid descriptions.
+
+```python
+def print_data(verbose):
+    """Prints information about the user's environment.
+
+    Args:
+        verbose: If True, print out lots of logging data to the user's screen.
+            If False, only print one line.
+    """
+```
+
+```python
+def print_data(verbose):
+    """Prints information about the user's environment.
+
+    Args:
+        verbose:
+            If True, print out lots of logging data to the user's screen.
+            If False, only print one line.
+    """
+```
 
 <a id="doc-function-returns"></a>
 [*Returns:* (or *Yields:* for generators)](#doc-function-returns)
