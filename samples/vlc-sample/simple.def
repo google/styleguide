@@ -4,15 +4,15 @@ src/*
 Done processing src/libvlc.c
 Done processing src/libvlc.h
 Done processing src/missing.c
-Total errors found: 601
+Total errors found: 602
 
-src/libvlc.c:41:  Found C system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
+src/libvlc.c:41:  Found other system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
 src/libvlc.c:47:  Found C system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
 src/libvlc.c:48:  Found C system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
 src/libvlc.c:49:  Found C system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
 src/libvlc.c:50:  Found C system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
 src/libvlc.c:71:  Include the directory when naming .h files  [build/include_subdir] [4]
-src/libvlc.c:75:  Found C system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
+src/libvlc.c:75:  Found other system header after other header. Should be: libvlc.h, c system, c++ system, other.  [build/include_order] [4]
 src/libvlc.c:86:  Extra space before [  [whitespace/braces] [5]
 src/libvlc.c:86:  Extra space after ( in function call  [whitespace/parens] [4]
 src/libvlc.c:86:  Extra space before ( in function call  [whitespace/parens] [4]
@@ -418,6 +418,7 @@ src/libvlc.h:222:  Extra space before ( in function call  [whitespace/parens] [4
 src/libvlc.h:223:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:224:  Extra space before ( in function call  [whitespace/parens] [4]
 src/libvlc.h:224:  Extra space before )  [whitespace/parens] [2]
+src/missing.c:39:  Found C system header after other system header. Should be: missing.h, c system, c++ system, other.  [build/include_order] [4]
 src/missing.c:44:  Extra space before ( in function call  [whitespace/parens] [4]
 src/missing.c:45:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/missing.c:47:  Extra space before ( in function call  [whitespace/parens] [4]

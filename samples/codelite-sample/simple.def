@@ -3,10 +3,11 @@ src/*
 4
 Done processing src/pptable.cpp
 Done processing src/pptable.h
-Total errors found: 680
+Total errors found: 685
 
 src/pptable.cpp:0:  No copyright message found.  You should have a line: "Copyright [year] <Copyright Owner>"  [legal/copyright] [5]
 src/pptable.cpp:1:  Include the directory when naming .h files  [build/include_subdir] [4]
+src/pptable.cpp:3:  Found C++ system header after other system header. Should be: pptable.h, c system, c++ system, other.  [build/include_order] [4]
 src/pptable.cpp:6:  { should almost always be at the end of the previous line  [whitespace/braces] [4]
 src/pptable.cpp:7:  Tab found; better to use spaces  [whitespace/tab] [1]
 src/pptable.cpp:8:  Tab found; better to use spaces  [whitespace/tab] [1]
@@ -607,7 +608,11 @@ src/pptable.cpp:663:  Tab found; better to use spaces  [whitespace/tab] [1]
 src/pptable.h:0:  No copyright message found.  You should have a line: "Copyright [year] <Copyright Owner>"  [legal/copyright] [5]
 src/pptable.h:1:  #ifndef header guard has wrong style, please use: SAMPLES_CODELITE_SAMPLE_SRC_PPTABLE_H_  [build/header_guard] [5]
 src/pptable.h:131:  #endif line should be "#endif  // SAMPLES_CODELITE_SAMPLE_SRC_PPTABLE_H_"  [build/header_guard] [5]
-src/pptable.h:6:  Found C system header after C++ system header. Should be: pptable.h, c system, c++ system, other.  [build/include_order] [4]
+src/pptable.h:5:  Found C++ system header after other system header. Should be: pptable.h, c system, c++ system, other.  [build/include_order] [4]
+src/pptable.h:7:  Found C++ system header after other system header. Should be: pptable.h, c system, c++ system, other.  [build/include_order] [4]
+src/pptable.h:8:  Found C++ system header after other system header. Should be: pptable.h, c system, c++ system, other.  [build/include_order] [4]
+src/pptable.h:9:  Found C++ system header after other system header. Should be: pptable.h, c system, c++ system, other.  [build/include_order] [4]
+src/pptable.h:10:  Found C++ system header after other system header. Should be: pptable.h, c system, c++ system, other.  [build/include_order] [4]
 src/pptable.h:19:  At least two spaces is best between code and comments  [whitespace/comments] [2]
 src/pptable.h:27:  Tab found; better to use spaces  [whitespace/tab] [1]
 src/pptable.h:28:  Tab found; better to use spaces  [whitespace/tab] [1]

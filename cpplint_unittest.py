@@ -5288,6 +5288,20 @@ class OrderOfIncludesTest(CpplintTestBase):
                      self.include_state.CheckNextIncludeOrder(
                          cpplint._C_SYS_HEADER))
 
+  def testCheckNextIncludeOrder_OtherSysThenC(self):
+    self.assertEqual('', self.include_state.CheckNextIncludeOrder(
+        cpplint._OTHER_SYS_HEADER))
+    self.assertEqual('Found C system header after other system header',
+                     self.include_state.CheckNextIncludeOrder(
+                         cpplint._C_SYS_HEADER))
+
+  def testCheckNextIncludeOrder_OtherSysThenCpp(self):
+    self.assertEqual('', self.include_state.CheckNextIncludeOrder(
+        cpplint._OTHER_SYS_HEADER))
+    self.assertEqual('Found C++ system header after other system header',
+                     self.include_state.CheckNextIncludeOrder(
+                         cpplint._CPP_SYS_HEADER))
+
   def testCheckNextIncludeOrder_LikelyThenCpp(self):
     self.assertEqual('', self.include_state.CheckNextIncludeOrder(
         cpplint._LIKELY_MY_HEADER))
@@ -5313,12 +5327,29 @@ class OrderOfIncludesTest(CpplintTestBase):
     self.assertEqual('', self.include_state.CheckNextIncludeOrder(
         cpplint._POSSIBLE_MY_HEADER))
 
+  def testCheckNextIncludeOrder_CppThenOtherSys(self):
+    self.assertEqual('', self.include_state.CheckNextIncludeOrder(
+        cpplint._CPP_SYS_HEADER))
+    self.assertEqual('', self.include_state.CheckNextIncludeOrder(
+        cpplint._OTHER_SYS_HEADER))
+
+  def testCheckNextIncludeOrder_OtherSysThenPossible(self):
+    self.assertEqual('', self.include_state.CheckNextIncludeOrder(
+        cpplint._OTHER_SYS_HEADER))
+    self.assertEqual('', self.include_state.CheckNextIncludeOrder(
+        cpplint._POSSIBLE_MY_HEADER))
+
+
   def testClassifyInclude(self):
     file_info = cpplint.FileInfo
     classify_include = cpplint._ClassifyInclude
     self.assertEqual(cpplint._C_SYS_HEADER,
                      classify_include(file_info('foo/foo.cc'),
                                       'stdio.h',
+                                      True))
+    self.assertEqual(cpplint._C_SYS_HEADER,
+                     classify_include(file_info('foo/foo.cc'),
+                                      'sys/time.h',
                                       True))
     self.assertEqual(cpplint._CPP_SYS_HEADER,
                      classify_include(file_info('foo/foo.cc'),
@@ -5327,6 +5358,10 @@ class OrderOfIncludesTest(CpplintTestBase):
     self.assertEqual(cpplint._CPP_SYS_HEADER,
                      classify_include(file_info('foo/foo.cc'),
                                       'typeinfo',
+                                      True))
+    self.assertEqual(cpplint._OTHER_SYS_HEADER,
+                     classify_include(file_info('foo/foo.cc'),
+                                      'foo/foo.h',
                                       True))
     self.assertEqual(cpplint._OTHER_HEADER,
                      classify_include(file_info('foo/foo.cc'),
@@ -5344,7 +5379,6 @@ class OrderOfIncludesTest(CpplintTestBase):
                      classify_include(file_info('foo/foo.h++'),
                                       'boost/any.hpp',
                                       True))
-
     self.assertEqual(cpplint._LIKELY_MY_HEADER,
                      classify_include(file_info('foo/foo.cc'),
                                       'foo/foo-inl.h',
