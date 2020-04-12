@@ -811,7 +811,7 @@ mybinary ${flags}
 # work correctly if the command output contains special
 # characters.
 declare -a files=($(ls /directory))
-mybinary $(get_arguments)
+mybinary $(files)
 ```
 
 <a id="s6.7.1-arrays-pros"></a>
