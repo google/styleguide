@@ -3840,6 +3840,15 @@ class CpplintTest(CpplintTestBase):
         '  [readability/braces] [4]')
     self.TestMultiLineLint(
         """
+        if constexpr (foo) {
+          goto fail;
+          goto fail;
+        } else if constexpr (bar) {
+          hello();
+        }""",
+        '')
+    self.TestMultiLineLint(
+        """
         if (foo)
           if (bar)
             baz;
