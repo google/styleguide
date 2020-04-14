@@ -3479,7 +3479,8 @@ array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
 <h3 id="Lambda_expressions">Lambda expressions</h3>
 
 <p>Use lambda expressions where appropriate. Prefer explicit captures
-when the lambda will escape the current scope.</p>
+when the lambda will escape the current scope. Do not use <code>[=]</code>
+or <code>[=, this]</code> to capture <code>this</code>.</p>
 
 <p class="definition"></p>
 <p> Lambda expressions are a concise way of creating anonymous
@@ -3555,13 +3556,19 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
 <p class="cons"></p>
 <ul>
   <li>Variable capture in lambdas can be a source of dangling-pointer
-  bugs, particularly if a lambda escapes the current scope.</li>
+  bugs, particularly if a lambda escapes the current scope. Default capture
+  by reference (<code>[&amp;]</code>) makes such bugs easier to introduce.</li>
 
-  <li>Default captures by value can be misleading because they do not prevent
-  dangling-pointer bugs. Capturing a pointer by value doesn't cause a deep
-  copy, so it often has the same lifetime issues as capture by reference.
-  This is especially confusing when capturing 'this' by value, since the use
-  of 'this' is often implicit.</li>
+  <li>Default capture by value (<code>[=]</code>) can be misleading because
+  it does not prevent dangling-pointer bugs. Capturing a pointer by value
+  doesn't cause a deep copy, so it has essentially the same lifetime issues
+  as capture by reference.</li>
+
+  <li>Capturing <code>this</code> along with default capture by value is
+  especially confusing, and strict support among C++ versions is incompatible.
+  If capturing <code>this</code> (either explicitly or with by-reference
+  capture default), list any by-value captures explicitly. Keep in mind that
+  uses of captured <code>this</code> are often implicit.</li>
 
   <li>Captures actually declare new variables (whether or not the captures have
     initializers), but they look nothing like any other variable declaration
