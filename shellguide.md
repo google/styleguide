@@ -809,8 +809,16 @@ mybinary ${flags}
 # Command expansions return single strings, not arrays. Avoid
 # unquoted expansion in array assignments because it won’t
 # work correctly if the command output contains special
-# characters.
+# characters or whitespace.
+
+# This expands the listing output into a string, then does special keyword
+# expansion, and then whitespace splitting.  Only then is it turned into a
+# list of words.  The ls command may also change behavior based on the user's
+# active environment!
 declare -a files=($(ls /directory))
+
+# The get_arguments writes everything to STDOUT, but then goes through the
+# same expansion process above before turning into a list of arguments.
 mybinary $(get_arguments)
 ```
 
