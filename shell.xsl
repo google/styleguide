@@ -24,6 +24,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
               <TITLE><xsl:value-of select="@title"/></TITLE>
               <META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
               <META http-equiv="refresh" content="0;url=https://google.github.io/styleguide/shellguide.html" />
+              <LINK rel="canonical" href="https://google.github.io/styleguide/shellguide.html" />
               <LINK HREF="https://www.google.com/favicon.ico" type="image/x-icon"
                     rel="shortcut icon"/>
               <LINK HREF="styleguide.css"
