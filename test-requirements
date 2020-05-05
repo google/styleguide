@@ -2,3 +2,4 @@
 # 5.x requires python 3.5
 pytest>=4.6,<5.0
 pytest-cov
+pyparsing=2.4.0
