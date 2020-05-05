@@ -2,4 +2,7 @@
 # 5.x requires python 3.5
 pytest>=4.6,<5.0
 pytest-cov
-pyparsing=2.4.0
+# freeze versions breaking python 2.7 on travis
+pyparsing<3
+zipp<=0.5.1
+configparser<=3.7.4
