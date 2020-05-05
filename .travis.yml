@@ -17,7 +17,3 @@ install:
 
 script:
   - tox
-
-stages:
-  - lint
-  - test
