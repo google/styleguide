@@ -936,7 +936,7 @@ statement, and otherwise be wary of its expression evaluating to zero
 ```shell
 # Simple calculation used as text - note the use of $(( … )) within
 # a string.
-echo "$(( 2 + 2 )) is 4!?"
+echo "$(( 2 + 2 )) is 4"
 
 # When performing arithmetic comparisons for testing
 if (( a < b )); then
