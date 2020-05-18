@@ -1253,17 +1253,17 @@ We prefer the use of builtins such as the *Parameter Expansion*
 functions in `bash(1)` as it's more robust and portable
 (especially when compared to things like `sed`).
 
-Example:
+Examples:
 
 ```shell
 # Prefer this:
-addition=$(( ${X} + ${Y} ))
+addition=$(( X + Y ))
 substitution="${string/#foo/bar}"
 ```
 
 ```shell
 # Instead of this:
-addition="$(expr ${X} + ${Y})"
+addition="$(expr "${X}" + "${Y}")"
 substitution="$(echo "${string}" | sed -e 's/^foo/bar/')"
 ```
 
