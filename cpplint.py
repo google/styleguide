@@ -6354,7 +6354,8 @@ def ProcessFile(filename, vlevel, extra_check_functions=None):
                                         codecs.getwriter('utf8'),
                                         'replace').read().split('\n')
     else:
-      lines = codecs.open(filename, 'r', 'utf8', 'replace').read().split('\n')
+      with codecs.open(filename, 'r', 'utf8', 'replace') as target_file:
+        lines = target_file.read().split('\n')
 
     # Remove trailing '\r'.
     # The -1 accounts for the extra trailing blank line we get from split()
