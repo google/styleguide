@@ -38,7 +38,7 @@ class Lint(Cmd):
 # some pip versions bark on comments (e.g. on travis)
 def read_without_comments(filename):
     with open(filename) as f:
-        return [l for l in f.read().splitlines() if not len(l) == 0 and not l.startswith('#')]
+        return [line for line in f.read().splitlines() if not len(line) == 0 and not line.startswith('#')]
 
 test_required = read_without_comments('test-requirements')
 
