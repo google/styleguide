@@ -3545,7 +3545,7 @@ Robert Brown
     <SUMMARY>
       You should not use <code>NCONC</code>;
       you should use <code>APPEND</code> instead,
-      or better, better data structures.
+      or better data structures.
     </SUMMARY>
     <BODY>
       <p>
