@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+1.4.6
+-----
+
+* Fix #135: allow 'if constexpr' in readability/braces.
+* Fix runtime warning: Close files after reading contents
+
 1.4.5
 -----
 
