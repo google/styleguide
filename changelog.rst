@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+1.5.0
+-----
+
+* Fix #43 false positives in header include order by checking includes against a list of c headers.
+  Since this interprets certain include lines different than before, output about header include order changes.
+
 1.4.6
 -----
 
