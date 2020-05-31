@@ -57,10 +57,10 @@ For full usage instructions, run:
 Changes
 -------
 
-The modifications in this fork are minor fixes and cosmetic changes:
+The modifications in this fork are minor fixes and cosmetic changes, such as:
 
-* more default extensions
 * python 3 compatibility
+* more default file extensions
 * customizable file extensions with the --extensions argument
 * continuous integration on travis
 * support for recursive file discovery via the --recursive argument
@@ -68,6 +68,7 @@ The modifications in this fork are minor fixes and cosmetic changes:
 * JUnit XML output format
 * Overriding repository root auto-detection via --repository
 * Support ``#pragma once`` as an alternative to header include guards
+* ... and a few more
 
 
 Acknowledgements
