@@ -3712,14 +3712,22 @@ class CpplintTest(CpplintTestBase):
     self.TestLint(' protected: \\', '')
     self.TestLint('  public:      \\', '')
     self.TestLint('   private:   \\', '')
+    # examples using slots macro (e.g. used a lot in QT source code)
     self.TestMultiLineLint(
         TrimExtraIndent("""
             class foo {
              public slots:
               void bar();
             };"""),
-        'Weird number of spaces at line-start.  '
-        'Are you using a 2-space indent?  [whitespace/indent] [3]')
+        '')
+    self.TestMultiLineLint(
+        TrimExtraIndent("""
+            class foo {
+              public slots:
+              void bar();
+            };"""),
+        'public slots: should be indented +1 space inside class foo'
+        '  [whitespace/indent] [3]')
     self.TestMultiLineLint(
         TrimExtraIndent('''
             static const char kRawString[] = R"("
