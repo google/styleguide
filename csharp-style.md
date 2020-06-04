@@ -462,14 +462,15 @@ following remedies:
 
 Consider the following example:
 
-```c# {.bad}
-// What are these arguments?
+```c#
+// Bad - what are these arguments?
 DecimalNumber product = CalculateProduct(values, 7, false, null);
 ```
 
 versus:
 
-```c# {.good}
+```c#
+// Good
 ProductOptions options = new ProductOptions();
 options.PrecisionDecimals = 7;
 options.UseCache = CacheUsage.DontUseCache;
