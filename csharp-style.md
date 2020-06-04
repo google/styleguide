@@ -235,7 +235,7 @@ namespace MyNamespace {                             // Namespaces are PascalCase
 
 For example:
 
-```c# {.good}
+```c#
 int SomeProperty => _someProperty
 ```
 
@@ -359,7 +359,7 @@ int SomeProperty => _someProperty
 
 For example:
 
-```c# {.good}
+```c#
 var x = new SomeClass {
   Property1 = value1,
   Property2 = value2,
