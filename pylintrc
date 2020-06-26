@@ -56,7 +56,10 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=apply-builtin,
+disable=abstract-method,
+        apply-builtin,
+        arguments-differ,
+        attribute-defined-outside-init,
         backtick,
         bad-option-value,
         basestring-builtin,
@@ -90,6 +93,7 @@ disable=apply-builtin,
         long-suffix,
         map-builtin-not-iterating,
         metaclass-assignment,
+        missing-function-docstring,
         next-method-called,
         next-method-defined,
         no-absolute-import,
@@ -98,6 +102,7 @@ disable=apply-builtin,
         no-else-raise,
         no-else-return,
         no-member,
+        no-name-in-module,
         no-self-use,
         nonzero-method,
         oct-method,
@@ -135,8 +140,10 @@ disable=apply-builtin,
         unicode-builtin,
         unpacking-in-except,
         useless-else-on-loop,
+        useless-object-inheritance,
         useless-suppression,
         using-cmp-argument,
+        wrong-import-order,
         xrange-builtin,
         zip-builtin-not-iterating,
 
@@ -300,6 +307,13 @@ expected-line-ending-format=
 notes=TODO
 
 
+[STRING]
+
+# This flag controls whether inconsistent-quotes generates a warning when the
+# character used as a quote delimiter is used inconsistently within a module.
+check-quote-consistency=yes
+
+
 [VARIABLES]
 
 # Tells whether we should check for unused import in __init__ files.
@@ -326,7 +340,7 @@ redefining-builtins-modules=six,six.moves,past.builtins,future.builtins,functool
 
 # Logging modules to check that the string format arguments are in logging
 # function parameter format
-logging-modules=logging,absl.logging,tensorflow.google.logging
+logging-modules=logging,absl.logging,tensorflow.io.logging
 
 
 [SIMILARITIES]
