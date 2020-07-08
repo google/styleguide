@@ -7,6 +7,8 @@ See README.md for details.
 # Google Python Style Guide
 
 
+<!-- https://github.com/google/styleguide/issues/566: Can this render properly on Github Pages? -->
+
 <details>
   <summary>Table of Contents</summary>
 
@@ -2153,9 +2155,10 @@ aptly described using a one-line docstring.
 <a id="doc-function-args"></a>
 [*Args:*](#doc-function-args)
 :   List each parameter by name. A description should follow the name, and be
-    separated by a colon and a space. If the description is too long to fit on a
-    single 80-character line, use a hanging indent of 2 or 4 spaces (be
-    consistent with the rest of the file).
+    separated by a colon followed by either a space or newline. If the
+    description is too long to fit on a single 80-character line, use a hanging
+    indent of 2 or 4 spaces more than the parameter name (be consistent with the
+    rest of the docstrings in the file).
 
     The description should include required type(s) if the code does not contain
     a corresponding type annotation. If a function accepts `*foo` (variable
@@ -2172,40 +2175,85 @@ aptly described using a one-line docstring.
 
 <a id="doc-function-raises"></a>
 [*Raises:*](#doc-function-raises)
-:   List all exceptions that are relevant to the interface. You should not
-    document exceptions that get raised if the API specified in the docstring is
-    violated (because this would paradoxically make behavior under violation of
-    the API part of the API).
+:   List all exceptions that are relevant to the interface followed by a
+    description. Use a similar exception name + colon + space or newline and
+    hanging indent style as described in *Args:*. You should not document
+    exceptions that get raised if the API specified in the docstring is violated
+    (because this would paradoxically make behavior under violation of the API
+    part of the API).
 
 ```python
-def fetch_bigtable_rows(big_table, keys, other_silly_variable=None):
-    """Fetches rows from a Bigtable.
+def fetch_smalltable_rows(table_handle: smalltable.Table,
+                          keys: Sequence[Union[bytes, str]],
+                          require_all_keys: bool = False,
+                         ) -> Mapping[bytes, Tuple[str]]:
+    """Fetches rows from a Smalltable.
 
     Retrieves rows pertaining to the given keys from the Table instance
-    represented by big_table.  Silly things may happen if
-    other_silly_variable is not None.
+    represented by table_handle.  String keys will be UTF-8 encoded.
 
     Args:
-        big_table: An open Bigtable Table instance.
-        keys: A sequence of strings representing the key of each table row
-            to fetch.
-        other_silly_variable: Another optional variable, that has a much
-            longer name than the other args, and which does nothing.
+        table_handle: An open smalltable.Table instance.
+        keys: A sequence of strings representing the key of each table
+          row to fetch.  String keys will be UTF-8 encoded.
+        require_all_keys: Optional; If require_all_keys is True only
+          rows with values set for all keys will be returned.
 
     Returns:
         A dict mapping keys to the corresponding table row data
         fetched. Each row is represented as a tuple of strings. For
         example:
 
-        {'Serak': ('Rigel VII', 'Preparer'),
-         'Zim': ('Irk', 'Invader'),
-         'Lrrr': ('Omicron Persei 8', 'Emperor')}
+        {b'Serak': ('Rigel VII', 'Preparer'),
+         b'Zim': ('Irk', 'Invader'),
+         b'Lrrr': ('Omicron Persei 8', 'Emperor')}
 
-        If a key from the keys argument is missing from the dictionary,
-        then that row was not found in the table.
+        Returned keys are always bytes.  If a key from the keys argument is
+        missing from the dictionary, then that row was not found in the
+        table (and require_all_keys must have been False).
 
     Raises:
-        IOError: An error occurred accessing the bigtable.Table object.
+        IOError: An error occurred accessing the smalltable.
+    """
+```
+
+Similarly, this variation on `Args:` with a line break is also allowed:
+
+```python
+def fetch_smalltable_rows(table_handle: smalltable.Table,
+                          keys: Sequence[Union[bytes, str]],
+                          require_all_keys: bool = False,
+                         ) -> Mapping[bytes, Tuple[str]]:
+    """Fetches rows from a Smalltable.
+
+    Retrieves rows pertaining to the given keys from the Table instance
+    represented by table_handle.  String keys will be UTF-8 encoded.
+
+    Args:
+      table_handle:
+        An open smalltable.Table instance.
+      keys:
+        A sequence of strings representing the key of each table row to
+        fetch.  String keys will be UTF-8 encoded.
+      require_all_keys:
+        Optional; If require_all_keys is True only rows with values set
+        for all keys will be returned.
+
+    Returns:
+      A dict mapping keys to the corresponding table row data
+      fetched. Each row is represented as a tuple of strings. For
+      example:
+
+      {b'Serak': ('Rigel VII', 'Preparer'),
+       b'Zim': ('Irk', 'Invader'),
+       b'Lrrr': ('Omicron Persei 8', 'Emperor')}
+
+      Returned keys are always bytes.  If a key from the keys argument is
+      missing from the dictionary, then that row was not found in the
+      table (and require_all_keys must have been False).
+
+    Raises:
+      IOError: An error occurred accessing the smalltable.
     """
 ```
 
