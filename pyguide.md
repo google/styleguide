@@ -2159,7 +2159,6 @@ aptly described using a one-line docstring.
     description is too long to fit on a single 80-character line, use a hanging
     indent of 2 or 4 spaces more than the parameter name (be consistent with the
     rest of the docstrings in the file).
-
     The description should include required type(s) if the code does not contain
     a corresponding type annotation. If a function accepts `*foo` (variable
     length argument lists) and/or `**bar` (arbitrary keyword arguments), they
