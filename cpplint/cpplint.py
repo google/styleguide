@@ -1747,6 +1747,7 @@ def CheckForCopyright(filename, lines, error):
                              "// Copyright 20XX and onwards Google Inc.",
                              "// Copyright (c) 20XX, Google Inc.",
                              "/* Copyright (c) 20XX, Google Inc.",
+                             "// Copyright 20XX Google Inc."
                             ]
   for line in xrange(1, min(len(lines), 11)):
     line_str = lines[line]
