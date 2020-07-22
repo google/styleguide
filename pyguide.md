@@ -6,9 +6,7 @@ See README.md for details.
 
 # Google Python Style Guide
 
-<!-- https://github.com/google/styleguide/issues/566: Can this render properly on Github Pages? -->
-
-<details>
+<details markdown="1">
   <summary>Table of Contents</summary>
 
 -   [1 Background](#s1-background)
