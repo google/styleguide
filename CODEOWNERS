@@ -2,3 +2,5 @@
 
 lispguide.xml @sfreilich
 csharp-style.md @jbcoe
+pyguide.md @gpshead
+pylintrc @gpshead
