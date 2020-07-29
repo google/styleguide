@@ -1383,7 +1383,7 @@ def FindNextMultiLineCommentEnd(lines, lineix):
 
 def RemoveMultiLineCommentsFromRange(lines, begin, end):
   """Clears a range of lines for multi-line comments."""
-  # Having // dummy comments makes the lines non-empty, so we will not get
+  # Having // <empty> comments makes the lines non-empty, so we will not get
   # unnecessary blank line warnings later in the code.
   for i in range(begin, end):
     lines[i] = '/**/'
@@ -1757,7 +1757,7 @@ def CheckForCopyright(filename, lines, error):
   """Logs an error if no Copyright message appears at the top of the file."""
 
   # We'll say it should occur by line 10. Don't forget there's a
-  # dummy line at the front.
+  # placeholder line at the front.
   for line in xrange(1, min(len(lines), 11)):
     if re.search(r'Copyright', lines[line], re.I): break
   else:                       # means no copyright line was found
