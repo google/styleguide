@@ -6,9 +6,10 @@ See README.md for details.
 
 # Google Python Style Guide
 
-<!-- https://github.com/google/styleguide/issues/566: Can this render properly on Github Pages? -->
 
-<details>
+<!-- markdown="1" is required for GitHub Pages to render the TOC properly. -->
+
+<details markdown="1">
   <summary>Table of Contents</summary>
 
 -   [1 Background](#s1-background)
