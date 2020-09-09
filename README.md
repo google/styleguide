@@ -55,3 +55,5 @@ The following Google style guides live outside of this project:
 [go]: https://golang.org/wiki/CodeReviewComments
 [dart]: https://www.dartlang.org/guides/language/effective-dart
 [ccl]: https://creativecommons.org/licenses/by/3.0/
+
+[![CodeFactor](https://www.codefactor.io/repository/github/google/styleguide/badge)](https://www.codefactor.io/repository/github/google/styleguide)
