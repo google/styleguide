@@ -1747,7 +1747,8 @@ def CheckForCopyright(filename, lines, error):
                              "// Copyright 20XX and onwards Google Inc.",
                              "// Copyright (c) 20XX, Google Inc.",
                              "/* Copyright (c) 20XX, Google Inc.",
-                             "// Copyright 20XX Google Inc."
+                             "// Copyright 20XX Google Inc.",
+                             "// Copyright 20XX and onwards Google, Inc.",
                             ]
   for line in xrange(1, min(len(lines), 11)):
     line_str = lines[line]
@@ -3090,8 +3091,11 @@ def CheckComment(line, filename, linenum, next_line_start, error):
       # If the comment contains an alphanumeric character, there
       # should be a space somewhere between it and the // unless
       # it's a /// or //! Doxygen comment.
+      # Also allow PVS Studio //V-:... comments.
+      # https://www.viva64.com/en/m/0017/#IDA6296BF877
       if (Match(r'//[^ ]*\w', comment) and
-          not Match(r'(///|//\!)(\s+|$)', comment)):
+          not Match(r'(///|//\!)(\s+|$)', comment) and
+          not Match(r'//-V:', comment)):
         error(filename, linenum, 'whitespace/comments', 4,
               'Should have a space between // and comment')
 
