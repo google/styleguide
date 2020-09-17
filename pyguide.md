@@ -463,10 +463,6 @@ library calls.
 
 Exceptions must follow certain conditions:
 
--   Raise exceptions like this: `raise MyError('Error message')` or `raise
-    MyError()`. Do not use the two-argument form (`raise MyError, 'Error
-    message'`).
-
 -   Make use of built-in exception classes when it makes sense. For example,
     raise a `ValueError` to indicate a programming mistake like a violated
     precondition (such as if you were passed a negative number but required a
@@ -547,16 +543,6 @@ Exceptions must follow certain conditions:
 -   Use the `finally` clause to execute code whether or not an exception is
     raised in the `try` block. This is often useful for cleanup, i.e., closing a
     file.
-
--   When capturing an exception, use `as` rather than a comma. For example:
-
-    
-    ```python
-    try:
-      raise Error()
-    except Error as error:
-      pass
-    ```
 
 <a id="s2.5-global-variables"></a>
 <a id="25-global-variables"></a>
@@ -1376,8 +1362,8 @@ Okay to use.
 <a id="decorators"></a>
 ### 2.17 Function and Method Decorators 
 
-Use decorators judiciously when there is a clear advantage. Avoid
-`@staticmethod` and limit use of `@classmethod`.
+Use decorators judiciously when there is a clear advantage. Avoid `staticmethod`
+and limit use of `classmethod`.
 
 <a id="s2.17.1-definition"></a>
 <a id="2171-definition"></a>
@@ -1447,10 +1433,10 @@ guaranteed to succeed in all cases.
 Decorators are a special case of "top level code" - see [main](#s3.17-main) for
 more discussion.
 
-Never use `@staticmethod` unless forced to in order to integrate with an API
+Never use `staticmethod` unless forced to in order to integrate with an API
 defined in an existing library. Write a module level function instead.
 
-Use `@classmethod` only when writing a named constructor or a class-specific
+Use `classmethod` only when writing a named constructor or a class-specific
 routine that modifies necessary global state such as a process-wide cache.
 
 <a id="s2.18-threading"></a>
@@ -2188,7 +2174,7 @@ aptly described using a one-line docstring.
 def fetch_smalltable_rows(table_handle: smalltable.Table,
                           keys: Sequence[Union[bytes, str]],
                           require_all_keys: bool = False,
-                         ) -> Mapping[bytes, Tuple[str]]:
+) -> Mapping[bytes, Tuple[str]]:
     """Fetches rows from a Smalltable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -2225,7 +2211,7 @@ Similarly, this variation on `Args:` with a line break is also allowed:
 def fetch_smalltable_rows(table_handle: smalltable.Table,
                           keys: Sequence[Union[bytes, str]],
                           require_all_keys: bool = False,
-                         ) -> Mapping[bytes, Tuple[str]]:
+) -> Mapping[bytes, Tuple[str]]:
     """Fetches rows from a Smalltable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -2649,8 +2635,8 @@ grouped from most generic to least generic:
 
     
 Within each grouping, imports should be sorted lexicographically, ignoring case,
-according to each module's full package path. Code may optionally place a blank
-line between import sections.
+according to each module's full package path (the `path` in `from path import
+...`). Code may optionally place a blank line between import sections.
 
 ```python
 import collections
@@ -2664,6 +2650,7 @@ import cryptography
 import tensorflow as tf
 
 from book.genres import scifi
+from myproject.backend import huxley
 from myproject.backend.hgwells import time_machine
 from myproject.backend.state_machine import main_loop
 from otherproject.ai import body
@@ -2756,7 +2743,7 @@ Always use a `.py` filename extension. Never use dashes.
 
 -   single character names, except for specifically allowed cases:
 
-    -   counters or iterators (e.g. `i`, `j`, `k`, `v`, et al)
+    -   counters or iterators (e.g. `i`, `j`, `k`, `v`, et al.)
     -   `e` as an exception identifier in `try/except` statements.
     -   `f` as a file handle in `with` statements
 
@@ -2904,13 +2891,11 @@ containing `exec "$0.py" "$@"`.
 <a id="main"></a>
 ### 3.17 Main 
 
-Even a file meant to be used as an executable should be importable and a mere
-import should not have the side effect of executing the program's main
-functionality. The main functionality should be in a `main()` function.
-
-In Python, `pydoc` as well as unit tests require modules to be importable. Your
-code should always check `if __name__ == '__main__'` before executing your main
-program so that the main program is not executed when the module is imported.
+In Python, `pydoc` as well as unit tests require modules to be importable. If a
+file is meant to be used as an executable, its main functionality should be in a
+`main()` function, and your code should always check `if __name__ == '__main__'`
+before executing your main program, so that it is not executed when the module
+is imported.
 
 When using [absl](https://github.com/abseil/abseil-py), use `app.run`:
 
@@ -3142,7 +3127,7 @@ has to be declared! You can use `Union`, but if there is only one other type,
 use `Optional`.
 
 Use explicit `Optional` instead of implicit `Optional`. Earlier versions of PEP
-484 allowed `a: Text = None` to be interpretted as `a: Optional[Text] = None`,
+484 allowed `a: Text = None` to be interpreted as `a: Optional[Text] = None`,
 but that is no longer the preferred behavior.
 
 ```python
