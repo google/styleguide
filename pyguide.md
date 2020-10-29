@@ -3399,7 +3399,7 @@ def f(x: "sketch.Sketch"): ...
 
 Circular dependencies that are caused by typing are code smells. Such code is a
 good candidate for refactoring. Although technically it is possible to keep
-circular dependencies, the [build system](#typing-build-deps) will not let you
+circular dependencies, the build system will not let you
 do so because each module has to depend on the other.
 
 Replace modules that create circular dependency imports with `Any`. Set an
