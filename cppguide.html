@@ -1693,8 +1693,8 @@ earlier.</p>
 <code>protected:</code>, then <code>private:</code>.  Omit
 sections that would be empty.</p>
 
-<p>Within each section, generally prefer grouping similar
-kinds of declarations together, and generally prefer the
+<p>Within each section, prefer grouping similar
+kinds of declarations together, and prefer the
 following order: types (including <code>typedef</code>,
 <code>using</code>, and nested structs and classes),
 constants, factory functions, constructors and assignment
@@ -1718,6 +1718,9 @@ a return value and sometimes via output parameters (or in/out parameters).</p>
 <p>Prefer using return values over output parameters: they
 improve readability, and often provide the same or better
 performance.</p>
+
+<p>Prefer to return by value or, failing that, return by reference.
+Avoid returning a pointer unless it can be null.</p>
 
 <p>Parameters are either inputs to the function, outputs from the
 function, or both. Input parameters should usually be values
@@ -2077,9 +2080,7 @@ do use shared ownership, prefer to use
 is a tool that reads a source file and identifies many
 style errors. It is not perfect, and has both false
 positives and false negatives, but it is still a valuable
-tool. False positives can be ignored by putting <code>//
-NOLINT</code> at the end of the line or
-<code>// NOLINTNEXTLINE</code> in the previous line.</p>
+tool. </p>
 
 
 
@@ -4044,7 +4045,7 @@ and avoid terms that other programmers might find disrespectful or offensive
 (such as "master" and "slave", "blacklist" and "whitelist", or "redline"),
 even if the terms also have an ostensibly neutral meaning.
 Similarly, use gender-neutral language unless you're referring
-to a specific person (and using their preferred pronouns). For example,
+to a specific person (and using their pronouns). For example,
 use "they"/"them"/"their" for people of unspecified gender
 (<a href="https://apastyle.apa.org/style-grammar-guidelines/grammar/singular-they">even
 when singular</a>), and "it"/"its" for software, computers, and other
@@ -4621,7 +4622,7 @@ obvious. For example:</p>
 are, what they are used for, and (if unclear) why it needs to be
 global. For example:</p>
 
-<pre>// The total number of tests cases that we run through in this regression test.
+<pre>// The total number of test cases that we run through in this regression test.
 const int kNumTestCases = 6;
 </pre>
 
@@ -5178,92 +5179,83 @@ MyType m = {  // Here, you could also break before {.
 
 <h3 id="Conditionals">Conditionals</h3>
 
-<p>Each of <code>if</code>, <code>else</code>, and <code>else if</code>
-  belong on separate lines. There should be a space between
-  the <code>if</code> and the open parenthesis, and between the close
-  parenthesis and the curly brace (if any), but no space between the
-  parentheses and the condition.</p>
+<p>In an <code>if</code> statement, including its optional <code>else if</code>
+and <code>else</code> clauses, put one space between the <code>if</code> and the
+opening parenthesis, and between the closing parenthesis and the curly brace (if
+any), but no spaces between the parentheses and the condition or initializer. If
+the optional initializer is present, put a space or newline after the semicolon,
+but not before.</p>
 
-<pre>if (condition) {  // no spaces inside parentheses
-  ...  // 2 space indent.
-} else if (...) {  // The else goes on the same line as the closing brace.
-  ...
+<pre class="badcode">if(condition) {              // Bad - space missing after IF
+if ( condition ) {           // Bad - space between the parentheses and the condition
+if (condition){              // Bad - space missing before {
+if(condition){               // Doubly bad
+
+if (int a = f();a == 10) {   // Bad - space missing after the semicolon
+</pre>
+
+<p>Use curly braces for the controlled statements following
+<code>if</code>, <code>else if</code> and <code>else</code>. Break the line
+immediately after the opening brace, and immediately before the closing brace. A
+subsequent <code>else</code>, if any, appears on the same line as the preceding
+closing brace, separated by a space.</p>
+
+<pre>if (condition) {                   // no spaces inside parentheses, space before brace
+  DoOneThing();                    // two space indent
+  DoAnotherThing();
+} else if (int a = f(); a != 3) {  // closing brace on new line, else on same line
+  DoAThirdThing(a);
 } else {
-  ...
+  DoNothing();
 }
 </pre>
 
-<pre class="badcode">if(condition) {   // Bad - space missing after IF.
-if ( condition ) { // Bad - space between the parentheses and the condition
-if (condition){   // Bad - space missing before {.
-if(condition){    // Doubly bad.
-</pre>
-
-<pre>if (condition) {  // Good - proper space after IF and before {.
-</pre>
-
-<p>Short conditional statements may be written on one
-line if this enhances readability. You may use this only
-when the line is brief and the statement does not use the
-<code>else</code> clause.</p>
+<p>For historical reasons, we allow one exception to the above rules: if an
+<code>if</code> statement has no <code>else</code> or <code>else if</code>
+clauses, then the curly braces for the controlled statement or the line breaks
+inside the curly braces may be omitted if as a result the entire <code>if</code>
+statement appears on either a single line (in which case there is a space
+between the closing parenthesis and the controlled statement) or on two lines
+(in which case there is a line break after the closing parenthesis and there are
+no braces). For example, the following forms are allowed under this
+exception.</p>
 
 <pre>if (x == kFoo) return new Foo();
-if (x == kBar) return new Bar();
+
+if (x == kBar)
+  return new Bar(arg1, arg2, arg3);
+
+if (x == kQuz) { return new Quz(1, 2, 3); }
 </pre>
 
-<p>This is not allowed when the if statement has an
-<code>else</code>:</p>
+<p>Use this style only when the statement is brief, and consider that
+conditional statements with complex conditions or controlled statements may be
+more readable with curly braces. Some
+projects
+require curly braces always.</p>
 
-<pre class="badcode">// Not allowed - IF statement on one line when there is an ELSE clause
+<p>Finally, these are not permitted:</p>
+
+<pre class="badcode">// Bad - IF statement with ELSE is missing braces
 if (x) DoThis();
 else DoThat();
-</pre>
 
-<p>In general, curly braces are not required for
-single-line statements, but they are allowed if you like
-them; conditional or loop statements with complex
-conditions or statements may be more readable with curly
-braces. Some
-projects require that an
-<code>if</code> must always have an accompanying
-brace.</p>
-
-<pre>if (condition)
-  DoSomething();  // 2 space indent.
-
-if (condition) {
-  DoSomething();  // 2 space indent.
-}
-</pre>
-
-<p>However, if one part of an
-<code>if</code>-<code>else</code> or an
-<code>if</code>-<code>else if</code>-<code>else</code> statement uses curly
-braces, the other part(s) must, too:</p>
-
-<pre class="badcode">// Not allowed - curly on IF but not ELSE
-if (condition) {
-  foo;
-} else
-  bar;
-
-// Not allowed - curly on ELSE but not IF
+// Bad - IF statement with ELSE does not have braces everywhere
 if (condition)
   foo;
 else {
   bar;
 }
-</pre>
 
-<pre>// Curly braces around IF, ELSE IF, and ELSE required because
-// one of the clauses used braces.
-if (condition) {
-  foo;
-} else if (other_condition) {
-  frob;
-} else {
-  bar;
-}
+// Bad - IF statement is too long to omit braces
+if (condition)
+  // Comment
+  DoSomething();
+
+// Bad - IF statement is too long to omit braces
+if (condition1 &amp;&amp;
+    condition2)
+  DoSomething();
 </pre>
 
 <h3 id="Loops_and_Switch_Statements">Loops and Switch Statements</h3>
