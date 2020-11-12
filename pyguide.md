@@ -949,6 +949,7 @@ true-expression, if-expression, else-expression. Use a complete if statement
 when things get more complicated.
 
 ```python
+Yes:
 one_line = 'yes' if predicate(value) else 'no'
 slightly_split = ('yes' if predicate(value)
                   else 'no, nein, nyet')
@@ -959,6 +960,7 @@ the_longest_ternary_style_that_can_be_done = (
 ```
 
 ```python
+No:
 bad_line_breaking = ('yes' if predicate(value) else
                      'no')
 portion_too_long = ('yes'
