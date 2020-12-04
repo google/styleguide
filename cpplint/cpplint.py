@@ -1745,6 +1745,7 @@ def CheckForCopyright(filename, lines, error):
                              " * Copyright 20XX Facebook",
                              "// Copyright 20XX-20XX Georges Menie (www.menie.org)",
                              "// Copyright 20XX and onwards Google Inc.",
+                             "// Copyright (C) 19XX and onwards Google, Inc.",
                              "// Copyright (c) 20XX, Google Inc.",
                              "/* Copyright (c) 20XX, Google Inc.",
                              "// Copyright 20XX Google Inc.",
@@ -1752,8 +1753,11 @@ def CheckForCopyright(filename, lines, error):
                             ]
   for line in xrange(1, min(len(lines), 11)):
     line_str = lines[line]
-    fixed_line = re.sub(r'20\d\d', '20XX', re.sub(' +', ' ', line_str))
-    fixed_line = re.sub('Reserved', 'reserved', re.sub('Rights', 'rights', fixed_line))
+    fixed_line = re.sub(' +', ' ', line_str)
+    fixed_line = re.sub(r'19\d\d', '19XX', fixed_line)
+    fixed_line = re.sub(r'20\d\d', '20XX', fixed_line)
+    fixed_line = re.sub('Reserved', 'reserved', fixed_line)
+    fixed_line = re.sub('Rights', 'rights', fixed_line)
     if fixed_line.endswith('reserved.'):
         fixed_line = fixed_line[:-1]
     if re.search(r'Copyright', line_str, re.I):
