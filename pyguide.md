@@ -83,9 +83,6 @@ See README.md for details.
         +   [2.14.2 Pros](#s2.14.2-pros)
         +   [2.14.3 Cons](#s2.14.3-cons)
         +   [2.14.4 Decision](#s2.14.4-decision)
-    *   [2.15 Deprecated Language Features](#s2.15-deprecated-language-features)
-        +   [2.15.1 Definition](#s2.15.1-definition)
-        +   [2.15.2 Decision](#s2.15.2-decision)
     *   [2.16 Lexical Scoping](#s2.16-lexical-scoping)
         +   [2.16.1 Definition](#s2.16.1-definition)
         +   [2.16.2 Pros](#s2.16.2-pros)
@@ -128,8 +125,9 @@ See README.md for details.
         +   [3.8.4 Classes](#s3.8.4-comments-in-classes)
         +   [3.8.5 Block and Inline Comments](#s3.8.5-block-and-inline-comments)
         +   [3.8.6 Punctuation, Spelling, and Grammar](#s3.8.6-punctuation-spelling-and-grammar)
-    *   [3.9 Classes](#s3.9-classes)
     *   [3.10 Strings](#s3.10-strings)
+        +   [3.10.1 Logging](#s3.10.1-logging)
+        +   [3.10.2 Error Messages](#s3.10.2-error-messages)
     *   [3.11 Files and Sockets](#s3.11-files-and-sockets)
     *   [3.12 TODO Comments](#s3.12-todo-comments)
     *   [3.13 Imports formatting](#s3.13-imports-formatting)
@@ -220,8 +218,8 @@ Catches easy-to-miss errors like typos, using-vars-before-assignment, etc.
 #### 2.1.3 Cons 
 
 `pylint`
-isn't perfect. To take advantage of it, we'll need to sometimes: a) Write around
-it b) Suppress its warnings or c) Improve it.
+isn't perfect. To take advantage of it, sometimes we'll need to write around it,
+suppress its warnings or fix it.
 
 <a id="s2.1.4-decision"></a>
 <a id="214-decision"></a>
@@ -432,8 +430,8 @@ Exceptions are allowed but must be used carefully.
 <a id="exceptions-definition"></a>
 #### 2.4.1 Definition 
 
-Exceptions are a means of breaking out of the normal flow of control of a code
-block to handle errors or other exceptional conditions.
+Exceptions are a means of breaking out of normal control flow to handle errors
+or other exceptional conditions.
 
 <a id="s2.4.2-pros"></a>
 <a id="242-pros"></a>
@@ -444,7 +442,7 @@ block to handle errors or other exceptional conditions.
 The control flow of normal operation code is not cluttered by error-handling
 code. It also allows the control flow to skip multiple frames when a certain
 condition occurs, e.g., returning from N nested functions in one step instead of
-having to carry-through error codes.
+having to plumb error codes through.
 
 <a id="s2.4.3-cons"></a>
 <a id="243-cons"></a>
@@ -629,9 +627,8 @@ Commonly used for implementing decorators.
 <a id="nested-classes-functions-cons"></a>
 #### 2.6.3 Cons 
 
-Instances of nested or local classes cannot be pickled. Nested functions and
-classes cannot be directly tested. Nesting can make your outer function longer
-and less readable.
+Nested functions and classes cannot be directly tested. Nesting can make the
+outer function longer and less readable.
 
 <a id="s2.6.4-decision"></a>
 <a id="264-decision"></a>
@@ -789,8 +786,7 @@ means a dictionary). This is also an advantage.
 Use default iterators and operators for types that support them, like lists,
 dictionaries, and files. The built-in types define iterator methods, too. Prefer
 these methods to methods that return lists, except that you should not mutate a
-container while iterating over it. Never use Python 2 specific iteration methods
-such as `dict.iter*()` unless necessary.
+container while iterating over it.
 
 ```python
 Yes:  for key in adict: ...
@@ -859,7 +855,8 @@ functions.
 <a id="lambdas"></a>
 ### 2.10 Lambda Functions 
 
-Okay for one-liners.
+Okay for one-liners. Prefer generator expressions over `map()` or `filter()`
+with a `lambda`.
 
 <a id="s2.10.1-definition"></a>
 <a id="2101-definition"></a>
@@ -868,8 +865,6 @@ Okay for one-liners.
 #### 2.10.1 Definition 
 
 Lambdas define anonymous functions in an expression, as opposed to a statement.
-They are often used to define callbacks or operators for higher-order functions
-like `map()` and `filter()`.
 
 <a id="s2.10.2-pros"></a>
 <a id="2102-pros"></a>
@@ -949,22 +944,24 @@ true-expression, if-expression, else-expression. Use a complete if statement
 when things get more complicated.
 
 ```python
-one_line = 'yes' if predicate(value) else 'no'
-slightly_split = ('yes' if predicate(value)
-                  else 'no, nein, nyet')
-the_longest_ternary_style_that_can_be_done = (
-    'yes, true, affirmative, confirmed, correct'
-    if predicate(value)
-    else 'no, false, negative, nay')
+Yes:
+    one_line = 'yes' if predicate(value) else 'no'
+    slightly_split = ('yes' if predicate(value)
+                      else 'no, nein, nyet')
+    the_longest_ternary_style_that_can_be_done = (
+        'yes, true, affirmative, confirmed, correct'
+        if predicate(value)
+        else 'no, false, negative, nay')
 ```
 
 ```python
-bad_line_breaking = ('yes' if predicate(value) else
-                     'no')
-portion_too_long = ('yes'
-                    if some_long_module.some_long_predicate_function(
-                        really_long_variable_name)
-                    else 'no, false, negative, nay')
+No:
+    bad_line_breaking = ('yes' if predicate(value) else
+                         'no')
+    portion_too_long = ('yes'
+                        if some_long_module.some_long_predicate_function(
+                            really_long_variable_name)
+                        else 'no, false, negative, nay')
 ```
 
 <a id="s2.12-default-argument-values"></a>
@@ -1079,8 +1076,8 @@ future without breaking the interface.
 <a id="properties-cons"></a>
 #### 2.13.3 Cons 
 
-Must inherit from `object` in Python 2. Can hide side-effects much like operator
-overloading. Can be confusing for subclasses.
+Can hide side-effects much like operator overloading. Can be confusing for
+subclasses.
 
 <a id="s2.13.4-decision"></a>
 <a id="2134-decision"></a>
@@ -1089,8 +1086,8 @@ overloading. Can be confusing for subclasses.
 #### 2.13.4 Decision 
 
 Use properties in new code to access or set data where you would normally have
-used simple, lightweight accessor or setter methods. Properties should be
-created with the `@property` [decorator](#s2.17-function-and-method-decorators).
+used lightweight accessor or setter methods. Properties should be created with
+the `@property` [decorator](#s2.17-function-and-method-decorators).
 
 Inheritance with properties can be non-obvious if the property itself is not
 overridden. Thus one must make sure that accessor methods are called indirectly
@@ -1233,53 +1230,6 @@ Use the "implicit" false if possible, e.g., `if foo:` rather than `if foo !=
     ```
 
 -   Note that `'0'` (i.e., `0` as string) evaluates to true.
-
-<a id="s2.15-deprecated-language-features"></a>
-<a id="215-deprecated-language-features"></a>
-
-<a id="deprecated-features"></a>
-### 2.15 Deprecated Language Features 
-
-Use string methods instead of the `string` module where possible. Use function
-call syntax instead of `apply`. Use list comprehensions and `for` loops instead
-of `filter` and `map` when the function argument would have been an inlined
-lambda anyway. Use `for` loops instead of `reduce`.
-
-<a id="s2.15.1-definition"></a>
-<a id="2151-definition"></a>
-
-<a id="deprecated-features-definition"></a>
-#### 2.15.1 Definition 
-
-Current versions of Python provide alternative constructs that people find
-generally preferable.
-
-<a id="s2.15.2-decision"></a>
-<a id="2152-decision"></a>
-
-<a id="deprecated-features-decision"></a>
-#### 2.15.2 Decision 
-
-We do not use any Python version which does not support these features, so there
-is no reason not to use the new styles.
-
-```python
-Yes: words = foo.split(':')
-
-     [x[1] for x in my_list if x[2] == 5]
-
-     map(math.sqrt, data)    # Ok. No inlined lambda expression.
-
-     fn(*args, **kwargs)
-```
-
-```python
-No:  words = string.split(foo, ':')
-
-     map(lambda x: x[1], filter(lambda x: x[2] == 5, my_list))
-
-     apply(fn, args, kwargs)
-```
 
 <a id="s2.16-lexical-scoping"></a>
 <a id="216-lexical-scoping"></a>
@@ -1506,8 +1456,7 @@ longer but is straightforward.
 Avoid these features in your code.
 
 Standard library modules and classes that internally use these features are okay
-to use (for example, `abc.ABCMeta`, `collections.namedtuple`, `dataclasses`, and
-`enum`).
+to use (for example, `abc.ABCMeta`, `dataclasses`, and `enum`).
 
 <a id="s2.20-modern-python"></a>
 <a id="220-modern-python"></a>
@@ -2039,10 +1988,10 @@ No:
 
 Most `.py` files do not need to start with a `#!` line. Start the main file of a
 program with
-`#!/usr/bin/python` with an optional single digit `2` or `3` suffix per
-[PEP-394](https://www.google.com/url?sa=D&q=http://www.python.org/dev/peps/pep-0394/).
+`#!/usr/bin/env python3` (to support virtualenvs) or `#!/usr/bin/python3` per
+[PEP-394](https://www.python.org/dev/peps/pep-0394/).
 
-This line is used by the kernel to find the Python interpreter, but is ignored by Python when importing modules. It is only necessary on a file that will be executed directly.
+This line is used by the kernel to find the Python interpreter, but is ignored by Python when importing modules. It is only necessary on a file intended to be executed directly.
 
 <a id="s3.8-comments-and-docstrings"></a>
 <a id="s3.8-comments"></a>
@@ -2337,48 +2286,18 @@ using a comma when you should be using a semicolon, it is very important that
 source code maintain a high level of clarity and readability. Proper
 punctuation, spelling, and grammar help with that goal.
 
-<a id="s3.9-classes"></a>
-<a id="39-classes"></a>
-
-<a id="classes"></a>
-### 3.9 Classes 
-
-Classes need not explicitly inherit from `object` (unless for compatibility with
-Python 2).
-
-```python
-Modern:
-     class SampleClass:
-         pass
-
-
-     class OuterClass:
-
-         class InnerClass:
-             pass
-```
-
-```python
-Ancient:
-    class SampleClass(object):
-        pass
-
-
-    class OuterClass(object):
-
-        class InnerClass(object):
-            pass
-```
-
 <a id="s3.10-strings"></a>
 <a id="310-strings"></a>
 
 <a id="strings"></a>
 ### 3.10 Strings 
 
-Use the `format` method or the `%` operator for formatting strings, even when
-the parameters are all strings. Use your best judgment to decide between `+` and
-`%` (or `format`) though.
+Use an
+[f-string](https://docs.python.org/3/reference/lexical_analysis.html#f-strings),
+the `%` operator, or the `format` method for formatting strings, even when the
+parameters are all strings. Use your best judgment to decide between `+` and `%`
+(or `format`) though. Do not use `%` or the `format` method for pure
+concatenation.
 
 ```python
 Yes: x = a + b
@@ -2386,7 +2305,7 @@ Yes: x = a + b
      x = '{}, {}'.format(first, second)
      x = 'name: %s; score: %d' % (name, n)
      x = 'name: {}; score: {}'.format(name, n)
-     x = f'name: {name}; score: {n}'  # Python 3.6+
+     x = f'name: {name}; score: {n}'
 ```
 
 ```python
@@ -2396,11 +2315,14 @@ No: x = '%s%s' % (a, b)  # use + in this case
     x = 'name: ' + name + '; score: ' + str(n)
 ```
 
-Avoid using the `+` and `+=` operators to accumulate a string within a loop.
-Since strings are immutable, this creates unnecessary temporary objects and
-results in quadratic rather than linear running time. Instead, add each
-substring to a list and `''.join` the list after the loop terminates (or, write
-each substring to an `io.BytesIO` buffer).
+Avoid using the `+` and `+=` operators to accumulate a string within a loop. In
+some conditions, accumulating a string with addition can lead to quadratic
+rather than linear running time. Although common accumulations of this sort may
+be optimized on CPython, that is an implementation detail. The conditions under
+which an optimization applies are not easy to predict and may change. Instead,
+add each substring to a list and `''.join` the list after the loop terminates,
+or write each substring to an `io.StringIO` buffer. These techniques
+consistently have amortized-linear run time complexity.
 
 ```python
 Yes: items = ['<table>']
@@ -2477,6 +2399,104 @@ Don't do this.
   long_string = textwrap.dedent("""\
       This is also fine, because textwrap.dedent()
       will collapse common leading spaces in each line.""")
+```
+
+<a id="s3.10.1-logging"></a>
+<a id="3101-logging"></a>
+<a id="logging"></a>
+
+<a id="logging"></a>
+#### 3.10.1 Logging 
+
+For logging functions that expect a pattern-string (with %-placeholders) as
+their first argument: Always call them with a string literal (not an f-string!)
+as their first argument with pattern-parameters as subsequent arguments. Some
+logging implementations collect the unexpanded pattern-string as a queryable
+field. It also prevents spending time rendering a message that no logger is
+configured to output.
+
+```python
+  Yes:
+  import tensorflow as tf
+  logger = tf.get_logger()
+  logger.info('TensorFlow Version is: %s', tf.__version__)
+```
+
+```python
+  Yes:
+  import os
+  from absl import logging
+
+  logging.info('Current $PAGER is: %s', os.getenv('PAGER', default=''))
+
+  homedir = os.getenv('HOME')
+  if homedir is None or not os.access(homedir, os.W_OK):
+    logging.error('Cannot write to home directory, $HOME=%r', homedir)
+```
+
+```python
+  No:
+  import os
+  from absl import logging
+
+  logging.info('Current $PAGER is:')
+  logging.info(os.getenv('PAGER', default=''))
+
+  homedir = os.getenv('HOME')
+  if homedir is None or not os.access(homedir, os.W_OK):
+    logging.error(f'Cannot write to home directory, $HOME={homedir!r}')
+```
+
+<a id="s3.10.2-error-messages"></a>
+<a id="3102-error-messages"></a>
+<a id="error-messages"></a>
+
+<a id="error-messages"></a>
+#### 3.10.2 Error Messages 
+
+Error messages (such as: message strings on exceptions like `ValueError`, or
+messages shown to the user) should follow three guidelines:
+
+1.  The message needs to precisely match the actual error condition.
+
+2.  Interpolated pieces need to always be clearly identifiable as such.
+
+3.  They should allow simple automated processing (e.g. grepping).
+
+```python
+  Yes:
+  if not 0 <= p <= 1:
+    raise ValueError(f'Not a probability: {p!r}')
+
+  try:
+    os.rmdir(workdir)
+  except OSError as error:
+    logging.warning('Could not remove directory (reason: %r): %r',
+                    error, workdir)
+```
+
+```python
+  No:
+  if p < 0 or p > 1:  # PROBLEM: also false for float('nan')!
+    raise ValueError(f'Not a probability: {p!r}')
+
+  try:
+    os.rmdir(workdir)
+  except OSError:
+    # PROBLEM: Message makes an assumption that might not be true:
+    # Deletion might have failed for some other reason, misleading
+    # whoever has to debug this.
+    logging.warning('Directory already was deleted: %s', workdir)
+
+  try:
+    os.rmdir(workdir)
+  except OSError:
+    # PROBLEM: The message is harder to grep for than necessary, and
+    # not universally non-confusing for all possible values of `workdir`.
+    # Imagine someone calling a library function with such code
+    # using a name such as workdir = 'deleted'. The warning would read:
+    # "The deleted directory could not be deleted."
+    logging.warning('The %s directory could not be deleted.', workdir)
 ```
 
 <a id="s3.11-files-and-sockets"></a>
@@ -2758,6 +2778,9 @@ Always use a `.py` filename extension. Never use dashes.
 
 -   offensive terms
 
+-   names that needlessly include the type of the variable (for example:
+    `id_to_name_dict`)
+
 <a id="s3.16.2-naming-conventions"></a>
 <a id="3162-naming-convention"></a>
 
@@ -2771,8 +2794,8 @@ Always use a `.py` filename extension. Never use dashes.
     variables and functions (linters will flag protected member access). While
     prepending a double underscore (`__` aka "dunder") to an instance variable
     or method effectively makes the variable or method private to its class
-    (using name mangling) we discourage its use as it impacts readability and
-    testability and isn't *really* private.
+    (using name mangling); we discourage its use as it impacts readability and
+    testability, and isn't *really* private.
 
 -   Place related classes and top-level functions together in a
     module.
@@ -3399,8 +3422,8 @@ def f(x: "sketch.Sketch"): ...
 
 Circular dependencies that are caused by typing are code smells. Such code is a
 good candidate for refactoring. Although technically it is possible to keep
-circular dependencies, the [build system](#typing-build-deps) will not let you
-do so because each module has to depend on the other.
+circular dependencies, various build systems will not let you do so
+because each module has to depend on the other.
 
 Replace modules that create circular dependency imports with `Any`. Set an
 [alias](#typing-aliases) with a meaningful name, and use the real type name from
