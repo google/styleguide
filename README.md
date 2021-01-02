@@ -1,5 +1,4 @@
-Google Style Guides
-===================
+# Google Style Guides
 
 Every major open-source project has its own style guide: a set of conventions
 (sometimes arbitrary) about how to write code for that project. It is much
@@ -13,11 +12,11 @@ style guidelines we use for Google code. If you are modifying a project that
 originated at Google, you may be pointed to this page to see the style guides
 that apply to that project.
 
-This project holds the [C++ Style Guide][cpp], [C# Style Guide][csharp], 
+This project holds the [C++ Style Guide][cpp], [C# Style Guide][csharp],
 [Swift Style Guide][swift], [Objective-C Style Guide][objc],
 [Java Style Guide][java], [Python Style Guide][py], [R Style Guide][r],
 [Shell Style Guide][sh], [HTML/CSS Style Guide][htmlcss],
-[JavaScript Style Guide][js], [AngularJS Style Guide][angular],
+[JavaScript Style Guide][js], [TypeScript Style Guide][ts], [AngularJS Style Guide][angular],
 [Common Lisp Style Guide][cl], and [Vimscript Style Guide][vim]. This project
 also contains [cpplint][cpplint], a tool to assist with style guide compliance,
 and [google-c-style.el][emacs], an Emacs settings file for Google style.
@@ -46,6 +45,7 @@ The following Google style guides live outside of this project:
 [sh]: https://google.github.io/styleguide/shellguide.html
 [htmlcss]: https://google.github.io/styleguide/htmlcssguide.html
 [js]: https://google.github.io/styleguide/jsguide.html
+[ts]: https://google.github.io/styleguide/tsguide.html
 [angular]: https://google.github.io/styleguide/angularjs-google-style.html
 [cl]: https://google.github.io/styleguide/lispguide.xml
 [vim]: https://google.github.io/styleguide/vimscriptguide.xml
