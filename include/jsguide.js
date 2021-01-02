@@ -41,6 +41,10 @@ window.initStyleGuide = function(init) {
   // properly. Fix it by moving the code directly into the pre.
   find('pre > code', function(code) {
     var pre = code.parentElement;
+    // internal TS style guide does not want prettyprint
+    if (code.classList.contains("language-ts")) {
+      code.classList.add("prettyprint");
+    }
     pre.className = code.className;
     pre.innerHTML = code.innerHTML;
   });
