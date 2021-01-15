@@ -247,14 +247,37 @@ guard:</p>
 
 
 
+<h3 id="Include_What_You_Use">Include What You Use</h3>
+
+<p>If a source or header file refers to a symbol defined elsewhere,
+the file should directly include a header file which properly intends
+to provide a declaration or definition of that symbol. It should not
+include header files for any other reason.
+</p>
+
+<p>Do not rely on transitive inclusions. This allows people to remove
+no-longer-needed <code>#include</code> statements from their headers without
+breaking clients. This also applies to related headers
+- <code>foo.cc</code> should include <code>bar.h</code> if it uses a
+symbol from it even if <code>foo.h</code>
+includes <code>bar.h</code>.</p>
+
 <h3 id="Forward_Declarations">Forward Declarations</h3>
 
 <p>Avoid using forward declarations where possible.
-Instead, <code>#include</code> the headers you need.</p>
+  Instead, <a href="#Include_What_You_Use">include the headers you need</a>.
+</p>
+
 
 <p class="definition"></p>
-<p>A "forward declaration" is a declaration of a class,
-function, or template without an associated definition.</p>
+<p>A "forward declaration" is a declaration of an entity
+  without an associated definition.</p>
+<pre>// In a C++ source file:
+class B;
+void FuncInB();
+extern int variable_in_b;
+ABSL_DECLARE_FLAG(flag_in_b);
+</pre>
 
 <p class="pros"></p>
 <ul>
@@ -273,6 +296,10 @@ function, or template without an associated definition.</p>
   <li>Forward declarations can hide a dependency, allowing
   user code to skip necessary recompilation when headers
   change.</li>
+
+  <li>A forward declaration as opposed to an #include statement
+    makes it difficult for automatic tooling to discover the module
+    defining the symbol.</li>
 
   <li>A forward declaration may be broken by subsequent
   changes to the library. Forward declarations of functions
@@ -316,19 +343,8 @@ void test(D* x) { f(x); }  // calls f(B*)
 </ul>
 
 <p class="decision"></p>
-<ul>
-  <li>Try to avoid forward declarations of entities
-  defined in another project.</li>
-
-  <li>When using a function declared in a header file,
-  always <code>#include</code> that header.</li>
-
-  <li>When using a class template, prefer to
-  <code>#include</code> its header file.</li>
-</ul>
-
-<p>Please see <a href="#Names_and_Order_of_Includes">Names and Order
-of Includes</a> for rules about when to #include a header.</p>
+Try to avoid forward declarations of entities
+defined in another project.
 
 <h3 id="Inline_Functions">Inline Functions</h3>
 
@@ -453,14 +469,6 @@ Either style is acceptable, but prefer consistency with existing code.</p>
 alphabetically. Note that older code might not conform to
 this rule and should be fixed when convenient.</p>
 
-<p>You should include all the headers that define the symbols you rely
-upon, except in the unusual case of <a href="#Forward_Declarations">forward
-declaration</a>. If you rely on symbols from <code>bar.h</code>,
-don't count on the fact that you included <code>foo.h</code> which
-(currently) includes <code>bar.h</code>: include <code>bar.h</code>
-yourself, unless <code>foo.h</code> explicitly demonstrates its intent
-to provide you the symbols of <code>bar.h</code>.</p>
-
 <p>For example, the includes in
 
 <code>google-awesome-project/src/foo/internal/fooserver.cc</code>
@@ -563,7 +571,7 @@ namespaces, this can add a lot of clutter.</p>
 
 <ul>
   <li>Follow the rules on <a href="#Namespace_Names">Namespace Names</a>.
-  </li><li>Terminate namespaces with comments as shown in the given examples.
+  </li><li>Terminate multi-line namespaces with comments as shown in the given examples.
   </li><li>
 
   <p>Namespaces wrap the entire source file after
@@ -1316,11 +1324,12 @@ declaring and/or deleting the appropriate operations in the <code>public</code>
 section of the declaration.</p>
 
 <p>Specifically, a copyable class should explicitly declare the copy
-operations, a move-only class should explicitly declare the move operations,
-and a non-copyable/movable class should explicitly delete the copy operations.
-Explicitly declaring or deleting all four copy/move operations is permitted,
-but not required. If you provide a copy or move assignment operator, you
-must also provide the corresponding constructor.</p>
+operations, a move-only class should explicitly declare the move operations, and
+a non-copyable/movable class should explicitly delete the copy operations. A
+copyable class may also declare move operations in order to support efficient
+moves. Explicitly declaring or deleting all four copy/move operations is
+permitted, but not required. If you provide a copy or move assignment operator,
+you must also provide the corresponding constructor.</p>
 
 <pre>class Copyable {
  public:
@@ -1328,12 +1337,13 @@ must also provide the corresponding constructor.</p>
   Copyable&amp; operator=(const Copyable&amp; other) = default;
 
   // The implicit move operations are suppressed by the declarations above.
+  // You may explicitly declare move operations to support efficient moves.
 };
 
 class MoveOnly {
  public:
-  MoveOnly(MoveOnly&amp;&amp; other);
-  MoveOnly&amp; operator=(MoveOnly&amp;&amp; other);
+  MoveOnly(MoveOnly&amp;&amp; other) = default;
+  MoveOnly&amp; operator=(MoveOnly&amp;&amp; other) = default;
 
   // The copy operations are implicitly deleted, but you can
   // spell that out explicitly if you want:
@@ -1683,8 +1693,8 @@ earlier.</p>
 <code>protected:</code>, then <code>private:</code>.  Omit
 sections that would be empty.</p>
 
-<p>Within each section, generally prefer grouping similar
-kinds of declarations together, and generally prefer the
+<p>Within each section, prefer grouping similar
+kinds of declarations together, and prefer the
 following order: types (including <code>typedef</code>,
 <code>using</code>, and nested structs and classes),
 constants, factory functions, constructors and assignment
@@ -1709,12 +1719,16 @@ a return value and sometimes via output parameters (or in/out parameters).</p>
 improve readability, and often provide the same or better
 performance.</p>
 
-<p>Parameters are either input to the function, output from the
+<p>Prefer to return by value or, failing that, return by reference.
+Avoid returning a pointer unless it can be null.</p>
+
+<p>Parameters are either inputs to the function, outputs from the
 function, or both. Input parameters should usually be values
-or <code>const</code> references,
-while required (non-nullable) output and input/output parameters should
-usually be references. Generally, use <code>absl::optional</code> to represent
-optional inputs, and non-<code>const</code> pointers to represent
+or <code>const</code> references, while non-optional output and
+input/output parameters should usually be references (which cannot be null).
+Generally, use <code>absl::optional</code> to represent optional by-value
+inputs, and use a <code>const</code> pointer when the non-optional form would
+have used a reference. Use non-<code>const</code> pointers to represent
 optional outputs.</p>
 
 <p>
@@ -1722,7 +1736,7 @@ Avoid defining functions that require a <code>const</code> reference parameter
 to outlive the call, because <code>const</code> reference parameters bind
 to temporaries. Instead, find a way to eliminate the lifetime requirement
 (for example, by copying the parameter), or pass it by <code>const</code>
-pointer and document the non-null requirement.
+pointer and document the lifetime and non-null requirements.
 
 </p>
 
@@ -2066,9 +2080,7 @@ do use shared ownership, prefer to use
 is a tool that reads a source file and identifies many
 style errors. It is not perfect, and has both false
 positives and false negatives, but it is still a valuable
-tool. False positives can be ignored by putting <code>//
-NOLINT</code> at the end of the line or
-<code>// NOLINTNEXTLINE</code> in the previous line.</p>
+tool. </p>
 
 
 
@@ -2394,12 +2406,12 @@ functions throwing and make it unconditionally
 <h3 id="Run-Time_Type_Information__RTTI_">Run-Time Type
 Information (RTTI)</h3>
 
-<p>Avoid using Run Time Type Information (RTTI).</p>
+<p>Avoid using run-time type information (RTTI).</p>
 
 <p class="definition"></p>
 <p> RTTI allows a
-programmer to query the C++ class of an object at run
-time. This is done by use of <code>typeid</code> or
+programmer to query the C++ class of an object at
+run-time. This is done by use of <code>typeid</code> or
 <code>dynamic_cast</code>.</p>
 
 <p class="pros"></p>
@@ -3126,8 +3138,8 @@ memset(&amp;data, 0, sizeof(data));
 }
 </pre>
 
-<a name="auto"></a>
-<h3 id="Type_deduction">Type deduction</h3>
+<a id="auto"></a>
+<h3 id="Type_deduction">Type Deduction (including auto)</h3>
 
 <p>Use type deduction only if it makes the code clearer to readers who aren't
   familiar with the project, or if it makes the code safer. Do not use it
@@ -3300,8 +3312,7 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   key type aren't relevant, but the type of the values is probably useful.
   In such situations, it's often possible to define local variables with
   explicit types that convey the relevant information:
-  </p><pre class="goodcode">auto it = my_map_.find(key);
-if (it != my_map_.end()) {
+  </p><pre class="goodcode">if (auto it = my_map_.find(key); it != my_map_.end()) {
   WidgetWithBellsAndWhistles&amp; widget = *it-&gt;second;
   // Do stuff with `widget`
 }</pre>
@@ -3367,7 +3378,7 @@ if (it != my_map_.end()) {
   As with function parameter comments, this can enable tools to detect if
   you get the order of the fields wrong.
 
-<h3 id="CTAD">Class template argument deduction</h3>
+<h3 id="CTAD">Class Template Argument Deduction</h3>
 
 <p>Use class template argument deduction only with templates that have
   explicitly opted into supporting it.</p>
@@ -3425,7 +3436,7 @@ array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
 <p>Uses of CTAD must also follow the general rules on
   <a href="#Type_deduction">Type deduction</a>.</p>
 
-<h3 id="Designated_initializers">Designated initializers</h3>
+<h3 id="Designated_initializers">Designated Initializers</h3>
 
 <p>Use designated initializers only in their C++20-compliant form.</p>
 
@@ -3471,7 +3482,7 @@ fields appear in the struct definition.</p>
 
 
 
-<h3 id="Lambda_expressions">Lambda expressions</h3>
+<h3 id="Lambda_expressions">Lambda Expressions</h3>
 
 <p>Use lambda expressions where appropriate. Prefer explicit captures
 when the lambda will escape the current scope.</p>
@@ -3625,7 +3636,7 @@ complex lambdas with default capture by value.
 
 </ul>
 
-<h3 id="Template_metaprogramming">Template metaprogramming</h3>
+<h3 id="Template_metaprogramming">Template Metaprogramming</h3>
 
 <p>Avoid complicated template programming.</p>
 
@@ -3639,7 +3650,7 @@ computation in the type domain.</p>
 <p>Template metaprogramming allows extremely flexible interfaces that
 are type safe and high performance. Facilities like
 
-<a href="https://code.google.com/p/googletest/">Google Test</a>,
+<a href="https://github.com/google/googletest">Google Test</a>,
 <code>std::tuple</code>, <code>std::function</code>, and
 Boost.Spirit would be impossible without it.</p>
 
@@ -3795,8 +3806,6 @@ features to the list, so this list may be expanded in
 the future.</p>
 </div>
 
-
-
 <h3 id="std_hash">std::hash</h3>
 
 <p>Do not define specializations of <code>std::hash</code>.</p>
@@ -3870,7 +3879,7 @@ using a new customization mechanism that doesn't have the drawbacks of
 
 
 
-<h3 id="Other_Features"><a name="C++11">Other C++ Features</a></h3>
+<h3 id="Other_Features"><a id="C++11">Other C++ Features</a></h3>
 
 <p>As with <a href="#Boost">Boost</a>, some modern C++
 extensions encourage coding practices that hamper
@@ -4028,6 +4037,21 @@ typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&g
 <pre>// In a .cc file
 using ::foo::Bar;
 </pre>
+
+<h2 id="Inclusive_Language">Inclusive Language</h2>
+
+<p>In all code, including naming and comments, use inclusive language
+and avoid terms that other programmers might find disrespectful or offensive
+(such as "master" and "slave", "blacklist" and "whitelist", or "redline"),
+even if the terms also have an ostensibly neutral meaning.
+Similarly, use gender-neutral language unless you're referring
+to a specific person (and using their pronouns). For example,
+use "they"/"them"/"their" for people of unspecified gender
+(<a href="https://apastyle.apa.org/style-grammar-guidelines/grammar/singular-they">even
+when singular</a>), and "it"/"its" for software, computers, and other
+things that aren't people.</p>
+
+
 
 <h2 id="Naming">Naming</h2>
 
@@ -4270,8 +4294,8 @@ set_count(int count)</code>.</p>
 
 <h3 id="Namespace_Names">Namespace Names</h3>
 
-Namespace names are all lower-case. Top-level namespace names are
-based on the project name
+Namespace names are all lower-case, with words separated by underscores.
+Top-level namespace names are based on the project name
 . Avoid collisions
 between nested namespaces and well-known top-level namespaces.
 
@@ -4446,11 +4470,10 @@ be used.</p>
 
 <pre>// Iterates over the contents of a GargantuanTable.
 // Example:
-//    GargantuanTableIterator* iter = table-&gt;NewIterator();
+//    std::unique_ptr&lt;GargantuanTableIterator&gt; iter = table-&gt;NewIterator();
 //    for (iter-&gt;Seek("foo"); !iter-&gt;done(); iter-&gt;Next()) {
 //      process(iter-&gt;key(), iter-&gt;value());
 //    }
-//    delete iter;
 class GargantuanTableIterator {
   ...
 };
@@ -4494,7 +4517,9 @@ left to comments in the function definition.</p>
 declaration:</p>
 
 <ul>
-  <li>What the inputs and outputs are.</li>
+  <li>What the inputs and outputs are. If function argument names
+      are provided in `backticks`, then code-indexing
+      tools may be able to present the documentation better.</li>
 
   <li>For class member functions: whether the object
   remembers reference arguments beyond the duration of
@@ -4516,21 +4541,16 @@ declaration:</p>
 
 <p>Here is an example:</p>
 
-<pre>// Returns an iterator for this table.  It is the client's
-// responsibility to delete the iterator when it is done with it,
-// and it must not use the iterator once the GargantuanTable object
-// on which the iterator was created has been deleted.
-//
-// The iterator is initially positioned at the beginning of the table.
+<pre>// Returns an iterator for this table, positioned at the first entry
+// lexically greater than or equal to `start_word`. If there is no
+// such entry, returns a null pointer. The client must not use the
+// iterator after the underlying GargantuanTable has been destroyed.
 //
 // This method is equivalent to:
-//    Iterator* iter = table-&gt;NewIterator();
-//    iter-&gt;Seek("");
+//    std::unique_ptr&lt;Iterator&gt; iter = table-&gt;NewIterator();
+//    iter-&gt;Seek(start_word);
 //    return iter;
-// If you are going to immediately seek to another place in the
-// returned iterator, it will be faster to use NewIterator()
-// and avoid the extra seek.
-Iterator* GetIterator() const;
+std::unique_ptr&lt;Iterator&gt; GetIterator(absl::string_view start_word) const;
 </pre>
 
 <p>However, do not be unnecessarily verbose or state the
@@ -4602,7 +4622,7 @@ obvious. For example:</p>
 are, what they are used for, and (if unclear) why it needs to be
 global. For example:</p>
 
-<pre>// The total number of tests cases that we run through in this regression test.
+<pre>// The total number of test cases that we run through in this regression test.
 const int kNumTestCases = 6;
 </pre>
 
@@ -4699,8 +4719,7 @@ the code does what it does, or make the code self describing.</p>
 Compare this:
 
 <pre class="badcode">// Find the element in the vector.  &lt;-- Bad: obvious!
-auto iter = std::find(v.begin(), v.end(), element);
-if (iter != v.end()) {
+if (std::find(v.begin(), v.end(), element) != v.end()) {
   Process(element);
 }
 </pre>
@@ -4708,8 +4727,7 @@ if (iter != v.end()) {
 To this:
 
 <pre>// Process "element" unless it was already processed.
-auto iter = std::find(v.begin(), v.end(), element);
-if (iter != v.end()) {
+if (std::find(v.begin(), v.end(), element) != v.end()) {
   Process(element);
 }
 </pre>
@@ -5018,10 +5036,10 @@ ampersand (&amp;) and the variable name.</p>
 auto x_plus_n = [&amp;x](int n) -&gt; int { return x + n; }
 </pre>
 <p>Short lambdas may be written inline as function arguments.</p>
-<pre>std::set&lt;int&gt; blacklist = {7, 8, 9};
+<pre>std::set&lt;int&gt; to_remove = {7, 8, 9};
 std::vector&lt;int&gt; digits = {3, 9, 1, 8, 4, 7, 1};
-digits.erase(std::remove_if(digits.begin(), digits.end(), [&amp;blacklist](int i) {
-               return blacklist.find(i) != blacklist.end();
+digits.erase(std::remove_if(digits.begin(), digits.end(), [&amp;to_remove](int i) {
+               return to_remove.find(i) != to_remove.end();
              }),
              digits.end());
 </pre>
@@ -5124,8 +5142,8 @@ my_widget.Transform(x1, x2, x3,
 
 <h3 id="Braced_Initializer_List_Format">Braced Initializer List Format</h3>
 
-<p>Format a <a href="#Braced_Initializer_List">braced initializer list</a>
-exactly like you would format a function call in its place.</p>
+<p>Format a braced initializer list exactly like you would format a function
+call in its place.</p>
 
 <p>If the braced list follows a name (e.g., a type or
 variable name), format as if the <code>{}</code> were the
@@ -5146,7 +5164,7 @@ SomeType variable{
     {"assume a zero-length name before {"},
     SomeOtherType{
         "Very long string requiring the surrounding breaks.",
-        some, other values},
+        some, other, values},
     SomeOtherType{"Slightly shorter string",
                   some, other, values}};
 SomeType variable{
@@ -5161,88 +5179,83 @@ MyType m = {  // Here, you could also break before {.
 
 <h3 id="Conditionals">Conditionals</h3>
 
-<p>The <code>if</code> and <code>else</code> keywords belong on separate lines.
-  There should be a space between the <code>if</code> and the open parenthesis,
-  and between the close parenthesis and the curly brace (if any), but no space
-  between the parentheses and the condition.</p>
+<p>In an <code>if</code> statement, including its optional <code>else if</code>
+and <code>else</code> clauses, put one space between the <code>if</code> and the
+opening parenthesis, and between the closing parenthesis and the curly brace (if
+any), but no spaces between the parentheses and the condition or initializer. If
+the optional initializer is present, put a space or newline after the semicolon,
+but not before.</p>
 
-<pre>if (condition) {  // no spaces inside parentheses
-  ...  // 2 space indent.
-} else if (...) {  // The else goes on the same line as the closing brace.
-  ...
+<pre class="badcode">if(condition) {              // Bad - space missing after IF
+if ( condition ) {           // Bad - space between the parentheses and the condition
+if (condition){              // Bad - space missing before {
+if(condition){               // Doubly bad
+
+if (int a = f();a == 10) {   // Bad - space missing after the semicolon
+</pre>
+
+<p>Use curly braces for the controlled statements following
+<code>if</code>, <code>else if</code> and <code>else</code>. Break the line
+immediately after the opening brace, and immediately before the closing brace. A
+subsequent <code>else</code>, if any, appears on the same line as the preceding
+closing brace, separated by a space.</p>
+
+<pre>if (condition) {                   // no spaces inside parentheses, space before brace
+  DoOneThing();                    // two space indent
+  DoAnotherThing();
+} else if (int a = f(); a != 3) {  // closing brace on new line, else on same line
+  DoAThirdThing(a);
 } else {
-  ...
+  DoNothing();
 }
 </pre>
 
-<pre class="badcode">if(condition) {   // Bad - space missing after IF.
-if ( condition ) { // Bad - space between the parentheses and the condition
-if (condition){   // Bad - space missing before {.
-if(condition){    // Doubly bad.
-</pre>
-
-<pre>if (condition) {  // Good - proper space after IF and before {.
-</pre>
-
-<p>Short conditional statements may be written on one
-line if this enhances readability. You may use this only
-when the line is brief and the statement does not use the
-<code>else</code> clause.</p>
+<p>For historical reasons, we allow one exception to the above rules: if an
+<code>if</code> statement has no <code>else</code> or <code>else if</code>
+clauses, then the curly braces for the controlled statement or the line breaks
+inside the curly braces may be omitted if as a result the entire <code>if</code>
+statement appears on either a single line (in which case there is a space
+between the closing parenthesis and the controlled statement) or on two lines
+(in which case there is a line break after the closing parenthesis and there are
+no braces). For example, the following forms are allowed under this
+exception.</p>
 
 <pre>if (x == kFoo) return new Foo();
-if (x == kBar) return new Bar();
+
+if (x == kBar)
+  return new Bar(arg1, arg2, arg3);
+
+if (x == kQuz) { return new Quz(1, 2, 3); }
 </pre>
 
-<p>This is not allowed when the if statement has an
-<code>else</code>:</p>
+<p>Use this style only when the statement is brief, and consider that
+conditional statements with complex conditions or controlled statements may be
+more readable with curly braces. Some
+projects
+require curly braces always.</p>
 
-<pre class="badcode">// Not allowed - IF statement on one line when there is an ELSE clause
+<p>Finally, these are not permitted:</p>
+
+<pre class="badcode">// Bad - IF statement with ELSE is missing braces
 if (x) DoThis();
 else DoThat();
-</pre>
 
-<p>In general, curly braces are not required for
-single-line statements, but they are allowed if you like
-them; conditional or loop statements with complex
-conditions or statements may be more readable with curly
-braces. Some
-projects require that an
-<code>if</code> must always have an accompanying
-brace.</p>
-
-<pre>if (condition)
-  DoSomething();  // 2 space indent.
-
-if (condition) {
-  DoSomething();  // 2 space indent.
-}
-</pre>
-
-<p>However, if one part of an
-<code>if</code>-<code>else</code> statement uses curly
-braces, the other part must too:</p>
-
-<pre class="badcode">// Not allowed - curly on IF but not ELSE
-if (condition) {
-  foo;
-} else
-  bar;
-
-// Not allowed - curly on ELSE but not IF
+// Bad - IF statement with ELSE does not have braces everywhere
 if (condition)
   foo;
 else {
   bar;
 }
-</pre>
 
-<pre>// Curly braces around both IF and ELSE required because
-// one of the clauses used braces.
-if (condition) {
-  foo;
-} else {
-  bar;
-}
+// Bad - IF statement is too long to omit braces
+if (condition)
+  // Comment
+  DoSomething();
+
+// Bad - IF statement is too long to omit braces
+if (condition1 &amp;&amp;
+    condition2)
+  DoSomething();
 </pre>
 
 <h3 id="Loops_and_Switch_Statements">Loops and Switch Statements</h3>
@@ -5360,8 +5373,8 @@ x = r-&gt;y;
    <code>*</code> or <code>&amp;</code>.</li>
 </ul>
 
-<p>When declaring a pointer variable or argument, you may
-place the asterisk adjacent to either the type or to the
+<p>When declaring a pointer or reference variable or argument, you may
+place the asterisk/ampersand adjacent to either the type or the
 variable name:</p>
 
 <pre>// These are fine, space preceding.
@@ -5385,6 +5398,7 @@ reference decorations. Such declarations are easily misread.
 int x, y;
 </pre>
 <pre class="badcode">int x, *y;  // Disallowed - no &amp; or * in multiple declaration
+int* x, *y;  // Disallowed - no &amp; or * in multiple declaration; inconsistent spacing
 char * c;  // Bad - spaces on both sides of *
 const std::string &amp; str;  // Bad - spaces on both sides of &amp;
 </pre>
@@ -5439,9 +5453,6 @@ return(result);                // return is not a function!
 
 
 <h3 id="Variable_and_Array_Initialization">Variable and Array Initialization</h3>
-
-<p>Your choice of <code>=</code>, <code>()</code>, or
-<code>{}</code>.</p>
 
 <p>You may choose between <code>=</code>,
 <code>()</code>, and <code>{}</code>; the following are

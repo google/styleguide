@@ -56,12 +56,16 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=apply-builtin,
+disable=abstract-method,
+        apply-builtin,
+        arguments-differ,
+        attribute-defined-outside-init,
         backtick,
         bad-option-value,
         basestring-builtin,
         buffer-builtin,
         c-extension-no-member,
+        consider-using-enumerate,
         cmp-builtin,
         cmp-method,
         coerce-builtin,
@@ -82,6 +86,7 @@ disable=apply-builtin,
         import-error,
         import-self,
         import-star-module-level,
+        inconsistent-return-statements,
         input-builtin,
         intern-builtin,
         invalid-str-codec,
@@ -89,6 +94,8 @@ disable=apply-builtin,
         long-builtin,
         long-suffix,
         map-builtin-not-iterating,
+        misplaced-comparison-constant,
+        missing-function-docstring,
         metaclass-assignment,
         next-method-called,
         next-method-defined,
@@ -97,7 +104,9 @@ disable=apply-builtin,
         no-else-continue,
         no-else-raise,
         no-else-return,
+        no-init,  # added
         no-member,
+        no-name-in-module,
         no-self-use,
         nonzero-method,
         oct-method,
@@ -127,16 +136,20 @@ disable=apply-builtin,
         too-many-branches,
         too-many-instance-attributes,
         too-many-locals,
+        too-many-nested-blocks,
         too-many-public-methods,
         too-many-return-statements,
         too-many-statements,
         trailing-newlines,
         unichr-builtin,
         unicode-builtin,
+        unnecessary-pass,
         unpacking-in-except,
         useless-else-on-loop,
+        useless-object-inheritance,
         useless-suppression,
         using-cmp-argument,
+        wrong-import-order,
         xrange-builtin,
         zip-builtin-not-iterating,
 
@@ -300,6 +313,13 @@ expected-line-ending-format=
 notes=TODO
 
 
+[STRING]
+
+# This flag controls whether inconsistent-quotes generates a warning when the
+# character used as a quote delimiter is used inconsistently within a module.
+check-quote-consistency=yes
+
+
 [VARIABLES]
 
 # Tells whether we should check for unused import in __init__ files.
@@ -326,7 +346,7 @@ redefining-builtins-modules=six,six.moves,past.builtins,future.builtins,functool
 
 # Logging modules to check that the string format arguments are in logging
 # function parameter format
-logging-modules=logging,absl.logging,tensorflow.google.logging
+logging-modules=logging,absl.logging,tensorflow.io.logging
 
 
 [SIMILARITIES]

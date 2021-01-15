@@ -1383,7 +1383,7 @@ def FindNextMultiLineCommentEnd(lines, lineix):
 
 def RemoveMultiLineCommentsFromRange(lines, begin, end):
   """Clears a range of lines for multi-line comments."""
-  # Having // dummy comments makes the lines non-empty, so we will not get
+  # Having // <empty> comments makes the lines non-empty, so we will not get
   # unnecessary blank line warnings later in the code.
   for i in range(begin, end):
     lines[i] = '/**/'
@@ -1757,7 +1757,7 @@ def CheckForCopyright(filename, lines, error):
   """Logs an error if no Copyright message appears at the top of the file."""
 
   # We'll say it should occur by line 10. Don't forget there's a
-  # dummy line at the front.
+  # placeholder line at the front.
   for line in xrange(1, min(len(lines), 11)):
     if re.search(r'Copyright', lines[line], re.I): break
   else:                       # means no copyright line was found
@@ -3866,9 +3866,9 @@ def CheckTrailingSemicolon(filename, clean_lines, linenum, error):
 
   # Block bodies should not be followed by a semicolon.  Due to C++11
   # brace initialization, there are more places where semicolons are
-  # required than not, so we use a whitelist approach to check these
-  # rather than a blacklist.  These are the places where "};" should
-  # be replaced by just "}":
+  # required than not, so we explicitly list the allowed rules rather
+  # than listing the disallowed ones.  These are the places where "};"
+  # should be replaced by just "}":
   # 1. Some flavor of block following closing parenthesis:
   #    for (;;) {};
   #    while (...) {};
@@ -3924,11 +3924,11 @@ def CheckTrailingSemicolon(filename, clean_lines, linenum, error):
     #  - INTERFACE_DEF
     #  - EXCLUSIVE_LOCKS_REQUIRED, SHARED_LOCKS_REQUIRED, LOCKS_EXCLUDED:
     #
-    # We implement a whitelist of safe macros instead of a blacklist of
+    # We implement a list of safe macros instead of a list of
     # unsafe macros, even though the latter appears less frequently in
     # google code and would have been easier to implement.  This is because
-    # the downside for getting the whitelist wrong means some extra
-    # semicolons, while the downside for getting the blacklist wrong
+    # the downside for getting the allowed checks wrong means some extra
+    # semicolons, while the downside for getting disallowed checks wrong
     # would result in compile errors.
     #
     # In addition to macros, we also don't want to warn on
@@ -5124,19 +5124,19 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
   #
   # We also accept & in static_assert, which looks like a function but
   # it's actually a declaration expression.
-  whitelisted_functions = (r'(?:[sS]wap(?:<\w:+>)?|'
+  allowed_functions = (r'(?:[sS]wap(?:<\w:+>)?|'
                            r'operator\s*[<>][<>]|'
                            r'static_assert|COMPILE_ASSERT'
                            r')\s*\(')
-  if Search(whitelisted_functions, line):
+  if Search(allowed_functions, line):
     return
   elif not Search(r'\S+\([^)]*$', line):
-    # Don't see a whitelisted function on this line.  Actually we
+    # Don't see an allowed function on this line.  Actually we
     # didn't see any function name on this line, so this is likely a
     # multi-line parameter list.  Try a bit harder to catch this case.
     for i in xrange(2):
       if (linenum > i and
-          Search(whitelisted_functions, clean_lines.elided[linenum - i - 1])):
+          Search(allowed_functions, clean_lines.elided[linenum - i - 1])):
         return
 
   decls = ReplaceAll(r'{[^}]*}', ' ', line)  # exclude function body
