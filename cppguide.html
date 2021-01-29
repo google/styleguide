@@ -343,8 +343,8 @@ void test(D* x) { f(x); }  // calls f(B*)
 </ul>
 
 <p class="decision"></p>
-Try to avoid forward declarations of entities
-defined in another project.
+<p>Try to avoid forward declarations of entities
+defined in another project.</p>
 
 <h3 id="Inline_Functions">Inline Functions</h3>
 
@@ -512,8 +512,7 @@ should have unique names based on the project name, and possibly
 its path. Do not use <i>using-directives</i> (e.g.,
 <code>using namespace foo</code>). Do not use
 inline namespaces. For unnamed namespaces, see
-<a href="#Unnamed_Namespaces_and_Static_Variables">Unnamed Namespaces and
-Static Variables</a>.
+<a href="#Internal_Linkage">Internal Linkage</a>.
 
 </p><p class="definition"></p>
 <p>Namespaces subdivide the global scope
@@ -674,13 +673,13 @@ inline void my_inline_function() {
   </li><li>Do not use inline namespaces.</li>
 </ul>
 
-<h3 id="Unnamed_Namespaces_and_Static_Variables">Unnamed Namespaces and Static
-Variables</h3>
+<a id="Unnamed_Namespaces_and_Static_Variables"></a>
+<h3 id="Internal_Linkage">Internal Linkage</h3>
 
 <p>When definitions in a <code>.cc</code> file do not need to be
-referenced outside that file, place them in an unnamed
-namespace or declare them <code>static</code>. Do not use either
-of these constructs in <code>.h</code> files.
+referenced outside that file, give them internal linkage by placing
+them in an unnamed namespace or declaring them <code>static</code>.
+Do not use either of these constructs in <code>.h</code> files.
 
 </p><p class="definition"></p>
 <p>All declarations can be given internal linkage by placing them in unnamed
@@ -733,7 +732,7 @@ common prefix, and such grouping is usually unnecessary anyway.</p>
 
 <p>If you define a nonmember function and it is only
 needed in its <code>.cc</code> file, use
-<a href="#Unnamed_Namespaces_and_Static_Variables">internal linkage</a> to limit
+<a href="#Internal_Linkage">internal linkage</a> to limit
 its scope.</p>
 
 <h3 id="Local_Variables">Local Variables</h3>
@@ -1366,8 +1365,8 @@ class NotCopyableOrMovable {
 };
 </pre>
 
-<p>These declarations/deletions can be omitted only if they are obvious:
-</p><ul>
+<p>These declarations/deletions can be omitted only if they are obvious:</p>
+<ul>
 <li>If the class has no <code>private</code> section, like a
     <a href="#Structs_vs._Classes">struct</a> or an interface-only base class,
     then the copyability/movability can be determined by the
@@ -1723,13 +1722,13 @@ performance.</p>
 Avoid returning a pointer unless it can be null.</p>
 
 <p>Parameters are either inputs to the function, outputs from the
-function, or both. Input parameters should usually be values
+function, or both. Non-optional input parameters should usually be values
 or <code>const</code> references, while non-optional output and
 input/output parameters should usually be references (which cannot be null).
 Generally, use <code>absl::optional</code> to represent optional by-value
 inputs, and use a <code>const</code> pointer when the non-optional form would
 have used a reference. Use non-<code>const</code> pointers to represent
-optional outputs.</p>
+optional outputs and optional input/output parameters.</p>
 
 <p>
 Avoid defining functions that require a <code>const</code> reference parameter
@@ -2555,7 +2554,8 @@ casts when explicit type conversion is necessary.
 
   <li>Use <code>reinterpret_cast</code> to do unsafe conversions of
   pointer types to and from integer and other pointer
-  types. Use this
+  types,
+  including <code>void*</code>. Use this
   only if you know what you are doing and you understand the aliasing
   issues. Also, consider the alternative
   <code>absl::bit_cast</code>.</li>
@@ -2701,9 +2701,7 @@ make a copy of the value as it was before the operation.
 <p class="cons"></p>
 <p>The tradition developed, in C, of using post-increment, even
 when the expression value is not used, especially in
-<code>for</code> loops. Some find post-increment easier
-to read, since the "subject" (<code>i</code>) precedes
-the "verb" (<code>++</code>), just like in English.</p>
+<code>for</code> loops.</p>
 
 <p class="decision"></p>
 <p>Use prefix increment/decrement, unless the code explicitly
@@ -3294,8 +3292,8 @@ auto i = y.Find(key);
 
 <p>For local variables, you can use type deduction to make the code clearer
   by eliminating type information that is obvious or irrelevant, so that
-  the reader can focus on the meaningful parts of the code:
-  </p><pre class="neutralcode">std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt; widget_ptr =
+  the reader can focus on the meaningful parts of the code:</p>
+  <pre class="neutralcode">std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt; widget_ptr =
     absl::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
 absl::flat_hash_map&lt;std::string,
                     std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt;&gt;::const_iterator
@@ -3311,17 +3309,17 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   type is an iterator, and in many contexts the container type and even the
   key type aren't relevant, but the type of the values is probably useful.
   In such situations, it's often possible to define local variables with
-  explicit types that convey the relevant information:
-  </p><pre class="goodcode">if (auto it = my_map_.find(key); it != my_map_.end()) {
+  explicit types that convey the relevant information:</p>
+  <pre class="goodcode">if (auto it = my_map_.find(key); it != my_map_.end()) {
   WidgetWithBellsAndWhistles&amp; widget = *it-&gt;second;
   // Do stuff with `widget`
 }</pre>
-  If the type is a template instance, and the parameters are
+<p>If the type is a template instance, and the parameters are
   boilerplate but the template itself is informative, you can use
   class template argument deduction to suppress the boilerplate. However,
   cases where this actually provides a meaningful benefit are quite rare.
   Note that class template argument deduction is also subject to a
-  <a href="#CTAD">separate style rule</a>.
+  <a href="#CTAD">separate style rule</a>.</p>
 
 <p>Do not use <code>decltype(auto)</code> if a simpler option will work,
   because it's a fairly obscure feature, so it has a high cost in code
@@ -3373,10 +3371,10 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   this may also mean the names are less recognizable to your reader than the
   field names. We recommend using a comment to indicate the name of the
   underlying field, if it doesn't match the name of the binding, using the
-  same syntax as for function parameter comments:
-  </p><pre>auto [/*field_name1=*/ bound_name1, /*field_name2=*/ bound_name2] = ...</pre>
-  As with function parameter comments, this can enable tools to detect if
-  you get the order of the fields wrong.
+  same syntax as for function parameter comments:</p>
+  <pre>auto [/*field_name1=*/ bound_name1, /*field_name2=*/ bound_name2] = ...</pre>
+<p>As with function parameter comments, this can enable tools to detect if
+  you get the order of the fields wrong.</p>
 
 <h3 id="CTAD">Class Template Argument Deduction</h3>
 
@@ -3387,21 +3385,21 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
 <p><a href="https://en.cppreference.com/w/cpp/language/class_template_argument_deduction">Class
     template argument deduction</a> (often abbreviated "CTAD") occurs when
   a variable is declared with a type that names a template, and the template
-  argument list is not provided (not even empty angle brackets):
-  </p><pre class="neutralcode">std::array a = {1, 2, 3};  // `a` is a std::array&lt;int, 3&gt;</pre>
-  The compiler deduces the arguments from the initializer using the
-  template's "deduction guides", which can be explicit or implicit.
+  argument list is not provided (not even empty angle brackets):</p>
+  <pre class="neutralcode">std::array a = {1, 2, 3};  // `a` is a std::array&lt;int, 3&gt;</pre>
+<p>The compiler deduces the arguments from the initializer using the
+  template's "deduction guides", which can be explicit or implicit.</p>
 
 <p>Explicit deduction guides look like function declarations with trailing
   return types, except that there's no leading <code>auto</code>, and the
   function name is the name of the template. For example, the above example
-  relies on this deduction guide for <code>std::array</code>:
-  </p><pre class="neutralcode">namespace std {
+  relies on this deduction guide for <code>std::array</code>:</p>
+  <pre class="neutralcode">namespace std {
 template &lt;class T, class... U&gt;
 array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
 }</pre>
-  Constructors in a primary template (as opposed to a template specialization)
-  also implicitly define deduction guides.
+<p>Constructors in a primary template (as opposed to a template specialization)
+  also implicitly define deduction guides.</p>
 
 <p>When you declare a variable that relies on CTAD, the compiler selects
   a deduction guide using the rules of constructor overload resolution,
@@ -3443,8 +3441,8 @@ array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
 <p class="definition"></p>
 <p><a href="https://en.cppreference.com/w/cpp/language/aggregate_initialization#Designated_initializers">
   Designated initializers</a> are a syntax that allows for initializing an
-  aggregate ("plain old struct") by naming its fields explicitly:
-  </p><pre class="neutralcode">  struct Point {
+  aggregate ("plain old struct") by naming its fields explicitly:</p>
+  <pre class="neutralcode">  struct Point {
     float x = 0.0;
     float y = 0.0;
     float z = 0.0;
@@ -3455,9 +3453,9 @@ array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
     .y = 2.0,
     // z will be 0.0
   };</pre>
-  The explicitly listed fields will be initialized as specified, and others
+<p>The explicitly listed fields will be initialized as specified, and others
   will be initialized in the same way they would be in a traditional aggregate
-  initialization expression like <code>Point{1.0, 2.0}</code>.
+  initialization expression like <code>Point{1.0, 2.0}</code>.</p>
 
 <p class="pros"></p>
 <p>Designated initializers can make for convenient and highly readable
@@ -3525,20 +3523,20 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
 
 <p>A variable capture can also have an explicit initializer, which can
   be used for capturing move-only variables by value, or for other situations
-  not handled by ordinary reference or value captures:
-  </p><pre>std::unique_ptr&lt;Foo&gt; foo = ...;
+  not handled by ordinary reference or value captures:</p>
+  <pre>std::unique_ptr&lt;Foo&gt; foo = ...;
 [foo = std::move(foo)] () {
   ...
 }</pre>
-  Such captures (often called "init captures" or "generalized lambda captures")
+<p>Such captures (often called "init captures" or "generalized lambda captures")
   need not actually "capture" anything from the enclosing scope, or even have
   a name from the enclosing scope; this syntax is a fully general way to define
-  members of a lambda object:
+  members of a lambda object:</p>
   <pre class="neutralcode">[foo = std::vector&lt;int&gt;({1, 2, 3})] () {
   ...
 }</pre>
-  The type of a capture with an initializer is deduced using the same rules
-  as <code>auto</code>.
+<p>The type of a capture with an initializer is deduced using the same rules
+  as <code>auto</code>.</p>
 
 <p class="pros"></p>
 <ul>
@@ -3881,6 +3879,7 @@ using a new customization mechanism that doesn't have the drawbacks of
 
 <h3 id="Other_Features"><a id="C++11">Other C++ Features</a></h3>
 
+
 <p>As with <a href="#Boost">Boost</a>, some modern C++
 extensions encourage coding practices that hamper
 readability—for example by removing
@@ -4013,7 +4012,7 @@ implementation retain some degree of freedom to change the alias.</p>
 <pre>namespace mynamespace {
 // Used to store field measurements. DataPoint may change from Bar* to some internal type.
 // Client code should treat it as an opaque pointer.
-using DataPoint = foo::Bar*;
+using DataPoint = ::foo::Bar*;
 
 // A set of measurements. Just an alias for user convenience.
 using TimeSeries = std::unordered_set&lt;DataPoint, std::hash&lt;DataPoint&gt;, DataPointComparator&gt;;
@@ -4319,7 +4318,8 @@ build breaks because of name lookup rules. In particular, do not
 create any nested <code>std</code> namespaces. Prefer unique project
 identifiers
 (<code>websearch::index</code>, <code>websearch::index_util</code>)
-over collision-prone names like <code>websearch::util</code>.</p>
+over collision-prone names like <code>websearch::util</code>. Also avoid overly deep nesting
+  namespaces (<a href="https://abseil.io/tips/130">TotW #130</a>).</p>
 
 <p>For <code>internal</code> namespaces, be wary of other code being
 added to the same <code>internal</code> namespace causing a collision
@@ -4327,7 +4327,7 @@ added to the same <code>internal</code> namespace causing a collision
 collisions). In such a situation, using the filename to make a unique
 internal name is helpful
 (<code>websearch::index::frobber_internal</code> for use
-in <code>frobber.h</code>)</p>
+in <code>frobber.h</code>).</p>
 
 <h3 id="Enumerator_Names">Enumerator Names</h3>
 
@@ -4505,11 +4505,10 @@ operation.</p>
 <p>Almost every function declaration should have comments immediately
 preceding it that describe what the function does and how to use
 it. These comments may be omitted only if the function is simple and
-obvious (e.g., simple accessors for obvious properties of the
-class).  These comments should open with descriptive verbs in the
-indicative mood ("Opens the file") rather than verbs in the imperative
-("Open the file"). The comment describes the function; it does not
-tell the function what to do. In general, these comments do not
+obvious (e.g., simple accessors for obvious properties of the class).
+Function comments should be written with an implied subject of
+<i>This function</i> and should start with the verb phrase; for example,
+"Opens the file", rather than "Open the file". In general, these comments do not
 describe how the function performs its task. Instead, that should be
 left to comments in the function definition.</p>
 
@@ -5373,22 +5372,27 @@ x = r-&gt;y;
    <code>*</code> or <code>&amp;</code>.</li>
 </ul>
 
-<p>When declaring a pointer or reference variable or argument, you may
-place the asterisk/ampersand adjacent to either the type or the
-variable name:</p>
+<p>When referring to a pointer or reference (variable declarations or definitions, arguments,
+return types, template parameters, etc), you may place the space before or after the
+asterisk/ampersand. In the trailing-space style, the space is elided in some cases (template
+parameters, etc).</p>
 
 <pre>// These are fine, space preceding.
 char *c;
 const std::string &amp;str;
+int *GetPointer();
+std::vector&lt;char *&gt;
 
-// These are fine, space following.
+// These are fine, space following (or elided).
 char* c;
 const std::string&amp; str;
+int* GetPointer();
+std::vector&lt;char*&gt;  // Note no space between '*' and '&gt;'
 </pre>
 
 <p>You should do this consistently within a single
-file,
-so, when modifying an existing file, use the style in
+file.
+When modifying an existing file, use the style in
 that file.</p>
 
 It is allowed (if unusual) to declare multiple variables in the same
