@@ -2806,6 +2806,11 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
            filename, line number, error level, and message
   """
 
+  line = clean_lines.lines_without_raw_strings[linenum]
+  if Match(r'\s*#\s*endif\s*([^/\s]|/[^/]|$)', line):
+    error(filename, linenum, 'build/endif_comment', 5,
+          'Uncommented text after #endif is non-standard.  Use a comment.')
+
   # Remove comments from the line, but leave in strings for now.
   line = clean_lines.lines[linenum]
 
@@ -2835,10 +2840,6 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
     error(filename, linenum, 'build/storage_class', 5,
           'Storage-class specifier (static, extern, typedef, etc) should be '
           'at the beginning of the declaration.')
-
-  if Match(r'\s*#\s*endif\s*[^/\s]+', line):
-    error(filename, linenum, 'build/endif_comment', 5,
-          'Uncommented text after #endif is non-standard.  Use a comment.')
 
   if Match(r'\s*class\s+(\w+\s*::\s*)+\w+\s*;', line):
     error(filename, linenum, 'build/forward_decl', 5,
