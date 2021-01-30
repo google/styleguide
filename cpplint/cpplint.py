@@ -189,7 +189,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
       Example file:
         filter=-build/include_order,+build/include_alpha
-        exclude_files=.*\.cc
+        exclude_files=.*\\.cc
 
     The above example disables build/include_order warning and enables
     build/include_alpha as well as excludes all .cc from being
@@ -1114,7 +1114,7 @@ class FileInfo(object):
     If we have a real absolute path name here we can try to do something smart:
     detecting the root of the checkout and truncating /path/to/checkout from
     the name so that we get header guards that don't include things like
-    "C:\Documents and Settings\..." or "/home/username/..." in them and thus
+    "C:\\Documents and Settings\\..." or "/home/username/..." in them and thus
     people on different computers who have checked the source out to different
     locations won't see bogus errors.
     """
