@@ -4664,7 +4664,8 @@ def _GetTextInside(text, start_pattern):
 #   >
 _RE_PATTERN_IDENT = r'[_a-zA-Z]\w*'  # =~ [[:alpha:]][[:alnum:]]*
 _RE_PATTERN_TYPE = (
-    r'(?:const\s+)?(?:typename\s+|class\s+|struct\s+|union\s+|enum\s+)?'
+    r'(?:const\s+)?(?:typename\s+|class\s+|struct\s+|union\s+|enum\s+'
+    r'|signed\s+|unsigned\s+)?'
     r'(?:\w|'
     r'\s*<(?:<(?:<[^<>]*>|[^<>])*>|[^<>])*>|'
     r'::)+')
