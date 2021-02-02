@@ -46,6 +46,7 @@ html {
   margin-left:10%;
   margin-right:10%;
   padding:0;
+  scroll-behavior: smooth;
 }
 
 .bp-reset-element,
@@ -569,4 +570,24 @@ li.toc_entry a {
 
 .toc td.two_columns {
   border-width: 0px;
+}
+
+/* Back to top button */
+footer {
+  display: flex;
+  margin: 2%;
+  margin-top: 5%;
+}
+
+#scrollToTopBtn {
+  background-color: #ffe6d8;
+  color:#c00;
+  width: 250px;
+  height: 50px;
+  margin: 0 auto;
+  padding: 0;
+  display: inline-block;
+  line-height: 50px;
+  text-align: center;
+  font-size: 18px;
 }
