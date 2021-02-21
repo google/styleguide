@@ -196,7 +196,7 @@ Example:
 # Arguments:
 #   None
 #######################################
-function cleanup() {
+cleanup() {
   …
 }
 
@@ -209,7 +209,7 @@ function cleanup() {
 # Outputs:
 #   Writes location to stdout
 #######################################
-function get_dir() {
+get_dir() {
   echo "${SOMEDIR}"
 }
 
@@ -220,7 +220,7 @@ function get_dir() {
 # Returns:
 #   0 if thing was deleted, non-zero on error.
 #######################################
-function del_thing() {
+del_thing() {
   rm "$1"
 }
 ```
@@ -1006,8 +1006,8 @@ echo $(( hr * 3600 + min * 60 + sec )) # prints 7530 as expected
 
 Lower-case, with underscores to separate words. Separate libraries with
 `::`. Parentheses are required after the function name. The
-keyword `function` is optional, but must be used consistently
-throughout a project.
+keyword `function` is optional but not POSIX. Consistency throughout a project
+trumps POSIX.
 
 If you're writing single functions, use lowercase and separate words
 with underscore. If you're writing a package, separate package names
@@ -1028,8 +1028,7 @@ mypackage::my_func() {
 ```
 
 The `function` keyword is extraneous when "()" is present
-after the function name, but enhances quick identification of
-functions.
+after the function name and is not POSIX compliant.
 
 <a id="s7.2-variable-names"></a>
 
@@ -1166,7 +1165,7 @@ may be done before declaring functions.
 
 ### main
 
-A function called `main` is required for scripts long enough
+A function called `main` is recommended for scripts long enough
 to contain at least one other function.
 
 In order to easily find the start of the program, put the main program
