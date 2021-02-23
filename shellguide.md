@@ -1165,8 +1165,10 @@ may be done before declaring functions.
 
 ### main
 
-A function called `main` is recommended for scripts long enough
-to contain at least one other function.
+A dedicated entry point is required for scripts long enough to contain
+at least one other function. The name
+[`main`](https://en.wikipedia.org/wiki/Entry_point) is commonly used in
+other languages, so it will be familiar to most programmers.
 
 In order to easily find the start of the program, put the main program
 in a function called `main` as the bottom most function.
