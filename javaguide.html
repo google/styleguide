@@ -1137,6 +1137,12 @@ punctuated as if it were a complete sentence.</p>
 <p class="tip"><strong>Tip:</strong> A common mistake is to write simple Javadoc in the form
 <code class="badcode">/** @return the customer ID */</code>. This is incorrect, and should be
 changed to <code class="prettyprint lang-java">/** Returns the customer ID. */</code>.</p>
+<p class="tip"><strong>Tip:</strong> When targeting Java 16 or newer, use the
+<a href="https://docs.oracle.com/en/java/javase/16/docs/specs/javadoc/doc-comment-spec.html#return">
+inline <code>{@return <var>description</var>}</code> tag</a> to not repeat yourself. For example
+<code class="prettyprint lang-java">/** {@return the name} {@code null} if unknown. */</code>
+will generate the description "Returns the name. <code>null</code> if unknown." and additionally
+uses "the name" as description for the return value.</p>
 
 <a name="s7.3.3-javadoc-optional"></a> 
 <h3 id="s7.3-javadoc-where-required">7.3 Where Javadoc is used</h3>
