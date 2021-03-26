@@ -84,14 +84,20 @@ site). </dd>
 
 <dt>Be consistent with existing code</dt>
 <dd>Using one style consistently through our codebase lets us focus on
-other (more important) issues. Consistency also allows for
-automation: tools that format your code or adjust
-your <code>#include</code>s only work properly when your code is
-consistent with the expectations of the tooling. In many cases, rules
-that are attributed to "Be Consistent" boil down to "Just pick one and
-stop worrying about it"; the potential value of allowing flexibility
-on these points is outweighed by the cost of having people argue over
-them. </dd>
+other (more important) issues. Consistency also allows for automation:
+tools that format your code or adjust your <code>#include</code>s only
+work properly when your code is consistent with the expectations of
+the tooling. In many cases, rules that are attributed to "Be
+Consistent" boil down to "Just pick one and stop worrying about it";
+the potential value of allowing flexibility on these points is
+outweighed by the cost of having people argue over them. However,
+there are limits to consistency; it is a good tie breaker when there
+is no clear technical argument, nor a long-term direction. It applies
+more heavily locally (per file, or for a tightly-related set of
+interfaces). Consistency should not generally be used as a
+justification to do things in an old style without considering the
+benefits of the new style, or the tendency of the codebase to converge
+on newer styles over time.</dd>
 
 <dt>Be consistent with the broader C++ community when appropriate</dt>
 <dd>Consistency with the way other organizations use C++ has value for
@@ -1678,7 +1684,7 @@ be <code>protected</code> when using
 
 
 <a href="https://github.com/google/googletest">Google
-Test</a>).
+Test</a>.
 If a test fixture class is defined outside of the .cc file it is used in, for example in a .h file,
 make data members <code>private</code>.</p>
 
@@ -1695,7 +1701,7 @@ sections that would be empty.</p>
 <p>Within each section, prefer grouping similar
 kinds of declarations together, and prefer the
 following order: types (including <code>typedef</code>,
-<code>using</code>, and nested structs and classes),
+<code>using</code>, <code>enum</code>, and nested structs and classes),
 constants, factory functions, constructors and assignment
 operators, destructor, all other methods, data members.</p>
 
@@ -1729,6 +1735,8 @@ Generally, use <code>absl::optional</code> to represent optional by-value
 inputs, and use a <code>const</code> pointer when the non-optional form would
 have used a reference. Use non-<code>const</code> pointers to represent
 optional outputs and optional input/output parameters.</p>
+
+
 
 <p>
 Avoid defining functions that require a <code>const</code> reference parameter
@@ -2505,7 +2513,7 @@ workarounds disguise your true intent.</p>
 <p>Use C++-style casts
 like <code>static_cast&lt;float&gt;(double_value)</code>, or brace
 initialization for conversion of arithmetic types like
-<code>int64 y = int64{1} &lt;&lt; 42</code>. Do not use
+<code>int64_t y = int64_t{1} &lt;&lt; 42</code>. Do not use
 cast formats like <code>(int)x</code> unless the cast is to
 <code>void</code>. You may use cast formats like `T(x)` only when
 `T` is a class type.</p>
@@ -2534,7 +2542,7 @@ casts when explicit type conversion is necessary.
 
 <ul>
   <li>Use brace initialization to convert arithmetic types
-  (e.g., <code>int64{x}</code>).  This is the safest approach because code
+  (e.g., <code>int64_t{x}</code>).  This is the safest approach because code
   will not compile if conversion can result in information loss.  The
   syntax is also concise.</li>
 
@@ -2563,7 +2571,7 @@ casts when explicit type conversion is necessary.
   <li>Use <code>absl::bit_cast</code> to interpret the raw bits of a
   value using a different type of the same size (a type pun), such as
   interpreting the bits of a <code>double</code> as
-  <code>int64</code>.</li>
+  <code>int64_t</code>.</li>
 </ul>
 
 <p>See the <a href="#Run-Time_Type_Information__RTTI_">
@@ -2839,13 +2847,11 @@ enable their use with <code>constexpr</code>. Do not use
 <p>Of the built-in C++ integer types, the only one used
  is
 <code>int</code>. If a program needs a variable of a
-different size, use
-a precise-width integer type from
+different size, use a precise-width integer type from
 <code>&lt;stdint.h&gt;</code>, such as
 <code>int16_t</code>. If your variable represents a
 value that could ever be greater than or equal to 2^31
-(2GiB), use a 64-bit type such as
-<code>int64_t</code>.
+(2GiB), use a 64-bit type such as <code>int64_t</code>.
 Keep in mind that even if your value won't ever be too large
 for an <code>int</code>, it may be used in intermediate
 calculations which may require a larger type. When in doubt,
@@ -2867,17 +2873,6 @@ compiler and architecture.</p>
 
 <p class="decision"></p>
 
-<p>
-<code>&lt;cstdint&gt;</code> defines types
-like <code>int16_t</code>, <code>uint32_t</code>,
-<code>int64_t</code>, etc. You should always use
-those in preference to <code>short</code>, <code>unsigned
-long long</code> and the like, when you need a guarantee
-on the size of an integer. Of the C integer types, only
-<code>int</code> should be used. When appropriate, you
-are welcome to use standard types like
-<code>size_t</code> and <code>ptrdiff_t</code>.</p>
-
 <p>We use <code>int</code> very often, for integers we
 know are not going to be too big, e.g., loop counters.
 Use plain old <code>int</code> for such things. You
@@ -2885,18 +2880,14 @@ should assume that an <code>int</code> is
 
 at least 32 bits, but don't
 assume that it has more than 32 bits. If you need a 64-bit
-integer type, use
-<code>int64_t</code>
-or
-<code>uint64_t</code>.</p>
+integer type, use <code>int64_t</code> or <code>uint64_t</code>.
 
-<p>For integers we know can be "big",
+</p><p>For integers we know can be "big",
  use
 <code>int64_t</code>.
 </p>
 
 <p>You should not use the unsigned integer types such as
-
 <code>uint32_t</code>, unless there is a valid
 reason such as representing a bit pattern rather than a
 number, or you need defined overflow modulo 2^N. In
@@ -2967,7 +2958,6 @@ problems of printing, comparisons, and structure alignment.</p>
   specify a conversion for the standard bitwidth typedefs (e.g.,
   <code>int64_t</code>, <code>uint64_t</code>, <code>int32_t</code>,
   <code>uint32_t</code>, etc).
-
   Where possible, avoid passing arguments of types specified by bitwidth
   typedefs to <code>printf</code>-based APIs. Note that it is acceptable
   to use typedefs for which printf has dedicated length modifiers, such as
@@ -2982,8 +2972,7 @@ problems of printing, comparisons, and structure alignment.</p>
 
   <li>You may need to be careful with structure
   alignments, particularly for structures being stored on
-  disk. Any class/structure with a
-  <code>int64_t</code>/<code>uint64_t</code>
+  disk. Any class/structure with a <code>int64_t</code>/<code>uint64_t</code>
   member will by default end up being 8-byte aligned on a
   64-bit system. If you have such structures being shared
   on disk between 32-bit and 64-bit code, you will need
@@ -2998,13 +2987,9 @@ problems of printing, comparisons, and structure alignment.</p>
   <li>
   <p>Use <a href="#Casting">braced-initialization</a> as needed to create
   64-bit constants. For example:</p>
-
-
-<div>
 <pre>int64_t my_value{0x123456789};
 uint64_t my_mask{3ULL &lt;&lt; 48};
 </pre>
-</div>
   </li>
 </ul>
 
@@ -3648,7 +3633,7 @@ computation in the type domain.</p>
 <p>Template metaprogramming allows extremely flexible interfaces that
 are type safe and high performance. Facilities like
 
-<a href="https://github.com/google/googletest">Google Test</a>,
+<a href="https://github.com/google/googletest">GoogleTest</a>,
 <code>std::tuple</code>, <code>std::function</code>, and
 Boost.Spirit would be impossible without it.</p>
 
@@ -4651,7 +4636,7 @@ at the end of the line. These end-of-line comments should
 be separated from the code by 2 spaces. Example:</p>
 
 <pre>// If we have enough memory, mmap the data portion too.
-mmap_budget = max&lt;int64&gt;(0, mmap_budget - index_-&gt;length());
+mmap_budget = max&lt;int64_t&gt;(0, mmap_budget - index_-&gt;length());
 if (mmap_budget &gt;= data_size_ &amp;&amp; !MmapData(mmap_chunk_bytes, mlock))
   return;  // Error already logged.
 </pre>
