@@ -39,9 +39,11 @@ The following Google style guides live outside of this project:
 With few exceptions, these style guides are copies of Google's internal style guides
 to assist developers working on Google owned and originated open source projects.
 Changes to the style guides are made to the internal style guides first and
-eventually copied into the versions found here. **External contributions are
-not accepted.** Pull requests and issues filed in this repository may be
-closed without comment.
+eventually copied into the versions found here. 
+Pull requests are regularly closed without comment.
+Issues that raise questions, justify changes on technical merits,
+or point out obvious mistakes may get some engagement and could in theory lead to changes,
+but we are primarily optimizing for Google's internal needs.
 
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
