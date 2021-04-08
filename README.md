@@ -33,6 +33,19 @@ See [https://creativecommons.org/licenses/by/3.0/][ccl] for more details.
 The following Google style guides live outside of this project:
 [Go Code Review Comments][go] and [Effective Dart][dart].
 
+
+## Contributing
+
+With few exceptions, these style guides are copies of Google's internal style guides
+to assist developers working on Google owned and originated open source projects.
+Changes to the style guides are made to the internal style guides first and
+eventually copied into the versions found here. **External contributions are
+not accepted.** 
+Pull requests are regularly closed without comment.
+Issues that raise questions, justify changes on technical merits,
+or point out obvious mistakes may get some engagement and could in theory lead to changes,
+but we are primarily optimizing for Google's internal needs.
+
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
 [cpp]: https://google.github.io/styleguide/cppguide.html
@@ -55,3 +68,4 @@ The following Google style guides live outside of this project:
 [go]: https://golang.org/wiki/CodeReviewComments
 [dart]: https://www.dartlang.org/guides/language/effective-dart
 [ccl]: https://creativecommons.org/licenses/by/3.0/
+
