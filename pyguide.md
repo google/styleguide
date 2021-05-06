@@ -15,100 +15,25 @@ See README.md for details.
 -   [1 Background](#s1-background)
 -   [2 Python Language Rules](#s2-python-language-rules)
     *   [2.1 Lint](#s2.1-lint)
-        +   [2.1.1 Definition](#s2.1.1-definition)
-        +   [2.1.2 Pros](#s2.1.2-pros)
-        +   [2.1.3 Cons](#s2.1.3-cons)
-        +   [2.1.4 Decision](#s2.1.4-decision)
     *   [2.2 Imports](#s2.2-imports)
-        +   [2.2.1 Definition](#s2.2.1-definition)
-        +   [2.2.2 Pros](#s2.2.2-pros)
-        +   [2.2.3 Cons](#s2.2.3-cons)
-        +   [2.2.4 Decision](#s2.2.4-decision)
     *   [2.3 Packages](#s2.3-packages)
-        +   [2.3.1 Pros](#s2.3.1-pros)
-        +   [2.3.2 Cons](#s2.3.2-cons)
-        +   [2.3.3 Decision](#s2.3.3-decision)
     *   [2.4 Exceptions](#s2.4-exceptions)
-        +   [2.4.1 Definition](#s2.4.1-definition)
-        +   [2.4.2 Pros](#s2.4.2-pros)
-        +   [2.4.3 Cons](#s2.4.3-cons)
-        +   [2.4.4 Decision](#s2.4.4-decision)
     *   [2.5 Global variables](#s2.5-global-variables)
-        +   [2.5.1 Definition](#s2.5.1-definition)
-        +   [2.5.2 Pros](#s2.5.2-pros)
-        +   [2.5.3 Cons](#s2.5.3-cons)
-        +   [2.5.4 Decision](#s2.5.4-decision)
     *   [2.6 Nested/Local/Inner Classes and Functions](#s2.6-nested)
-        +   [2.6.1 Definition](#s2.6.1-definition)
-        +   [2.6.2 Pros](#s2.6.2-pros)
-        +   [2.6.3 Cons](#s2.6.3-cons)
-        +   [2.6.4 Decision](#s2.6.4-decision)
     *   [2.7 Comprehensions & Generator Expressions](#s2.7-comprehensions)
-        +   [2.7.1 Definition](#s2.7.1-definition)
-        +   [2.7.2 Pros](#s2.7.2-pros)
-        +   [2.7.3 Cons](#s2.7.3-cons)
-        +   [2.7.4 Decision](#s2.7.4-decision)
     *   [2.8 Default Iterators and Operators](#s2.8-default-iterators-and-operators)
-        +   [2.8.1 Definition](#s2.8.1-definition)
-        +   [2.8.2 Pros](#s2.8.2-pros)
-        +   [2.8.3 Cons](#s2.8.3-cons)
-        +   [2.8.4 Decision](#s2.8.4-decision)
     *   [2.9 Generators](#s2.9-generators)
-        +   [2.9.1 Definition](#s2.9.1-definition)
-        +   [2.9.2 Pros](#s2.9.2-pros)
-        +   [2.9.3 Cons](#s2.9.3-cons)
-        +   [2.9.4 Decision](#s2.9.4-decision)
     *   [2.10 Lambda Functions](#s2.10-lambda-functions)
-        +   [2.10.1 Definition](#s2.10.1-definition)
-        +   [2.10.2 Pros](#s2.10.2-pros)
-        +   [2.10.3 Cons](#s2.10.3-cons)
-        +   [2.10.4 Decision](#s2.10.4-decision)
     *   [2.11 Conditional Expressions](#s2.11-conditional-expressions)
-        +   [2.11.1 Definition](#s2.11.1-definition)
-        +   [2.11.2 Pros](#s2.11.2-pros)
-        +   [2.11.3 Cons](#s2.11.3-cons)
-        +   [2.11.4 Decision](#s2.11.4-decision)
     *   [2.12 Default Argument Values](#s2.12-default-argument-values)
-        +   [2.12.1 Definition](#s2.12.1-definition)
-        +   [2.12.2 Pros](#s2.12.2-pros)
-        +   [2.12.3 Cons](#s2.12.3-cons)
-        +   [2.12.4 Decision](#s2.12.4-decision)
     *   [2.13 Properties](#s2.13-properties)
-        +   [2.13.1 Definition](#s2.13.1-definition)
-        +   [2.13.2 Pros](#s2.13.2-pros)
-        +   [2.13.3 Cons](#s2.13.3-cons)
-        +   [2.13.4 Decision](#s2.13.4-decision)
     *   [2.14 True/False Evaluations](#s2.14-truefalse-evaluations)
-        +   [2.14.1 Definition](#s2.14.1-definition)
-        +   [2.14.2 Pros](#s2.14.2-pros)
-        +   [2.14.3 Cons](#s2.14.3-cons)
-        +   [2.14.4 Decision](#s2.14.4-decision)
     *   [2.16 Lexical Scoping](#s2.16-lexical-scoping)
-        +   [2.16.1 Definition](#s2.16.1-definition)
-        +   [2.16.2 Pros](#s2.16.2-pros)
-        +   [2.16.3 Cons](#s2.16.3-cons)
-        +   [2.16.4 Decision](#s2.16.4-decision)
     *   [2.17 Function and Method Decorators](#s2.17-function-and-method-decorators)
-        +   [2.17.1 Definition](#s2.17.1-definition)
-        +   [2.17.2 Pros](#s2.17.2-pros)
-        +   [2.17.3 Cons](#s2.17.3-cons)
-        +   [2.17.4 Decision](#s2.17.4-decision)
     *   [2.18 Threading](#s2.18-threading)
     *   [2.19 Power Features](#s2.19-power-features)
-        +   [2.19.1 Definition](#s2.19.1-definition)
-        +   [2.19.2 Pros](#s2.19.2-pros)
-        +   [2.19.3 Cons](#s2.19.3-cons)
-        +   [2.19.4 Decision](#s2.19.4-decision)
     *   [2.20 Modern Python: Python 3 and from \_\_future\_\_ imports](#s2.20-modern-python)
-        +   [2.20.1 Definition](#s2.20.1-definition)
-        +   [2.20.2 Pros](#s2.20.2-pros)
-        +   [2.20.3 Cons](#s2.20.3-cons)
-        +   [2.20.4 Decision](#s2.20.4-decision)
     *   [2.21 Type Annotated Code](#s2.21-type-annotated-code)
-        +   [2.21.1 Definition](#s2.21.1-definition)
-        +   [2.21.2 Pros](#s2.21.2-pros)
-        +   [2.21.3 Cons](#s2.21.3-cons)
-        +   [2.21.4 Decision](#s2.21.4-decision)
 -   [3 Python Style Rules](#s3-python-style-rules)
     *   [3.1 Semicolons](#s3.1-semicolons)
     *   [3.2 Line length](#s3.2-line-length)
@@ -288,8 +213,11 @@ that the arguments are actually unused.
 ### 2.2 Imports 
 
 Use `import` statements for packages and modules only, not for individual
-classes or functions. Note that there is an explicit exemption for imports from
-the [typing module](#typing-imports).
+classes or functions. Imports from the [typing module](#typing-imports),
+[typing_extensions module](https://github.com/python/typing/tree/master/typing_extensions),
+and the
+[six.moves module](https://six.readthedocs.io/#module-six.moves)
+are exempt from this rule.
 
 <a id="s2.2.1-definition"></a>
 <a id="221-definition"></a>
@@ -342,10 +270,6 @@ echo.EchoFilter(input, output, delay=0.7, atten=4)
 Do not use relative names in imports. Even if the module is in the same package,
 use the full package name. This helps prevent unintentionally importing a
 package twice.
-
-Imports from the [typing module](#typing-imports) and the
-[six.moves module](https://six.readthedocs.io/#module-six.moves)
-are exempt from this rule.
 
 <a id="s2.3-packages"></a>
 <a id="23-packages"></a>
@@ -584,7 +508,7 @@ assignments to global variables are done when the module is first imported.
 Avoid global variables.
 
 While they are technically variables, module-level constants are permitted and
-encouraged. For example: `MAX_HOLY_HANDGRENADE_COUNT = 3`. Constants must be
+encouraged. For example: `_MAX_HOLY_HANDGRENADE_COUNT = 3`. Constants must be
 named using all caps with underscores. See [Naming](#s3.16-naming) below.
 
 If needed, globals should be declared at the module level and made internal to
@@ -637,9 +561,9 @@ outer function longer and less readable.
 #### 2.6.4 Decision 
 
 They are fine with some caveats. Avoid nested functions or classes except when
-closing over a local value. Do not nest a function just to hide it from users of
-a module. Instead, prefix its name with an \_ at the module level so that it can
-still be accessed by tests.
+closing over a local value other than `self` or `cls`. Do not nest a function
+just to hide it from users of a module. Instead, prefix its name with an \_ at
+the module level so that it can still be accessed by tests.
 
 <a id="s2.7-comprehensions"></a>
 <a id="s2.7-list_comprehensions"></a>
@@ -1705,7 +1629,7 @@ Yes:  with very_long_first_expression_function() as spam, \
 ```python
 No:  with VeryLongFirstExpressionFunction() as spam, \
           VeryLongSecondExpressionFunction() as beans:
-       PlaceOrder(eggs, beans, spam, beans)
+       PlaceOrder(beans, spam)
 ```
 
 ```python
@@ -2911,6 +2835,17 @@ containing `exec "$0.py" "$@"`.
 <a id="s3.17-main"></a>
 <a id="317-main"></a>
 
+<a id="math-notation"></a>
+#### 3.16.5 Mathematical Notation 
+
+For mathematically heavy code, short variable names that would otherwise violate
+the style guide are preferred when they match established notation in a
+reference paper or algorithm. When doing so, reference the source of all naming
+conventions in a comment or docstring or, if the source is not accessible,
+clearly document the naming conventions. Prefer PEP8-compliant
+`descriptive_names` for public APIs, which are much more likely to be
+encountered out of context.
+
 <a id="main"></a>
 ### 3.17 Main 
 
@@ -3150,22 +3085,22 @@ has to be declared! You can use `Union`, but if there is only one other type,
 use `Optional`.
 
 Use explicit `Optional` instead of implicit `Optional`. Earlier versions of PEP
-484 allowed `a: Text = None` to be interpreted as `a: Optional[Text] = None`,
-but that is no longer the preferred behavior.
+484 allowed `a: str = None` to be interpreted as `a: Optional[str] = None`, but
+that is no longer the preferred behavior.
 
 ```python
 Yes:
-def func(a: Optional[Text], b: Optional[Text] = None) -> Text:
+def func(a: Optional[str], b: Optional[str] = None) -> str:
   ...
-def multiple_nullable_union(a: Union[None, Text, int]) -> Text
+def multiple_nullable_union(a: Union[None, str, int]) -> str:
   ...
 ```
 
 ```python
 No:
-def nullable_union(a: Union[None, Text]) -> Text:
+def nullable_union(a: Union[None, str]) -> str:
   ...
-def implicit_optional(a: Text = None) -> Text:
+def implicit_optional(a: str = None) -> str:
   ...
 ```
 
@@ -3185,7 +3120,7 @@ long:
 
 ```python
 _ShortName = module_with_long_name.TypeWithLongName
-ComplexMap = Mapping[Text, List[Tuple[int, int]]]
+ComplexMap = Mapping[str, List[Tuple[int, int]]]
 ```
 
 Other examples are complex nested types and multiple return variables from a
@@ -3248,7 +3183,7 @@ The latter is commonly used as the return type from a function.
 ```python
 a = [1, 2, 3]  # type: List[int]
 b = (1, 2, 3)  # type: Tuple[int, ...]
-c = (1, "2", 3.5)  # type: Tuple[int, Text, float]
+c = (1, "2", 3.5)  # type: Tuple[int, str, float]
 ```
 
 <a id="s3.19.10-typevars"></a>
@@ -3276,7 +3211,7 @@ def next(l: List[T]) -> T:
 A TypeVar can be constrained:
 
 ```python
-AddableType = TypeVar("AddableType", int, float, Text)
+AddableType = TypeVar("AddableType", int, float, str)
 def add(a: AddableType, b: AddableType) -> AddableType:
   return a + b
 ```
@@ -3469,13 +3404,13 @@ remember that in many cases [`TypeVar`](#typing-type-var) might be more
 appropriate:
 
 ```python
-def get_names(employee_ids: List[Any]) -> Dict[Any, Text]:
+def get_names(employee_ids: List[Any]) -> Dict[Any, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
 ```python
 T = TypeVar('T')
-def get_names(employee_ids: List[T]) -> Dict[T, Text]:
+def get_names(employee_ids: List[T]) -> Dict[T, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
