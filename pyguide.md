@@ -1644,7 +1644,8 @@ above; see the [indentation](#s3.4-indentation) section for explanation.
 In all other cases where a line exceeds 80 characters, and the
 [yapf](https://github.com/google/yapf/)
 auto-formatter does not help bring the line below the limit, the line is allowed
-to exceed this maximum.
+to exceed this maximum. Authors are encouraged to manually break the line up per
+the notes above when it is sensible.
 
 <a id="s3.3-parentheses"></a>
 <a id="33-parentheses"></a>
