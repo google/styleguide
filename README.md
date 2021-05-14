@@ -31,7 +31,9 @@ which encourages you to share these documents.
 See [https://creativecommons.org/licenses/by/3.0/][ccl] for more details.
 
 The following Google style guides live outside of this project:
-[Go Code Review Comments][go] and [Effective Dart][dart].
+- [Go Code Review Comments][go]
+- [Effective Dart][dart]
+- [Kotlin Style Guide][kotlin]
 
 
 ## Contributing
@@ -65,6 +67,7 @@ but we are primarily optimizing for Google's internal needs.
 [cpplint]: https://github.com/google/styleguide/tree/gh-pages/cpplint
 [emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
 [xml]: https://google.github.io/styleguide/xmlstyle.html
+[kotlin]: https://android.github.io/kotlin-guides/style.html
 [go]: https://golang.org/wiki/CodeReviewComments
 [dart]: https://www.dartlang.org/guides/language/effective-dart
 [ccl]: https://creativecommons.org/licenses/by/3.0/
