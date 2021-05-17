@@ -393,6 +393,7 @@ _CPP_HEADERS = frozenset([
     'stdexcept',
     'streambuf',
     'string',
+    'string_view',
     'strstream',
     'system_error',
     'thread',
