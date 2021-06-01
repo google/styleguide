@@ -920,5 +920,40 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
       </xsl:call-template>
     </xsl:if>
   </xsl:template>
+
+  <!-- Given a url, redirect to it.
+       The BODY onLoad redirect is the best: it preserves #fragments and
+       ?queries.  But it requires javascript.  If that fails, the
+       meta-refresh kicks in; it works more generally, but loses fragments
+       and queries, takes a second, and pollutes the browser history.
+       If they both fail, we let the user manually click on the new link.
+  -->
+  <xsl:template match="REDIRECT">
+      <HTML>
+          <HEAD>
+              <TITLE><xsl:value-of select="@title"/></TITLE>
+              <META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+              <META http-equiv="refresh">
+                <xsl:attribute name="content">
+                  <xsl:value-of select="'1; url='"/>
+                  <xsl:value-of select="@url"/>
+                </xsl:attribute>
+              </META>
+              <LINK HREF="http://www.google.com/favicon.ico" type="image/x-icon"
+                    rel="shortcut icon"/>
+              <LINK HREF="styleguide.css"
+                    type="text/css" rel="stylesheet"/>
+          </HEAD>
+          <BODY>
+            <xsl:attribute name="onload"><xsl:value-of select="'location.replace(location.href.replace(`.xml`, `.html`))'"/></xsl:attribute>
+            Redirecting you to
+            <A>
+              <xsl:attribute name="href"><xsl:value-of select="@url"/></xsl:attribute>
+              <xsl:value-of select="@url"/>
+            </A>.
+            <xsl:apply-templates/>
+          </BODY>
+      </HTML>
+  </xsl:template>
 </xsl:stylesheet>
 
