@@ -5779,7 +5779,7 @@ def CheckItemIndentationInNamespace(filename, raw_lines_no_comments, linenum,
 
 def ProcessLine(filename, file_extension, clean_lines, line,
                 include_state, function_state, nesting_state, error,
-                extra_check_functions=[]):
+                extra_check_functions=None):
   """Processes a single line in the file.
 
   Args:
@@ -5798,6 +5798,8 @@ def ProcessLine(filename, file_extension, clean_lines, line,
                            run on each source line. Each function takes 4
                            arguments: filename, clean_lines, line, error
   """
+  if extra_check_functions is None:
+    extra_check_functions = []
   raw_lines = clean_lines.raw_lines
   ParseNolintSuppressions(filename, raw_lines[line], line, error)
   nesting_state.Update(filename, clean_lines, line, error)
@@ -5893,7 +5895,7 @@ def FlagCxx14Features(filename, clean_lines, linenum, error):
 
 
 def ProcessFileData(filename, file_extension, lines, error,
-                    extra_check_functions=[]):
+                    extra_check_functions=None):
   """Performs lint checks and reports any errors to the given error function.
 
   Args:
@@ -5907,6 +5909,8 @@ def ProcessFileData(filename, file_extension, lines, error,
                            run on each source line. Each function takes 4
                            arguments: filename, clean_lines, line, error
   """
+  if extra_check_functions is None:
+    extra_check_functions = []
   lines = (['// marker so line numbers and indices both start at 1'] + lines +
            ['// marker so line numbers end in a known way'])
 
@@ -6028,7 +6032,7 @@ def ProcessConfigOverrides(filename):
   return True
 
 
-def ProcessFile(filename, vlevel, extra_check_functions=[]):
+def ProcessFile(filename, vlevel, extra_check_functions=None):
   """Does google-lint on a single file.
 
   Args:
@@ -6041,7 +6045,8 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
                            run on each source line. Each function takes 4
                            arguments: filename, clean_lines, line, error
   """
-
+  if extra_check_functions is None:
+    extra_check_functions = []
   _SetVerboseLevel(vlevel)
   _BackupFilters()
   old_errors = _cpplint_state.error_count
