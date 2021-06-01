@@ -2992,6 +2992,8 @@ def CheckSpacingForFunctionCall(filename, clean_lines, linenum, error):
         not Search(r'_{0,2}asm_{0,2}\s+_{0,2}volatile_{0,2}\s+\(', fncall) and
         not Search(r'#\s*define|typedef|using\s+\w+\s*=', fncall) and
         not Search(r'\w\s+\((\w+::)*\*\w+\)\(', fncall) and
+        not Search(r'\b(' + '|'.join(_ALT_TOKEN_REPLACEMENT.keys()) + r')\b\s+\(',
+                   fncall) and
         not Search(r'\bcase\s+\(', fncall)):
       # TODO(unknown): Space after an operator function seem to be a common
       # error, silence those for now by restricting them to highest verbosity.
