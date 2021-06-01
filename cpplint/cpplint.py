@@ -5291,7 +5291,7 @@ def CheckCStyleCast(filename, clean_lines, linenum, cast_type, pattern, error):
 
   # Exclude lines with keywords that tend to look like casts
   context = line[0:match.start(1) - 1]
-  if Match(r'.*\b(?:sizeof|alignof|alignas|[_A-Z][_A-Z0-9]*)\s*$', context):
+  if Match(r'.*\b(?:sizeof|typeid|alignof|alignas|[_A-Z][_A-Z0-9]*)\s*$', context):
     return False
 
   # Try expanding current context to see if we one level of
