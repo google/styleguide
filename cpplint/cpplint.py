@@ -772,7 +772,6 @@ class _IncludeState(object):
   def CanonicalizeAlphabeticalOrder(self, header_path):
     """Returns a path canonicalized for alphabetical comparison.
 
-    - replaces "-" with "_" so they both cmp the same.
     - removes '-inl' since we don't require them to be after the main header.
     - lowercase everything, just in case.
 
@@ -782,7 +781,7 @@ class _IncludeState(object):
     Returns:
       Canonicalized path.
     """
-    return header_path.replace('-inl.h', '.h').replace('-', '_').lower()
+    return header_path.replace('-inl.h', '.h').lower()
 
   def IsInAlphabeticalOrder(self, clean_lines, linenum, header_path):
     """Check if a header is in alphabetical order with the previous header.
