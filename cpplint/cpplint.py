@@ -4399,6 +4399,9 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
             'Lines should be <= %i characters long' % _line_length)
 
   if (cleansed_line.count(';') > 1 and
+      # allow simple single line lambdas
+      not Match(r'^[^{};]*\[[^\[\]]*\][^{}]*\{[^{}\n\r]*\}',
+                line) and
       # for loops are allowed two ;'s (and may run over two lines).
       cleansed_line.find('for') == -1 and
       (GetPreviousNonBlankLine(clean_lines, linenum)[0].find('for') == -1 or

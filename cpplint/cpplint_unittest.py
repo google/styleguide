@@ -3325,6 +3325,54 @@ class CpplintTest(CpplintTestBase):
                             error_collector)
     cpplint._cpplint_state.verbose_level = old_verbose_level
 
+  def testLambdasOnSameLine(self):
+    error_collector = ErrorCollector(self.assert_)
+    old_verbose_level = cpplint._cpplint_state.verbose_level
+    cpplint._cpplint_state.verbose_level = 0
+    cpplint.ProcessFileData('foo.cc', 'cc',
+                            ['const auto lambda = '
+                              '[](const int i) { return i; };'],
+                            error_collector)
+    cpplint._cpplint_state.verbose_level = old_verbose_level
+    self.assertEquals(0, error_collector.Results().count(
+        'More than one command on the same line  [whitespace/newline] [0]'))
+
+    error_collector = ErrorCollector(self.assert_)
+    old_verbose_level = cpplint._cpplint_state.verbose_level
+    cpplint._cpplint_state.verbose_level = 0
+    cpplint.ProcessFileData('foo.cc', 'cc',
+                            ['const auto result = std::any_of(vector.begin(), '
+                              'vector.end(), '
+                              '[](const int i) { return i > 0; });'],
+                            error_collector)
+    cpplint._cpplint_state.verbose_level = old_verbose_level
+    self.assertEquals(0, error_collector.Results().count(
+        'More than one command on the same line  [whitespace/newline] [0]'))
+
+    error_collector = ErrorCollector(self.assert_)
+    old_verbose_level = cpplint._cpplint_state.verbose_level
+    cpplint._cpplint_state.verbose_level = 0
+    cpplint.ProcessFileData('foo.cc', 'cc',
+                            ['return mutex::Lock<void>([this]() { '
+                              'this->ReadLock(); }, [this]() { '
+                              'this->ReadUnlock(); });'],
+                            error_collector)
+    cpplint._cpplint_state.verbose_level = old_verbose_level
+    self.assertEquals(0, error_collector.Results().count(
+        'More than one command on the same line  [whitespace/newline] [0]'))
+
+    error_collector = ErrorCollector(self.assert_)
+    old_verbose_level = cpplint._cpplint_state.verbose_level
+    cpplint._cpplint_state.verbose_level = 0
+    cpplint.ProcessFileData('foo.cc', 'cc',
+                            ['return mutex::Lock<void>([this]() { '
+                              'this->ReadLock(); }, [this]() { '
+                              'this->ReadUnlock(); }, object);'],
+                            error_collector)
+    cpplint._cpplint_state.verbose_level = old_verbose_level
+    self.assertEquals(0, error_collector.Results().count(
+        'More than one command on the same line  [whitespace/newline] [0]'))
+
   def testEndOfNamespaceComments(self):
     error_collector = ErrorCollector(self.assert_)
     cpplint.ProcessFileData('foo.cc', 'cc',
