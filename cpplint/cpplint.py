@@ -57,6 +57,23 @@ try:
   xrange          # Python 2
 except NameError:
   xrange = range  # Python 3
+  unicode = str
+  def iteritems(d):
+    return d.items()
+  def itervalues(d):
+    return d.values()
+else:
+  # Python 2
+  def iteritems(d):
+    return d.iteritems()
+  def itervalues(d):
+    return d.itervalues()
+  # Change stderr to write with replacement characters so we don't die
+  # if we try to print something containing non-ASCII characters.
+  sys.stderr = codecs.StreamReaderWriter(sys.stderr,
+                                         codecs.getreader('utf8'),
+                                         codecs.getwriter('utf8'),
+                                         'replace')
 
 
 _USAGE = """
@@ -952,7 +969,7 @@ class _CppLintState(object):
 
   def PrintErrorCounts(self):
     """Print a summary of errors by category, and the total."""
-    for category, count in self.errors_by_category.iteritems():
+    for category, count in iteritems(self.errors_by_category):
       sys.stderr.write('Category \'%s\' errors found: %d\n' %
                        (category, count))
     sys.stdout.write('Total errors found: %d\n' % self.error_count)
@@ -4622,7 +4639,7 @@ def _GetTextInside(text, start_pattern):
 
   # Give opening punctuations to get the matching close-punctuations.
   matching_punctuation = {'(': ')', '{': '}', '[': ']'}
-  closing_punctuation = set(matching_punctuation.itervalues())
+  closing_punctuation = set(itervalues(matching_punctuation))
 
   # Find the position to start extracting text.
   match = re.search(start_pattern, text, re.M)
@@ -5570,7 +5587,7 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
 
   # include_dict is modified during iteration, so we iterate over a copy of
   # the keys.
-  header_keys = include_dict.keys()
+  header_keys = list(include_dict)
   for header in header_keys:
     (same_module, common_path) = FilesBelongToSameModule(abs_filename, header)
     fullpath = common_path + header
@@ -6222,13 +6239,6 @@ def ParseArguments(args):
 
 def main():
   filenames = ParseArguments(sys.argv[1:])
-
-  # Change stderr to write with replacement characters so we don't die
-  # if we try to print something containing non-ASCII characters.
-  sys.stderr = codecs.StreamReaderWriter(sys.stderr,
-                                         codecs.getreader('utf8'),
-                                         codecs.getwriter('utf8'),
-                                         'replace')
 
   _cpplint_state.ResetErrorCounts()
   for filename in filenames:
