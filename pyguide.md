@@ -39,7 +39,7 @@ See README.md for details.
     *   [3.2 Line length](#s3.2-line-length)
     *   [3.3 Parentheses](#s3.3-parentheses)
     *   [3.4 Indentation](#s3.4-indentation)
-    *   [3.4.1 Trailing commas in sequences of items?](#s3.4.1-trailing-commas)
+        +   [3.4.1 Trailing commas in sequences of items?](#s3.4.1-trailing-commas)
     *   [3.5 Blank Lines](#s3.5-blank-lines)
     *   [3.6 Whitespace](#s3.6-whitespace)
     *   [3.7 Shebang Line](#s3.7-shebang-line)
@@ -1758,7 +1758,7 @@ No:    # Stuff on first line forbidden
 <a id="trailing_commas"></a>
 
 <a id="trailing-comma"></a>
-### 3.4.1 Trailing commas in sequences of items? 
+#### 3.4.1 Trailing commas in sequences of items? 
 
 Trailing commas in sequences of items are recommended only when the closing
 container token `]`, `)`, or `}` does not appear on the same line as the final
