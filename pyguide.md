@@ -6,7 +6,6 @@ See README.md for details.
 
 # Google Python Style Guide
 
-
 <!-- markdown="1" is required for GitHub Pages to render the TOC properly. -->
 
 <details markdown="1">
@@ -39,7 +38,7 @@ See README.md for details.
     *   [3.2 Line length](#s3.2-line-length)
     *   [3.3 Parentheses](#s3.3-parentheses)
     *   [3.4 Indentation](#s3.4-indentation)
-    *   [3.4.1 Trailing commas in sequences of items?](#s3.4.1-trailing-commas)
+        +   [3.4.1 Trailing commas in sequences of items?](#s3.4.1-trailing-commas)
     *   [3.5 Blank Lines](#s3.5-blank-lines)
     *   [3.6 Whitespace](#s3.6-whitespace)
     *   [3.7 Shebang Line](#s3.7-shebang-line)
@@ -53,7 +52,7 @@ See README.md for details.
     *   [3.10 Strings](#s3.10-strings)
         +   [3.10.1 Logging](#s3.10.1-logging)
         +   [3.10.2 Error Messages](#s3.10.2-error-messages)
-    *   [3.11 Files and Sockets](#s3.11-files-and-sockets)
+    *   [3.11 Files, Sockets, and similar Stateful Resources](#s3.11-files-sockets-closeables)
     *   [3.12 TODO Comments](#s3.12-todo-comments)
     *   [3.13 Imports formatting](#s3.13-imports-formatting)
     *   [3.14 Statements](#s3.14-statements)
@@ -195,7 +194,7 @@ beginning of the function. Always include a comment explaining why you are
 deleting it. "Unused." is sufficient. For example:
 
 ```python
-def viking_cafe_order(spam, beans, eggs=None):
+def viking_cafe_order(spam: str, beans: str, eggs: Optional[str] = None) -> str:
     del beans, eggs  # Unused by vikings.
     return spam + spam + spam
 ```
@@ -397,7 +396,7 @@ Exceptions must follow certain conditions:
     
     ```python
     Yes:
-      def connect_to_next_port(self, minimum):
+      def connect_to_next_port(self, minimum: int) -> int:
         """Connects to the next available port.
 
         Args:
@@ -425,7 +424,7 @@ Exceptions must follow certain conditions:
 
     ```python
     No:
-      def connect_to_next_port(self, minimum):
+      def connect_to_next_port(self, minimum: int) -> int:
         """Connects to the next available port.
 
         Args:
@@ -1037,28 +1036,28 @@ Yes: import math
          16
          """
 
-         def __init__(self, side):
+         def __init__(self, side: float):
              self.side = side
 
          @property
-         def area(self):
+         def area(self) -> float:
              """Area of the square."""
              return self._get_area()
 
          @area.setter
-         def area(self, area):
-             return self._set_area(area)
+         def area(self, area: float):
+             self._set_area(area)
 
-         def _get_area(self):
+         def _get_area(self) -> float:
              """Indirect accessor to calculate the 'area' property."""
              return self.side ** 2
 
-         def _set_area(self, area):
+         def _set_area(self, area: float):
              """Indirect setter to set the 'area' property."""
              self.side = math.sqrt(area)
 
          @property
-         def perimeter(self):
+         def perimeter(self) -> float:
              return self.side * 4
 ```
 
@@ -1179,9 +1178,9 @@ treated as a global variable.
 An example of the use of this feature is:
 
 ```python
-def get_adder(summand1):
+def get_adder(summand1: float) -> Callable[[float], float]:
     """Returns a function that adds numbers to a given number."""
-    def adder(summand2):
+    def adder(summand2: float) -> float:
         return summand1 + summand2
 
     return adder
@@ -1207,7 +1206,7 @@ Can lead to confusing bugs. Such as this example based on
 
 ```python
 i = 4
-def foo(x):
+def foo(x: Iterable[int]):
     def bar():
         print(i, end='')
     # ...
@@ -1349,7 +1348,8 @@ Avoid these features.
 Python is an extremely flexible language and gives you many fancy features such
 as custom metaclasses, access to bytecode, on-the-fly compilation, dynamic
 inheritance, object reparenting, import hacks, reflection (e.g. some uses of
-`getattr()`), modification of system internals, etc.
+`getattr()`), modification of system internals, `__del__` methods implementing
+customized cleanup, etc.
 
 <a id="s2.19.2-pros"></a>
 <a id="2192-pros"></a>
@@ -1707,8 +1707,8 @@ Yes:   # Aligned with opening delimiter
 
        # Aligned with opening delimiter in a dictionary
        foo = {
-           long_dictionary_key: value1 +
-                                value2,
+           'long_dictionary_key': value1 +
+                                  value2,
            ...
        }
 
@@ -1722,7 +1722,7 @@ Yes:   # Aligned with opening delimiter
 
        # 4-space hanging indent in a dictionary
        foo = {
-           long_dictionary_key:
+           'long_dictionary_key':
                long_dictionary_value,
            ...
        }
@@ -1742,7 +1742,7 @@ No:    # Stuff on first line forbidden
 
        # No hanging indent in a dictionary
        foo = {
-           long_dictionary_key:
+           'long_dictionary_key':
            long_dictionary_value,
            ...
        }
@@ -1758,7 +1758,7 @@ No:    # Stuff on first line forbidden
 <a id="trailing_commas"></a>
 
 <a id="trailing-comma"></a>
-### 3.4.1 Trailing commas in sequences of items? 
+#### 3.4.1 Trailing commas in sequences of items? 
 
 Trailing commas in sequences of items are recommended only when the closing
 container token `]`, `)`, or `}` does not appear on the same line as the final
@@ -1807,11 +1807,11 @@ Follow standard typographic rules for the use of spaces around punctuation.
 No whitespace inside parentheses, brackets or braces.
 
 ```python
-Yes: spam(ham[1], {eggs: 2}, [])
+Yes: spam(ham[1], {'eggs': 2}, [])
 ```
 
 ```python
-No:  spam( ham[ 1 ], { eggs: 2 }, [ ] )
+No:  spam( ham[ 1 ], { 'eggs': 2 }, [ ] )
 ```
 
 No whitespace before a comma, semicolon, or colon. Do use whitespace after a
@@ -1992,13 +1992,21 @@ A function must have a docstring, unless it meets all of the following criteria:
 -   obvious
 
 A docstring should give enough information to write a call to the function
-without reading the function's code. The docstring should be descriptive-style
-(`"""Fetches rows from a Bigtable."""`) rather than imperative-style (`"""Fetch
-rows from a Bigtable."""`), except for `@property` data descriptors, which
-should use the <a href="#384-classes">same style as attributes</a>. A docstring
-should describe the function's calling syntax and its semantics, not its
-implementation. For tricky code, comments alongside the code are more
-appropriate than using docstrings.
+without reading the function's code. The docstring should describe the
+function's calling syntax and its semantics, but generally not its
+implementation details, unless those details are relevant to how the function is
+to be used. For example, a function that mutates one of its arguments as a side
+effect should note that in its docstring. Otherwise, subtle but important
+details of a function's implementation that are not relevant to the caller are
+better expressed as comments alongside the code than within the function's
+docstring.
+
+The docstring should be descriptive-style (`"""Fetches rows from a
+Bigtable."""`) rather than imperative-style (`"""Fetch rows from a
+Bigtable."""`). The docstring for a `@property` data descriptor should use the
+same style as the docstring for an attribute or a
+<a href="#doc-function-args">function argument</a> (`"""The Bigtable path."""`,
+rather than `"""Returns the Bigtable path."""`).
 
 A method that overrides a method from a base class may have a simple docstring
 sending the reader to its overridden method's docstring, such as `"""See base
@@ -2143,7 +2151,7 @@ class SampleClass:
         eggs: An integer count of the eggs we have laid.
     """
 
-    def __init__(self, likes_spam=False):
+    def __init__(self, likes_spam: bool = False):
         """Inits SampleClass with blah."""
         self.likes_spam = likes_spam
         self.eggs = 0
@@ -2424,40 +2432,53 @@ messages shown to the user) should follow three guidelines:
     logging.warning('The %s directory could not be deleted.', workdir)
 ```
 
+<a id="s3.11-files-sockets-closeables"></a>
 <a id="s3.11-files-and-sockets"></a>
 <a id="311-files-and-sockets"></a>
 <a id="files-and-sockets"></a>
 
 <a id="files"></a>
-### 3.11 Files and Sockets 
+### 3.11 Files, Sockets, and similar Stateful Resources 
 
-Explicitly close files and sockets when done with them.
+Explicitly close files and sockets when done with them. This rule naturally
+extends to closeable resources that internally use sockets, such as database
+connections, and also other resources that need to be closed down in a similar
+fashion. To name only a few examples, this also includes
+[mmap](https://docs.python.org/3/library/mmap.html) mappings,
+[h5py File objects](https://docs.h5py.org/en/stable/high/file.html), and
+[matplotlib.pyplot figure windows](https://matplotlib.org/2.1.0/api/_as_gen/matplotlib.pyplot.close.html).
 
-Leaving files, sockets or other file-like objects open unnecessarily has many
-downsides:
+Leaving files, sockets or other such stateful objects open unnecessarily has
+many downsides:
 
 -   They may consume limited system resources, such as file descriptors. Code
     that deals with many such objects may exhaust those resources unnecessarily
     if they're not returned to the system promptly after use.
 -   Holding files open may prevent other actions such as moving or deleting
-    them.
+    them, or unmounting a filesystem.
 -   Files and sockets that are shared throughout a program may inadvertently be
     read from or written to after logically being closed. If they are actually
-    closed, attempts to read or write from them will throw exceptions, making
+    closed, attempts to read or write from them will raise exceptions, making
     the problem known sooner.
 
-Furthermore, while files and sockets are automatically closed when the file
-object is destructed, tying the lifetime of the file object to the state of the
-file is poor practice:
+Furthermore, while files and sockets (and some similarly behaving resources) are
+automatically closed when the object is destructed, coupling the lifetime of the
+object to the state of the resource is poor practice:
 
--   There are no guarantees as to when the runtime will actually run the file's
-    destructor. Different Python implementations use different memory management
-    techniques, such as delayed garbage collection, which may increase the
-    object's lifetime arbitrarily and indefinitely.
+-   There are no guarantees as to when the runtime will actually invoke the
+    `__del__` method. Different Python implementations use different memory
+    management techniques, such as delayed garbage collection, which may
+    increase the object's lifetime arbitrarily and indefinitely.
 -   Unexpected references to the file, e.g. in globals or exception tracebacks,
     may keep it around longer than intended.
 
-The preferred way to manage files is using the
+Relying on finalizers to do automatic cleanup that has observable side effects
+has been rediscovered over and over again to lead to major problems, across many
+decades and multiple languages (see e.g.
+[this article](https://wiki.sei.cmu.edu/confluence/display/java/MET12-J.+Do+not+use+finalizers)
+for Java).
+
+The preferred way to manage files and similar resources is using the
 [`with` statement](http://docs.python.org/reference/compound_stmts.html#the-with-statement):
 
 ```python
@@ -2476,6 +2497,9 @@ with contextlib.closing(urllib.urlopen("http://www.python.org/")) as front_page:
     for line in front_page:
         print(line)
 ```
+
+In rare cases where context-based resource management is infeasible, code
+documentation must explain clearly how resource lifetime is managed.
 
 <a id="s3.12-todo-comments"></a>
 <a id="312-todo-comments"></a>
@@ -2716,11 +2740,12 @@ Always use a `.py` filename extension. Never use dashes.
     class.
 
 -   Prepending a single underscore (`_`) has some support for protecting module
-    variables and functions (linters will flag protected member access). While
-    prepending a double underscore (`__` aka "dunder") to an instance variable
+    variables and functions (linters will flag protected member access).
+
+-   Prepending a double underscore (`__` aka "dunder") to an instance variable
     or method effectively makes the variable or method private to its class
     (using name mangling); we discourage its use as it impacts readability and
-    testability, and isn't *really* private.
+    testability, and isn't *really* private. Prefer a single underscore.
 
 -   Place related classes and top-level functions together in a
     module.
@@ -2862,7 +2887,7 @@ When using [absl](https://github.com/abseil/abseil-py), use `app.run`:
 from absl import app
 ...
 
-def main(argv):
+def main(argv: Sequence[str]):
     # process non-flag arguments
     ...
 
