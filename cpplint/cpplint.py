@@ -153,8 +153,9 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
         --headers=hpp,hxx
         --headers=hpp
 
-    cpplint.py supports per-directory configurations specified in CPPLINT.cfg
-    files. CPPLINT.cfg file can contain a number of key=value pairs.
+    cpplint.py supports per-directory configurations specified in a config file.
+    Named either "CPPLINT.cfg" or ".cpplint.cfg" if the first doesn't exist.
+    The config file can contain a number of key=value pairs.
     Currently the following options are supported:
 
       set noparent
@@ -179,12 +180,13 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
     "linelength" allows to specify the allowed line length for the project.
 
     The "root" option is similar in function to the --root flag (see example
-    above). Paths are relative to the directory of the CPPLINT.cfg.
+    above).
+    Paths are relative to the directory of the config file.
 
     The "headers" option is similar in function to the --headers flag
     (see example above).
 
-    CPPLINT.cfg has an effect on files in the same directory and all
+    The config file has an effect on files in the same directory and all
     sub-directories, unless overridden by a nested configuration file.
 
       Example file:
@@ -4301,7 +4303,7 @@ def GetLineWidth(line):
           is_low_surrogate = 0xDC00 <= ord(uc) <= 0xDFFF
           if not is_wide_build and is_low_surrogate:
             width -= 1
-          
+
         width += 1
     return width
   else:
@@ -5961,7 +5963,11 @@ def ProcessConfigOverrides(filename):
     if not base_name:
       break  # Reached the root directory.
 
+    # First try to read from "CPPLINT.cfg", if it doesn't exist
+    # try to read from ".cpplint.cfg"
     cfg_file = os.path.join(abs_path, "CPPLINT.cfg")
+    if not os.path.exists(cfg_file):
+        cfg_file = os.path.join(abs_path, ".cpplint.cfg")
     abs_filename = abs_path
     if not os.path.isfile(cfg_file):
       continue
@@ -5984,9 +5990,9 @@ def ProcessConfigOverrides(filename):
             # When matching exclude_files pattern, use the base_name of
             # the current file name or the directory name we are processing.
             # For example, if we are checking for lint errors in /foo/bar/baz.cc
-            # and we found the .cfg file at /foo/CPPLINT.cfg, then the config
-            # file's "exclude_files" filter is meant to be checked against "bar"
-            # and not "baz" nor "bar/baz.cc".
+            # and we found the .cfg file at /foo/*.cfg,
+            # then the config file's "exclude_files" filter is meant to be checked
+            # against "bar" and not "baz" nor "bar/baz.cc".
             if base_name:
               pattern = re.compile(val)
               if pattern.match(base_name):
@@ -6006,7 +6012,7 @@ def ProcessConfigOverrides(filename):
                 sys.stderr.write('Line length must be numeric.')
           elif name == 'root':
             global _root
-            # root directories are specified relative to CPPLINT.cfg dir.
+            # root directories are specified relative to the dir of the config file.
             _root = os.path.join(os.path.dirname(cfg_file), val)
           elif name == 'headers':
             ProcessHppHeadersOption(val)
