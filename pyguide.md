@@ -31,7 +31,7 @@ See README.md for details.
     *   [2.17 Function and Method Decorators](#s2.17-function-and-method-decorators)
     *   [2.18 Threading](#s2.18-threading)
     *   [2.19 Power Features](#s2.19-power-features)
-    *   [2.20 Modern Python: Python 3 and from \_\_future\_\_ imports](#s2.20-modern-python)
+    *   [2.20 Modern Python: from \_\_future\_\_ imports](#s2.20-modern-python)
     *   [2.21 Type Annotated Code](#s2.21-type-annotated-code)
 -   [3 Python Style Rules](#s3-python-style-rules)
     *   [3.1 Semicolons](#s3.1-semicolons)
@@ -1386,11 +1386,10 @@ to use (for example, `abc.ABCMeta`, `dataclasses`, and `enum`).
 <a id="220-modern-python"></a>
 
 <a id="modern-python"></a>
-### 2.20 Modern Python: Python 3 and from \_\_future\_\_ imports 
+### 2.20 Modern Python: from \_\_future\_\_ imports 
 
-Python 3 is here! While not every project is ready to use it yet,
-all code should be written to be 3 compatible (and tested under 3 when
-possible).
+New language version semantic changes may be gated behind a special future
+import to enable them on a per-file basis within earlier runtimes.
 
 <a id="s2.20.1-definition"></a>
 <a id="2201-definition"></a>
@@ -1398,10 +1397,9 @@ possible).
 <a id="modern-python-definition"></a>
 #### 2.20.1 Definition 
 
-Python 3 is a significant change in the Python language. While existing code is
-often written with 2.7 in mind, there are some simple things to do to make code
-more explicit about its intentions and thus better prepared for use under Python
-3 without modification.
+Being able to turn on some of the more modern features via `from __future__
+import` statements allows early use of features from expected future Python
+versions.
 
 <a id="s2.20.2-pros"></a>
 <a id="2202-pros"></a>
@@ -1409,8 +1407,11 @@ more explicit about its intentions and thus better prepared for use under Python
 <a id="modern-python-pros"></a>
 #### 2.20.2 Pros 
 
-Code written with Python 3 in mind is more explicit and easier to get running
-under Python 3 once all of the dependencies of your project are ready.
+This has proven to make runtime version upgrades smoother as changes can be made
+on a per-file basis while declaring compatibility and preventing regressions
+within those files. Modern code is more maintainable as it is less likely to
+accumulate technical debt that will be problematic during future runtime
+upgrades.
 
 <a id="s2.20.3-cons"></a>
 <a id="2203-cons"></a>
@@ -1418,9 +1419,9 @@ under Python 3 once all of the dependencies of your project are ready.
 <a id="modern-python-cons"></a>
 #### 2.20.3 Cons 
 
-Some people find the additional boilerplate to be ugly. It's unusual to add
-imports to a module that doesn't actually require the features added by the
-import.
+Such code may not work on very old interpreter versions prior to the
+introduction of the needed future statement. The need for this is more common in
+projects supporting an extremely wide variety of environments.
 
 <a id="s2.20.4-decision"></a>
 <a id="2204-decision"></a>
@@ -1430,9 +1431,18 @@ import.
 
 ##### from \_\_future\_\_ imports
 
-Use of `from __future__ import` statements is encouraged. All new code should
-contain the following and existing code should be updated to be compatible when
-possible:
+Use of `from __future__ import` statements is encouraged. It allows a given
+source file to start using more modern Python syntax features today. Once you no
+longer need to run on a version where the features are hidden behind a
+`__future__` import, feel free to remove those lines.
+
+In code that may execute on versions as old as 3.5 rather than >= 3.7, import:
+
+```python
+from __future__ import generator_stop
+```
+
+For legacy code with the burden of continuing to support 2.7, import:
 
 ```python
 from __future__ import absolute_import
@@ -1440,27 +1450,26 @@ from __future__ import division
 from __future__ import print_function
 ```
 
-For more information on these imports, see
-[absolute imports](https://www.python.org/dev/peps/pep-0328/),
-[`/` division behavior](https://www.python.org/dev/peps/pep-0238/), and
-[the `print` function](https://www.python.org/dev/peps/pep-3105/).
+For more information read the
+[Python future statement definitions](https://docs.python.org/3/library/__future__.html)
+documentation.
 
+Please don't remove these imports until you are confident the code is only ever
+used in a sufficiently modern environment. Even if you do not currently use the
+feature a specific future import enables in your code today, keeping it in place
+in the file prevents later modifications of the code from inadvertently
+depending on the older behavior.
 
-Please don't omit or remove these imports, even if they're not currently used in
-the module, unless the code is Python 3 only. It is better to always have the
-future imports in all files so that they are not forgotten during later edits
-when someone starts using such a feature.
-
-There are other `from __future__` import statements. Use them as you see fit. We
-do not include `unicode_literals` in our recommendations as it is not a clear
-win due to implicit default codec conversion consequences it introduces in many
-places within Python 2.7. Most code is better off with explicit use of `b''` and
-`u''` bytes and unicode string literals as necessary.
+Use other `from __future__` import statements as you see fit. We did not include
+`unicode_literals` in our recommendations for 2.7 as it was not a clear win due
+to implicit default codec conversion consequences it introduced in many places
+within 2.7. Most dual-version 2-and-3 code was better off with explicit use of
+`b''` and `u''` bytes and unicode string literals where necessary.
 
 ##### The six, future, and past libraries
 
-When your project needs to actively support use under both Python 2 and 3, use
-the [six](https://pypi.org/project/six/),
+When your project still needs to support use under both Python 2 and 3, use the
+[six](https://pypi.org/project/six/),
 [future](https://pypi.org/project/future/), and
 [past](https://pypi.org/project/past/) libraries as you see fit. They exist to
 make your code cleaner and life easier.
@@ -3264,40 +3273,30 @@ def check_length(x: AnyStr) -> AnyStr:
 The proper type for annotating strings depends on what versions of Python the
 code is intended for.
 
-For Python 3 only code, prefer to use `str`. `Text` is also acceptable. Be
-consistent in using one or the other.
-
-For Python 2 compatible code, use `Text`. In some rare cases, `str` may make
-sense; typically to aid compatibility when the return types aren't the same
-between the two Python versions. Avoid using `unicode`: it doesn't exist in
-Python 3.
-
-The reason this discrepancy exists is because `str` means different things
-depending on the Python version.
+Prefer to use `str`, though `Text` is also acceptable. Be consistent in using
+one or the other. For code that deals with binary data, use `bytes`. For Python
+2 compatible code that processes text data (`str` or `unicode` in Python 2,
+`str` in Python 3), use `Text`.
 
 ```python
-No:
-def py2_code(x: str) -> unicode:
+def deals_with_text_data_in_py3(x: str) -> str:
   ...
-```
-
-For code that deals with binary data, use `bytes`.
-
-```python
 def deals_with_binary_data(x: bytes) -> bytes:
   ...
+def py2_compatible_text_data_processor(x: Text) -> Text:
+  ...
 ```
 
-For Python 2 compatible code that processes text data (`str` or `unicode` in
-Python 2, `str` in Python 3), use `Text`. For Python 3 only code that process
-text data, prefer `str`.
+In some uncommon Python 2 compatibility cases, `str` may make sense instead of
+`Text`, typically to aid compatibility when the return types aren't the same
+between Python 2 and Python 3. Never use `unicode` as it doesn't exist in Python
+3. The reason this discrepancy exists is because `str` means something different
+in Python 2 than in Python 3.
+
+No:
 
 ```python
-from typing import Text
-...
-def py2_compatible(x: Text) -> Text:
-  ...
-def py3_only(x: str) -> str:
+def py2_code(x: str) -> unicode:
   ...
 ```
 
@@ -3307,17 +3306,15 @@ type.
 ```python
 from typing import Text, Union
 ...
-def py2_compatible(x: Union[bytes, Text]) -> Union[bytes, Text]:
-  ...
 def py3_only(x: Union[bytes, str]) -> Union[bytes, str]:
+  ...
+def py2_compatible(x: Union[bytes, Text]) -> Union[bytes, Text]:
   ...
 ```
 
 If all the string types of a function are always the same, for example if the
 return type is the same as the argument type in the code above, use
 [AnyStr](#typing-type-var).
-
-Writing it like this will simplify the process of porting the code to Python 3.
 
 <a id="s3.19.12-imports-for-typing"></a>
 <a id="s3.19.12-imports"></a>
