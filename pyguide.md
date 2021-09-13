@@ -306,31 +306,32 @@ All new code should import each module by its full package name.
 
 Imports should be as follows:
 
+```python
 Yes:
+  # Reference absl.flags in code with the complete name (verbose).
+  import absl.flags
+  from doctor.who import jodie
 
-```python
-# Reference absl.flags in code with the complete name (verbose).
-import absl.flags
-from doctor.who import jodie
-
-FLAGS = absl.flags.FLAGS
+  FLAGS = absl.flags.FLAGS
 ```
 
 ```python
-# Reference flags in code with just the module name (common).
-from absl import flags
-from doctor.who import jodie
+Yes:
+  # Reference flags in code with just the module name (common).
+  from absl import flags
+  from doctor.who import jodie
 
-FLAGS = flags.FLAGS
+  FLAGS = flags.FLAGS
 ```
 
-No: _(assume this file lives in `doctor/who/` where `jodie.py` also exists)_
+_(assume this file lives in `doctor/who/` where `jodie.py` also exists)_
 
 ```python
-# Unclear what module the author wanted and what will be imported.  The actual
-# import behavior depends on external factors controlling sys.path.
-# Which possible jodie module did the author intend to import?
-import jodie
+No:
+  # Unclear what module the author wanted and what will be imported.  The actual
+  # import behavior depends on external factors controlling sys.path.
+  # Which possible jodie module did the author intend to import?
+  import jodie
 ```
 
 The directory the main binary is located in should not be assumed to be in
@@ -441,7 +442,7 @@ Exceptions must follow certain conditions:
 
 -   Libraries or packages may define their own exceptions. When doing so they
     must inherit from an existing exception class. Exception names should end in
-    `Error` and should not introduce stutter (`foo.FooError`).
+    `Error` and should not introduce repetition (`foo.FooError`).
 
 -   Never use catch-all `except:` statements, or catch `Exception` or
     `StandardError`, unless you are
@@ -968,8 +969,10 @@ No:  def foo(a, b: Mapping = {}):  # Could still get passed to unchecked code
 <a id="properties"></a>
 ### 2.13 Properties 
 
-Use properties for accessing or setting data where you would normally have used
-simple, lightweight accessor or setter methods.
+Properties may be used to control getting or setting attributes that require
+trivial, but unsurprising, computations or logic. Property implementations must
+match the general expectations of regular attribute access: that they are cheap,
+straightforward, and unsurprising.
 
 <a id="s2.13.1-definition"></a>
 <a id="2131-definition"></a>
@@ -1008,9 +1011,19 @@ subclasses.
 <a id="properties-decision"></a>
 #### 2.13.4 Decision 
 
-Use properties in new code to access or set data where you would normally have
-used lightweight accessor or setter methods. Properties should be created with
-the `@property` [decorator](#s2.17-function-and-method-decorators).
+Properties are allowed, but, like operator overloading, should only be used when
+necessary and match the expectations of typical attribute access; follow the
+[getters and setters](#getters-and-setters) rules otherwise.
+
+For example, using a property to simply both get and set an internal attribute
+isn't allowed: there is no computation occurring, so the property is unnecessary
+([make it public instead](#getters-and-setters)). In comparison, using a
+property to control attribute access, or calculate a *trivially* derived value,
+is allowed: the logic is trivial, but unsurprising.
+
+Properties should be created with the `@property`
+[decorator](#s2.17-function-and-method-decorators). Manually implementing a
+property descriptor is considered a [power feature](#power-features).
 
 Inheritance with properties can be non-obvious if the property itself is not
 overridden. Thus one must make sure that accessor methods are called indirectly
@@ -1127,9 +1140,6 @@ Use the "implicit" false if possible, e.g., `if foo:` rather than `if foo !=
     Yes: if not users:
              print('no users')
 
-         if foo == 0:
-             self.handle_zero()
-
          if i % 10 == 0:
              self.handle_multiple_of_ten()
 
@@ -1141,9 +1151,6 @@ Use the "implicit" false if possible, e.g., `if foo:` rather than `if foo !=
     ```python
     No:  if len(users) == 0:
              print('no users')
-
-         if foo is not None and not foo:
-             self.handle_zero()
 
          if not i % 10:
              self.handle_multiple_of_ten()
@@ -1805,6 +1812,10 @@ definitions. One blank line between method definitions and between the `class`
 line and the first method. No blank line following a `def` line. Use single
 blank lines as you judge appropriate within functions or methods.
 
+Blank lines need not be anchored to the definition. For example, related
+comments immediately preceding function, class, and method definitions can make
+sense. Consider if your comment might be more useful as part of the docstring.
+
 <a id="s3.6-whitespace"></a>
 <a id="36-whitespace"></a>
 
@@ -2050,7 +2061,14 @@ aptly described using a one-line docstring.
     returns None, this section is not required. It may also be omitted if the
     docstring starts with Returns or Yields (e.g. `"""Returns row from Bigtable
     as a tuple of strings."""`) and the opening sentence is sufficient to
-    describe return value.
+    describe the return value. Do not imitate 'NumPy style'
+    ([example](http://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html)),
+    which frequently documents a tuple return value as if it were multiple
+    return values with individual names (never mentioning the tuple). Instead,
+    describe such a return value as: "Returns a tuple (mat_a, mat_b), where
+    mat_a is ..., and ...". The auxiliary names in the docstring need not
+    necessarily correspond to any internal names used in the function body (as
+    those are not part of the API).
 
 <a id="doc-function-raises"></a>
 [*Raises:*](#doc-function-raises)
@@ -2075,8 +2093,8 @@ def fetch_smalltable_rows(table_handle: smalltable.Table,
         table_handle: An open smalltable.Table instance.
         keys: A sequence of strings representing the key of each table
           row to fetch.  String keys will be UTF-8 encoded.
-        require_all_keys: Optional; If require_all_keys is True only
-          rows with values set for all keys will be returned.
+        require_all_keys: If True only rows with values set for all keys will be
+          returned.
 
     Returns:
         A dict mapping keys to the corresponding table row data
@@ -2115,8 +2133,7 @@ def fetch_smalltable_rows(table_handle: smalltable.Table,
         A sequence of strings representing the key of each table row to
         fetch.  String keys will be UTF-8 encoded.
       require_all_keys:
-        Optional; If require_all_keys is True only rows with values set
-        for all keys will be returned.
+        If True only rows with values set for all keys will be returned.
 
     Returns:
       A dict mapping keys to the corresponding table row data
@@ -2283,7 +2300,7 @@ No: employee_table = '<table>'
 
 Be consistent with your choice of string quote character within a file. Pick `'`
 or `"` and stick with it. It is okay to use the other quote character on a
-string to avoid the need to `\\ ` escape within the string.
+string to avoid the need to backslash-escape quote characters within the string.
 
 ```python
 Yes:
@@ -2678,22 +2695,33 @@ No:
 <a id="s3.15-access-control"></a>
 <a id="315-access-control"></a>
 <a id="access-control"></a>
-
 <a id="accessors"></a>
-### 3.15 Accessors 
 
-If an accessor function would be trivial, you should use public variables
-instead of accessor functions to avoid the extra cost of function calls in
-Python. When more functionality is added you can use `property` to keep the
-syntax consistent.
+<a id="getters-and-setters"></a>
+### 3.15 Getters and Setters 
 
-On the other hand, if access is more complex, or the cost of accessing the
-variable is significant, you should use function calls (following the
-[Naming](#s3.16-naming) guidelines) such as `get_foo()` and `set_foo()`. If the
-past behavior allowed access through a property, do not bind the new accessor
-functions to the property. Any code still attempting to access the variable by
-the old method should break visibly so they are made aware of the change in
-complexity.
+Getter and setter functions (also called accessors and mutators) should be used
+when they provide a meaningful role or behavior for getting or setting a
+variable's value.
+
+In particular, they should be used when getting or setting the variable is
+complex or the cost is significant, either currently or in a reasonable future.
+
+If, for example, a pair of getters/setters simply read and write an internal
+attribute, the internal attribute should be made public instead. By comparison,
+if setting a variable means some state is invalidated or rebuilt, it should be a
+setter function. The function invocation hints that a potentially non-trivial
+operation is occurring. Alternatively, [properties](#properties) may be an
+option when simple logic is needed, or refactoring to no longer need getters and
+setters.
+
+Getters and setters should follow the [Naming](#s3.16-naming) guidelines, such
+as `get_foo()` and `set_foo()`.
+
+If the past behavior allowed access through a property, do not bind the new
+getter/setter functions to the property. Any code still attempting to access the
+variable by the old method should break visibly so they are made aware of the
+change in complexity.
 
 <a id="s3.16-naming"></a>
 <a id="316-naming"></a>
