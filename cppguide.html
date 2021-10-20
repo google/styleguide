@@ -165,7 +165,8 @@ input.</p>
 <h2 id="C++_Version">C++ Version</h2>
 
 <p>Currently, code should target C++17, i.e., should not use C++2x
-  features. The C++ version targeted by this guide will advance
+  features, with the exception of <a href="#Designated_initializers">designated
+  initializers</a>. The C++ version targeted by this guide will advance
   (aggressively) over time.</p>
 
 
@@ -441,6 +442,8 @@ as follows:</p>
 
   <div>
   <li>Other libraries' <code>.h</code> files.</li>
+
+  <li>A blank line</li>
   </div>
 
   <li>
@@ -957,10 +960,12 @@ does not make an observable difference. For example:</p>
 <h4>Common patterns</h4>
 
 <ul>
-  <li>Global strings: if you require a global or static string constant,
-    consider using a simple character array, or a char pointer to the first
-    element of a string literal. String literals have static storage duration
-    already and are usually sufficient.</li>
+  <li>Global strings: if you require a named global or static string constant,
+    consider using a <code>constexpr</code> variable of
+    <code>string_view</code>, character array, or character pointer, pointing
+    to a string literal. String literals have static storage duration already
+    and are usually sufficient.
+    See <a href="https://abseil.io/tips/140">TotW #140.</a></li>
   <li>Maps, sets, and other dynamic containers: if you require a static, fixed
     collection, such as a set to search against or a lookup table, you cannot
     use the dynamic containers from the standard library as a static variable,
@@ -1003,7 +1008,7 @@ attribute. Prefer
 <code>thread_local</code> over other ways of defining thread-local data.</p>
 
 <p class="definition"></p>
-<p>Starting with C++11, variables can be declared with the
+<p>Variables can be declared with the
 <code>thread_local</code> specifier:</p>
 <pre>thread_local Foo foo = ...;
 </pre>
@@ -1022,8 +1027,8 @@ thread, rather than once at program startup. This means that
 other <code>thread_local</code> variables are subject to the same
 initialization-order issues as static variables (and more besides).</p>
 
-<p><code>thread_local</code> variable instances are destroyed when their thread
-terminates, so they do not have the destruction-order issues of static
+<p><code>thread_local</code> variable instances are not destroyed before their
+thread terminates, so they do not have the destruction-order issues of static
 variables.</p>
 
 <p class="pros"></p>
@@ -1045,9 +1050,10 @@ variables.</p>
   <li>The memory consumed by a <code>thread_local</code> variable scales with
     the number of running threads (in the worst case), which can be quite large
     in a  program.</li>
-  <li>An ordinary class member cannot be <code>thread_local</code>.</li>
+  <li>Non-static data members cannot be <code>thread_local</code>.</li>
   <li><code>thread_local</code> may not be as efficient as certain compiler
     intrinsics.</li>
+
 </ul>
 
 <p class="decision"></p>
@@ -1164,10 +1170,10 @@ type is defined by a constructor that can take the source type as
 its only argument (or only argument with no default value).</p>
 
 <p>The <code>explicit</code> keyword can be applied to a constructor
-or (since C++11) a conversion operator, to ensure that it can only be
+or a conversion operator, to ensure that it can only be
 used when the destination type is explicit at the point of use,
 e.g., with a cast. This applies not only to implicit conversions, but to
-C++11's list initialization syntax:</p>
+list initialization syntax:</p>
 <pre>class Foo {
   explicit Foo(int x, double y);
   ...
@@ -1395,13 +1401,10 @@ recommended that you design your class so that the default implementation of
 those operations is correct. Remember to review the correctness of any
 defaulted operations as you would any other code.</p>
 
-<p>Due to the risk of slicing, prefer to avoid providing a public assignment
-operator or copy/move constructor for a class that's
-intended to be derived from (and prefer to avoid deriving from a class
-with such members). If your base class needs to be
-copyable, provide a public virtual <code>Clone()</code>
-method, and a protected copy constructor that derived classes
-can use to implement it.</p>
+<p>To eliminate the risk of slicing, prefer to make base classes abstract,
+by making their constructors protected, by declaring their destructors protected,
+or by giving them one or more pure virtual member functions. Prefer to avoid
+deriving from concrete classes.</p>
 
 
 
@@ -1505,7 +1508,9 @@ which are prone to ambiguity, confusion, and outright bugs.</p>
 
 <p>All inheritance should be <code>public</code>. If you
 want to do private inheritance, you should be including
-an instance of the base class as a member instead.</p>
+an instance of the base class as a member instead. You may use
+<code>final</code> on classes when you don't intend to support using
+them as base classes.</p>
 
 <p>Do not overuse implementation inheritance. Composition
 is often more appropriate. Try to restrict use of
@@ -1700,10 +1705,11 @@ sections that would be empty.</p>
 
 <p>Within each section, prefer grouping similar
 kinds of declarations together, and prefer the
-following order: types (including <code>typedef</code>,
-<code>using</code>, <code>enum</code>, and nested structs and classes),
-constants, factory functions, constructors and assignment
-operators, destructor, all other methods, data members.</p>
+following order: types and type aliases (<code>typedef</code>,
+<code>using</code>, <code>enum</code>, nested structs and classes),
+static constants, factory functions, constructors and assignment
+operators, destructor, all other member and <code>friend</code> functions,
+data members.</p>
 
 <p>Do not put large method definitions inline in the
 class definition. Usually, only trivial or
@@ -1731,7 +1737,7 @@ Avoid returning a pointer unless it can be null.</p>
 function, or both. Non-optional input parameters should usually be values
 or <code>const</code> references, while non-optional output and
 input/output parameters should usually be references (which cannot be null).
-Generally, use <code>absl::optional</code> to represent optional by-value
+Generally, use <code>std::optional</code> to represent optional by-value
 inputs, and use a <code>const</code> pointer when the non-optional form would
 have used a reference. Use non-<code>const</code> pointers to represent
 optional outputs and optional input/output parameters.</p>
@@ -1890,7 +1896,7 @@ doubt, use overloads.</p>
   form, the return type appears before the function name. For example:</p>
 <pre>int foo(int x);
 </pre>
-<p>The newer form, introduced in C++11, uses the <code>auto</code>
+<p>The newer form uses the <code>auto</code>
   keyword before the function name and a trailing return type after
   the argument list. For example, the declaration above could
   equivalently be written:</p>
@@ -1976,7 +1982,7 @@ can be used to automate ownership bookkeeping, to ensure
 these responsibilities are met.
 <a href="http://en.cppreference.com/w/cpp/memory/unique_ptr">
 <code>std::unique_ptr</code></a> is a smart pointer type
-introduced in C++11, which expresses exclusive ownership
+which expresses exclusive ownership
 of a dynamically allocated object; the object is deleted
 when the <code>std::unique_ptr</code> goes out of scope.
 It cannot be copied, but can be <em>moved</em> to
@@ -2036,7 +2042,7 @@ all copies, and the object is deleted when the last
   where the resource releases take place.</li>
 
   <li><code>std::unique_ptr</code> expresses ownership
-  transfer using C++11's move semantics, which are
+  transfer using move semantics, which are
   relatively new and may confuse some programmers.</li>
 
   <li>Shared ownership can be a tempting alternative to
@@ -2320,9 +2326,8 @@ exceptions in Google open-source projects as well.
 Things would probably be different if we had to do it all
 over again from scratch.</p>
 
-<p>This prohibition also applies to the exception handling related
-features added in C++11, such as
-<code>std::exception_ptr</code> and
+<p>This prohibition also applies to exception handling related
+features such as <code>std::exception_ptr</code> and
 <code>std::nested_exception</code>.</p>
 
 <p>There is an <a href="#Windows_Code">exception</a> to
@@ -2546,7 +2551,14 @@ casts when explicit type conversion is necessary.
   will not compile if conversion can result in information loss.  The
   syntax is also concise.</li>
 
-
+  <li>Use <code>absl::implicit_cast</code>
+  to safely cast up a type hierarchy,
+  e.g., casting a <code>Foo*</code> to a
+  <code>SuperclassOfFoo*</code> or casting a
+  <code>Foo*</code> to a <code>const Foo*</code>. C++
+  usually does this automatically but some situations
+  need an explicit up-cast, such as use of the
+  <code>?:</code> operator.</li>
 
   <li>Use <code>static_cast</code> as the equivalent of a C-style cast
   that does value conversion, when you need to
@@ -2668,10 +2680,8 @@ localization, and security hardening.</p>
 <p>If you do use streams, avoid the stateful parts of the
 streams API (other than error state), such as <code>imbue()</code>,
 <code>xalloc()</code>, and <code>register_callback()</code>.
-Use explicit formatting functions (see e.g.,
-
-<code>absl/strings</code>)
-rather than
+Use explicit formatting functions (such as
+<code>absl::StreamFormat()</code>) rather than
 stream manipulators or formatting flags to control formatting
 details such as number base, precision, or padding.</p>
 
@@ -2848,7 +2858,7 @@ enable their use with <code>constexpr</code>. Do not use
  is
 <code>int</code>. If a program needs a variable of a
 different size, use a precise-width integer type from
-<code>&lt;stdint.h&gt;</code>, such as
+<code>&lt;cstdint&gt;</code>, such as
 <code>int16_t</code>. If your variable represents a
 value that could ever be greater than or equal to 2^31
 (2GiB), use a 64-bit type such as <code>int64_t</code>.
@@ -2858,7 +2868,7 @@ calculations which may require a larger type. When in doubt,
 choose a larger type.</p>
 
 <p class="definition"></p>
-<p> C++ does not specify the sizes of integer types
+<p> C++ does not precisely specify the sizes of integer types
 like <code>int</code>. Typically people assume
 that <code>short</code> is 16 bits,
 <code>int</code> is 32 bits, <code>long</code> is 32 bits
@@ -3279,13 +3289,13 @@ auto i = y.Find(key);
   by eliminating type information that is obvious or irrelevant, so that
   the reader can focus on the meaningful parts of the code:</p>
   <pre class="neutralcode">std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt; widget_ptr =
-    absl::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
+    std::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
 absl::flat_hash_map&lt;std::string,
                     std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt;&gt;::const_iterator
     it = my_map_.find(key);
 std::array&lt;int, 6&gt; numbers = {4, 8, 15, 16, 23, 42};</pre>
 
-  <pre class="goodcode">auto widget_ptr = absl::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
+  <pre class="goodcode">auto widget_ptr = std::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
 auto it = my_map_.find(key);
 std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
 
@@ -3450,18 +3460,18 @@ ordering of fields than the <code>Point</code> example above.</p>
 <p class="cons"></p>
 <p>While designated initializers have long been part of the C standard and
 supported by C++ compilers as an extension, only recently have they made it
-into the draft C++ standard. They are on track for publishing in C++20.</p>
+into the C++ standard, being added as part of C++20.</p>
 
-<p>The rules in the draft C++ standard are stricter than in C and compiler
-extensions, requiring that the designated initializers appear in the same order
-as the fields appear in the struct definition. So in the example above it is
-legal according to draft C++20 to initialize <code>x</code> and then
-<code>z</code>, but not <code>y</code> and then <code>x</code>.</p>
+<p>The rules in the C++ standard are stricter than in C and compiler extensions,
+requiring that the designated initializers appear in the same order as the
+fields appear in the struct definition. So in the example above, it is legal
+according to C++20 to initialize <code>x</code> and then <code>z</code>, but not
+<code>y</code> and then <code>x</code>.</p>
 
 <p class="decision"></p>
 <p>Use designated initializers only in the form that is compatible with the
-draft C++20 standard: with initializers in the same order as the corresponding
-fields appear in the struct definition.</p>
+C++20 standard: with initializers in the same order as the corresponding fields
+appear in the struct definition.</p>
 
 
 
@@ -3549,8 +3559,8 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
   <li>Default captures by value can be misleading because they do not prevent
   dangling-pointer bugs. Capturing a pointer by value doesn't cause a deep
   copy, so it often has the same lifetime issues as capture by reference.
-  This is especially confusing when capturing 'this' by value, since the use
-  of 'this' is often implicit.</li>
+  This is especially confusing when capturing <code>this</code> by value,
+  since the use of <code>this</code> is often implicit.</li>
 
   <li>Captures actually declare new variables (whether or not the captures have
     initializers), but they look nothing like any other variable declaration
@@ -3600,14 +3610,18 @@ prefer to write:
 // reference.
 </pre>
 </li>
-<li>Use default capture by reference ([&amp;]) only when the
-lifetime of the lambda is obviously shorter than any potential
+<li>Use default capture by reference (<code>[&amp;]</code>) only when
+the lifetime of the lambda is obviously shorter than any potential
 captures.
 </li>
-<li>Use default capture by value ([=]) only as a means of binding a
-few variables for a short lambda, where the set of captured
-variables is obvious at a glance. Prefer not to write long or
-complex lambdas with default capture by value.
+<li>Use default capture by value (<code>[=]</code>) only as a means of
+binding a few variables for a short lambda, where the set of captured
+variables is obvious at a glance, and which does not result in
+capturing <code>this</code> implicitly. (That means that a lambda that
+appears in a non-static class member function and refers to non-static
+class members in its body must capture <code>this</code> explicitly or
+via <code>[&amp;]</code>.) Prefer not to write long or complex lambdas
+with default capture by value.
 </li>
 <li>Use captures only to actually capture variables from the enclosing scope.
   Do not use captures with initializers to introduce new names, or
@@ -3789,76 +3803,6 @@ features to the list, so this list may be expanded in
 the future.</p>
 </div>
 
-<h3 id="std_hash">std::hash</h3>
-
-<p>Do not define specializations of <code>std::hash</code>.</p>
-
-<p class="definition"></p>
-<p><code>std::hash&lt;T&gt;</code> is the function object that the
-C++11 hash containers use to hash keys of type <code>T</code>,
-unless the user explicitly specifies a different hash function. For
-example, <code>std::unordered_map&lt;int, std::string&gt;</code> is a hash
-map that uses <code>std::hash&lt;int&gt;</code> to hash its keys,
-whereas <code>std::unordered_map&lt;int, std::string, MyIntHash&gt;</code>
-uses <code>MyIntHash</code>.</p>
-
-<p><code>std::hash</code> is defined for all integral, floating-point,
-pointer, and <code>enum</code> types, as well as some standard library
-types such as <code>string</code> and <code>unique_ptr</code>. Users
-can enable it to work for their own types by defining specializations
-of it for those types.</p>
-
-<p class="pros"></p>
-<p><code>std::hash</code> is easy to use, and simplifies the code
-since you don't have to name it explicitly. Specializing
-<code>std::hash</code> is the standard way of specifying how to
-hash a type, so it's what outside resources will teach, and what
-new engineers will expect.</p>
-
-<p class="cons"></p>
-<p><code>std::hash</code> is hard to specialize. It requires a lot
-of boilerplate code, and more importantly, it combines responsibility
-for identifying the hash inputs with responsibility for executing the
-hashing algorithm itself. The type author has to be responsible for
-the former, but the latter requires expertise that a type author
-usually doesn't have, and shouldn't need. The stakes here are high
-because low-quality hash functions can be security vulnerabilities,
-due to the emergence of
-<a href="https://emboss.github.io/blog/2012/12/14/breaking-murmur-hash-flooding-dos-reloaded/">
-hash flooding attacks</a>.</p>
-
-<p>Even for experts, <code>std::hash</code> specializations are
-inordinately difficult to implement correctly for compound types,
-because the implementation cannot recursively call <code>std::hash</code>
-on data members. High-quality hash algorithms maintain large
-amounts of internal state, and reducing that state to the
-<code>size_t</code> bytes that <code>std::hash</code>
-returns is usually the slowest part of the computation, so it
-should not be done more than once.</p>
-
-<p>Due to exactly that issue, <code>std::hash</code> does not work
-with <code>std::pair</code> or <code>std::tuple</code>, and the
-language does not allow us to extend it to support them.</p>
-
-<p class="decision"></p>
-<p>You can use <code>std::hash</code> with the types that it supports
-"out of the box", but do not specialize it to support additional types.
-If you need a hash table with a key type that <code>std::hash</code>
-does not support, consider using legacy hash containers (e.g.,
-<code>hash_map</code>) for now; they use a different default hasher,
-which is unaffected by this prohibition.</p>
-
-<p>If you want to use the standard hash containers anyway, you will
-need to specify a custom hasher for the key type, e.g.,</p>
-<pre>std::unordered_map&lt;MyKeyType, Value, MyKeyTypeHasher&gt; my_map;
-</pre><p>
-Consult with the type's owners to see if there is an existing hasher
-that you can use; otherwise work with them to provide one,
- or roll your own.</p>
-
-<p>We are planning to provide a hash function that can work with any type,
-using a new customization mechanism that doesn't have the drawbacks of
-<code>std::hash</code>.</p>
 
 
 
@@ -4491,6 +4435,7 @@ operation.</p>
 preceding it that describe what the function does and how to use
 it. These comments may be omitted only if the function is simple and
 obvious (e.g., simple accessors for obvious properties of the class).
+Private methods and functions declared in `.cc` files are not exempt.
 Function comments should be written with an implied subject of
 <i>This function</i> and should start with the verb phrase; for example,
 "Opens the file", rather than "Open the file". In general, these comments do not
@@ -4603,7 +4548,7 @@ obvious. For example:</p>
 <h4>Global Variables</h4>
 
 <p>All global variables should have a comment describing what they
-are, what they are used for, and (if unclear) why it needs to be
+are, what they are used for, and (if unclear) why they need to be
 global. For example:</p>
 
 <pre>// The total number of test cases that we run through in this regression test.
@@ -4618,33 +4563,7 @@ non-obvious, interesting, or important parts of your code.</p>
 <h4>Explanatory Comments</h4>
 
 <p>Tricky or complicated code blocks should have comments
-before them. Example:</p>
-
-<pre>// Divide result by two, taking into account that x
-// contains the carry from the add.
-for (int i = 0; i &lt; result-&gt;size(); ++i) {
-  x = (x &lt;&lt; 8) + (*result)[i];
-  (*result)[i] = x &gt;&gt; 1;
-  x &amp;= 1;
-}
-</pre>
-
-<h4>Line-end Comments</h4>
-
-<p>Also, lines that are non-obvious should get a comment
-at the end of the line. These end-of-line comments should
-be separated from the code by 2 spaces. Example:</p>
-
-<pre>// If we have enough memory, mmap the data portion too.
-mmap_budget = max&lt;int64_t&gt;(0, mmap_budget - index_-&gt;length());
-if (mmap_budget &gt;= data_size_ &amp;&amp; !MmapData(mmap_chunk_bytes, mlock))
-  return;  // Error already logged.
-</pre>
-
-<p>Note that there are both comments that describe what
-the code is doing, and comments that mention that an
-error has already been logged when the function
-returns.</p>
+before them.</p>
 
 <h4 class="stylepoint_subsection" id="Function_Argument_Comments">Function Argument Comments</h4>
 
@@ -4662,7 +4581,8 @@ one of the following remedies:</p>
   values self-describing.</li>
 
   <li>For functions that have several configuration options, consider
-  defining a single class or struct to hold all the options,
+  defining a single class or struct to hold all the options
+  ,
   and pass an instance of that.
   This approach has several advantages. Options are referenced by name
   at the call site, which clarifies their meaning. It also reduces
@@ -4882,7 +4802,7 @@ encoded as UTF-8, because that will produce incorrect
 output if the compiler does not interpret the source file
 as UTF-8. </p>
 
-<p>You shouldn't use the C++11 <code>char16_t</code> and
+<p>You shouldn't use <code>char16_t</code> and
 <code>char32_t</code> character types, since they're for
 non-UTF-8 text. For similar reasons you also shouldn't
 use <code>wchar_t</code> (unless you're writing code that
@@ -5630,7 +5550,9 @@ trailing whitespace at the end of a line.</p>
 
 <h4>General</h4>
 
-<pre>void f(bool b) {  // Open braces should always have a space before them.
+<pre>int i = 0;  // Two spaces before end-of-line comments.
+
+void f(bool b) {  // Open braces should always have a space before them.
   ...
 int i = 0;  // Semicolons usually have no space before them.
 // Spaces inside braces for braced-init-list are optional.  If you use them,
@@ -5865,32 +5787,6 @@ occasionally need to break on Windows:</p>
   <code>resource.h</code> and contain only macros, do not
   need to conform to these style guidelines.</li>
 </ul>
-
-<h2 id="Parting_Words">Parting Words</h2>
-
-<p>Use common sense and <em>BE CONSISTENT</em>.</p>
-
-<p>If you are editing code, take a few minutes to look at the
-code around you and determine its style. If they use spaces
-around their <code>if</code> clauses, you should, too. If their
-comments have little boxes of stars around them, make your
-comments have little boxes of stars around them too.</p>
-
-<p>The point of having style guidelines is to have a common
-vocabulary of coding so people can concentrate on what you are
-saying, rather than on how you are saying it. We present global
-style rules here so people know the vocabulary. But local style
-is also important. If code you add to a file looks drastically
-different from the existing code around it, the discontinuity
-throws readers out of their rhythm when they go to read it. Try
-to avoid this.</p>
-
-
-
-<p>OK, enough writing about writing code; the code itself is much
-more interesting. Have fun!</p>
-
-<hr>
 </div>
 </body>
 </html>
