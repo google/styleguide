@@ -212,9 +212,10 @@ that the arguments are actually unused.
 ### 2.2 Imports 
 
 Use `import` statements for packages and modules only, not for individual
-classes or functions. Imports from the [typing module](#typing-imports),
+classes or functions. Classes imported from the
+[typing module](#typing-imports),
 [typing_extensions module](https://github.com/python/typing/tree/master/typing_extensions),
-and the
+and redirects from the
 [six.moves module](https://six.readthedocs.io/#module-six.moves)
 are exempt from this rule.
 
@@ -324,7 +325,7 @@ Yes:
   FLAGS = flags.FLAGS
 ```
 
-_(assume this file lives in `doctor/who/` where `jodie.py` also exists)_
+*(assume this file lives in `doctor/who/` where `jodie.py` also exists)*
 
 ```python
 No:
@@ -439,6 +440,7 @@ Exceptions must follow certain conditions:
         assert port is not None
         return port
     ```
+
 
 -   Libraries or packages may define their own exceptions. When doing so they
     must inherit from an existing exception class. Exception names should end in
@@ -970,9 +972,9 @@ No:  def foo(a, b: Mapping = {}):  # Could still get passed to unchecked code
 ### 2.13 Properties 
 
 Properties may be used to control getting or setting attributes that require
-trivial, but unsurprising, computations or logic. Property implementations must
-match the general expectations of regular attribute access: that they are cheap,
-straightforward, and unsurprising.
+trivial computations or logic. Property implementations must match the general
+expectations of regular attribute access: that they are cheap, straightforward,
+and unsurprising.
 
 <a id="s2.13.1-definition"></a>
 <a id="2131-definition"></a>
@@ -981,7 +983,7 @@ straightforward, and unsurprising.
 #### 2.13.1 Definition 
 
 A way to wrap method calls for getting and setting an attribute as a standard
-attribute access when the computation is lightweight.
+attribute access.
 
 <a id="s2.13.2-pros"></a>
 <a id="2132-pros"></a>
@@ -989,12 +991,12 @@ attribute access when the computation is lightweight.
 <a id="properties-pros"></a>
 #### 2.13.2 Pros 
 
-Readability is increased by eliminating explicit get and set method calls for
-simple attribute access. Allows calculations to be lazy. Considered the Pythonic
-way to maintain the interface of a class. In terms of performance, allowing
-properties bypasses needing trivial accessor methods when a direct variable
-access is reasonable. This also allows accessor methods to be added in the
-future without breaking the interface.
+*   Allows for an attribute access and assignment API rather than
+    [getter and setter](#getters-and-setters) method calls.
+*   Can be used to make an attribute read-only.
+*   Allows calculations to be lazy.
+*   Provides a way to maintain the public interface of a class when the
+    internals evolve independently of class users.
 
 <a id="s2.13.3-cons"></a>
 <a id="2133-cons"></a>
@@ -1002,8 +1004,8 @@ future without breaking the interface.
 <a id="properties-cons"></a>
 #### 2.13.3 Cons 
 
-Can hide side-effects much like operator overloading. Can be confusing for
-subclasses.
+*   Can hide side-effects much like operator overloading.
+*   Can be confusing for subclasses.
 
 <a id="s2.13.4-decision"></a>
 <a id="2134-decision"></a>
@@ -1017,62 +1019,16 @@ necessary and match the expectations of typical attribute access; follow the
 
 For example, using a property to simply both get and set an internal attribute
 isn't allowed: there is no computation occurring, so the property is unnecessary
-([make it public instead](#getters-and-setters)). In comparison, using a
-property to control attribute access, or calculate a *trivially* derived value,
-is allowed: the logic is trivial, but unsurprising.
+([make the attribute public instead](#getters-and-setters)). In comparison,
+using a property to control attribute access or to calculate a *trivially*
+derived value is allowed: the logic is simple and unsurprising.
 
 Properties should be created with the `@property`
 [decorator](#s2.17-function-and-method-decorators). Manually implementing a
 property descriptor is considered a [power feature](#power-features).
 
-Inheritance with properties can be non-obvious if the property itself is not
-overridden. Thus one must make sure that accessor methods are called indirectly
-to ensure methods overridden in subclasses are called by the property (using the
-[template method design pattern](https://en.wikipedia.org/wiki/Template_method_pattern)).
-
-```python
-Yes: import math
-
-     class Square:
-         """A square with two properties: a writable area and a read-only perimeter.
-
-         To use:
-         >>> sq = Square(3)
-         >>> sq.area
-         9
-         >>> sq.perimeter
-         12
-         >>> sq.area = 16
-         >>> sq.side
-         4
-         >>> sq.perimeter
-         16
-         """
-
-         def __init__(self, side: float):
-             self.side = side
-
-         @property
-         def area(self) -> float:
-             """Area of the square."""
-             return self._get_area()
-
-         @area.setter
-         def area(self, area: float):
-             self._set_area(area)
-
-         def _get_area(self) -> float:
-             """Indirect accessor to calculate the 'area' property."""
-             return self.side ** 2
-
-         def _set_area(self, area: float):
-             """Indirect setter to set the 'area' property."""
-             self.side = math.sqrt(area)
-
-         @property
-         def perimeter(self) -> float:
-             return self.side * 4
-```
+Inheritance with properties can be non-obvious. Do not use properties to
+implement computations a subclass may ever want to override and extend.
 
 <a id="s2.14-truefalse-evaluations"></a>
 <a id="214-truefalse-evaluations"></a>
@@ -1160,6 +1116,10 @@ Use the "implicit" false if possible, e.g., `if foo:` rather than `if foo !=
     ```
 
 -   Note that `'0'` (i.e., `0` as string) evaluates to true.
+
+-   Note that Numpy arrays may raise an exception in an implicit boolean
+    context. Prefer the `.size` attribute when testing emptiness of a `np.array`
+    (e.g. `if not users.size`).
 
 <a id="s2.16-lexical-scoping"></a>
 <a id="216-lexical-scoping"></a>
@@ -1290,8 +1250,9 @@ eliminate some repetitive code, enforce invariants, etc.
 
 Decorators can perform arbitrary operations on a function's arguments or return
 values, resulting in surprising implicit behavior. Additionally, decorators
-execute at import time. Failures in decorator code are pretty much impossible to
-recover from.
+execute at object definition time. For module-level objects (classes, module
+functions, ...) this happens at import time. Failures in decorator code are
+pretty much impossible to recover from.
 
 <a id="s2.17.4-decision"></a>
 <a id="2174-decision"></a>
@@ -1885,7 +1846,7 @@ No:  x<1
 
 Never use spaces around `=` when passing keyword arguments or defining a default
 parameter value, with one exception:
-[when a type annotation is present](#typing-default-values), _do_ use spaces
+[when a type annotation is present](#typing-default-values), *do* use spaces
 around the `=` for the default parameter value.
 
 ```python
@@ -1955,7 +1916,7 @@ inline comments.
 <a id="docstrings"></a>
 #### 3.8.1 Docstrings 
 
-Python uses _docstrings_ to document code. A docstring is a string that is the
+Python uses *docstrings* to document code. A docstring is a string that is the
 first statement in a package, module, class or function. These strings can be
 extracted automatically through the `__doc__` member of the object and are used
 by `pydoc`.
@@ -2083,7 +2044,7 @@ aptly described using a one-line docstring.
 def fetch_smalltable_rows(table_handle: smalltable.Table,
                           keys: Sequence[Union[bytes, str]],
                           require_all_keys: bool = False,
-) -> Mapping[bytes, Tuple[str]]:
+) -> Mapping[bytes, Tuple[str, ...]]:
     """Fetches rows from a Smalltable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -2120,7 +2081,7 @@ Similarly, this variation on `Args:` with a line break is also allowed:
 def fetch_smalltable_rows(table_handle: smalltable.Table,
                           keys: Sequence[Union[bytes, str]],
                           require_all_keys: bool = False,
-) -> Mapping[bytes, Tuple[str]]:
+) -> Mapping[bytes, Tuple[str, ...]]:
     """Fetches rows from a Smalltable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -3103,13 +3064,15 @@ def my_function(
 
 If you need to use a class name from the same module that is not yet defined --
 for example, if you need the class inside the class declaration, or if you use a
-class that is defined below -- use a string for the class name.
+class that is defined below -- either use `from __future__ import annotations`
+for simple cases or use a string for the class name.
 
 ```python
+from __future__ import annotations
+
 class MyClass:
 
-  def __init__(self,
-               stack: List["MyClass"]) -> None:
+  def __init__(self, stack: Sequence[MyClass]) -> None:
 ```
 
 <a id="s3.19.4-default-values"></a>
@@ -3120,7 +3083,7 @@ class MyClass:
 
 As per
 [PEP-008](https://www.python.org/dev/peps/pep-0008/#other-recommendations), use
-spaces around the `=` _only_ for arguments that have both a type annotation and
+spaces around the `=` *only* for arguments that have both a type annotation and
 a default value.
 
 ```python
