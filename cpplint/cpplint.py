@@ -356,7 +356,6 @@ _CPP_HEADERS = frozenset([
     'map',
     'memory',
     'mutex',
-    'shared_mutex',
     'new',
     'numeric',
     'ostream',
