@@ -570,3 +570,32 @@ li.toc_entry a {
 .toc td.two_columns {
   border-width: 0px;
 }
+
+/* Numbered sections */
+
+h1 {
+  counter-reset: h2;
+}
+
+h2.numbered {
+  counter-reset: h3;
+}
+
+h3.numbered {
+  counter-reset: h4;
+}
+
+h2.numbered::before {
+  content: counter(h2) ' ';
+  counter-increment: h2;
+}
+
+h3.numbered::before {
+  content: counter(h2) '.' counter(h3) ' ';
+  counter-increment: h3;
+}
+
+h4.numbered::before {
+  content: counter(h2) '.' counter(h3) '.' counter(h4) ' ';
+  counter-increment: h4;
+}
