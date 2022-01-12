@@ -59,7 +59,7 @@ over HTTPS.</p>
 
 <p>Indent by 2 spaces at a time.</p>
 
-<p>Don&#8217;t use tabs or mix tabs and spaces for indentation.</p>
+<p>Don’t use tabs or mix tabs and spaces for indentation.</p>
 
 <pre><code class="language-html good">&lt;ul&gt;
   &lt;li&gt;Fantastic
@@ -135,7 +135,7 @@ why is respective solution used or preferred?</p>
 
 <p>(This item is optional as it is not deemed a realistic expectation to always
 demand fully documented code. Mileage may vary heavily for HTML and CSS code and
-depends on the project&#8217;s complexity.)</p>
+depends on the project’s complexity.)</p>
 
 <h4 id="Action_Items">2.3.3 Action Items</h4>
 
@@ -170,7 +170,7 @@ depends on the project&#8217;s complexity.)</p>
 
 <p>HTML5 (HTML syntax) is preferred for all HTML documents: <code>&lt;!DOCTYPE html&gt;</code>.</p>
 
-<p>(It&#8217;s recommended to use HTML, as <code>text/html</code>. Do not use XHTML. XHTML, as
+<p>(It’s recommended to use HTML, as <code>text/html</code>. Do not use XHTML. XHTML, as
 <a href="https://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a>, lacks both browser
 and infrastructure support and offers less room for optimization than HTML.)</p>
 
@@ -210,7 +210,7 @@ HTML usage.</p>
 
 <p>Use HTML according to its purpose.</p>
 
-<p>Use elements (sometimes incorrectly called &#8220;tags&#8221;) for what they have been
+<p>Use elements (sometimes incorrectly called “tags”) for what they have been
 created for. For example, use heading elements for headings, <code>p</code> elements for
 paragraphs, <code>a</code> elements for anchors, etc.</p>
 
@@ -275,9 +275,9 @@ templates than it is to update style sheets and scripts.</p>
 &lt;link rel="stylesheet" href="grid.css" media="screen"&gt;
 &lt;link rel="stylesheet" href="print.css" media="print"&gt;
 &lt;h1 style="font-size: 1em;"&gt;HTML sucks&lt;/h1&gt;
-&lt;p&gt;I&#8217;ve read about this on a few sites but now I&#8217;m sure:
+&lt;p&gt;I’ve read about this on a few sites but now I’m sure:
   &lt;u&gt;HTML is stupid!!1&lt;/u&gt;
-&lt;center&gt;I can&#8217;t believe there&#8217;s no way to control the styling of
+&lt;center&gt;I can’t believe there’s no way to control the styling of
   my website without doing everything all over again!&lt;/center&gt;
 </code></pre>
 
@@ -286,10 +286,10 @@ templates than it is to update style sheets and scripts.</p>
 &lt;title&gt;My first CSS-only redesign&lt;/title&gt;
 &lt;link rel="stylesheet" href="default.css"&gt;
 &lt;h1&gt;My first CSS-only redesign&lt;/h1&gt;
-&lt;p&gt;I&#8217;ve read about this on a few sites but today I&#8217;m actually
+&lt;p&gt;I’ve read about this on a few sites but today I’m actually
   doing it: separating concerns and avoiding anything in the HTML of
   my website that is presentational.
-&lt;p&gt;It&#8217;s awesome!
+&lt;p&gt;It’s awesome!
 </code></pre>
 
 <h4 id="Entity_References">3.1.6 Entity References</h4>
@@ -301,14 +301,14 @@ templates than it is to update style sheets and scripts.</p>
 as well as among teams.</p>
 
 <p>The only exceptions apply to characters with special meaning in HTML (like <code>&lt;</code>
-and <code>&amp;</code>) as well as control or &#8220;invisible&#8221; characters (like no-break spaces).</p>
+and <code>&amp;</code>) as well as control or “invisible” characters (like no-break spaces).</p>
 
 <pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 The currency symbol for the Euro is &amp;ldquo;&amp;eur;&amp;rdquo;.
 </code></pre>
 
 <pre><code class="language-html good">&lt;!-- Recommended --&gt;
-The currency symbol for the Euro is &#8220;&#8364;&#8221;.
+The currency symbol for the Euro is “€”.
 </code></pre>
 
 <h4 id="Optional_Tags">3.1.7 Optional Tags</h4>
@@ -320,8 +320,8 @@ tags. The <a href="https://html.spec.whatwg.org/multipage/syntax.html#syntax-tag
 defines what tags can be omitted.</p>
 
 <p>(This approach may require a grace period to be established as a wider guideline
-as it&#8217;s significantly different from what web developers are typically taught.
-For consistency and simplicity reasons it&#8217;s best served omitting all optional
+as it’s significantly different from what web developers are typically taught.
+For consistency and simplicity reasons it’s best served omitting all optional
 tags, not just a selection.)</p>
 
 <pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
@@ -385,7 +385,7 @@ on a new line.</p>
 
 <p>Also, indent them if they are child elements of a block, list, or table element.</p>
 
-<p>(If you run into issues around whitespace between list items it&#8217;s acceptable to
+<p>(If you run into issues around whitespace between list items it’s acceptable to
 put all <code>li</code> elements in one line. A linter is encouraged to throw a warning
 instead of an error.)</p>
 
@@ -490,7 +490,7 @@ reflect the purpose of the element in question, or that are otherwise generic.</
 preferred as these are most understandable and the least likely to change.</p>
 
 <p>Generic names are simply a fallback for elements that have no particular or no
-meaning different from their siblings. They are typically needed as &#8220;helpers.&#8221;</p>
+meaning different from their siblings. They are typically needed as “helpers.”</p>
 
 <p>Using functional or generic names reduces the probability of unnecessary
 document or template changes.</p>
@@ -580,7 +580,7 @@ padding: 0 1em 2em;
 
 <h4 id="0_and_Units">4.1.6 0 and Units</h4>
 
-<p>Omit unit specification after &#8220;0&#8221; values, unless required.</p>
+<p>Omit unit specification after “0” values, unless required.</p>
 
 <p>Do not use units after <code>0</code> values unless they are required.</p>
 
@@ -592,7 +592,7 @@ padding: 0;
 
 <h4 id="Leading_0s">4.1.7 Leading 0s</h4>
 
-<p>Omit leading &#8220;0&#8221;s in values.</p>
+<p>Omit leading “0”s in values.</p>
 
 <p>Do not put <code>0</code>s in front of values or lengths between -1 and 1.</p>
 
@@ -637,7 +637,7 @@ easier, for example in search and replace operations.</p>
 (including none at all) other than hyphens, in order to improve understanding
 and scannability.</p>
 
-<pre><code class="language-css bad">/* Not recommended: does not separate the words &#8220;demo&#8221; and &#8220;image&#8221; */
+<pre><code class="language-css bad">/* Not recommended: does not separate the words “demo” and “image” */
 .demoimage {}
 
 /* Not recommended: uses underscore instead of hyphen */
@@ -651,16 +651,16 @@ and scannability.</p>
 
 <h4 id="Hacks">4.1.11 Hacks</h4>
 
-<p>Avoid user agent detection as well as CSS &#8220;hacks&#8221;&#8212;try a different approach
+<p>Avoid user agent detection as well as CSS “hacks”—try a different approach
 first.</p>
 
-<p>It&#8217;s tempting to address styling differences over user agent detection or
+<p>It’s tempting to address styling differences over user agent detection or
 special CSS filters, workarounds, and hacks. Both approaches should be
 considered last resort in order to achieve and maintain an efficient and
 manageable code base. Put another way, giving detection and hacks a free pass
 will hurt projects in the long run as projects tend to take the way of least
 resistance. That is, allowing and making it easy to use detection and hacks
-means using detection and hacks more frequently&#8212;and more frequently is too
+means using detection and hacks more frequently—and more frequently is too
 frequently.</p>
 
 <h3 id="CSS_Formatting_Rules">4.2 CSS Formatting Rules</h3>
@@ -727,7 +727,7 @@ reasons.</p>
 
 <h4 id="Property_Name_Stops">4.2.4 Property Name Stops</h4>
 
-<p>Use a space after a property name&#8217;s colon.</p>
+<p>Use a space after a property name’s colon.</p>
 
 <p>Always use a single space between property and value (but no space between
 property and colon) for consistency reasons.</p>
@@ -817,7 +817,7 @@ selectors and property values.</p>
 <p>Do not use quotation marks in URI values (<code>url()</code>).</p>
 
 <p>Exception: If you do need to use the <code>@charset</code> rule, use double quotation
-marks&#8212;<a href="https://www.w3.org/TR/CSS21/syndata.html#charset">single quotation marks are not permitted</a>.</p>
+marks—<a href="https://www.w3.org/TR/CSS21/syndata.html#charset">single quotation marks are not permitted</a>.</p>
 
 <pre><code class="language-css bad">/* Not recommended */
 @import url("https://www.google.com/css/maia.css");
@@ -861,13 +861,13 @@ sections with new lines.</p>
 
 <p><em>Be consistent.</em></p>
 
-<p>If you&#8217;re editing code, take a few minutes to look at the code around you and
+<p>If you’re editing code, take a few minutes to look at the code around you and
 determine its style. If they use spaces around all their arithmetic operators,
 you should too. If their comments have little boxes of hash marks around them,
 make your comments have little boxes of hash marks around them too.</p>
 
 <p>The point of having style guidelines is to have a common vocabulary of coding so
-people can concentrate on what you&#8217;re saying rather than on how you&#8217;re saying
+people can concentrate on what you’re saying rather than on how you’re saying
 it. We present global style rules here so people know the vocabulary, but local
 style is also important. If code you add to a file looks drastically different
 from the existing code around it, it throws readers out of their rhythm when
