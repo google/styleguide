@@ -11,7 +11,7 @@
 <body onload="initStyleGuide();">
 <div id="content">
 <h1>Google HTML/CSS Style Guide</h1>
-<h2 id="Background">1 Background</h2>
+<h2 id="Background" class="numbered">Background</h2>
 
 <p>This document defines formatting and style rules for HTML and CSS. It aims at
 improving collaboration, code quality, and enabling supporting infrastructure.
@@ -19,17 +19,16 @@ It applies to raw, working files that use HTML and CSS, including GSS files.
 Tools are free to obfuscate, minify, and compile as long as the general code
 quality is maintained.</p>
 
-<h2 id="General">2 General</h2>
+<h2 id="General" class="numbered">General</h2>
 
-<h3 id="General_Style_Rules">2.1 General Style Rules</h3>
+<h3 id="General_Style_Rules" class="numbered">General Style Rules</h3>
 
-<h4 id="Protocol">2.1.1 Protocol</h4>
+<h4 id="Protocol" class="numbered">Protocol</h4>
 
 <p>Use HTTPS for embedded resources where possible.</p>
 
-<p>Always use HTTPS (<code>https:</code>) for images and other media
-files, style sheets, and scripts, unless the respective files are not available
-over HTTPS.</p>
+<p>Always use HTTPS (<code>https:</code>) for images and other media files, style sheets, and
+scripts, unless the respective files are not available over HTTPS.</p>
 
 <pre><code class="language-html bad">&lt;!-- Not recommended: omits the protocol --&gt;
 &lt;script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"&gt;&lt;/script&gt;
@@ -53,9 +52,9 @@ over HTTPS.</p>
 @import 'https://fonts.googleapis.com/css?family=Open+Sans';
 </code></pre>
 
-<h3 id="General_Formatting_Rules">2.2 General Formatting Rules</h3>
+<h3 id="General_Formatting_Rules" class="numbered">General Formatting Rules</h3>
 
-<h4 id="Indentation">2.2.1 Indentation</h4>
+<h4 id="Indentation" class="numbered">Indentation</h4>
 
 <p>Indent by 2 spaces at a time.</p>
 
@@ -72,7 +71,7 @@ over HTTPS.</p>
 }
 </code></pre>
 
-<h4 id="Capitalization">2.2.2 Capitalization</h4>
+<h4 id="Capitalization" class="numbered">Capitalization</h4>
 
 <p>Use only lowercase.</p>
 
@@ -96,7 +95,7 @@ color: #E5E5E5;
 color: #e5e5e5;
 </code></pre>
 
-<h4 id="Trailing_Whitespace">2.2.3 Trailing Whitespace</h4>
+<h4 id="Trailing_Whitespace" class="numbered">Trailing Whitespace</h4>
 
 <p>Remove trailing white spaces.</p>
 
@@ -110,9 +109,9 @@ color: #e5e5e5;
 &lt;p&gt;Yes please.
 </code></pre>
 
-<h3 id="General_Meta_Rules">2.3 General Meta Rules</h3>
+<h3 id="General_Meta_Rules" class="numbered">General Meta Rules</h3>
 
-<h4 id="Encoding">2.3.1 Encoding</h4>
+<h4 id="Encoding" class="numbered">Encoding</h4>
 
 <p>Use UTF-8 (no BOM).</p>
 
@@ -123,10 +122,10 @@ mark.</p>
 charset="utf-8"&gt;</code>. Do not specify the encoding of style sheets as these assume
 UTF-8.</p>
 
-<p>(More on encodings and when and how to specify them can be found in <a href="https://www.w3.org/International/tutorials/tutorial-char-enc/">Handling
-character encodings in HTML and CSS</a>.)</p>
+<p>(More on encodings and when and how to specify them can be found in
+<a href="https://www.w3.org/International/tutorials/tutorial-char-enc/">Handling character encodings in HTML and CSS</a>.)</p>
 
-<h4 id="Comments">2.3.2 Comments</h4>
+<h4 id="Comments" class="numbered">Comments</h4>
 
 <p>Explain code as needed, where possible.</p>
 
@@ -137,7 +136,7 @@ why is respective solution used or preferred?</p>
 demand fully documented code. Mileage may vary heavily for HTML and CSS code and
 depends on the project’s complexity.)</p>
 
-<h4 id="Action_Items">2.3.3 Action Items</h4>
+<h4 id="Action_Items" class="numbered">Action Items</h4>
 
 <p>Mark todos and action items with <code>TODO</code>.</p>
 
@@ -160,11 +159,11 @@ depends on the project’s complexity.)</p>
 &lt;/ul&gt;
 </code></pre>
 
-<h2 id="HTML">3 HTML</h2>
+<h2 id="HTML" class="numbered">HTML</h2>
 
-<h3 id="HTML_Style_Rules">3.1 HTML Style Rules</h3>
+<h3 id="HTML_Style_Rules" class="numbered">HTML Style Rules</h3>
 
-<h4 id="Document_Type">3.1.1 Document Type</h4>
+<h4 id="Document_Type" class="numbered">Document Type</h4>
 
 <p>Use HTML5.</p>
 
@@ -174,21 +173,19 @@ depends on the project’s complexity.)</p>
 <a href="https://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a>, lacks both browser
 and infrastructure support and offers less room for optimization than HTML.)</p>
 
-<p>Although fine with HTML, do not close void elements, i.e. write <code>&lt;br&gt;</code>, not
-<code>&lt;br /&gt;</code>.</p>
+<p>Although fine with HTML, do not close void elements, i.e. write <code>&lt;br&gt;</code>, not <code>&lt;br
+/&gt;</code>.</p>
 
-<h4 id="HTML_Validity">3.1.2 HTML Validity</h4>
+<h4 id="HTML_Validity" class="numbered">HTML Validity</h4>
 
 <p>Use valid HTML where possible.</p>
 
 <p>Use valid HTML code unless that is not possible due to otherwise unattainable
 performance goals regarding file size.</p>
 
-<p>
-
-Use tools such as the <a href="https://validator.w3.org/nu/">W3C HTML validator</a>
-to test.
-</p>
+<p> Use tools such as the
+<a href="https://validator.w3.org/nu/">W3C HTML validator</a>
+to test.</p>
 
 <p>Using valid HTML is a measurable baseline quality attribute that contributes to
 learning about technical requirements and constraints, and that ensures proper
@@ -206,7 +203,7 @@ HTML usage.</p>
 &lt;article&gt;This is only a test.&lt;/article&gt;
 </code></pre>
 
-<h4 id="Semantics">3.1.3 Semantics</h4>
+<h4 id="Semantics" class="numbered">Semantics</h4>
 
 <p>Use HTML according to its purpose.</p>
 
@@ -225,7 +222,7 @@ code efficiency reasons.</p>
 &lt;a href="recommendations/"&gt;All recommendations&lt;/a&gt;
 </code></pre>
 
-<h4 id="Multimedia_Fallback">3.1.4 Multimedia Fallback</h4>
+<h4 id="Multimedia_Fallback" class="numbered">Multimedia Fallback</h4>
 
 <p>Provide alternative contents for multimedia.</p>
 
@@ -249,7 +246,7 @@ no alternative text, as in <code>alt=""</code>.)</p>
 &lt;img src="spreadsheet.png" alt="Spreadsheet screenshot."&gt;
 </code></pre>
 
-<h4 id="Separation_of_Concerns">3.1.5 Separation of Concerns</h4>
+<h4 id="Separation_of_Concerns" class="numbered">Separation of Concerns</h4>
 
 <p>Separate structure from presentation from behavior.</p>
 
@@ -292,13 +289,13 @@ templates than it is to update style sheets and scripts.</p>
 &lt;p&gt;It’s awesome!
 </code></pre>
 
-<h4 id="Entity_References">3.1.6 Entity References</h4>
+<h4 id="Entity_References" class="numbered">Entity References</h4>
 
 <p>Do not use entity references.</p>
 
 <p>There is no need to use entity references like <code>&amp;mdash;</code>, <code>&amp;rdquo;</code>, or
-<code>&amp;#x263a;</code>, assuming the same encoding (UTF-8) is used for files and editors
-as well as among teams.</p>
+<code>&amp;#x263a;</code>, assuming the same encoding (UTF-8) is used for files and editors as
+well as among teams.</p>
 
 <p>The only exceptions apply to characters with special meaning in HTML (like <code>&lt;</code>
 and <code>&amp;</code>) as well as control or “invisible” characters (like no-break spaces).</p>
@@ -311,12 +308,13 @@ The currency symbol for the Euro is &amp;ldquo;&amp;eur;&amp;rdquo;.
 The currency symbol for the Euro is “€”.
 </code></pre>
 
-<h4 id="Optional_Tags">3.1.7 Optional Tags</h4>
+<h4 id="Optional_Tags" class="numbered">Optional Tags</h4>
 
 <p>Omit optional tags (optional).</p>
 
 <p>For file size optimization and scannability purposes, consider omitting optional
-tags. The <a href="https://html.spec.whatwg.org/multipage/syntax.html#syntax-tag-omission">HTML5 specification</a>
+tags. The
+<a href="https://html.spec.whatwg.org/multipage/syntax.html#syntax-tag-omission">HTML5 specification</a>
 defines what tags can be omitted.</p>
 
 <p>(This approach may require a grace period to be established as a wider guideline
@@ -342,7 +340,7 @@ tags, not just a selection.)</p>
 &lt;p&gt;Qed.
 </code></pre>
 
-<h4 id="type_Attributes">3.1.8 <code>type</code> Attributes</h4>
+<h4 id="type_Attributes" class="numbered"><code>type</code> Attributes</h4>
 
 <p>Omit <code>type</code> attributes for style sheets and scripts.</p>
 
@@ -351,7 +349,8 @@ tags, not just a selection.)</p>
 
 <p>Specifying <code>type</code> attributes in these contexts is not necessary as HTML5 implies
 <a href="https://html.spec.whatwg.org/multipage/obsolete.html#attr-style-type"><code>text/css</code></a>
-and <a href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type"><code>text/javascript</code></a>
+and
+<a href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type"><code>text/javascript</code></a>
 as defaults. This can be safely done even for older browsers.</p>
 
 <pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
@@ -372,9 +371,9 @@ as defaults. This can be safely done even for older browsers.</p>
 &lt;script src="https://www.google.com/js/gweb/analytics/autotrack.js"&gt;&lt;/script&gt;
 </code></pre>
 
-<h3 id="HTML_Formatting_Rules">3.2 HTML Formatting Rules</h3>
+<h3 id="HTML_Formatting_Rules" class="numbered">HTML Formatting Rules</h3>
 
-<h4 id="General_Formatting">3.2.1 General Formatting</h4>
+<h4 id="General_Formatting" class="numbered">General Formatting</h4>
 
 <p>Use a new line for every block, list, or table element, and indent every such
 child element.</p>
@@ -413,7 +412,7 @@ instead of an error.)</p>
 &lt;/table&gt;
 </code></pre>
 
-<h4 id="HTML_Line-Wrapping">3.2.2 HTML Line-Wrapping</h4>
+<h4 id="HTML_Line-Wrapping" class="numbered">HTML Line-Wrapping</h4>
 
 <p>Break long lines (optional).</p>
 
@@ -443,7 +442,7 @@ additional spaces from the original line.</p>
 &lt;/md-progress-circular&gt;
 </code></pre>
 
-<h4 id="HTML_Quotation_Marks">3.2.3 HTML Quotation Marks</h4>
+<h4 id="HTML_Quotation_Marks" class="numbered">HTML Quotation Marks</h4>
 
 <p>When quoting attributes values, use double quotation marks.</p>
 
@@ -458,28 +457,26 @@ values.</p>
 &lt;a class="maia-button maia-button-secondary"&gt;Sign in&lt;/a&gt;
 </code></pre>
 
-<h2 id="CSS">4 CSS</h2>
+<h2 id="CSS" class="numbered">CSS</h2>
 
-<h3 id="CSS_Style_Rules">4.1 CSS Style Rules</h3>
+<h3 id="CSS_Style_Rules" class="numbered">CSS Style Rules</h3>
 
-<h4 id="CSS_Validity">4.1.1 CSS Validity</h4>
+<h4 id="CSS_Validity" class="numbered">CSS Validity</h4>
 
 <p>Use valid CSS where possible.</p>
 
 <p>Unless dealing with CSS validator bugs or requiring proprietary syntax, use
 valid CSS code.</p>
 
-<p>
-
-Use tools such as the <a href="https://jigsaw.w3.org/css-validator/">W3C CSS validator</a>
-to test.
-</p>
+<p> Use tools such as the
+<a href="https://jigsaw.w3.org/css-validator/">W3C CSS validator</a>
+to test.</p>
 
 <p>Using valid CSS is a measurable baseline quality attribute that allows to spot
 CSS code that may not have any effect and can be removed, and that ensures
 proper CSS usage.</p>
 
-<h4 id="ID_and_Class_Naming">4.1.2 ID and Class Naming</h4>
+<h4 id="ID_and_Class_Naming" class="numbered">ID and Class Naming</h4>
 
 <p>Use meaningful or generic ID and class names.</p>
 
@@ -513,7 +510,7 @@ document or template changes.</p>
 .alt {}
 </code></pre>
 
-<h4 id="ID_and_Class_Name_Style">4.1.3 ID and Class Name Style</h4>
+<h4 id="ID_and_Class_Name_Style" class="numbered">ID and Class Name Style</h4>
 
 <p>Use ID and class names that are as short as possible but as long as necessary.</p>
 
@@ -532,14 +529,15 @@ understandability and code efficiency.</p>
 .author {}
 </code></pre>
 
-<h4 id="Type_Selectors">4.1.4 Type Selectors</h4>
+<h4 id="Type_Selectors" class="numbered">Type Selectors</h4>
 
 <p>Avoid qualifying ID and class names with type selectors.</p>
 
 <p>Unless necessary (for example with helper classes), do not use element names in
 conjunction with IDs or classes.</p>
 
-<p>Avoiding unnecessary ancestor selectors is useful for <a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">performance reasons</a>.</p>
+<p>Avoiding unnecessary ancestor selectors is useful for
+<a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">performance reasons</a>.</p>
 
 <pre><code class="language-css bad">/* Not recommended */
 ul#example {}
@@ -551,11 +549,12 @@ div.error {}
 .error {}
 </code></pre>
 
-<h4 id="Shorthand_Properties">4.1.5 Shorthand Properties</h4>
+<h4 id="Shorthand_Properties" class="numbered">Shorthand Properties</h4>
 
 <p>Use shorthand properties where possible.</p>
 
-<p>CSS offers a variety of <a href="https://www.w3.org/TR/CSS21/about.html#shorthand">shorthand</a>
+<p>CSS offers a variety of
+<a href="https://www.w3.org/TR/CSS21/about.html#shorthand">shorthand</a>
 properties (like <code>font</code>) that should be used whenever possible, even in cases
 where only one value is explicitly set.</p>
 
@@ -578,7 +577,7 @@ font: 100%/1.6 palatino, georgia, serif;
 padding: 0 1em 2em;
 </code></pre>
 
-<h4 id="0_and_Units">4.1.6 0 and Units</h4>
+<h4 id="0_and_Units" class="numbered">0 and Units</h4>
 
 <p>Omit unit specification after “0” values, unless required.</p>
 
@@ -590,7 +589,7 @@ margin: 0;
 padding: 0;
 </code></pre>
 
-<h4 id="Leading_0s">4.1.7 Leading 0s</h4>
+<h4 id="Leading_0s" class="numbered">Leading 0s</h4>
 
 <p>Omit leading “0”s in values.</p>
 
@@ -599,7 +598,7 @@ padding: 0;
 <pre><code class="language-css good">font-size: .8em;
 </code></pre>
 
-<h4 id="Hexadecimal_Notation">4.1.8 Hexadecimal Notation</h4>
+<h4 id="Hexadecimal_Notation" class="numbered">Hexadecimal Notation</h4>
 
 <p>Use 3 character hexadecimal notation where possible.</p>
 
@@ -614,7 +613,7 @@ color: #eebbcc;
 color: #ebc;
 </code></pre>
 
-<h4 id="Prefixes">4.1.9 Prefixes</h4>
+<h4 id="Prefixes" class="numbered">Prefixes</h4>
 
 <p>Prefix selectors with an application-specific prefix (optional).</p>
 
@@ -629,7 +628,7 @@ easier, for example in search and replace operations.</p>
 #maia-note {} /* Maia */
 </code></pre>
 
-<h4 id="ID_and_Class_Name_Delimiters">4.1.10 ID and Class Name Delimiters</h4>
+<h4 id="ID_and_Class_Name_Delimiters" class="numbered">ID and Class Name Delimiters</h4>
 
 <p>Separate words in ID and class names by a hyphen.</p>
 
@@ -649,7 +648,7 @@ and scannability.</p>
 .ads-sample {}
 </code></pre>
 
-<h4 id="Hacks">4.1.11 Hacks</h4>
+<h4 id="Hacks" class="numbered">Hacks</h4>
 
 <p>Avoid user agent detection as well as CSS “hacks”—try a different approach
 first.</p>
@@ -663,9 +662,9 @@ resistance. That is, allowing and making it easy to use detection and hacks
 means using detection and hacks more frequently—and more frequently is too
 frequently.</p>
 
-<h3 id="CSS_Formatting_Rules">4.2 CSS Formatting Rules</h3>
+<h3 id="CSS_Formatting_Rules" class="numbered">CSS Formatting Rules</h3>
 
-<h4 id="Declaration_Order">4.2.1 Declaration Order</h4>
+<h4 id="Declaration_Order" class="numbered">Declaration Order</h4>
 
 <p>Alphabetize declarations.</p>
 
@@ -686,11 +685,12 @@ text-align: center;
 text-indent: 2em;
 </code></pre>
 
-<h4 id="Block_Content_Indentation">4.2.2 Block Content Indentation</h4>
+<h4 id="Block_Content_Indentation" class="numbered">Block Content Indentation</h4>
 
 <p>Indent all block content.</p>
 
-<p>Indent all <a href="https://www.w3.org/TR/CSS21/syndata.html#block">block content</a>,
+<p>Indent all
+<a href="https://www.w3.org/TR/CSS21/syndata.html#block">block content</a>,
 that is rules within rules as well as declarations, so to reflect hierarchy and
 improve understanding.</p>
 
@@ -704,7 +704,7 @@ improve understanding.</p>
 }
 </code></pre>
 
-<h4 id="Declaration_Stops">4.2.3 Declaration Stops</h4>
+<h4 id="Declaration_Stops" class="numbered">Declaration Stops</h4>
 
 <p>Use a semicolon after every declaration.</p>
 
@@ -725,7 +725,7 @@ reasons.</p>
 }
 </code></pre>
 
-<h4 id="Property_Name_Stops">4.2.4 Property Name Stops</h4>
+<h4 id="Property_Name_Stops" class="numbered">Property Name Stops</h4>
 
 <p>Use a space after a property name’s colon.</p>
 
@@ -744,12 +744,13 @@ h3 {
 }
 </code></pre>
 
-<h4 id="Declaration_Block_Separation">4.2.5 Declaration Block Separation</h4>
+<h4 id="Declaration_Block_Separation" class="numbered">Declaration Block Separation</h4>
 
 <p>Use a space between the last selector and the declaration block.</p>
 
 <p>Always use a single space between the last selector and the opening brace that
-begins the <a href="https://www.w3.org/TR/CSS21/syndata.html#rule-sets">declaration block</a>.</p>
+begins the
+<a href="https://www.w3.org/TR/CSS21/syndata.html#rule-sets">declaration block</a>.</p>
 
 <p>The opening brace should be on the same line as the last selector in a given
 rule.</p>
@@ -772,7 +773,7 @@ rule.</p>
 }
 </code></pre>
 
-<h4 id="Selector_and_Declaration_Separation">4.2.6 Selector and Declaration Separation</h4>
+<h4 id="Selector_and_Declaration_Separation" class="numbered">Selector and Declaration Separation</h4>
 
 <p>Separate selectors and declarations by new lines.</p>
 
@@ -793,7 +794,7 @@ h3 {
 }
 </code></pre>
 
-<h4 id="Rule_Separation">4.2.7 Rule Separation</h4>
+<h4 id="Rule_Separation" class="numbered">Rule Separation</h4>
 
 <p>Separate rules by new lines.</p>
 
@@ -809,7 +810,7 @@ body {
 }
 </code></pre>
 
-<h4 id="CSS_Quotation_Marks">4.2.8 CSS Quotation Marks</h4>
+<h4 id="CSS_Quotation_Marks" class="numbered">CSS Quotation Marks</h4>
 
 <p>Use single (<code>''</code>) rather than double (<code>""</code>) quotation marks for attribute
 selectors and property values.</p>
@@ -835,9 +836,9 @@ html {
 }
 </code></pre>
 
-<h3 id="CSS_Meta_Rules">4.3 CSS Meta Rules</h3>
+<h3 id="CSS_Meta_Rules" class="numbered">CSS Meta Rules</h3>
 
-<h4 id="Section_Comments">4.3.1 Section Comments</h4>
+<h4 id="Section_Comments" class="numbered">Section Comments</h4>
 
 <p>Group sections by a section comment (optional).</p>
 
