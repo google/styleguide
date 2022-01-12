@@ -31,25 +31,25 @@ quality is maintained.</p>
 files, style sheets, and scripts, unless the respective files are not available
 over HTTPS.</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended: omits the protocol --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended: omits the protocol --&gt;
 &lt;script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"&gt;&lt;/script&gt;
 
 &lt;!-- Not recommended: uses HTTP --&gt;
 &lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"&gt;&lt;/script&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"&gt;&lt;/script&gt;
 </code></pre>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended: omits the protocol */
+<pre><code class="language-css bad">/* Not recommended: omits the protocol */
 @import '//fonts.googleapis.com/css?family=Open+Sans';
 
 /* Not recommended: uses HTTP */
 @import 'http://fonts.googleapis.com/css?family=Open+Sans';
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 @import 'https://fonts.googleapis.com/css?family=Open+Sans';
 </code></pre>
 
@@ -61,13 +61,13 @@ over HTTPS.</p>
 
 <p>Don&#8217;t use tabs or mix tabs and spaces for indentation.</p>
 
-<pre><code class="language-html prettyprint">&lt;ul&gt;
+<pre><code class="language-html good">&lt;ul&gt;
   &lt;li&gt;Fantastic
   &lt;li&gt;Great
 &lt;/ul&gt;
 </code></pre>
 
-<pre><code class="language-css prettyprint">.example {
+<pre><code class="language-css good">.example {
   color: blue;
 }
 </code></pre>
@@ -80,19 +80,19 @@ over HTTPS.</p>
 attribute values (unless <code>text/CDATA</code>), CSS selectors, properties, and property
 values (with the exception of strings).</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;A HREF="/"&gt;Home&lt;/A&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;img src="google.png" alt="Google"&gt;
 </code></pre>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended */
+<pre><code class="language-css bad">/* Not recommended */
 color: #E5E5E5;
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 color: #e5e5e5;
 </code></pre>
 
@@ -102,11 +102,11 @@ color: #e5e5e5;
 
 <p>Trailing white spaces are unnecessary and can complicate diffs.</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;p&gt;What?_
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;p&gt;Yes please.
 </code></pre>
 
@@ -149,11 +149,11 @@ depends on the project&#8217;s complexity.)</p>
 
 <p>Append action items after a colon as in <code>TODO: action item</code>.</p>
 
-<pre><code class="language-django prettyprint external">{# TODO(john.doe): revisit centering #}
+<pre><code class="language-django external good">{# TODO(john.doe): revisit centering #}
 &lt;center&gt;Test&lt;/center&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- TODO: remove optional tags --&gt;
+<pre><code class="language-html good">&lt;!-- TODO: remove optional tags --&gt;
 &lt;ul&gt;
   &lt;li&gt;Apples&lt;/li&gt;
   &lt;li&gt;Oranges&lt;/li&gt;
@@ -194,12 +194,12 @@ to test.
 learning about technical requirements and constraints, and that ensures proper
 HTML usage.</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;title&gt;Test&lt;/title&gt;
 &lt;article&gt;This is only a test.
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;meta charset="utf-8"&gt;
 &lt;title&gt;Test&lt;/title&gt;
@@ -217,11 +217,11 @@ paragraphs, <code>a</code> elements for anchors, etc.</p>
 <p>Using HTML according to its purpose is important for accessibility, reuse, and
 code efficiency reasons.</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;div onclick="goToRecommendations();"&gt;All recommendations&lt;/div&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;a href="recommendations/"&gt;All recommendations&lt;/a&gt;
 </code></pre>
 
@@ -241,11 +241,11 @@ may have no way of understanding what video or audio contents are about either.<
 whose purpose is purely decorative which you cannot immediately use CSS for, use
 no alternative text, as in <code>alt=""</code>.)</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;img src="spreadsheet.png"&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;img src="spreadsheet.png" alt="Spreadsheet screenshot."&gt;
 </code></pre>
 
@@ -268,7 +268,7 @@ sheets and scripts as possible from documents and templates.</p>
 maintenance reasons. It is always more expensive to change HTML documents and
 templates than it is to update style sheets and scripts.</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;title&gt;HTML sucks&lt;/title&gt;
 &lt;link rel="stylesheet" href="base.css" media="screen"&gt;
@@ -281,7 +281,7 @@ templates than it is to update style sheets and scripts.</p>
   my website without doing everything all over again!&lt;/center&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;title&gt;My first CSS-only redesign&lt;/title&gt;
 &lt;link rel="stylesheet" href="default.css"&gt;
@@ -303,11 +303,11 @@ as well as among teams.</p>
 <p>The only exceptions apply to characters with special meaning in HTML (like <code>&lt;</code>
 and <code>&amp;</code>) as well as control or &#8220;invisible&#8221; characters (like no-break spaces).</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 The currency symbol for the Euro is &amp;ldquo;&amp;eur;&amp;rdquo;.
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 The currency symbol for the Euro is &#8220;&#8364;&#8221;.
 </code></pre>
 
@@ -324,7 +324,7 @@ as it&#8217;s significantly different from what web developers are typically tau
 For consistency and simplicity reasons it&#8217;s best served omitting all optional
 tags, not just a selection.)</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -336,7 +336,7 @@ tags, not just a selection.)</p>
 &lt;/html&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;title&gt;Saving money, saving bytes&lt;/title&gt;
 &lt;p&gt;Qed.
@@ -354,21 +354,21 @@ tags, not just a selection.)</p>
 and <a href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type"><code>text/javascript</code></a>
 as defaults. This can be safely done even for older browsers.</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;link rel="stylesheet" href="https://www.google.com/css/maia.css"
     type="text/css"&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;link rel="stylesheet" href="https://www.google.com/css/maia.css"&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;script src="https://www.google.com/js/gweb/analytics/autotrack.js"
     type="text/javascript"&gt;&lt;/script&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;script src="https://www.google.com/js/gweb/analytics/autotrack.js"&gt;&lt;/script&gt;
 </code></pre>
 
@@ -389,19 +389,19 @@ on a new line.</p>
 put all <code>li</code> elements in one line. A linter is encouraged to throw a warning
 instead of an error.)</p>
 
-<pre><code class="language-html prettyprint">&lt;blockquote&gt;
+<pre><code class="language-html good">&lt;blockquote&gt;
   &lt;p&gt;&lt;em&gt;Space&lt;/em&gt;, the final frontier.&lt;/p&gt;
 &lt;/blockquote&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;ul&gt;
+<pre><code class="language-html good">&lt;ul&gt;
   &lt;li&gt;Moe
   &lt;li&gt;Larry
   &lt;li&gt;Curly
 &lt;/ul&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;table&gt;
+<pre><code class="language-html good">&lt;table&gt;
   &lt;thead&gt;
     &lt;tr&gt;
       &lt;th scope="col"&gt;Income
@@ -423,12 +423,12 @@ wrapping long lines if it significantly improves readability.</p>
 <p>When line-wrapping, each continuation line should be indented at least 4
 additional spaces from the original line.</p>
 
-<pre><code class="language-html prettyprint">&lt;md-progress-circular md-mode="indeterminate" class="md-accent"
+<pre><code class="language-html good">&lt;md-progress-circular md-mode="indeterminate" class="md-accent"
     ng-show="ctrl.loading" md-diameter="35"&gt;
 &lt;/md-progress-circular&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;md-progress-circular
+<pre><code class="language-html good">&lt;md-progress-circular
     md-mode="indeterminate"
     class="md-accent"
     ng-show="ctrl.loading"
@@ -436,7 +436,7 @@ additional spaces from the original line.</p>
 &lt;/md-progress-circular&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;md-progress-circular md-mode="indeterminate"
+<pre><code class="language-html good">&lt;md-progress-circular md-mode="indeterminate"
                       class="md-accent"
                       ng-show="ctrl.loading"
                       md-diameter="35"&gt;
@@ -450,11 +450,11 @@ additional spaces from the original line.</p>
 <p>Use double (<code>""</code>) rather than single quotation marks (<code>''</code>) around attribute
 values.</p>
 
-<pre><code class="language-html prettyprint badcode">&lt;!-- Not recommended --&gt;
+<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;a class='maia-button maia-button-secondary'&gt;Sign in&lt;/a&gt;
 </code></pre>
 
-<pre><code class="language-html prettyprint">&lt;!-- Recommended --&gt;
+<pre><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;a class="maia-button maia-button-secondary"&gt;Sign in&lt;/a&gt;
 </code></pre>
 
@@ -495,7 +495,7 @@ meaning different from their siblings. They are typically needed as &#8220;helpe
 <p>Using functional or generic names reduces the probability of unnecessary
 document or template changes.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended: meaningless */
+<pre><code class="language-css bad">/* Not recommended: meaningless */
 #yee-1901 {}
 
 /* Not recommended: presentational */
@@ -503,7 +503,7 @@ document or template changes.</p>
 .clear {}
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended: specific */
+<pre><code class="language-css good">/* Recommended: specific */
 #gallery {}
 #login {}
 .video {}
@@ -522,12 +522,12 @@ document or template changes.</p>
 <p>Using ID and class names this way contributes to acceptable levels of
 understandability and code efficiency.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended */
+<pre><code class="language-css bad">/* Not recommended */
 #navigation {}
 .atr {}
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 #nav {}
 .author {}
 </code></pre>
@@ -541,12 +541,12 @@ conjunction with IDs or classes.</p>
 
 <p>Avoiding unnecessary ancestor selectors is useful for <a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">performance reasons</a>.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended */
+<pre><code class="language-css bad">/* Not recommended */
 ul#example {}
 div.error {}
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 #example {}
 .error {}
 </code></pre>
@@ -561,7 +561,7 @@ where only one value is explicitly set.</p>
 
 <p>Using shorthand properties is useful for code efficiency and understandability.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended */
+<pre><code class="language-css bad">/* Not recommended */
 border-top-style: none;
 font-family: palatino, georgia, serif;
 font-size: 100%;
@@ -572,7 +572,7 @@ padding-right: 1em;
 padding-top: 0;
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 border-top: 0;
 font: 100%/1.6 palatino, georgia, serif;
 padding: 0 1em 2em;
@@ -584,7 +584,7 @@ padding: 0 1em 2em;
 
 <p>Do not use units after <code>0</code> values unless they are required.</p>
 
-<pre><code class="language-css prettyprint">flex: 0px; /* This flex-basis component requires a unit. */
+<pre><code class="language-css good">flex: 0px; /* This flex-basis component requires a unit. */
 flex: 1 1 0px; /* Not ambiguous without the unit, but needed in IE11. */
 margin: 0;
 padding: 0;
@@ -596,7 +596,7 @@ padding: 0;
 
 <p>Do not put <code>0</code>s in front of values or lengths between -1 and 1.</p>
 
-<pre><code class="language-css prettyprint">font-size: .8em;
+<pre><code class="language-css good">font-size: .8em;
 </code></pre>
 
 <h4 id="Hexadecimal_Notation">4.1.8 Hexadecimal Notation</h4>
@@ -606,11 +606,11 @@ padding: 0;
 <p>For color values that permit it, 3 character hexadecimal notation is shorter and
 more succinct.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended */
+<pre><code class="language-css bad">/* Not recommended */
 color: #eebbcc;
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 color: #ebc;
 </code></pre>
 
@@ -625,7 +625,7 @@ unique identifiers followed by a dash.</p>
 <p>Using namespaces helps preventing naming conflicts and can make maintenance
 easier, for example in search and replace operations.</p>
 
-<pre><code class="language-css prettyprint">.adw-help {} /* AdWords */
+<pre><code class="language-css good">.adw-help {} /* AdWords */
 #maia-note {} /* Maia */
 </code></pre>
 
@@ -637,14 +637,14 @@ easier, for example in search and replace operations.</p>
 (including none at all) other than hyphens, in order to improve understanding
 and scannability.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended: does not separate the words &#8220;demo&#8221; and &#8220;image&#8221; */
+<pre><code class="language-css bad">/* Not recommended: does not separate the words &#8220;demo&#8221; and &#8220;image&#8221; */
 .demoimage {}
 
 /* Not recommended: uses underscore instead of hyphen */
 .error_status {}
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 #video-id {}
 .ads-sample {}
 </code></pre>
@@ -676,7 +676,7 @@ way that is easy to remember and maintain.</p>
 vendor-specific prefixes for a certain CSS property should be kept sorted (e.g.
 -moz prefix comes before -webkit).</p>
 
-<pre><code class="language-css prettyprint">background: fuchsia;
+<pre><code class="language-css good">background: fuchsia;
 border: 1px solid;
 -moz-border-radius: 4px;
 -webkit-border-radius: 4px;
@@ -694,7 +694,7 @@ text-indent: 2em;
 that is rules within rules as well as declarations, so to reflect hierarchy and
 improve understanding.</p>
 
-<pre><code class="language-css prettyprint">@media screen, projection {
+<pre><code class="language-css good">@media screen, projection {
 
   html {
     background: #fff;
@@ -711,14 +711,14 @@ improve understanding.</p>
 <p>End every declaration with a semicolon for consistency and extensibility
 reasons.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended */
+<pre><code class="language-css bad">/* Not recommended */
 .test {
   display: block;
   height: 100px
 }
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 .test {
   display: block;
   height: 100px;
@@ -732,13 +732,13 @@ reasons.</p>
 <p>Always use a single space between property and value (but no space between
 property and colon) for consistency reasons.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended */
+<pre><code class="language-css bad">/* Not recommended */
 h3 {
   font-weight:bold;
 }
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 h3 {
   font-weight: bold;
 }
@@ -754,7 +754,7 @@ begins the <a href="https://www.w3.org/TR/CSS21/syndata.html#rule-sets">declarat
 <p>The opening brace should be on the same line as the last selector in a given
 rule.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended: missing space */
+<pre><code class="language-css bad">/* Not recommended: missing space */
 #video{
   margin-top: 1em;
 }
@@ -766,7 +766,7 @@ rule.</p>
 }
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 #video {
   margin-top: 1em;
 }
@@ -778,13 +778,13 @@ rule.</p>
 
 <p>Always start a new line for each selector and declaration.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended */
+<pre><code class="language-css bad">/* Not recommended */
 a:focus, a:active {
   position: relative; top: 1px;
 }
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 h1,
 h2,
 h3 {
@@ -799,7 +799,7 @@ h3 {
 
 <p>Always put a blank line (two line breaks) between rules.</p>
 
-<pre><code class="language-css prettyprint">html {
+<pre><code class="language-css good">html {
   background: #fff;
 }
 
@@ -819,7 +819,7 @@ selectors and property values.</p>
 <p>Exception: If you do need to use the <code>@charset</code> rule, use double quotation
 marks&#8212;<a href="https://www.w3.org/TR/CSS21/syndata.html#charset">single quotation marks are not permitted</a>.</p>
 
-<pre><code class="language-css prettyprint badcode">/* Not recommended */
+<pre><code class="language-css bad">/* Not recommended */
 @import url("https://www.google.com/css/maia.css");
 
 html {
@@ -827,7 +827,7 @@ html {
 }
 </code></pre>
 
-<pre><code class="language-css prettyprint">/* Recommended */
+<pre><code class="language-css good">/* Recommended */
 @import url(https://www.google.com/css/maia.css);
 
 html {
@@ -844,7 +844,7 @@ html {
 <p>If possible, group style sheet sections together by using comments. Separate
 sections with new lines.</p>
 
-<pre><code class="language-css prettyprint">/* Header */
+<pre><code class="language-css good">/* Header */
 
 #adw-header {}
 
