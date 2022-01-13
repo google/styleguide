@@ -693,6 +693,27 @@ color: #eebbcc;
 color: #ebc;
 </code></pre>
 
+<h4 id="Important_Declarations" class="numbered">Important Declarations</h4>
+
+<p>Avoid using <code>!important</code> declarations.</p>
+
+<p>These declarations break the natural cascade of CSS and make it difficult to
+reason about and compose styles. Use
+<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity">selector specificity</a>
+to override properties instead.</p>
+
+<pre><code class="language-css bad">/* Not recommended */
+.example {
+  font-weight: bold !important;
+}
+</code></pre>
+
+<pre><code class="language-css good">/* Recommended */
+.example {
+  font-weight: bold;
+}
+</code></pre>
+
 <h4 id="Hacks" class="numbered">Hacks</h4>
 
 <p>Avoid user agent detection as well as CSS “hacks”—try a different approach
@@ -713,8 +734,8 @@ frequently.</p>
 
 <p>Alphabetize declarations.</p>
 
-<p>Put declarations in alphabetical order in order to achieve consistent code in a
-way that is easy to remember and maintain.</p>
+<p>Put declarations in alphabetical order in order to
+achieve consistent code in a way that is easy to remember and maintain.</p>
 
 <p>Ignore vendor-specific prefixes for sorting purposes. However, multiple
 vendor-specific prefixes for a certain CSS property should be kept sorted (e.g.
