@@ -530,6 +530,41 @@ understandability and code efficiency.</p>
 .author {}
 </code></pre>
 
+<h4 id="ID_and_Class_Name_Delimiters" class="numbered">ID and Class Name Delimiters</h4>
+
+<p>Separate words in ID and class names by a hyphen.</p>
+
+<p>Do not concatenate words and abbreviations in selectors by any characters
+(including none at all) other than hyphens, in order to improve understanding
+and scannability.</p>
+
+<pre><code class="language-css bad">/* Not recommended: does not separate the words “demo” and “image” */
+.demoimage {}
+
+/* Not recommended: uses underscore instead of hyphen */
+.error_status {}
+</code></pre>
+
+<pre><code class="language-css good">/* Recommended */
+#video-id {}
+.ads-sample {}
+</code></pre>
+
+<h4 id="Prefixes" class="numbered">Prefixes</h4>
+
+<p>Prefix selectors with an application-specific prefix (optional).</p>
+
+<p>In large projects as well as for code that gets embedded in other projects or on
+external sites use prefixes (as namespaces) for ID and class names. Use short,
+unique identifiers followed by a dash.</p>
+
+<p>Using namespaces helps preventing naming conflicts and can make maintenance
+easier, for example in search and replace operations.</p>
+
+<pre><code class="language-css good">.adw-help {} /* AdWords */
+#maia-note {} /* Maia */
+</code></pre>
+
 <h4 id="Type_Selectors" class="numbered">Type Selectors</h4>
 
 <p>Avoid qualifying ID and class names with type selectors.</p>
@@ -612,41 +647,6 @@ color: #eebbcc;
 
 <pre><code class="language-css good">/* Recommended */
 color: #ebc;
-</code></pre>
-
-<h4 id="Prefixes" class="numbered">Prefixes</h4>
-
-<p>Prefix selectors with an application-specific prefix (optional).</p>
-
-<p>In large projects as well as for code that gets embedded in other projects or on
-external sites use prefixes (as namespaces) for ID and class names. Use short,
-unique identifiers followed by a dash.</p>
-
-<p>Using namespaces helps preventing naming conflicts and can make maintenance
-easier, for example in search and replace operations.</p>
-
-<pre><code class="language-css good">.adw-help {} /* AdWords */
-#maia-note {} /* Maia */
-</code></pre>
-
-<h4 id="ID_and_Class_Name_Delimiters" class="numbered">ID and Class Name Delimiters</h4>
-
-<p>Separate words in ID and class names by a hyphen.</p>
-
-<p>Do not concatenate words and abbreviations in selectors by any characters
-(including none at all) other than hyphens, in order to improve understanding
-and scannability.</p>
-
-<pre><code class="language-css bad">/* Not recommended: does not separate the words “demo” and “image” */
-.demoimage {}
-
-/* Not recommended: uses underscore instead of hyphen */
-.error_status {}
-</code></pre>
-
-<pre><code class="language-css good">/* Recommended */
-#video-id {}
-.ads-sample {}
 </code></pre>
 
 <h4 id="Hacks" class="numbered">Hacks</h4>
