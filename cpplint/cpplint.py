@@ -1744,6 +1744,8 @@ def CheckForCopyright(filename, lines, error):
                              "// Copyright (c) 20XX, Red Hat, Inc. All rights reserved",
                              "// Copyright 20XX Facebook",
                              " * Copyright 20XX Facebook",
+                             "// Copyright 20XX Facebook, Inc.",
+                             " * Copyright 20XX Facebook, Inc.",
                              "// Copyright 20XX-20XX Georges Menie (www.menie.org)",
                              "// Copyright 20XX and onwards Google Inc.",
                              "// Copyright (C) 19XX and onwards Google, Inc.",
