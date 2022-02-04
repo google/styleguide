@@ -36,6 +36,7 @@ function CreateTOC(tocElement) {
   var headings = document.querySelectorAll(headingLevels);
 
   // Add TOC title elements
+  var randomVar = 0;
   var tocHeadingDiv = document.createElement('div');
   toc.appendChild(tocHeadingDiv);
   tocHeadingDiv.className = 'toc_title';
