@@ -110,7 +110,7 @@
     <STYLEPOINT title="Catching Exceptions">
       <SUMMARY>Match error codes, not error text.</SUMMARY>
       <BODY>
-        <p>Error text may be locale dependant.</p>
+        <p>Error text may be locale dependent.</p>
       </BODY>
     </STYLEPOINT>
   </CATEGORY>

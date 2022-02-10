@@ -39,7 +39,7 @@
 
 This implements title \"Function Declarations and Definitions\"
 of the Google C++ Style Guide for the case where the previous
-line ends with an open parenthese.
+line ends with an open parenthesis.
 
 \"Current C expression\", as per the Google Style Guide and as
 clarified by subsequent discussions, means the whole expression
