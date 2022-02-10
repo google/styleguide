@@ -805,8 +805,8 @@ Robert Brown
       <p>
         You should strive to keep top-level forms,
         including comments but excluding the documentation string, of
-        appropriate length; preferrably short.  Forms extending beyond a
-        single page should be rare and their use should be justfied.
+        appropriate length; preferably short.  Forms extending beyond a
+        single page should be rare and their use should be justified.
         This applies to each of the forms in an <code>eval-when</code>,
         rather than to the <code>eval-when</code> itself.
         Additionally, <code>defpackage</code> forms may be longer,
@@ -3116,7 +3116,7 @@ Robert Brown
         You must not use exact comparison on floating point numbers,
         since the vague nature of floating point arithmetic
         can produce little "errors" in numeric value.
-        You should compare absolute values to a threshhold.
+        You should compare absolute values to a threshold.
       </p>
       <p>
         You must use <code>=</code> to compare numbers,
