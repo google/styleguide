@@ -544,7 +544,7 @@ variables defined in enclosing scopes.
 
 Allows definition of utility classes and functions that are only used inside of
 a very limited scope. Very
-[ADT](http://www.google.com/url?sa=D&q=http://en.wikipedia.org/wiki/Abstract_data_type)-y.
+[ADT](https://en.wikipedia.org/wiki/Abstract_data_type)-y.
 Commonly used for implementing decorators.
 
 <a id="s2.6.3-cons"></a>
@@ -1169,7 +1169,7 @@ experienced Lisp and Scheme (and Haskell and ML and ...) programmers.
 #### 2.16.3 Cons 
 
 Can lead to confusing bugs. Such as this example based on
-[PEP-0227](http://www.google.com/url?sa=D&q=http://www.python.org/dev/peps/pep-0227/):
+[PEP-0227](https://peps.python.org/pep-0227/):
 
 ```python
 i = 4
@@ -1560,7 +1560,7 @@ Do not use backslash line continuation except for `with` statements requiring
 three or more context managers.
 
 Make use of Python's
-[implicit line joining inside parentheses, brackets and braces](http://docs.python.org/reference/lexical_analysis.html#implicit-line-joining).
+[implicit line joining inside parentheses, brackets and braces](https://docs.python.org/3/reference/lexical_analysis.html#implicit-line-joining).
 If necessary, you can add an extra pair of parentheses around an expression.
 
 ```python
@@ -1581,14 +1581,14 @@ x = ('This will build a very long long '
 
 Within comments, put long URLs on their own line if necessary.
 
-```python
 Yes:  # See details at
-      # http://www.example.com/us/developer/documentation/api/content/v2.0/csv_file_name_extension_full_specification.html
+```python
+https://www.example.com/us/developer/documentation/api/content/v2.0/csv_file_name_extension_full_specification.html
 ```
 
-```python
 No:  # See details at
-     # http://www.example.com/us/developer/documentation/api/content/\
+```python
+https://www.example.com/us/developer/documentation/api/content/\
      # v2.0/csv_file_name_extension_full_specification.html
 ```
 
@@ -1922,7 +1922,7 @@ extracted automatically through the `__doc__` member of the object and are used
 by `pydoc`.
 (Try running `pydoc` on your module to see how it looks.) Always use the three
 double-quote `"""` format for docstrings (per
-[PEP 257](https://www.google.com/url?sa=D&q=http://www.python.org/dev/peps/pep-0257/)).
+[PEP 257](https://peps.python.org/pep-0257/)).
 A docstring should be organized as a summary line (one physical line not
 exceeding 80 characters) terminated by a period, question mark, or exclamation
 point. When writing more (encouraged), this must be followed by a blank line,
@@ -2023,7 +2023,7 @@ aptly described using a one-line docstring.
     docstring starts with Returns or Yields (e.g. `"""Returns row from Bigtable
     as a tuple of strings."""`) and the opening sentence is sufficient to
     describe the return value. Do not imitate 'NumPy style'
-    ([example](http://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html)),
+    ([example](https://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html)),
     which frequently documents a tuple return value as if it were multiple
     return values with individual names (never mentioning the tuple). Instead,
     describe such a return value as: "Returns a tuple (mat_a, mat_b), where
@@ -2156,7 +2156,7 @@ class SampleClass:
 #### 3.8.5 Block and Inline Comments 
 
 The final place to have comments is in tricky parts of the code. If you're going
-to have to explain it at the next [code review](http://en.wikipedia.org/wiki/Code_review),
+to have to explain it at the next [code review](https://en.wikipedia.org/wiki/Code_review),
 you should comment it now. Complicated operations get a few lines of comments
 before the operations commence. Non-obvious ones get comments at the end of the
 line.
@@ -2466,7 +2466,7 @@ decades and multiple languages (see e.g.
 for Java).
 
 The preferred way to manage files and similar resources is using the
-[`with` statement](http://docs.python.org/reference/compound_stmts.html#the-with-statement):
+[`with` statement](https://docs.python.org/3/reference/compound_stmts.html#the-with-statement):
 
 ```python
 with open("hello.txt") as hello_file:
@@ -2480,7 +2480,7 @@ For file-like objects that do not support the `with` statement, use
 ```python
 import contextlib
 
-with contextlib.closing(urllib.urlopen("http://www.python.org/")) as front_page:
+with contextlib.closing(urllib.urlopen("https://www.python.org/")) as front_page:
     for line in front_page:
         print(line)
 ```
