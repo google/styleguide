@@ -213,8 +213,8 @@ that the arguments are actually unused.
 
 Use `import` statements for packages and modules only, not for individual
 classes or functions. Classes imported from the
-[typing module](#typing-imports),
-[typing_extensions module](https://github.com/python/typing/tree/master/typing_extensions),
+[`typing` module](#typing-imports), [`collections.abc` module](#typing-imports),
+[`typing_extensions` module](https://github.com/python/typing/tree/master/typing_extensions),
 and redirects from the
 [six.moves module](https://six.readthedocs.io/#module-six.moves)
 are exempt from this rule.
@@ -254,8 +254,9 @@ Module names can still collide. Some module names are inconveniently long.
 *   Use `import x` for importing packages and modules.
 *   Use `from x import y` where `x` is the package prefix and `y` is the module
     name with no prefix.
-*   Use `from x import y as z` if two modules named `y` are to be imported or if
-    `y` is an inconveniently long name.
+*   Use `from x import y as z` if two modules named `y` are to be imported, if
+    `y` conflicts with a top-level name defined in the current module, or if `y`
+    is an inconveniently long name.
 *   Use `import y as z` only when `z` is a standard abbreviation (e.g., `np` for
     `numpy`).
 
@@ -313,7 +314,7 @@ Yes:
   import absl.flags
   from doctor.who import jodie
 
-  FLAGS = absl.flags.FLAGS
+  _FOO = absl.flags.DEFINE_string(...)
 ```
 
 ```python
@@ -322,7 +323,7 @@ Yes:
   from absl import flags
   from doctor.who import jodie
 
-  FLAGS = flags.FLAGS
+  _FOO = flags.DEFINE_string(...)
 ```
 
 *(assume this file lives in `doctor/who/` where `jodie.py` also exists)*
@@ -416,7 +417,7 @@ Exceptions must follow certain conditions:
           # guarantee this specific behavioral reaction to API misuse.
           raise ValueError(f'Min. port must be at least 1024, not {minimum}.')
         port = self._find_next_open_port(minimum)
-        if not port:
+        if port is None:
           raise ConnectionError(
               f'Could not connect to service on port {minimum} or higher.')
         assert port >= minimum, (
@@ -509,13 +510,14 @@ assignments to global variables are done when the module is first imported.
 
 Avoid global variables.
 
-While they are technically variables, module-level constants are permitted and
-encouraged. For example: `_MAX_HOLY_HANDGRENADE_COUNT = 3`. Constants must be
-named using all caps with underscores. See [Naming](#s3.16-naming) below.
+If needed, global variables should be declared at the module level and made
+internal to the module by prepending an `_` to the name. External access to
+global variables must be done through public module-level functions. See
+[Naming](#s3.16-naming) below.
 
-If needed, globals should be declared at the module level and made internal to
-the module by prepending an `_` to the name. External access must be done
-through public module-level functions. See [Naming](#s3.16-naming) below.
+While module-level constants are technically variables, they are permitted and
+encouraged. For example: `MAX_HOLY_HANDGRENADE_COUNT = 3`. Constants must be
+named using all caps with underscores. See [Naming](#s3.16-naming) below.
 
 <a id="s2.6-nested"></a>
 <a id="26-nested"></a>
@@ -955,11 +957,14 @@ Yes: def foo(a, b: Sequence = ()):  # Empty tuple OK since tuples are immutable
 ```
 
 ```python
+from absl import flags
+_FOO = flags.DEFINE_string(...)
+
 No:  def foo(a, b=[]):
          ...
 No:  def foo(a, b=time.time()):  # The time the module was loaded???
          ...
-No:  def foo(a, b=FLAGS.my_thing):  # sys.argv has not yet been parsed...
+No:  def foo(a, b=_FOO.value):  # sys.argv has not yet been parsed...
          ...
 No:  def foo(a, b: Mapping = {}):  # Could still get passed to unchecked code
          ...
@@ -1471,7 +1476,7 @@ Type annotations (or "type hints") are for function or method arguments and
 return values:
 
 ```python
-def func(a: int) -> List[int]:
+def func(a: int) -> list[int]:
 ```
 
 You can also declare the type of a variable using similar
@@ -2026,7 +2031,7 @@ aptly described using a one-line docstring.
     ([example](http://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html)),
     which frequently documents a tuple return value as if it were multiple
     return values with individual names (never mentioning the tuple). Instead,
-    describe such a return value as: "Returns a tuple (mat_a, mat_b), where
+    describe such a return value as: "Returns: A tuple (mat_a, mat_b), where
     mat_a is ..., and ...". The auxiliary names in the docstring need not
     necessarily correspond to any internal names used in the function body (as
     those are not part of the API).
@@ -2044,7 +2049,7 @@ aptly described using a one-line docstring.
 def fetch_smalltable_rows(table_handle: smalltable.Table,
                           keys: Sequence[Union[bytes, str]],
                           require_all_keys: bool = False,
-) -> Mapping[bytes, Tuple[str, ...]]:
+) -> Mapping[bytes, tuple[str, ...]]:
     """Fetches rows from a Smalltable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -2081,7 +2086,7 @@ Similarly, this variation on `Args:` with a line break is also allowed:
 def fetch_smalltable_rows(table_handle: smalltable.Table,
                           keys: Sequence[Union[bytes, str]],
                           require_all_keys: bool = False,
-) -> Mapping[bytes, Tuple[str, ...]]:
+) -> Mapping[bytes, tuple[str, ...]]:
     """Fetches rows from a Smalltable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -2215,23 +2220,20 @@ punctuation, spelling, and grammar help with that goal.
 Use an
 [f-string](https://docs.python.org/3/reference/lexical_analysis.html#f-strings),
 the `%` operator, or the `format` method for formatting strings, even when the
-parameters are all strings. Use your best judgment to decide between `+` and `%`
-(or `format`) though. Do not use `%` or the `format` method for pure
-concatenation.
+parameters are all strings. Use your best judgment to decide between `+` and
+string formatting.
 
 ```python
-Yes: x = a + b
+Yes: x = f'name: {name}; score: {n}'
      x = '%s, %s!' % (imperative, expletive)
      x = '{}, {}'.format(first, second)
      x = 'name: %s; score: %d' % (name, n)
      x = 'name: {}; score: {}'.format(name, n)
-     x = f'name: {name}; score: {n}'
+     x = a + b
 ```
 
 ```python
-No: x = '%s%s' % (a, b)  # use + in this case
-    x = '{}{}'.format(a, b)  # use + in this case
-    x = first + ', ' + second
+No: x = first + ', ' + second
     x = 'name: ' + name + '; score: ' + str(n)
 ```
 
@@ -2524,7 +2526,7 @@ event ("Remove this code when all clients can handle XML responses.").
 ### 3.13 Imports formatting 
 
 Imports should be on separate lines; there are
-[exceptions for `typing` imports](#typing-imports).
+[exceptions for `typing` and `collections.abc` imports](#typing-imports).
 
 E.g.:
 
@@ -2692,7 +2694,8 @@ change in complexity.
 
 `module_name`, `package_name`, `ClassName`, `method_name`, `ExceptionName`,
 `function_name`, `GLOBAL_CONSTANT_NAME`, `global_var_name`, `instance_var_name`,
-`function_parameter_name`, `local_var_name`.
+`function_parameter_name`, `local_var_name`, `query_proper_noun_for_thing`,
+`send_acronym_via_https`.
 
 
 Function names, variable names, and filenames should be descriptive; eschew
@@ -2713,6 +2716,8 @@ Always use a `.py` filename extension. Never use dashes.
     -   counters or iterators (e.g. `i`, `j`, `k`, `v`, et al.)
     -   `e` as an exception identifier in `try/except` statements.
     -   `f` as a file handle in `with` statements
+    -   private [`TypeVar`s](#typing-type-var) with no constraints (e.g. `_T`,
+        `_U`, `_V`)
 
     Please be mindful not to abuse single-character naming. Generally speaking,
     descriptiveness should be proportional to the name's scope of visibility.
@@ -2949,6 +2954,8 @@ the function into smaller and more manageable pieces.
 *   In methods, only annotate `self`, or `cls` if it is necessary for proper
     type information. e.g., `@classmethod def create(cls: Type[T]) -> T: return
     cls()`
+*   Similarly, don't feel compelled to annotate the return value of `__init__`
+    (where `None` is the only valid option).
 *   If any other variable or a returned type should not be expressed, use `Any`.
 *   You are not required to annotate all the functions in a module.
     -   At least annotate your public APIs.
@@ -2993,7 +3000,7 @@ is too long, indent by 4 in a new line.
 
 ```python
 def my_method(
-    self, first_var: int) -> Tuple[MyLongType1, MyLongType1]:
+    self, first_var: int) -> tuple[MyLongType1, MyLongType1]:
   ...
 ```
 
@@ -3005,7 +3012,7 @@ closing parenthesis with the `def`.
 Yes:
 def my_method(
     self, other_arg: Optional[MyLongType]
-) -> Dict[OtherLongType, MyLongType]:
+) -> dict[OtherLongType, MyLongType]:
   ...
 ```
 
@@ -3017,7 +3024,7 @@ opening one, but this is less readable.
 No:
 def my_method(self,
               other_arg: Optional[MyLongType]
-             ) -> Dict[OtherLongType, MyLongType]:
+             ) -> dict[OtherLongType, MyLongType]:
   ...
 ```
 
@@ -3027,9 +3034,9 @@ too long to be on a single line (try to keep sub-types unbroken).
 ```python
 def my_method(
     self,
-    first_var: Tuple[List[MyLongType1],
-                     List[MyLongType2]],
-    second_var: List[Dict[
+    first_var: tuple[list[MyLongType1],
+                     list[MyLongType2]],
+    second_var: list[dict[
         MyLongType3, MyLongType4]]) -> None:
   ...
 ```
@@ -3146,7 +3153,7 @@ long:
 
 ```python
 _ShortName = module_with_long_name.TypeWithLongName
-ComplexMap = Mapping[str, List[Tuple[int, int]]]
+ComplexMap = Mapping[str, list[tuple[int, int]]]
 ```
 
 Other examples are complex nested types and multiple return variables from a
@@ -3207,9 +3214,9 @@ have a single repeated type or a set number of elements with different types.
 The latter is commonly used as the return type from a function.
 
 ```python
-a = [1, 2, 3]  # type: List[int]
-b = (1, 2, 3)  # type: Tuple[int, ...]
-c = (1, "2", 3.5)  # type: Tuple[int, str, float]
+a = [1, 2, 3]  # type: list[int]
+b = (1, 2, 3)  # type: tuple[int, ...]
+c = (1, "2", 3.5)  # type: tuple[int, str, float]
 ```
 
 <a id="s3.19.10-typevars"></a>
@@ -3227,10 +3234,10 @@ function `TypeVar` is a common way to use them.
 Example:
 
 ```python
-from typing import List, TypeVar
-T = TypeVar("T")
+from typing import TypeVar
+_T = TypeVar("_T")
 ...
-def next(l: List[T]) -> T:
+def next(l: list[_T]) -> _T:
   return l.pop()
 ```
 
@@ -3252,6 +3259,26 @@ def check_length(x: AnyStr) -> AnyStr:
   if len(x) <= 42:
     return x
   raise ValueError()
+```
+
+A TypeVar must have a descriptive name, unless it meets all of the following
+criteria:
+
+*   not externally visible
+*   not constrained
+
+```python
+Yes:
+  _T = TypeVar("_T")
+  AddableType = TypeVar("AddableType", int, float, str)
+  AnyFunction = TypeVar("AnyFunction", bound=Callable)
+```
+
+```python
+No:
+  T = TypeVar("T")
+  _T = TypeVar("_T", int, float, str)
+  _F = TypeVar("_F", bound=Callable)
 ```
 
 <a id="s3.19.11-string-types"></a>
@@ -3314,19 +3341,21 @@ return type is the same as the argument type in the code above, use
 <a id="typing-imports"></a>
 #### 3.19.12 Imports For Typing 
 
-For classes from the `typing` module, always import the class itself. You are
-explicitly allowed to import multiple specific classes on one line from the
-`typing` module. Ex:
+For classes from the `typing` and `collections.abc` modules for use in
+annotations, always import the class itself. This keeps common annotations more
+concise and matches typing practices used around the world. You are explicitly
+allowed to import multiple specific classes on one line from the `typing` and
+`collections.abc` modules. Ex:
 
 ```python
-from typing import Any, Dict, Optional
+from collections.abc import Mapping, Sequence
+from typing import Any, Union
 ```
 
-Given that this way of importing from `typing` adds items to the local
-namespace, any names in `typing` should be treated similarly to keywords, and
-not be defined in your Python code, typed or not. If there is a collision
-between a type and an existing name in a module, import it using `import x as
-y`.
+Given that this way of importing adds items to the local namespace, names in
+`typing` or `collections.abc` should be treated similarly to keywords, and not
+be defined in your Python code, typed or not. If there is a collision between a
+type and an existing name in a module, import it using `import x as y`.
 
 ```python
 from typing import Any as AnyType
@@ -3400,12 +3429,12 @@ When annotating, prefer to specify type parameters for generic types; otherwise,
 [the generics' parameters will be assumed to be `Any`](https://www.python.org/dev/peps/pep-0484/#the-any-type).
 
 ```python
-def get_names(employee_ids: List[int]) -> Dict[int, Any]:
+def get_names(employee_ids: list[int]) -> dict[int, Any]:
   ...
 ```
 
 ```python
-# These are both interpreted as get_names(employee_ids: List[Any]) -> Dict[Any, Any]
+# These are both interpreted as get_names(employee_ids: list[Any]) -> dict[Any, Any]
 def get_names(employee_ids: list) -> Dict:
   ...
 
@@ -3418,13 +3447,13 @@ remember that in many cases [`TypeVar`](#typing-type-var) might be more
 appropriate:
 
 ```python
-def get_names(employee_ids: List[Any]) -> Dict[Any, str]:
+def get_names(employee_ids: list[Any]) -> dict[Any, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
 ```python
-T = TypeVar('T')
-def get_names(employee_ids: List[T]) -> Dict[T, str]:
+_T = TypeVar('_T')
+def get_names(employee_ids: list[_T]) -> dict[_T, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
