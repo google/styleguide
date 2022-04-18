@@ -39,7 +39,7 @@ Section                                                                         
 
 ### Which Shell to Use
 
-Bash is the only shell scripting language permitted for
+Bash is shell scripting language permitted for
 executables.
 
 Executables must start with `#!/bin/bash` and a minimum
