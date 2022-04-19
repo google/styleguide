@@ -1486,12 +1486,6 @@ You can also declare the type of a variable using similar
 a: SomeType = some_func()
 ```
 
-Or by using a type comment in code that must support legacy Python versions.
-
-```python
-a = some_func()  # type: SomeType
-```
-
 <a id="s2.21.2-pros"></a>
 <a id="2212-pros"></a>
 
@@ -3182,25 +3176,26 @@ ignore`.
 <a id="typing-variables"></a>
 #### 3.19.8 Typing Variables 
 
-If an internal variable has a type that is hard or impossible to infer, you can
-specify its type in a couple ways.
-
-<a id="type-comments"></a>
-[*Type Comments:*](#type-comments)
-:   Use a `# type:` comment on the end of the line
-
-```python
-a = SomeUndecoratedFunction()  # type: Foo
-```
-
 <a id="annotated-assignments"></a>
 [*Annotated Assignments*](#annotated-assignments)
-:   Use a colon and type between the variable name and value, as with function
-    arguments.
+:   If an internal variable has a type that is hard or impossible to infer,
+    specify its type with an annotated assignment - use a colon and type between
+    the variable name and value (the same as is done with function arguments
+    that have a default value):
 
-```python
-a: Foo = SomeUndecoratedFunction()
-```
+    ```python
+    a: Foo = SomeUndecoratedFunction()
+    ```
+
+<a id="type-comments"></a>
+[*Type Comments*](#type-comments)
+:   Though you may see them remaining in the codebase (they were necessary
+    before Python 3.6), do not add any more uses of a `# type: <type name>`
+    comment on the end of the line:
+
+    ```python
+    a = SomeUndecoratedFunction()  # type: Foo
+    ```
 
 <a id="s3.19.9-tuples-vs-lists"></a>
 <a id="s3.19.9-tuples"></a>
@@ -3214,9 +3209,9 @@ have a single repeated type or a set number of elements with different types.
 The latter is commonly used as the return type from a function.
 
 ```python
-a = [1, 2, 3]  # type: list[int]
-b = (1, 2, 3)  # type: tuple[int, ...]
-c = (1, "2", 3.5)  # type: tuple[int, str, float]
+a: list[int] = [1, 2, 3]
+b: tuple[int, ...] = (1, 2, 3)
+c: tuple[int, str, float] = (1, "2", 3.5)
 ```
 
 <a id="s3.19.10-typevars"></a>
