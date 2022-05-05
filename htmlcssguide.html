@@ -451,24 +451,27 @@ wrapping long lines if it significantly improves readability.</p>
 additional spaces from the original line to distinguish wrapped attributes from
 child elements.</p>
 
-<pre><code class="language-html good">&lt;md-progress-circular md-mode="indeterminate" class="md-accent"
-    ng-show="ctrl.loading" md-diameter="35"&gt;
-&lt;/md-progress-circular&gt;
+<pre><code class="language-html good">&lt;button mat-icon-button color="primary" class="menu-button"
+    (click)="openMenu()"&gt;
+  &lt;mat-icon&gt;menu&lt;/mat-icon&gt;
+&lt;/button&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;md-progress-circular
-    md-mode="indeterminate"
-    class="md-accent"
-    ng-show="ctrl.loading"
-    md-diameter="35"&gt;
-&lt;/md-progress-circular&gt;
+<pre><code class="language-html good">&lt;button
+    mat-icon-button
+    color="primary"
+    class="menu-button"
+    (click)="openMenu()"&gt;
+  &lt;mat-icon&gt;menu&lt;/mat-icon&gt;
+&lt;/button&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;md-progress-circular md-mode="indeterminate"
-                      class="md-accent"
-                      ng-show="ctrl.loading"
-                      md-diameter="35"&gt;
-&lt;/md-progress-circular&gt;
+<pre><code class="language-html good">&lt;button mat-icon-button
+        color="primary"
+        class="menu-button"
+        (click)="openMenu()"&gt;
+  &lt;mat-icon&gt;menu&lt;/mat-icon&gt;
+&lt;/button&gt;
 </code></pre>
 
 <h4 id="HTML_Quotation_Marks" class="numbered">HTML Quotation Marks</h4>
