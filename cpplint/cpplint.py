@@ -1916,11 +1916,11 @@ def CheckForHeaderGuard(filename, clean_lines, error):
     linesplit = line.split()
     if len(linesplit) >= 2:
       # find the first occurrence of #ifndef and #define, save arg
-      if not ifndef and linesplit[0] == '#ifndef':
+      if not ifndef and (linesplit[0] == '#ifndef' or linesplit[0] == '\ufeff#ifndef'):
         # set ifndef to the header guard presented on the #ifndef line.
         ifndef = linesplit[1]
         ifndef_linenum = linenum
-      if not define and linesplit[0] == '#define':
+      if not define and (linesplit[0] == '#define' or linesplit[0] == '\ufeff#define'):
         define = linesplit[1]
     # find the last occurrence of #endif, save entire line
     if line.startswith('#endif'):
