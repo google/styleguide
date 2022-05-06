@@ -3072,7 +3072,7 @@
                     /**
                      * Whether to cancel the event in internal capture/bubble processing.
                      * @public {boolean}
-                     * @suppress {visiblity} Referencing this outside this package is strongly
+                     * @suppress {visibility} Referencing this outside this package is strongly
                      * discouraged.
                      */
                      goog.events.Event.prototype.propagationStopped_ = false;

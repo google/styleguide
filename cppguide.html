@@ -204,19 +204,15 @@ header. Specifically, a header should
 have <a href="#The__define_Guard">header guards</a> and include all
 other headers it needs.</p>
 
-<p>Prefer placing the definitions for template and inline functions in
-the same file as their declarations.  The definitions of these
-constructs must be included into every <code>.cc</code> file that uses
-them, or the program may fail to link in some build configurations.  If
-declarations and definitions are in different files, including the
-former should transitively include the latter.  Do not move these
-definitions to separately included header files (<code>-inl.h</code>);
-this practice was common in the past, but is no longer allowed.</p>
-
-<p>As an exception, a template that is explicitly instantiated for
-all relevant sets of template arguments, or that is a private
-implementation detail of a class, is allowed to be defined in the one
-and only <code>.cc</code> file that instantiates the template.</p>
+<p>When a header declares inline functions or templates that clients of the
+header will instantiate, the inline functions and templates must also have
+definitions in the header, either directly or in files it includes.  Do not move
+these definitions to separately included header (<code>-inl.h</code>) files;
+this practice was common in the past, but is no longer allowed.  When all
+instantiations of a template occur in one <code>.cc</code> file, either because
+they're <a href="https://en.cppreference.com/w/cpp/language/class_template#Explicit_instantiation">
+explicit</a> or because the definition is accessible to only
+the <code>.cc</code> file, the template definition can be kept in that file.</p>
 
 <p>There are rare cases where a file designed to be included is not
 self-contained.  These are typically intended to be included at unusual
@@ -331,7 +327,7 @@ struct D : B {};
 #include "b.h"
 void f(B*);
 void f(void*);
-void test(D* x) { f(x); }  // calls f(B*)
+void test(D* x) { f(x); }  // Calls f(B*)
 </pre>
   If the <code>#include</code> was replaced with forward
   decls for <code>B</code> and <code>D</code>,
@@ -492,8 +488,8 @@ might look like this:</p>
 #include &lt;vector&gt;
 
 #include "base/basictypes.h"
-#include "base/commandlineflags.h"
 #include "foo/server/bar.h"
+#include "third_party/absl/flags/flag.h"
 </pre>
 
 <p><b>Exception:</b></p>
@@ -618,7 +614,7 @@ void MyClass::Foo() {
 
 <pre>#include "a.h"
 
-ABSL_FLAG(bool, someflag, false, "dummy flag");
+ABSL_FLAG(bool, someflag, false, "a flag");
 
 namespace mynamespace {
 
@@ -869,26 +865,26 @@ objects with static storage duration if they are trivially destructible.
 Fundamental types (like pointers and <code>int</code>) are trivially
 destructible, as are arrays of trivially destructible types. Note that
 variables marked with <code>constexpr</code> are trivially destructible.</p>
-<pre>const int kNum = 10;  // allowed
+<pre>const int kNum = 10;  // Allowed
 
 struct X { int n; };
-const X kX[] = {{1}, {2}, {3}};  // allowed
+const X kX[] = {{1}, {2}, {3}};  // Allowed
 
 void foo() {
-  static const char* const kMessages[] = {"hello", "world"};  // allowed
+  static const char* const kMessages[] = {"hello", "world"};  // Allowed
 }
 
-// allowed: constexpr guarantees trivial destructor
-constexpr std::array&lt;int, 3&gt; kArray = {{1, 2, 3}};</pre>
+// Allowed: constexpr guarantees trivial destructor.
+constexpr std::array&lt;int, 3&gt; kArray = {1, 2, 3};</pre>
 <pre class="badcode">// bad: non-trivial destructor
 const std::string kFoo = "foo";
 
-// bad for the same reason, even though kBar is a reference (the
-// rule also applies to lifetime-extended temporary objects)
+// Bad for the same reason, even though kBar is a reference (the
+// rule also applies to lifetime-extended temporary objects).
 const std::string&amp; kBar = StrCat("a", "b", "c");
 
 void bar() {
-  // bad: non-trivial destructor
+  // Bad: non-trivial destructor.
   static std::map&lt;int, int&gt; kData = {{1, 0}, {2, 0}, {3, 0}};
 }</pre>
 
@@ -902,10 +898,10 @@ applies, though. In particular, a function-local static reference of the form
 <p>Initialization is a more complex topic. This is because we must not only
 consider whether class constructors execute, but we must also consider the
 evaluation of the initializer:</p>
-<pre class="neutralcode">int n = 5;    // fine
-int m = f();  // ? (depends on f)
-Foo x;        // ? (depends on Foo::Foo)
-Bar y = g();  // ? (depends on g and on Bar::Bar)
+<pre class="neutralcode">int n = 5;    // Fine
+int m = f();  // ? (Depends on f)
+Foo x;        // ? (Depends on Foo::Foo)
+Bar y = g();  // ? (Depends on g and on Bar::Bar)
 </pre>
 
 <p>All but the first statement expose us to indeterminate initialization
@@ -918,9 +914,9 @@ constructor call, then the constructor must be specified as
 <code>constexpr</code>, too:</p>
 <pre>struct Foo { constexpr Foo(int) {} };
 
-int n = 5;  // fine, 5 is a constant expression
-Foo x(2);   // fine, 2 is a constant expression and the chosen constructor is constexpr
-Foo a[] = { Foo(1), Foo(2), Foo(3) };  // fine</pre>
+int n = 5;  // Fine, 5 is a constant expression.
+Foo x(2);   // Fine, 2 is a constant expression and the chosen constructor is constexpr.
+Foo a[] = { Foo(1), Foo(2), Foo(3) };  // Fine</pre>
 
 <p>Constant initialization is always allowed. Constant initialization of
 static storage duration variables should be marked with <code>constexpr</code>
@@ -936,22 +932,22 @@ dynamic initialization, and reviewed very carefully.</p>
 <p>By contrast, the following initializations are problematic:</p>
 
 <pre class="badcode">// Some declarations used below.
-time_t time(time_t*);      // not constexpr!
-int f();                   // not constexpr!
+time_t time(time_t*);      // Not constexpr!
+int f();                   // Not constexpr!
 struct Bar { Bar() {} };
 
 // Problematic initializations.
-time_t m = time(nullptr);  // initializing expression not a constant expression
-Foo y(f());                // ditto
-Bar b;                     // chosen constructor Bar::Bar() not constexpr</pre>
+time_t m = time(nullptr);  // Initializing expression not a constant expression.
+Foo y(f());                // Ditto
+Bar b;                     // Chosen constructor Bar::Bar() not constexpr.</pre>
 
 <p>Dynamic initialization of nonlocal variables is discouraged, and in general
 it is forbidden. However, we do permit it if no aspect of the program depends
 on the sequencing of this initialization with respect to all other
 initializations. Under those restrictions, the ordering of the initialization
 does not make an observable difference. For example:</p>
-<pre>int p = getpid();  // allowed, as long as no other static variable
-                   // uses p in its own initialization</pre>
+<pre>int p = getpid();  // Allowed, as long as no other static variable
+                   // uses p in its own initialization.</pre>
 
 <p>Dynamic initialization of static local variables is allowed (and common).</p>
 
@@ -969,19 +965,20 @@ does not make an observable difference. For example:</p>
   <li>Maps, sets, and other dynamic containers: if you require a static, fixed
     collection, such as a set to search against or a lookup table, you cannot
     use the dynamic containers from the standard library as a static variable,
-    since they have non-trivial destructors. Instead, consider a simple array of
-    trivial types, e.g., an array of arrays of ints (for a "map from int to
+    since they have non-trivial destructors. Instead, consider
+
+
+    a simple array of trivial types, e.g., an array of arrays of ints (for a "map from int to
     int"), or an array of pairs (e.g., pairs of <code>int</code> and <code>const
     char*</code>). For small collections, linear search is entirely sufficient
     (and efficient, due to memory locality); consider using the facilities from
-
     <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/algorithm/container.h">absl/algorithm/container.h</a>
-
-
     for the standard operations. If necessary, keep the collection in sorted
-    order and use a binary search algorithm. If you do really prefer a dynamic
-    container from the standard library, consider using a function-local static
-    pointer, as described below.</li>
+    order and use a binary search algorithm.
+
+    If you do really prefer a dynamic container from the standard library, consider using
+    a function-local static pointer, as described below
+    .</li>
   <li>Smart pointers (<code>unique_ptr</code>, <code>shared_ptr</code>): smart
     pointers execute cleanup during destruction and are therefore forbidden.
     Consider whether your use case fits into one of the other patterns described
@@ -991,8 +988,8 @@ does not make an observable difference. For example:</p>
     a type that you need to define yourself, give the type a trivial destructor
     and a <code>constexpr</code> constructor.</li>
   <li>If all else fails, you can create an object dynamically and never delete
-    it by using a function-local static pointer or reference (e.g., <code>static
-    const auto&amp; impl = *new T(args...);</code>).</li>
+    it by using a function-local static pointer or reference (e.g.,
+    <code>static const auto&amp; impl = *new T(args...);</code>).</li>
 </ul>
 
 <h3 id="thread_local">thread_local Variables</h3>
@@ -1705,11 +1702,27 @@ sections that would be empty.</p>
 
 <p>Within each section, prefer grouping similar
 kinds of declarations together, and prefer the
-following order: types and type aliases (<code>typedef</code>,
-<code>using</code>, <code>enum</code>, nested structs and classes),
-static constants, factory functions, constructors and assignment
-operators, destructor, all other member and <code>friend</code> functions,
-data members.</p>
+following order:</p>
+
+<ol>
+  <li>Types and type aliases (<code>typedef</code>, <code>using</code>,
+    <code>enum</code>, nested structs and classes)</li>
+
+  <li>Static constants</li>
+
+  <li>Factory functions</li>
+
+  <li>Constructors and assignment operators</li>
+
+  <li>Destructor</li>
+
+  <li>
+    All other functions (<code>static</code> and non-<code>static</code> member
+    functions, and <code>friend</code> functions)
+  </li>
+
+  <li>Data members (static and non-static)</li>
+</ol>
 
 <p>Do not put large method definitions inline in the
 class definition. Usually, only trivial or
@@ -2998,7 +3011,7 @@ problems of printing, comparisons, and structure alignment.</p>
   <p>Use <a href="#Casting">braced-initialization</a> as needed to create
   64-bit constants. For example:</p>
 <pre>int64_t my_value{0x123456789};
-uint64_t my_mask{3ULL &lt;&lt; 48};
+uint64_t my_mask{uint64_t{3} &lt;&lt; 48};
 </pre>
   </li>
 </ul>
@@ -3077,6 +3090,8 @@ possible:</p>
 
   <li>Prefer not using <code>##</code> to generate
   function/class/variable names.</li>
+
+
 </ul>
 
 <p>Exporting macros from headers (i.e., defining them in a header
@@ -3093,12 +3108,6 @@ not the <code>0</code> literal).</p>
 
 <p>For pointers (address values), use <code>nullptr</code>, as this
 provides type-safety.</p>
-
-<p>For C++03 projects, prefer <code>NULL</code> to <code>0</code>. While the
-values are equivalent, <code>NULL</code> looks more like a pointer to the
-reader, and some C++ compilers provide special definitions of <code>NULL</code>
-which enable them to give useful warnings. Never use <code>NULL</code> for
-numeric (integer or floating-point) values.</p>
 
 <p>Use <code>'\0'</code> for the null character. Using the correct type makes
 the code more readable.</p>
@@ -3367,7 +3376,7 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   field names. We recommend using a comment to indicate the name of the
   underlying field, if it doesn't match the name of the binding, using the
   same syntax as for function parameter comments:</p>
-  <pre>auto [/*field_name1=*/ bound_name1, /*field_name2=*/ bound_name2] = ...</pre>
+  <pre>auto [/*field_name1=*/bound_name1, /*field_name2=*/bound_name2] = ...</pre>
 <p>As with function parameter comments, this can enable tools to detect if
   you get the order of the fields wrong.</p>
 
@@ -4759,8 +4768,20 @@ can easily show longer lines.</p>
   readability, ease of cut and paste or auto-linking -- e.g., if a line
   contains an example command or a literal URL longer than 80 characters.</li>
 
-  <li>a raw-string literal with content that exceeds 80 characters.  Except for
-  test code, such literals should appear near the top of a file.</li>
+  <li>a string literal that cannot easily be wrapped at 80 columns.
+  This may be because it contains URIs or other semantically-critical pieces,
+  or because the literal contains an embedded language, or a multiline
+  literal whose newlines are significant like help messages.
+  In these cases, breaking up the literal would
+  reduce readability, searchability, ability to click links, etc. Except for
+  test code, such literals should appear at namespace scope near the top of a
+  file. If a tool like Clang-Format doesn't recognize the unsplittable content,
+  <a href="https://clang.llvm.org/docs/ClangFormatStyleOptions.html#disabling-formatting-on-a-piece-of-code">
+  disable the tool</a> around the content as necessary.
+  <br><br>
+  (We must balance between usability/searchability of such literals and the
+  readability of the code around them.)
+  </li>
 
   <li>an include statement.</li>
 
@@ -5200,10 +5221,8 @@ case should never execute, treat this as an error. For example:
 
 <p>Fall-through from one case label to
 another must be annotated using the
-<code>ABSL_FALLTHROUGH_INTENDED;</code> macro (defined in
-
-<code>absl/base/macros.h</code>).
-<code>ABSL_FALLTHROUGH_INTENDED;</code> should be placed at a
+<code>[[fallthrough]];</code> attribute.
+<code>[[fallthrough]];</code> should be placed at a
 point of execution where a fall-through to the next case
 label occurs. A common exception is consecutive case
 labels without intervening code, in which case no
@@ -5214,14 +5233,14 @@ annotation is needed.</p>
   case 43:
     if (dont_be_picky) {
       // Use this instead of or along with annotations in comments.
-      ABSL_FALLTHROUGH_INTENDED;
+      [[fallthrough]];
     } else {
       CloseButNoCigar();
       break;
     }
   case 42:
     DoSomethingSpecial();
-    ABSL_FALLTHROUGH_INTENDED;
+    [[fallthrough]];
   default:
     DoSomethingGeneric();
     break;

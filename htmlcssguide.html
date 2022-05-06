@@ -371,6 +371,34 @@ as defaults. This can be safely done even for older browsers.</p>
 &lt;script src="https://www.google.com/js/gweb/analytics/autotrack.js"&gt;&lt;/script&gt;
 </code></pre>
 
+<h4 id="id_Attributes" class="numbered"><code>id</code> Attributes</h4>
+
+<p>Avoid unnecessary <code>id</code> attributes.</p>
+
+<p>Prefer <code>class</code> attributes for styling and <code>data</code> attributes for scripting.</p>
+
+<p>Where <code>id</code> attributes are strictly required, always include a hyphen in the
+value to ensure it does not match the JavaScript identifier syntax, e.g. use
+<code>user-profile</code> rather than just <code>profile</code> or <code>userProfile</code>.</p>
+
+<p>When an element has an <code>id</code> attribute, browsers will make that available as a
+<a href="https://html.spec.whatwg.org/multipage/window-object.html#named-access-on-the-window-object">named property on the global <code>window</code> prototype</a>,
+which may cause unexpected behavior. While <code>id</code> attribute values containing a
+hyphen are still available as property names, these cannot be referenced as
+global JavaScript variables.</p>
+
+<pre><code class="language-html bad">&lt;!-- Not recommended: `window.userProfile` will resolve to reference the &lt;div&gt; node --&gt;
+&lt;div id="userProfile"&gt;&lt;/div&gt;
+</code></pre>
+
+<pre><code class="language-html good">&lt;!-- Recommended: `id` attribute is required and its value includes a hyphen --&gt;
+&lt;div aria-describedby="user-profile"&gt;
+  …
+  &lt;div id="user-profile"&gt;&lt;/div&gt;
+  …
+&lt;/div&gt;
+</code></pre>
+
 <h3 id="HTML_Formatting_Rules" class="numbered">HTML Formatting Rules</h3>
 
 <h4 id="General_Formatting" class="numbered">General Formatting</h4>
@@ -420,26 +448,30 @@ instead of an error.)</p>
 wrapping long lines if it significantly improves readability.</p>
 
 <p>When line-wrapping, each continuation line should be indented at least 4
-additional spaces from the original line.</p>
+additional spaces from the original line to distinguish wrapped attributes from
+child elements.</p>
 
-<pre><code class="language-html good">&lt;md-progress-circular md-mode="indeterminate" class="md-accent"
-    ng-show="ctrl.loading" md-diameter="35"&gt;
-&lt;/md-progress-circular&gt;
+<pre><code class="language-html good">&lt;button mat-icon-button color="primary" class="menu-button"
+    (click)="openMenu()"&gt;
+  &lt;mat-icon&gt;menu&lt;/mat-icon&gt;
+&lt;/button&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;md-progress-circular
-    md-mode="indeterminate"
-    class="md-accent"
-    ng-show="ctrl.loading"
-    md-diameter="35"&gt;
-&lt;/md-progress-circular&gt;
+<pre><code class="language-html good">&lt;button
+    mat-icon-button
+    color="primary"
+    class="menu-button"
+    (click)="openMenu()"&gt;
+  &lt;mat-icon&gt;menu&lt;/mat-icon&gt;
+&lt;/button&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;md-progress-circular md-mode="indeterminate"
-                      class="md-accent"
-                      ng-show="ctrl.loading"
-                      md-diameter="35"&gt;
-&lt;/md-progress-circular&gt;
+<pre><code class="language-html good">&lt;button mat-icon-button
+        color="primary"
+        class="menu-button"
+        (click)="openMenu()"&gt;
+  &lt;mat-icon&gt;menu&lt;/mat-icon&gt;
+&lt;/button&gt;
 </code></pre>
 
 <h4 id="HTML_Quotation_Marks" class="numbered">HTML Quotation Marks</h4>
@@ -476,12 +508,12 @@ to test.</p>
 CSS code that may not have any effect and can be removed, and that ensures
 proper CSS usage.</p>
 
-<h4 id="ID_and_Class_Naming" class="numbered">ID and Class Naming</h4>
+<h4 id="ID_and_Class_Naming" class="numbered">Class Naming</h4>
 
-<p>Use meaningful or generic ID and class names.</p>
+<p>Use meaningful or generic class names.</p>
 
-<p>Instead of presentational or cryptic names, always use ID and class names that
-reflect the purpose of the element in question, or that are otherwise generic.</p>
+<p>Instead of presentational or cryptic names, always use class names that reflect
+the purpose of the element in question, or that are otherwise generic.</p>
 
 <p>Names that are specific and reflect the purpose of the element should be
 preferred as these are most understandable and the least likely to change.</p>
@@ -493,7 +525,7 @@ meaning different from their siblings. They are typically needed as “helpers.�
 document or template changes.</p>
 
 <pre><code class="language-css bad">/* Not recommended: meaningless */
-#yee-1901 {}
+.yee-1901 {}
 
 /* Not recommended: presentational */
 .button-green {}
@@ -501,8 +533,8 @@ document or template changes.</p>
 </code></pre>
 
 <pre><code class="language-css good">/* Recommended: specific */
-#gallery {}
-#login {}
+.gallery {}
+.login {}
 .video {}
 
 /* Recommended: generic */
@@ -510,43 +542,94 @@ document or template changes.</p>
 .alt {}
 </code></pre>
 
-<h4 id="ID_and_Class_Name_Style" class="numbered">ID and Class Name Style</h4>
+<h4 id="ID_and_Class_Name_Style" class="numbered">Class Name Style</h4>
 
-<p>Use ID and class names that are as short as possible but as long as necessary.</p>
+<p>Use class names that are as short as possible but as long as necessary.</p>
 
-<p>Try to convey what an ID or class is about while being as brief as possible.</p>
+<p>Try to convey what a class is about while being as brief as possible.</p>
 
-<p>Using ID and class names this way contributes to acceptable levels of
-understandability and code efficiency.</p>
+<p>Using class names this way contributes to acceptable levels of understandability
+and code efficiency.</p>
 
 <pre><code class="language-css bad">/* Not recommended */
-#navigation {}
+.navigation {}
 .atr {}
 </code></pre>
 
 <pre><code class="language-css good">/* Recommended */
-#nav {}
+.nav {}
 .author {}
+</code></pre>
+
+<h4 id="ID_and_Class_Name_Delimiters" class="numbered">Class Name Delimiters</h4>
+
+<p>Separate words in class names by a hyphen.</p>
+
+<p>Do not concatenate words and abbreviations in selectors by any characters
+(including none at all) other than hyphens, in order to improve understanding
+and scannability.</p>
+
+<pre><code class="language-css bad">/* Not recommended: does not separate the words “demo” and “image” */
+.demoimage {}
+
+/* Not recommended: uses underscore instead of hyphen */
+.error_status {}
+</code></pre>
+
+<pre><code class="language-css good">/* Recommended */
+.video-id {}
+.ads-sample {}
+</code></pre>
+
+<h4 id="Prefixes" class="numbered">Prefixes</h4>
+
+<p>Prefix selectors with an application-specific prefix (optional).</p>
+
+<p>In large projects as well as for code that gets embedded in other projects or on
+external sites use prefixes (as namespaces) for class names. Use short, unique
+identifiers followed by a dash.</p>
+
+<p>Using namespaces helps preventing naming conflicts and can make maintenance
+easier, for example in search and replace operations.</p>
+
+<pre><code class="language-css good">.adw-help {} /* AdWords */
+.maia-note {} /* Maia */
 </code></pre>
 
 <h4 id="Type_Selectors" class="numbered">Type Selectors</h4>
 
-<p>Avoid qualifying ID and class names with type selectors.</p>
+<p>Avoid qualifying class names with type selectors.</p>
 
 <p>Unless necessary (for example with helper classes), do not use element names in
-conjunction with IDs or classes.</p>
+conjunction with classes.</p>
 
 <p>Avoiding unnecessary ancestor selectors is useful for
 <a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">performance reasons</a>.</p>
 
 <pre><code class="language-css bad">/* Not recommended */
-ul#example {}
+ul.example {}
 div.error {}
 </code></pre>
 
 <pre><code class="language-css good">/* Recommended */
-#example {}
+.example {}
 .error {}
+</code></pre>
+
+<h4 id="ID_Selectors" class="numbered">ID Selectors</h4>
+
+<p>Avoid ID selectors.</p>
+
+<p>ID attributes are expected to be unique across an entire page, which is
+difficult to guarantee when a page contains many components worked on by many
+different engineers. Class selectors should be preferred in all situations.</p>
+
+<pre><code class="language-css bad">/* Not recommended */
+#example {}
+</code></pre>
+
+<pre><code class="language-css good">/* Recommended */
+.example {}
 </code></pre>
 
 <h4 id="Shorthand_Properties" class="numbered">Shorthand Properties</h4>
@@ -591,11 +674,11 @@ padding: 0;
 
 <h4 id="Leading_0s" class="numbered">Leading 0s</h4>
 
-<p>Omit leading “0”s in values.</p>
+<p>Always include leading “0”s in values.</p>
 
-<p>Do not put <code>0</code>s in front of values or lengths between -1 and 1.</p>
+<p>Put <code>0</code>s in front of values or lengths between -1 and 1.</p>
 
-<pre><code class="language-css good">font-size: .8em;
+<pre><code class="language-css good">font-size: 0.8em;
 </code></pre>
 
 <h4 id="Hexadecimal_Notation" class="numbered">Hexadecimal Notation</h4>
@@ -613,39 +696,25 @@ color: #eebbcc;
 color: #ebc;
 </code></pre>
 
-<h4 id="Prefixes" class="numbered">Prefixes</h4>
+<h4 id="Important_Declarations" class="numbered">Important Declarations</h4>
 
-<p>Prefix selectors with an application-specific prefix (optional).</p>
+<p>Avoid using <code>!important</code> declarations.</p>
 
-<p>In large projects as well as for code that gets embedded in other projects or on
-external sites use prefixes (as namespaces) for ID and class names. Use short,
-unique identifiers followed by a dash.</p>
+<p>These declarations break the natural cascade of CSS and make it difficult to
+reason about and compose styles. Use
+<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity">selector specificity</a>
+to override properties instead.</p>
 
-<p>Using namespaces helps preventing naming conflicts and can make maintenance
-easier, for example in search and replace operations.</p>
-
-<pre><code class="language-css good">.adw-help {} /* AdWords */
-#maia-note {} /* Maia */
-</code></pre>
-
-<h4 id="ID_and_Class_Name_Delimiters" class="numbered">ID and Class Name Delimiters</h4>
-
-<p>Separate words in ID and class names by a hyphen.</p>
-
-<p>Do not concatenate words and abbreviations in selectors by any characters
-(including none at all) other than hyphens, in order to improve understanding
-and scannability.</p>
-
-<pre><code class="language-css bad">/* Not recommended: does not separate the words “demo” and “image” */
-.demoimage {}
-
-/* Not recommended: uses underscore instead of hyphen */
-.error_status {}
+<pre><code class="language-css bad">/* Not recommended */
+.example {
+  font-weight: bold !important;
+}
 </code></pre>
 
 <pre><code class="language-css good">/* Recommended */
-#video-id {}
-.ads-sample {}
+.example {
+  font-weight: bold;
+}
 </code></pre>
 
 <h4 id="Hacks" class="numbered">Hacks</h4>
@@ -666,10 +735,12 @@ frequently.</p>
 
 <h4 id="Declaration_Order" class="numbered">Declaration Order</h4>
 
-<p>Alphabetize declarations.</p>
+<p>Alphabetize declarations (optional).</p>
 
-<p>Put declarations in alphabetical order in order to achieve consistent code in a
-way that is easy to remember and maintain.</p>
+<p>Sort declarations consistently within a project. In the absence of tooling to
+automate and enforce a consistent sort order, consider putting declarations in
+alphabetical order in order to achieve consistent code in a way that is easy to
+learn, remember, and manually maintain.</p>
 
 <p>Ignore vendor-specific prefixes for sorting purposes. However, multiple
 vendor-specific prefixes for a certain CSS property should be kept sorted (e.g.
@@ -756,19 +827,19 @@ begins the
 rule.</p>
 
 <pre><code class="language-css bad">/* Not recommended: missing space */
-#video{
+.video{
   margin-top: 1em;
 }
 
 /* Not recommended: unnecessary line break */
-#video
+.video
 {
   margin-top: 1em;
 }
 </code></pre>
 
 <pre><code class="language-css good">/* Recommended */
-#video {
+.video {
   margin-top: 1em;
 }
 </code></pre>
@@ -847,11 +918,11 @@ sections with new lines.</p>
 
 <pre><code class="language-css good">/* Header */
 
-#adw-header {}
+.adw-header {}
 
 /* Footer */
 
-#adw-footer {}
+.adw-footer {}
 
 /* Gallery */
 

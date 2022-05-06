@@ -42,7 +42,7 @@ avoids giving <em>advice</em> that isn't clearly enforceable (whether by human o
   and comments.
 
   </li><li>The term <em>comment</em> always refers to <em>implementation</em> comments. We do not
-  use the phrase "documentation comments", instead using the common term "Javadoc."</li>
+  use the phrase "documentation comments", and instead use the common term "Javadoc."</li>
 </ol>
 
 <p>Other "terminology notes" will appear occasionally throughout the document.</p>
@@ -236,8 +236,10 @@ ordering.</p>
 <a name="overloads"></a>
 <h5 id="s3.4.2.1-overloads-never-split">3.4.2.1 Overloads: never split</h5>
 
-<p>When a class has multiple constructors, or multiple methods with the same name, these appear
-sequentially, with no other code in between (not even private members).</p>
+<p>Methods of a class that share the same name appear in a single contiguous group with no other
+members in between. The same applies to multiple constructors (which always have the same name).
+This rule applies even when modifiers such as <code class="prettyprint lang-java">static</code> or
+<code class="prettyprint lang-java">private</code> differ between the methods.</p>
 
 <h2 id="s4-formatting">4 Formatting</h2>
 
@@ -249,7 +251,7 @@ the body of a class, method or constructor. Note that, by Section 4.8.3.1 on
 <a name="braces"></a>
 <h3 id="s4.1-braces">4.1 Braces</h3>
 
-<h4 id="s4.1.1-braces-always-used">4.1.1 Braces are used where optional</h4>
+<h4 id="s4.1.1-braces-always-used">4.1.1 Use of optional braces</h4>
 
 <p>Braces are used with
 <code class="prettyprint lang-java">if</code>,
@@ -259,6 +261,8 @@ the body of a class, method or constructor. Note that, by Section 4.8.3.1 on
 <code class="prettyprint lang-java">while</code> statements, even when the
 body is empty or contains only a single statement.</p>
 
+<p>Other optional braces, such as those in a lambda expression, remain optional.</p>
+
 <h4 id="s4.1.2-blocks-k-r-style">4.1.2 Nonempty blocks: K &amp; R style</h4>
 
 <p>Braces follow the Kernighan and Ritchie style
@@ -266,7 +270,7 @@ body is empty or contains only a single statement.</p>
 for <em>nonempty</em> blocks and block-like constructs:</p>
 
 <ul>
-  <li>No line break before the opening brace.</li>
+  <li>No line break before the opening brace, except as detailed below.</li>
 
   <li>Line break after the opening brace.</li>
 
@@ -277,6 +281,11 @@ for <em>nonempty</em> blocks and block-like constructs:</p>
   For example, there is <em>no</em> line break after the brace if it is followed by
   <code class="prettyprint lang-java">else</code> or a comma.</li>
 </ul>
+
+<p>Exception: In places where these rules allow a single statement ending with a semicolon
+(<code class="prettyprint lang-java">;</code>), a block of statements can appear, and the opening
+brace of this block is preceded by a line break. Blocks like these are typically introduced to
+limit the scope of local variables, for example inside switch statements.</p>
 
 <p>Examples:</p>
 
@@ -298,6 +307,10 @@ return new MyClass() {
       somethingElse();
     } else {
       lastThing();
+    }
+    {
+      int x = foo();
+      frob(x);
     }
   }
 };
@@ -367,7 +380,14 @@ you may choose to wrap the line earlier than where this rule strictly requires.<
   3.2 <a href="#s3.2-package-statement">Package statement</a> and
   3.3 <a href="#s3.3-import-statements">Import statements</a>).</li>
 
-  <li>Command lines in a comment that may be cut-and-pasted into a shell.</li>
+  <li>Command lines in a comment that may be copied-and-pasted into a shell.</li>
+
+  <li>Very long identifiers, on the rare occasions they are called for, are allowed to exceed the
+  column limit. In that case, the valid wrapping for the surrounding code is as produced by
+
+
+    <a href="https://github.com/google/google-java-format">google-java-format</a>.
+  </li>
 </ol>
 
 <h3 id="s4.5-line-wrapping">4.5 Line-wrapping</h3>
@@ -509,7 +529,7 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
     <li><code class="prettyprint lang-java">@SomeAnnotation({a, b})</code> (no space is used)</li>
 
     <li><code class="prettyprint lang-java">String[][] x = {{"foo"}};</code> (no space is required
-    between <code class="prettyprint lang-java">{{</code>, by item 8 below)</li>
+    between <code class="prettyprint lang-java">{{</code>, by item 9 below)</li>
   </ul>
   </li>
 
@@ -541,8 +561,11 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
   <li>After <code class="prettyprint lang-java">,:;</code> or the closing parenthesis
   (<code class="prettyprint lang-java">)</code>) of a cast</li>
 
-  <li>On both sides of the double slash (<code class="prettyprint lang-java">//</code>) that
-  begins an end-of-line comment. Here, multiple spaces are allowed, but not required.</li>
+  <li>Between any content and a double slash (<code class="prettyprint lang-java">//</code>) which
+  begins a comment. Multiple spaces are allowed.</li>
+
+  <li>Between a double slash (<code class="prettyprint lang-java">//</code>) which begins a comment
+  and the comment's text. Multiple spaces are allowed.</li>
 
   <li>Between the type and variable of a declaration:
   <code class="prettyprint lang-java">List&lt;String&gt; list</code></li>
@@ -712,7 +735,7 @@ the last statement group of the switch block. Example:</p>
 <p>Notice that no comment is needed after <code class="prettyprint lang-java">case 1:</code>, only
 at the end of the statement group.</p>
 
-<h5 id="s4.8.4.3-switch-default">4.8.4.3 The <code>default</code> case is present</h5>
+<h5 id="s4.8.4.3-switch-default">4.8.4.3 Presence of the <code>default</code> label</h5>
 
 <p>Each switch statement includes a <code class="prettyprint lang-java">default</code> statement
 group, even if it contains no code.</p>
@@ -727,14 +750,37 @@ analysis tools to issue a warning if any cases were missed.
 <a name="annotations"></a>
 <h4 id="s4.8.5-annotations">4.8.5 Annotations</h4>
 
-<p>Annotations applying to a class, method or constructor appear immediately after the
+<h5 id="s4.8.5.1-type-use-annotation-style">4.8.5.1 Type-use annotations</h5>
+
+<p>Type-use annotations appear immediately before the annotated type. An annotation is a type-use
+annotation if it is meta-annotated with
+<code class="prettyprint lang-java">@Target(ElementType.TYPE_USE)</code>. Example:</p>
+
+<pre class="prettyprint lang-java">final @Nullable String name;
+
+public @Nullable Person getPersonByName(String name);
+</pre>
+
+<h5 id="s4.8.5.2-class-annotation-style">4.8.5.2 Class annotations</h5>
+
+<p>Annotations applying to a class appear immediately after the
 documentation block, and each annotation is listed on a line of its own (that is, one annotation
 per line). These line breaks do not constitute line-wrapping (Section
 4.5, <a href="#s4.5-line-wrapping">Line-wrapping</a>), so the indentation level is not
 increased. Example:</p>
 
-<pre class="prettyprint lang-java">@Override
-@Nullable
+<pre class="prettyprint lang-java">@Deprecated
+@CheckReturnValue
+public final class Frozzler { ... }
+</pre>
+
+<h5 id="s4.8.5.3-method-annotation-style">4.8.5.3 Method and constructor annotations</h5>
+
+<p>The rules for annotations on method and constructor declarations are the same as the
+<a href="#s4.8.5.2-class-annotation-style">previous section</a>. Example: </p>
+
+<pre class="prettyprint lang-java">@Deprecated
+@Override
 public String getNameIfPresent() { ... }
 </pre>
 
@@ -744,6 +790,8 @@ public String getNameIfPresent() { ... }
 <pre class="prettyprint lang-java">@Override public int hashCode() { ... }
 </pre>
 
+<h5 id="s4.8.5.4-field-annotation-style">4.8.5.4 Field annotations</h5>
+
 <p>Annotations applying to a field also appear immediately after the documentation block, but in
 this case, <em>multiple</em> annotations (possibly parameterized) may be listed on the same line;
 for example:</p>
@@ -751,8 +799,10 @@ for example:</p>
 <pre class="prettyprint lang-java">@Partial @Mock DataLoader loader;
 </pre>
 
-<p>There are no specific rules for formatting annotations on parameters, local variables, or types.
-</p>
+<h5 id="s4.8.5.5-local-parameter-annotation-style">4.8.5.5 Parameter and local variable annotations</h5>
+
+<p>There are no specific rules for formatting annotations on parameters or local variables (except,
+of course, when the annotation is a type-use annotation).</p>
 
 <a name="comments"></a>
 <h4 id="s4.8.6-comments">4.8.6 Comments</h4>
@@ -820,8 +870,8 @@ names are not Google Style: <code class="badcode">name_</code>, <code class="bad
 
 <h4 id="s5.2.1-package-names">5.2.1 Package names</h4>
 
-<p>Package names are all lowercase, with consecutive words simply concatenated together (no
-underscores). For example, <code>com.example.deepspace</code>, not
+<p>Package names use only lowercase letters and digits (no underscores). Consecutive words are
+simply concatenated together. For example, <code>com.example.deepspace</code>, not
 <code class="badcode">com.example.deepSpace</code> or
 <code class="badcode">com.example.deep_space</code>.</p>
 
@@ -838,10 +888,11 @@ adjectives or adjective phrases instead (for example,
 
 <p>There are no specific rules or even well-established conventions for naming annotation types.</p>
 
-<p><em>Test</em> classes are named starting with the name of the class they are testing, and ending
-with <code class="prettyprint lang-java">Test</code>. For example,
-<code class="prettyprint lang-java">HashTest</code> or
-<code class="prettyprint lang-java">HashIntegrationTest</code>.</p>
+<p>A <em>test</em> class has a name that ends with <code class="prettyprint lang-java">Test</code>,
+for example, <code class="prettyprint lang-java">HashIntegrationTest</code>.
+If it covers a single class, its name is the name of that class
+plus <code class="prettyprint lang-java">Test</code>, for example <code class="prettyprint
+  lang-java">HashImplTest</code>.</p>
 
 <h4 id="s5.2.3-method-names">5.2.3 Method names</h4>
 
@@ -852,30 +903,28 @@ with <code class="prettyprint lang-java">Test</code>. For example,
 <code class="prettyprint lang-java">stop</code>.</p>
 
 <p>Underscores may appear in JUnit <em>test</em> method names to separate logical components of the
-name, with <em>each</em> component written in <a href="#s5.3-camel-case">lowerCamelCase</a>.
-One typical pattern is <code><i>&lt;methodUnderTest&gt;</i>_<i>&lt;state&gt;</i></code>,
-for example <code class="prettyprint lang-java">pop_emptyStack</code>. There is no One Correct
-Way to name test methods.</p>
+name, with <em>each</em> component written in <a href="#s5.3-camel-case">lowerCamelCase</a>, for
+example <code class="prettyprint lang-java">transferMoney_deductsFromSource</code>. There is no One
+Correct Way to name test methods.</p>
 
 <a name="constants"></a>
 <h4 id="s5.2.4-constant-names">5.2.4 Constant names</h4>
 
-<p>Constant names use <code class="prettyprint lang-java">CONSTANT_CASE</code>: all uppercase
+<p>Constant names use <code class="prettyprint lang-java">UPPER_SNAKE_CASE</code>: all uppercase
 letters, with each word separated from the next by a single underscore. But what <em>is</em> a
 constant, exactly?</p>
 
 <p>Constants are static final fields whose contents are deeply immutable and whose methods have no
-detectable side effects. This includes primitives, Strings, immutable types, and immutable
-collections of immutable types. If any of the instance's observable state can change, it is not a
+detectable side effects. Examples include primitives, strings, immutable value classes, and anything
+set to <code>null</code>. If any of the instance's observable state can change, it is not a
 constant. Merely <em>intending</em> to never mutate the object is not enough. Examples:</p>
 
 <pre class="prettyprint lang-java">// Constants
 static final int NUMBER = 5;
 static final ImmutableList&lt;String&gt; NAMES = ImmutableList.of("Ed", "Ann");
-static final ImmutableMap&lt;String, Integer&gt; AGES = ImmutableMap.of("Ed", 35, "Ann", 32);
+static final Map&lt;String, Integer&gt; AGES = ImmutableMap.of("Ed", 35, "Ann", 32);
 static final Joiner COMMA_JOINER = Joiner.on(','); // because Joiner is immutable
 static final SomeMutableType[] EMPTY_ARRAY = {};
-enum SomeEnum { ENUM_CONSTANT }
 
 // Not constants
 static String nonFinal = "non-final";
@@ -1073,9 +1122,9 @@ lang-java">Object.finalize</code>.</p>
 <p class="tip"><strong>Tip:</strong> Don't do it. If you absolutely must, first read and understand
 
 
-  <a href="http://books.google.com/books?isbn=8131726592"><em>Effective Java</em> Item 7,</a>
+  <a href="http://books.google.com/books?isbn=0134686047"><em>Effective Java</em> Item 8</a>,
 
-"Avoid Finalizers," very carefully, and <em>then</em> don't do it.</p>
+"Avoid finalizers and cleaners" very carefully, and <em>then</em> don't do it.</p>
 
 
 <a name="javadoc"></a>
@@ -1107,14 +1156,15 @@ applies when there are no block tags such as <code>@return</code>.
 
 </p><h4 id="s7.1.2-javadoc-paragraphs">7.1.2 Paragraphs</h4>
 
-<p>One blank line&#8212;that is, a line containing only the aligned leading asterisk
-(<code>*</code>)&#8212;appears between paragraphs, and before the group of block tags if
-present. Each paragraph but the first has <code>&lt;p&gt;</code> immediately before the first word,
-with no space after.</p>
+<p>One blank line—that is, a line containing only the aligned leading asterisk
+(<code>*</code>)—appears between paragraphs, and before the group of block tags if present.
+Each paragraph except the first has <code>&lt;p&gt;</code> immediately before the first word, with
+no space after it. HTML tags for other block-level elements, such as <code>&lt;ul&gt;</code> or
+<code>&lt;table&gt;</code>, are <em>not</em> preceded with <code>&lt;p&gt;</code>.</p>
 
 <a name="s7.1.3-javadoc-at-clauses"></a>
 
-<h4 id="s7.1.3-javadoc-block-tags">7.1.3 Block tags</h4>
+</p><h4 id="s7.1.3-javadoc-block-tags">7.1.3 Block tags</h4>
 
 <p>Any of the standard "block tags" that are used appear in the order <code>@param</code>,
 <code>@return</code>, <code>@throws</code>, <code>@deprecated</code>, and these four types never
@@ -1135,8 +1185,9 @@ like <code class="badcode">Save the record.</code>. However, the fragment is cap
 punctuated as if it were a complete sentence.</p>
 
 <p class="tip"><strong>Tip:</strong> A common mistake is to write simple Javadoc in the form
-<code class="badcode">/** @return the customer ID */</code>. This is incorrect, and should be
-changed to <code class="prettyprint lang-java">/** Returns the customer ID. */</code>.</p>
+<code class="badcode prettyprint lang-java">/** @return the customer ID */</code>. This is
+incorrect, and should be changed to
+<code class="prettyprint lang-java">/** Returns the customer ID. */</code>.</p>
 
 <a name="s7.3.3-javadoc-optional"></a> 
 <h3 id="s7.3-javadoc-where-required">7.3 Where Javadoc is used</h3>
@@ -1150,11 +1201,11 @@ noted below.</p>
 <p>Additional Javadoc content may also be present, as explained in Section 7.3.4,
 <a href="#s7.3.4-javadoc-non-required">Non-required Javadoc</a>.</p>
 
-<h4 id="s7.3.1-javadoc-exception-self-explanatory">7.3.1 Exception: self-explanatory methods</h4>
+<h4 id="s7.3.1-javadoc-exception-self-explanatory">7.3.1 Exception: self-explanatory members</h4>
 
-<p>Javadoc is optional for "simple, obvious" methods like
-<code class="prettyprint lang-java">getFoo</code>, in cases where there <em>really and truly</em> is
-nothing else worthwhile to say but "Returns the foo".</p>
+<p>Javadoc is optional for "simple, obvious" members like
+<code class="prettyprint lang-java">getFoo()</code>, in cases where there <em>really and truly</em>
+ is nothing else worthwhile to say but "Returns the foo".</p>
 
 <p class="note"><strong>Important:</strong> it is not appropriate to cite this exception to justify
 omitting relevant information that a typical reader might need to know. For example, for a method
@@ -1179,7 +1230,7 @@ what the term "canonical name" means!</p>
 class or member, that comment is written as Javadoc instead (using <code>/**</code>).</p>
 
 <p>Non-required Javadoc is not strictly required to follow the formatting rules of Sections
-7.1.2, 7.1.3, and 7.2, though it is of course recommended.</p>
+7.1.1, 7.1.2, 7.1.3, and 7.2, though it is of course recommended.</p>
 
  
 

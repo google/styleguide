@@ -107,7 +107,7 @@
             <code>&gt;=#</code> must be used for strings.
           </li>
           <li>
-            The behavior of <code>=~</code> and friends is dependant upon the
+            The behavior of <code>=~</code> and friends is dependent upon the
             <code>ignorecase</code> setting.
           </li>
           <li>
@@ -232,7 +232,7 @@
             Loud scripts are annoying.
           </li>
           <li>
-            Message the user when an error has occured.
+            Message the user when an error has occurred.
           </li>
           <li>
             Message the user when an operation which takes a long time has
