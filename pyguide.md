@@ -212,12 +212,7 @@ that the arguments are actually unused.
 ### 2.2 Imports 
 
 Use `import` statements for packages and modules only, not for individual
-classes or functions. Classes imported from the
-[`typing` module](#typing-imports), [`collections.abc` module](#typing-imports),
-[`typing_extensions` module](https://github.com/python/typing/tree/master/typing_extensions),
-and redirects from the
-[six.moves module](https://six.readthedocs.io/#module-six.moves)
-are exempt from this rule.
+classes or functions.
 
 <a id="s2.2.1-definition"></a>
 <a id="221-definition"></a>
@@ -271,6 +266,18 @@ echo.EchoFilter(input, output, delay=0.7, atten=4)
 Do not use relative names in imports. Even if the module is in the same package,
 use the full package name. This helps prevent unintentionally importing a
 package twice.
+
+<a id="imports-exemptions"></a>
+##### 2.2.4.1 Exemptions 
+
+Exemptions from this rule:
+
+*   Classes imported from the [`typing` module](#typing-imports).
+*   Classes imported from the [`collections.abc` module](#typing-imports).
+*   Classes imported from the
+    [`typing_extensions` module](https://github.com/python/typing/tree/HEAD/typing_extensions).
+*   Redirects from the
+    [six.moves module](https://six.readthedocs.io/#module-six.moves).
 
 <a id="s2.3-packages"></a>
 <a id="23-packages"></a>
@@ -722,14 +729,12 @@ Yes:  for key in adict: ...
       if obj in alist: ...
       for line in afile: ...
       for k, v in adict.items(): ...
-      for k, v in six.iteritems(adict): ...
 ```
 
 ```python
 No:   for key in adict.keys(): ...
       if not adict.has_key(key): ...
       for line in afile.readlines(): ...
-      for k, v in dict.iteritems(): ...
 ```
 
 <a id="s2.9-generators"></a>
@@ -744,7 +749,7 @@ Use generators as needed.
 <a id="291-definition"></a>
 
 <a id="generators-definition"></a>
-#### 2.9 Definition 
+#### 2.9.1 Definition 
 
 A generator function returns an iterator that yields a value each time it
 executes a yield statement. After it yields a value, the runtime state of the
@@ -766,7 +771,8 @@ creates an entire list of values at once.
 <a id="generators-cons"></a>
 #### 2.9.3 Cons 
 
-None.
+Local variables in the generator will not be garbage collected until the
+generator is either consumed to exhaustion or itself garbage collected.
 
 <a id="s2.9.4-decision"></a>
 <a id="294-decision"></a>
@@ -776,6 +782,11 @@ None.
 
 Fine. Use "Yields:" rather than "Returns:" in the docstring for generator
 functions.
+
+If the generator manages an expensive resource, make sure to force the clean up.
+
+A good way to do the clean up is by wrapping the generator with a context
+manager [PEP-0533](https://peps.python.org/pep-0533/).
 
 <a id="s2.10-lambda-functions"></a>
 <a id="210-lambda-functions"></a>
@@ -1415,14 +1426,6 @@ In code that may execute on versions as old as 3.5 rather than >= 3.7, import:
 from __future__ import generator_stop
 ```
 
-For legacy code with the burden of continuing to support 2.7, import:
-
-```python
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-```
-
 For more information read the
 [Python future statement definitions](https://docs.python.org/3/library/__future__.html)
 documentation.
@@ -1433,19 +1436,7 @@ feature a specific future import enables in your code today, keeping it in place
 in the file prevents later modifications of the code from inadvertently
 depending on the older behavior.
 
-Use other `from __future__` import statements as you see fit. We did not include
-`unicode_literals` in our recommendations for 2.7 as it was not a clear win due
-to implicit default codec conversion consequences it introduced in many places
-within 2.7. Most dual-version 2-and-3 code was better off with explicit use of
-`b''` and `u''` bytes and unicode string literals where necessary.
-
-##### The six, future, and past libraries
-
-When your project still needs to support use under both Python 2 and 3, use the
-[six](https://pypi.org/project/six/),
-[future](https://pypi.org/project/future/), and
-[past](https://pypi.org/project/past/) libraries as you see fit. They exist to
-make your code cleaner and life easier.
+Use other `from __future__` import statements as you see fit.
 
 <a id="s2.21-type-annotated-code"></a>
 <a id="s2.21-typed-code"></a>
@@ -1455,10 +1446,9 @@ make your code cleaner and life easier.
 <a id="typed-code"></a>
 ### 2.21 Type Annotated Code 
 
-You can annotate Python 3 code with type hints according to
+You can annotate Python code with type hints according to
 [PEP-484](https://www.python.org/dev/peps/pep-0484/), and type-check the code at
 build time with a type checking tool like [pytype](https://github.com/google/pytype).
-
 
 Type annotations can be in the source or in a
 [stub pyi file](https://www.python.org/dev/peps/pep-0484/#stub-files). Whenever
@@ -2129,8 +2119,8 @@ If your class has public attributes, they should be documented here in an
 class SampleClass:
     """Summary of class here.
 
-    Longer class information....
-    Longer class information....
+    Longer class information...
+    Longer class information...
 
     Attributes:
         likes_spam: A boolean indicating if we like SPAM or not.
@@ -2144,6 +2134,34 @@ class SampleClass:
 
     def public_method(self):
         """Performs operation blah."""
+```
+
+All class docstrings should start with a one-line summary that describes what
+the class instance represents. This implies that subclasses of `Exception`
+should also describe what the exception represents, and not the context in which
+it might occur. The class docstring should not repeat unnecessary information,
+such as that the class is a class.
+
+```python
+class CheeseShopAddress:
+  """The address of a cheese shop.
+
+  ...
+  """
+
+class OutOfCheeseError(Exception):
+  """No more cheese is available."""
+```
+
+```python
+class CheeseShopAddress:
+  """Class that describes the address of a cheese shop.
+
+  ...
+  """
+
+class OutOfCheeseError(Exception):
+  """Raised when no more cheese is available."""
 ```
 
 <a id="s3.8.5-block-and-inline-comments"></a>
@@ -2542,9 +2560,7 @@ grouped from most generic to least generic:
 1.  Python future import statements. For example:
 
     ```python
-    from __future__ import absolute_import
-    from __future__ import division
-    from __future__ import print_function
+    from __future__ import annotations
     ```
 
     See [above](#from-future-imports) for more information about those.
@@ -2945,13 +2961,23 @@ the function into smaller and more manageable pieces.
 
 *   Familiarize yourself with
     [PEP-484](https://www.python.org/dev/peps/pep-0484/).
+
 *   In methods, only annotate `self`, or `cls` if it is necessary for proper
-    type information. e.g., `@classmethod def create(cls: Type[T]) -> T: return
-    cls()`
+    type information. e.g.,
+
+    ```python
+    @classmethod
+    def create(cls: Type[T]) -> T:
+      return cls()
+    ```
+
 *   Similarly, don't feel compelled to annotate the return value of `__init__`
     (where `None` is the only valid option).
+
 *   If any other variable or a returned type should not be expressed, use `Any`.
+
 *   You are not required to annotate all the functions in a module.
+
     -   At least annotate your public APIs.
     -   Use judgment to get to a good balance between safety and clarity on the
         one hand, and flexibility on the other.
@@ -3245,8 +3271,7 @@ def add(a: AddableType, b: AddableType) -> AddableType:
 ```
 
 A common predefined type variable in the `typing` module is `AnyStr`. Use it for
-multiple annotations that can be `bytes` or `unicode` and must all be the same
-type.
+multiple annotations that can be `bytes` or `str` and must all be the same type.
 
 ```python
 from typing import AnyStr
@@ -3283,45 +3308,15 @@ No:
 <a id="typing-strings"></a>
 #### 3.19.11 String types 
 
-The proper type for annotating strings depends on what versions of Python the
-code is intended for.
+> Do not use `typing.Text` in new code. It's only for Python 2/3 compatibility.
 
-Prefer to use `str`, though `Text` is also acceptable. Be consistent in using
-one or the other. For code that deals with binary data, use `bytes`. For Python
-2 compatible code that processes text data (`str` or `unicode` in Python 2,
-`str` in Python 3), use `Text`.
+Use `str` for string/text data. For code that deals with binary data, use
+`bytes`.
 
 ```python
-def deals_with_text_data_in_py3(x: str) -> str:
+def deals_with_text_data(x: str) -> str:
   ...
 def deals_with_binary_data(x: bytes) -> bytes:
-  ...
-def py2_compatible_text_data_processor(x: Text) -> Text:
-  ...
-```
-
-In some uncommon Python 2 compatibility cases, `str` may make sense instead of
-`Text`, typically to aid compatibility when the return types aren't the same
-between Python 2 and Python 3. Never use `unicode` as it doesn't exist in Python
-3. The reason this discrepancy exists is because `str` means something different
-in Python 2 than in Python 3.
-
-No:
-
-```python
-def py2_code(x: str) -> unicode:
-  ...
-```
-
-If the type can be either bytes or text, use `Union`, with the appropriate text
-type.
-
-```python
-from typing import Text, Union
-...
-def py3_only(x: Union[bytes, str]) -> Union[bytes, str]:
-  ...
-def py2_compatible(x: Union[bytes, Text]) -> Union[bytes, Text]:
   ...
 ```
 
@@ -3336,11 +3331,11 @@ return type is the same as the argument type in the code above, use
 <a id="typing-imports"></a>
 #### 3.19.12 Imports For Typing 
 
-For classes from the `typing` and `collections.abc` modules for use in
-annotations, always import the class itself. This keeps common annotations more
-concise and matches typing practices used around the world. You are explicitly
-allowed to import multiple specific classes on one line from the `typing` and
-`collections.abc` modules. Ex:
+For symbols from the `typing` and `collections.abc` modules used to support
+static analysis and type checking, always import the symbol itself. This keeps
+common annotations more concise and matches typing practices used around the
+world. You are explicitly allowed to import multiple specific classes on one
+line from the `typing` and `collections.abc` modules. Ex:
 
 ```python
 from collections.abc import Mapping, Sequence
