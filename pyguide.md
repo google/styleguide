@@ -272,10 +272,11 @@ package twice.
 
 Exemptions from this rule:
 
-*   Classes imported from the [`typing` module](#typing-imports).
-*   Classes imported from the [`collections.abc` module](#typing-imports).
-*   Classes imported from the
-    [`typing_extensions` module](https://github.com/python/typing/tree/HEAD/typing_extensions).
+*   Symbols from the following modules and used to support static analysis and
+    type checking:
+    *   [`typing` module](#typing-imports)
+    *   [`collections.abc` module](#typing-imports)
+    *   [`typing_extensions` module](https://github.com/python/typing_extensions/blob/main/README.md)
 *   Redirects from the
     [six.moves module](https://six.readthedocs.io/#module-six.moves).
 
@@ -2543,9 +2544,10 @@ Imports should be on separate lines; there are
 E.g.:
 
 ```python
-Yes: import os
+Yes: from collections.abc import Mapping, Sequence
+     import os
      import sys
-     from typing import Mapping, Sequence
+     from typing import Any, NewType
 ```
 
 ```python
@@ -3170,6 +3172,8 @@ CapWorded. If the alias is used only in this module, it should be \_Private.
 
 For example, if the name of the module together with the name of the type is too
 long:
+
+<!-- Annotate below with `typing.TypeAlias` for 3.10. -->
 
 ```python
 _ShortName = module_with_long_name.TypeWithLongName
