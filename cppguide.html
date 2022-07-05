@@ -1706,7 +1706,7 @@ following order:</p>
 
 <ol>
   <li>Types and type aliases (<code>typedef</code>, <code>using</code>,
-    <code>enum</code>, nested structs and classes)</li>
+    <code>enum</code>, nested structs and classes, and <code>friend</code> types)</li>
 
   <li>Static constants</li>
 
@@ -2895,6 +2895,17 @@ and <code>long long</code> is 64 bits.</p>
 compiler and architecture.</p>
 
 <p class="decision"></p>
+
+<p>
+The standard library header <code>&lt;cstdint&gt;</code> defines types
+like <code>int16_t</code>, <code>uint32_t</code>,
+<code>int64_t</code>, etc. You should always use
+those in preference to <code>short</code>, <code>unsigned
+long long</code> and the like, when you need a guarantee
+on the size of an integer. Of the C integer types, only
+<code>int</code> should be used. When appropriate, you
+are welcome to use standard types like
+<code>size_t</code> and <code>ptrdiff_t</code>.</p>
 
 <p>We use <code>int</code> very often, for integers we
 know are not going to be too big, e.g., loop counters.
@@ -4459,23 +4470,20 @@ declaration:</p>
       are provided in `backticks`, then code-indexing
       tools may be able to present the documentation better.</li>
 
-  <li>For class member functions: whether the object
-  remembers reference arguments beyond the duration of
-  the method call, and whether it will free them or
-  not.</li>
+  <li>For class member functions: whether the object remembers
+  reference or pointer arguments beyond the duration of the method
+  call. This is quite common for pointer/reference arguments to
+  constructors.</li>
 
-  <li>If the function allocates memory that the caller
-  must free.</li>
+  <li>For each pointer argument, whether it is allowed to be null and what happens
+  if it is.</li>
 
-  <li>Whether any of the arguments can be a null
-  pointer.</li>
+  <li>For each output or input/output argument, what happens to any state that argument
+    is in. (E.g. is the state appended to or overwritten?).
 
-  <li>If there are any performance implications of how a
+  </li><li>If there are any performance implications of how a
   function is used.</li>
-
-  <li>If the function is re-entrant. What are its
-  synchronization assumptions?</li>
- </ul>
+</ul>
 
 <p>Here is an example:</p>
 
@@ -4946,7 +4954,8 @@ void Circle::Rotate(double) {}
 <p>Attributes, and macros that expand to attributes, appear at the very
 beginning of the function declaration or definition, before the
 return type:</p>
-<pre>ABSL_MUST_USE_RESULT bool IsOk();
+<pre>  ABSL_ATTRIBUTE_NOINLINE void ExpensiveFunction();
+  [[nodiscard]] bool IsOk();
 </pre>
 
 <h3 id="Formatting_Lambda_Expressions">Lambda Expressions</h3>
