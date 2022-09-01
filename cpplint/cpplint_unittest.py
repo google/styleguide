@@ -37,10 +37,16 @@ import codecs
 import os
 import random
 import re
+import subprocess
 import sys
 import unittest
 
 import cpplint
+
+try:
+  xrange          # Python 2
+except NameError:
+  xrange = range  # Python 3
 
 
 # This class works as an error collector and replaces cpplint.Error
@@ -315,6 +321,8 @@ class CpplintTest(CpplintTestBase):
     self.assertEquals(0, cpplint.GetLineWidth(''))
     self.assertEquals(10, cpplint.GetLineWidth(u'x' * 10))
     self.assertEquals(16, cpplint.GetLineWidth(u'都|道|府|県|支庁'))
+    self.assertEquals(5 + 13 + 9, cpplint.GetLineWidth(
+        u'd𝐱/dt' + u'f : t ⨯ 𝐱 → ℝ' + u't ⨯ 𝐱 → ℝ'))
 
   def testGetTextInside(self):
     self.assertEquals('', cpplint._GetTextInside('fun()', r'fun\('))
@@ -4218,6 +4226,8 @@ class CpplintTest(CpplintTestBase):
           error_collector.ResultList())
 
   def testBuildHeaderGuardWithRoot(self):
+    # note: Tested file paths must be real, otherwise
+    # the repository name lookup will fail.
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'cpplint_test_header.h')
     file_info = cpplint.FileInfo(file_path)
@@ -4232,13 +4242,98 @@ class CpplintTest(CpplintTestBase):
 
     self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
                       cpplint.GetHeaderGuardCPPVariable(file_path))
+    #
+    # test --root flags:
+    #   this changes the cpp header guard prefix
+    #
+
+    # left-strip the header guard by using a root dir inside of the repo dir.
+    # relative directory
     cpplint._root = 'cpplint'
     self.assertEquals('CPPLINT_TEST_HEADER_H_',
                       cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    nested_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                    os.path.join('nested',
+                                                 'cpplint_test_header.h'))
+    cpplint._root = os.path.join('cpplint', 'nested')
+    actual = cpplint.GetHeaderGuardCPPVariable(nested_file_path)
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      actual)
+
+    # absolute directory
+    # (note that CPPLINT.cfg root=setting is always made absolute)
+    cpplint._root = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    nested_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                    os.path.join('nested',
+                                                 'cpplint_test_header.h'))
+    cpplint._root = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 'nested')
+    self.assertEquals('CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(nested_file_path))
+
     # --root flag is ignored if an non-existent directory is specified.
     cpplint._root = 'NON_EXISTENT_DIR'
     self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
                       cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    # prepend to the header guard by using a root dir that is more outer
+    # than the repo dir
+
+    # (using absolute paths)
+    # (note that CPPLINT.cfg root=setting is always made absolute)
+    this_files_path = os.path.dirname(os.path.abspath(__file__))
+    (styleguide_path, this_files_dir) = os.path.split(this_files_path)
+    (styleguide_parent_path, styleguide_dir_name) = os.path.split(styleguide_path)
+    # parent dir of styleguide
+    cpplint._root = styleguide_parent_path
+    self.assertIsNotNone(styleguide_parent_path)
+    # do not hardcode the 'styleguide' repository name, it could be anything.
+    expected_prefix = re.sub(r'[^a-zA-Z0-9]', '_', styleguide_dir_name).upper() + '_'
+    # do not have 'styleguide' repo in '/'
+    self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    # To run the 'relative path' tests, we must be in the directory of this test file.
+    cur_dir = os.getcwd()
+    os.chdir(this_files_path)
+
+    # (using relative paths)
+    styleguide_rel_path = os.path.relpath(styleguide_path, this_files_path)
+    # '..'
+    cpplint._root = styleguide_rel_path
+    self.assertEquals('CPPLINT_CPPLINT_TEST_HEADER_H_',
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    styleguide_rel_path = os.path.relpath(styleguide_parent_path,
+                                          this_files_path) # '../..'
+    cpplint._root = styleguide_rel_path
+    self.assertEquals('%sCPPLINT_CPPLINT_TEST_HEADER_H_' %(expected_prefix),
+                      cpplint.GetHeaderGuardCPPVariable(file_path))
+
+    cpplint._root = None
+
+    # Restore previous CWD.
+    os.chdir(cur_dir)
+
+  def testPathSplitToList(self):
+    self.assertEquals([''],
+                      cpplint.PathSplitToList(os.path.join('')))
+
+    self.assertEquals(['.'],
+                      cpplint.PathSplitToList(os.path.join('.')))
+
+    self.assertEquals(['..'],
+                      cpplint.PathSplitToList(os.path.join('..')))
+
+    self.assertEquals(['..', 'a', 'b'],
+                      cpplint.PathSplitToList(os.path.join('..', 'a', 'b')))
+
+    self.assertEquals(['a', 'b', 'c', 'd'],
+                      cpplint.PathSplitToList(os.path.join('a', 'b', 'c', 'd')))
 
   def testBuildInclude(self):
     # Test that include statements have slashes in them.
@@ -5600,6 +5695,83 @@ class NestingStateTest(unittest.TestCase):
     self.UpdateWithLines(['}'])
     self.assertEquals(len(self.nesting_state.stack), 0)
 
+
+class QuietTest(unittest.TestCase):
+
+  def setUp(self):
+    self.this_dir_path = os.path.dirname(os.path.abspath(__file__))
+    self.python_executable = sys.executable or 'python'
+    self.cpplint_test_h = os.path.join(self.this_dir_path,
+                                       'cpplint_test_header.h')
+
+  def _runCppLint(self, *args):
+    cpplint_abspath = os.path.join(self.this_dir_path, 'cpplint.py')
+
+    cmd_line = [self.python_executable, cpplint_abspath] +                     \
+        list(args) +                                                           \
+        [ self.cpplint_test_h ]
+
+    return_code = 0
+    try:
+      output = subprocess.check_output(cmd_line,
+                                       stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as err:
+      return_code = err.returncode
+      output = err.output
+
+    return (return_code, output)
+
+  def testNonQuietWithErrors(self):
+    # This will fail: the test header is missing a copyright and header guard.
+    (return_code, output) = self._runCppLint()
+    self.assertEquals(1, return_code)
+    # Always-on behavior: Print error messages as they come up.
+    self.assertIn("[legal/copyright]", output)
+    self.assertIn("[build/header_guard]", output)
+    # If --quiet was unspecified: Print 'Done processing' and 'Total errors..'
+    self.assertIn("Done processing", output)
+    self.assertIn("Total errors found:", output)
+
+  def testQuietWithErrors(self):
+    # When there are errors, behavior is identical to not passing --quiet.
+    (return_code, output) = self._runCppLint('--quiet')
+    self.assertEquals(1, return_code)
+    self.assertIn("[legal/copyright]", output)
+    self.assertIn("[build/header_guard]", output)
+    # Even though --quiet was used, print these since there were errors.
+    self.assertIn("Done processing", output)
+    self.assertIn("Total errors found:", output)
+
+  def testNonQuietWithoutErrors(self):
+    # This will succeed. We filtered out all the known errors for that file.
+    (return_code, output) = self._runCppLint('--filter=' +
+                                                '-legal/copyright,' +
+                                                '-build/header_guard')
+    self.assertEquals(0, return_code, output)
+    # No cpplint errors are printed since there were no errors.
+    self.assertNotIn("[legal/copyright]", output)
+    self.assertNotIn("[build/header_guard]", output)
+    # Print 'Done processing' and 'Total errors found' since
+    # --quiet was not specified.
+    self.assertIn("Done processing", output)
+    self.assertIn("Total errors found:", output)
+
+  def testQuietWithoutErrors(self):
+    # This will succeed. We filtered out all the known errors for that file.
+    (return_code, output) = self._runCppLint('--quiet',
+                                             '--filter=' +
+                                                 '-legal/copyright,' +
+                                                 '-build/header_guard')
+    self.assertEquals(0, return_code, output)
+    # No cpplint errors are printed since there were no errors.
+    self.assertNotIn("[legal/copyright]", output)
+    self.assertNotIn("[build/header_guard]", output)
+    # --quiet was specified and there were no errors:
+    # skip the printing of 'Done processing' and 'Total errors..'
+    self.assertNotIn("Done processing", output)
+    self.assertNotIn("Total errors found:", output)
+    # Output with no errors must be completely blank!
+    self.assertEquals("", output)
 
 # pylint: disable-msg=C6409
 def setUp():

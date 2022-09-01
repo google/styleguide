@@ -41,6 +41,13 @@ window.initStyleGuide = function(init) {
   // properly. Fix it by moving the code directly into the pre.
   find('pre > code', function(code) {
     var pre = code.parentElement;
+    // Internal HTML/CSS & TS style guides do not use prettyprint.
+    if (code.classList.contains('language-css') ||
+        code.classList.contains('language-django') ||
+        code.classList.contains('language-html') ||
+        code.classList.contains('language-ts')) {
+      code.classList.add('prettyprint');
+    }
     pre.className = code.className;
     pre.innerHTML = code.innerHTML;
   });

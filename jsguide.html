@@ -89,36 +89,19 @@ depending only on which makes the code <strong>easier to read and understand</st
 <p>Tip: In the Unicode escape case, and occasionally even when actual Unicode
 characters are used, an explanatory comment can be very helpful.</p>
 
-<table>
-  <thead>
-    <tr>
-      <th>Example
-      </th><th>Discussion
-  </th></tr></thead><tbody>
-    <tr>
-      <td><code class="prettyprint lang-js">const units = '&#956;s';</code>
-      </td><td>Best: perfectly clear even without a comment.
-    </td></tr><tr>
-      <td>
-        <code class="prettyprint lang-js">const units = '\u03bcs'; // '&#956;s'
-        </code>
-      </td><td>Allowed, but there&#8217;s no reason to do this.
-    </td></tr><tr>
-      <td>
-        <code class="prettyprint lang-js">const units = '\u03bcs'; // Greek letter mu, 's'
-        </code>
-      </td><td>Allowed, but awkward and prone to mistakes.
-    </td></tr><tr>
-      <td><code class="badcode">const units = '\u03bcs';</code>
-      </td><td>Poor: the reader has no idea what this is.
-    </td></tr><tr>
-      <td>
-        <code class="prettyprint lang-js">return '\ufeff' + content;  // byte order mark
-        </code>
-      </td><td>
-        Good: use escapes for non-printable characters, and comment if
-        necessary.
-</td></tr></tbody></table>
+<pre><code class="language-js prettyprint">/* Best: perfectly clear even without a comment. */
+const units = '&#956;s';
+
+/* Allowed: but unnecessary as &#956; is a printable character. */
+const units = '\u03bcs'; // '&#956;s'
+
+/* Good: use escapes for non-printable characters with a comment for clarity. */
+return '\ufeff' + content;  // Prepend a byte order mark.
+</code></pre>
+
+<pre><code class="language-js prettyprint badcode">/* Poor: the reader has no idea what character this is. */
+const units = '\u03bcs';
+</code></pre>
 
 <p>Tip: Never make your code less readable simply out of fear that some programs
 might not handle non-ASCII characters properly. If that happens, those programs
@@ -126,13 +109,16 @@ are <strong>broken</strong> and they must be <strong>fixed</strong>.</p>
 
 <h2 id="source-file-structure">3 Source file structure</h2>
 
-<p>A source file consists of, <strong>in order</strong>:</p>
+<p>All new source files should either be a <code>goog.module</code> file (a file containing a
+<code>goog.module</code> call) or an ECMAScript (ES) module (uses <code>import</code> and <code>export</code>
+statements). Files consist of the following, <strong>in order</strong>:</p>
 
 <ol>
 <li>License or copyright information, if present</li>
 <li><code>@fileoverview</code> JSDoc, if present</li>
-<li><code>goog.module</code> statement</li>
-<li><code>goog.require</code> statements</li>
+<li><code>goog.module</code> statement, if a <code>goog.module</code> file</li>
+<li>ES <code>import</code> statements, if an ES module</li>
+<li><code>goog.require</code> and <code>goog.requireType</code> statements</li>
 <li>The file&#8217;s implementation</li>
 </ol>
 
@@ -149,9 +135,9 @@ file's implementation, which may be preceded by 1 or 2 blank lines.</p>
 
 <h3 id="file-goog-module">3.3 <code>goog.module</code> statement</h3>
 
-<p>All files must declare exactly one <code>goog.module</code> name on a single line: lines
-containing a <code>goog.module</code> declaration must not be wrapped, and are therefore an
-exception to the 80-column limit.</p>
+<p>All <code>goog.module</code> files must declare exactly one <code>goog.module</code> name on a single
+line: lines containing a <code>goog.module</code> declaration must not be wrapped, and are
+therefore an exception to the 80-column limit.</p>
 
 <p>The entire argument to goog.module is what defines a namespace.  It is the
 package name (an identifier that reflects the fragment of the directory
@@ -168,7 +154,7 @@ that it defines concatenated to the end.</p>
 <p>Module namespaces may never be named as a <em>direct</em> child of another module's
 namespace.</p>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">goog.module('foo.bar');   // 'foo.bar.qux' would be fine, though
 goog.module('foo.bar.baz');
@@ -179,12 +165,7 @@ children are subdirectories of higher-level parent directories.  Note that this
 implies that owners of &#8220;parent&#8221; namespace groups are necessarily aware of all
 child namespaces, since they exist in the same directory.</p>
 
-<h4 id="file-set-test-only">3.3.2 <code>goog.setTestOnly</code></h4>
-
-<p>The single <code>goog.module</code> statement may optionally be followed by a call to
-goog.setTestOnly().</p>
-
-<h4 id="file-declare-legacy-namespace">3.3.3 <code>goog.module.declareLegacyNamespace</code></h4>
+<h4 id="file-declare-legacy-namespace">3.3.2 <code>goog.module.declareLegacyNamespace</code></h4>
 
 <p>The single <code>goog.module</code> statement may optionally be followed by a call to
 <code>goog.module.declareLegacyNamespace();</code>. Avoid
@@ -205,29 +186,415 @@ namespace, this name <strong>must not</strong> be a child or parent of any other
 <code>goog.module('parent.child');</code> cannot both exist safely, nor can
 <code>goog.module('parent');</code> and <code>goog.module('parent.child.grandchild');</code>).</p>
 
-<h4 id="file-es6-modules">3.3.4 ES6 Modules</h4>
+<h3 id="file-goog-module-exports">3.3.3 <code>goog.module</code> Exports</h3>
 
-<p>Do not use ES6 modules yet (i.e. the <code>export</code> and <code>import</code> keywords), as their
-semantics are not yet finalized. Note that this policy will be revisited once
-the semantics are fully-standard.</p>
+<p>Classes, enums, functions, constants, and other symbols are exported using the
+<code>exports</code> object. Exported symbols may be defined directly on the <code>exports</code>
+object, or else declared locally and exported separately. Symbols are only
+exported if they are meant to be used outside the module. Non-exported
+module-local symbols are not declared <code>@private</code> nor do their names end with an
+underscore. There is no prescribed ordering for exported and module-local
+symbols.</p>
 
-<h3 id="file-goog-require">3.4 <code>goog.require</code> statements</h3>
+<p>Examples:</p>
 
-<p>Imports are done with <code>goog.require</code> statements, grouped together immediately
-following the module declaration. Each <code>goog.require</code> is assigned to a single
-constant alias, or else destructured into several constant aliases. These
-aliases are the only acceptable way to refer to the <code>require</code>d dependency,
-whether in code or in type annotations: the fully qualified name is never used
-except as the argument to <code>goog.require</code>. Alias names should match the final
-dot-separated component of the imported module name when possible, though
-additional components may be included (with appropriate casing such that the
-alias' casing still correctly identifies its type) if necessary to
-disambiguate, or if it significantly improves readability. <code>goog.require</code>
-statements may not appear anywhere else in the file.</p>
+<pre><code class="language-js prettyprint">const /** !Array&lt;number&gt; */ exportedArray = [1, 2, 3];
 
-<p>If a module is imported only for its side effects, the assignment may be
-omitted, but the fully qualified name may not appear anywhere else in the file.
-A comment is required to explain why this is needed and suppress a compiler
+const /** !Array&lt;number&gt; */ moduleLocalArray = [4, 5, 6];
+
+/** @return {number} */
+function moduleLocalFunction() {
+  return moduleLocalArray.length;
+}
+
+/** @return {number} */
+function exportedFunction() {
+  return moduleLocalFunction() * 2;
+}
+
+exports = {exportedArray, exportedFunction};
+</code></pre>
+
+<pre><code class="language-js prettyprint">/** @const {number} */
+exports.CONSTANT_ONE = 1;
+
+/** @const {string} */
+exports.CONSTANT_TWO = 'Another constant';
+</code></pre>
+
+<p>Do not annotate the <code>exports</code> object as <code>@const</code> as it is already treated as a
+constant by the compiler.</p>
+
+<pre><code class="language-js badcode prettyprint">/** @const */
+exports = {exportedFunction};
+</code></pre>
+
+<p><span id="file-es6-modules"></span></p>
+
+<h3 id="file-es-modules">3.4 ES modules</h3>
+
+<p><span id="es6-module-imports"></span></p>
+
+<h4 id="es-module-imports">3.4.1 Imports</h4>
+
+<p>Import statements must not be line wrapped and are therefore an exception to the
+80-column limit.</p>
+
+<p><span id="es6-import-paths"></span></p>
+
+<h5 id="esm-import-paths">3.4.1.1 Import paths</h5>
+
+<p>ES module files must use the <code>import</code> statement to import other ES module
+files. Do not <code>goog.require</code> another ES module.</p>
+
+<pre><code class="language-js prettyprint external">import './sideeffects.js';
+
+import * as goog from '../closure/goog/goog.js';
+import * as parent from '../parent.js';
+
+import {name} from './sibling.js';
+</code></pre>
+
+<p><span id="es6-import-paths-file-extension"></span></p>
+
+<h6 id="esm-import-paths-file-extension">3.4.1.1.1 File extensions in import paths</h6>
+
+<p>The <code>.js</code> file extension is not optional in import paths and must always be
+included.</p>
+
+<pre><code class="language-js badcode prettyprint">import '../directory/file';
+</code></pre>
+
+<pre><code class="language-js good prettyprint">import '../directory/file.js';
+</code></pre>
+
+<h5 id="importing-the-same-file-multiple-times">3.4.1.2 Importing the same file multiple times</h5>
+
+<p>Do not import the same file multiple times. This can make it hard to determine
+the aggregate imports of a file.</p>
+
+<pre><code class="language-js badcode prettyprint">// Imports have the same path, but since it doesn't align it can be hard to see.
+import {short} from './long/path/to/a/file.js';
+import {aLongNameThatBreaksAlignment} from './long/path/to/a/file.js';
+</code></pre>
+
+<p><span id="naming-es6-imports"></span></p>
+
+<h5 id="naming-esm-imports">3.4.1.3 Naming imports</h5>
+
+<h6 id="naming-module-imports">3.4.1.3.1 Naming module imports</h6>
+
+<p>Module import names (<code>import * as name</code>) are <code>lowerCamelCase</code> names that are
+derived from the imported file name.</p>
+
+<pre><code class="language-js prettyprint">import * as fileOne from '../file-one.js';
+import * as fileTwo from '../file_two.js';
+import * as fileThree from '../filethree.js';
+</code></pre>
+
+<pre><code class="language-js prettyprint">import * as libString from './lib/string.js';
+import * as math from './math/math.js';
+import * as vectorMath from './vector/math.js';
+</code></pre>
+
+<h6 id="naming-default-imports">3.4.1.3.2 Naming default imports</h6>
+
+<p>Default import names are derived from the imported file name and follow the
+rules in <a href="#naming-rules-by-identifier-type">??</a>.</p>
+
+<pre><code class="language-js prettyprint">import MyClass from '../my-class.js';
+import myFunction from '../my_function.js';
+import SOME_CONSTANT from '../someconstant.js';
+</code></pre>
+
+<p>Note: In general this should not happen as default exports are banned by this
+style guide, see <a href="#named-vs-default-exports">??</a>. Default imports are only used
+to import modules that do not conform to this style guide.</p>
+
+<h6 id="naming-named-imports">3.4.1.3.3 Naming named imports</h6>
+
+<p>In general symbols imported via the named import (<code>import {name}</code>) should keep
+the same name. Avoid aliasing imports (<code>import {SomeThing as SomeOtherThing}</code>).
+Prefer fixing name collisions by using a module import (<code>import *</code>) or renaming
+the exports themselves.</p>
+
+<pre><code class="language-js prettyprint">import * as bigAnimals from './biganimals.js';
+import * as domesticatedAnimals from './domesticatedanimals.js';
+
+new bigAnimals.Cat();
+new domesticatedAnimals.Cat();
+</code></pre>
+
+<p>If renaming a named import is needed then use components of the imported
+module's file name or path in the resulting alias.</p>
+
+<pre><code class="language-js prettyprint">import {Cat as BigCat} from './biganimals.js';
+import {Cat as DomesticatedCat} from './domesticatedanimals.js';
+
+new BigCat();
+new DomesticatedCat();
+</code></pre>
+
+<p><span id="es6-module-exports"></span></p>
+
+<h4 id="es-module-exports">3.4.2 Exports</h4>
+
+<p>Symbols are only exported if they are meant to be used outside the module.
+Non-exported module-local symbols are not declared <code>@private</code> nor do their names
+end with an underscore. There is no prescribed ordering for exported and
+module-local symbols.</p>
+
+<h5 id="named-vs-default-exports">3.4.2.1 Named vs default exports</h5>
+
+<p>Use named exports in all code. You can apply the <code>export</code> keyword to a
+declaration, or use the <code>export {name};</code> syntax.</p>
+
+<p>Do not use default exports. Importing modules must give a name to these values,
+which can lead to inconsistencies in naming across modules.</p>
+
+<pre><code class="language-js badcode prettyprint">// Do not use default exports:
+export default class Foo { ... } // BAD!
+</code></pre>
+
+<pre><code class="language-js good prettyprint">// Use named exports:
+export class Foo { ... }
+</code></pre>
+
+<pre><code class="language-js good prettyprint">// Alternate style named exports:
+class Foo { ... }
+
+export {Foo};
+</code></pre>
+
+<h5 id="exporting-static-containers">3.4.2.2 Exporting static container classes and objects</h5>
+
+<p>Do not export container classes or objects with static methods or properties for
+the sake of namespacing.</p>
+
+<pre><code class="language-js badcode prettyprint">// container.js
+// Bad: Container is an exported class that has only static methods and fields.
+export class Container {
+  /** @return {number} */
+  static bar() {
+    return 1;
+  }
+}
+
+/** @const {number} */
+Container.FOO = 1;
+</code></pre>
+
+<p>Instead, export individual constants and functions:</p>
+
+<pre><code class="language-js good prettyprint">/** @return {number} */
+export function bar() {
+  return 1;
+}
+
+export const /** number */ FOO = 1;
+</code></pre>
+
+<p><span id="es6-exports-mutability"></span></p>
+
+<h5 id="esm-exports-mutability">3.4.2.3 Mutability of exports</h5>
+
+<p>Exported variables must not be mutated outside of module initialization.</p>
+
+<p>There are alternatives if mutation is needed, including exporting a constant
+reference to an object that has mutable fields or exporting accessor functions for
+mutable data.</p>
+
+<pre><code class="language-js badcode prettyprint">// Bad: both foo and mutateFoo are exported and mutated.
+export let /** number */ foo = 0;
+
+/**
+ * Mutates foo.
+ */
+export function mutateFoo() {
+  ++foo;
+}
+
+/**
+ * @param {function(number): number} newMutateFoo
+ */
+export function setMutateFoo(newMutateFoo) {
+  // Exported classes and functions can be mutated!
+  mutateFoo = () =&gt; {
+    foo = newMutateFoo(foo);
+  };
+}
+</code></pre>
+
+<pre><code class="language-js good prettyprint">// Good: Rather than export the mutable variables foo and mutateFoo directly,
+// instead make them module scoped and export a getter for foo and a wrapper for
+// mutateFooFunc.
+let /** number */ foo = 0;
+let /** function(number): number */ mutateFooFunc = foo =&gt; foo + 1;
+
+/** @return {number} */
+export function getFoo() {
+  return foo;
+}
+
+export function mutateFoo() {
+  foo = mutateFooFunc(foo);
+}
+
+/** @param {function(number): number} mutateFoo */
+export function setMutateFoo(mutateFoo) {
+  mutateFooFunc = mutateFoo;
+}
+</code></pre>
+
+<p><span id="es6-module-circular-dependencies"></span></p>
+
+<h5 id="es-module-export-from">3.4.2.4 export from</h5>
+
+<p><code>export from</code> statements must not be line wrapped and are therefore an
+exception to the 80-column limit. This applies to both <code>export from</code> flavors.</p>
+
+<pre><code class="language-js">export {specificName} from './other.js';
+export * from './another.js';
+</code></pre>
+
+<h4 id="es-module-circular-dependencies">3.4.3 Circular Dependencies in ES modules</h4>
+
+<p>Do not create cycles between ES modules, even though the ECMAScript
+specification allows this. Note that it is possible to create cycles with both
+the <code>import</code> and <code>export</code> statements.</p>
+
+<pre><code class="language-js badcode prettyprint">// a.js
+import './b.js';
+</code></pre>
+
+<pre><code class="language-js badcode prettyprint">// b.js
+import './a.js';
+
+// `export from` can cause circular dependencies too!
+export {x} from './c.js';
+</code></pre>
+
+<pre><code class="language-js badcode prettyprint">// c.js
+import './b.js';
+
+export let x;
+</code></pre>
+
+<p><span id="es6-module-closure-interop"></span></p>
+
+<h4 id="es-module-closure-interop">3.4.4 Interoperating with Closure</h4>
+
+<p><span id="es6-module-referencing-goog"></span></p>
+
+<h5 id="es-module-referencing-goog">3.4.4.1 Referencing goog</h5>
+
+<p>To reference the Closure <code>goog</code> namespace, import Closure's <code>goog.js</code>.</p>
+
+<pre><code class="language-js good prettyprint external">import * as goog from '../closure/goog/goog.js';
+
+const name = goog.require('a.name');
+
+export const CONSTANT = name.compute();
+</code></pre>
+
+<p><code>goog.js</code> exports only a subset of properties from the global <code>goog</code> that can be
+used in ES modules.</p>
+
+<p><span id="goog-require-in-es6-module"></span></p>
+
+<h5 id="goog-require-in-es-module">3.4.4.2 goog.require in ES modules</h5>
+
+<p><code>goog.require</code> in ES modules works as it does in <code>goog.module</code> files. You can
+require any Closure namespace symbol (i.e., symbols created by <code>goog.provide</code> or
+<code>goog.module</code>) and <code>goog.require</code> will return the value.</p>
+
+<pre><code class="language-js prettyprint external">import * as goog from '../closure/goog/goog.js';
+import * as anEsModule from './anEsModule.js';
+
+const GoogPromise = goog.require('goog.Promise');
+const myNamespace = goog.require('my.namespace');
+</code></pre>
+
+<p><span id="closure-module-id-in-es6-module"></span></p>
+
+<h5 id="closure-module-id-in-es-module">3.4.4.3 Declaring Closure Module IDs in ES modules</h5>
+
+<p><code>goog.declareModuleId</code> can be used within ES modules to declare a
+<code>goog.module</code>-like module ID. This means that this module ID can be
+<code>goog.require</code>d, <code>goog.module.get</code>d, <code>goog.forwardDeclare</code>'d, etc. as if it were
+a <code>goog.module</code> that did not call <code>goog.module.declareLegacyNamespace</code>. It does
+not create the module ID as a globally available JavaScript symbol.</p>
+
+<p>A <code>goog.require</code> (or <code>goog.module.get</code>) for a module ID from
+<code>goog.declareModuleId</code> will always return the module object (as if it was
+<code>import *</code>'d). As a result, the argument to <code>goog.declareModuleId</code> should always
+end with a <code>lowerCamelCaseName</code>.</p>
+
+<p>Note: It is an error to call <code>goog.module.declareLegacyNamespace</code> in an ES
+module, it can only be called from <code>goog.module</code> files. There is no direct way
+to associate a <q>legacy</q> namespace with an ES module.</p>
+
+<p><code>goog.declareModuleId</code> should only be used to upgrade Closure files to ES
+modules in place, where named exports are used.</p>
+
+<pre><code class="language-js prettyprint external">import * as goog from '../closure/goog.js';
+
+goog.declareModuleId('my.esm');
+
+export class Class {};
+</code></pre>
+
+<h3 id="file-set-test-only">3.5 <code>goog.setTestOnly</code></h3>
+
+<p>In a <code>goog.module</code> file the <code>goog.module</code> statement may optionally be followed
+by a call to <code>goog.setTestOnly()</code>.</p>
+
+<p>In an ES module the <code>import</code> statements may optionally be followed by a call to
+<code>goog.setTestOnly()</code>.</p>
+
+<h3 id="file-goog-require">3.6 <code>goog.require</code> and <code>goog.requireType</code> statements</h3>
+
+<p>Imports are done with <code>goog.require</code> and <code>goog.requireType</code> statements. The
+names imported by a <code>goog.require</code> statement may be used both in code and in
+type annotations, while those imported by a <code>goog.requireType</code> may be used
+in type annotations only.</p>
+
+<p>The <code>goog.require</code> and <code>goog.requireType</code> statements form a contiguous block
+with no empty lines. This block follows the <code>goog.module</code> declaration separated
+<a href="#source-file-structure">by a single empty line</a>. The entire argument to
+<code>goog.require</code> or <code>goog.requireType</code> is a namespace defined by a <code>goog.module</code>
+in a separate file. <code>goog.require</code> and <code>goog.requireType</code> statements may not
+appear anywhere else in the file.</p>
+
+<p>Each <code>goog.require</code> or <code>goog.requireType</code> is assigned to a single constant
+alias, or else destructured into several constant aliases. These aliases are the
+only acceptable way to refer to dependencies in type annotations or code. Fully
+qualified namespaces must not be used anywhere, except as an argument to
+<code>goog.require</code> or <code>goog.requireType</code>.</p>
+
+<p><strong>Exception</strong>: Types, variables, and functions declared in externs files have to
+use their fully qualified name in type annotations and code.</p>
+
+<p>Aliases must match the final dot-separated component of the imported module's
+namespace.</p>
+
+<p><strong>Exception</strong>: In certain cases, additional components of the namespace can be
+used to form a longer alias. The resulting alias must retain the original
+identifier's casing such that it still correctly identifies its type. Longer
+aliases may be used to disambiguate otherwise identical aliases, or if it
+significantly improves readability. In addition, a longer alias must be used to
+prevent masking native types such as <code>Element</code>, <code>Event</code>, <code>Error</code>, <code>Map</code>, and
+<code>Promise</code> (for a more complete list, see <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects">Standard Built-in Objects</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/API">Web
+APIs</a> at MDN). When renaming destructured aliases, a space must follow the colon
+as required in <a href="#formatting-horizontal-whitespace">??</a>.</p>
+
+<p>A file should not contain both a <code>goog.require</code> and a <code>goog.requireType</code>
+statement for the same namespace. If the imported name is used both in code and
+in type annotations, it should be imported by a single <code>goog.require</code> statement.</p>
+
+<p>If a module is imported only for its side effects, the call must be a
+<code>goog.require</code> (not a <code>goog.requireType</code>) and assignment may be omitted. A
+comment is required to explain why this is needed and suppress a compiler
 warning.</p>
 
 
@@ -235,51 +602,83 @@ warning.</p>
 <p>The lines are sorted according to the following rules: All requires with a name
 on the left hand side come first, sorted alphabetically by those names. Then
 destructuring requires, again sorted by the names on the left hand side.
-Finally, any <code>goog.require</code> calls that are standalone (generally these are for
-modules imported just for their side effects).</p>
+Finally, any require calls that are standalone (generally these are for modules
+imported just for their side effects).</p>
 
 <p>Tip: There&#8217;s no need to memorize this order and enforce it manually. You can
 rely on your IDE to report requires
 that are not sorted correctly.</p>
 
 <p>If a long alias or module name would cause a line to exceed the 80-column limit,
-it <strong>must not</strong> be wrapped: goog.require lines are an exception to the 80-column
+it <strong>must not</strong> be wrapped: require lines are an exception to the 80-column
 limit.</p>
 
 <p>Example:</p>
 
-<pre><code class="language-js prettyprint">const MyClass = goog.require('some.package.MyClass');
+<pre><code class="language-js prettyprint">// Standard alias style.
+const MyClass = goog.require('some.package.MyClass');
+const MyType = goog.requireType('some.package.MyType');
+// Namespace-based alias used to disambiguate.
 const NsMyClass = goog.require('other.ns.MyClass');
-const googAsserts = goog.require('goog.asserts');
+// Namespace-based alias used to prevent masking native type.
+const RendererElement = goog.require('web.renderer.Element');
+// Out of sequence namespace-based aliases used to improve readability.
+// Also, require lines longer than 80 columns must not be wrapped.
+const SomeDataStructureModel = goog.requireType('identical.package.identifiers.models.SomeDataStructure');
+const SomeDataStructureProto = goog.require('proto.identical.package.identifiers.SomeDataStructure');
+// Standard alias style.
+const asserts = goog.require('goog.asserts');
+// Namespace-based alias used to disambiguate.
 const testingAsserts = goog.require('goog.testing.asserts');
-const than80columns = goog.require('pretend.this.is.longer.than80columns');
-const {clear, forEach, map} = goog.require('goog.array');
+// Standard destructuring into aliases.
+const {clear, clone} = goog.require('goog.array');
+const {Rgb} = goog.require('goog.color');
+// Namespace-based destructuring into aliases in order to disambiguate.
+const {SomeType: FooSomeType} = goog.requireType('foo.types');
+const {clear: objectClear, clone: objectClone} = goog.require('goog.object');
+// goog.require without an alias in order to trigger side effects.
 /** @suppress {extraRequire} Initializes MyFramework. */
 goog.require('my.framework.initialization');
 </code></pre>
 
-<p>Illegal:</p>
+<p>Discouraged:</p>
 
-<pre><code class="language-js badcode prettyprint">const randomName = goog.require('something.else'); // name must match
+<pre><code class="language-js badcode prettyprint">// If necessary to disambiguate, prefer PackageClass over SomeClass as it is
+// closer to the format of the module name.
+const SomeClass = goog.require('some.package.Class');
+</code></pre>
 
-const {clear, forEach, map} = // don't break lines
-    goog.require('goog.array');
+<p>Disallowed:</p>
 
-function someFunction() {
-  const alias = goog.require('my.long.name.alias'); // must be at top level
-  // &#8230;
+<pre><code class="language-js badcode prettyprint">// Extra terms must come from the namespace.
+const MyClassForBizzing = goog.require('some.package.MyClass');
+// Alias must include the entire final namespace component.
+const MyClass = goog.require('some.package.MyClassForBizzing');
+// Alias must not mask native type (should be `const JspbMap` here).
+const Map = goog.require('jspb.Map');
+// Don't break goog.require lines over 80 columns.
+const SomeDataStructure =
+    goog.require('proto.identical.package.identifiers.SomeDataStructure');
+// Alias must be based on the namespace.
+const randomName = goog.require('something.else');
+// Missing a space after the colon.
+const {Foo:FooProto} = goog.require('some.package.proto.Foo');
+// goog.requireType without an alias.
+goog.requireType('some.package.with.a.Type');
+
+
+/**
+ * @param {!some.unimported.Dependency} param All external types used in JSDoc
+ *     annotations must be goog.require'd, unless declared in externs.
+ */
+function someFunction(param) {
+  // goog.require lines must be at the top level before any other code.
+  const alias = goog.require('my.long.name.alias');
+  // ...
 }
 </code></pre>
 
-<h4 id="file-goog-forward-declare">3.4.1 <code>goog.forwardDeclare</code></h4>
-
-<p><code>goog.forwardDeclare</code> is not needed very often, but is a valuable tool to break
-circular dependencies or to reference late loaded code. These statements are
-grouped together and immediately follow any <code>goog.require</code> statements. A
-<code>goog.forwardDeclare</code> statement must follow the same style rules as a
-<code>goog.require</code> statement.</p>
-
-<h3 id="file-implementation">3.5 The file&#8217;s implementation</h3>
+<h3 id="file-implementation">3.7 The file&#8217;s implementation</h3>
 
 <p>The actual implementation follows after all dependency information is declared
 (separated by at least one blank line).</p>
@@ -308,7 +707,7 @@ editors.</p>
 <code>while</code>, as well as any others), even if the body contains only a single
 statement.  The first statement of a non-empty block must begin on its own line.</p>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js badcode prettyprint">if (someVeryLongCondition())
   doSomething();
@@ -321,7 +720,7 @@ no wrapping (and that doesn&#8217;t have an else) may be kept on a single line w
 braces when it improves readability.  This is the only case in which a control
 structure may omit braces and newlines.</p>
 
-<pre><code class="language-js prettyprint">if (shortCondition()) return;
+<pre><code class="language-js prettyprint">if (shortCondition()) foo();
 </code></pre>
 
 <h4 id="formatting-nonempty-blocks">4.1.2 Nonempty blocks: K&amp;R style</h4>
@@ -370,7 +769,7 @@ multiple blocks: <code>if</code>/<code>else</code> or <code>try</code>/<code>cat
 <pre><code class="language-js prettyprint">function doNothing() {}
 </code></pre>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">if (condition) {
   // &#8230;
@@ -557,16 +956,25 @@ line that would exceed this limit must be line-wrapped, as explained in
 <p><strong>Exceptions:</strong></p>
 
 <ol>
-<li>Lines where obeying the column limit is not possible (for example, a long URL
-in JSDoc or a shell command intended to be copied-and-pasted).</li>
-<li><code>goog.module</code> and <code>goog.require</code> statements (see <a href="#file-goog-module">??</a> and
-<a href="#file-goog-require">??</a>).</li>
+<li><code>goog.module</code>, <code>goog.require</code> and <code>goog.requireType</code> statements (see
+<a href="#file-goog-module">??</a> and <a href="#file-goog-require">??</a>).</li>
+<li>ES module <code>import</code> and <code>export from</code> statements (see
+<a href="#es-module-imports">??</a> and <a href="#es-module-export-from">??</a>).</li>
+<li>Lines where obeying the column limit is not possible or would hinder
+discoverability. Examples include:
+<ul>
+<li>A long URL which should be clickable in source.</li>
+<li>A shell command intended to be copied-and-pasted.</li>
+<li>A long string literal which may need to be copied or searched for wholly
+(e.g., a long file path).</li>
+</ul></li>
 </ol>
 
 <h3 id="formatting-line-wrapping">4.5 Line-wrapping</h3>
 
-<p><strong>Terminology Note</strong>: <em>Line-wrapping</em> is defined as breaking a single expression
-into multiple lines.</p>
+<p><strong>Terminology Note</strong>: <em>Line wrapping</em> is breaking a chunk of code into multiple
+lines to obey column limit, where the chunk could otherwise legally fit in a
+single line.</p>
 
 <p>There is no comprehensive, deterministic formula showing <em>exactly</em> how to
 line-wrap in every situation. Very often there are several valid ways to
@@ -588,13 +996,13 @@ level</strong>. </p>
 
 <pre><code class="language-js prettyprint">currentEstimate =
     calc(currentEstimate + x * currentEstimate) /
-        2.0f;
+        2.0;
 </code></pre>
 
 <p>Discouraged:</p>
 
 <pre><code class="language-js prettyprint badcode">currentEstimate = calc(currentEstimate + x *
-    currentEstimate) / 2.0f;
+    currentEstimate) / 2.0;
 </code></pre>
 
 <p>In the preceding example, the syntactic levels from highest to lowest are as
@@ -669,26 +1077,28 @@ literals, comments, and JSDoc, a single internal ASCII space also appears in the
 following places <strong>only</strong>.</p>
 
 <ol>
-<li>Separating any reserved word (such as <code>if</code>, <code>for</code>, or <code>catch</code>) from an open
-parenthesis (<code>(</code>) that follows it on that line.</li>
+<li>Separating any reserved word (such as <code>if</code>, <code>for</code>, or <code>catch</code>) except for
+<code>function</code> and <code>super</code>, from an open parenthesis (<code>(</code>) that follows it on
+that line.</li>
 <li>Separating any reserved word (such as <code>else</code> or <code>catch</code>) from a closing
 curly brace (<code>}</code>) that precedes it on that line.</li>
 <li>Before any open curly brace (<code>{</code>), with two exceptions:
 <ol>
 <li>Before an object literal that is the first argument of a function or the
 first element in an array literal (e.g. <code>foo({a: [{c: d}]})</code>).</li>
-<li>In a template expansion, as it is forbidden by the language
-(e.g. <code>abc${1 + 2}def</code>).</li>
+<li>In a template expansion, as it is forbidden by the language (e.g. valid:
+<code>`ab${1 + 2}cd`</code>, invalid: <code class="badcode">`xy$ {3}z`</code>).</li>
 </ol></li>
 <li>On both sides of any binary or ternary operator.</li>
 <li>After a comma (<code>,</code>) or semicolon (<code>;</code>). Note that spaces are <em>never</em> allowed
 before these characters.</li>
 <li>After the colon (<code>:</code>) in an object literal.</li>
-<li>On both sides of the double slash (<code>//</code>) that begins an end-of-line
-comment. Here, multiple spaces are allowed, but not required.</li>
-<li>After an open-JSDoc comment character and on both sides of close characters
-(e.g. for short-form type declarations or casts: <code>this.foo = /** @type
-{number} */ (bar);</code> or <code>function(/** string */ foo) {</code>).</li>
+<li>On both sides of the double slash (<code>//</code>) that begins an end-of-line comment.
+Here, multiple spaces are allowed, but not required.</li>
+<li>After an open-block comment character and on both sides of close characters
+(e.g. for short-form type declarations, casts, and parameter name comments:
+<code>this.foo = /** @type {number} */ (bar)</code>; or <code>function(/** string */ foo)
+{</code>; or <code>baz(/* buzz= */ true)</code>).</li>
 </ol>
 
 <h4 id="formatting-horizontal-alignment">4.6.3 Horizontal alignment: discouraged</h4>
@@ -778,9 +1188,7 @@ in <a href="#jsdoc">??</a>.</p>
 <p>Block comments are indented at the same level as the surrounding code. They may
 be in <code>/* &#8230; */</code> or <code>//</code>-style. For multi-line <code>/* &#8230; */</code> comments, subsequent
 lines must start with * aligned with the <code>*</code> on the previous line, to make
-comments obvious with no extra context.  &#8220;Parameter name&#8221; comments should appear
-after values whenever the value and method name do not sufficiently convey the
-meaning.</p>
+comments obvious with no extra context.</p>
 
 <pre><code class="language-js prettyprint">/*
  * This is
@@ -791,13 +1199,27 @@ meaning.</p>
 // is this.
 
 /* This is fine, too. */
-
-someFunction(obviousParam, true /* shouldRender */, 'hello' /* name */);
 </code></pre>
 
 <p>Comments are not enclosed in boxes drawn with asterisks or other characters.</p>
 
-<p>Do not use JSDoc (<code>/** &#8230; */</code>) for any of the above implementation comments.</p>
+<p>Do not use JSDoc (<code>/** &#8230; */</code>) for implementation comments.</p>
+
+<h4 id="formatting-param-name-comments">4.8.2 Parameter Name Comments</h4>
+
+<p>&#8220;Parameter name&#8221; comments should be used whenever the value and method name do
+not sufficiently convey the meaning, and refactoring the method to be clearer is
+infeasible .
+Their preferred format is before the value with <q>=</q>:</p>
+
+<pre><code class="language-js prettyprint">someFunction(obviousParam, /* shouldRender= */ true, /* name= */ 'hello');
+</code></pre>
+
+<p>For consistency with surrounding code you may put them after the value without
+<q>=</q>:</p>
+
+<pre><code class="language-js prettyprint">someFunction(obviousParam, true /* shouldRender */, 'hello' /* name */);
+</code></pre>
 
 <h2 id="language-features">5 Language features</h2>
 
@@ -827,14 +1249,24 @@ the point they are first used (within reason), to minimize their scope.</p>
 <h4 id="features-declare-types-as-needed">5.1.4 Declare types as needed</h4>
 
 <p>JSDoc type annotations may be added either on the line above the declaration, or
-else inline before the variable name.</p>
+else inline before the variable name if no other JSDoc is present.</p>
 
 <p>Example:</p>
 
 <pre><code class="language-js prettyprint">const /** !Array&lt;number&gt; */ data = [];
 
-/** @type {!Array&lt;number&gt;} */
+/**
+ * Some description.
+ * @type {!Array&lt;number&gt;}
+ */
 const data = [];
+</code></pre>
+
+<p>Mixing inline and JSDoc styles is not allowed: the compiler will only process
+the first JsDoc and the inline annotations will be lost.</p>
+
+<pre><code class="language-js prettyprint badcode">/** Some description. */
+const /** !Array&lt;number&gt; */ data = [];
 </code></pre>
 
 <p>Tip: There are many cases where the compiler can infer a templatized type but
@@ -866,7 +1298,7 @@ element and the closing bracket.</p>
 <p>The constructor is error-prone if arguments are added or removed. Use a literal
 instead.</p>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">const a1 = new Array(x1, x2, x3);
 const a2 = new Array(x1, x2);
@@ -915,14 +1347,14 @@ hand side:</p>
 function optionalDestructuring([a = 4, b = 2] = []) { &#8230; };
 </code></pre>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">function badDestructuring([a, b] = [4, 2]) { &#8230; };
 </code></pre>
 
 <p>Tip: For (un)packing multiple values into a function&#8217;s parameter or return,
 prefer object destructuring to array destructuring when possible, as it allows
-naming the individual elements and specifying a different type for each.*</p>
+naming the individual elements and specifying a different type for each.</p>
 
 <h4 id="features-arrays-spread-operator">5.2.5 Spread operator</h4>
 
@@ -956,11 +1388,33 @@ instead.</p>
 symbols) or <em>dicts</em> (with quoted and/or computed keys). Do not mix these key
 types in a single object literal.</p>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">{
-  a: 42, // struct-style unquoted key
-  'b': 43, // dict-style quoted key
+  width: 42, // struct-style unquoted key
+  'maxWidth': 43, // dict-style quoted key
+}
+</code></pre>
+
+<p>This also extends to passing the property name to functions, like
+<code>hasOwnProperty</code>. In particular, doing so will break in compiled code because
+the compiler cannot rename/obfuscate the string literal.</p>
+
+<p>Disallowed:</p>
+
+<pre><code class="language-js prettyprint badcode">/** @type {{width: number, maxWidth: (number|undefined)}} */
+const o = {width: 42};
+if (o.hasOwnProperty('maxWidth')) {
+  ...
+}
+</code></pre>
+
+<p>This is best implemented as:</p>
+
+<pre><code class="language-js prettyprint">/** @type {{width: number, maxWidth: (number|undefined)}} */
+const o = {width: 42};
+if (o.maxWidth != null) {
+  ...
 }
 </code></pre>
 
@@ -968,9 +1422,10 @@ types in a single object literal.</p>
 
 <p>Computed property names (e.g., <code>{['key' + foo()]: 42}</code>) are allowed, and are
 considered dict-style (quoted) keys (i.e., must not be mixed with non-quoted
-keys) unless the computed property is a symbol (e.g., <code>[Symbol.iterator]</code>).
-Enum values may also be used for computed keys, but should not be mixed with
-non-enum keys in the same literal.</p>
+keys) unless the computed property is a
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">symbol</a>
+(e.g., <code>[Symbol.iterator]</code>). Enum values may also be used for computed keys, but
+should not be mixed with non-enum keys in the same literal.</p>
 
 <h4 id="features-objects-method-shorthand">5.3.5 Method shorthand</h4>
 
@@ -1046,7 +1501,7 @@ by the compiler).</p>
 function destructured(ordinary, {num, str = 'some default'} = {})
 </code></pre>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">/** @param {{x: {num: (number|undefined), str: (string|undefined)}}} param1 */
 function nestedTooDeeply({x: {num, str}}) {};
@@ -1093,17 +1548,18 @@ const Option = {
 
 <h4 id="features-classes-constructors">5.4.1 Constructors</h4>
 
-<p>Constructors are optional for concrete classes. Subclass constructors must call
-<code>super()</code> before setting any fields or otherwise accessing <code>this</code>.  Interfaces
-must not define a constructor.</p>
+<p>Constructors are optional. Subclass constructors must call <code>super()</code> before
+setting any fields or otherwise accessing <code>this</code>. Interfaces should declare
+non-method properties in the constructor.</p>
 
 <h4 id="features-classes-fields">5.4.2 Fields</h4>
 
 <p>Set all of a concrete object&#8217;s fields (i.e. all properties other than methods)
 in the constructor. Annotate fields that are never reassigned with <code>@const</code>
-(these need not be deeply immutable). Private fields must be annotated with
-<code>@private</code> and their names must end with a trailing underscore. Fields are never
-set on a concrete class' <code>prototype</code>.</p>
+(these need not be deeply immutable). Annotate non-public fields with the proper
+visibility annotation (<code>@private</code>, <code>@protected</code>, <code>@package</code>), and end all
+<code>@private</code> fields' names with an underscore. Fields are never set on a concrete
+class' <code>prototype</code>.</p>
 
 <p>Example:</p>
 
@@ -1111,6 +1567,9 @@ set on a concrete class' <code>prototype</code>.</p>
   constructor() {
     /** @private @const {!Bar} */
     this.bar_ = computeBar();
+
+    /** @protected @const {!Baz} */
+    this.baz = computeBaz();
   }
 }
 </code></pre>
@@ -1147,12 +1606,12 @@ either the constructor or a subclass constructor (and must be defined with
 <code>@nocollapse</code> if this is done), and must not be called directly on a subclass
 that doesn&#8217;t define the method itself.</p>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">class Base { /** @nocollapse */ static foo() {} }
 class Sub extends Base {}
 function callFoo(cls) { cls.foo(); }  // discouraged: don't call static methods dynamically
-Sub.foo();  // illegal: don't call static methods on subclasses that don't define it themselves
+Sub.foo();  // Disallowed: don't call static methods on subclasses that don't define it themselves
 </code></pre>
 
 <h4 id="features-classes-old-style">5.4.5 Old-style class declarations</h4>
@@ -1228,15 +1687,12 @@ C.prototype.method = function(param) {
 
 <p>The <code>class</code> keyword allows clearer and more readable class definitions than
 defining <code>prototype</code> properties. Ordinary implementation code has no business
-manipulating these objects, though they are still useful for defining <code>@record</code>
-interfaces and classes as defined in <a href="#features-classes-old-style">??</a>. Mixins
-and modifying the prototypes of builtin objects are
-explicitly forbidden.</p>
+manipulating these objects, though they are still useful for defining classes as
+defined in <a href="#features-classes-old-style">??</a>. Mixins and modifying the
+prototypes of builtin objects are explicitly forbidden.</p>
 
 <p><strong>Exception</strong>: Framework code (such as Polymer, or Angular) may need to use <code>prototype</code>s, and should not
 resort to even-worse workarounds to avoid doing so.</p>
-
-<p><strong>Exception</strong>: Defining fields in interfaces (see <a href="#features-classes-interfaces">??</a>).</p>
 
 <h4 id="features-classes-getters-and-setters">5.4.7 Getters and Setters</h4>
 
@@ -1244,15 +1700,15 @@ resort to even-worse workarounds to avoid doing so.</p>
 surprising and difficult to reason about, and have limited support in the
 compiler.  Provide ordinary methods instead.</p>
 
-<p><strong>Exception</strong>: when working with data binding frameworks (such as Angular and
-Polymer), getters and setters may be used sparingly.  Note, however, that
-compiler support is limited.  When they are used, they must be defined either
-with <code>get foo()</code> and <code>set foo(value)</code> in the class or object literal, or if that
-is not possible, with <code>Object.defineProperties</code>.  Do not use
-<code>Object.defineProperty</code>, which interferes with property renaming.  Getters
+<p><strong>Exception</strong>: there are situations where defining a getter or setter is
+unavoidable (e.g. data binding frameworks such as Angular and Polymer, or for
+compatibility with external APIs that cannot be adjusted).  In these cases only,
+getters and setters may be used <em>with caution</em>, provided they are defined with
+the <code>get</code> and <code>set</code> shorthand method keywords or <code>Object.defineProperties</code> (not
+<code>Object.defineProperty</code>, which interferes with property renaming).  Getters
 <strong>must not</strong> change observable state.</p>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">class Foo {
   get next() { return this.nextId++; }
@@ -1273,8 +1729,8 @@ exceptional conditions could lead to infinite loops.</p>
 with <code>@record</code> can be explicitly (i.e. via <code>@implements</code>) or implicitly
 implemented by a class or object literal.</p>
 
-<p>All non-static method bodies on an interface must be empty blocks.  Fields must
-be defined after the interface body as stubs on the <code>prototype</code>.</p>
+<p>All non-static method bodies on an interface must be empty blocks. Fields must
+be declared as uninitialized members in the class constructor.</p>
 
 <p>Example:</p>
 
@@ -1283,6 +1739,11 @@ be defined after the interface body as stubs on the <code>prototype</code>.</p>
  * @record
  */
 class Frobnicator {
+  constructor() {
+    /** @type {number} The number of attempts before giving up. */
+    this.attempts;
+  }
+
   /**
    * Performs the frobnication according to the given strategy.
    * @param {!FrobnicationStrategy} strategy
@@ -1290,43 +1751,36 @@ class Frobnicator {
   frobnicate(strategy) {}
 }
 
-/** @type {number} The number of attempts before giving up. */
-Frobnicator.prototype.attempts;
 </code></pre>
+
+<h4 id="features-classes-abstract-classes">5.4.10 Abstract Classes</h4>
+
+<p>Use abstract classes when appropriate. Abstract classes and methods must be
+annotated with <code>@abstract</code>. Do not use <code>goog.abstractMethod</code>. See <a href="https://github.com/google/closure-compiler/wiki/@abstract-classes-and-methods">abstract
+classes and methods</a>.</p>
 
 <h3 id="features-functions">5.5 Functions</h3>
 
 <h4 id="features-functions-top-level-functions">5.5.1 Top-level functions</h4>
 
-<p>Exported functions may be defined directly on the <code>exports</code> object, or else
-declared locally and exported separately.  Non-exported functions are encouraged
-and should not be declared <code>@private</code>.</p>
+<p>Top-level functions may be defined directly on the <code>exports</code> object, or else
+declared locally and optionally exported. See <a href="#file-goog-module-exports">??</a>
+for more on exports.</p>
 
 <p>Examples:</p>
 
-<pre><code class="language-js prettyprint">/** @return {number} */
-function helperFunction() {
-  return 42;
-}
-/** @return {number} */
-function exportedFunction() {
-  return helperFunction() * 2;
-}
-/**
- * @param {string} arg
- * @return {number}
- */
-function anotherExportedFunction(arg) {
-  return helperFunction() / arg.length;
-}
-/** @const */
-exports = {exportedFunction, anotherExportedFunction};
+<pre><code class="language-js prettyprint">/** @param {string} str */
+exports.processString = (str) =&gt; {
+  // Process the string.
+};
 </code></pre>
 
-<pre><code class="language-js prettyprint">/** @param {string} arg */
-exports.foo = (arg) =&gt; {
-  // do some stuff ...
+<pre><code class="language-js prettyprint">/** @param {string} str */
+const processString = (str) =&gt; {
+  // Process the string.
 };
+
+exports = {processString};
 </code></pre>
 
 <h4 id="features-functions-nested-functions">5.5.2 Nested functions and closures</h4>
@@ -1336,22 +1790,73 @@ function a name, it should be assigned to a local <code>const</code>.</p>
 
 <h4 id="features-functions-arrow-functions">5.5.3 Arrow functions</h4>
 
-<p>Arrow functions provide a concise syntax and fix a number of difficulties with
-<code>this</code>.  Prefer arrow functions over the <code>function</code> keyword, particularly for
-nested functions (but see <a href="#features-objects-method-shorthand">??</a>).</p>
+<p>Arrow functions provide a concise function syntax and simplify scoping <code>this</code>
+for nested functions. Prefer arrow functions over the <code>function</code> keyword,
+particularly for nested functions (but see
+<a href="#features-objects-method-shorthand">??</a>).</p>
 
-<p>Prefer using arrow functions over <code>f.bind(this)</code>, and especially over
-<code>goog.bind(f, this)</code>. Avoid writing <code>const self = this</code>. Arrow functions are
-particularly useful for callbacks, which sometimes pass unexpected additional
-arguments.</p>
+<p>Prefer arrow functions over other <code>this</code> scoping approaches such as
+<code>f.bind(this)</code>, <code>goog.bind(f, this)</code>, and <code>const self = this</code>. Arrow functions
+are particularly useful for calling into callbacks as they permit explicitly
+specifying which parameters to pass to the callback whereas binding will blindly
+pass along all parameters.</p>
 
-<p>The right-hand side of the arrow may be a single expression or a block.
-Parentheses around the arguments are optional if there is only a single
-non-destructured argument.</p>
+<p>The left-hand side of the arrow contains zero or more parameters. Parentheses
+around the parameters are optional if there is only a single non-destructured
+parameter. When parentheses are used, inline parameter types may be specified
+(see <a href="#jsdoc-method-and-function-comments">??</a>).</p>
 
-<p>Tip: It is a good practice to use parentheses even for single-argument arrows,
-since the code may still parse reasonably (but incorrectly) if the parentheses
-are forgotten when an additional argument is added.</p>
+<p>Tip: Always using parentheses even for single-parameter arrow functions can
+avoid situations where adding parameters, but forgetting to add parentheses, may
+result in parseable code which no longer works as intended.</p>
+
+<p>The right-hand side of the arrow contains the body of the function. By default
+the body is a block statement (zero or more statements surrounded by curly
+braces). The body may also be an implicitly returned single expression if
+either: the program logic requires returning a value, or the <code>void</code> operator
+precedes a single function or method call (using <code>void</code> ensures <code>undefined</code> is
+returned, prevents leaking values, and communicates intent). The single
+expression form is preferred if it improves readability (e.g., for short or
+simple expressions).</p>
+
+<p>Examples:</p>
+
+<pre><code class="language-js prettyprint">/**
+ * Arrow functions can be documented just like normal functions.
+ * @param {number} numParam A number to add.
+ * @param {string} strParam Another number to add that happens to be a string.
+ * @return {number} The sum of the two parameters.
+ */
+const moduleLocalFunc = (numParam, strParam) =&gt; numParam + Number(strParam);
+
+// Uses the single expression syntax with `void` because the program logic does
+// not require returning a value.
+getValue((result) =&gt; void alert(`Got ${result}`));
+
+class CallbackExample {
+  constructor() {
+    /** @private {number} */
+    this.cachedValue_ = 0;
+
+    // For inline callbacks, you can use inline typing for parameters.
+    // Uses a block statement because the value of the single expression should
+    // not be returned and the expression is not a single function call.
+    getNullableValue((/** ?number */ result) =&gt; {
+      this.cachedValue_ = result == null ? 0 : result;
+    });
+  }
+}
+</code></pre>
+
+<p>Disallowed:</p>
+
+<pre><code class="language-js prettyprint badcode">/**
+ * A function with no params and no returned value.
+ * This single expression body usage is illegal because the program logic does
+ * not require returning a value and we're missing the `void` operator.
+ */
+const moduleLocalFunc = () =&gt; anotherFunction();
+</code></pre>
 
 <h4 id="features-functions-generators">5.5.4 Generators</h4>
 
@@ -1381,15 +1886,10 @@ class SomeClass {
 }
 </code></pre>
 
-<h4 id="features-functions-parameters">5.5.5 Parameters</h4>
+<h4 id="features-functions-parameter-return-types">5.5.5 Parameter and return types</h4>
 
-<p>Function parameters must be typed with JSDoc annotations in the JSDoc preceding
-the function&#8217;s definition, except in the case of same-signature <code>@override</code>s,
-where all types are omitted.</p>
-
-<p>Parameter types <em>may</em> be specified inline, immediately before the parameter name
-(as in <code>(/** number */ foo, /** string */ bar) =&gt; foo + bar</code>). Inline and
-<code>@param</code> type annotations <em>must not</em> be mixed in the same function definition.</p>
+<p>Function parameters and return types should usually be documented with JSDoc
+annotations. See <a href="#jsdoc-method-and-function-comments">??</a> for more information.</p>
 
 <h5 id="features-functions-default-parameters">5.5.5.1 Default parameters</h5>
 
@@ -1398,8 +1898,9 @@ list. Optional parameters must include spaces on both sides of the equals
 operator, be named exactly like required parameters (i.e., not prefixed with
 <code>opt_</code>), use the <code>=</code> suffix in their JSDoc type, come after required parameters,
 and not use initializers that produce observable side effects. All optional
-parameters must have a default value in the function declaration, even if that
-value is <code>undefined</code>.</p>
+parameters for concrete functions must have default values, even if that value
+is <code>undefined</code>. In contrast to concrete functions, abstract and interface
+methods must omit default parameter values.</p>
 
 <p>Example:</p>
 
@@ -1409,6 +1910,15 @@ value is <code>undefined</code>.</p>
  * @param {!Node=} node Another optional parameter.
  */
 function maybeDoSomething(required, optional = '', node = undefined) {}
+
+/** @interface */
+class MyInterface {
+  /**
+   * Interface and abstract methods must omit default parameter values.
+   * @param {string=} optional
+   */
+  someMethod(optional) {}
+}
 </code></pre>
 
 <p>Use default parameters sparingly. Prefer destructuring (as in
@@ -1443,18 +1953,12 @@ parameter <code>arguments</code>, which confusingly shadows the built-in name.</
 function variadic(array, ...numbers) {}
 </code></pre>
 
-<h4 id="features-functions-returns">5.5.6 Returns</h4>
-
-<p>Function return types must be specified in the JSDoc directly above the function
-definition, except in the case of same-signature <code>@override</code>s where all types
-are omitted.</p>
-
-<h4 id="features-functions-generics">5.5.7 Generics</h4>
+<h4 id="features-functions-generics">5.5.6 Generics</h4>
 
 <p>Declare generic functions and methods when necessary with <code>@template TYPE</code> in
-the JSDoc above the class definition.</p>
+the JSDoc above the function or method definition.</p>
 
-<h4 id="features-functions-spread-operator">5.5.8 Spread operator</h4>
+<h4 id="features-functions-spread-operator">5.5.7 Spread operator</h4>
 
 <p>Function calls may use the spread operator (<code>...</code>).  Prefer the spread operator
 to <code>Function.prototype.apply</code> when an array or iterable is unpacked into
@@ -1478,13 +1982,13 @@ string to avoid having to escape the quote.</p>
 
 <p>Ordinary string literals may not span multiple lines.</p>
 
-<h4 id="features-strings-template-strings">5.6.2 Template strings</h4>
+<h4 id="features-strings-template-strings">5.6.2 Template literals</h4>
 
-<p>Use template strings (delimited with <code>`</code>) over complex string
+<p>Use template literals (delimited with <code>`</code>) over complex string
 concatenation, particularly if multiple string literals are involved. Template
-strings may span multiple lines.</p>
+literals may span multiple lines.</p>
 
-<p>If a template string spans multiple lines, it does not need to follow the
+<p>If a template literal spans multiple lines, it does not need to follow the
 indentation of the enclosing block, though it may if the added whitespace does
 not matter.</p>
 
@@ -1506,7 +2010,7 @@ with a backslash) in either ordinary or template string literals. Even though
 ES5 allows this, it can lead to tricky errors if any trailing whitespace comes
 after the slash, and is less obvious to readers.</p>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">const longString = 'This is a very long string that far exceeds the 80 \
     column limit. It unfortunately contains long stretches of spaces due \
@@ -1547,6 +2051,9 @@ exceptional cases occur.  Always throw <code>Error</code>s or subclasses of <cod
 throw string literals or other objects.  Always use <code>new</code> when constructing an
 <code>Error</code>.</p>
 
+<p>This treatment extends to <code>Promise</code> rejection values as <code>Promise.reject(obj)</code> is
+equivalent to <code>throw obj;</code> in async functions.</p>
+
 <p>Custom exceptions provide a great way to convey additional error information
 from functions.  They should be defined and used wherever the native <code>Error</code>
 type is insufficient.</p>
@@ -1569,13 +2076,13 @@ reason this is justified is explained in a comment.</p>
 return handleTextResponse(response);
 </code></pre>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
-<pre><code class="language-js prettyprint badcode">   try {
+<pre><code class="language-js prettyprint badcode">  try {
     shouldFail();
     fail('expected an error');
+  } catch (expected) {
   }
-  catch (expected) {}
 </code></pre>
 
 <p>Tip: Unlike in some other languages, patterns like the above simply don&#8217;t work
@@ -1612,36 +2119,51 @@ statement group of the switch block.</p>
 <h5 id="features-switch-default-case">5.8.3.2 The <code>default</code> case is present</h5>
 
 <p>Each switch statement includes a <code>default</code> statement group, even if it contains
-no code.</p>
+no code. The <code>default</code> statement group must be last.</p>
 
 <h3 id="features-this">5.9 this</h3>
 
-<p>Only use <code>this</code> in class constructors and methods, or in arrow functions defined
-within class constructors and methods. Any other uses of <code>this</code> must have an
-explicit <code>@this</code> declared in the immediately-enclosing function&#8217;s JSDoc.</p>
+<p>Only use <code>this</code> in class constructors and methods, in arrow functions defined
+within class constructors and methods, or in functions that have an explicit
+<code>@this</code> declared in the immediately-enclosing function&#8217;s JSDoc.</p>
 
 <p>Never use <code>this</code> to refer to the global object, the context of an <code>eval</code>, the
 target of an event, or unnecessarily <code>call()</code>ed or <code>apply()</code>ed functions.</p>
 
-<h3 id="disallowed-features">5.10 Disallowed features</h3>
+<h3 id="features-equality-checks">5.10 Equality Checks</h3>
 
-<h4 id="disallowed-features-with">5.10.1 with</h4>
+<p>Use identity operators (<code>===</code>/<code>!==</code>) except in the cases documented below.</p>
+
+<h4 id="features-equality-checks-exceptions">5.10.1 Exceptions Where Coercion is Desirable</h4>
+
+<p>Catching both <code>null</code> and <code>undefined</code> values:</p>
+
+<pre><code class="language-js prettyprint">if (someObjectOrPrimitive == null) {
+  // Checking for null catches both null and undefined for objects and
+  // primitives, but does not catch other falsy values like 0 or the empty
+  // string.
+}
+</code></pre>
+
+<h3 id="disallowed-features">5.11 Disallowed features</h3>
+
+<h4 id="disallowed-features-with">5.11.1 with</h4>
 
 <p>Do not use the <code>with</code> keyword.  It makes your code harder to understand and has
 been banned in strict mode since ES5.</p>
 
-<h4 id="disallowed-features-dynamic-code-evaluation">5.10.2 Dynamic code evaluation</h4>
+<h4 id="disallowed-features-dynamic-code-evaluation">5.11.2 Dynamic code evaluation</h4>
 
 <p>Do not use <code>eval</code> or the <code>Function(...string)</code> constructor (except for code
 loaders).  These features are potentially dangerous and simply do not work in
 CSP environments.</p>
 
-<h4 id="disallowed-features-automatic-semicolon-insertion">5.10.3 Automatic semicolon insertion</h4>
+<h4 id="disallowed-features-automatic-semicolon-insertion">5.11.3 Automatic semicolon insertion</h4>
 
 <p>Always terminate statements with semicolons (except function and class
 declarations, as noted above).</p>
 
-<h4 id="disallowed-features-non-standard-features">5.10.4 Non-standard features</h4>
+<h4 id="disallowed-features-non-standard-features">5.11.4 Non-standard features</h4>
 
 <p>Do not use non-standard features.  This includes old features that have been
 removed (e.g., <code>WeakMap.clear</code>), new features that are not yet standardized
@@ -1653,12 +2175,12 @@ Chrome extensions or Node.js, can obviously use those APIs).  Non-standard
 language &#8220;extensions&#8221; (such as those provided by some external transpilers) are
 forbidden.</p>
 
-<h4 id="disallowed-features-wrapper-objects">5.10.5 Wrapper objects for primitive types</h4>
+<h4 id="disallowed-features-wrapper-objects">5.11.5 Wrapper objects for primitive types</h4>
 
 <p>Never use <code>new</code> on the primitive object wrappers (<code>Boolean</code>, <code>Number</code>, <code>String</code>,
 <code>Symbol</code>), nor include them in type annotations.</p>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">const /** Boolean */ x = new Boolean(false);
 if (x) alert(typeof x);  // alerts 'object' - WAT?
@@ -1673,7 +2195,7 @@ using <code>+</code> or concatenating the empty string) or creating symbols.</p>
 if (!x) alert(typeof x);  // alerts 'boolean', as expected
 </code></pre>
 
-<h4 id="disallowed-features-modifying-builtin-objects">5.10.6 Modifying builtin objects</h4>
+<h4 id="disallowed-features-modifying-builtin-objects">5.11.6 Modifying builtin objects</h4>
 
 <p>Never modify builtin types, either by adding methods to their constructors or to
 their prototypes.  Avoid depending on libraries that do this.  Note that the
@@ -1682,6 +2204,27 @@ possible; nothing else may modify builtin objects.</p>
 
 <p>Do not add symbols to the global object unless absolutely necessary
 (e.g. required by a third-party API).</p>
+
+<h4 id="disallowed-features-omitting-parents-with-new">5.11.7 Omitting <code>()</code> when invoking a constructor</h4>
+
+<p>Never invoke a constructor in a <code>new</code> statement without using parentheses <code>()</code>.</p>
+
+<p>Disallowed:</p>
+
+<pre><code class="language-js prettyprint badcode">new Foo;
+</code></pre>
+
+<p>Use instead:</p>
+
+<pre><code class="language-js prettyprint">new Foo();
+</code></pre>
+
+<p>Omitting parentheses can lead to subtle mistakes. These two lines are not
+equivalent:</p>
+
+<pre><code class="language-js prettyprint">new Foo().Bar();
+new Foo.Bar();
+</code></pre>
 
 <h2 id="naming">6 Naming</h2>
 
@@ -1697,20 +2240,21 @@ understandable by a new reader. Do not use abbreviations that are ambiguous or
 unfamiliar to readers outside your project, and do not abbreviate by deleting
 letters within a word.</p>
 
-<pre><code class="language-js prettyprint">priceCountReader      // No abbreviation.
-numErrors             // "num" is a widespread convention.
-numDnsConnections     // Most people know what "DNS" stands for.
+<pre><code class="language-js prettyprint">errorCount          // No abbreviation.
+dnsConnectionIndex  // Most people know what "DNS" stands for.
+referrerUrl         // Ditto for "URL".
+customerId          // "Id" is both ubiquitous and unlikely to be misunderstood.
 </code></pre>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
-<pre><code class="language-js prettyprint badcode">n                     // Meaningless.
-nErr                  // Ambiguous abbreviation.
-nCompConns            // Ambiguous abbreviation.
-wgcConnections        // Only your group knows what this stands for.
-pcReader              // Lots of things can be abbreviated "pc".
-cstmrId               // Deletes internal letters.
-kSecondsPerDay        // Do not use Hungarian notation.
+<pre><code class="language-js prettyprint badcode">n                   // Meaningless.
+nErr                // Ambiguous abbreviation.
+nCompConns          // Ambiguous abbreviation.
+wgcConnections      // Only your group knows what this stands for.
+pcReader            // Lots of things can be abbreviated "pc".
+cstmrId             // Deletes internal letters.
+kSecondsPerDay      // Do not use Hungarian notation.
 </code></pre>
 
 <h3 id="naming-rules-by-identifier-type">6.2 Rules by identifier type</h3>
@@ -1732,8 +2276,8 @@ sometimes be adjectives or adjective phrases instead (for example, <code>Readabl
 
 <h4 id="naming-method-names">6.2.3 Method names</h4>
 
-<p>Method names are written in <code>lowerCamelCase</code>.  Private methods&#8217; names must end
-with a trailing underscore.</p>
+<p>Method names are written in <code>lowerCamelCase</code>. Names for <code>@private</code> methods must
+end with a trailing underscore.</p>
 
 <p>Method names are typically verbs or verb phrases. For example, <code>sendMessage</code> or
 <code>stop_</code>.  Getter and setter methods for properties are never required, but if
@@ -1741,9 +2285,9 @@ they are used they should be named <code>getFoo</code> (or optionally <code>isFo
 for booleans), or <code>setFoo(value)</code> for setters.</p>
 
 <p>Underscores may also appear in JsUnit test method names to separate logical
-components of the name. One typical pattern is <code>test&lt;MethodUnderTest&gt;_&lt;state&gt;</code>,
-for example <code>testPop_emptyStack</code>. There is no One Correct Way to name test
-methods.</p>
+components of the name. One typical pattern is
+<code>test&lt;MethodUnderTest&gt;_&lt;state&gt;_&lt;expectedOutcome&gt;</code>, for example
+<code>testPop_emptyStack_throws</code>. There is no One Correct Way to name test methods.</p>
 
 <h4 id="naming-enum-names">6.2.4 Enum names</h4>
 
@@ -1776,9 +2320,9 @@ const NUMBER = 5;
 
 // Not constants
 let letVariable = 'non-const';
-class MyClass { constructor() { /** @const */ this.nonStatic = 'non-static'; } };
+class MyClass { constructor() { /** @const {string} */ this.nonStatic = 'non-static'; } };
 /** @type {string} */ MyClass.staticButMutable = 'not @const, can be reassigned';
-const /** Set&lt;String&gt; */ mutableCollection = new Set();
+const /** Set&lt;string&gt; */ mutableCollection = new Set();
 const /** ImmutableSet&lt;SomeMutableType&gt; */ mutableElements = ImmutableSet.of(mutable);
 const Foo = goog.require('my.Foo');  // mirrors imported name
 const logger = log.getLogger('loggers.are.not.immutable');
@@ -1786,7 +2330,7 @@ const logger = log.getLogger('loggers.are.not.immutable');
 
 <p>Constants&#8217; names are typically nouns or noun phrases.</p>
 
-<h5 id="naming-local-aliases">6.2.5.1 Local aliases</h5>
+<h5 id="naming-local-aliases">6.2.5.2 Local aliases</h5>
 
 <p>Local aliases should be used whenever they improve readability over
 fully-qualified names.  Follow the same rules as <code>goog.require</code>s
@@ -1822,14 +2366,20 @@ begin with a <code>$</code>.  This exception does not apply to any other identif
 <h4 id="naming-local-variable-names">6.2.8 Local variable names</h4>
 
 <p>Local variable names are written in <code>lowerCamelCase</code>, except for module-local
-(top-level) constants, as described above.  Constants in function scopes are
-still named in <code>lowerCamelCase</code>.  Note that lowerCamelCase applies even if the
-variable holds a constructor.</p>
+(top-level) constants, as described above. Constants in function scopes are
+still named in <code>lowerCamelCase</code>. Note that <code>lowerCamelCase</code> is used
+even if the variable holds a constructor.</p>
 
 <h4 id="naming-template-parameter-names">6.2.9 Template parameter names</h4>
 
 <p>Template parameter names should be concise, single-word or single-letter
 identifiers, and must be all-caps, such as <code>TYPE</code> or <code>THIS</code>.</p>
+
+<h4 id="naming-module-local-names">6.2.10 Module-local names</h4>
+
+<p>Module-local names that are not exported are implicitly private. They are not
+marked <code>@private</code> and do not end in an underscore. This applies to classes,
+functions, variables, constants, enums, and other module-local identifiers.</p>
 
 <h3 id="naming-camel-case-defined">6.3 Camel case: defined</h3>
 
@@ -1959,6 +2509,7 @@ ignore plain text formatting, so if you did this:</p>
 
 <pre><code class="language-js prettyprint">/**
  * Computes weight based on three factors:
+ *
  *  - items sent
  *  - items received
  *  - last timestamp
@@ -1971,7 +2522,7 @@ ignore plain text formatting, so if you did this:</p>
 <a href="#appendices-jsdoc-tag-reference">??</a> for the complete list.  Most tags must
 occupy their own line, with the tag at the beginning of the line.</p>
 
-<p>Illegal:</p>
+<p>Disallowed:</p>
 
 <pre><code class="language-js prettyprint badcode">/**
  * The "param" tag must occupy its own line and may not be combined.
@@ -2029,7 +2580,7 @@ exports.method = function(foo) {
 };
 </code></pre>
 
-<p>Do not indent when wrapping a <code>@fileoverview</code> description.</p>
+<p>Do not indent when wrapping a <code>@desc</code> or <code>@fileoverview</code> description.</p>
 
 <h3 id="jsdoc-top-file-level-comments">7.5 Top/file-level comments</h3>
 
@@ -2088,8 +2639,9 @@ class Listable {
 
 <h3 id="jsdoc-enum-and-typedef-comments">7.7 Enum and typedef comments</h3>
 
-<p>Enums and typedefs must be documented.  Public enums and typedefs must have a
-non-empty description.  Individual enum items may be documented with a JSDoc
+<p>All enums and typedefs must be documented with appropriate JSDoc tags
+(<code>@typedef</code> or <code>@enum</code>) on the preceding line. Public enums and typedefs must
+also have a description. Individual enum items may be documented with a JSDoc
 comment on the preceding line.</p>
 
 <pre><code class="language-js prettyprint">/**
@@ -2120,16 +2672,25 @@ For large record types, prefer <code>@record</code>.</p>
 
 <h3 id="jsdoc-method-and-function-comments">7.8 Method and function comments</h3>
 
-<p>Parameter and return types must be documented. The <code>this</code> type should be
-documented when necessary. Method, parameter, and return descriptions (but not
-types) may be omitted if they are obvious from the rest of the method&#8217;s JSDoc or
-from its signature. Method descriptions should start with a sentence written in
-the third person declarative voice.  If a method overrides a superclass method,
-it must include an <code>@override</code> annotation.  Overridden methods must include all
-<code>@param</code> and <code>@return</code> annotations if any types are refined, but should omit
-them if the types are all the same.</p>
+<p>In methods and named functions, parameter and return types must be documented,
+except in the case of same-signature <code>@override</code>s, where all types are omitted.
+The <code>this</code> type should be documented when necessary. Return type may be omitted
+if the function has no non-empty <code>return</code> statements.</p>
 
-<pre><code class="language-js prettyprint">/** This is a class. */
+<p>Method, parameter, and return descriptions (but not types) may be omitted if
+they are obvious from the rest of the method&#8217;s JSDoc or from its signature.</p>
+
+<p>Method descriptions begin with a verb phrase that describes what the method
+does. This phrase is not an imperative sentence, but instead is written in the
+third person, as if there is an implied <q>This method ...</q> before it.</p>
+
+<p>If a method overrides a superclass method, it must include an <code>@override</code>
+annotation. Overridden methods inherit all JSDoc annotations from the super
+class method (including visibility annotations) and they should be omitted in
+the overridden method. However, if any type is refined in type annotations, all
+<code>@param</code> and <code>@return</code> annotations must be specified explicitly.</p>
+
+<pre><code class="language-js prettyprint">/** A class that does something. */
 class SomeClass extends SomeBaseClass {
   /**
    * Operates on an instance of MyClass and returns something.
@@ -2154,16 +2715,49 @@ class SomeClass extends SomeBaseClass {
 function makeArray(arg) { ... }
 </code></pre>
 
+<p>If you only need to document the param and return types of a function, you may
+optionally use inline JSDocs in the function's signature. These inline JSDocs
+specify the return and param types without tags.</p>
+
+<pre><code class="language-js prettyprint">function /** string */ foo(/** number */ arg) {...}
+</code></pre>
+
+<p>If you need descriptions or tags, use a single JSDoc comment above the method.
+For example, methods which return values need a <code>@return</code> tag.</p>
+
+<pre><code class="language-js prettyprint">class MyClass {
+  /**
+   * @param {number} arg
+   * @return {string}
+   */
+  bar(arg) {...}
+}
+</code></pre>
+
+<pre><code class="language-js prettyprint badcode">// Illegal inline JSDocs.
+
+class MyClass {
+  /** @return {string} */ foo() {...}
+}
+
+/** Function description. */ bar() {...}
+</code></pre>
 
 
-<p>Anonymous functions do not require JSDoc, though parameter types may be specified inline if the automatic type inference is insufficient.</p>
+
+<p>In anonymous functions annotations are generally optional. If the automatic type
+inference is insufficient or explicit annotation improves readability, then
+annotate param and return types like this:</p>
 
 <pre><code class="language-js prettyprint">promise.then(
-    (/** !Array&lt;number|string&gt; */ items) =&gt; {
+    /** @return {string} */
+    (/** !Array&lt;string&gt; */ items) =&gt; {
       doSomethingWith(items);
-      return /** @type {string} */ (items[0]);
+      return items[0];
     });
 </code></pre>
+
+<p>For function type expressions, see <a href="#jsdoc-function-types">??</a>.</p>
 
 <h3 id="jsdoc-property-comments">7.9 Property comments</h3>
 
@@ -2171,21 +2765,13 @@ function makeArray(arg) { ... }
 properties, if name and type provide enough documentation for understanding the
 code.</p>
 
-<p>Publicly exported constants are commented the same way as properties.  Explicit
-types may be omitted for <code>@const</code> properties initialized from an expression with
-an obviously known type.</p>
-
-<p>Tip: A <code>@const</code> property&#8217;s type can be considered &#8220;obviously known&#8221; if it is
-assigned directly from a constructor parameter with a declared type, or directly
-from a function call with a declared return type.  Non-const properties and
-properties assigned from more complex expressions should have their types
-declared explicitly.</p>
+<p>Publicly exported constants are commented the same way as properties.</p>
 
 <pre><code class="language-js prettyprint">/** My class. */
 class MyClass {
   /** @param {string=} someString */
   constructor(someString = 'default string') {
-    /** @private @const */
+    /** @private @const {string} */
     this.someString_ = someString;
 
     /** @private @const {!OtherType} */
@@ -2201,7 +2787,7 @@ class MyClass {
 
 /**
  * The number of times we'll try before giving up.
- * @const
+ * @const {number}
  */
 MyClass.RETRY_COUNT = 33;
 </code></pre>
@@ -2215,20 +2801,55 @@ annotations attached to JSDoc tags must always be enclosed in braces.</p>
 <h4 id="jsdoc-nullability">7.10.1 Nullability</h4>
 
 <p>The type system defines modifiers <code>!</code> and <code>?</code> for non-null and nullable,
-respectively.  Primitive types (<code>undefined</code>, <code>string</code>, <code>number</code>, <code>boolean</code>,
-<code>symbol</code>, and <code>function(...): ...</code>) and record literals (<code>{foo: string, bar:
-number}</code>) are non-null by default.  Do not add an explicit <code>!</code> to these types.
-Object types (<code>Array</code>, <code>Element</code>, <code>MyClass</code>, etc) are nullable by default, but
-cannot be immediately distinguished from a name that is <code>@typedef</code>&#8217;d to a
-non-null-by-default type.  As such, all types except primitives and record
-literals must be annotated explicitly with either <code>?</code> or <code>!</code> to indicate whether
-they are nullable or not.</p>
+respectively. These modifiers must precede the type.</p>
+
+<p>Nullability modifiers have different requirements for different types, which
+fall into two broad categories:</p>
+
+<ol>
+<li>Type annotations for primitives (<code>string</code>, <code>number</code>, <code>boolean</code>, <code>symbol</code>,
+<code>undefined</code>, <code>null</code>) and literals (<code>{function(...): ...}</code> and <code>{{foo:
+string...}}</code>) are always non-nullable by default. Use the <code>?</code> modifier to
+make it nullable, but omit the redundant <code>!</code>.</li>
+<li>Reference types (generally, anything in <code>UpperCamelCase</code>, including
+<code>some.namespace.ReferenceType</code>) refer to a class, enum, record, or typedef
+defined elsewhere. Since these types may or may not be nullable, it is
+impossible to tell from the name alone whether it is nullable or not. Always
+use explicit <code>?</code> and <code>!</code> modifiers for these types to prevent ambiguity at
+use sites.</li>
+</ol>
+
+<p>Bad:</p>
+
+<pre><code class="language-js prettyprint badcode">const /** MyObject */ myObject = null; // Non-primitive types must be annotated.
+const /** !number */ someNum = 5; // Primitives are non-nullable by default.
+const /** number? */ someNullableNum = null; // ? should precede the type.
+const /** !{foo: string, bar: number} */ record = ...; // Already non-nullable.
+const /** MyTypeDef */ def = ...; // Not sure if MyTypeDef is nullable.
+
+// Not sure if object (nullable), enum (non-nullable, unless otherwise
+// specified), or typedef (depends on definition).
+const /** SomeCamelCaseName */ n = ...;
+</code></pre>
+
+<p>Good:</p>
+
+<pre><code class="language-js prettyprint">const /** ?MyObject */ myObject = null;
+const /** number */ someNum = 5;
+const /** ?number */ someNullableNum = null;
+const /** {foo: string, bar: number} */ record = ...;
+const /** !MyTypeDef */ def = ...;
+const /** ?SomeCamelCaseName */ n = ...;
+</code></pre>
 
 <h4 id="jsdoc-type-casts">7.10.2 Type Casts</h4>
 
-<p>In cases where type checking doesn't accurately infer the type of an expression,
-it is possible to tighten the type by adding a type annotation comment and
-enclosing the expression in parentheses. Note that the parentheses are required.</p>
+<p>In cases where the compiler doesn't accurately infer the type of an expression,
+and the assertion functions in
+<a href="https://google.github.io/closure-library/api/goog.asserts.html">goog.asserts</a>
+cannot remedy it , it is possible to
+tighten the type by adding a type annotation comment and enclosing the
+expression in parentheses. Note that the parentheses are required.</p>
 
 <pre><code class="language-js prettyprint">/** @type {number} */ (x)
 </code></pre>
@@ -2260,6 +2881,96 @@ const /** !Object&lt;string, *&gt; */ mapOfEverything = {};
 <ul>
 <li><code>Object</code> is used for type hierarchy and not as map-like structure.</li>
 </ul>
+
+<h4 id="jsdoc-function-types">7.10.4 Function type expressions</h4>
+
+<p><strong>Terminology Note</strong>: <em>function type expression</em> refers to a type annotation for
+function types with the keyword <code>function</code> in the annotation (see examples
+below).</p>
+
+<p>Where the function definition is given, do not use a function type expression.
+Specify parameter and return types with <code>@param</code> and <code>@return</code>, or with inline
+annotations (see <a href="#jsdoc-method-and-function-comments">??</a>). This includes
+anonymous functions and functions defined and assigned to a const (where the
+function jsdoc appears above the whole assignment expression).</p>
+
+<p>Function type expressions are needed, for example, inside <code>@typedef</code>, <code>@param</code>
+or <code>@return</code>. Use it also for variables or properties of function type, if they
+are not immediately initialized with the function definition.</p>
+
+<pre><code class="language-js prettyprint">  /** @private {function(string): string} */
+  this.idGenerator_ = googFunctions.identity;
+</code></pre>
+
+<p>When using a function type expression, always specify the return type
+explicitly. Otherwise the default return type is <q>unknown</q> (<code>?</code>), which leads to
+strange and unexpected behavior, and is rarely what is actually desired.</p>
+
+<p>Bad - type error, but no warning given:</p>
+
+<pre><code class="language-js prettyprint badcode">/** @param {function()} generateNumber */
+function foo(generateNumber) {
+  const /** number */ x = generateNumber();  // No compile-time type error here.
+}
+
+foo(() =&gt; 'clearly not a number');
+</code></pre>
+
+<p>Good:</p>
+
+<pre><code class="language-js prettyprint">/**
+ * @param {function(): *} inputFunction1 Can return any type.
+ * @param {function(): undefined} inputFunction2 Definitely doesn't return
+ *      anything.
+ * NOTE: the return type of `foo` itself is safely implied to be {undefined}.
+ */
+function foo(inputFunction1, inputFunction2) {...}
+</code></pre>
+
+<h4 id="jsdoc-whitespace">7.10.5 Whitespace</h4>
+
+<p>Within a type annotation, a single space or line break is required after each
+comma or colon. Additional line breaks may be inserted to improve readability or
+avoid exceeding the column limit. These breaks should be chosen and indented
+following the applicable guidelines (e.g. <a href="#formatting-line-wrapping">??</a> and
+<a href="#formatting-block-indentation">??</a>). No other whitespace is allowed in type
+annotations.</p>
+
+<p>Good:</p>
+
+<pre><code class="language-js prettyprint">/** @type {function(string): number} */
+
+/** @type {{foo: number, bar: number}} */
+
+/** @type {number|string} */
+
+/** @type {!Object&lt;string, string&gt;} */
+
+/** @type {function(this: Object&lt;string, string&gt;, number): string} */
+
+/**
+ * @type {function(
+ *     !SuperDuperReallyReallyLongTypedefThatForcesTheLineBreak,
+ *     !OtherVeryLongTypedef): string}
+ */
+
+/**
+ * @type {!SuperDuperReallyReallyLongTypedefThatForcesTheLineBreak|
+ *     !OtherVeryLongTypedef}
+ */
+</code></pre>
+
+<p>Bad:</p>
+
+<pre><code class="language-js prettyprint badcode">// Only put a space after the colon
+/** @type {function(string) : number} */
+
+// Put spaces after colons and commas
+/** @type {{foo:number,bar:number}} */
+
+// No space in union types
+/** @type {number | string} */
+</code></pre>
 
 <h3 id="jsdoc-visibility-annotations">7.11 Visibility annotations</h3>
 
@@ -2398,151 +3109,222 @@ System</a>.</p>
 
 <p>In addition to the JSDoc described in <a href="https://github.com/google/closure-compiler/wiki/Annotating-JavaScript-for-the-Closure-Compiler">Annotating JavaScript for the Closure
 Compiler</a> the following tags are common and well supported by various
-documentation generations tools (such as <a href="https://github.com/jleyba/js-dossier">JsDossier</a>) for purely documentation
-purposes.
-<table>
-  <thead>
-    <tr>
-      <th>Tag
-      </th><th>Template &amp; Examples
-      </th><th>Description
-  </th></tr></thead><tbody>
-    <tr>
-      <td><code>@author</code> or <code>@owner</code>
-      </td><td><code>@author username@google.com (First Last)</code>
-        <p><em>For example:</em>
-        </p><pre class="prettyprint lang-js">
-/**
+documentation generation tools (such as <a href="https://github.com/jleyba/js-dossier">JsDossier</a>) for purely documentation
+purposes.</p>
+
+<p>You may also see other types of JSDoc annotations in third-party code. These
+annotations appear in the <a href="http://code.google.com/p/jsdoc-toolkit/wiki/TagReference">JSDoc Toolkit Tag Reference</a> but are not considered
+part of valid Google style.</p>
+
+<section class="zippy">
+
+<h5>9.1.2.1 <code>@author</code> or <code>@owner</code> - <em>Not recommended.</em></h5>
+
+<p><strong>Not recommended.</strong></p>
+
+<p>Syntax: <code>@author username@google.com (First Last)</code></p>
+
+<pre><code class="language-js prettyprint">/**
  * @fileoverview Utilities for handling textareas.
- * @author <a href="mailto:kuth@google.com">kuth@google.com</a> (Uthur Pendragon)
+ * @author kuth@google.com (Uthur Pendragon)
  */
- </pre>
-      </td><td>Document the author of a file or the owner of a test, generally only
-        used in the <code>@fileoverview</code> comment. The <code>@owner</code> tag is used by the
-        unit test dashboard to determine who owns the test results.
-        <p>Not recommended.
-    </p></td></tr><tr>
-      <td><code>@bug</code>
-      </td><td><code>@bug bugnumber</code>
-        <p><em>For example:</em>
-        </p><pre class="prettyprint lang-js">
-/** @bug 1234567 */
+</code></pre>
+
+<p>Documents the author of a file or the owner of a test, generally only used in
+the <code>@fileoverview</code> comment. The <code>@owner</code> tag is used by the unit test dashboard
+to determine who owns the test results.</p>
+
+</section>
+
+<section class="zippy">
+
+<h5>9.1.2.2 <code>@bug</code></h5>
+
+<p>Syntax: <code>@bug bugnumber</code></p>
+
+<pre><code class="language-js prettyprint">/** @bug 1234567 */
 function testSomething() {
   // &#8230;
 }
 
-<p>/**
+/**
  * @bug 1234568
  * @bug 1234569
  */
 function testTwoBugs() {
   // &#8230;
 }
-</p></pre>
-      </td><td>Indicates what bugs the given test function regression tests.
-        <p>Multiple bugs should each have their own <code>@bug</code> line, to make
-        searching for regression tests as easy as possible.
-    </p></td></tr><tr>
-      <td><code>@code</code>
-      </td><td><code>{@code ...}</code>
-        <p><em>For example:</em>
-        </p><pre class="prettyprint lang-js">
-/**
- * Moves to the next position in the selection.
- * Throws {@code goog.iter.StopIteration} when it
- * passes the end of the range.
- * @return {!Node} The node at the next position.
+</code></pre>
+
+<p>Indicates what bugs the given test function regression tests.</p>
+
+<p>Multiple bugs should each have their own <code>@bug</code> line, to make searching for
+regression tests as easy as possible.</p>
+
+</section>
+
+<section class="zippy">
+
+<h5>9.1.2.3 <code>@code</code> - <em>Deprecated. Do not use.</em></h5>
+
+<p><strong>Deprecated. Do not use. Use Markdown backticks instead.</strong></p>
+
+<p>Syntax: <code>{@code ...}</code></p>
+
+<p>Historically, <code>`BatchItem`</code> was written as
+<code class="badcode">{@code BatchItem}</code>.</p>
+
+<pre><code class="language-js prettyprint">/** Processes pending `BatchItem` instances. */
+function processBatchItems() {}
+</code></pre>
+
+<p>Indicates that a term in a JSDoc description is code so it may be correctly
+formatted in generated documentation.</p>
+
+</section>
+
+<section class="zippy">
+
+<h5>9.1.2.4 <code>@desc</code></h5>
+
+<p>Syntax: <code>@desc Message description</code></p>
+
+<pre><code class="language-js prettyprint">/** @desc Notifying a user that their account has been created. */
+exports.MSG_ACCOUNT_CREATED = goog.getMsg(
+    'Your account has been successfully created.');
+</code></pre>
+
+</section>
+
+<section class="zippy">
+
+<h5>9.1.2.5 <code>@link</code></h5>
+
+<p>Syntax: <code>{@link ...}</code></p>
+
+<p>This tag is used to generate cross-reference links within generated
+documentation.</p>
+
+<pre><code class="language-js prettyprint">/** Processes pending {@link BatchItem} instances. */
+function processBatchItems() {}
+</code></pre>
+
+<p><strong>Historical note:</strong> @link tags have also been used to create external links in
+generated documentation. For external links, always use Markdown's link syntax
+instead:</p>
+
+<pre><code class="language-js prettyprint">/**
+ * This class implements a useful subset of the
+ * [native Event interface](https://dom.spec.whatwg.org/#event).
  */
-goog.dom.RangeIterator.prototype.next = function() {
-  // &#8230;
-};
-</pre>
-      </td><td>Indicates that a term in a JSDoc description is code so it may be
-        correctly formatted in generated documentation.
-    </td></tr><tr>
-      <td><code>@see</code>
-      </td><td><code>@see Link</code>
-        <p><em>For example:</em>
-        </p><pre class="prettyprint lang-js">
-/**
+class ApplicationEvent {}
+</code></pre>
+
+</section>
+
+<section class="zippy">
+
+<h5>9.1.2.6 <code>@see</code></h5>
+
+<p>Syntax: <code>@see Link</code></p>
+
+<pre><code class="language-js prettyprint">/**
  * Adds a single item, recklessly.
  * @see #addSafely
  * @see goog.Collect
  * @see goog.RecklessAdder#add
  */
- </pre>
-       </td><td>Reference a lookup to another class function or method.
-    </td></tr><tr>
-      <td><code>@supported</code>
-      </td><td><code>@supported Description</code>
-        <p><em>For example:</em>
-        </p><pre class="prettyprint lang-js">
-/**
+</code></pre>
+
+<p>Reference a lookup to another class function or method.</p>
+
+</section>
+
+<section class="zippy">
+
+<h5>9.1.2.7 <code>@supported</code></h5>
+
+<p>Syntax: <code>@supported Description</code></p>
+
+<pre><code class="language-js prettyprint">/**
  * @fileoverview Event Manager
- * Provides an abstracted interface to the
- * browsers' event systems.
+ * Provides an abstracted interface to the browsers' event systems.
  * @supported IE10+, Chrome, Safari
  */
-</pre>
-      </td><td>Used in a fileoverview to indicate what browsers are supported by
-        the file.
-    </td></tr><tr>
-      <td><code>@desc</code>
-      </td><td><code>@desc Message description</code>
-        <p><em>For example:</em>
-        </p><pre class="prettyprint lang-js">
-/** @desc Notifying a user that their account has been created. */
-exports.MSG_ACCOUNT_CREATED = goog.getMsg(
-    'Your account has been successfully created.');
- </pre>
-      </td></tr></tbody></table></p>
+</code></pre>
 
-<p>You may also see other types of JSDoc annotations in third-party code. These
-annotations appear in the <a href="http://code.google.com/p/jsdoc-toolkit/wiki/TagReference">JSDoc Toolkit Tag Reference</a> but are not considered
-part of valid Google style.</p>
+<p>Used in a fileoverview to indicate what browsers are supported by the file.</p>
+
+</section>
 
 <h4 id="appendices-framework-specific-annotations">9.1.3 Framework specific annotations</h4>
 
-<p>The following annotations are specific to a particular framework.
-<table>
-  <thead>
-    <tr>
-      <th>Framework
-      </th><th>Tag
-      </th><th>Documentation
-  </th></tr></thead><tbody>
-    <tr>
-      <td>Angular 1
-      </td><td><code>@ngInject</code>
-      </td></tr><tr>
-      <td>Polymer
-      </td><td><code>@polymerBehavior</code>
-      </td><td>
-          
-            <a href="https://github.com/google/closure-compiler/wiki/Polymer-Pass">https://github.com/google/closure-compiler/wiki/Polymer-Pass</a>
-          
-    </td></tr></tbody></table></p>
+<p>The following annotations are specific to a particular framework.</p>
+
+<section class="zippy">
+
+<h5>9.1.3.1 <code>@ngInject</code> for Angular 1</h5>
+
+</section>
+
+<section class="zippy">
+
+<h5>9.1.3.2 <code>@polymerBehavior</code> for Polymer</h5>
+
+
+
+<p><a href="https://github.com/google/closure-compiler/wiki/Polymer-Pass">https://github.com/google/closure-compiler/wiki/Polymer-Pass</a>
+</p>
+
+</section>
+
+<section class="zippy">
+
+</section>
 
 <h4 id="appendices-notes-about-standard-closure-compiler-annotations">9.1.4 Notes about standard Closure Compiler annotations</h4>
 
-<p>The following tags used to be standard but are now deprecated.
-<table>
-  <thead>
-    <tr>
-      <th>Tag
-      </th><th>Template &amp; Examples
-      </th><th>Description
-  </th></tr></thead><tbody>
-    <tr>
-      <td><code>@expose</code>
-      </td><td><code>@expose</code>
-      </td><td><strong>Deprecated. Do not use. Use <code>@export</code> and/or <code>@nocollapse</code>
-        instead.</strong>
-    </td></tr><tr>
-      <td><code>@inheritDoc</code>
-      </td><td><code>@inheritDoc</code>
-      </td><td><strong>Deprecated. Do not use. Use <code>@override</code> instead.</strong>
-</td></tr></tbody></table></p>
+<p>The following tags used to be standard but are now deprecated.</p>
+
+<section class="zippy">
+
+<h5>9.1.4.1 <code>@expose</code> - <em>Deprecated. Do not use.</em></h5>
+
+<p><strong>Deprecated. Do not use. Use <code>@export</code> and/or <code>@nocollapse</code> instead.</strong></p>
+
+</section>
+
+<section class="zippy">
+
+<h5>9.1.4.2 <code>@inheritDoc</code> - <em>Deprecated. Do not use.</em></h5>
+
+<p><strong>Deprecated. Do not use. Use <code>@override</code> instead.</strong></p>
+
+</section>
+
+<section class="zippy">
+
+</section>
+
+<section class="zippy">
+
+</section>
+
+<section class="zippy">
+
+</section>
+
+<section class="zippy">
+
+</section>
+
+<section class="zippy">
+
+</section>
+
+<section class="zippy">
+
+</section>
 
 <h3 id="appendices-commonly-misunderstood-style-rules">9.2 Commonly misunderstood style rules</h3>
 
@@ -2553,14 +3335,13 @@ list of <q>myths.</q>)</p>
 <ul>
 <li>Neither a copyright statement nor <code>@author</code> credit is required in a source
 file. (Neither is explicitly recommended, either.)</li>
-<li>Aside from the constructor coming first
-(<a href="#features-classes-constructors">??</a>), there is no <q>hard and fast</q> rule
-governing how to order the members of a class (<a href="#features-classes">??</a>).</li>
+<li>There is no <q>hard and fast</q> rule governing how to order the members of a
+class (<a href="#features-classes">??</a>).</li>
 <li>Empty blocks can usually be represented concisely as <code>{}</code>, as detailed in
 (<a href="#formatting-empty-blocks">??</a>).</li>
 <li>The prime directive of line-wrapping is: prefer to break at a higher
 syntactic level (<a href="#formatting-where-to-break">??</a>).</li>
-<li>Non-ASCII characters are allowed in string literals, comments and Javadoc,
+<li>Non-ASCII characters are allowed in string literals, comments and JSDoc,
 and in fact are recommended when they make the code easier to read than the
 equivalent Unicode escape would (<a href="#non-ascii-characters">??</a>).</li>
 </ul>
@@ -2579,7 +3360,9 @@ code lowering).</p>
 
 <p>This program  reformats
 JavaScript source code into Google Style, and also follows a number of
-non-required but frequently readability-enhancing formatting practices.</p>
+non-required but frequently readability-enhancing formatting practices.
+The output produced by <code>clang-format</code> is compliant with the style guide.
+</p>
 
 <p><code>clang-format</code> is not required. Authors are allowed to change its output, and
 reviewers are allowed to ask for such changes; disputes are worked out in the
@@ -2689,11 +3472,12 @@ expression to define a function within a block:</p>
 
 <h4 id="appendices-legacy-exceptions-goog-provide">9.4.4 Dependency management with <code>goog.provide</code>/<code>goog.require</code></h4>
 
-<p><strong><code>goog.provide</code> is deprecated. All new files should use <code>goog.module</code>, even in
-projects with existing <code>goog.provide</code> usage. The following rules are for
-pre-existing goog.provide files, only.</strong></p>
-
 <h5 id="appendices-legacy-exceptions-goog-provide-summary">9.4.4.1 Summary</h5>
+
+<p><strong>WARNING: <code>goog.provide</code> dependency management is deprecated.</strong> All new files,
+even in projects using <code>goog.provide</code> for older files, should use
+<a href="#source-file-structure"><code>goog.module</code></a>. The following rules are for
+pre-existing <code>goog.provide</code> files only.</p>
 
 <ul>
 <li>Place all <code>goog.provide</code>s first, <code>goog.require</code>s second. Separate provides
@@ -2703,11 +3487,6 @@ from requires with an empty line.</li>
 if necessary.</li>
 <li>Only provide top-level symbols.</li>
 </ul>
-
-<p>As of Oct 2016, <strong><code>goog.provide</code>/<code>goog.require</code> dependency management is
-deprecated</strong>. All new files, even in projects using <code>goog.provide</code> for older
-files, should use
-<a href="#source-file-structure"><code>goog.module</code></a>.</p>
 
 <p><code>goog.provide</code> statements should be grouped together and placed first. All
 <code>goog.require</code> statements should follow. The two lists should be separated with
@@ -2758,8 +3537,8 @@ goog.provide('foo.bar.method');
 
 <h5 id="appendices-legacy-exceptions-goog-scope">9.4.4.2 Aliasing with <code>goog.scope</code></h5>
 
-<p><strong><code>goog.scope</code> is deprecated. New files should not use <code>goog.scope</code> even in
-projects with existing goog.scope usage.</strong></p>
+<p><strong>WARNING: <code>goog.scope</code> is deprecated.</strong> New files should not use <code>goog.scope</code>
+even in projects with existing <code>goog.scope</code> usage.</p>
 
 <p><code>goog.scope</code> may be used to shorten references to namespaced symbols in
 code using <code>goog.provide</code>/<code>goog.require</code> dependency management.</p>
@@ -2810,6 +3589,22 @@ SomeType.prototype.findButton = function() {
 ...
 });  // goog.scope
 </code></pre>
+
+<h5 id="appendices-legacy-exceptions-forward-declare">9.4.4.3 <code>goog.forwardDeclare</code></h5>
+
+<p>Prefer to use <code>goog.requireType</code> instead of <code>goog.forwardDeclare</code> to break
+circular dependencies between files in the same library. Unlike <code>goog.require</code>,
+a <code>goog.requireType</code> statement is allowed to import a namespace before it is
+defined.</p>
+
+<p><code>goog.forwardDeclare</code> may still be used in legacy code to break circular
+references spanning across library boundaries, but newer code should be
+structured to avoid it.</p>
+
+<p><code>goog.forwardDeclare</code> statements must follow the same style rules as
+<code>goog.require</code> and <code>goog.requireType</code>. The entire block of
+<code>goog.forwardDeclare</code>, <code>goog.require</code> and <code>goog.requireType</code> statements is
+sorted alphabetically.</p>
 
 </div>
 </body>
