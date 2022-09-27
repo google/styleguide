@@ -1,6 +1,6 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd">
-<html>
+<html lang="en" dir="ltr">
 <head>
     <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <base target="_blank">
@@ -8,32 +8,28 @@
     <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
     <script language="javascript" src="/eng/doc/devguide/include/styleguide.js"></script>
     <title>Google's AngularJS Style Guide</title>
-    <style type="text/css"><!--
-    th { background-color: #ddd; }
-    //--></style>
 </head>
 <body onload="prettyPrint();initStyleGuide();">
-<h1 class="external">An AngularJS Style Guide for Closure Users at Google</h1>
+<h1>An AngularJS Style Guide for Closure Users at Google</h1>
 
-<p class="external">This is the external version of a document that was primarily written for Google
+<p>This is the external version of a document that was primarily written for Google
     engineers. It describes a recommended style for AngularJS apps that use Closure, as used
     internally at Google. Members of the broader AngularJS community should feel free to apply
     (or not apply) these recommendations, as relevant to their own use cases.</p>
 
-<p class="external">This document describes style for AngularJS apps in google3. This guide
+<p>This document describes style for AngularJS apps in google3. This guide
     supplements and extends the <a href="https://google.github.io/styleguide/jsguide.html">
         Google JavaScript Style Guide</a>.
 </p>
 
 <p><b>Style Note</b>: Examples on the AngularJS external webpage, and many external apps, are
     written in a style that freely uses closures, favors functional inheritance, and does not often use
-    <a class="external"
-                               href="https://github.com/google/closure-compiler/wiki/Types-in-the-Closure-Type-System">
+    <a href="https://github.com/google/closure-compiler/wiki/Types-in-the-Closure-Type-System">
         JavaScript types</a>. Google follows a more rigorous Javascript style to support JSCompiler
     optimizations and large code bases - see the javascript-style mailing list.
     This is not an Angular-specific issue, and is not discussed further in this style guide.
     (But if you want further reading:
-    <a  href="http://martinfowler.com/bliki/Lambda.html">Martin Fowler on closures</a>,
+    <a href="http://martinfowler.com/bliki/Lambda.html">Martin Fowler on closures</a>,
     <a href="http://jibbering.com/faq/notes/closures/">much longer description</a>, appendix A of the
     <a href="https://books.google.com/books/about/Closure_The_Definitive_Guide.html?id=p7uyWPcVGZsC">
         closure book</a> has a good description of inheritance patterns and why it prefers
@@ -43,32 +39,32 @@
 
 <h5>1 Angular Language Rules</h5>
 <ul>
-    <li> <a target="_self" href="#googprovide">Manage dependencies with Closure's goog.require and
+    <li> <a href="#googprovide">Manage dependencies with Closure's goog.require and
         goog.provide</a>
-    <li> <a target="_self" href="#modules"> Modules</a>
-    <li> <a target="_self" href="#moduledeps"> Modules should reference other modules using the
+    <li> <a href="#modules"> Modules</a>
+    <li> <a href="#moduledeps"> Modules should reference other modules using the
         "name" property</a>
-    <li> <a target="_self" href="#externs">Use the provided Angular externs file</a>
-    <li> <a target="_self" href="#compilerflags">JSCompiler Flags</a>
-    <li> <a target="_self" href="#controllers">Controllers and Scopes</a>
-    <li> <a target="_self" href="#directives">Directives</a>
-    <li> <a target="_self" href="#services">Services</a>
+    <li> <a href="#externs">Use the provided Angular externs file</a>
+    <li> <a href="#compilerflags">JSCompiler Flags</a>
+    <li> <a href="#controllers">Controllers and Scopes</a>
+    <li> <a href="#directives">Directives</a>
+    <li> <a href="#services">Services</a>
 </ul>
 <h5>2 Angular Style Rules</h5>
 <ul>
-    <li><a target="_self" href="#dollarsign">Reserve $ for Angular properties and services
+    <li><a href="#dollarsign">Reserve $ for Angular properties and services
     </a>
-    <li><a target="_self" href="#customelements">Custom elements.</a>
+    <li><a href="#customelements">Custom elements.</a>
 </ul>
 <h5>3 Angular Tips, Tricks, and Best Practices</h5>
 <ul>
-    <li><a target="_self" href="#testing">Testing</a>
-    <li><a target="_self" href="#appstructure">Consider using the Best Practices for App Structure</a>
-    <li><a target="_self" href="#scopeinheritance">Be aware of how scope inheritance works</a>
-    <li><a target="_self" href="#nginject">Use @ngInject for easy dependency injection compilation</a>
+    <li><a href="#testing">Testing</a>
+    <li><a href="#appstructure">Consider using the Best Practices for App Structure</a>
+    <li><a href="#scopeinheritance">Be aware of how scope inheritance works</a>
+    <li><a href="#nginject">Use @ngInject for easy dependency injection compilation</a>
 </ul>
 
-<h5><a target="_self" href="#bestpractices">4 Best practices links and docs</a></h5>
+<h5><a href="#bestpractices">4 Best practices links and docs</a></h5>
 
 <h2>1 Angular Language Rules</h2>
 
@@ -112,9 +108,9 @@ goog.provide('hello.versions.Versions');
   goog.require('my.submoduleA');
 
   Yes: my.application.module = angular.module('hello', [my.submoduleA.name]);
-  <font color="red">
+  <span style="color: #EB0000">
       No: my.application.module = angular.module('hello', ['my.submoduleA']);
-  </font></pre>
+  </span></pre>
 
 <p><b>Why?</b>
     Using a property of my.submoduleA prevents Closure presubmit failures complaining that the file is
@@ -308,7 +304,7 @@ module.service('request', hello.request.Request);
   var MyCtrl = function($http) {this.http_ = $http;};
 </pre>
 
-<p><font color="red">No:</font></p>
+<p><span style="color: #EB0000">No:</span></p>
 <pre class="prettyprint">
   $scope.$myModel = { value: 'foo' } // BAD
   $scope.myModel = { $value: 'foo' } // BAD
