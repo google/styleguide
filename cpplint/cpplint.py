@@ -195,6 +195,7 @@ _ERROR_CATEGORIES = [
     'build/namespaces',
     'build/printf_format',
     'build/storage_class',
+    'build/gflag_default_api',
     'legal/copyright',
     'readability/alt_tokens',
     'readability/braces',
@@ -5700,6 +5701,29 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
             'Add #include ' + required_header_unstripped + ' for ' + template)
 
 
+_RE_PATTERN_GFLAG_DEFAULT_API = re.compile(r'DEFINE_(bool|int32|int64|uint64|double|string)')
+
+
+def CheckGflagDefaultApiCheckMakePairUsesDeduction(filename, clean_lines, linenum, error):
+  """Check if we're still using the default gflag DEFINE flag api.
+
+  We've added a new set of APIs for runtime vs non-runtime flags in D19978, which should be used by
+  default, moving forward.
+
+  Args:
+    filename: The name of the current file.
+    clean_lines: A CleansedLines instance containing the file.
+    linenum: The number of the line to check.
+    error: The function to call with any errors found.
+  """
+  line = clean_lines.elided[linenum]
+  match = _RE_PATTERN_GFLAG_DEFAULT_API.search(line)
+  if match:
+    error(filename, linenum, 'build/gflag_default_api',
+          4,  # 4 = high confidence
+          'Please use the new DEFINE_RUNTIME and DEFINE_NON_RUNTIME macros.')
+
+
 _RE_PATTERN_EXPLICIT_MAKEPAIR = re.compile(r'\bmake_pair\s*<')
 
 
@@ -5923,6 +5947,7 @@ def ProcessLine(filename, file_extension, clean_lines, line,
   CheckPosixThreading(filename, clean_lines, line, error)
   CheckInvalidIncrement(filename, clean_lines, line, error)
   CheckMakePairUsesDeduction(filename, clean_lines, line, error)
+  CheckGflagDefaultApiCheckMakePairUsesDeduction(filename, clean_lines, line, error)
   CheckRedundantVirtual(filename, clean_lines, line, error)
   CheckRedundantOverrideOrFinal(filename, clean_lines, line, error)
   for check_fn in extra_check_functions:
