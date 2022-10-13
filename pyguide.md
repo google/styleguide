@@ -272,7 +272,7 @@ package twice.
 
 Exemptions from this rule:
 
-*   Symbols from the following modules and used to support static analysis and
+*   Symbols from the following modules are used to support static analysis and
     type checking:
     *   [`typing` module](#typing-imports)
     *   [`collections.abc` module](#typing-imports)
@@ -524,7 +524,7 @@ global variables must be done through public module-level functions. See
 [Naming](#s3.16-naming) below.
 
 While module-level constants are technically variables, they are permitted and
-encouraged. For example: `MAX_HOLY_HANDGRENADE_COUNT = 3`. Constants must be
+encouraged. For example: `_MAX_HOLY_HANDGRENADE_COUNT = 3`. Constants must be
 named using all caps with underscores. See [Naming](#s3.16-naming) below.
 
 <a id="s2.6-nested"></a>
@@ -710,8 +710,8 @@ operators is generic. It can be used with any type that supports the operation.
 <a id="default-iterators-operators-cons"></a>
 #### 2.8.3 Cons 
 
-You can't tell the type of objects by reading the method names (e.g. `has_key()`
-means a dictionary). This is also an advantage.
+You can't tell the type of objects by reading the method names (unless the
+variable has type annotations). This is also an advantage.
 
 <a id="s2.8.4-decision"></a>
 <a id="284-decision"></a>
@@ -726,7 +726,6 @@ container while iterating over it.
 
 ```python
 Yes:  for key in adict: ...
-      if key not in adict: ...
       if obj in alist: ...
       for line in afile: ...
       for k, v in adict.items(): ...
@@ -734,7 +733,6 @@ Yes:  for key in adict: ...
 
 ```python
 No:   for key in adict.keys(): ...
-      if not adict.has_key(key): ...
       for line in afile.readlines(): ...
 ```
 
@@ -964,7 +962,7 @@ Yes: def foo(a, b=None):
 Yes: def foo(a, b: Optional[Sequence] = None):
          if b is None:
              b = []
-Yes: def foo(a, b: Sequence = ()):  # Empty tuple OK since tuples are immutable
+Yes: def foo(a, b: Sequence = ()):  # Empty tuple OK since tuples are immutable.
          ...
 ```
 
@@ -978,7 +976,7 @@ No:  def foo(a, b=time.time()):  # The time the module was loaded???
          ...
 No:  def foo(a, b=_FOO.value):  # sys.argv has not yet been parsed...
          ...
-No:  def foo(a, b: Mapping = {}):  # Could still get passed to unchecked code
+No:  def foo(a, b: Mapping = {}):  # Could still get passed to unchecked code.
          ...
 ```
 
@@ -1294,7 +1292,7 @@ more discussion.
 Never use `staticmethod` unless forced to in order to integrate with an API
 defined in an existing library. Write a module level function instead.
 
-Use `classmethod` only when writing a named constructor or a class-specific
+Use `classmethod` only when writing a named constructor, or a class-specific
 routine that modifies necessary global state such as a process-wide cache.
 
 <a id="s2.18-threading"></a>
@@ -1659,27 +1657,27 @@ No:  if (x):
 
 Indent your code blocks with *4 spaces*.
 
-Never use tabs or mix tabs and spaces. In cases of implied line continuation,
-you should align wrapped elements either vertically, as per the examples in the
-[line length](#s3.2-line-length) section; or using a hanging indent of 4 spaces,
-in which case there should be nothing after the open parenthesis or bracket on
-the first line.
+Never use tabs. Implied line continuation should align wrapped elements
+vertically (see [line length examples](#s3.2-line-length)), or use a hanging
+4-space indent. Closing (round, square or curly) brackets can be placed at the
+end of the expression, or on separate lines, but then should be indented the
+same as the line with the corresponding opening bracket.
 
 ```python
-Yes:   # Aligned with opening delimiter
+Yes:   # Aligned with opening delimiter.
        foo = long_function_name(var_one, var_two,
                                 var_three, var_four)
        meal = (spam,
                beans)
 
-       # Aligned with opening delimiter in a dictionary
+       # Aligned with opening delimiter in a dictionary.
        foo = {
            'long_dictionary_key': value1 +
                                   value2,
            ...
        }
 
-       # 4-space hanging indent; nothing on first line
+       # 4-space hanging indent; nothing on first line.
        foo = long_function_name(
            var_one, var_two, var_three,
            var_four)
@@ -1687,7 +1685,18 @@ Yes:   # Aligned with opening delimiter
            spam,
            beans)
 
-       # 4-space hanging indent in a dictionary
+       # 4-space hanging indent; nothing on first line,
+       # closing parenthesis on a new line.
+       foo = long_function_name(
+           var_one, var_two, var_three,
+           var_four
+       )
+       meal = (
+           spam,
+           beans,
+       )
+
+       # 4-space hanging indent in a dictionary.
        foo = {
            'long_dictionary_key':
                long_dictionary_value,
@@ -1696,18 +1705,18 @@ Yes:   # Aligned with opening delimiter
 ```
 
 ```python
-No:    # Stuff on first line forbidden
+No:    # Stuff on first line forbidden.
        foo = long_function_name(var_one, var_two,
            var_three, var_four)
        meal = (spam,
            beans)
 
-       # 2-space hanging indent forbidden
+       # 2-space hanging indent forbidden.
        foo = long_function_name(
          var_one, var_two, var_three,
          var_four)
 
-       # No hanging indent in a dictionary
+       # No hanging indent in a dictionary.
        foo = {
            'long_dictionary_key':
            long_dictionary_value,
@@ -1939,7 +1948,7 @@ overall description of the module or program.  Optionally, it may also
 contain a brief description of exported classes and functions and/or usage
 examples.
 
-  Typical usage example:
+Typical usage example:
 
   foo = ClassFoo()
   bar = foo.FunctionBar()
@@ -2512,25 +2521,27 @@ documentation must explain clearly how resource lifetime is managed.
 Use `TODO` comments for code that is temporary, a short-term solution, or
 good-enough but not perfect.
 
-A `TODO` comment begins with the string `TODO` in all caps and a parenthesized
-name, e-mail address, or other identifier
-of the person or issue with the best context about the problem. This is followed
-by an explanation of what there is to do.
+A `TODO` comment begins with the word `TODO` in all caps, and a parenthesized
+context identifier. Ideally a bug reference, sometimes a username. A bug
+reference like `TODO(https://crbug.com/bug_id_number):` is
+preferable, because bugs are tracked and have follow-up comments, whereas
+individuals move around and may lose context over time. The `TODO` is followed by an explanation of
+what there is to do.
 
 The purpose is to have a consistent `TODO` format that can be searched to find
 out how to get more details. A `TODO` is not a commitment that the person
-referenced will fix the problem. Thus when you create a
-`TODO`, it is almost always your name
-that is given.
+referenced will fix the problem. Thus when you create a `TODO` with a username,
+it is almost always your *own* username that is given.
 
 ```python
-# TODO(kl@gmail.com): Use a "*" here for string repetition.
-# TODO(Zeke) Change this to use relations.
+# TODO(crbug.com/192795): Investigate cpufreq optimizations.
+# TODO(yourusername): File an issue and use a '*' for repetition.
 ```
 
 If your `TODO` is of the form "At a future date do something" make sure that you
 either include a very specific date ("Fix by November 2009") or a very specific
-event ("Remove this code when all clients can handle XML responses.").
+event ("Remove this code when all clients can handle XML responses.") that
+future code maintainers will comprehend.
 
 <a id="s3.13-imports-formatting"></a>
 <a id="313-imports-formatting"></a>
@@ -2710,7 +2721,7 @@ change in complexity.
 `send_acronym_via_https`.
 
 
-Function names, variable names, and filenames should be descriptive; eschew
+Function names, variable names, and filenames should be descriptive; avoid
 abbreviation. In particular, do not use abbreviations that are ambiguous or
 unfamiliar to readers outside your project, and do not abbreviate by deleting
 letters within a word.
@@ -2969,7 +2980,7 @@ the function into smaller and more manageable pieces.
 
     ```python
     @classmethod
-    def create(cls: Type[T]) -> T:
+    def create(cls: Type[_T]) -> _T:
       return cls()
     ```
 
@@ -2999,12 +3010,16 @@ the function into smaller and more manageable pieces.
 Try to follow the existing [indentation](#indentation) rules.
 
 After annotating, many function signatures will become "one parameter per line".
+To ensure the return type is also given its own line, a comma can be placed
+after the last parameter.
 
 ```python
-def my_method(self,
-              first_var: int,
-              second_var: Foo,
-              third_var: Optional[Bar]) -> int:
+def my_method(
+    self,
+    first_var: int,
+    second_var: Foo,
+    third_var: Optional[Bar],
+) -> int:
   ...
 ```
 
@@ -3018,23 +3033,27 @@ def my_method(self, first_var: int) -> int:
 ```
 
 If the combination of the function name, the last parameter, and the return type
-is too long, indent by 4 in a new line.
-
-```python
-def my_method(
-    self, first_var: int) -> tuple[MyLongType1, MyLongType1]:
-  ...
-```
-
-When the return type does not fit on the same line as the last parameter, the
-preferred way is to indent the parameters by 4 on a new line and align the
-closing parenthesis with the `def`.
+is too long, indent by 4 in a new line. When using line breaks, prefer putting
+each parameter and the return type on their own lines and aligning the closing
+parenthesis with the `def`:
 
 ```python
 Yes:
 def my_method(
-    self, other_arg: Optional[MyLongType]
-) -> dict[OtherLongType, MyLongType]:
+    self,
+    other_arg: Optional[MyLongType],
+) -> tuple[MyLongType1, MyLongType1]:
+  ...
+```
+
+Optionally, the return type may be put on the same line as the last parameter:
+
+```python
+Okay:
+def my_method(
+    self,
+    first_var: int,
+    second_var: int) -> dict[OtherLongType, MyLongType]:
   ...
 ```
 
@@ -3045,7 +3064,7 @@ opening one, but this is less readable.
 ```python
 No:
 def my_method(self,
-              other_arg: Optional[MyLongType]
+              other_arg: Optional[MyLongType],
              ) -> dict[OtherLongType, MyLongType]:
   ...
 ```
@@ -3059,7 +3078,8 @@ def my_method(
     first_var: tuple[list[MyLongType1],
                      list[MyLongType2]],
     second_var: list[dict[
-        MyLongType3, MyLongType4]]) -> None:
+        MyLongType3, MyLongType4]],
+) -> None:
   ...
 ```
 
@@ -3176,8 +3196,8 @@ long:
 <!-- Annotate below with `typing.TypeAlias` for 3.10. -->
 
 ```python
-_ShortName = module_with_long_name.TypeWithLongName
-ComplexMap = Mapping[str, list[tuple[int, int]]]
+_LossAndGradient = tuple[tf.Tensor, tf.Tensor]
+ComplexTFMap = Mapping[str, _LossAndGradient]
 ```
 
 Other examples are complex nested types and multiple return variables from a
