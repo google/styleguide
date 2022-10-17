@@ -174,9 +174,8 @@ input.</p>
 <p>Do not use
   <a href="#Nonstandard_Extensions">non-standard extensions</a>.</p>
 
-  <div>Consider portability to other environments
-before using features from C++14 and C++17 in your project.
-</div>
+<p>Consider portability to other environments
+before using features from C++14 and C++17 in your project.</p>
 
 <h2 id="Header_Files">Header Files</h2>
 
@@ -230,15 +229,11 @@ should be
 
 <code><i>&lt;PROJECT&gt;</i>_<i>&lt;PATH&gt;</i>_<i>&lt;FILE&gt;</i>_H_</code>.</p>
 
-
-
-<div>
 <p>To guarantee uniqueness, they should
 be based on the full path in a project's source tree. For
 example, the file <code>foo/src/bar/baz.h</code> in
 project <code>foo</code> should have the following
 guard:</p>
-</div>
 
 <pre>#ifndef FOO_BAR_BAZ_H_
 #define FOO_BAR_BAZ_H_
@@ -436,14 +431,11 @@ as follows:</p>
 
   <li>A blank line</li>
 
-  <div>
   <li>Other libraries' <code>.h</code> files.</li>
 
   <li>A blank line</li>
-  </div>
 
-  <li>
-  Your project's <code>.h</code>
+  <li>Your project's <code>.h</code>
   files.</li>
 </ol>
 
@@ -1180,8 +1172,8 @@ void Func(Foo f);
 </pre>
 <pre class="badcode">Func({42, 3.14});  // Error
 </pre>
-This kind of code isn't technically an implicit conversion, but the
-language treats it as one as far as <code>explicit</code> is concerned.
+<p>This kind of code isn't technically an implicit conversion, but the
+language treats it as one as far as <code>explicit</code> is concerned.</p>
 
 <p class="pros"></p>
 <ul>
@@ -1961,15 +1953,9 @@ doubt, use overloads.</p>
 
 <h2 id="Google-Specific_Magic">Google-Specific Magic</h2>
 
-
-
-<div>
 <p>There are various tricks and utilities that
 we use to make C++ code more robust, and various ways we use
 C++ that may differ from what you see elsewhere.</p>
-</div>
-
-
 
 <h3 id="Ownership_and_Smart_Pointers">Ownership and Smart Pointers</h3>
 
@@ -2108,18 +2094,12 @@ style errors. It is not perfect, and has both false
 positives and false negatives, but it is still a valuable
 tool. </p>
 
-
-
-<div>
 <p>Some projects have instructions on
 how to run <code>cpplint.py</code> from their project
 tools. If the project you are contributing to does not,
 you can download
 <a href="https://raw.githubusercontent.com/google/styleguide/gh-pages/cpplint/cpplint.py">
 <code>cpplint.py</code></a> separately.</p>
-</div>
-
-
 
 <h2 id="Other_C++_Features">Other C++ Features</h2>
 
@@ -2243,14 +2223,10 @@ members.</p>
   nested functions, without the obscuring and error-prone
   bookkeeping of error codes.</li>
 
-
-
-  <div>
   <li>Exceptions are used by most other
   modern languages. Using them in C++ would make it more
   consistent with Python, Java, and the C++ that others
   are familiar with.</li>
-  </div>
 
   <li>Some third-party C++ libraries use exceptions, and
   turning them off internally makes it harder to
@@ -3746,9 +3722,6 @@ advanced template techniques, and an excessively
 
 <p class="decision"></p>
 
-
-
-<div>
 <p>In order to maintain a high level of readability for
 all contributors who might read and maintain code, we
 only allow an approved subset of Boost features.
@@ -3821,10 +3794,6 @@ Currently, the following libraries are permitted:</p>
 <p>We are actively considering adding other Boost
 features to the list, so this list may be expanded in
 the future.</p>
-</div>
-
-
-
 
 <h3 id="Other_Features"><a id="C++11">Other C++ Features</a></h3>
 
@@ -4242,10 +4211,10 @@ set_count(int count)</code>.</p>
 
 <h3 id="Namespace_Names">Namespace Names</h3>
 
-Namespace names are all lower-case, with words separated by underscores.
+<p>Namespace names are all lower-case, with words separated by underscores.
 Top-level namespace names are based on the project name
 . Avoid collisions
-between nested namespaces and well-known top-level namespaces.
+between nested namespaces and well-known top-level namespaces.</p>
 
 <p>The name of a top-level namespace should usually be the
 name of the project or team whose code is contained in that
@@ -4374,26 +4343,19 @@ comment and what style you use where.</p>
 
 <h3 id="File_Comments">File Comments</h3>
 
-<div>
 <p>Start each file with license boilerplate.</p>
-</div>
 
 <p>File comments describe the contents of a file. If a file declares,
 implements, or tests exactly one abstraction that is documented by a comment
 at the point of declaration, file comments are not required. All other files
 must have file comments.</p>
 
-<h4>Legal Notice and Author
-Line</h4>
+<h4>Legal Notice and Author Line</h4>
 
-
-
-<div>
 <p>Every file should contain license
 boilerplate. Choose the appropriate boilerplate for the
 license used by the project (for example, Apache 2.0,
 BSD, LGPL, GPL).</p>
-</div>
 
 <p>If you make significant changes to a file with an
 author line, consider deleting the author line.
@@ -4652,8 +4614,8 @@ if (std::find(v.begin(), v.end(), element) != v.end()) {
 }
 </pre>
 
-Self-describing code doesn't need a comment. The comment from
-the example above would be obvious:
+<p>Self-describing code doesn't need a comment. The comment from
+the example above would be obvious:</p>
 
 <pre>if (!IsAlreadyProcessed(element)) {
   Process(element);
@@ -4699,14 +4661,10 @@ person referenced will fix the problem. Thus when you create
 a <code>TODO</code> with a name, it is almost always your
 name that is given.</p>
 
-
-
-<div>
 <pre>// TODO(kl@gmail.com): Use a "*" here for concatenation operator.
 // TODO(Zeke) change this to use relations.
 // TODO(bug 12345): remove the "Last visitors" feature.
 </pre>
-</div>
 
 <p>If your <code>TODO</code> is of the form "At a future
 date do something" make sure that you either include a
@@ -4728,26 +4686,18 @@ style rules so that
 they can all read and understand
 everyone's code easily.</p>
 
-
-
-<div>
 <p>To help you format code correctly, we've created a
 <a href="https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el">
 settings file for emacs</a>.</p>
-</div>
 
 <h3 id="Line_Length">Line Length</h3>
 
 <p>Each line of text in your code should be at most 80
 characters long.</p>
 
-
-
-<div>
 <p>We recognize that this rule is
 controversial, but so much existing code already adheres
 to it, and we feel that consistency is important.</p>
-</div>
 
 <p class="pros"></p>
 <p>Those who favor  this rule
@@ -5211,7 +5161,6 @@ case should never execute, treat this as an error. For example:
 
 </p>
 
-<div>
 <pre>switch (var) {
   case 0: {  // 2 space indent
     ...      // 4 space indent
@@ -5226,7 +5175,6 @@ case should never execute, treat this as an error. For example:
   }
 }
 </pre>
-</div>
 
 <p>Fall-through from one case label to
 another must be annotated using the
@@ -5327,9 +5275,10 @@ file.
 When modifying an existing file, use the style in
 that file.</p>
 
-It is allowed (if unusual) to declare multiple variables in the same
+<p>It is allowed (if unusual) to declare multiple variables in the same
 declaration, but it is disallowed if any of those have pointer or
-reference decorations. Such declarations are easily misread.
+reference decorations. Such declarations are easily misread.</p>
+
 <pre>// Fine if helpful for readability.
 int x, y;
 </pre>
@@ -5711,9 +5660,6 @@ useful:</p>
 However, like all good rules, these sometimes have exceptions,
 which we discuss here.</p>
 
-
-
-<div>
 <h3 id="Existing_Non-conformant_Code">Existing Non-conformant Code</h3>
 
 <p>You may diverge from the rules when dealing with code that
@@ -5727,10 +5673,6 @@ code. If you are in doubt about how to do this, ask the
 original author or the person currently responsible for
 the code. Remember that <em>consistency</em> includes
 local consistency, too.</p>
-
-</div>
-
-
 
 <h3 id="Windows_Code">Windows Code</h3>
 
