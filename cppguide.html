@@ -958,7 +958,7 @@ does not make an observable difference. For example:</p>
 <ul>
   <li>Global strings: if you require a named global or static string constant,
     consider using a <code>constexpr</code> variable of
-    <code>string_view</code>, character array, or character pointer, pointing
+    <code>std::string_view</code>, character array, or character pointer, pointing
     to a string literal. String literals have static storage duration already
     and are usually sufficient.
     See <a href="https://abseil.io/tips/140">TotW #140.</a></li>
@@ -979,7 +979,7 @@ does not make an observable difference. For example:</p>
     If you do really prefer a dynamic container from the standard library, consider using
     a function-local static pointer, as described below
     .</li>
-  <li>Smart pointers (<code>unique_ptr</code>, <code>shared_ptr</code>): smart
+  <li>Smart pointers (<code>std::unique_ptr</code>, <code>std::shared_ptr</code>): smart
     pointers execute cleanup during destruction and are therefore forbidden.
     Consider whether your use case fits into one of the other patterns described
     in this section. One simple solution is to use a plain pointer to a
@@ -1190,7 +1190,7 @@ language treats it as one as far as <code>explicit</code> is concerned.
     when it's obvious.</li>
 <li>Implicit conversions can be a simpler alternative to
     overloading, such as when a single
-    function with a <code>string_view</code> parameter takes the
+    function with a <code>std::string_view</code> parameter takes the
     place of separate overloads for <code>std::string</code> and
     <code>const char*</code>.</li>
 <li>List initialization syntax is a concise and expressive
@@ -1519,7 +1519,7 @@ that <code>Bar</code> "is a kind of"
 <p>Limit the use of <code>protected</code> to those
 member functions that might need to be accessed from
 subclasses. Note that <a href="#Access_Control">data
-members should be private</a>.</p>
+members should be <code>private</code></a>.</p>
 
 <p>Explicitly annotate overrides of virtual functions or virtual
 destructors with exactly one of an <code>override</code> or (less
@@ -1629,7 +1629,7 @@ built-in operators. For example, use <code>|</code> as a
 bitwise- or logical-or, not as a shell-style pipe.</p>
 
 <p>Define operators only on your own types. More precisely,
-define them in the same headers, .cc files, and namespaces
+define them in the same headers, <code>.cc</code> files, and namespaces
 as the types they operate on. That way, the operators are available
 wherever the type is, minimizing the risk of multiple
 definitions. If possible, avoid defining operators as templates,
@@ -1681,18 +1681,18 @@ apply to operator overloading as well.</p>
 of some easy boilerplate in the form of accessors (usually <code>const</code>) if necessary.</p>
 
 <p>For technical
-reasons, we allow data members of a test fixture class defined in a .cc file to
+reasons, we allow data members of a test fixture class defined in a <code>.cc</code> file to
 be <code>protected</code> when using
 
 
 <a href="https://github.com/google/googletest">Google
 Test</a>.
-If a test fixture class is defined outside of the .cc file it is used in, for example in a .h file,
+If a test fixture class is defined outside of the <code>.cc</code> file it is used in, for example in a <code>.h</code> file,
 make data members <code>private</code>.</p>
 
 <h3 id="Declaration_Order">Declaration Order</h3>
 
-<p>Group similar declarations together, placing public parts
+<p>Group similar declarations together, placing <code>public</code> parts
 earlier.</p>
 
 <p>A class definition should usually start with a
@@ -1812,8 +1812,8 @@ which overload is being called.</p>
 <p>You may write a function that takes a <code>const
 std::string&amp;</code> and overload it with another that
 takes <code>const char*</code>. However, in this case consider
-std::string_view
- instead.</p>
+<code>std::string_view</code>
+instead.</p>
 
 <pre>class MyClass {
  public:
@@ -1827,7 +1827,7 @@ std::string_view
 identically-named function to take different arguments.
 It may be necessary for templatized code, and it can be
 convenient for Visitors.</p>
-<p>Overloading based on const or ref qualification may make utility
+<p>Overloading based on <code>const</code> or ref qualification may make utility
   code more usable, more efficient, or both.
   (See <a href="http://abseil.io/tips/148">TotW 148</a> for more.)
 </p>
@@ -2030,7 +2030,7 @@ all copies, and the object is deleted when the last
   bookkeeping, simplifying the code and ruling out large
   classes of errors.</li>
 
-  <li>For const objects, shared ownership can be a simple
+  <li>For <code>const</code> objects, shared ownership can be a simple
   and efficient alternative to deep copying.</li>
 </ul>
 
@@ -2133,9 +2133,9 @@ are a type of reference that can only bind to temporary
 objects. The syntax is similar to traditional reference
 syntax. For example, <code>void f(std::string&amp;&amp;
 s);</code> declares a function whose argument is an
-rvalue reference to a std::string.</p>
+rvalue reference to a <code>std::string</code>.</p>
 
-<p id="Forwarding_references"> When the token '&amp;&amp;' is applied to
+<p id="Forwarding_references"> When the token <code>&amp;&amp;</code> is applied to
 an unqualified template argument in a function
 parameter, special template argument deduction
 rules apply. Such a reference is called forwarding reference.</p>
@@ -2227,7 +2227,7 @@ make a unittest class a friend of the class it tests.</p>
 
 <p>Friends extend, but do not break, the encapsulation
 boundary of a class. In some cases this is better than
-making a member public when you want to give only one
+making a member <code>public</code> when you want to give only one
 other class access to it. However, most classes should
 interact with other classes solely through their public
 members.</p>
@@ -2533,8 +2533,8 @@ like <code>static_cast&lt;float&gt;(double_value)</code>, or brace
 initialization for conversion of arithmetic types like
 <code>int64_t y = int64_t{1} &lt;&lt; 42</code>. Do not use
 cast formats like <code>(int)x</code> unless the cast is to
-<code>void</code>. You may use cast formats like `T(x)` only when
-`T` is a class type.</p>
+<code>void</code>. You may use cast formats like <code>T(x)</code> only when
+<code>T</code> is a class type.</p>
 
 <p class="definition"></p>
 <p> C++ introduced a
@@ -2797,7 +2797,7 @@ many other contexts as well. In particular:</p>
 
   </li><li>Declare methods to be <code>const</code> unless they
   alter the logical state of the object (or enable the user to modify
-  that state, e.g., by returning a non-const reference, but that's
+  that state, e.g., by returning a non-<code>const</code> reference, but that's
   rare), or they can't safely be invoked concurrently.</li>
 </ul>
 
@@ -2850,9 +2850,9 @@ types; and definition of constants with function
 calls.</p>
 
 <p class="cons"></p>
-<p>Prematurely marking something as constexpr may cause
+<p>Prematurely marking something as <code>constexpr</code> may cause
 migration problems if later on it has to be downgraded.
-Current restrictions on what is allowed in constexpr
+Current restrictions on what is allowed in <code>constexpr</code>
 functions and constructors may invite obscure workarounds
 in these definitions.</p>
 
@@ -3918,7 +3918,7 @@ using other_namespace::Foo;
 
   <p>Like other declarations, aliases declared in a header file are part of that
   header's public API unless they're in a function definition, in the private portion of a class,
-  or in an explicitly-marked internal namespace. Aliases in such areas or in .cc files are
+  or in an explicitly-marked internal namespace. Aliases in such areas or in <code>.cc</code> files are
   implementation details (because client code can't refer to them), and are not restricted by this
   rule.</p>
 
@@ -3979,8 +3979,8 @@ typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&g
 }  // namespace mynamespace
 </pre>
 
-<p>However, local convenience aliases are fine in function definitions, private sections of
-  classes, explicitly marked internal namespaces, and in .cc files:</p>
+<p>However, local convenience aliases are fine in function definitions, <code>private</code> sections of
+  classes, explicitly marked internal namespaces, and in <code>.cc</code> files:</p>
 
 <pre>// In a .cc file
 using ::foo::Bar;
@@ -4202,7 +4202,7 @@ versus a class.</p>
 
 <h3 id="Constant_Names">Constant Names</h3>
 
-<p>Variables declared constexpr or const, and whose value is fixed for
+<p>Variables declared <code>constexpr</code> or <code>const</code>, and whose value is fixed for
 the duration of the program, are named with a leading "k" followed
 by mixed case. Underscores can be used as separators in the rare cases
 where capitalization cannot be used for separation. For example:</p>
@@ -4455,7 +4455,7 @@ operation.</p>
 preceding it that describe what the function does and how to use
 it. These comments may be omitted only if the function is simple and
 obvious (e.g., simple accessors for obvious properties of the class).
-Private methods and functions declared in `.cc` files are not exempt.
+Private methods and functions declared in <code>.cc</code> files are not exempt.
 Function comments should be written with an implied subject of
 <i>This function</i> and should start with the verb phrase; for example,
 "Opens the file", rather than "Open the file". In general, these comments do not
