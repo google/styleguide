@@ -2087,7 +2087,7 @@ Robert Brown
       </p>
       <CODE_SNIPPET>
         (defmethod print-object ((p person) stream)
-          (print-unprintable-object (p stream :type t :identity t)
+          (print-unreadable-object (p stream :type t :identity t)
             (with-slots (first-name last-name) p
               (safe-format stream "~a ~a" first-name last-name))))
       </CODE_SNIPPET>
