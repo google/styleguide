@@ -5396,12 +5396,10 @@ _RE_PATTERN_STRING = re.compile(r'\bstring\b')
 _re_pattern_headers_maybe_templates = []
 for _header, _templates in _HEADERS_MAYBE_TEMPLATES:
   for _template in _templates:
-    # Match max<type>(..., ...), max(..., ...), but not foo->max, foo.max or
-    # type::max().
+    # Match max<type>(..., ...), max(..., ...), but not foo->max or foo.max.
     _re_pattern_headers_maybe_templates.append(
-        (re.compile(r'[^>.]\b' + _template + r'(<.*?>)?\([^\)]'),
-            _template,
-            _header))
+        (re.compile(r'(?<![>.]\b)' + _template + r'(<.*?>)?\([^\)]'), _template,
+         _header))
 
 # Other scripts may reach in and modify this pattern.
 _re_pattern_templates = []
@@ -5495,6 +5493,18 @@ def UpdateIncludeState(filename, include_dict, io=codecs):
   return True
 
 
+def UpdateRequiredHeadersForLine(patterns, line, linenum, required):
+  for pattern, template, header in patterns:
+    matched = pattern.search(line)
+    if matched:
+      # Don't warn about IWYU in non-STL namespaces:
+      # (We check only the first match per line; good enough.)
+      prefix = line[:matched.start()]
+      if prefix.endswith('std::') or not prefix.endswith('::'):
+        required[header] = (linenum, template)
+  return required
+
+
 def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
                               io=codecs):
   """Reports for missing stl includes.
@@ -5530,22 +5540,15 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
       if prefix.endswith('std::') or not prefix.endswith('::'):
         required['<string>'] = (linenum, 'string')
 
-    for pattern, template, header in _re_pattern_headers_maybe_templates:
-      if pattern.search(line):
-        required[header] = (linenum, template)
+    required = UpdateRequiredHeadersForLine(_re_pattern_headers_maybe_templates,
+                                            line, linenum, required)
 
     # The following function is just a speed up, no semantics are changed.
     if not '<' in line:  # Reduces the cpu time usage by skipping lines.
       continue
 
-    for pattern, template, header in _re_pattern_templates:
-      matched = pattern.search(line)
-      if matched:
-        # Don't warn about IWYU in non-STL namespaces:
-        # (We check only the first match per line; good enough.)
-        prefix = line[:matched.start()]
-        if prefix.endswith('std::') or not prefix.endswith('::'):
-          required[header] = (linenum, template)
+    required = UpdateRequiredHeadersForLine(_re_pattern_templates, line,
+                                            linenum, required)
 
   # The policy is that if you #include something in foo.h you don't need to
   # include it again in foo.cc. Here, we will look at possible includes.
