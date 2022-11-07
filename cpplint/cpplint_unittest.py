@@ -975,6 +975,11 @@ class CpplintTest(CpplintTestBase):
         '')
     self.TestIncludeWhatYouUse(
         """#include "base/foobar.h"
+          void FooBar::Remove(size_t index);
+        """,
+        '')
+    self.TestIncludeWhatYouUse(
+        """#include "base/foobar.h"
            bool foobar = std::less<int>(0,1);
         """,
         'Add #include <functional> for less<>'
