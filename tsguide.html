@@ -11,26 +11,34 @@
 <body onload="initStyleGuide();">
 <div id="content">
 <h1>Google TypeScript Style Guide</h1>
-<h1>TypeScript style guide</h1>
+<h1>TypeScript Style Guide</h1>
 
-<section>
-This is the external guide that's based on the internal Google version but has been adjusted for the broader audience. There is no automatic deployment process for this version as it's pushed on-demand by volunteers.
+<p>go/tsstyle</p>
 
-<p>It contains both rules and best practices. Choose those that work best for your team.
+<section markdown="1">
+This guide is based on the internal Google TypeScript style guide, but it has
+been slightly adjusted to remove Google-internal sections.  Google's internal
+environment has different constraints on TypeScript than you might find outside
+of Google.  The advice here is specifically useful for people authoring code
+they intend to import into Google, but otherwise may not apply in your external
+environment.
+
+<p>There is no automatic deployment process for this version as it's pushed
+on-demand by volunteers.
 </p></section>
 
-<p>This Style Guide uses <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a> terminology
-when using the phrases <em>must</em>, <em>must not</em>, <em>should</em>, <em>should not</em>, and <em>may</em>.
-All examples given are non-normative and serve only to illustrate the normative
-language of the style guide.</p>
+<p>This Style Guide uses <a href="https://tools.ietf.org/html/rfc2119">RFC 2119</a>
+terminology when using the phrases <em>must</em>, <em>must not</em>, <em>should</em>, <em>should not</em>,
+and <em>may</em>. All examples given are non-normative and serve only to illustrate the
+normative language of the style guide.</p>
 
 <h2 id="syntax">Syntax</h2>
 
 <h3 id="identifiers">Identifiers</h3>
 
-<p>Identifiers must use only ASCII letters, digits, underscores (for constants and
-structured test method names), and the '\(' sign. Thus each valid identifier name
-is matched by the regular expression `[\)\w]+`.</p>
+<p>Identifiers <em>must</em> use only ASCII letters, digits, underscores (for constants
+and structured test method names), and the '\(' sign. Thus each valid identifier
+name is matched by the regular expression `[\)\w]+`.</p>
 
 <table>
 <thead>
@@ -54,8 +62,10 @@ parameters</td>
 module alias</td>
 </tr>
 <tr>
-<td><code>CONSTANT_CASE</code></td>
-<td>global constant values, including enum values</td>
+<td><code>CONSTANT_CASE</code>
+</td>
+<td>global constant values, including enum values. See
+<a href="#identifiers-constants">Constants</a> below.</td>
 </tr>
 <tr>
 <td><code>#ident</code></td>
@@ -64,24 +74,35 @@ module alias</td>
 </tbody>
 </table>
 
-<ul>
-<li><p><strong>Abbreviations</strong>:
-Treat abbreviations like acronyms in names as whole words, i.e. use
-<code>loadHttpUrl</code>, not <del><code>loadHTTPURL</code></del>, unless required by a platform name
-(e.g. <code>XMLHttpRequest</code>).</p></li>
-<li><p><strong>Dollar sign</strong>: Identifiers <em>should not</em> generally use <code>$</code>, except when
-aligning with naming conventions for third party frameworks.
-<a href="#naming-style">See below</a> for more on using <code>$</code> with <code>Observable</code> values.</p></li>
-<li><p><strong>Type parameters</strong>: Type parameters, like in <code>Array&lt;T&gt;</code>, may use a single
-upper case character (<code>T</code>) or <code>UpperCamelCase</code>.</p></li>
-<li><p><strong>Test names</strong>: Test method names in Closure <code>testSuite</code>s and similar
-xUnit-style test frameworks may be structured with <code>_</code> separators, e.g.
-<code>testX_whenY_doesZ()</code>.</p></li>
-<li><p><strong><code>_</code> prefix/suffix</strong>: Identifiers must not use <code>_</code> as a prefix or suffix.</p>
+<h4 id="identifiers-abbreviations">Abbreviations</h4>
 
-<p>This also means that <code>_</code> must not be used as an identifier by itself (e.g.
-to indicate a parameter is unused).</p></li>
-</ul>
+<p>
+Treat abbreviations like acronyms in names as whole words, i.e. use
+<code>loadHttpUrl</code>, not <del><code>loadHTTPURL</code></del>, unless required by a platform name (e.g.
+<code>XMLHttpRequest</code>).</p>
+
+<h4 id="identifiers-dollar-sign">Dollar sign</h4>
+
+<p>Identifiers <em>should not</em> generally use <code>$</code>, except when aligning with naming
+conventions for third party frameworks. <a href="#naming-style">See below</a> for more on
+using <code>$</code> with <code>Observable</code> values.</p>
+
+<h4 id="identifiers-type-parameters">Type parameters</h4>
+
+<p>Type parameters, like in <code>Array&lt;T&gt;</code>, <em>may</em> use a single upper case character
+(<code>T</code>) or <code>UpperCamelCase</code>.</p>
+
+<h4 id="identifiers-test-names">Test names</h4>
+
+<p>Test method names in Closure <code>testSuite</code>s and similar xUnit-style test
+frameworks <em>may</em> be structured with <code>_</code> separators, e.g. <code>testX_whenY_doesZ()</code>.</p>
+
+<h4 id="identifiers-underscore-prefix-suffix"><code>_</code> prefix/suffix</h4>
+
+<p>Identifiers must not use <code>_</code> as a prefix or suffix.</p>
+
+<p>This also means that <code>_</code> <em>must not</em> be used as an identifier by itself (e.g. to
+indicate a parameter is unused).</p>
 
 <blockquote>
 <p>Tip: If you only need some of the elements from an array (or TypeScript
@@ -92,27 +113,30 @@ in-between elements:</p>
 </code></pre>
 </blockquote>
 
-<ul>
-<li><p><strong>Imports</strong>: Module namespace imports are <code>lowerCamelCase</code> while files are
-<code>snake_case</code>, which means that imports correctly will not match in casing
-style, such as</p>
+<h4 id="identifiers-imports">Imports</h4>
+
+<p>Module namespace imports are <code>lowerCamelCase</code> while files are <code>snake_case</code>,
+which means that imports correctly will not match in casing style, such as</p>
 
 <pre><code class="language-ts good">import * as fooBar from './foo_bar';
 </code></pre>
 
-<p>Some libraries might commonly use a namespace import prefix that violates
-this naming scheme, but overbearingly common open source use makes the
-violating style more readable. The only libraries that currently fall under
-this exception are:</p>
+<p>Some libraries might commonly use a namespace import prefix that violates this
+naming scheme, but overbearingly common open source use makes the violating
+style more readable. The only libraries that currently fall under this exception
+are:</p>
 
 <ul>
 <li><a href="https://jquery.com/">jquery</a>, using the <code>$</code> prefix</li>
 <li><a href="https://threejs.org/">threejs</a>, using the <code>THREE</code> prefix</li>
-</ul></li>
-<li><p><strong>Constants</strong>: <code>CONSTANT_CASE</code> indicates that a value is <em>intended</em> to not
-be changed, and may be used for values that can technically be modified
-(i.e. values that are not deeply frozen) to indicate to users that they must
-not be modified.</p>
+</ul>
+
+<h4 id="identifiers-constants">Constants</h4>
+
+<p><strong>Immutable</strong>: <code>CONSTANT_CASE</code> indicates that a value is <em>intended</em> to not be
+changed, and <em>may</em> be used for values that can technically be modified (i.e.
+values that are not deeply frozen) to indicate to users that they must not be
+modified.</p>
 
 <pre><code class="language-ts good">const UNIT_SUFFIXES = {
   'milliseconds': 'ms',
@@ -133,25 +157,29 @@ not be modified.</p>
 }
 </code></pre>
 
-<p>If a value can be instantiated more than once over the lifetime of the
-program, or if users mutate it in any way, it must use <code>lowerCamelCase</code>.</p>
+<p><strong>Global</strong>: Only symbols declared on the module level, static fields of module
+level classes, and values of module level enums, <em>may</em> use <code>CONST_CASE</code>. If a
+value can be instantiated more than once over the lifetime of the program (e.g.
+a local variable declared within a function, or a static field on a class nested
+in a function) then it <em>must</em> use <code>lowerCamelCase</code>.</p>
 
-<p>If a value is an arrow function that implements an interface, then it can be
-declared <code>lowerCamelCase</code>.</p></li>
-<li>
-
-</li>
-</ul>
+<p>If a value is an arrow function that implements an interface, then it <em>may</em> be
+declared <code>lowerCamelCase</code>.</p>
 
 <h4 id="aliases">Aliases</h4>
 
 <p>When creating a local-scope alias of an existing symbol, use the format of the
-existing identifier. The local alias must match the existing naming and format
+existing identifier. The local alias <em>must</em> match the existing naming and format
 of the source. For variables use <code>const</code> for your local aliases, and for class
 fields use the <code>readonly</code> attribute.</p>
 
-<pre><code class="language-ts good">
-const {Foo} = SomeType;
+<blockquote>
+<p>Note: If you're creating an alias just to expose it to a template in your
+framework of choice, remember to also apply the proper
+<a href="#properties-used-outside-of-class-lexical-scope">access modifiers</a>.</p>
+</blockquote>
+
+<pre><code class="language-ts good">const {Foo} = SomeType;
 const CAPACITY = 5;
 
 class Teapot {
@@ -223,6 +251,27 @@ const units = '\u03bcs'; // Greek letter mu, 's'
 const output = '\ufeff' + content;
 </code></pre>
 
+<h3 id="syntax-no-line-continuations">No line continuations</h3>
+
+<p>Do not use <em>line continuations</em> (that is, ending a line inside a string literal
+with a backslash) in either ordinary or template string literals. Even though
+ES5 allows this, it can lead to tricky errors if any trailing whitespace comes
+after the slash, and is less obvious to readers.</p>
+
+<p>Disallowed:</p>
+
+<pre><code class="language-ts bad">const LONG_STRING = 'This is a very long string that far exceeds the 80 \
+    column limit. It unfortunately contains long stretches of spaces due \
+    to how the continued lines are indented.';
+</code></pre>
+
+<p>Instead, write</p>
+
+<pre><code class="language-ts good">const LONG_STRING = 'This is a very long string that far exceeds the 80 ' +
+    'column limit. It does not contain long stretches of spaces since ' +
+    'the concatenated strings are cleaner.';
+</code></pre>
+
 <h3 id="comments-documentation">Comments &amp; Documentation</h3>
 
 <h4 id="jsdoc-vs-comments">JSDoc vs comments</h4>
@@ -260,17 +309,11 @@ not immediately obvious from their name, as judged by your reviewer.</p>
 
 <h4 id="omit-comments-that-are-redundant-with-typescript">Omit comments that are redundant with TypeScript</h4>
 
+<p><a id="do-not-use-override"></a></p>
+
 <p>For example, do not declare types in <code>@param</code> or <code>@return</code> blocks, do not write
-<code>@implements</code>, <code>@enum</code>, <code>@private</code> etc. on code that uses the <code>implements</code>,
-<code>enum</code>, <code>private</code> etc. keywords.</p>
-
-<h4 id="do-not-use-override">Do not use <code>@override</code></h4>
-
-<p>Do not use <code>@override</code> in TypeScript source code.</p>
-
-<p><code>@override</code> is not enforced by the compiler, which is surprising and leads to
-annotations and implementation going out of sync. Including it purely for
-documentation purposes is confusing.</p>
+<code>@implements</code>, <code>@enum</code>, <code>@private</code>, <code>@override</code> etc. on code that uses the
+<code>implements</code>, <code>enum</code>, <code>private</code>, <code>override</code> etc. keywords.</p>
 
 <h4 id="redundant-comments">Make comments that actually add information</h4>
 
@@ -284,7 +327,7 @@ just variable names though!</p>
 <pre><code class="language-ts bad">/** @param fooBarService The Bar service for the Foo application. */
 </code></pre></li>
 <li><p>Because of this rule, <code>@param</code> and <code>@return</code> lines are only required when
-they add information, and may otherwise be omitted.</p>
+they add information, and <em>may</em> otherwise be omitted.</p>
 
 <pre><code class="language-ts good">/**
  * POSTs the request to start coffee brewing.
@@ -298,10 +341,15 @@ brew(amountLitres: number, logger: Logger) {
 
 <h4 id="parameter-property-comments">Parameter property comments</h4>
 
-<p>A parameter property is when a class declares a field and a constructor
-parameter in a single declaration, by marking a parameter in the constructor.
-E.g. <code>constructor(private readonly foo: Foo)</code>, declares that the class has a
-<code>foo</code> field.</p>
+<p>A
+<a href="https://www.typescriptlang.org/docs/handbook/2/classes.html#parameter-properties">parameter property</a>
+is a constructor parameter that is prefixed by one of the modifiers <code>private</code>,
+<code>protected</code>, <code>public</code>, or <code>readonly</code>. A parameter property declares both a
+parameter and an instance property, and implicitly assigns into it. For example,
+<code>constructor(private readonly foo: Foo)</code>, declares that the constructor takes a
+parameter <code>foo</code>, but also declares a private readonly property <code>foo</code>, and
+assigns the parameter into that property before executing the remainder of the
+constructor.</p>
 
 <p>To document these fields, use JSDoc's <code>@param</code> annotation. Editors display the
 description on constructor calls and property accesses.</p>
@@ -382,6 +430,9 @@ export class FooComponent {}
 
 <h2 id="language-rules">Language Rules</h2>
 
+<p>TypeScript language features which are not discussed in this style guide <em>may</em>
+be used with no recommendations of their usage.</p>
+
 <h3 id="visibility">Visibility</h3>
 
 <p>Restricting visibility of properties, methods, and entire types helps with
@@ -415,7 +466,7 @@ constructors).</li>
 
 <h3 id="constructors">Constructors</h3>
 
-<p>Constructor calls must use parentheses, even when no arguments are passed:</p>
+<p>Constructor calls <em>must</em> use parentheses, even when no arguments are passed:</p>
 
 <pre><code class="language-ts bad">const x = new Foo;
 </code></pre>
@@ -425,9 +476,9 @@ constructors).</li>
 
 <p>It is unnecessary to provide an empty constructor or one that simply delegates
 into its parent class because ES2015 provides a default class constructor if one
-is not specified. However constructors with parameter properties, modifiers or
-parameter decorators should not be omitted even if the body of the constructor
-is empty.</p>
+is not specified. However constructors with parameter properties, visibility
+modifiers or parameter decorators <em>should not</em> be omitted even if the body of
+the constructor is empty.</p>
 
 <pre><code class="language-ts bad">class UnnecessaryConstructor {
   constructor() {}
@@ -475,7 +526,7 @@ class NoInstantiation {
 }
 </code></pre>
 
-<section class="zippy">
+<section class="zippy" markdown="1">
 Why?
 
 <p> Private identifiers cause substantial emit size and
@@ -495,7 +546,7 @@ to enforce visibility.</p>
 
 <p>Rather than plumbing an obvious initializer through to a class member, use a
 TypeScript
-<a href="https://www.typescriptlang.org/docs/handbook/classes.html#parameter-properties">parameter property</a>.</p>
+<a href="https://www.typescriptlang.org/docs/handbook/2/classes.html#parameter-properties">parameter property</a>.</p>
 
 <pre><code class="language-ts bad">class Foo {
   private readonly barService: BarService;
@@ -535,18 +586,20 @@ sometimes lets you drop the constructor entirely.</p>
 <h4 id="properties-used-outside-of-class-lexical-scope">Properties used outside of class lexical scope</h4>
 
 <p>Properties used from outside the lexical scope of their containing class, such
-as an AngularJS controller's properties used from a template, must not use
+as an Angular component's properties used from a template, <em>must not</em> use
 <code>private</code> visibility, as they are used outside of the lexical scope of their
 containing class.</p>
 
-<p>Prefer <code>public</code> visibility for these properties, however <code>protected</code> visibility
-can also be used as needed. For example, Angular and Polymer template properties
-should use <code>public</code>, but AngularJS should use <code>protected</code>.</p>
+<p>Use either <code>protected</code> or <code>public</code> as appropriate to the property in question.
+Angular and AngularJS template properties should use <code>protected</code>, but Polymer
+should use <code>public</code>.</p>
 
-<p>TypeScript code must not not use <code>obj['foo']</code> to bypass the visibility of a
-property</p>
+<p>TypeScript code <em>must not</em> use <code>obj['foo']</code> to bypass the visibility of a
+property. See
+<a href="http://go/typescript-testing#export-private-visibility">testing and private visibility</a>
+if you want to access protected fields from a test.</p>
 
-<section class="zippy">
+<section class="zippy" markdown="1">
 Why?
 
 <p>When a property is <code>private</code>, you are declaring to both automated systems and
@@ -555,15 +608,15 @@ class, and they will rely on that. For example, a check for unused code will
 flag a private property that appears to be unused, even if some other file
 manages to bypass the visibility restriction.</p>
 
-<p>Though it may appear that <code>obj['foo']</code> can bypass visibility in the TypeScript
+<p>Though it might appear that <code>obj['foo']</code> can bypass visibility in the TypeScript
 compiler, this pattern can be broken by rearranging the build rules,
 and also violates <a href="#optimization-compatibility">optimization compatibility</a>.
 </p></section>
 
 <h4>Getters and Setters (Accessors)</h4>
 
-<p>Getters and setters for class members may be used. The getter method must be a
-<a href="https://en.wikipedia.org/wiki/Pure_function">pure function</a> (i.e., result is
+<p>Getters and setters for class members <em>may</em> be used. The getter method <em>must</em> be
+a <a href="https://en.wikipedia.org/wiki/Pure_function">pure function</a> (i.e., result is
 consistent and has no side effects). They are also useful as a means of
 restricting the visibility of internal or verbose implementation details (shown
 below).</p>
@@ -581,10 +634,10 @@ below).</p>
 }
 </code></pre>
 
-<p>If an accessor is used to hide a class property, the hidden property may be
+<p>If an accessor is used to hide a class property, the hidden property <em>may</em> be
 prefixed or suffixed with any whole word, like <code>internal</code> or <code>wrapped</code>. When
 using these private properties, access the value through the accessor whenever
-possible. At least one accessor for a property must be non-trivial: do not
+possible. At least one accessor for a property <em>must</em> be non-trivial: do not
 define <q>pass-through</q> accessors only for the purpose of hiding a property.
 Instead, make the property public (or consider making it <code>readonly</code> rather than
 just defining a getter with no setter).</p>
@@ -614,11 +667,44 @@ just defining a getter with no setter).</p>
 }
 </code></pre>
 
+<h4 id="static-this">Static this references</h4>
+
+<p>Code <em>must not</em> use <code>this</code> in a static context.</p>
+
+<p>JavaScript allows accessing static fields through <code>this</code>. Different from other
+languages, static fields are also inherited.</p>
+
+<pre><code class="bad">class ShoeStore {
+  static storage: Storage = ...;
+
+  static isAvailable(s: Shoe) {
+    // Bad: do not use `this` in a static method.
+    return this.storage.has(s.id);
+  }
+}
+
+class EmptyShoeStore extends ShoeStore {
+  static storage: Storage = EMPTY_STORE;  // overrides storage from ShoeStore
+}
+</code></pre>
+
+<section class="zippy">
+Why?
+
+<p>This code is generally surprising: authors might not expect that static fields
+can be accessed through the this pointer, and might be surprised to find that
+they can be overridden - this feature is not commonly used.</p>
+
+<p>This code also encourages an anti-pattern of having substantial static state,
+which causes problems with testability.</p>
+
+</section>
+
 <h3 id="primitive-types-wrapper-classes">Primitive Types &amp; Wrapper Classes</h3>
 
-<p>TypeScript code must not instantiate the wrapper classes for the primitive types
-<code>String</code>, <code>Boolean</code>, and <code>Number</code>. Wrapper classes have surprising behaviour,
-such as <code>new Boolean(false)</code> evaluating to <code>true</code>.</p>
+<p>TypeScript code <em>must not</em> instantiate the wrapper classes for the primitive
+types <code>String</code>, <code>Boolean</code>, and <code>Number</code>. Wrapper classes have surprising
+behavior, such as <code>new Boolean(false)</code> evaluating to <code>true</code>.</p>
 
 <pre><code class="language-ts bad">const s = new String('hello');
 const b = new Boolean(false);
@@ -632,7 +718,7 @@ const n = 5;
 
 <h3 id="array-constructor">Array constructor</h3>
 
-<p>TypeScript code must not use the <code>Array()</code> constructor, with or without <code>new</code>.
+<p>TypeScript code <em>must not</em> use the <code>Array()</code> constructor, with or without <code>new</code>.
 It has confusing and contradictory usage:</p>
 
 
@@ -659,7 +745,7 @@ Array.from&lt;number&gt;({length: 5}).fill(0);
 
 <h3 id="type-coercion">Type coercion</h3>
 
-<p>TypeScript code may use the <code>String()</code> and <code>Boolean()</code> (note: no <code>new</code>!)
+<p>TypeScript code <em>may</em> use the <code>String()</code> and <code>Boolean()</code> (note: no <code>new</code>!)
 functions, string template literals, or <code>!!</code> to coerce types.</p>
 
 <pre><code class="language-ts good">const bool = Boolean(false);
@@ -668,29 +754,75 @@ const bool2 = !!str;
 const str2 = `result: ${bool2}`;
 </code></pre>
 
+<p>Values of enum types (including unions of enum types and other types) <em>must not</em>
+be converted to booleans with <code>Boolean()</code> or <code>!!</code>, and must instead be compared
+explicitly with comparison operators.</p>
+
+<pre><code class="language-ts bad">enum SupportLevel {
+  NONE,
+  BASIC,
+  ADVANCED,
+}
+
+const level: SupportLevel = ...;
+let enabled = Boolean(level);
+
+const maybeLevel: SupportLevel|undefined = ...;
+enabled = !!maybeLevel;
+</code></pre>
+
+<pre><code class="language-ts good">enum SupportLevel {
+  NONE,
+  BASIC,
+  ADVANCED,
+}
+
+const level: SupportLevel = ...;
+let enabled = level !== SupportLevel.NONE;
+
+const maybeLevel: SupportLevel|undefined = ...;
+enabled = level !== undefined &amp;&amp; level !== SupportLevel.NONE;
+</code></pre>
+
+<section class="zippy" markdown="1">
+Why?
+
+<p>For most purposes, it doesn't matter what number or string value an enum name is
+mapped to at runtime, because values of enum types are referred to by name in
+source code. Consequently, engineers are accustomed to not thinking about this,
+and so situations where it <em>does</em> matter are undesirable because they will be
+surprising. Such is the case with conversion of enums to booleans; in
+particular, by default, the first declared enum value is falsy (because it is 0)
+while the others are truthy, which is likely to be unexpected. Readers of code
+that uses an enum value may not even know whether it's the first declared value
+or not.
+</p></section>
+
 <p>Using string concatenation to cast to string is discouraged, as we check that
 operands to the plus operator are of matching types.</p>
 
-<p>Code must use <code>Number()</code> to parse numeric values, and <em>must</em> check its return
+<p>Code <em>must</em> use <code>Number()</code> to parse numeric values, and <em>must</em> check its return
 for <code>NaN</code> values explicitly, unless failing to parse is impossible from context.</p>
 
 <p>Note: <code>Number('')</code>, <code>Number(' ')</code>, and <code>Number('\t')</code> would return <code>0</code> instead
 of <code>NaN</code>. <code>Number('Infinity')</code> and <code>Number('-Infinity')</code> would return <code>Infinity</code>
-and <code>-Infinity</code> respectively. These cases may require special handling.</p>
+and <code>-Infinity</code> respectively. Additionally, exponential notation such as
+<code>Number('1e+309')</code> and <code>Number('-1e+309')</code> can overflow into <code>Infinity</code>. These
+cases may require special handling.</p>
 
 <pre><code class="language-ts good">const aNumber = Number('123');
-if (isNaN(aNumber)) throw new Error(...);  // Handle NaN if the string might not contain a number
-assertFinite(aNumber, ...);                // Optional: if NaN cannot happen because it was validated before.
+if (!isFinite(aNumber)) throw new Error(...);
 </code></pre>
 
-<p>Code must not use unary plus (<code>+</code>) to coerce strings to numbers. Parsing numbers
-can fail, has surprising corner cases, and can be a code smell (parsing at the
-wrong layer). A unary plus is too easy to miss in code reviews given this.</p>
+<p>Code <em>must not</em> use unary plus (<code>+</code>) to coerce strings to numbers. Parsing
+numbers can fail, has surprising corner cases, and can be a code smell (parsing
+at the wrong layer). A unary plus is too easy to miss in code reviews given
+this.</p>
 
 <pre><code class="language-ts bad">const x = +y;
 </code></pre>
 
-<p>Code must also not use <code>parseInt</code> or <code>parseFloat</code> to parse numbers, except for
+<p>Code also <em>must not</em> use <code>parseInt</code> or <code>parseFloat</code> to parse numbers, except for
 non-base-10 strings (see below). Both of those functions ignore trailing
 characters in the string, which can shadow error conditions (e.g. parsing <code>12
 dwarves</code> as <code>12</code>).</p>
@@ -699,8 +831,8 @@ dwarves</code> as <code>12</code>).</p>
 const f = parseFloat(someString);    // regardless of passing a radix.
 </code></pre>
 
-<p>Code that must parse using a radix <em>must</em> check that its input is a number
-before calling into <code>parseInt</code>;</p>
+<p>Code that requires parsing with a radix <em>must</em> check that its input contains
+only appropriate digits for that radix before calling into <code>parseInt</code>;</p>
 
 <pre><code class="language-ts good">if (!/^[a-fA-F0-9]+$/.test(someString)) throw new Error(...);
 // Needed to parse hexadecimal.
@@ -716,6 +848,8 @@ if (isNaN(f)) handleError();
 f = Math.floor(f);
 </code></pre>
 
+<h4 id="type-coercion-implicit">Implicit coercion</h4>
+
 <p>Do not use explicit boolean coercions in conditional clauses that have implicit
 boolean coercion. Those are the conditions in an <code>if</code>, <code>for</code> and <code>while</code>
 statements.</p>
@@ -730,7 +864,38 @@ if (foo) {...}
 while (foo) {...}
 </code></pre>
 
-<p>Code may use explicit comparisons:</p>
+<p><a href="#type-coercion">As with explicit conversions</a>, values of enum types (including
+unions of enum types and other types) <em>must not</em> be implicitly coerced to
+booleans, and must instead be compared explicitly with comparison operators.</p>
+
+<pre><code class="language-ts bad">enum SupportLevel {
+  NONE,
+  BASIC,
+  ADVANCED,
+}
+
+const level: SupportLevel = ...;
+if (level) {...}
+
+const maybeLevel: SupportLevel|undefined = ...;
+if (level) {...}
+</code></pre>
+
+<pre><code class="language-ts good">enum SupportLevel {
+  NONE,
+  BASIC,
+  ADVANCED,
+}
+
+const level: SupportLevel = ...;
+if (level !== SupportLevel.NONE) {...}
+
+const maybeLevel: SupportLevel|undefined = ...;
+if (level !== undefined &amp;&amp; level !== SupportLevel.NONE) {...}
+</code></pre>
+
+<p>Other types of values may be either implicitly coerced to booleans or compared
+explicitly with comparison operators:</p>
 
 <pre><code class="language-ts good">// Explicitly comparing &gt; 0 is OK:
 if (arr.length &gt; 0) {...}
@@ -754,9 +919,11 @@ bugs. Don't use it.</p>
 <pre><code class="language-ts bad">var foo = someValue;     // Don't use - var scoping is complex and causes bugs.
 </code></pre>
 
-<p>Variables must not be used before their declaration.</p>
+<p>Variables <em>must not</em> be used before their declaration.</p>
 
 <h3 id="exceptions">Exceptions</h3>
+
+<h4>Instantiate Errors using new</h4>
 
 <p>Always use <code>new Error()</code> when instantiating exceptions, instead of just calling
 <code>Error()</code>. Both forms create a new <code>Error</code> instance, but using <code>new</code> is more
@@ -767,6 +934,67 @@ consistent with how other objects are instantiated.</p>
 
 <pre><code class="language-ts bad">throw Error('Foo is not a valid bar.');
 </code></pre>
+
+<h4>Only throw Errors</h4>
+
+<p>JavaScript (and thus TypeScript) allow throwing arbitrary values. However if the
+thrown value is not an <code>Error</code>, it does not get a stack trace filled in, making
+debugging hard.</p>
+
+<pre><code class="language-ts bad">// bad: does not get a stack trace.
+throw 'oh noes!';
+</code></pre>
+
+<p>Instead, only throw (subclasses of) <code>Error</code>:</p>
+
+<pre><code class="language-ts good">// Throw only Errors
+throw new Error('oh noes!');
+// ... or subtypes of Error.
+class MyError extends Error {}
+throw new MyError('my oh noes!');
+</code></pre>
+
+<h4>Catching &amp; rethrowing</h4>
+
+<p>When catching errors, code <em>should</em> assume that all thrown errors are instances
+of <code>Error</code>.</p>
+
+<section markdown="1">
+
+<pre><code class="language-ts good">try {
+  doSomething();
+} catch (e: unknown) {
+  // All thrown errors must be Error subtypes. Do not handle
+  // other possible values unless you know they are thrown.
+  assert(e, isInstanceOf(Error));
+  displayError(e.message);
+  // or rethrow:
+  throw e;
+}
+</code></pre>
+
+</section>
+
+<p>Exception handlers <em>must not</em> defensively handle non-<code>Error</code> types unless the
+called API is conclusively known to throw non-<code>Error</code>s in violation of the above
+rule. In that case, a comment should be included to specifically identify where
+the non-<code>Error</code>s originate.</p>
+
+<pre><code class="language-ts good">try {
+  badApiThrowingStrings();
+} catch (e: unknown) {
+  // Note: bad API throws strings instead of errors.
+  if (typeof e === 'string') { ... }
+}
+</code></pre>
+
+<section class="zippy" markdown="1">
+Why?
+
+<p>Avoid <a href="https://en.wikipedia.org/wiki/Defensive_programming#Offensive_programming">overly defensive programming</a>. Repeating the same
+defenses against a problem that will not exist in most code leads to
+boiler-plate code that is not useful.
+</p></section>
 
 <h3 id="iterating-objects">Iterating objects</h3>
 
@@ -805,8 +1033,9 @@ give the array's indices (as strings!), not values:</p>
 }
 </code></pre>
 
-<p>Use <code>for (... of someArr)</code> or vanilla <code>for</code> loops with indices to iterate over
-arrays.</p>
+<p>Prefer <code>for (... of someArr)</code> to iterate over arrays,
+go/tsjs-practices/iteration. <code>Array.prototype.forEach</code> and vanilla <code>for</code> loops
+are also allowed:</p>
 
 <pre><code class="language-ts good">for (const x of someArr) {
   // x is a value of someArr.
@@ -821,38 +1050,6 @@ for (const [i, x] of someArr.entries()) {
   // Alternative version of the above.
 }
 </code></pre>
-
-<p>Do not use <code>Array.prototype.forEach</code>, <code>Set.prototype.forEach</code>, and
-<code>Map.prototype.forEach</code>. They make code harder to debug and defeat some useful
-compiler checks (e.g. reachability).</p>
-
-<pre><code class="language-ts bad">someArr.forEach((item, index) =&gt; {
-  someFn(item, index);
-});
-</code></pre>
-
-<section class="zippy">
-Why?
-
-<p>Consider this code:</p>
-
-<pre><code class="language-ts bad">let x: string|null = 'abc';
-myArray.forEach(() =&gt; { x.charAt(0); });
-</code></pre>
-
-<p>You can recognize that this code is fine: <code>x</code> isn't null and it doesn't change
-before it is accessed. But the compiler cannot know that this <code>.forEach()</code> call
-doesn't hang on to the closure that was passed in and call it at some later
-point, maybe after <code>x</code> was set to null, so it flags this code as an error. The
-equivalent for-of loop is fine.</p>
-
-<p>
-<a href="https://www.typescriptlang.org/play?#code/DYUwLgBAHgXBDOYBOBLAdgcwD5oK7GAgF4IByAQwCMBjUgbgCgBtAXQDoAzAeyQFFzqACwAUwgJTEAfBADeDCNDZDySAIJhhABjGMAvjoYNQkAJ5xEqTDnyESFGvQbckEYdS5pEEAPoQuHCFYJOQUTJUEVdS0DXQYgA">See the error and non-error in the playground</a>
-</p>
-
-<p>In practice, variations of this limitation of control flow analysis show up in
-more complex codepaths where it is more surprising.
-</p></section>
 
 <h3 id="using-the-spread-operator">Using the spread operator</h3>
 
@@ -879,10 +1076,10 @@ foo3.num === 1;
 
 </code></pre>
 
-<p>When using the spread operator, the value being spread must match what is being
-created. That is, when creating an object, only objects may be used with the
-spread operator; when creating an array, only spread iterables. Primitives,
-including <code>null</code> and <code>undefined</code>, may never be spread.</p>
+<p>When using the spread operator, the value being spread <em>must</em> match what is
+being created. That is, when creating an object, only objects may be used with
+the spread operator; when creating an array, only spread iterables. Primitives,
+including <code>null</code> and <code>undefined</code>, <em>must not</em> be spread.</p>
 
 <pre><code class="language-ts bad">const foo = {num: 7};
 const bar = {num: 5, ...(shouldUseFoo &amp;&amp; foo)}; // might be undefined
@@ -900,32 +1097,58 @@ const ids = [...fooStrings, 'd', 'e'];
 
 <h3 id="control-flow-statements-blocks">Control flow statements &amp; blocks</h3>
 
-<p>Control flow statements spanning multiple lines always use blocks for the
-containing code.</p>
+<p>Control flow statements always use blocks for the containing code.</p>
 
 <pre><code class="language-ts good">for (let i = 0; i &lt; x; i++) {
   doSomethingWith(i);
-  andSomeMore();
 }
+
 if (x) {
-  doSomethingWithALongMethodName(x);
+  doSomethingWithALongMethodNameThatForcesANewLine(x);
 }
 </code></pre>
 
 <pre><code class="language-ts bad">if (x)
-  x.doFoo();
-for (let i = 0; i &lt; x; i++)
-  doSomethingWithALongMethodName(i);
+  doSomethingWithALongMethodNameThatForcesANewLine(x);
+
+for (let i = 0; i &lt; x; i++) doSomethingWith(i);
 </code></pre>
 
-<p>The exception is that <code>if</code> statements fitting on one line may elide the block.</p>
+<p>The exception is that <code>if</code> statements fitting on one line <em>may</em> elide the block.</p>
 
 <pre><code class="language-ts good">if (x) x.doFoo();
 </code></pre>
 
-<h3 id="switch-statements">Switch Statements</h3>
+<h3>Assignment in control statements</h3>
 
-<p>All <code>switch</code> statements must contain a <code>default</code> statement group, even if it
+<p>Prefer to avoid assignment of variables inside control statements. Assignment
+can be easily mistaken for equality checks inside control statements.</p>
+
+<pre><code class="language-ts bad">if (x = someFunction()) {
+  // Assignment easily mistaken with equality check
+  // ...
+}
+</code></pre>
+
+<pre><code class="language-ts good">x = someFunction();
+if (x) {
+  // ...
+}
+</code></pre>
+
+<p>In cases where assignment inside the control statement is preferred, enclose the
+assignment in additional parenthesis to indicate it is intentional.</p>
+
+<pre><code class="language-ts">while ((x = someFunction())) {
+  // Double parenthesis shows assignment is intentional
+  // ...
+}
+
+</code></pre>
+
+<h3>Switch Statements</h3>
+
+<p>All <code>switch</code> statements <em>must</em> contain a <code>default</code> statement group, even if it
 contains no code.</p>
 
 <pre><code class="language-ts good">switch (x) {
@@ -937,7 +1160,7 @@ contains no code.</p>
 }
 </code></pre>
 
-<p>Non-empty statement groups (<code>case ...</code>) may not fall through (enforced by the
+<p>Non-empty statement groups (<code>case ...</code>) <em>must not</em> fall through (enforced by the
 compiler):</p>
 
 <pre><code class="language-ts bad">switch (x) {
@@ -977,45 +1200,50 @@ slower to implement for JavaScript Virtual Machines. See also the
 }
 </code></pre>
 
-<p><strong>Exception</strong>: Comparisons to the literal <code>null</code> value may use the <code>==</code> and <code>!=</code>
-operators to cover both <code>null</code> and <code>undefined</code> values.</p>
+<p><strong>Exception</strong>: Comparisons to the literal <code>null</code> value <em>may</em> use the <code>==</code> and
+<code>!=</code> operators to cover both <code>null</code> and <code>undefined</code> values.</p>
 
 <pre><code class="language-ts good">if (foo == null) {
   // Will trigger when foo is null or undefined.
 }
 </code></pre>
 
+<h3>Keep try blocks focused</h3>
+
+<p>Limit the amount of code inside a try block, if this can be done without hurting
+readability.</p>
+
+<pre><code class="language-ts bad">try {
+  const result = methodThatMayThrow();
+  use(result);
+} catch (error: unknown) {
+  // ...
+}
+</code></pre>
+
+<pre><code class="language-ts good">let result;
+try {
+  result = methodThatMayThrow();
+} catch (error: unknown) {
+  // ...
+}
+use(result);
+</code></pre>
+
+<p>Moving the non-throwable lines out of the try/catch block helps the reader learn
+which method throws exceptions. Some inline calls that do not throw exceptions
+could stay inside because they might not be worth the extra complication of a
+temporary variable.</p>
+
+<p><strong>Exception</strong>: There may be performance issues if try blocks are inside a loop.
+Widening try blocks to cover a whole loop is ok.</p>
+
 <h3 id="function-declarations">Function Declarations</h3>
 
-<p>Use <code>function foo() { ... }</code> to declare named functions, including functions in
-nested scopes, e.g. within another function.</p>
+<p>Prefer <code>function foo() { ... }</code> to declare top-level named functions.</p>
 
-<p>Use function declarations instead of assigning a function expression into a
-local variable (<del><code>const x = function() {...};</code></del>). TypeScript already disallows
-rebinding functions, so preventing overwriting a function declaration by using
-<code>const</code> is unnecessary.</p>
-
-<p>Exception: Use arrow functions assigned to variables instead of function
-declarations if the function accesses the outer scope's <code>this</code>.</p>
-
-<pre><code class="language-ts good">function foo() { ... }
-</code></pre>
-
-<pre><code class="language-ts bad">// Given the above declaration, this won't compile:
-foo = () =&gt; 3;  // ERROR: Invalid left-hand side of assignment expression.
-
-// So declarations like this are unnecessary.
-const foo = function() { ... }
-</code></pre>
-
-<blockquote>
-<p>Note the difference between function declarations (<code>function foo() {}</code>)
-discussed here, and function expressions (<del><code>doSomethingWith(function()
-{});</code></del>) discussed <a href="#function-expressions">below</a>.</p>
-</blockquote>
-
-<p>Top level arrow functions <em>may</em> be used to explicitly declare that a function
-implements an interface.</p>
+<p>Top-level arrow functions <em>may</em> be used, for example to provide an explicit type
+annotation.</p>
 
 <pre><code class="language-ts good">interface SearchFunction {
   (source: string, subString: string): boolean;
@@ -1023,6 +1251,12 @@ implements an interface.</p>
 
 const fooSearch: SearchFunction = (source, subString) =&gt; { ... };
 </code></pre>
+
+<blockquote>
+<p>Note the difference between function declarations (<code>function foo() {}</code>)
+discussed here, and function expressions (<del><code>doSomethingWith(function()
+{});</code></del>) discussed <a href="#function-expressions">below</a>.</p>
+</blockquote>
 
 <h3 id="function-expressions">Function Expressions</h3>
 
@@ -1037,7 +1271,7 @@ the <code>function</code> keyword.</p>
 <pre><code class="language-ts bad">bar(function() { ... })
 </code></pre>
 
-<p>Function expressions (defined with the <code>function</code> keyword) may only be used if
+<p>Function expressions (defined with the <code>function</code> keyword) <em>may</em> only be used if
 code has to dynamically rebind the <code>this</code> pointer, but code <em>should not</em> rebind
 the <code>this</code> pointer in general. Code in regular functions (as opposed to arrow
 functions and methods) <em>should not</em> access <code>this</code>.</p>
@@ -1061,6 +1295,9 @@ function someFunction() {
   function payMoney(amount: number) {
     // function declarations are fine, but don't access `this` in them.
   }
+
+  // Nested arrow functions may be assigned to a const.
+  const computeTax = (amount: number) =&gt; amount * 0.12;
 }
 </code></pre>
 
@@ -1085,7 +1322,7 @@ const transformed = [1, 2, 3].map(v =&gt; {
 
 <h4 id="rebinding-this">Rebinding <code>this</code></h4>
 
-<p>Function expressions must not use <code>this</code> unless they specifically exist to
+<p>Function expressions <em>must not</em> use <code>this</code> unless they specifically exist to
 rebind the <code>this</code> pointer. Rebinding <code>this</code> can in most cases be avoided by
 using arrow functions or explicit parameters.</p>
 
@@ -1164,9 +1401,9 @@ class DelayHandler {
 
 <p>Event handlers <em>may</em> use arrow functions when there is no need to uninstall the
 handler (for example, if the event is emitted by the class itself). If the
-handler must be uninstalled, arrow function properties are the right approach,
-because they automatically capture <code>this</code> and provide a stable reference to
-uninstall.</p>
+handler requires uninstallation, arrow function properties are the right
+approach, because they automatically capture <code>this</code> and provide a stable
+reference to uninstall.</p>
 
 <pre><code class="language-ts good">// Event handlers may be anonymous functions or arrow function properties.
 class Component {
@@ -1218,9 +1455,10 @@ clang-format).</p>
 
 <h3 id="ts-ignore">@ts-ignore</h3>
 
-<p>Do not use <code>@ts-ignore</code>. It superficially seems to be an easy way to <q>fix</q> a
-compiler error, but in practice, a specific compiler error is often caused by a
-larger problem that can be fixed more directly.</p>
+<p>Do not use <code>@ts-ignore</code> nor variants <code>@ts-expect-error</code> or <code>@ts-nocheck</code>. They
+superficially seem to be an easy way to <q>fix</q> a compiler error, but in practice,
+a specific compiler error is often caused by a larger problem that can be fixed
+more directly.</p>
 
 <p>For example, if you are using <code>@ts-ignore</code> to suppress a type error, then it's
 hard to predict what types the surrounding code will end up seeing. For many
@@ -1268,20 +1506,21 @@ y!.bar();
 </code></pre>
 
 <p>If the reasoning behind a type or non-nullability assertion is obvious, the
-comments may not be necessary. For example, generated proto code is always
+comments <em>may</em> not be necessary. For example, generated proto code is always
 nullable, but perhaps it is well-known in the context of the code that certain
 fields are always provided by the backend. Use your judgement.</p>
 
 <h4 id="type-assertions-syntax">Type Assertions Syntax</h4>
 
-<p>Type assertions must use the <code>as</code> syntax (as opposed to the angle brackets
+<p>Type assertions <em>must</em> use the <code>as</code> syntax (as opposed to the angle brackets
 syntax). This enforces parentheses around the assertion when accessing a member.</p>
 
 <pre><code class="language-ts bad">const x = (&lt;Foo&gt;z).length;
 const y = &lt;Foo&gt;z.length;
 </code></pre>
 
-<pre><code class="language-ts good">const x = (z as Foo).length;
+<pre><code class="language-ts good">// z must be Foo because ...
+const x = (z as Foo).length;
 </code></pre>
 
 <h4 id="type-assertions-and-object-literals">Type Assertions and Object Literals</h4>
@@ -1328,8 +1567,8 @@ function func(): Foo {
 
 <h3 id="member-property-declarations">Member property declarations</h3>
 
-<p>Interface and class declarations must use the <code>;</code> character to separate
-individual member declarations:</p>
+<p>Interface and class declarations <em>must use</em> a semicolon to separate individual
+member declarations:</p>
 
 <pre><code class="language-ts good">interface Foo {
   memberA: string;
@@ -1337,8 +1576,8 @@ individual member declarations:</p>
 }
 </code></pre>
 
-<p>Interfaces specifically must not use the <code>,</code> character to separate fields, for
-symmetry with class declarations:</p>
+<p>Interfaces specifically <em>must not</em> use a comma to separate fields, for symmetry
+with class declarations:</p>
 
 <pre><code class="language-ts bad">interface Foo {
   memberA: string,
@@ -1346,7 +1585,7 @@ symmetry with class declarations:</p>
 }
 </code></pre>
 
-<p>Inline object type declarations must use the comma as a separator:</p>
+<p>Inline object type declarations <em>must</em> use a comma as a separator:</p>
 
 <pre><code class="language-ts good">type SomeTypeAlias = {
   memberA: string,
@@ -1358,7 +1597,7 @@ let someProperty: {memberC: string, memberD: number};
 
 <h4 id="optimization-compatibility-for-property-access">Optimization compatibility for property access</h4>
 
-<p>Code must not mix quoted property access with dotted property access:</p>
+<p>Code <em>must not</em> mix quoted property access with dotted property access:</p>
 
 <pre><code class="language-ts bad">// Bad: code must use either non-quoted or quoted access for any property
 // consistently across the entire application:
@@ -1366,17 +1605,18 @@ console.log(x['someField']);
 console.log(x.someField);
 </code></pre>
 
-<p>Code must not rely on disabling renaming, but must rather declare all properties
-that are external to the application to prevent renaming:</p>
+<p>Properties that are external to the application, e.g. properties on JSON objects
+or external APIs, <em>must</em> be accessed using <code>.dotted</code> notation, and <em>must</em> be
+declared as so-called ambient properties, using the <code>declare</code> modifier.
+</p>
 
-<p>Prefer for code to account for a possible property-renaming optimization, and
-declare all properties that are external to the application to prevent renaming:</p>
-
-<pre><code class="language-ts good">// Good: declaring an interface
+<pre><code class="language-ts good">// Good: using "declare" to declare types that are external to the application,
+// so that their properties are not renamed.
 declare interface ServerInfoJson {
   appVersion: string;
-  user: UserJson;
+  user: UserJson; // Note: UserJson must also use `declare`!
 }
+// serverResponse must be ServerInfoJson as per the application's contract.
 const data = JSON.parse(serverResponse) as ServerInfoJson;
 console.log(data.appVersion); // Type safe &amp; renaming safe!
 </code></pre>
@@ -1388,15 +1628,23 @@ rather than passing it around. This ensures that modules can be analyzed and
 optimized. Treating
 <a href="#module-versus-destructuring-imports">module imports</a> as namespaces is fine.</p>
 
-<pre><code class="language-ts good">import {method1, method2} from 'utils';
+<pre><code class="language-ts bad">import * as utils from 'utils';
 class A {
-  readonly utils = {method1, method2};
+  readonly utils = utils;  // &lt;--- BAD: passing around the module object
 }
 </code></pre>
 
-<pre><code class="language-ts bad">import * as utils from 'utils';
+<pre><code class="language-ts good">import * as utils from 'utils';
 class A {
-  readonly utils = utils;
+  readonly utils = {method1: utils.method1, method2: utils.method2};
+}
+</code></pre>
+
+<p>or, more tersely:</p>
+
+<pre><code class="language-ts good">import {method1, method2} from 'utils';
+class A {
+  readonly utils = {method1, method2};
 }
 </code></pre>
 
@@ -1407,15 +1655,21 @@ to code that only runs server side (e.g. in NodeJS for a test runner). It is
 still strongly encouraged to always declare all types and avoid mixing quoted
 and unquoted property access, for code hygiene.</p>
 
-<h3 id="enums">Enums</h3>
+<h3 id="enums">Const Enums</h3>
 
-<p>Always use <code>enum</code> and not <code>const enum</code>. TypeScript enums already cannot be
-mutated; <code>const enum</code> is a separate language feature related to optimization
-that makes the enum invisible to JavaScript users of the module.</p>
+<p>Code <em>must not</em> use <code>const enum</code>; use plain <code>enum</code> instead.</p>
+
+<section class="zippy" markdown="1">
+Why?
+
+<p>TypeScript enums already cannot be mutated; <code>const enum</code> is a separate language
+feature related to optimization that makes the enum invisible to
+JavaScript users of the module.
+</p></section>
 
 <h3 id="debugger-statements">Debugger statements</h3>
 
-<p>Debugger statements must not be included in production code.</p>
+<p>Debugger statements <em>must not</em> be included in production code.</p>
 
 <pre><code class="language-ts bad">function debugMe() {
   debugger;
@@ -1434,7 +1688,7 @@ frameworks:</p>
 <li>Polymer (e.g. <code>@property</code>)</li>
 </ul>
 
-<section>
+<section markdown="1">
 Why?
 
 <p>We generally want to avoid decorators, because they were an experimental
@@ -1442,7 +1696,7 @@ feature that have since diverged from the TC39 proposal and have known bugs that
 won't be fixed.
 </p></section>
 
-<p>When using decorators, the decorator must immediately precede the symbol it
+<p>When using decorators, the decorator <em>must</em> immediately precede the symbol it
 decorates, with no empty lines between:</p>
 
 <pre><code class="language-ts">/** JSDoc comments go before decorators */
@@ -1461,18 +1715,19 @@ class MyComp {
 
 <h4 id="import-paths">Import Paths</h4>
 
-<p>TypeScript code must use paths to import other TypeScript code. Paths may be
+<p>TypeScript code <em>must</em> use paths to import other TypeScript code. Paths <em>may</em> be
 relative, i.e. starting with <code>.</code> or <code>..</code>,
  or rooted at the base directory, e.g.
 <code>root/path/to/file</code>.</p>
 
 <p>Code <em>should</em> use relative imports (<code>./foo</code>) rather than absolute imports
-<code>path/to/foo</code> when referring to files within the same (logical) project.</p>
+<code>path/to/foo</code> when referring to files within the same (logical) project as this
+allows to move the project around without introducing changes in these imports.</p>
 
 <p>Consider limiting the number of parent steps (<code>../../../</code>) as those can make
 module and path structures hard to understand.</p>
 
-<pre><code class="language-ts good">import {Symbol1} from 'google3/path/from/root';
+<pre><code class="language-ts good">import {Symbol1} from 'path/from/root';
 import {Symbol2} from '../parent/file';
 import {Symbol3} from './sibling';
 </code></pre>
@@ -1480,16 +1735,15 @@ import {Symbol3} from './sibling';
 <h4 id="namespaces-vs-modules">Namespaces vs Modules</h4>
 
 <p>TypeScript supports two methods to organize code: <em>namespaces</em> and <em>modules</em>,
-but namespaces are disallowed. google3 code must use TypeScript <em>modules</em> (which
-are <a href="http://exploringjs.com/es6/ch_modules.html">ECMAScript 6 modules</a>). That
+but namespaces are disallowed.  That
 is, your code <em>must</em> refer to code in other files using imports and exports of
 the form <code>import {foo} from 'bar';</code></p>
 
-<p>Your code must not use the <code>namespace Foo { ... }</code> construct. <code>namespace</code>s may
-only be used when required to interface with external, third party code. To
-semantically namespace your code, use separate files.</p>
+<p>Your code <em>must not</em> use the <code>namespace Foo { ... }</code> construct. <code>namespace</code>s
+<em>may</em> only be used when required to interface with external, third party code.
+To semantically namespace your code, use separate files.</p>
 
-<p>Code must not use <code>require</code> (as in <code>import x = require('...');</code>) for imports.
+<p>Code <em>must not</em> use <code>require</code> (as in <code>import x = require('...');</code>) for imports.
 Use ES6 module syntax.</p>
 
 <pre><code class="language-ts bad">// Bad: do not use namespaces:
@@ -1525,7 +1779,7 @@ pattern.</p>
 export default class Foo { ... } // BAD!
 </code></pre>
 
-<section class="zippy">
+<section class="zippy" markdown="1">
 Why?
 
 <p>Default exports provide no canonical name, which makes central maintenance
@@ -1593,7 +1847,7 @@ exported API surface of modules.</p>
 and debug code, in particular with re-exports across multiple modules. One way
 to paraphrase this style point is that <code>export let</code> is not allowed.</p>
 
-<section>
+<section markdown="1">
 
 <pre><code class="language-ts bad">export let foo = 3;
 // In pure ES6, foo is mutable and importers will observe the value change after a second.
@@ -1605,8 +1859,8 @@ window.setTimeout(() =&gt; {
 
 </section>
 
-<p>If one needs to support externally accessible and mutable bindings, they should
-instead use explicit getter functions.</p>
+<p>If one needs to support externally accessible and mutable bindings, they
+<em>should</em> instead use explicit getter functions.</p>
 
 <pre><code class="language-ts good">let foo = 3;
 window.setTimeout(() =&gt; {
@@ -1783,25 +2037,29 @@ be more readable when renamed to <code>observableFrom</code>.</li>
 
 <h4 id="import-export-type">Import &amp; export type</h4>
 
-<p>Do not use <code>import type ... from</code> or <code>export type ... from</code>.</p>
+<p>Do not use <code>import type {...}</code> or <code>export type {...}</code>.</p>
 
-<p>Note: this does not apply to exporting type definitions, i.e. <code>export type Foo =
-...;</code>.</p>
-
-<pre><code class="language-ts bad">import type {Foo} from './foo';
+<pre><code class="language-ts bad">import type {Foo};
+export type {Bar};
 export type {Bar} from './bar';
 </code></pre>
 
-<p>Instead, just use regular imports:</p>
+<p>Instead, just use regular imports and exports:</p>
 
 <pre><code class="language-ts good">import {Foo} from './foo';
 export {Bar} from './bar';
 </code></pre>
 
+<p><strong>Note:</strong> this does not apply to <code>export</code> as applied to a type definition, i.e.
+<code>export type Foo = ...;</code>.</p>
+
+<pre><code class="language-ts good">export type Foo = string;
+</code></pre>
+
 <p>TypeScript tooling automatically distinguishes symbols used as types vs symbols
 used as values and only generates runtime loads for the latter.</p>
 
-<section class="zippy">
+<section class="zippy" markdown="1">
 Why?
 
 <p>TypeScript tooling automatically handles the distinction and does not insert
@@ -1832,11 +2090,9 @@ have packages named <code>products</code>, <code>checkout</code>, <code>backend<
 
 <h3 id="type-inference">Type Inference</h3>
 
-<p>Code may rely on type inference as implemented by the TypeScript compiler for
-all type expressions (variables, fields, return types, etc). The google3
-compiler flags reject code that does not have a type annotation and cannot be
-inferred, so all code is guaranteed to be typed (but might use the <code>any</code> type
-explicitly).</p>
+<p>Code <em>may</em> rely on type inference as implemented by the TypeScript compiler for
+all type expressions (variables, fields, return types, etc).
+</p>
 
 <pre><code class="language-ts good">const x = 15;  // Type inferred.
 </code></pre>
@@ -1856,7 +2112,17 @@ const x: Set&lt;string&gt; = new Set();
 </code></pre>
 
 <p>For more complex expressions, type annotations can help with readability of the
-program. Whether an annotation is required is decided by the code reviewer.</p>
+program:</p>
+
+<pre><code class="language-ts bad">// Hard to reason about the type of 'value' without an annotation.
+const value = await rpc.getSomeValue().transform();
+</code></pre>
+
+<pre><code class="language-ts good">// Can tell the type of 'value' at a glance.
+const value: string[] = await rpc.getSomeValue().transform();
+</code></pre>
+
+<p>Whether an annotation is required is decided by the code reviewer.</p>
 
 <h4 id="return-types">Return types</h4>
 
@@ -1980,7 +2246,7 @@ reporting).</p>
 }
 </code></pre>
 
-<section class="zippy">
+<section class="zippy" markdown="1">
 Why?
 
 <p>The <q>badFoo</q> object above relies on type inference. Additional fields could be
@@ -2033,7 +2299,7 @@ makeSound(horse);
 <h3 id="interfaces-vs-type-aliases">Interfaces vs Type Aliases</h3>
 
 <p>TypeScript supports
-<a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases">type aliases</a>
+<a href="https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases">type aliases</a>
 for naming a type expression. This can be used to name primitives, unions,
 tuples, and any other types.</p>
 
@@ -2052,12 +2318,12 @@ alias for the object literal expression.</p>
 }
 </code></pre>
 
-<section class="zippy">
+<section class="zippy" markdown="1">
 Why?
 
 <p>These forms are nearly equivalent, so under the principle of just choosing one
 out of two forms to prevent variation, we should choose one. Additionally, there
-also
+are also
 <a href="https://ncjamieson.com/prefer-interfaces/">interesting technical reasons to prefer interface</a>.
 That page quotes the TypeScript team lead: <q>Honestly, my take is that it should
 really just be interfaces for anything that they can model. There is no benefit
@@ -2071,6 +2337,9 @@ syntax sugar for arrays, <code>T[]</code>, rather than the longer form <code>Arr
 
 <p>For anything more complex, use the longer form <code>Array&lt;T&gt;</code>.</p>
 
+<p>These rules apply at each level of nesting, i.e. a simple <code>T[]</code> nested in a more
+complex type would still be spelled as <code>T[]</code>, using the syntax sugar.</p>
+
 <p>This also applies for <code>readonly T[]</code> vs <code>ReadonlyArray&lt;T&gt;</code>.</p>
 
 <pre><code class="language-ts good">const a: string[];
@@ -2078,19 +2347,22 @@ const b: readonly string[];
 const c: ns.MyObj[];
 const d: Array&lt;string|number&gt;;
 const e: ReadonlyArray&lt;string|number&gt;;
+const f: InjectionToken&lt;string[]&gt;;  // Use syntax sugar for nested types.
 </code></pre>
 
-<pre><code class="language-ts bad">const f: Array&lt;string&gt;;            // the syntax sugar is shorter
-const g: ReadonlyArray&lt;string&gt;;
-const h: {n: number, s: string}[]; // the braces/parens make it harder to read
-const i: (string|number)[];
-const j: readonly (string|number)[];
+<pre><code class="language-ts bad">const a: Array&lt;string&gt;;            // the syntax sugar is shorter
+const b: ReadonlyArray&lt;string&gt;;
+const c: {n: number, s: string}[]; // the braces/parens make it harder to read
+const d: (string|number)[];
+const e: readonly (string|number)[];
 </code></pre>
 
-<h3 id="indexable-key-string-number-type">Indexable (<code>{[key: string]: number}</code>) Type</h3>
+<h3 id="indexable-key-string-type">Indexable Types / index signatures (<code>{[key: string]: T}</code>)</h3>
 
 <p>In JavaScript, it's common to use an object as an associative array (aka <q>map</q>,
-<q>hash</q>, or <q>dict</q>):</p>
+<q>hash</q>, or <q>dict</q>). Such objects can be typed using an
+<a href="https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures">index signature</a>
+(<code>[k: string]: T</code>) in TypeScript:</p>
 
 <pre><code class="language-ts">const fileSizes: {[fileName: string]: number} = {};
 fileSizes['readme.txt'] = 541;
@@ -2121,9 +2393,9 @@ keys are statically known. See advice on that
 <h3 id="mapped-conditional-types">Mapped &amp; Conditional Types</h3>
 
 <p>TypeScript's
-<a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#mapped-types">mapped types</a>
+<a href="https://www.typescriptlang.org/docs/handbook/2/mapped-types.html">mapped types</a>
 and
-<a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#conditional-types">conditional types</a>
+<a href="https://www.typescriptlang.org/docs/handbook/2/conditional-types.html">conditional types</a>
 allow specifying new types based on other types. TypeScript's standard library
 includes several type operators based on these (<code>Record</code>, <code>Partial</code>, <code>Readonly</code>
 etc).</p>
@@ -2162,7 +2434,7 @@ term cost of complex type expressions.</li>
 <li>Mapped &amp; conditional types may be used, subject to these considerations.</li>
 </ul>
 
-<section class="zippy">
+<section class="zippy" markdown="1">
 For example, TypeScript's builtin <code>Pick&lt;T, Keys&gt;</code> type allows creating a new
 type by subsetting another type <code>T</code>, but simple interface extension can often be
 easier to understand.
@@ -2207,7 +2479,7 @@ dereferencing all properties. As such, <code>any</code> is dangerous - it can ma
 programming errors, and its use undermines the value of having static types in
 the first place.</p>
 
-<section>
+<section markdown="1">
 <strong>Consider <em>not</em> to use <code>any</code>.</strong> In circumstances where you
 want to use <code>any</code>, consider one of:
 </section>
@@ -2220,8 +2492,8 @@ want to use <code>any</code>, consider one of:
 
 <h4 id="any-specific">Providing a more specific type</h4>
 
-<p>Use interfaces , an inline object type, or
-a type alias:</p>
+<p>Use interfaces , an
+inline object type, or a type alias:</p>
 
 <pre><code class="language-ts good">// Use declared interfaces to represent server-side JSON.
 declare interface MyUserJson {
@@ -2264,7 +2536,7 @@ const val: unknown = value;
 danger.whoops();  // This access is completely unchecked!
 </code></pre>
 
-<section>
+<section markdown="1">
 To safely use <code>unknown</code> values, narrow the type using a
 <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types">type guard</a>
 </section>
@@ -2327,7 +2599,7 @@ const {host, port} = splitHostPort(userAddress);
 
 <h3 id="wrapper-types">Wrapper types</h3>
 
-<p>There are a few types related to JavaScript primitives that should never be
+<p>There are a few types related to JavaScript primitives that <em>should not</em> ever be
 used:</p>
 
 <ul>
@@ -2416,8 +2688,7 @@ always safely use a shared library.</li>
 <li>Code must import the libraries it uses (<q>strict deps</q>) so that a
 refactor in a dependency doesn't change the dependencies of its users.</li>
 <li>We ask users to write tests. Without tests we cannot have confidence
-that changes that we make to the language, or google3-wide library
-changes, don't break users.</li>
+that changes that we make to the language,  don't break users.</li>
 </ul></li>
 <li><p><strong>Code reviewers should be focused on improving the quality of the code, not
 enforcing arbitrary rules.</strong></p>
