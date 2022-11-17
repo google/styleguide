@@ -3371,7 +3371,7 @@ some other error, then consider using `cmp` with [`cmpopts.EquateErrors`].
 >
 > ```go
 > // Good:
-> gotErr := f(test.input) == nil
+> gotErr := f(test.input) != nil
 > if gotErr != test.wantErr {
 >     t.Errorf("f(%q) returned err = %v, want error presence = %v", test.input, gotErr, test.wantErr)
 > }
