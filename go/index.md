@@ -161,11 +161,11 @@ reviews.
 
 **Relevant Testing-on-the-Toilet articles**
 
-*   [https://testing.googleblog.com/2017/10/code-health-identifiernamingpostforworl.html](Identifier Naming)
-*   [https://testing.googleblog.com/2013/03/testing-on-toilet-testing-state-vs.html](Testing State vs. Testing Interactions)
-*   [https://testing.googleblog.com/2014/05/testing-on-toilet-effective-testing.html](Effective Testing)
-*   [https://testing.googleblog.com/2014/05/testing-on-toilet-risk-driven-testing.html](Risk-driven Testing)
-*   [https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html](Change-detector Tests Considered Harmful)
+*   [Identifier Naming](https://testing.googleblog.com/2017/10/code-health-identifiernamingpostforworl.html)
+*   [Testing State vs. Testing Interactions](https://testing.googleblog.com/2013/03/testing-on-toilet-testing-state-vs.html)
+*   [Effective Testing](https://testing.googleblog.com/2014/05/testing-on-toilet-effective-testing.html)
+*   [Risk-driven Testing](https://testing.googleblog.com/2014/05/testing-on-toilet-risk-driven-testing.html)
+*   [Change-detector Tests Considered Harmful](https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html)
 
 **Additional External Writings**
 
