@@ -17,7 +17,7 @@ This project holds the [C++ Style Guide][cpp], [C# Style Guide][csharp],
 [Java Style Guide][java], [Python Style Guide][py], [R Style Guide][r],
 [Shell Style Guide][sh], [HTML/CSS Style Guide][htmlcss],
 [JavaScript Style Guide][js], [TypeScript Style Guide][ts], [AngularJS Style Guide][angular],
-[Common Lisp Style Guide][cl], and [Vimscript Style Guide][vim]. This project
+[Common Lisp Style Guide][cl], and [Vim script Style Guide][vim]. This project
 also contains [cpplint][cpplint], a tool to assist with style guide compliance,
 and [google-c-style.el][emacs], an Emacs settings file for Google style.
 
