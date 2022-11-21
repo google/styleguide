@@ -1494,7 +1494,7 @@ import (
 )
 
 ldb := leveldb.Open("/my/table", &db.Options{
-    BlockSize int: 1<<16,
+    BlockSize: 1<<16,
     ErrorIfDBExists: true,
 
     // These fields all have their zero values.
@@ -1517,7 +1517,7 @@ import (
 )
 
 ldb := leveldb.Open("/my/table", &db.Options{
-    BlockSize int: 1<<16,
+    BlockSize: 1<<16,
     ErrorIfDBExists: true,
 })
 ```
