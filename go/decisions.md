@@ -30,20 +30,19 @@ This document is **not exhaustive** and will grow over time. In cases where
 [the core style guide](guide) contradicts the advice given here, **the style
 guide takes precedence**, and this document should be updated accordingly.
 
-See https://google.github.io/styleguide/go#about for the full set of Go Style
-documents.
+See [the Overview](https://google.github.io/styleguide/go#about) for the full
+set of Go Style documents.
 
 The following sections have moved from style decisions to another part of the
 guide:
 
-*   **MixedCaps**: see https://google.github.io/styleguide/go/guide#mixed-caps
+*   **MixedCaps**: see [guide#mixed-caps](guide#mixed-caps)
     <a id="mixed-caps"></a>
 
-*   **Formatting**: see https://google.github.io/styleguide/go/guide#formatting
+*   **Formatting**: see [guide#formatting](guide#formatting)
     <a id="formatting"></a>
 
-*   **Line Length**: see
-    https://google.github.io/styleguide/go/guide#line-length
+*   **Line Length**: see [guide#line-length](guide#line-length)
     <a id="line-length"></a>
 
 <a id="naming"></a>
@@ -116,7 +115,7 @@ wherever possible for consistency.
 
 <!--#include file="/go/g3doc/style/includes/special-name-exception.md"-->
 
-See also: https://go.dev/blog/package-names
+See also: [Go blog post about package names](https://go.dev/blog/package-names).
 
 <a id="receiver-names"></a>
 
@@ -1494,7 +1493,7 @@ import (
 )
 
 ldb := leveldb.Open("/my/table", &db.Options{
-    BlockSize int: 1<<16,
+    BlockSize: 1<<16,
     ErrorIfDBExists: true,
 
     // These fields all have their zero values.
@@ -1517,7 +1516,7 @@ import (
 )
 
 ldb := leveldb.Open("/my/table", &db.Options{
-    BlockSize int: 1<<16,
+    BlockSize: 1<<16,
     ErrorIfDBExists: true,
 })
 ```
@@ -2820,7 +2819,7 @@ Exceptions are:
 
     Code using gRPC streaming accesses a context from a `Context()` method in
     the generated server type, which implements `grpc.ServerStream`. See
-    https://grpc.io/docs/languages/go/generated-code/.
+    [gRPC Generated Code documentation](https://grpc.io/docs/languages/go/generated-code/).
 
 *   In entrypoint functions (see below for examples of such functions), use
     [`context.Background()`](https://pkg.go.dev/context/#Background).
@@ -2866,8 +2865,8 @@ and readability review.
 
 Code in the Google codebase that must spawn background operations which can run
 after the parent context has been cancelled can use an internal package for
-detachment. Follow https://github.com/golang/go/issues/40221 for discussions on
-an open source alternative.
+detachment. Follow [issue #40221](https://github.com/golang/go/issues/40221) for
+discussions on an open source alternative.
 
 Since contexts are immutable, it is fine to pass the same context to multiple
 calls that share the same deadline, cancellation signal, credentials, parent
@@ -3394,7 +3393,8 @@ See also
 The standard Go testing library offers a facility to [define subtests]. This
 allows flexibility in setup and cleanup, controlling parallelism, and test
 filtering. Subtests can be useful (particularly for table-driven tests), but
-using them is not mandatory. See also https://blog.golang.org/subtests.
+using them is not mandatory. See also the
+[Go blog post about subtests](https://blog.golang.org/subtests).
 
 Subtests should not depend on the execution of other cases for success or
 initial state, because subtests are expected to be able to be run individually

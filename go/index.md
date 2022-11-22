@@ -35,12 +35,12 @@ Document            | Link                                                  | Pr
 
 ### Documents
 
-1.  The **Style Guide** (https://google.github.io/styleguide/go/guide) outlines
+1.  The **[Style Guide](https://google.github.io/styleguide/go/guide)** outlines
     the foundation of Go style at Google. This document is definitive and is
     used as the basis for the recommendations in Style Decisions and Best
     Practices.
 
-1.  **Style Decisions** (https://google.github.io/styleguide/go/decisions) is a
+1.  **[Style Decisions](https://google.github.io/styleguide/go/decisions)** is a
     more verbose document that summarizes decisions on specific style points and
     discusses the reasoning behind the decisions where appropriate.
 
@@ -49,7 +49,7 @@ Document            | Link                                                  | Pr
     individual Go programmers at Google should keep up-to-date with this
     document.
 
-1.  **Best Practices** (https://google.github.io/styleguide/go/best-practices)
+1.  **[Best Practices](https://google.github.io/styleguide/go/best-practices)**
     documents some of the patterns that have evolved over time that solve common
     problems, read well, and are robust to code maintenance needs.
 
@@ -161,11 +161,17 @@ reviews.
 
 **Relevant Testing-on-the-Toilet articles**
 
-*   [https://testing.googleblog.com/2017/10/code-health-identifiernamingpostforworl.html](Identifier Naming)
-*   [https://testing.googleblog.com/2013/03/testing-on-toilet-testing-state-vs.html](Testing State vs. Testing Interactions)
-*   [https://testing.googleblog.com/2014/05/testing-on-toilet-effective-testing.html](Effective Testing)
-*   [https://testing.googleblog.com/2014/05/testing-on-toilet-risk-driven-testing.html](Risk-driven Testing)
-*   [https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html](Change-detector Tests Considered Harmful)
+*   [TotT: Identifier Naming][tott-431]
+*   [TotT: Testing State vs. Testing Interactions][tott-281]
+*   [TotT: Effective Testing][tott-324]
+*   [TotT: Risk-driven Testing][tott-329]
+*   [TotT: Change-detector Tests Considered Harmful][tott-350]
+
+[tott-431]: https://testing.googleblog.com/2017/10/code-health-identifiernamingpostforworl.html
+[tott-281]: https://testing.googleblog.com/2013/03/testing-on-toilet-testing-state-vs.html
+[tott-324]: https://testing.googleblog.com/2014/05/testing-on-toilet-effective-testing.html
+[tott-329]: https://testing.googleblog.com/2014/05/testing-on-toilet-risk-driven-testing.html
+[tott-350]: https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html
 
 **Additional External Writings**
 

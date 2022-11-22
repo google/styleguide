@@ -823,7 +823,8 @@ func handlePet(...) {
 ```
 
 Do not attempt to distinguish errors based on their string form. (See
-https://google.github.io/styleguide/go/index.html#gotip for more.)
+[Go Tip #13: Designing Errors for Checking](https://google.github.io/styleguide/go/index.html#gotip)
+for more.)
 
 ```go
 // Bad:
@@ -1492,11 +1493,11 @@ func (c *Client) Get(url string) (resp *Response, err error)
 
 ### Preview
 
-Go features a documentation server:
-https://pkg.go.dev/golang.org/x/pkgsite/cmd/pkgsite. It is recommended to
-preview the documentation your code produces both before and during the code
-review process. This helps to validate that the [godoc formatting] is rendered
-correctly.
+Go features a
+[documentation server](https://pkg.go.dev/golang.org/x/pkgsite/cmd/pkgsite). It
+is recommended to preview the documentation your code produces both before and
+during the code review process. This helps to validate that the
+[godoc formatting] is rendered correctly.
 
 [godoc formatting]: #godoc-formatting
 
@@ -2554,8 +2555,8 @@ fails, the user should know where, and why.
 **Tip:** Go 1.14 introduced a [`t.Cleanup`] function that can be used to
 register cleanup functions that run when your test completes. The function also
 works with test helpers. See
-https://google.github.io/styleguide/go/index.html#gotip for guidance on
-simplifying test helpers.
+[GoTip #4: Cleaning Up Your Tests](https://google.github.io/styleguide/go/index.html#gotip)
+for guidance on simplifying test helpers.
 
 The snippet below in a fictional file called `paint_test.go` demonstrates how
 `(*testing.T).Helper` influences failure reporting in a Go test:
