@@ -2152,6 +2152,7 @@ should also describe what the exception represents, and not the context in which
 it might occur. The class docstring should not repeat unnecessary information,
 such as that the class is a class.
 
+Do this:
 ```python
 class CheeseShopAddress:
   """The address of a cheese shop.
@@ -2163,6 +2164,7 @@ class OutOfCheeseError(Exception):
   """No more cheese is available."""
 ```
 
+Not this:
 ```python
 class CheeseShopAddress:
   """Class that describes the address of a cheese shop.
