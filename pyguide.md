@@ -17,7 +17,7 @@ See README.md for details.
     *   [2.2 Imports](#s2.2-imports)
     *   [2.3 Packages](#s2.3-packages)
     *   [2.4 Exceptions](#s2.4-exceptions)
-    *   [2.5 Global variables](#s2.5-global-variables)
+    *   [2.5 Mutable Global State](#s2.5-global-variables)
     *   [2.6 Nested/Local/Inner Classes and Functions](#s2.6-nested)
     *   [2.7 Comprehensions & Generator Expressions](#s2.7-comprehensions)
     *   [2.8 Default Iterators and Operators](#s2.8-default-iterators-and-operators)
@@ -45,6 +45,7 @@ See README.md for details.
     *   [3.8 Comments and Docstrings](#s3.8-comments-and-docstrings)
         +   [3.8.1 Docstrings](#s3.8.1-comments-in-doc-strings)
         +   [3.8.2 Modules](#s3.8.2-comments-in-modules)
+        +   [3.8.2.1 Test modules](#s3.8.2.1-test-modules)
         +   [3.8.3 Functions and Methods](#s3.8.3-functions-and-methods)
         +   [3.8.4 Classes](#s3.8.4-comments-in-classes)
         +   [3.8.5 Block and Inline Comments](#s3.8.5-block-and-inline-comments)
@@ -479,11 +480,13 @@ Exceptions must follow certain conditions:
 
 <a id="s2.5-global-variables"></a>
 <a id="25-global-variables"></a>
+<a id="s2.5-global-state"></a>
+<a id="25-global-state"></a>
 
 <a id="global-variables"></a>
-### 2.5 Global variables 
+### 2.5 Mutable Global State 
 
-Avoid global variables.
+Avoid mutable global state.
 
 <a id="s2.5.1-definition"></a>
 <a id="251-definition"></a>
@@ -491,7 +494,8 @@ Avoid global variables.
 <a id="global-variables-definition"></a>
 #### 2.5.1 Definition 
 
-Variables that are declared at the module level or as class attributes.
+Module level values or class attributes that can get mutated during program
+execution.
 
 <a id="s2.5.2-pros"></a>
 <a id="252-pros"></a>
@@ -507,8 +511,14 @@ Occasionally useful.
 <a id="global-variables-cons"></a>
 #### 2.5.3 Cons 
 
-Has the potential to change module behavior during the import, because
-assignments to global variables are done when the module is first imported.
+*   Breaks encapsulation: Such design can make it hard to achieve valid
+    objectives. For example, if global state is used to manage a database
+    connection, then connecting to two different databases at the same time
+    (such as for computing differences during a migration) becomes difficult.
+    Similar problems easily arise with global registries.
+
+*   Has the potential to change module behavior during the import, because
+    assignments to global variables are done when the module is first imported.
 
 <a id="s2.5.4-decision"></a>
 <a id="254-decision"></a>
@@ -516,16 +526,20 @@ assignments to global variables are done when the module is first imported.
 <a id="global-variables-decision"></a>
 #### 2.5.4 Decision 
 
-Avoid global variables.
+Avoid mutable global state.
 
-If needed, global variables should be declared at the module level and made
-internal to the module by prepending an `_` to the name. External access to
-global variables must be done through public module-level functions. See
-[Naming](#s3.16-naming) below.
+In those rare cases where using global state is warranted, mutable global
+entities should be declared at the module level or as a class attribute and made
+internal by prepending an `_` to the name. If necessary, external access to
+mutable global state must be done through public functions or class methods. See
+[Naming](#s3.16-naming) below. Please explain the design reasons why mutable
+global state is being used in a comment or a doc linked to from a comment.
 
-While module-level constants are technically variables, they are permitted and
-encouraged. For example: `_MAX_HOLY_HANDGRENADE_COUNT = 3`. Constants must be
-named using all caps with underscores. See [Naming](#s3.16-naming) below.
+Module-level constants are permitted and encouraged. For example:
+`_MAX_HOLY_HANDGRENADE_COUNT = 3` for an internal use constant or
+`SIR_LANCELOTS_FAVORITE_COLOR = "blue"` for a public API constant. Constants
+must be named using all caps with underscores. See [Naming](#s3.16-naming)
+below.
 
 <a id="s2.6-nested"></a>
 <a id="26-nested"></a>
@@ -1581,8 +1595,8 @@ No:  # See details at
 ```
 
 It is permissible to use backslash continuation when defining a `with` statement
-whose expressions span three or more lines. For two lines of expressions, use a
-nested `with` statement:
+with three or more context managers. For two context managers, use a nested
+`with` statement:
 
 ```python
 Yes:  with very_long_first_expression_function() as spam, \
@@ -1768,9 +1782,9 @@ No:    golomb4 = [
 ### 3.5 Blank Lines 
 
 Two blank lines between top-level definitions, be they function or class
-definitions. One blank line between method definitions and between the `class`
-line and the first method. No blank line following a `def` line. Use single
-blank lines as you judge appropriate within functions or methods.
+definitions. One blank line between method definitions and between the docstring
+of a `class` and the first method. No blank line following a `def` line. Use
+single blank lines as you judge appropriate within functions or methods.
 
 Blank lines need not be anchored to the definition. For example, related
 comments immediately preceding function, class, and method definitions can make
@@ -1956,6 +1970,32 @@ Typical usage example:
 ```
 
 
+<a id="s3.8.2.1-test-modules"></a>
+
+<a id="test-docs"></a>
+##### 3.8.2.1 Test modules 
+
+Module-level docstrings for test files are not required. They should be included
+only when there is additional information that can be provided.
+
+Examples include some specifics on how the test should be run, an explanation of
+an unusual setup pattern, dependency on the external environment, and so on.
+
+```python
+"""This blaze test uses golden files.
+
+You can update those files by running
+`blaze run //foo/bar:foo_test -- --update_golden_files` from the `google3`
+directory.
+"""
+```
+
+Docstrings that do not provide any new information should not be used.
+
+```python
+"""Tests for foo.bar."""
+```
+
 <a id="s3.8.3-functions-and-methods"></a>
 <a id="383-functions-and-methods"></a>
 <a id="functions-and-methods"></a>
@@ -1963,13 +2003,14 @@ Typical usage example:
 <a id="function-docs"></a>
 #### 3.8.3 Functions and Methods 
 
-In this section, "function" means a method, function, or generator.
+In this section, "function" means a method, function, generator, or property.
 
-A function must have a docstring, unless it meets all of the following criteria:
+A docstring is mandatory for every function that has one or more of the
+following properties:
 
--   not externally visible
--   very short
--   obvious
+-   being part of the public API
+-   nontrivial size
+-   non-obvious logic
 
 A docstring should give enough information to write a call to the function
 without reading the function's code. The docstring should describe the
@@ -1981,10 +2022,10 @@ details of a function's implementation that are not relevant to the caller are
 better expressed as comments alongside the code than within the function's
 docstring.
 
-The docstring should be descriptive-style (`"""Fetches rows from a
-Bigtable."""`) rather than imperative-style (`"""Fetch rows from a
-Bigtable."""`). The docstring for a `@property` data descriptor should use the
-same style as the docstring for an attribute or a
+The docstring may be descriptive-style (`"""Fetches rows from a Bigtable."""`)
+or imperative-style (`"""Fetch rows from a Bigtable."""`), but the style should
+be consistent within a file. The docstring for a `@property` data descriptor
+should use the same style as the docstring for an attribute or a
 <a href="#doc-function-args">function argument</a> (`"""The Bigtable path."""`,
 rather than `"""Returns the Bigtable path."""`).
 
@@ -2153,6 +2194,7 @@ it might occur. The class docstring should not repeat unnecessary information,
 such as that the class is a class.
 
 ```python
+# Yes:
 class CheeseShopAddress:
   """The address of a cheese shop.
 
@@ -2164,6 +2206,7 @@ class OutOfCheeseError(Exception):
 ```
 
 ```python
+# No:
 class CheeseShopAddress:
   """Class that describes the address of a cheese shop.
 
@@ -2242,8 +2285,8 @@ punctuation, spelling, and grammar help with that goal.
 Use an
 [f-string](https://docs.python.org/3/reference/lexical_analysis.html#f-strings),
 the `%` operator, or the `format` method for formatting strings, even when the
-parameters are all strings. Use your best judgment to decide between `+` and
-string formatting.
+parameters are all strings. Use your best judgment to decide between string
+formatting options. A single join with `+` is okay but do not format with `+`.
 
 ```python
 Yes: x = f'name: {name}; score: {n}'
@@ -3111,17 +3154,29 @@ def my_function(
 <a id="forward-declarations"></a>
 #### 3.19.3 Forward Declarations 
 
-If you need to use a class name from the same module that is not yet defined --
-for example, if you need the class inside the class declaration, or if you use a
-class that is defined below -- either use `from __future__ import annotations`
-for simple cases or use a string for the class name.
+If you need to use a class name (from the same module) that is not yet
+defined -- for example, if you need the class name inside the declaration of
+that class, or if you use a class that is defined later in the code -- either
+use `from __future__ import annotations` or use a string for the class name.
 
 ```python
+Yes:
 from __future__ import annotations
 
 class MyClass:
+  def __init__(self, stack: Sequence[MyClass], item: OtherClass) -> None:
 
-  def __init__(self, stack: Sequence[MyClass]) -> None:
+class OtherClass:
+  ...
+```
+
+```python
+Yes:
+class MyClass:
+  def __init__(self, stack: Sequence['MyClass'], item: 'OtherClass') -> None:
+
+class OtherClass:
+  ...
 ```
 
 <a id="s3.19.4-default-values"></a>
@@ -3375,6 +3430,28 @@ type and an existing name in a module, import it using `import x as y`.
 from typing import Any as AnyType
 ```
 
+Prefer to use built-in types as annotations where available. Python supports
+type annotations using parametric container types via
+[PEP-585](https://peps.python.org/pep-0585/), introduced in Python 3.9.
+
+```python
+def generate_foo_scores(foo: set[str]) -> list[float]:
+  ...
+```
+
+NOTE: Users of [Apache Beam](https://github.com/apache/beam/issues/23366) should
+continue to import parametric containers from `typing`.
+
+```python
+from typing import Set, List
+
+# Only use this older style if you are required to by introspection
+# code such as Apache Beam that has not yet been updated for PEP-585,
+# or if your code needs to run on Python versions earlier than 3.9.
+def generate_foo_scores(foo: Set[str]) -> List[float]:
+  ...
+```
+
 <a id="s3.19.13-conditional-imports"></a>
 <a id="31913-conditional-imports"></a>
 
@@ -3443,11 +3520,13 @@ When annotating, prefer to specify type parameters for generic types; otherwise,
 [the generics' parameters will be assumed to be `Any`](https://www.python.org/dev/peps/pep-0484/#the-any-type).
 
 ```python
+# Yes:
 def get_names(employee_ids: list[int]) -> dict[int, Any]:
   ...
 ```
 
 ```python
+# No:
 # These are both interpreted as get_names(employee_ids: list[Any]) -> dict[Any, Any]
 def get_names(employee_ids: list) -> Dict:
   ...
@@ -3461,11 +3540,13 @@ remember that in many cases [`TypeVar`](#typing-type-var) might be more
 appropriate:
 
 ```python
+# No:
 def get_names(employee_ids: list[Any]) -> dict[Any, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
 ```python
+# Yes:
 _T = TypeVar('_T')
 def get_names(employee_ids: list[_T]) -> dict[_T, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
