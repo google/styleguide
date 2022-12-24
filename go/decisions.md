@@ -3217,7 +3217,7 @@ It is user-configurable and should serve most comparison needs.
 [language-defined comparisons]: http://golang.org/ref/spec#Comparison_operators
 [`cmp`]: https://pkg.go.dev/github.com/google/go-cmp/cmp
 [`cmp.Equal`]: https://pkg.go.dev/github.com/google/go-cmp/cmp#Equal
-[`cmp.Diff`]: https://pkg.go.dev/github.com/google/go-cmp/cmp/cmp#Diff
+[`cmp.Diff`]: https://pkg.go.dev/github.com/google/go-cmp/cmp#Diff
 [`protocmp.Transform`]: https://pkg.go.dev/google.golang.org/protobuf/testing/protocmp#Transform
 
 Existing code may make use of the following older libraries, and may continue
