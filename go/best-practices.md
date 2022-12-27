@@ -1434,7 +1434,7 @@ Documentation is strongly encouraged if:
     // Good:
     package health
 
-    // A Watcher reports the health of some entity (usually a backen service).
+    // A Watcher reports the health of some entity (usually a backend service).
     //
     // Watcher methods are safe for simultaneous use by multiple goroutines.
     type Watcher interface {
