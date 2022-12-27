@@ -157,7 +157,9 @@ reviews.
 *   [Go Interfaces](https://research.swtch.com/interfaces)
 *   [Go Proverbs](https://go-proverbs.github.io/)
 
-*   <a id="gotip"></a> Go tips - stay tuned.
+*   <a id="gotip"></a> Go Tip Episodes - stay tuned.
+
+*   <a id="unit-testing-practices"></a> Unit Testing Practices - stay tuned.
 
 **Relevant Testing-on-the-Toilet articles**
 
