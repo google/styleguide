@@ -12,7 +12,6 @@ guidelines we use for Google code. If you are modifying a project that
 originated at Google, you may be pointed to this page to see the style guides
 that apply to that project.
 
-This project holds the following style guides:
 
 *   [AngularJS Style Guide][angular]
 *   [Common Lisp Style Guide][cl]
@@ -28,7 +27,7 @@ This project holds the following style guides:
 *   [Shell Style Guide][sh]
 *   [Swift Style Guide][swift]
 *   [TypeScript Style Guide][ts]
-*   [Vimscript Style Guide][vim]
+*   [Vim script Style Guide][vim]
 
 This project also contains [cpplint][cpplint], a tool to assist with style guide
 compliance, and [google-c-style.el][emacs], an Emacs settings file for Google
