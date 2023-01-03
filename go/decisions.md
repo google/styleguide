@@ -550,8 +550,8 @@ reader experience.
 # Bad:
 // This is a comment paragraph. The length of individual lines doesn't matter in
 Godoc;
-// but the choice of wrapping causes jagged lines on narrow screens or in
-Critique,
+// but the choice of wrapping causes jagged lines on narrow screens or in code
+review,
 // which can be annoying, especially when in a comment block that will wrap
 repeatedly.
 //
@@ -2318,7 +2318,7 @@ Do not export interfaces that the users of the package do not need.
 [real implementation]: best-practices#use-real-transports
 [public API]: https://abseil.io/resources/swe-book/html/ch12.html#test_via_public_apis
 [double types]: https://abseil.io/resources/swe-book/html/ch13.html#techniques_for_using_test_doubles
-[test doubles]: https://abseil.io/resources/swe-book/html/ch13.html#basic_concepts
+[test double]: https://abseil.io/resources/swe-book/html/ch13.html#basic_concepts
 [tott-438]: https://testing.googleblog.com/2017/08/code-health-eliminate-yagni-smells.html
 
 ```go
@@ -2435,8 +2435,8 @@ over time.
 <a id="TOC-ReceiverType"></a>
 
 A [method receiver] can be passed either as a value or a pointer, just as if it
-were a regular function parameter. The choice of which to choose should be based
-on which [method set(s)] the method should be a part of.
+were a regular function parameter. The choice between the two is based on which
+[method set(s)] the method should be a part of.
 
 [method receiver]: https://golang.org/ref/spec#Method_declarations
 [method set(s)]: https://golang.org/ref/spec#Method_sets
@@ -2882,19 +2882,19 @@ See also:
 
 #### Custom contexts
 
-Do not create custom context types or use interfaces other than context in
-function signatures. There are no exceptions to this rule.
+Do not create custom context types or use interfaces other than
+`context.Context` in function signatures. There are no exceptions to this rule.
 
-Imagine if every team had a custom context. Every function call from package P
-to package Q would have to determine how to convert a `PContext` to a
-`QContext`, for all pairs of packages P and Q. This is impractical and
+Imagine if every team had a custom context. Every function call from package `p`
+to package `q` would have to determine how to convert a `p.Context` to a
+`q.Context`, for all pairs of packages `p` and `q`. This is impractical and
 error-prone for humans, and it makes automated refactorings that add context
 parameters nearly impossible.
 
 If you have application data to pass around, put it in a parameter, in the
-receiver, in globals, or in a Context value if it truly belongs there. Creating
-your own Context type is not acceptable since it undermines the ability of the
-Go team to make Go programs work properly in production.
+receiver, in globals, or in a `Context` value if it truly belongs there.
+Creating your own context type is not acceptable since it undermines the ability
+of the Go team to make Go programs work properly in production.
 
 <a id="crypto-rand"></a>
 
@@ -3217,7 +3217,7 @@ It is user-configurable and should serve most comparison needs.
 [language-defined comparisons]: http://golang.org/ref/spec#Comparison_operators
 [`cmp`]: https://pkg.go.dev/github.com/google/go-cmp/cmp
 [`cmp.Equal`]: https://pkg.go.dev/github.com/google/go-cmp/cmp#Equal
-[`cmp.Diff`]: https://pkg.go.dev/github.com/google/go-cmp/cmp/cmp#Diff
+[`cmp.Diff`]: https://pkg.go.dev/github.com/google/go-cmp/cmp#Diff
 [`protocmp.Transform`]: https://pkg.go.dev/google.golang.org/protobuf/testing/protocmp#Transform
 
 Existing code may make use of the following older libraries, and may continue
