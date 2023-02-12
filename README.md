@@ -2,6 +2,8 @@
 # Ad logo if applicable 
 // if headers are added, recommend using a table of contents
 
+# Table of Contents
+
 Every major open-source project has its own style guide: a set of conventions
 (sometimes arbitrary) about how to write code for that project. It is much
 easier to understand a large codebase when all the code in it is in a consistent
@@ -13,6 +15,8 @@ style.
 guidelines we use for Google code. If you are modifying a project that
 originated at Google, you may be pointed to this page to see the style guides
 that apply to that project.
+
+//if a project applies to other style guides how would this effect the contributor
 
 # How to use the Project 
 //include how to change Google originated projects to intended style guide
