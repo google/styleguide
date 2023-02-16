@@ -75,7 +75,7 @@ See README.md for details.
         +   [3.19.7 Ignoring Types](#s3.19.7-ignoring-types)
         +   [3.19.8 Typing Variables](#s3.19.8-typing-variables)
         +   [3.19.9 Tuples vs Lists](#s3.19.9-tuples-vs-lists)
-        +   [3.19.10 TypeVars](#s3.19.10-typevars)
+        +   [3.19.10 Type variables](#s3.19.10-typevars)
         +   [3.19.11 String types](#s3.19.11-string-types)
         +   [3.19.12 Imports For Typing](#s3.19.12-imports-for-typing)
         +   [3.19.13 Conditional Imports](#s3.19.13-conditional-imports)
@@ -97,7 +97,7 @@ of *dos and don'ts* for Python programs.
 
 To help you format code correctly, we've created a [settings file for Vim](google_python_style.vim). For Emacs, the default settings should be fine.
 
-Many teams use the [yapf](https://github.com/google/yapf/)
+Many teams use the [Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
 auto-formatter to avoid arguing over formatting.
 
 
@@ -161,7 +161,8 @@ Suppress warnings if they are inappropriate so that other issues are not hidden.
 To suppress warnings, you can set a line-level comment:
 
 ```python
-dict = 'something awful'  # Bad Idea... pylint: disable=redefined-builtin
+def do_PUT(self):  # WSGI name, so pylint: disable=invalid-name
+  ...
 ```
 
 `pylint`
@@ -185,7 +186,7 @@ pylint --list-msgs
 To get more information on a particular message, use:
 
 ```shell
-pylint --help-msg=C6409
+pylint --help-msg=invalid-name
 ```
 
 Prefer `pylint: disable` to the deprecated older form `pylint: disable-msg`.
@@ -195,7 +196,7 @@ beginning of the function. Always include a comment explaining why you are
 deleting it. "Unused." is sufficient. For example:
 
 ```python
-def viking_cafe_order(spam: str, beans: str, eggs: Optional[str] = None) -> str:
+def viking_cafe_order(spam: str, beans: str, eggs: str | None = None) -> str:
     del beans, eggs  # Unused by vikings.
     return spam + spam + spam
 ```
@@ -347,7 +348,7 @@ No:
 
 The directory the main binary is located in should not be assumed to be in
 `sys.path` despite that happening in some environments. This being the case,
-code should assume that `import jodie` refers to a third party or top level
+code should assume that `import jodie` refers to a third-party or top-level
 package named `jodie`, not a local `jodie.py`.
 
 
@@ -494,7 +495,7 @@ Avoid mutable global state.
 <a id="global-variables-definition"></a>
 #### 2.5.1 Definition 
 
-Module level values or class attributes that can get mutated during program
+Module-level values or class attributes that can get mutated during program
 execution.
 
 <a id="s2.5.2-pros"></a>
@@ -568,8 +569,8 @@ variables defined in enclosing scopes.
 
 Allows definition of utility classes and functions that are only used inside of
 a very limited scope. Very
-[ADT](http://www.google.com/url?sa=D&q=http://en.wikipedia.org/wiki/Abstract_data_type)-y.
-Commonly used for implementing decorators.
+[ADT](https://en.wikipedia.org/wiki/Abstract_data_type)-y. Commonly used for
+implementing decorators.
 
 <a id="s2.6.3-cons"></a>
 <a id="263-cons"></a>
@@ -973,7 +974,7 @@ definition.
 Yes: def foo(a, b=None):
          if b is None:
              b = []
-Yes: def foo(a, b: Optional[Sequence] = None):
+Yes: def foo(a, b: Sequence | None = None):
          if b is None:
              b = []
 Yes: def foo(a, b: Sequence = ()):  # Empty tuple OK since tuples are immutable.
@@ -1197,8 +1198,8 @@ experienced Lisp and Scheme (and Haskell and ML and ...) programmers.
 <a id="lexical-scoping-cons"></a>
 #### 2.16.3 Cons 
 
-Can lead to confusing bugs. Such as this example based on
-[PEP-0227](http://www.google.com/url?sa=D&q=http://www.python.org/dev/peps/pep-0227/):
+Can lead to confusing bugs, such as this example based on
+[PEP-0227](https://peps.python.org/pep-0227/):
 
 ```python
 i = 4
@@ -1300,11 +1301,11 @@ decorator runs (at import time, perhaps from `pydoc` or other tools). A
 decorator that is called with valid parameters should (as much as possible) be
 guaranteed to succeed in all cases.
 
-Decorators are a special case of "top level code" - see [main](#s3.17-main) for
+Decorators are a special case of "top-level code" - see [main](#s3.17-main) for
 more discussion.
 
 Never use `staticmethod` unless forced to in order to integrate with an API
-defined in an existing library. Write a module level function instead.
+defined in an existing library. Write a module-level function instead.
 
 Use `classmethod` only when writing a named constructor, or a class-specific
 routine that modifies necessary global state such as a process-wide cache.
@@ -1323,8 +1324,8 @@ or `__eq__` are implemented as Python methods) and their atomicity should not be
 relied upon. Neither should you rely on atomic variable assignment (since this
 in turn depends on dictionaries).
 
-Use the Queue module's `Queue` data type as the preferred way to communicate
-data between threads. Otherwise, use the threading module and its locking
+Use the `queue` module's `Queue` data type as the preferred way to communicate
+data between threads. Otherwise, use the `threading` module and its locking
 primitives. Prefer condition variables and `threading.Condition` instead of
 using lower-level locks.
 
@@ -1460,11 +1461,11 @@ Use other `from __future__` import statements as you see fit.
 ### 2.21 Type Annotated Code 
 
 You can annotate Python code with type hints according to
-[PEP-484](https://www.python.org/dev/peps/pep-0484/), and type-check the code at
-build time with a type checking tool like [pytype](https://github.com/google/pytype).
+[PEP-484](https://peps.python.org/pep-0484/), and type-check the code at build
+time with a type checking tool like [pytype](https://github.com/google/pytype).
 
 Type annotations can be in the source or in a
-[stub pyi file](https://www.python.org/dev/peps/pep-0484/#stub-files). Whenever
+[stub pyi file](https://peps.python.org/pep-0484/#stub-files). Whenever
 possible, annotations should be in the source. Use pyi files for third-party or
 extension modules.
 
@@ -1483,7 +1484,7 @@ def func(a: int) -> list[int]:
 ```
 
 You can also declare the type of a variable using similar
-[PEP-526](https://www.python.org/dev/peps/pep-0526/) syntax:
+[PEP-526](https://peps.python.org/pep-0526/) syntax:
 
 ```python
 a: SomeType = some_func()
@@ -1554,23 +1555,53 @@ Explicit exceptions to the 80 character limit:
 
 -   Long import statements.
 -   URLs, pathnames, or long flags in comments.
--   Long string module level constants not containing whitespace that would be
+-   Long string module-level constants not containing whitespace that would be
     inconvenient to split across lines such as URLs or pathnames.
     -   Pylint disable comments. (e.g.: `# pylint: disable=invalid-name`)
 
-Do not use backslash line continuation except for `with` statements requiring
-three or more context managers.
+Do not use a backslash for
+[explicit line continuation](https://docs.python.org/3/reference/lexical_analysis.html#explicit-line-joining).
 
-Make use of Python's
+Instead, make use of Python's
 [implicit line joining inside parentheses, brackets and braces](http://docs.python.org/reference/lexical_analysis.html#implicit-line-joining).
 If necessary, you can add an extra pair of parentheses around an expression.
+
+Note that this rule doesn't prohibit backslash-escaped newlines within strings
+(see [below](#strings)).
 
 ```python
 Yes: foo_bar(self, width, height, color='black', design=None, x='foo',
              emphasis=None, highlight=0)
+```
 
-     if (width == 0 and height == 0 and
+```python
+
+Yes: if (width == 0 and height == 0 and
          color == 'red' and emphasis == 'strong'):
+
+     (bridge_questions.clarification_on
+      .average_airspeed_of.unladen_swallow) = 'African or European?'
+
+     with (
+         very_long_first_expression_function() as spam,
+         very_long_second_expression_function() as beans,
+         third_thing() as eggs,
+     ):
+       place_order(eggs, beans, spam, beans)
+```
+
+```python
+
+No:  if width == 0 and height == 0 and \
+         color == 'red' and emphasis == 'strong':
+
+     bridge_questions.clarification_on \
+         .average_airspeed_of.unladen_swallow = 'African or European?'
+
+     with very_long_first_expression_function() as spam, \
+           very_long_second_expression_function() as beans, \
+           third_thing() as eggs:
+       place_order(eggs, beans, spam, beans)
 ```
 
 When a literal string won't fit on a single line, use parentheses for implicit
@@ -1579,6 +1610,37 @@ line joining.
 ```python
 x = ('This will build a very long long '
      'long long long long long long string')
+```
+
+Prefer to break lines at the highest possible syntactic level. If you must break
+a line twice, break it at the same syntactic level both times.
+
+```python
+Yes: bridgekeeper.answer(
+         name="Arthur", quest=questlib.find(owner="Arthur", perilous=True))
+
+     answer = (a_long_line().of_chained_methods()
+               .that_eventually_provides().an_answer())
+
+     if (
+         config is None
+         or 'editor.language' not in config
+         or config['editor.language'].use_spaces is False
+     ):
+       use_tabs()
+```
+
+```python
+No: bridgekeeper.answer(name="Arthur", quest=questlib.find(
+        owner="Arthur", perilous=True))
+
+    answer = a_long_line().of_chained_methods().that_eventually_provides(
+        ).an_answer()
+
+    if (config is None or 'editor.language' not in config or config[
+        'editor.language'].use_spaces is False):
+      use_tabs()
+
 ```
 
 Within comments, put long URLs on their own line if necessary.
@@ -1592,29 +1654,6 @@ Yes:  # See details at
 No:  # See details at
      # http://www.example.com/us/developer/documentation/api/content/\
      # v2.0/csv_file_name_extension_full_specification.html
-```
-
-It is permissible to use backslash continuation when defining a `with` statement
-with three or more context managers. For two context managers, use a nested
-`with` statement:
-
-```python
-Yes:  with very_long_first_expression_function() as spam, \
-           very_long_second_expression_function() as beans, \
-           third_thing() as eggs:
-          place_order(eggs, beans, spam, beans)
-```
-
-```python
-No:  with VeryLongFirstExpressionFunction() as spam, \
-          VeryLongSecondExpressionFunction() as beans:
-       PlaceOrder(beans, spam)
-```
-
-```python
-Yes:  with very_long_first_expression_function() as spam:
-          with very_long_second_expression_function() as beans:
-              place_order(beans, spam)
 ```
 
 Make note of the indentation of the elements in the line continuation examples
@@ -1753,151 +1792,7 @@ No:    # Stuff on first line forbidden.
 Trailing commas in sequences of items are recommended only when the closing
 container token `]`, `)`, or `}` does not appear on the same line as the final
 element. The presence of a trailing comma is also used as a hint to our Python
-code auto-formatter [YAPF](https://pypi.org/project/yapf/) to direct it to auto-format the container
-of items to one item per line when the `,` after the final element is present.
-
-```python
-Yes:   golomb3 = [0, 1, 3]
-Yes:   golomb4 = [
-           0,
-           1,
-           4,
-           6,
-       ]
-```
-
-```python
-No:    golomb4 = [
-           0,
-           1,
-           4,
-           6
-       ]
-```
-
-<a id="s3.5-blank-lines"></a>
-<a id="35-blank-lines"></a>
-
-<a id="blank-lines"></a>
-### 3.5 Blank Lines 
-
-Two blank lines between top-level definitions, be they function or class
-definitions. One blank line between method definitions and between the docstring
-of a `class` and the first method. No blank line following a `def` line. Use
-single blank lines as you judge appropriate within functions or methods.
-
-Blank lines need not be anchored to the definition. For example, related
-comments immediately preceding function, class, and method definitions can make
-sense. Consider if your comment might be more useful as part of the docstring.
-
-<a id="s3.6-whitespace"></a>
-<a id="36-whitespace"></a>
-
-<a id="whitespace"></a>
-### 3.6 Whitespace 
-
-Follow standard typographic rules for the use of spaces around punctuation.
-
-No whitespace inside parentheses, brackets or braces.
-
-```python
-Yes: spam(ham[1], {'eggs': 2}, [])
-```
-
-```python
-No:  spam( ham[ 1 ], { 'eggs': 2 }, [ ] )
-```
-
-No whitespace before a comma, semicolon, or colon. Do use whitespace after a
-comma, semicolon, or colon, except at the end of the line.
-
-```python
-Yes: if x == 4:
-         print(x, y)
-     x, y = y, x
-```
-
-```python
-No:  if x == 4 :
-         print(x , y)
-     x , y = y , x
-```
-
-No whitespace before the open paren/bracket that starts an argument list,
-indexing or slicing.
-
-```python
-Yes: spam(1)
-```
-
-```python
-No:  spam (1)
-```
-
-```python
-Yes: dict['key'] = list[index]
-```
-
-```python
-No:  dict ['key'] = list [index]
-```
-
-No trailing whitespace.
-
-Surround binary operators with a single space on either side for assignment
-(`=`), comparisons (`==, <, >, !=, <>, <=, >=, in, not in, is, is not`), and
-Booleans (`and, or, not`). Use your better judgment for the insertion of spaces
-around arithmetic operators (`+`, `-`, `*`, `/`, `//`, `%`, `**`, `@`).
-
-```python
-Yes: x == 1
-```
-
-```python
-No:  x<1
-```
-
-Never use spaces around `=` when passing keyword arguments or defining a default
-parameter value, with one exception:
-[when a type annotation is present](#typing-default-values), *do* use spaces
-around the `=` for the default parameter value.
-
-```python
-Yes: def complex(real, imag=0.0): return Magic(r=real, i=imag)
-Yes: def complex(real, imag: float = 0.0): return Magic(r=real, i=imag)
-```
-
-```python
-No:  def complex(real, imag = 0.0): return Magic(r = real, i = imag)
-No:  def complex(real, imag: float=0.0): return Magic(r = real, i = imag)
-```
-
-Don't use spaces to vertically align tokens on consecutive lines, since it
-becomes a maintenance burden (applies to `:`, `#`, `=`, etc.):
-
-```python
-Yes:
-  foo = 1000  # comment
-  long_name = 2  # comment that should not be aligned
-
-  dictionary = {
-      'foo': 1,
-      'long_name': 2,
-  }
-```
-
-```python
-No:
-  foo       = 1000  # comment
-  long_name = 2     # comment that should not be aligned
-
-  dictionary = {
-      'foo'      : 1,
-      'long_name': 2,
-  }
-```
-
-
+code auto-formatter 
 <a id="Python_Interpreter"></a>
 <a id="s3.7-shebang-line"></a>
 <a id="37-shebang-line"></a>
@@ -1908,7 +1803,7 @@ No:
 Most `.py` files do not need to start with a `#!` line. Start the main file of a
 program with
 `#!/usr/bin/env python3` (to support virtualenvs) or `#!/usr/bin/python3` per
-[PEP-394](https://www.python.org/dev/peps/pep-0394/).
+[PEP-394](https://peps.python.org/pep-0394/).
 
 This line is used by the kernel to find the Python interpreter, but is ignored by Python when importing modules. It is only necessary on a file intended to be executed directly.
 
@@ -1933,15 +1828,14 @@ Python uses *docstrings* to document code. A docstring is a string that is the
 first statement in a package, module, class or function. These strings can be
 extracted automatically through the `__doc__` member of the object and are used
 by `pydoc`.
-(Try running `pydoc` on your module to see how it looks.) Always use the three
-double-quote `"""` format for docstrings (per
-[PEP 257](https://www.google.com/url?sa=D&q=http://www.python.org/dev/peps/pep-0257/)).
-A docstring should be organized as a summary line (one physical line not
-exceeding 80 characters) terminated by a period, question mark, or exclamation
-point. When writing more (encouraged), this must be followed by a blank line,
-followed by the rest of the docstring starting at the same cursor position as
-the first quote of the first line. There are more formatting guidelines for
-docstrings below.
+(Try running `pydoc` on your module to see how it looks.) Always use the
+three-double-quote `"""` format for docstrings (per
+[PEP 257](https://peps.python.org/pep-0257/)). A docstring should be organized
+as a summary line (one physical line not exceeding 80 characters) terminated by
+a period, question mark, or exclamation point. When writing more (encouraged),
+this must be followed by a blank line, followed by the rest of the docstring
+starting at the same cursor position as the first quote of the first line. There
+are more formatting guidelines for docstrings below.
 
 <a id="s3.8.2-comments-in-modules"></a>
 <a id="382-modules"></a>
@@ -1950,12 +1844,12 @@ docstrings below.
 <a id="module-docs"></a>
 #### 3.8.2 Modules 
 
-Every file should contain license boilerplate. Choose the appropriate boilerplate for the license used by the project (for example, Apache 2.0, BSD, LGPL, GPL)
+Every file should contain license boilerplate. Choose the appropriate boilerplate for the license used by the project (for example, Apache 2.0, BSD, LGPL, GPL).
 
 Files should start with a docstring describing the contents and usage of the
 module.
 ```python
-"""A one line summary of the module or program, terminated by a period.
+"""A one-line summary of the module or program, terminated by a period.
 
 Leave one blank line.  The rest of this docstring should contain an
 overall description of the module or program.  Optionally, it may also
@@ -2081,9 +1975,10 @@ aptly described using a one-line docstring.
     part of the API).
 
 ```python
-def fetch_smalltable_rows(table_handle: smalltable.Table,
-                          keys: Sequence[Union[bytes, str]],
-                          require_all_keys: bool = False,
+def fetch_smalltable_rows(
+    table_handle: smalltable.Table,
+    keys: Sequence[bytes | str],
+    require_all_keys: bool = False,
 ) -> Mapping[bytes, tuple[str, ...]]:
     """Fetches rows from a Smalltable.
 
@@ -2118,9 +2013,10 @@ def fetch_smalltable_rows(table_handle: smalltable.Table,
 Similarly, this variation on `Args:` with a line break is also allowed:
 
 ```python
-def fetch_smalltable_rows(table_handle: smalltable.Table,
-                          keys: Sequence[Union[bytes, str]],
-                          require_all_keys: bool = False,
+def fetch_smalltable_rows(
+    table_handle: smalltable.Table,
+    keys: Sequence[bytes | str],
+    require_all_keys: bool = False,
 ) -> Mapping[bytes, tuple[str, ...]]:
     """Fetches rows from a Smalltable.
 
@@ -2179,7 +2075,11 @@ class SampleClass:
     """
 
     def __init__(self, likes_spam: bool = False):
-        """Inits SampleClass with blah."""
+        """Initializes the instance based on spam preference.
+
+        Args:
+          likes_spam: Defines if instance exhibits this preference.
+        """
         self.likes_spam = likes_spam
         self.eggs = 0
 
@@ -2293,6 +2193,7 @@ Yes: x = f'name: {name}; score: {n}'
      x = '%s, %s!' % (imperative, expletive)
      x = '{}, {}'.format(first, second)
      x = 'name: %s; score: %d' % (name, n)
+     x = 'name: %(name)s; score: %(score)d' % {'name':name, 'score':n}
      x = 'name: {}; score: {}'.format(name, n)
      x = a + b
 ```
@@ -2309,7 +2210,7 @@ be optimized on CPython, that is an implementation detail. The conditions under
 which an optimization applies are not easy to predict and may change. Instead,
 add each substring to a list and `''.join` the list after the loop terminates,
 or write each substring to an `io.StringIO` buffer. These techniques
-consistently have amortized-linear run time complexity.
+consistently have amortized-linear run-time complexity.
 
 ```python
 Yes: items = ['<table>']
@@ -2387,6 +2288,11 @@ Don't do this.
       This is also fine, because textwrap.dedent()
       will collapse common leading spaces in each line.""")
 ```
+
+Note that using a backslash here does not violate the prohibition against
+[explicit line continuation](#line-length); in this case, the backslash is
+[escaping a newline](https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals)
+in a string literal.
 
 <a id="s3.10.1-logging"></a>
 <a id="3101-logging"></a>
@@ -2644,7 +2550,7 @@ grouped from most generic to least generic:
     ```
 
 5.  **Deprecated:** application-specific imports that are part of the same
-    top level
+    top-level
     sub-package as this file. For example:
 
     
@@ -2782,8 +2688,8 @@ Always use a `.py` filename extension. Never use dashes.
     -   counters or iterators (e.g. `i`, `j`, `k`, `v`, et al.)
     -   `e` as an exception identifier in `try/except` statements.
     -   `f` as a file handle in `with` statements
-    -   private [`TypeVar`s](#typing-type-var) with no constraints (e.g. `_T`,
-        `_U`, `_V`)
+    -   private [type variables](#typing-type-var) with no constraints (e.g.
+        `_T = TypeVar("_T")`, `_P = ParamSpec("_P")`)
 
     Please be mindful not to abuse single-character naming. Generally speaking,
     descriptiveness should be proportional to the name's scope of visibility.
@@ -2826,11 +2732,11 @@ Always use a `.py` filename extension. Never use dashes.
     a class. ("wait -- did I write `import StringIO` or `from StringIO import
     StringIO`?")
 
--   Underscores may appear in *unittest* method names starting with `test` to
-    separate logical components of the name, even if those components use
-    CapWords. One possible pattern is `test<MethodUnderTest>_<state>`; for
-    example `testPop_EmptyStack` is okay. There is no One Correct Way to name
-    test methods.
+-   New *unit test* files follow PEP 8 compliant lower\_with\_under method
+    names, for example, `test_<method_under_test>_<state>`. For consistency(\*)
+    with legacy modules that follow CapWords function names, underscores may
+    appear in method names starting with `test` to separate logical components
+    of the name. One possible pattern is `test<MethodUnderTest>_<state>`.
 
 <a id="s3.16.3-file-naming"></a>
 <a id="3163-file-naming"></a>
@@ -3015,8 +2921,7 @@ the function into smaller and more manageable pieces.
 <a id="typing-general"></a>
 #### 3.19.1 General Rules 
 
-*   Familiarize yourself with
-    [PEP-484](https://www.python.org/dev/peps/pep-0484/).
+*   Familiarize yourself with [PEP-484](https://peps.python.org/pep-0484/).
 
 *   In methods, only annotate `self`, or `cls` if it is necessary for proper
     type information. e.g.,
@@ -3061,7 +2966,7 @@ def my_method(
     self,
     first_var: int,
     second_var: Foo,
-    third_var: Optional[Bar],
+    third_var: Bar | None,
 ) -> int:
   ...
 ```
@@ -3084,7 +2989,7 @@ parenthesis with the `def`:
 Yes:
 def my_method(
     self,
-    other_arg: Optional[MyLongType],
+    other_arg: MyLongType | None,
 ) -> tuple[MyLongType1, MyLongType1]:
   ...
 ```
@@ -3107,7 +3012,7 @@ opening one, but this is less readable.
 ```python
 No:
 def my_method(self,
-              other_arg: Optional[MyLongType],
+              other_arg: MyLongType | None,
              ) -> dict[OtherLongType, MyLongType]:
   ...
 ```
@@ -3185,8 +3090,7 @@ class OtherClass:
 <a id="typing-default-values"></a>
 #### 3.19.4 Default Values 
 
-As per
-[PEP-008](https://www.python.org/dev/peps/pep-0008/#other-recommendations), use
+As per [PEP-008](https://peps.python.org/pep-0008/#other-recommendations), use
 spaces around the `=` *only* for arguments that have both a type annotation and
 a default value.
 
@@ -3211,18 +3115,18 @@ def func(a:int=0) -> int:
 
 In the Python type system, `NoneType` is a "first class" type, and for typing
 purposes, `None` is an alias for `NoneType`. If an argument can be `None`, it
-has to be declared! You can use `Union`, but if there is only one other type,
-use `Optional`.
+has to be declared! You can use `|` union type expressions (recommended in new
+Python 3.10+ code), or the older `Optional` and `Union` syntaxes.
 
-Use explicit `Optional` instead of implicit `Optional`. Earlier versions of PEP
-484 allowed `a: str = None` to be interpreted as `a: Optional[str] = None`, but
-that is no longer the preferred behavior.
+Use explicit `X | None` instead of implicit. Earlier versions of PEP 484 allowed
+`a: str = None` to be interpreted as `a: str | None = None`, but that is no
+longer the preferred behavior.
 
 ```python
 Yes:
-def func(a: Optional[str], b: Optional[str] = None) -> str:
+def modern_or_union(a: str | int | None, b: str | None = None) -> str:
   ...
-def multiple_nullable_union(a: Union[None, str, int]) -> str:
+def union_optional(a: Union[str, int, None], b: Optional[str] = None) -> str:
   ...
 ```
 
@@ -3245,18 +3149,12 @@ def implicit_optional(a: str = None) -> str:
 You can declare aliases of complex types. The name of an alias should be
 CapWorded. If the alias is used only in this module, it should be \_Private.
 
-For example, if the name of the module together with the name of the type is too
-long:
-
-<!-- Annotate below with `typing.TypeAlias` for 3.10. -->
+Note that the `: TypeAlias` annotation is only supported in versions 3.10+.
 
 ```python
-_LossAndGradient = tuple[tf.Tensor, tf.Tensor]
-ComplexTFMap = Mapping[str, _LossAndGradient]
+_LossAndGradient: TypeAlias = tuple[tf.Tensor, tf.Tensor]
+ComplexTFMap: TypeAlias = Mapping[str, _LossAndGradient]
 ```
-
-Other examples are complex nested types and multiple return variables from a
-function (as a tuple).
 
 <a id="s3.19.7-ignoring-types"></a>
 <a id="s3.19.7-ignore"></a>
@@ -3325,23 +3223,31 @@ c: tuple[int, str, float] = (1, "2", 3.5)
 <a id="typing-type-var"></a>
 
 <a id="typevars"></a>
-#### 3.19.10 TypeVars 
+#### 3.19.10 Type variables 
 
 The Python type system has
-[generics](https://www.python.org/dev/peps/pep-0484/#generics). The factory
-function `TypeVar` is a common way to use them.
+[generics](https://peps.python.org/pep-0484/#generics). A type variable, such as
+`TypeVar` and `ParamSpec`, is a common way to use them.
 
 Example:
 
 ```python
-from typing import TypeVar
+from collections.abc import Callable
+from typing import ParamSpec, TypeVar
+_P = ParamSpec("_P")
 _T = TypeVar("_T")
 ...
 def next(l: list[_T]) -> _T:
   return l.pop()
+
+def print_when_called(f: Callable[_P, _T]) -> Callable[_P, _T]:
+  def inner(*args: P.args, **kwargs: P.kwargs) -> R:
+    print('Function was called')
+    return f(*args, **kwargs)
+  return inner
 ```
 
-A TypeVar can be constrained:
+A `TypeVar` can be constrained:
 
 ```python
 AddableType = TypeVar("AddableType", int, float, str)
@@ -3360,8 +3266,8 @@ def check_length(x: AnyStr) -> AnyStr:
   raise ValueError()
 ```
 
-A TypeVar must have a descriptive name, unless it meets all of the following
-criteria:
+A type variable must have a descriptive name, unless it meets all of the
+following criteria:
 
 *   not externally visible
 *   not constrained
@@ -3369,6 +3275,7 @@ criteria:
 ```python
 Yes:
   _T = TypeVar("_T")
+  _P = ParamSpec("_P")
   AddableType = TypeVar("AddableType", int, float, str)
   AnyFunction = TypeVar("AnyFunction", bound=Callable)
 ```
@@ -3376,6 +3283,7 @@ Yes:
 ```python
 No:
   T = TypeVar("T")
+  P = ParamSpec("P")
   _T = TypeVar("_T", int, float, str)
   _F = TypeVar("_F", bound=Callable)
 ```
@@ -3418,7 +3326,7 @@ line from the `typing` and `collections.abc` modules. Ex:
 
 ```python
 from collections.abc import Mapping, Sequence
-from typing import Any, Union
+from typing import Any, Generic
 ```
 
 Given that this way of importing adds items to the local namespace, names in
@@ -3460,7 +3368,7 @@ def generate_foo_scores(foo: Set[str]) -> List[float]:
 
 Use conditional imports only in exceptional cases where the additional imports
 needed for type checking must be avoided at runtime. This pattern is
-discouraged; alternatives such as refactoring the code to allow top level
+discouraged; alternatives such as refactoring the code to allow top-level
 imports should be preferred.
 
 Imports that are needed only for type annotations can be placed within an `if
@@ -3496,8 +3404,8 @@ because each module has to depend on the other.
 
 Replace modules that create circular dependency imports with `Any`. Set an
 [alias](#typing-aliases) with a meaningful name, and use the real type name from
-this module (any attribute of Any is Any). Alias definitions should be separated
-from the last import by one line.
+this module (any attribute of `Any` is `Any`). Alias definitions should be
+separated from the last import by one line.
 
 ```python
 from typing import Any
@@ -3517,21 +3425,18 @@ def my_method(self, var: "some_mod.SomeType") -> None:
 #### 3.19.15 Generics 
 
 When annotating, prefer to specify type parameters for generic types; otherwise,
-[the generics' parameters will be assumed to be `Any`](https://www.python.org/dev/peps/pep-0484/#the-any-type).
+[the generics' parameters will be assumed to be `Any`](https://peps.python.org/pep-0484/#the-any-type).
 
 ```python
 # Yes:
-def get_names(employee_ids: list[int]) -> dict[int, Any]:
+def get_names(employee_ids: Sequence[int]) -> Mapping[int, str]:
   ...
 ```
 
 ```python
 # No:
-# These are both interpreted as get_names(employee_ids: list[Any]) -> dict[Any, Any]
-def get_names(employee_ids: list) -> Dict:
-  ...
-
-def get_names(employee_ids: List) -> Dict:
+# This is interpreted as get_names(employee_ids: Sequence[Any]) -> Mapping[Any, Any]
+def get_names(employee_ids: Sequence) -> Mapping:
   ...
 ```
 
@@ -3541,14 +3446,14 @@ appropriate:
 
 ```python
 # No:
-def get_names(employee_ids: list[Any]) -> dict[Any, str]:
+def get_names(employee_ids: Sequence[Any]) -> Mapping[Any, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
 ```python
 # Yes:
 _T = TypeVar('_T')
-def get_names(employee_ids: list[_T]) -> dict[_T, str]:
+def get_names(employee_ids: Sequence[_T]) -> Mapping[_T, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
 
