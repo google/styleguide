@@ -300,7 +300,7 @@ ABSL_DECLARE_FLAG(flag_in_b);
   user code to skip necessary recompilation when headers
   change.</li>
 
-  <li>A forward declaration as opposed to an #include statement
+  <li>A forward declaration as opposed to an <code>#include</code> statement
     makes it difficult for automatic tooling to discover the module
     defining the symbol.</li>
 
@@ -1812,7 +1812,7 @@ which overload is being called.</p>
 <p>You may write a function that takes a <code>const
 std::string&amp;</code> and overload it with another that
 takes <code>const char*</code>. However, in this case consider
-std::string_view
+<code>std::string_view</code>
  instead.</p>
 
 <pre>class MyClass {
@@ -2133,7 +2133,7 @@ are a type of reference that can only bind to temporary
 objects. The syntax is similar to traditional reference
 syntax. For example, <code>void f(std::string&amp;&amp;
 s);</code> declares a function whose argument is an
-rvalue reference to a std::string.</p>
+rvalue reference to a <code>std::string</code>.</p>
 
 <p id="Forwarding_references"> When the token '&amp;&amp;' is applied to
 an unqualified template argument in a function
@@ -2850,9 +2850,9 @@ types; and definition of constants with function
 calls.</p>
 
 <p class="cons"></p>
-<p>Prematurely marking something as constexpr may cause
+<p>Prematurely marking something as <code>constexpr</code> may cause
 migration problems if later on it has to be downgraded.
-Current restrictions on what is allowed in constexpr
+Current restrictions on what is allowed in <code>constexpr</code>
 functions and constructors may invite obscure workarounds
 in these definitions.</p>
 
@@ -4098,7 +4098,7 @@ underscores (<code>_</code>) or dashes (<code>-</code>).
 Follow the convention that your
 
 project uses. If there is no consistent
-local pattern to follow, prefer "_".</p>
+local pattern to follow, prefer "<code>_</code>".</p>
 
 <p>Examples of acceptable file names:</p>
 
@@ -4598,8 +4598,7 @@ one of the following remedies:</p>
   values self-describing.</li>
 
   <li>For functions that have several configuration options, consider
-  defining a single class or struct to hold all the options
-  ,
+  defining a single class or struct to hold all the options,
   and pass an instance of that.
   This approach has several advantages. Options are referenced by name
   at the call site, which clarifies their meaning. It also reduces
@@ -4964,7 +4963,7 @@ return type:</p>
 lists like other comma-separated lists.</p>
 
 <p>For by-reference captures, do not leave a space between the
-ampersand (&amp;) and the variable name.</p>
+ampersand (<code>&amp;</code>) and the variable name.</p>
 <pre>int x = 0;
 auto x_plus_n = [&amp;x](int n) -&gt; int { return x + n; }
 </pre>
