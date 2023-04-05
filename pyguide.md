@@ -251,9 +251,12 @@ Module names can still collide. Some module names are inconveniently long.
 *   Use `import x` for importing packages and modules.
 *   Use `from x import y` where `x` is the package prefix and `y` is the module
     name with no prefix.
-*   Use `from x import y as z` if two modules named `y` are to be imported, if
-    `y` conflicts with a top-level name defined in the current module, or if `y`
-    is an inconveniently long name.
+*   Use `from x import y as z` in any of the following circumstances:
+    -   Two modules named `y` are to be imported.
+    -   `y` conflicts with a top-level name defined in the current module.
+    -   `y` conflicts with a common parameter name that is part of the public
+        API (e.g., `features`).
+    -   `y` is an inconveniently long name.
 *   Use `import y as z` only when `z` is a standard abbreviation (e.g., `np` for
     `numpy`).
 
@@ -1660,7 +1663,7 @@ Make note of the indentation of the elements in the line continuation examples
 above; see the [indentation](#s3.4-indentation) section for explanation.
 
 In all other cases where a line exceeds 80 characters, and the
-[yapf](https://github.com/google/yapf/)
+[Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
 auto-formatter does not help bring the line below the limit, the line is allowed
 to exceed this maximum. Authors are encouraged to manually break the line up per
 the notes above when it is sensible.
@@ -3152,6 +3155,8 @@ CapWorded. If the alias is used only in this module, it should be \_Private.
 Note that the `: TypeAlias` annotation is only supported in versions 3.10+.
 
 ```python
+from typing import TypeAlias
+
 _LossAndGradient: TypeAlias = tuple[tf.Tensor, tf.Tensor]
 ComplexTFMap: TypeAlias = Mapping[str, _LossAndGradient]
 ```
