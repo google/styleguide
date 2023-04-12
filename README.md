@@ -65,7 +65,7 @@ changes, but we are primarily optimizing for Google's internal needs.
 [objc]: objcguide.md
 [go]: go/
 [java]: https://google.github.io/styleguide/javaguide.html
-[py]: https://google.github.io/styleguide/pyguide.html
+[py]: https://google.github.io/styleguide/pyguide.md
 [r]: https://google.github.io/styleguide/Rguide.html
 [sh]: https://google.github.io/styleguide/shellguide.html
 [htmlcss]: https://google.github.io/styleguide/htmlcssguide.html
