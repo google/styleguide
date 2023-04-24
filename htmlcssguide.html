@@ -447,9 +447,19 @@ instead of an error.)</p>
 <p>While there is no column limit recommendation for HTML, you may consider
 wrapping long lines if it significantly improves readability.</p>
 
-<p>When line-wrapping, each continuation line should be indented at least 4
-additional spaces from the original line to distinguish wrapped attributes from
-child elements.</p>
+<p>When line-wrapping, each continuation line should be indented to distinguish
+wrapped attributes from child elements. Lines should be wrapped consistently
+within a project, ideally enforced by automated code formatting tools.</p>
+
+<pre><code class="language-html good">&lt;button
+  mat-icon-button
+  color="primary"
+  class="menu-button"
+  (click)="openMenu()"
+&gt;
+  &lt;mat-icon&gt;menu&lt;/mat-icon&gt;
+&lt;/button&gt;
+</code></pre>
 
 <pre><code class="language-html good">&lt;button mat-icon-button color="primary" class="menu-button"
     (click)="openMenu()"&gt;
