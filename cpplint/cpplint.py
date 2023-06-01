@@ -5989,7 +5989,7 @@ def ProcessConfigOverrides(filename):
             # and not "baz" nor "bar/baz.cc".
             if base_name:
               pattern = re.compile(val)
-              if pattern.match(base_name):
+              if pattern.fullmatch(base_name):
                 if _cpplint_state.quiet:
                   # Suppress "Ignoring file" warning when using --quiet.
                   return False
