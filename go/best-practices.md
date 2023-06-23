@@ -1255,7 +1255,7 @@ information to the reader:
 // string.
 //
 // format is the format, and data is the interpolation data.
-func Sprintf(format string, data ...interface{}) string
+func Sprintf(format string, data ...any) string
 ```
 
 However, this snippet demonstrates a code scenario similar to the previous where
@@ -1272,7 +1272,7 @@ reader:
 // the format specification, the function will inline warnings about formatting
 // errors into the output string as described by the Format errors section
 // above.
-func Sprintf(format string, data ...interface{}) string
+func Sprintf(format string, data ...any) string
 ```
 
 Consider your likely audience in choosing what to document and at what depth.

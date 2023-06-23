@@ -2978,7 +2978,7 @@ right:
 // Bad:
 package assert
 
-func IsNotNil(t *testing.T, name string, val interface{}) {
+func IsNotNil(t *testing.T, name string, val any) {
     if val == nil {
         t.Fatalf("data %s = nil, want not nil", name)
     }
