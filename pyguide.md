@@ -257,8 +257,10 @@ Module names can still collide. Some module names are inconveniently long.
     -   `y` conflicts with a common parameter name that is part of the public
         API (e.g., `features`).
     -   `y` is an inconveniently long name.
-*   Use `import y as z` only when `z` is a standard abbreviation (e.g., `np` for
-    `numpy`).
+    -   `y` is too generic in the context of your code (e.g., `from
+        storage.file_system import options as fs_options`).
+*   Use `import y as z` only when `z` is a standard abbreviation (e.g., `import
+    numpy as np`).
 
 For example the module `sound.effects.echo` may be imported as follows:
 
@@ -1794,8 +1796,9 @@ No:    # Stuff on first line forbidden.
 
 Trailing commas in sequences of items are recommended only when the closing
 container token `]`, `)`, or `}` does not appear on the same line as the final
-element. The presence of a trailing comma is also used as a hint to our Python
-code auto-formatter 
+element, as well as for tuples with a single element. The presence of a trailing
+comma is also used as a hint to our Python code auto-formatter
+
 <a id="Python_Interpreter"></a>
 <a id="s3.7-shebang-line"></a>
 <a id="37-shebang-line"></a>
@@ -1955,11 +1958,12 @@ aptly described using a one-line docstring.
 
 <a id="doc-function-returns"></a>
 [*Returns:* (or *Yields:* for generators)](#doc-function-returns)
-:   Describe the type and semantics of the return value. If the function only
-    returns None, this section is not required. It may also be omitted if the
-    docstring starts with Returns or Yields (e.g. `"""Returns row from Bigtable
-    as a tuple of strings."""`) and the opening sentence is sufficient to
-    describe the return value. Do not imitate 'NumPy style'
+:   Describe the semantics of the return value, including any type information
+    that the type annotation does not provide. If the function only returns
+    None, this section is not required. It may also be omitted if the docstring
+    starts with Returns or Yields (e.g. `"""Returns row from Bigtable as a tuple
+    of strings."""`) and the opening sentence is sufficient to describe the
+    return value. Do not imitate 'NumPy style'
     ([example](http://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html)),
     which frequently documents a tuple return value as if it were multiple
     return values with individual names (never mentioning the tuple). Instead,
@@ -3246,8 +3250,8 @@ def next(l: list[_T]) -> _T:
   return l.pop()
 
 def print_when_called(f: Callable[_P, _T]) -> Callable[_P, _T]:
-  def inner(*args: P.args, **kwargs: P.kwargs) -> R:
-    print('Function was called')
+  def inner(*args: _P.args, **kwargs: _P.kwargs) -> _T:
+    print("Function was called")
     return f(*args, **kwargs)
   return inner
 ```
@@ -3349,19 +3353,6 @@ type annotations using parametric container types via
 
 ```python
 def generate_foo_scores(foo: set[str]) -> list[float]:
-  ...
-```
-
-NOTE: Users of [Apache Beam](https://github.com/apache/beam/issues/23366) should
-continue to import parametric containers from `typing`.
-
-```python
-from typing import Set, List
-
-# Only use this older style if you are required to by introspection
-# code such as Apache Beam that has not yet been updated for PEP-585,
-# or if your code needs to run on Python versions earlier than 3.9.
-def generate_foo_scores(foo: Set[str]) -> List[float]:
   ...
 ```
 
@@ -3471,14 +3462,20 @@ def get_names(employee_ids: Sequence[_T]) -> Mapping[_T, str]:
 *BE CONSISTENT*.
 
 If you're editing code, take a few minutes to look at the code around you and
-determine its style. If they use spaces around all their arithmetic operators,
-you should too. If their comments have little boxes of hash marks around them,
-make your comments have little boxes of hash marks around them too.
+determine its style. If they use `_idx` suffixes in index variable names, you
+should too. If their comments have little boxes of hash marks around them, make
+your comments have little boxes of hash marks around them too.
 
 The point of having style guidelines is to have a common vocabulary of coding so
 people can concentrate on what you're saying rather than on how you're saying
 it. We present global style rules here so people know the vocabulary, but local
 style is also important. If code you add to a file looks drastically different
 from the existing code around it, it throws readers out of their rhythm when
-they go to read it. Avoid this.
+they go to read it.
+
+However, there are limits to consistency. It applies more heavily locally and on
+choices unspecified by the global style. Consistency should not generally be
+used as a justification to do things in an old style without considering the
+benefits of the new style, or the tendency of the codebase to converge on newer
+styles over time.
 
