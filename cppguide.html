@@ -1044,9 +1044,12 @@ thread, rather than once at program startup. This means that
 other <code>thread_local</code> variables are subject to the same
 initialization-order issues as static variables (and more besides).</p>
 
-<p><code>thread_local</code> variable instances are not destroyed before their
-thread terminates, so they do not have the destruction-order issues of static
-variables.</p>
+<p><code>thread_local</code> variables have a subtle destruction-order issue:
+during thread shutdown, <code>thread_local</code> variables will be destroyed
+in the opposite order of their initialization (as is generally true in C++).
+If code triggered by the destructor of any <code>thread_local</code> variable
+refers to any already-destroyed <code>thread_local</code> on that thread, we will
+get a particularly hard to diagnose use-after-free.</p>
 
 <p class="pros"></p>
 <ul>
@@ -1060,22 +1063,47 @@ variables.</p>
 <p class="cons"></p>
 <ul>
   <li>Accessing a <code>thread_local</code> variable may trigger execution of
-    an unpredictable and uncontrollable amount of other code.</li>
+    an unpredictable and uncontrollable amount of other code during thread-start or
+    first use on a given thread.</li>
   <li><code>thread_local</code> variables are effectively global variables,
     and have all the drawbacks of global variables other than lack of
     thread-safety.</li>
   <li>The memory consumed by a <code>thread_local</code> variable scales with
     the number of running threads (in the worst case), which can be quite large
     in a  program.</li>
-  <li>Non-static data members cannot be <code>thread_local</code>.</li>
-  <li><code>thread_local</code> may not be as efficient as certain compiler
-    intrinsics.</li>
+  <li>Data members cannot be <code>thread_local</code> unless they are also
+    <code>static</code>.</li>
+  <li>We may suffer from use-after-free bugs if <code>thread_local</code> variables
+    have complex destructors. In particular, the destructor of any such variable must not
+    call any code (transitively) that refers to any potentially-destroyed
+    <code>thread_local</code>. This property is hard to enforce.</li>
+
+  <li>Approaches for avoiding use-after-free in global/static contexts do not work for
+    <code>thread_local</code>s. Specifically, skipping destructors for globals and static
+    variables is allowable because their lifetimes end at program shutdown. Thus, any "leak"
+    is managed immediately by the OS cleaning up our memory and other resources. By
+    contrast, skipping destructors for <code>thread_local</code> variables leads to resource
+    leaks proportional to the total number of threads that terminate during the lifetime of
+    the program.</li>
 
 </ul>
 
 <p class="decision"></p>
-  <p><code>thread_local</code> variables inside a function have no safety
-    concerns, so they can be used without restriction. Note that you can use
+  <p><code>thread_local</code> variables at class or namespace scope must be
+  initialized with a true compile-time constant (i.e., they must have no
+  dynamic initialization). To enforce this, <code>thread_local</code> variables
+  at class or namespace scope must be annotated with
+
+
+  <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/attributes.h">
+  <code>ABSL_CONST_INIT</code></a>
+  (or <code>constexpr</code>, but that should be rare):</p>
+
+  <pre>  ABSL_CONST_INIT thread_local Foo foo = ...;
+  </pre>
+
+  <p><code>thread_local</code> variables inside a function have no initialization
+    concerns, but still risk use-after-free during thread exit. Note that you can use
     a function-scope <code>thread_local</code> to simulate a class- or
     namespace-scope <code>thread_local</code> by defining a function or
     static method that exposes it:</p>
@@ -1086,18 +1114,12 @@ variables.</p>
 }
 </pre>
 
-<p><code>thread_local</code> variables at class or namespace scope must be
-initialized with a true compile-time constant (i.e., they must have no
-dynamic initialization). To enforce this, <code>thread_local</code> variables
-at class or namespace scope must be annotated with
-
-
-<a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/attributes.h">
-<code>ABSL_CONST_INIT</code></a>
-(or <code>constexpr</code>, but that should be rare):</p>
-
-<pre>ABSL_CONST_INIT thread_local Foo foo = ...;
-</pre>
+  <p>Note that <code>thread_local</code> variables will be destroyed whenever a thread exits.
+    If the destructor of any such variable refers to any other (potentially-destroyed)
+    <code>thread_local</code> we will suffer from hard to diagnose use-after-free bugs.
+    Prefer trivial types, or types that provably run no user-provided code at destruction to
+    minimize the potential of accessing any other <code>thread_local</code>.
+  </p>
 
 <p><code>thread_local</code> should be preferred over other mechanisms for
 defining thread-local data.</p>
@@ -2613,8 +2635,8 @@ casts when explicit type conversion is necessary.
   types,
   including <code>void*</code>. Use this
   only if you know what you are doing and you understand the aliasing
-  issues. Also, consider the alternative
-  <code>absl::bit_cast</code>.</li>
+  issues. Also, consider dereferencing the pointer (without a cast) and
+  using <code>absl::bit_cast</code> to cast the resulting value.</li>
 
   <li>Use <code>absl::bit_cast</code> to interpret the raw bits of a
   value using a different type of the same size (a type pun), such as
@@ -4226,8 +4248,8 @@ enum class UrlTableError { ...
 <h3 id="Variable_Names">Variable Names</h3>
 
 <p>The names of variables (including function parameters) and data members are
-all lowercase, with underscores between words. Data members of classes (but not
-structs) additionally have trailing underscores. For instance:
+<code>snake_case</code> (all lowercase, with underscores between words). Data members of classes
+(but not structs) additionally have trailing underscores. For instance:
 <code>a_local_variable</code>, <code>a_struct_data_member</code>,
 <code>a_class_data_member_</code>.</p>
 
@@ -4235,7 +4257,7 @@ structs) additionally have trailing underscores. For instance:
 
 <p>For example:</p>
 
-<pre>std::string table_name;  // OK - lowercase with underscore.
+<pre>std::string table_name;  // OK - snake_case.
 </pre>
 
 <pre class="badcode">std::string tableName;   // Bad - mixed case.
@@ -4288,7 +4310,22 @@ const int kAndroid8_0_0 = 24;  // Android 8.0.0
 see <a href="http://en.cppreference.com/w/cpp/language/storage_duration#Storage_duration">
 Storage Duration</a> for details) should be named this way.  This
 convention is optional for variables of other storage classes, e.g., automatic
-variables, otherwise the usual variable naming rules apply.</p>
+variables; otherwise the usual variable naming rules apply. For example:</p>
+
+<pre>void ComputeFoo(absl::string_view suffix) {
+  // Either of these is acceptable.
+  const absl::string_view kPrefix = "prefix";
+  const absl::string_view prefix = "prefix";
+  ...
+}
+</pre>
+
+<pre class="badcode">void ComputeFoo(absl::string_view suffix) {
+  // Bad - different invocations of ComputeFoo give kCombined different values.
+  const std::string kCombined = absl::StrCat(kPrefix, suffix);
+  ...
+}
+</pre>
 
 <h3 id="Function_Names">Function Names</h3>
 
@@ -4450,12 +4487,19 @@ comment and what style you use where.</p>
 <p>Start each file with license boilerplate.</p>
 </div>
 
-<p>File comments describe the contents of a file. If a file declares,
-implements, or tests exactly one abstraction that is documented by a comment
-at the point of declaration, file comments are not required. All other files
-must have file comments.</p>
+<p>If a source file (such as a <code>.h</code> file) declares multiple user-facing abstractions
+(common functions, related classes, etc.), include a comment describing the collection of those
+abstractions. Include enough detail for future authors to know what does not fit there. However,
+the detailed documentation about individual abstractions belongs with those abstractions, not at the
+file level.</p>
 
-<h4>Legal Notice and Author Line</h4>
+<p>For instance, if you write a file comment for <code>frobber.h</code>, you do not need
+to include a file comment in <code>frobber.cc</code> or
+<code>frobber_test.cc</code>. On the other hand, if you write a collection of classes in
+<code>registered_objects.cc</code> that has no associated header file, you must include a file
+comment in <code>registered_objects.cc</code>.
+
+</p><h4>Legal Notice and Author Line</h4>
 
 
 
@@ -4470,17 +4514,6 @@ BSD, LGPL, GPL).</p>
 author line, consider deleting the author line.
 New files should usually not contain copyright notice or
 author line.</p>
-
-<h4>File Contents</h4>
-
-<p>If a <code>.h</code> declares multiple abstractions, the file-level comment
-should broadly describe the contents of the file, and how the abstractions are
-related. A 1 or 2 sentence file-level comment may be sufficient. The detailed
-documentation about individual abstractions belongs with those abstractions,
-not at the file level.</p>
-
-<p>Do not duplicate comments in both the <code>.h</code> and the
-<code>.cc</code>. Duplicated comments diverge.</p>
 
 <h3 id="Class_Comments">Class Comments</h3>
 
@@ -4759,23 +4792,18 @@ a short-term solution, or good-enough but not perfect.</p>
 <p><code>TODO</code>s should include the string
 <code>TODO</code> in all caps, followed by the
 
-name, e-mail address, bug ID, or other
+bug ID, name, e-mail address, or other
 identifier
 of the person or issue with the best context
-about the problem referenced by the <code>TODO</code>. The
-main purpose is to have a consistent <code>TODO</code> that
-can be searched to find out how to get more details upon
-request. A <code>TODO</code> is not a commitment that the
-person referenced will fix the problem. Thus when you create
-a <code>TODO</code> with a name, it is almost always your
-name that is given.</p>
+about the problem referenced by the <code>TODO</code>.
 
-
+</p>
 
 <div>
-<pre>// TODO(kl@gmail.com): Use a "*" here for concatenation operator.
-// TODO(Zeke) change this to use relations.
-// TODO(bug 12345): remove the "Last visitors" feature.
+<pre>// TODO: bug 12345678 - Remove this after the 2047q4 compatibility window expires.
+// TODO: example.com/my-design-doc - Manually fix up this code the next time it's touched.
+// TODO(bug 12345678): Update this list after the Foo service is turned down.
+// TODO(John): Use a "\*" here for concatenation operator.
 </pre>
 </div>
 
