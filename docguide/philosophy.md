@@ -18,7 +18,7 @@ Contents:
 
 * **Scalability and interoperability** are more important than a menagerie of
   unessential features. Scale comes from simplicity, speed, and ease.
-  Interoperability comes from unadorned, digestible content.
+  Interoperability comes from unadorned, digestable content.
 
 * **Fewer distractions** make for better writing and more productive reading.
 
