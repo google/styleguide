@@ -1071,7 +1071,7 @@ implement computations a subclass may ever want to override and extend.
 <a id="truefalse-evaluations"></a>
 ### 2.14 True/False Evaluations 
 
-Use the "implicit" false if at all possible.
+Use the "implicit" false if at all possible (with a few caveats).
 
 <a id="s2.14.1-definition"></a>
 <a id="2141-definition"></a>
@@ -1963,9 +1963,9 @@ aptly described using a one-line docstring.
     None, this section is not required. It may also be omitted if the docstring
     starts with Returns or Yields (e.g. `"""Returns row from Bigtable as a tuple
     of strings."""`) and the opening sentence is sufficient to describe the
-    return value. Do not imitate 'NumPy style'
-    ([example](http://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html)),
-    which frequently documents a tuple return value as if it were multiple
+    return value. Do not imitate older 'NumPy style'
+    ([example](https://numpy.org/doc/1.24/reference/generated/numpy.linalg.qr.html)),
+    which frequently documented a tuple return value as if it were multiple
     return values with individual names (never mentioning the tuple). Instead,
     describe such a return value as: "Returns: A tuple (mat_a, mat_b), where
     mat_a is ..., and ...". The auxiliary names in the docstring need not
@@ -2477,27 +2477,36 @@ documentation must explain clearly how resource lifetime is managed.
 Use `TODO` comments for code that is temporary, a short-term solution, or
 good-enough but not perfect.
 
-A `TODO` comment begins with the word `TODO` in all caps, and a parenthesized
-context identifier. Ideally a bug reference, sometimes a username. A bug
-reference like `TODO(https://crbug.com/bug_id_number):` is
-preferable, because bugs are tracked and have follow-up comments, whereas
-individuals move around and may lose context over time. The `TODO` is followed by an explanation of
-what there is to do.
-
+A `TODO` comment begins with the word `TODO` in all caps, a following colon, and
+a link to a resource that contains the context, ideally a bug reference. A bug
+reference is preferable because bugs are tracked and have follow-up comments.
+Follow this piece of context with an explanatory string introduced with a hyphen
+`-`. 
 The purpose is to have a consistent `TODO` format that can be searched to find
-out how to get more details. A `TODO` is not a commitment that the person
-referenced will fix the problem. Thus when you create a `TODO` with a username,
-it is almost always your *own* username that is given.
+out how to get more details. 
+
+```python
+# TODO: crbug.com/192795 - Investigate cpufreq optimizations.
+```
+
+Old style, formerly recommended, but discouraged for use in new code:
+
 
 ```python
 # TODO(crbug.com/192795): Investigate cpufreq optimizations.
-# TODO(yourusername): File an issue and use a '*' for repetition.
+# TODO(yourusername): Use a "\*" here for concatenation operator.
+```
+
+Avoid adding TODOs that refer to an individual or team as the context:
+
+```python
+# TODO: @yourusername - File an issue and use a '*' for repetition.
 ```
 
 If your `TODO` is of the form "At a future date do something" make sure that you
 either include a very specific date ("Fix by November 2009") or a very specific
 event ("Remove this code when all clients can handle XML responses.") that
-future code maintainers will comprehend.
+future code maintainers will comprehend. Issues are ideal for tracking this.
 
 <a id="s3.13-imports-formatting"></a>
 <a id="313-imports-formatting"></a>
@@ -2722,7 +2731,9 @@ Always use a `.py` filename extension. Never use dashes.
     class.
 
 -   Prepending a single underscore (`_`) has some support for protecting module
-    variables and functions (linters will flag protected member access).
+    variables and functions (linters will flag protected member access). Note
+    that it is okay for unit tests to access protected constants from the
+    modules under test.
 
 -   Prepending a double underscore (`__` aka "dunder") to an instance variable
     or method effectively makes the variable or method private to its class
@@ -3327,15 +3338,16 @@ return type is the same as the argument type in the code above, use
 <a id="typing-imports"></a>
 #### 3.19.12 Imports For Typing 
 
-For symbols from the `typing` and `collections.abc` modules used to support
-static analysis and type checking, always import the symbol itself. This keeps
-common annotations more concise and matches typing practices used around the
-world. You are explicitly allowed to import multiple specific classes on one
-line from the `typing` and `collections.abc` modules. Ex:
+For symbols (including types, functions, and constants) from the `typing` or
+`collections.abc` modules used to support static analysis and type checking,
+always import the symbol itself. This keeps common annotations more concise and
+matches typing practices used around the world. You are explicitly allowed to
+import multiple specific symbols on one line from the `typing` and
+`collections.abc` modules. For example:
 
 ```python
 from collections.abc import Mapping, Sequence
-from typing import Any, Generic
+from typing import Any, Generic, cast, TYPE_CHECKING
 ```
 
 Given that this way of importing adds items to the local namespace, names in
