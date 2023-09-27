@@ -5,7 +5,7 @@
 # Its canonical open-source location is:
 #   https://google.github.io/styleguide/pylintrc
 
-[MASTER]
+[MAIN]
 
 # Files or directories to be skipped. They should be base names, not paths.
 ignore=third_party
@@ -50,7 +50,8 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=abstract-method,
+disable=R,
+        abstract-method,
         apply-builtin,
         arguments-differ,
         attribute-defined-outside-init,
@@ -66,7 +67,6 @@ disable=abstract-method,
         coerce-method,
         delslice-method,
         div-method,
-        duplicate-code,
         eq-without-hash,
         execfile-builtin,
         file-builtin,
@@ -80,7 +80,6 @@ disable=abstract-method,
         import-error,
         import-self,
         import-star-module-level,
-        inconsistent-return-statements,
         input-builtin,
         intern-builtin,
         invalid-str-codec,
@@ -94,10 +93,6 @@ disable=abstract-method,
         next-method-called,
         next-method-defined,
         no-absolute-import,
-        no-else-break,
-        no-else-continue,
-        no-else-raise,
-        no-else-return,
         no-init,  # added
         no-member,
         no-name-in-module,
@@ -123,24 +118,12 @@ disable=abstract-method,
         standarderror-builtin,
         suppressed-message,
         sys-max-int,
-        too-few-public-methods,
-        too-many-ancestors,
-        too-many-arguments,
-        too-many-boolean-expressions,
-        too-many-branches,
-        too-many-instance-attributes,
-        too-many-locals,
-        too-many-nested-blocks,
-        too-many-public-methods,
-        too-many-return-statements,
-        too-many-statements,
         trailing-newlines,
         unichr-builtin,
         unicode-builtin,
         unnecessary-pass,
         unpacking-in-except,
         useless-else-on-loop,
-        useless-object-inheritance,
         useless-suppression,
         using-cmp-argument,
         wrong-import-order,
@@ -225,7 +208,7 @@ no-docstring-rgx=(__.*__|main|test.*|.*test|.*Test)$
 
 # Minimum line length for functions/classes that require docstrings, shorter
 # ones are exempt.
-docstring-min-length=10
+docstring-min-length=12
 
 
 [TYPECHECK]
@@ -234,10 +217,6 @@ docstring-min-length=10
 # contextlib.contextmanager. Add to this list to register other decorators that
 # produce valid context managers.
 contextmanager-decorators=contextlib.contextmanager,contextlib2.contextmanager
-
-# Tells whether missing members accessed in mixin class should be ignored. A
-# mixin class is detected if its name ends with "mixin" (case insensitive).
-ignore-mixin-members=yes
 
 # List of module names for which member attributes should not be checked
 # (useful for modules/projects where namespaces are manipulated during runtime
@@ -261,7 +240,7 @@ generated-members=
 # Maximum number of characters on a single line.
 max-line-length=80
 
-# TODO(https://github.com/PyCQA/pylint/issues/3352): Direct pylint to exempt
+# TODO(https://github.com/pylint-dev/pylint/issues/3352): Direct pylint to exempt
 # lines made too long by directives to pytype.
 
 # Regexp for a line that is allowed to be longer than the limit.
@@ -418,12 +397,3 @@ valid-classmethod-first-arg=cls,
 
 # List of valid names for the first argument in a metaclass class method.
 valid-metaclass-classmethod-first-arg=mcs
-
-
-[EXCEPTIONS]
-
-# Exceptions that will emit a warning when being caught. Defaults to
-# "Exception"
-overgeneral-exceptions=builtins.StandardError,
-                       builtins.Exception,
-                       builtins.BaseException
