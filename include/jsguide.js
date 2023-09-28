@@ -1,63 +1,45 @@
+// Defining a style guide initialization function
 window.initStyleGuide = function(init) {
-  // Runs the callback on every element matched by the query selector.
+  // Utility function to iterate over elements matching a query selector
   function find(querySelector, callback) {
-    var elements = [].slice.call(document.querySelectorAll(querySelector));
-    for (var i = 0; i < elements.length; i++) {
-      callback(elements[i]);
-    }
+      // Using forEach directly on NodeList using Array.prototype.forEach.call
+      Array.prototype.forEach.call(document.querySelectorAll(querySelector), callback);
   }
-  // Add the tocDiv at the top.
-  var title = document.getElementsByTagName('h1')[0];
-  var toc = document.createElement('div');
+  
+  // Adding the tocDiv below the title
+  const title = document.querySelector('h1'); // Using querySelector for simplicity
+  const toc = document.createElement('div');
   toc.id = 'tocDiv';
   toc.className = 'vertical_toc';
   title.parentNode.insertBefore(toc, title.nextSibling);
-
-  // If a paragraph starts with (e.g.) "Note:" or "Tip:" then add
-  // that "callout class" to its element.
+  
+  // Adding "callout class" to paragraph elements starting with "Note:" or "Tip:"
   find('p', function(paragraph) {
-    var match = /^([a-z]+):/i.exec(paragraph.textContent);
-    if (match) {
-      paragraph.classList.add(match[1].toLowerCase());
-    }
+      const match = /^([a-z]+):/i.exec(paragraph.textContent);
+      if (match) paragraph.classList.add(match[1].toLowerCase());
   });
-
-  // Fill in text for intra-document links, ensuring that links
-  // remain up-to-date even if sections are moved or renumbered.
-  // This triggers on any link with "??" as its text and a URL
-  // starting with "#", and the filled-in text is exactly the same
-  // as the text of the referenced section heading.
+  
+  // Filling in text for intra-document links
   find('a[href^="#"]', function(link) {
-    var href = link.getAttribute('href');
-    var heading = document.getElementById(href.substring(1));
-    // Fill in link text with heading title
-    if (heading && link.textContent == '??') {
-      link.textContent = heading.textContent;
-    }
+      const heading = document.getElementById(link.getAttribute('href').substring(1));
+      if (heading && link.textContent == '??') link.textContent = heading.textContent;
   });
-
-  // Hoedown renders fenced code blocks incompatibly with what
-  // prettify expects. As a result, prettify doesn't handle them
-  // properly. Fix it by moving the code directly into the pre.
+  
+  // Adjusting code blocks for compatibility with prettify
   find('pre > code', function(code) {
-    var pre = code.parentElement;
-    // Internal HTML/CSS & TS style guides do not use prettyprint.
-    if (code.classList.contains('language-css') ||
-        code.classList.contains('language-django') ||
-        code.classList.contains('language-html') ||
-        code.classList.contains('language-ts')) {
-      code.classList.add('prettyprint');
-    }
-    pre.className = code.className;
-    pre.innerHTML = code.innerHTML;
+      const pre = code.parentElement;
+      if (['language-css', 'language-django', 'language-html', 'language-ts'].includes(code.className)) {
+          code.classList.add('prettyprint');
+      }
+      pre.className = code.className;
+      pre.innerHTML = code.innerHTML;
   });
-
-  // Run the normal init function.
+  
+  // Running the normal init function
   init();
-
-  // Call the pretty-printer after we've fixed up the code blocks.
-  var pretty = document.createElement('script');
-  pretty.src = 'https://cdn.rawgit.com/google/code-prettify/master/loader/' +
-      'run_prettify.js';
+  
+  // Appending the pretty-print script to the document body
+  const pretty = document.createElement('script');
+  pretty.src = 'https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js';
   document.body.appendChild(pretty);
 }.bind(null, window.initStyleGuide);
