@@ -47,6 +47,7 @@ See README.md for details.
         +   [3.8.2 Modules](#s3.8.2-comments-in-modules)
         +   [3.8.2.1 Test modules](#s3.8.2.1-test-modules)
         +   [3.8.3 Functions and Methods](#s3.8.3-functions-and-methods)
+        +   [3.8.3.1 Overridden Methods](#s3.8.3.1-overridden-methods)
         +   [3.8.4 Classes](#s3.8.4-comments-in-classes)
         +   [3.8.5 Block and Inline Comments](#s3.8.5-block-and-inline-comments)
         +   [3.8.6 Punctuation, Spelling, and Grammar](#s3.8.6-punctuation-spelling-and-grammar)
@@ -213,8 +214,8 @@ that the arguments are actually unused.
 <a id="imports"></a>
 ### 2.2 Imports 
 
-Use `import` statements for packages and modules only, not for individual
-classes or functions.
+Use `import` statements for packages and modules only, not for individual types,
+classes, or functions.
 
 <a id="s2.2.1-definition"></a>
 <a id="221-definition"></a>
@@ -406,10 +407,11 @@ Exceptions must follow certain conditions:
     raise a `ValueError` to indicate a programming mistake like a violated
     precondition (such as if you were passed a negative number but required a
     positive one). Do not use `assert` statements for validating argument values
-    of a public API. `assert` is used to ensure internal correctness, not to
-    enforce correct usage nor to indicate that some unexpected event occurred.
-    If an exception is desired in the latter cases, use a raise statement. For
-    example:
+    of a public API. `assert` is used to ensure internal correctness or
+    to verify expectations in
+    [pytest](https://pytest.org) based tests, not to enforce correct usage nor
+    to indicate that some unexpected event occurred. If an exception is desired
+    in the latter cases, use a raise statement. For example:
 
     
     ```python
@@ -642,20 +644,18 @@ Complicated comprehensions or generator expressions can be hard to read.
 <a id="comprehensions-decision"></a>
 #### 2.7.4 Decision 
 
-Okay to use for simple cases. Each portion must fit on one line: mapping
-expression, `for` clause, filter expression. Multiple `for` clauses or filter
-expressions are not permitted. Use loops instead when things get more
-complicated.
+Comprehensions are allowed, however multiple `for` clauses or filter expressions
+are not permitted. Optimize for readability, not conciseness.
 
 ```python
 Yes:
   result = [mapping_expr for value in iterable if filter_expr]
 
-  result = [{'key': value} for value in iterable
-            if a_long_filter_expression(value)]
-
-  result = [complicated_transform(x)
-            for x in iterable if predicate(x)]
+  result = [
+      is_valid(metric={'key': value})
+      for value in interesting_iterable
+      if a_longer_filter_expression(value)
+  ]
 
   descriptive_name = [
       transform({'key': key, 'value': value}, color='black')
@@ -665,36 +665,33 @@ Yes:
 
   result = []
   for x in range(10):
-      for y in range(5):
-          if x * y > 10:
-              result.append((x, y))
+    for y in range(5):
+      if x * y > 10:
+        result.append((x, y))
 
-  return {x: complicated_transform(x)
-          for x in long_generator_function(parameter)
-          if x is not None}
+  return {
+      x: complicated_transform(x)
+      for x in long_generator_function(parameter)
+      if x is not None
+  }
 
-  squares_generator = (x**2 for x in range(10))
+  return (x**2 for x in range(10))
 
   unique_names = {user.name for user in users if user is not None}
-
-  eat(jelly_bean for jelly_bean in jelly_beans
-      if jelly_bean.color == 'black')
 ```
 
 ```python
 No:
-  result = [complicated_transform(
-                x, some_argument=x+1)
-            for x in iterable if predicate(x)]
-
   result = [(x, y) for x in range(10) for y in range(5) if x * y > 10]
 
-  return ((x, y, z)
-          for x in range(5)
-          for y in range(5)
-          if x != y
-          for z in range(5)
-          if y != z)
+  return (
+      (x, y, z)
+      for x in range(5)
+      for y in range(5)
+      if x != y
+      for z in range(5)
+      if y != z
+  )
 ```
 
 <a id="s2.8-default-iterators-and-operators"></a>
@@ -848,8 +845,8 @@ function may only contain an expression.
 <a id="lambdas-decision"></a>
 #### 2.10.4 Decision 
 
-Okay to use them for one-liners. If the code inside the lambda function is
-longer than 60-80 chars, it's probably better to define it as a regular
+Lambdas are allowed. If the code inside the lambda function spans multiple lines
+or is longer than 60-80 chars, it might be better to define it as a regular
 [nested function](#lexical-scoping).
 
 For common operations like multiplication, use the functions from the `operator`
@@ -992,7 +989,7 @@ _FOO = flags.DEFINE_string(...)
 
 No:  def foo(a, b=[]):
          ...
-No:  def foo(a, b=time.time()):  # The time the module was loaded???
+No:  def foo(a, b=time.time()):  # Is `b` supposed to represent when this module was loaded?
          ...
 No:  def foo(a, b=_FOO.value):  # sys.argv has not yet been parsed...
          ...
@@ -1798,6 +1795,150 @@ Trailing commas in sequences of items are recommended only when the closing
 container token `]`, `)`, or `}` does not appear on the same line as the final
 element, as well as for tuples with a single element. The presence of a trailing
 comma is also used as a hint to our Python code auto-formatter
+[Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
+to direct it to auto-format the container of items to one item per line when the
+`,` after the final element is present.
+
+```python
+Yes:   golomb3 = [0, 1, 3]
+       golomb4 = [
+           0,
+           1,
+           4,
+           6,
+       ]
+```
+
+```python
+No:    golomb4 = [
+           0,
+           1,
+           4,
+           6,]
+```
+
+<a id="s3.5-blank-lines"></a>
+<a id="35-blank-lines"></a>
+
+<a id="blank-lines"></a>
+### 3.5 Blank Lines 
+
+Two blank lines between top-level definitions, be they function or class
+definitions. One blank line between method definitions and between the docstring
+of a `class` and the first method. No blank line following a `def` line. Use
+single blank lines as you judge appropriate within functions or methods.
+
+Blank lines need not be anchored to the definition. For example, related
+comments immediately preceding function, class, and method definitions can make
+sense. Consider if your comment might be more useful as part of the docstring.
+
+<a id="s3.6-whitespace"></a>
+<a id="36-whitespace"></a>
+
+<a id="whitespace"></a>
+### 3.6 Whitespace 
+
+Follow standard typographic rules for the use of spaces around punctuation.
+
+No whitespace inside parentheses, brackets or braces.
+
+```python
+Yes: spam(ham[1], {'eggs': 2}, [])
+```
+
+```python
+No:  spam( ham[ 1 ], { 'eggs': 2 }, [ ] )
+```
+
+No whitespace before a comma, semicolon, or colon. Do use whitespace after a
+comma, semicolon, or colon, except at the end of the line.
+
+```python
+Yes: if x == 4:
+         print(x, y)
+     x, y = y, x
+```
+
+```python
+No:  if x == 4 :
+         print(x , y)
+     x , y = y , x
+```
+
+No whitespace before the open paren/bracket that starts an argument list,
+indexing or slicing.
+
+```python
+Yes: spam(1)
+```
+
+```python
+No:  spam (1)
+```
+
+```python
+Yes: dict['key'] = list[index]
+```
+
+```python
+No:  dict ['key'] = list [index]
+```
+
+No trailing whitespace.
+
+Surround binary operators with a single space on either side for assignment
+(`=`), comparisons (`==, <, >, !=, <>, <=, >=, in, not in, is, is not`), and
+Booleans (`and, or, not`). Use your better judgment for the insertion of spaces
+around arithmetic operators (`+`, `-`, `*`, `/`, `//`, `%`, `**`, `@`).
+
+```python
+Yes: x == 1
+```
+
+```python
+No:  x<1
+```
+
+Never use spaces around `=` when passing keyword arguments or defining a default
+parameter value, with one exception:
+[when a type annotation is present](#typing-default-values), *do* use spaces
+around the `=` for the default parameter value.
+
+```python
+Yes: def complex(real, imag=0.0): return Magic(r=real, i=imag)
+Yes: def complex(real, imag: float = 0.0): return Magic(r=real, i=imag)
+```
+
+```python
+No:  def complex(real, imag = 0.0): return Magic(r = real, i = imag)
+No:  def complex(real, imag: float=0.0): return Magic(r = real, i = imag)
+```
+
+Don't use spaces to vertically align tokens on consecutive lines, since it
+becomes a maintenance burden (applies to `:`, `#`, `=`, etc.):
+
+```python
+Yes:
+  foo = 1000  # comment
+  long_name = 2  # comment that should not be aligned
+
+  dictionary = {
+      'foo': 1,
+      'long_name': 2,
+  }
+```
+
+```python
+No:
+  foo       = 1000  # comment
+  long_name = 2     # comment that should not be aligned
+
+  dictionary = {
+      'foo'      : 1,
+      'long_name': 2,
+  }
+```
+
 
 <a id="Python_Interpreter"></a>
 <a id="s3.7-shebang-line"></a>
@@ -1929,15 +2070,6 @@ should use the same style as the docstring for an attribute or a
 <a href="#doc-function-args">function argument</a> (`"""The Bigtable path."""`,
 rather than `"""Returns the Bigtable path."""`).
 
-A method that overrides a method from a base class may have a simple docstring
-sending the reader to its overridden method's docstring, such as `"""See base
-class."""`. The rationale is that there is no need to repeat in many places
-documentation that is already present in the base method's docstring. However,
-if the overriding method's behavior is substantially different from the
-overridden method, or details need to be provided (e.g., documenting additional
-side effects), a docstring with at least those differences is required on the
-overriding method.
-
 Certain aspects of a function should be documented in special sections, listed
 below. Each section begins with a heading line, which ends with a colon. All
 sections other than the heading should maintain a hanging indent of two or four
@@ -2055,6 +2187,47 @@ def fetch_smalltable_rows(
     Raises:
       IOError: An error occurred accessing the smalltable.
     """
+```
+
+<a id="s3.8.3.1-overridden-methods"></a>
+
+<a id="overridden-method-docs"></a>
+##### 3.8.3.1 Overridden Methods 
+
+A method that overrides a method from a base class does not need a docstring if
+it is explicitly decorated with
+[`@override`](https://typing-extensions.readthedocs.io/en/latest/#override)
+(from `typing_extensions` or `typing` modules), unless the overriding method's
+behavior materially refines the base method's contract, or details need to be
+provided (e.g., documenting additional side effects), in which case a docstring
+with at least those differences is required on the overriding method.
+
+```python
+from typing_extensions import override
+
+class Parent:
+  def do_something(self):
+    """Parent method, includes docstring."""
+
+# Child class, method annotated with override.
+class Child(Parent):
+  @override
+  def do_something(self):
+    pass
+```
+
+```python
+# Child class, but without @override decorator, a docstring is required.
+class Child(Parent):
+  def do_something(self):
+    pass
+
+# Docstring is trivial, @override is sufficient to indicate that docs can be
+# found in the base class.
+class Child(Parent):
+  @override
+  def do_something(self):
+    """See base class."""
 ```
 
 <a id="s3.8.4-comments-in-classes"></a>
