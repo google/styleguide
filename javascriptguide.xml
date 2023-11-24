@@ -914,7 +914,8 @@
               };
 
               myapp.main = function() {
-                var Fruit = some.long.namespace.Fruit;
+                const fruit = some.long.namespace.Fruit;
+
                 switch (fruit) {
                   case Fruit.APPLE:
                     ...
