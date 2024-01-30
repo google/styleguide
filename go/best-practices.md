@@ -597,7 +597,11 @@ to have them in the same package.
 Code within a package can access unexported identifiers in the package. If you
 have a few related types whose *implementation* is tightly coupled, placing them
 in the same package lets you achieve this coupling without polluting the public
-API with these details.
+API with these details. A good test for this coupling is to imagine a
+hypothetical user of two packages, where the packages cover closely related
+topics: if the user must import both packages in order to use either in any
+meaningful way, combining them together is usually the right thing to do. The
+standard library generally demonstrates this kind of scoping and layering well.
 
 All of that being said, putting your entire project in a single package would
 likely make that package too large. When something is conceptually distinct,
@@ -776,7 +780,7 @@ var (
     ErrMarsupial = errors.New("marsupials are not supported")
 )
 
-func pet(animal Animal) error {
+func process(animal Animal) error {
     switch {
     case seen[animal]:
         return ErrDuplicate
@@ -849,6 +853,8 @@ to know if using status codes is the right choice.
 
 [`os.PathError`]: https://pkg.go.dev/os#PathError
 [`errors.Is`]: https://pkg.go.dev/errors#Is
+[`errors.As`]: https://pkg.go.dev/errors#As
+[`package cmp`]: https://pkg.go.dev/github.com/google/go-cmp/cmp
 [status]: https://pkg.go.dev/google.golang.org/grpc/status
 [canonical codes]: https://pkg.go.dev/google.golang.org/grpc/codes
 
@@ -977,6 +983,10 @@ func (*FortuneTeller) SuggestFortune(context.Context, *pb.SuggestionRequest) (*p
     }
 }
 ```
+
+See also:
+
+*   [Error Documentation Conventions](#documentation-conventions-errors)
 
 <a id="error-percent-w"></a>
 
@@ -1255,7 +1265,7 @@ information to the reader:
 // string.
 //
 // format is the format, and data is the interpolation data.
-func Sprintf(format string, data ...interface{}) string
+func Sprintf(format string, data ...any) string
 ```
 
 However, this snippet demonstrates a code scenario similar to the previous where
@@ -1272,7 +1282,7 @@ reader:
 // the format specification, the function will inline warnings about formatting
 // errors into the output string as described by the Format errors section
 // above.
-func Sprintf(format string, data ...interface{}) string
+func Sprintf(format string, data ...any) string
 ```
 
 Consider your likely audience in choosing what to document and at what depth.
@@ -1317,9 +1327,9 @@ func (Worker) Run(ctx context.Context) error
 ```
 
 Where context behavior is different or non-obvious, it should be expressly
-documented:
+documented if any of the following are true.
 
-*   If the function returns an error other than `ctx.Err()` when the context is
+*   The function returns an error other than `ctx.Err()` when the context is
     cancelled:
 
     ```go
@@ -1330,8 +1340,7 @@ documented:
     func (Worker) Run(ctx context.Context) error
     ```
 
-*   If the function has other mechanisms that may interrupt it or affect
-    lifetime:
+*   The function has other mechanisms that may interrupt it or affect lifetime:
 
     ```go
     // Good:
@@ -1347,7 +1356,7 @@ documented:
     func (Worker) Stop()
     ```
 
-*   If the function has special expectations about context lifetime, lineage, or
+*   The function has special expectations about context lifetime, lineage, or
     attached values:
 
     ```go
@@ -1394,9 +1403,9 @@ Similarly, the extra remark about concurrency can safely be removed here:
 func (*Buffer) Grow(n int)
 ```
 
-Documentation is strongly encouraged if:
+Documentation is strongly encouraged if any of the following are true.
 
-*   it is unclear whether the operation is read-only or a mutating
+*   It is unclear whether the operation is read-only or mutating:
 
     ```go
     // Good:
@@ -1411,7 +1420,7 @@ Documentation is strongly encouraged if:
     Why? A cache hit when looking up the key mutate a LRU cache internally. How
     this is implemented may not be obvious to all readers.
 
-*   synchronization is provided by API
+*   Synchronization is provided by the API:
 
     ```go
     // Good:
@@ -1427,7 +1436,7 @@ Documentation is strongly encouraged if:
     **Note:** If the API is a type and the API provides synchronization in
     entirety, conventionally only the type definition documents the semantics.
 
-*   the API consumes user-implemented types of interfaces, and the interface's
+*   The API consumes user-implemented types of interfaces, and the interface's
     consumer has particular concurrency requirements:
 
     ```go
@@ -1488,6 +1497,84 @@ If it is potentially unclear how to clean up the resources, explain how:
 //    body, err := io.ReadAll(resp.Body)
 func (c *Client) Get(url string) (resp *Response, err error)
 ```
+
+See also:
+
+*   [GoTip #110: Don’t Mix Exit With Defer]
+
+[GoTip #110: Don’t Mix Exit With Defer]: https://google.github.io/styleguide/go/index.html#gotip
+
+<a id="documentation-conventions-errors"></a>
+
+#### Errors
+
+Document significant error sentinel values or error types that your functions
+return to callers so that callers can anticipate what types of conditions they
+can handle in their code.
+
+```go
+// Good:
+package os
+
+// Read reads up to len(b) bytes from the File and stores them in b. It returns
+// the number of bytes read and any error encountered.
+//
+// At end of file, Read returns 0, io.EOF.
+func (*File) Read(b []byte) (n int, err error) {
+```
+
+When a function returns a specific error type, correctly note whether the error
+is a pointer receiver or not:
+
+```go
+// Good:
+package os
+
+type PathError struct {
+    Op   string
+    Path string
+    Err  error
+}
+
+// Chdir changes the current working directory to the named directory.
+//
+// If there is an error, it will be of type *PathError.
+func Chdir(dir string) error {
+```
+
+Documenting whether the values returned are pointer receivers enables callers to
+correctly compare the errors using [`errors.Is`], [`errors.As`], and
+[`package cmp`]. This is because a non-pointer value is not equivalent to a
+pointer value.
+
+**Note:** In the `Chdir` example, the return type is written as `error` rather
+than `*PathError` due to
+[how nil interface values work](https://go.dev/doc/faq#nil_error).
+
+Document overall error conventions in the
+[package's documentation](decisions#package-comments) when the behavior is
+applicable to most errors found in the package:
+
+```go
+// Good:
+// Package os provides a platform-independent interface to operating system
+// functionality.
+//
+// Often, more information is available within the error. For example, if a
+// call that takes a file name fails, such as Open or Stat, the error will
+// include the failing file name when printed and will be of type *PathError,
+// which may be unpacked for more information.
+package os
+```
+
+Thoughtful application of these approaches can add
+[extra information to errors](#error-extra-info) without much effort and help
+callers avoid adding redundant annotations.
+
+See also:
+
+*   [Go Tip #106: Error Naming Conventions](https://google.github.io/styleguide/go/index.html#gotip)
+*   [Go Tip #89: When to Use Canonical Status Codes as Errors](https://google.github.io/styleguide/go/index.html#gotip)
 
 <a id="documentation-preview"></a>
 
@@ -1944,7 +2031,7 @@ func foo(ctx context.Context) {
 }
 ```
 
-**Note**: [Contexts are never included in option structs](decisions#contexts).
+**Note:** [Contexts are never included in option structs](decisions#contexts).
 
 This option is often preferred when some of the following apply:
 
@@ -2411,7 +2498,7 @@ func ExerciseGame(t *testing.T, cfg *Config, p chess.Player) error {
     if cfg.Simulation == Modem {
         conn, err := modempool.Allocate()
         if err != nil {
-            t.Fatalf("no modem for the opponent could be provisioned: %v", err)
+            t.Fatalf("No modem for the opponent could be provisioned: %v", err)
         }
         t.Cleanup(func() { modempool.Return(conn) })
     }
@@ -2437,7 +2524,7 @@ func TestAcceptance(t *testing.T) {
     player := deepblue.New()
     err := chesstest.ExerciseGame(t, chesstest.SimpleGame, player)
     if err != nil {
-        t.Errorf("deepblue player failed acceptance test: %v", err)
+        t.Errorf("Deep Blue player failed acceptance test: %v", err)
     }
 }
 ```
@@ -2578,14 +2665,14 @@ func paint(color string) error {
 func badSetup(t *testing.T) {
     // This should call t.Helper, but doesn't.
     if err := paint("taupe"); err != nil {
-        t.Fatalf("could not paint the house under test: %v", err) // line 15
+        t.Fatalf("Could not paint the house under test: %v", err) // line 15
     }
 }
 
 func mustGoodSetup(t *testing.T) {
     t.Helper()
     if err := paint("lilac"); err != nil {
-        t.Fatalf("could not paint the house under test: %v", err)
+        t.Fatalf("Could not paint the house under test: %v", err)
     }
 }
 
@@ -2605,10 +2692,10 @@ differs:
 
 ```text
 === RUN   TestBad
-    paint_test.go:15: could not paint the house under test: no "taupe" paint today
+    paint_test.go:15: Could not paint the house under test: no "taupe" paint today
 --- FAIL: TestBad (0.00s)
 === RUN   TestGood
-    paint_test.go:32: could not paint the house under test: no "lilac" paint today
+    paint_test.go:32: Could not paint the house under test: no "lilac" paint today
 --- FAIL: TestGood (0.00s)
 FAIL
 ```
@@ -2616,7 +2703,7 @@ FAIL
 The error with `paint_test.go:15` refers to the line of the setup function that
 failed in `badSetup`:
 
-`t.Fatalf("could not paint the house under test: %v", err)`
+`t.Fatalf("Could not paint the house under test: %v", err)`
 
 Whereas `paint_test.go:32` refers to the line of the test that failed in
 `TestGood`:
@@ -2695,33 +2782,41 @@ and those should not depend on the system under test. Therefore, if a test
 helper [registers a fatal test failure](#test-helper-error-handling), it can and
 should do so from the test's goroutine.
 
+<a id="t-field-names"></a>
+
+### Use field names in struct literals
+
 <a id="t-field-labels"></a>
 
-### Use field labels for struct literals
-
-In table-driven tests, prefer to specify the key for each test case specified.
-This is helpful when the test cases cover a large amount of vertical space (e.g.
-more than 20-30 lines), when there are adjacent fields with the same type, and
-also when you wish to omit fields which have the zero value. For example:
+In table-driven tests, prefer to specify field names when initializing test case
+struct literals. This is helpful when the test cases cover a large amount of
+vertical space (e.g. more than 20-30 lines), when there are adjacent fields with
+the same type, and also when you wish to omit fields which have the zero value.
+For example:
 
 ```go
 // Good:
-tests := []struct {
-    foo     *pb.Foo
-    bar     *pb.Bar
-    want    string
-}{
-    {
-        foo: pb.Foo_builder{
-            Name: "foo",
-            // ...
-        }.Build(),
-        bar: pb.Bar_builder{
-            Name: "bar",
-            // ...
-        }.Build(),
-        want: "result",
-    },
+func TestStrJoin(t *testing.T) {
+    tests := []struct {
+        slice     []string
+        separator string
+        skipEmpty bool
+        want      string
+    }{
+        {
+            slice:     []string{"a", "b", ""},
+            separator: ",",
+            want:      "a,b,",
+        },
+        {
+            slice:     []string{"a", "b", ""},
+            separator: ",",
+            skipEmpty: true,
+            want:      "a,b",
+        },
+        // ...
+    }
+    // ...
 }
 ```
 
@@ -2742,7 +2837,7 @@ func mustLoadDataset(t *testing.T) []byte {
     data, err := os.ReadFile("path/to/your/project/testdata/dataset")
 
     if err != nil {
-        t.Fatalf("could not load dataset: %v", err)
+        t.Fatalf("Could not load dataset: %v", err)
     }
     return data
 }
@@ -2756,7 +2851,7 @@ func TestParseData(t *testing.T) {
     data := mustLoadDataset(t)
     parsed, err := ParseData(data)
     if err != nil {
-        t.Fatalf("unexpected error parsing data: %v", err)
+        t.Fatalf("Unexpected error parsing data: %v", err)
     }
     want := &DataTable{ /* ... */ }
     if got := parsed; !cmp.Equal(got, want) {
@@ -2768,7 +2863,7 @@ func TestListContents(t *testing.T) {
     data := mustLoadDataset(t)
     contents, err := ListContents(data)
     if err != nil {
-        t.Fatalf("unexpected error listing contents: %v", err)
+        t.Fatalf("Unexpected error listing contents: %v", err)
     }
     want := []string{ /* ... */ }
     if got := contents; !cmp.Equal(got, want) {
@@ -2916,7 +3011,7 @@ func mustLoadDataset(t *testing.T) []byte {
         dataset.err = err
     })
     if err := dataset.err; err != nil {
-        t.Fatalf("could not load dataset: %v", err)
+        t.Fatalf("Could not load dataset: %v", err)
     }
     return dataset.data
 }
@@ -2972,8 +3067,8 @@ guidance outlines when each method is preferred.
 
 ### Prefer "+" for simple cases
 
-Prefer using "+" when concatenating few strings. This method is the
-syntactically the simplest and requires no import.
+Prefer using "+" when concatenating few strings. This method is syntactically
+the simplest and requires no import.
 
 ```go
 // Good:
@@ -3024,7 +3119,7 @@ for i, d := range digitsOfPi {
 str := b.String()
 ```
 
-**NOTE**: For more discussion, see
+**Note:** For more discussion, see
 [GoTip #29: Building Strings Efficiently](https://google.github.io/styleguide/go/index.html#gotip).
 
 <a id="string-constants"></a>
