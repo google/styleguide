@@ -1413,7 +1413,7 @@ if (o.hasOwnProperty('maxWidth')) {
 
 <pre><code class="language-js prettyprint">/** @type {{width: number, maxWidth: (number|undefined)}} */
 const o = {width: 42};
-if (o.maxWidth != null) {
+if (o.maxWidth != undefined) {
   ...
 }
 </code></pre>
