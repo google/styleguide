@@ -405,13 +405,16 @@ Exceptions must follow certain conditions:
 
 -   Make use of built-in exception classes when it makes sense. For example,
     raise a `ValueError` to indicate a programming mistake like a violated
-    precondition (such as if you were passed a negative number but required a
-    positive one). Do not use `assert` statements for validating argument values
-    of a public API. `assert` is used to ensure internal correctness or
-    to verify expectations in
-    [pytest](https://pytest.org) based tests, not to enforce correct usage nor
-    to indicate that some unexpected event occurred. If an exception is desired
-    in the latter cases, use a raise statement. For example:
+    precondition, such as may happen when validating function arguments.
+
+-   Do not use `assert` statements in place of conditionals or validating
+    preconditions. They must not be critical to the application logic. A litmus
+    test would be that the `assert` could be removed without breaking the code.
+    `assert` conditionals are
+    [not guaranteed](https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement)
+    to be evaluated. For [pytest](https://pytest.org) based tests, `assert` is
+    okay and expected to verify expectations. For
+    example:
 
     
     ```python
@@ -437,6 +440,7 @@ Exceptions must follow certain conditions:
         if port is None:
           raise ConnectionError(
               f'Could not connect to service on port {minimum} or higher.')
+        # The code does not depend on the result of this assert.
         assert port >= minimum, (
             f'Unexpected port {port} when minimum was {minimum}.')
         return port
@@ -454,8 +458,10 @@ Exceptions must follow certain conditions:
           The new minimum port.
         """
         assert minimum >= 1024, 'Minimum port must be at least 1024.'
+        # The following code depends on the previous assert.
         port = self._find_next_open_port(minimum)
         assert port is not None
+        # The type checking of the return statement relies on the assert.
         return port
     ```
 
@@ -2240,8 +2246,8 @@ class Child(Parent):
 #### 3.8.4 Classes 
 
 Classes should have a docstring below the class definition describing the class.
-If your class has public attributes, they should be documented here in an
-`Attributes` section and follow the same formatting as a
+Public attributes, excluding [properties](#properties), should be documented
+here in an `Attributes` section and follow the same formatting as a
 [function's `Args`](#doc-function-args) section.
 
 ```python
@@ -2265,8 +2271,9 @@ class SampleClass:
         self.likes_spam = likes_spam
         self.eggs = 0
 
-    def public_method(self):
-        """Performs operation blah."""
+    @property
+    def butter_sticks(self) -> int:
+        """The number of butter sticks we have."""
 ```
 
 All class docstrings should start with a one-line summary that describes what
