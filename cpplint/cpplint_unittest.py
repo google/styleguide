@@ -3071,7 +3071,7 @@ class CpplintTest(CpplintTestBase):
       error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData(
           'foo.cc', 'cc',
-          unicode(raw_bytes, 'utf8', 'replace').split('\n'),
+          raw_bytes.decode('utf-8', errors='replace').split('\n'),
           error_collector)
       # The warning appears only once.
       self.assertEquals(
@@ -3081,12 +3081,12 @@ class CpplintTest(CpplintTestBase):
               ' (or Unicode replacement character).'
               '  [readability/utf8] [5]'))
 
-    DoTest(self, 'Hello world\n', False)
-    DoTest(self, '\xe9\x8e\xbd\n', False)
-    DoTest(self, '\xe9x\x8e\xbd\n', True)
+    DoTest(self, b'Hello world\n', False)
+    DoTest(self, b'\xe9\x8e\xbd\n', False)
+    DoTest(self, b'\xe9x\x8e\xbd\n', True)
     # This is the encoding of the replacement character itself (which
     # you can see by evaluating codecs.getencoder('utf8')(u'\ufffd')).
-    DoTest(self, '\xef\xbf\xbd\n', True)
+    DoTest(self, b'\xef\xbf\xbd\n', True)
 
   def testBadCharacters(self):
     # Test for NUL bytes only
@@ -3104,7 +3104,7 @@ class CpplintTest(CpplintTestBase):
     cpplint.ProcessFileData(
         'nul_utf8.cc', 'cc',
         ['// Copyright 2014 Your Company.',
-         unicode('\xe9x\0', 'utf8', 'replace'), ''],
+        b'\xe9x\0'.decode('utf-8', errors='replace'), ''],
         error_collector)
     self.assertEquals(
         error_collector.Results(),
@@ -5723,8 +5723,9 @@ class QuietTest(unittest.TestCase):
 
   def testNonQuietWithErrors(self):
     # This will fail: the test header is missing a copyright and header guard.
-    (return_code, output) = self._runCppLint()
+    (return_code, output_bytes) = self._runCppLint()
     self.assertEquals(1, return_code)
+    output = output_bytes.decode('utf-8')
     # Always-on behavior: Print error messages as they come up.
     self.assertIn("[legal/copyright]", output)
     self.assertIn("[build/header_guard]", output)
@@ -5734,7 +5735,8 @@ class QuietTest(unittest.TestCase):
 
   def testQuietWithErrors(self):
     # When there are errors, behavior is identical to not passing --quiet.
-    (return_code, output) = self._runCppLint('--quiet')
+    (return_code, output_bytes) = self._runCppLint('--quiet')
+    output = output_bytes.decode('utf-8')
     self.assertEquals(1, return_code)
     self.assertIn("[legal/copyright]", output)
     self.assertIn("[build/header_guard]", output)
@@ -5744,9 +5746,10 @@ class QuietTest(unittest.TestCase):
 
   def testNonQuietWithoutErrors(self):
     # This will succeed. We filtered out all the known errors for that file.
-    (return_code, output) = self._runCppLint('--filter=' +
-                                                '-legal/copyright,' +
-                                                '-build/header_guard')
+    (return_code, output_bytes) = self._runCppLint('--filter=' +
+                                                   '-legal/copyright,' +
+                                                   '-build/header_guard')
+    output = output_bytes.decode('utf-8')
     self.assertEquals(0, return_code, output)
     # No cpplint errors are printed since there were no errors.
     self.assertNotIn("[legal/copyright]", output)
@@ -5758,10 +5761,11 @@ class QuietTest(unittest.TestCase):
 
   def testQuietWithoutErrors(self):
     # This will succeed. We filtered out all the known errors for that file.
-    (return_code, output) = self._runCppLint('--quiet',
-                                             '--filter=' +
-                                                 '-legal/copyright,' +
-                                                 '-build/header_guard')
+    (return_code, output_bytes) = self._runCppLint('--quiet',
+                                                   '--filter=' +
+                                                   '-legal/copyright,' +
+                                                   '-build/header_guard')
+    output = output_bytes.decode('utf-8')
     self.assertEquals(0, return_code, output)
     # No cpplint errors are printed since there were no errors.
     self.assertNotIn("[legal/copyright]", output)
