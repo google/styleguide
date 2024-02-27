@@ -30,6 +30,7 @@
 ;; For some reason 1) c-backward-syntactic-ws is a macro and 2)  under Emacs 22
 ;; bytecode cannot call (unexpanded) macros at run time:
 (eval-when-compile (require 'cc-defs))
+(require 'cc-mode)
 
 ;; Wrapper function needed for Emacs 21 and XEmacs (Emacs 22 offers the more
 ;; elegant solution of composing a list of lineup functions or quantities with
