@@ -34,7 +34,7 @@
 ;; Wrapper function needed for Emacs 21 and XEmacs (Emacs 22 offers the more
 ;; elegant solution of composing a list of lineup functions or quantities with
 ;; operators such as "add")
-(defun google-c-lineup-expression-plus-4 (langelem)
+(defun google-c-lineup-expression-plus-4 (_langelem)
   "Indents to the beginning of the current C expression plus 4 spaces.
 
 This implements title \"Function Declarations and Definitions\"
