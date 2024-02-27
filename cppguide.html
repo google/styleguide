@@ -414,6 +414,18 @@ should be included as:</p>
 <pre>#include "base/logging.h"
 </pre>
 
+<p>Headers should only be included using an angle-bracketed path if the library
+requires you to do so. In particular, the following headers require angle
+brackets:</p>
+
+<ul>
+<li>C and C++ standard library headers (e.g. <code>&lt;stdlib.h&gt;</code>
+  and <code>&lt;string&gt;</code>).</li>
+<li>POSIX, Linux, and Windows system headers (e.g. <code>&lt;unistd.h&gt;</code>
+  and <code>&lt;windows.h&gt;</code>).</li>
+<li>In rare cases, third_party libraries (e.g. <code>&lt;Python.h&gt;</code>).</li>
+</ul>
+
 <p>In <code><var>dir/foo</var>.cc</code> or
 <code><var>dir/foo_test</var>.cc</code>, whose main
 purpose is to implement or test the stuff in
@@ -425,9 +437,9 @@ as follows:</p>
 
   <li>A blank line</li>
 
-  <li>C system headers (more precisely: headers in angle brackets with the
-    <code>.h</code> extension), e.g., <code>&lt;unistd.h&gt;</code>,
-    <code>&lt;stdlib.h&gt;</code>.</li>
+  <li>C system headers, and any other headers in angle brackets with the
+    <code>.h</code> extension, e.g., <code>&lt;unistd.h&gt;</code>,
+    <code>&lt;stdlib.h&gt;</code>, <code>&lt;Python.h&gt;</code>.</li>
 
   <li>A blank line</li>
 
@@ -663,9 +675,9 @@ namespace baz = ::foo::bar::baz;
 
 <pre>// Shorten access to some commonly used names (in a .h file).
 namespace librarian {
-namespace impl {  // Internal, not part of the API.
+namespace internal {  // Internal, not part of the API.
 namespace sidetable = ::pipeline_diagnostics::sidetable;
-}  // namespace impl
+}  // namespace internal
 
 inline void my_inline_function() {
   // namespace alias local to a function (or method).
@@ -936,7 +948,7 @@ the formal language of the C++ standard. It means that the initializing
 expression is a constant expression, and if the object is initialized by a
 constructor call, then the constructor must be specified as
 <code>constexpr</code>, too:</p>
-<pre>struct Foo { constexpr Foo(int) {} };
+<pre class="goodcode">struct Foo { constexpr Foo(int) {} };
 
 int n = 5;  // Fine, 5 is a constant expression.
 Foo x(2);   // Fine, 2 is a constant expression and the chosen constructor is constexpr.
@@ -944,10 +956,10 @@ Foo a[] = { Foo(1), Foo(2), Foo(3) };  // Fine</pre>
 
 <p>Constant initialization is always allowed. Constant initialization of
 static storage duration variables should be marked with <code>constexpr</code>
-or <code>constinit</code></p>.
+or <code>constinit</code>.
 Any non-local static storage
 duration variable that is not so marked should be presumed to have
-dynamic initialization, and reviewed very carefully.
+dynamic initialization, and reviewed very carefully.</p>
 
 <p>By contrast, the following initializations are problematic:</p>
 
@@ -1017,10 +1029,8 @@ does not make an observable difference. For example:</p>
 <p><code>thread_local</code> variables that aren't declared inside a function
 must be initialized with a true compile-time constant,
 and this must be enforced by using the
-
-
-<a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/attributes.h">
-<code>ABSL_CONST_INIT</code></a>
+<a href="https://en.cppreference.com/w/cpp/language/constinit">
+  <code>constinit</code></a>
 attribute. Prefer
 <code>thread_local</code> over other ways of defining thread-local data.</p>
 
@@ -1093,13 +1103,11 @@ get a particularly hard to diagnose use-after-free.</p>
   initialized with a true compile-time constant (i.e., they must have no
   dynamic initialization). To enforce this, <code>thread_local</code> variables
   at class or namespace scope must be annotated with
-
-
-  <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/attributes.h">
-  <code>ABSL_CONST_INIT</code></a>
+  <a href="https://en.cppreference.com/w/cpp/language/constinit">
+    <code>constinit</code></a>
   (or <code>constexpr</code>, but that should be rare):</p>
 
-  <pre>  ABSL_CONST_INIT thread_local Foo foo = ...;
+  <pre>   constinit thread_local Foo foo = ...;
   </pre>
 
   <p><code>thread_local</code> variables inside a function have no initialization
@@ -1177,8 +1185,7 @@ for your code ,
 terminating the program may be an appropriate error handling
 response. Otherwise, consider a factory function
 or <code>Init()</code> method as described in
-<a href="https://abseil.io/tips/42">TotW #42</a>
-.
+<a href="https://abseil.io/tips/42">TotW #42</a>.
 Avoid <code>Init()</code> methods on objects with
 no other states that affect which public methods may be called
 (semi-constructed objects of this form are particularly hard to work
@@ -1444,8 +1451,6 @@ defaulted operations as you would any other code.</p>
 by making their constructors protected, by declaring their destructors protected,
 or by giving them one or more pure virtual member functions. Prefer to avoid
 deriving from concrete classes.</p>
-
-
 
 <h3 id="Structs_vs._Classes">Structs vs. Classes</h3>
 
@@ -1794,7 +1799,7 @@ improve readability, and often provide the same or better
 performance.</p>
 
 <p>Prefer to return by value or, failing that, return by reference.
-Avoid returning a pointer unless it can be null.</p>
+Avoid returning a raw pointer unless it can be null.</p>
 
 <p>Parameters are either inputs to the function, outputs from the
 function, or both. Non-optional input parameters should usually be values
@@ -1808,10 +1813,10 @@ optional outputs and optional input/output parameters.</p>
 
 
 <p>
-Avoid defining functions that require a <code>const</code> reference parameter
-to outlive the call, because <code>const</code> reference parameters bind
-to temporaries. Instead, find a way to eliminate the lifetime requirement
-(for example, by copying the parameter), or pass it by <code>const</code>
+Avoid defining functions that require a reference parameter to outlive the call.
+In some cases reference parameters can bind to temporaries, leading to lifetime
+bugs. Instead, find a way to eliminate the lifetime requirement
+(for example, by copying the parameter), or pass retained parameters by
 pointer and document the lifetime and non-null requirements.
 
 </p>
@@ -2255,10 +2260,10 @@ qualifier to methods), except as follows:</p>
   <li>You may use them to define pairs of overloads, such as one taking
   <code>Foo&amp;&amp;</code> and the other taking <code>const Foo&amp;</code>.
   Usually the preferred solution is just to pass by value, but an overloaded
-  pair of functions sometimes yields better performance and is sometimes
-  necessary in generic code that needs to support a wide variety of types.
-  As always: if you're writing more complicated code for the sake of
-  performance, make sure you have evidence that it actually helps.</li>
+  pair of functions sometimes yields better performance, for example if the
+  functions sometimes don't consume the input. As always: if you're writing
+  more complicated code for the sake of performance, make sure you have evidence
+  that it actually helps.</li>
 </ul>
 
 <h3 id="Friends">Friends</h3>
@@ -2642,9 +2647,9 @@ casts when explicit type conversion is necessary.
   including <code>void*</code>. Use this
   only if you know what you are doing and you understand the aliasing
   issues. Also, consider dereferencing the pointer (without a cast) and
-  using <code>absl::bit_cast</code> to cast the resulting value.</li>
+  using <code>std::bit_cast</code> to cast the resulting value.</li>
 
-  <li>Use <code>absl::bit_cast</code> to interpret the raw bits of a
+  <li>Use <code>std::bit_cast</code> to interpret the raw bits of a
   value using a different type of the same size (a type pun), such as
   interpreting the bits of a <code>double</code> as
   <code>int64_t</code>.</li>
@@ -3243,8 +3248,8 @@ auto c = b;   // c is an int
 auto d{42};   // d is an int, not a std::initializer_list&lt;int&gt;
 </pre>
     <code>auto</code> can be qualified with <code>const</code>, and can be
-    used as part of a pointer or reference type, but it can't be used as a
-    template argument. A rare variant of this syntax uses
+    used as part of a pointer or reference type, and (since C++17) as a
+    non-type template argument. A rare variant of this syntax uses
     <code>decltype(auto)</code> instead of <code>auto</code>, in which case
     the deduced type is the result of applying
     <a href="https://en.cppreference.com/w/cpp/language/decltype"><code>decltype</code></a>
@@ -4366,6 +4371,10 @@ using PropertiesMap = hash_map&lt;UrlTableProperties *, std::string&gt;;
 enum class UrlTableError { ...
 </pre>
 
+<h3 id="Concept_Names">Concept Names</h3>
+
+Concept names follow the same rules as <a href="#Type_Names">type names</a>.
+
 <h3 id="Variable_Names">Variable Names</h3>
 
 <p>The names of variables (including function parameters) and data members are
@@ -5216,7 +5225,8 @@ double d = 1248e6;
 </pre>
 
 <pre class="goodcode">float f = 1.0f;
-float f2 = 1;   // Also OK
+float f2 = 1.0;  // Also OK
+float f3 = 1;    // Also OK
 long double ld = -0.5L;
 double d = 1248.0e6;
 </pre>
