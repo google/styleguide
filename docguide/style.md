@@ -187,7 +187,7 @@ When nesting lists, use a 4 space indent for both numbered and bulleted lists:
     4 space indent for wrapped text.
     1.  2 spaces after a numbered list.
         8 space indent for the wrapped text of a nested list.
-    2.  Looks nice, don't it?
+    2.  Looks nice, doesn't it?
 *   3 spaces after a bullet.
 ```
 
@@ -199,8 +199,8 @@ with no indent for wrapped text.
      1. Irregular nesting... DO NOT DO THIS.
 ```
 
-Even when there's no nesting, using the 4 space indent makes layout consistent
-for wrapped text:
+Even when there's no nesting, using the 4 space indent makes the layout
+consistent for wrapped text:
 
 ```markdown
 *   Foo,
