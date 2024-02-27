@@ -12,7 +12,7 @@ Naming rules follow
 [Microsoft's C# naming guidelines](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines).
 Where Microsoft's naming guidelines are unspecified (e.g. private and local
 variables), rules are taken from the
-[CoreFX C# coding guidelines](https://github.com/dotnet/runtime/blob/master/docs/coding-guidelines/coding-style.md)
+[CoreFX C# coding guidelines](https://github.com/dotnet/runtime/blob/main/docs/coding-guidelines/coding-style.md)
 
 Rule summary:
 
@@ -337,7 +337,7 @@ int SomeProperty => _someProperty
 *   In general, prefer a named class type over `Tuple<>`, particularly when
     returning complex types.
 
-### String interpolation vs `String.Format()` vs `String.Concat` vs `operator+`
+### `String interpolation` vs `String.Format()` vs `String.Concat` vs `operator+`
 
 *   In general, use whatever is easiest to read, particularly for logging and
     assert messages.
