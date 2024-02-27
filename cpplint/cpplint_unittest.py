@@ -969,6 +969,16 @@ class CpplintTest(CpplintTestBase):
         """,
         '')
     self.TestIncludeWhatYouUse(
+        """#include "base/ranges/algorithm.h"
+          base::ranges::copy(foo, bar.begin());
+        """,
+        '')
+    self.TestIncludeWhatYouUse(
+        """#include "base/foobar.h"
+          void FooBar::Remove(size_t index);
+        """,
+        '')
+    self.TestIncludeWhatYouUse(
         """#include "base/foobar.h"
            bool foobar = std::less<int>(0,1);
         """,
