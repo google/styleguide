@@ -419,8 +419,8 @@ initial capitalization.
 
 ### Line length
 
-There is no fixed line length for Go source code. If a line feels too long, it
-should be refactored instead of broken. If it is already as short as it is
+There is no fixed line length for Go source code. If a line feels too long,
+prefer refactoring instead of splitting it. If it is already as short as it is
 practical for it to be, the line should be allowed to remain long.
 
 Do not split a line:

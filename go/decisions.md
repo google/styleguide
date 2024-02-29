@@ -897,9 +897,14 @@ import (
 )
 ```
 
-It is acceptable to split the project packages into multiple groups, for example
-if you want a separate group for renamed, imported-only-for-side-effects or
-another special group of imports.
+It is acceptable to split the project packages into multiple groups if you want
+a separate group, as long as the groups have some meaning. Common reasons to do
+this:
+
+*   renamed imports
+*   packages imported for their side-effects
+
+Example:
 
 ```go
 // Good:
@@ -1273,14 +1278,19 @@ maintainable.
 
 #### Field names
 
-Struct literals should usually specify **field names** for types defined outside
-the current package.
+Struct literals must specify **field names** for types defined outside the
+current package.
 
 *   Include field names for types from other packages.
 
     ```go
     // Good:
-    good := otherpkg.Type{A: 42}
+    // https://pkg.go.dev/encoding/csv#Reader
+    r := csv.Reader{
+      Comma: ',',
+      Comment: '#',
+      FieldsPerRecord: 4,
+    }
     ```
 
     The position of fields in a struct and the full set of fields (both of which
@@ -1290,17 +1300,7 @@ the current package.
 
     ```go
     // Bad:
-    // https://pkg.go.dev/encoding/csv#Reader
     r := csv.Reader{',', '#', 4, false, false, false, false}
-    ```
-
-    Field names may be omitted within small, simple structs whose composition
-    and order are documented as being stable.
-
-    ```go
-    // Good:
-    okay := image.Point{42, 54}
-    also := image.Point{X: 42, Y: 54}
     ```
 
 *   For package-local types, field names are optional.
@@ -1721,33 +1721,6 @@ func (r *SomeType) SomeLongFunctionName(foo1, foo2, foo3 string,
 See [best practices](best-practices#funcargs) for a few options for shortening
 the call sites of functions that would otherwise have many arguments.
 
-```go
-// Good:
-good := foo.Call(long, CallOptions{
-    Names:   list,
-    Of:      of,
-    The:     parameters,
-    Func:    all,
-    Args:    on,
-    Now:     separate,
-    Visible: lines,
-})
-```
-
-```go
-// Bad:
-bad := foo.Call(
-    long,
-    list,
-    of,
-    parameters,
-    all,
-    on,
-    separate,
-    lines,
-)
-```
-
 Lines can often be shortened by factoring out local variables.
 
 ```go
@@ -1770,9 +1743,9 @@ bad := foo.Call(long, list, of, parameters,
     with, arbitrary, line, breaks)
 ```
 
-Do not add comments to specific function parameters. Instead, use an
-[option struct](best-practices#option-structure) or add more detail to the
-function documentation.
+Avoid adding inline comments to specific function arguments where possible.
+Instead, use an [option struct](best-practices#option-structure) or add more
+detail to the function documentation.
 
 ```go
 // Good:
@@ -1785,21 +1758,6 @@ bad := server.New(
     ctx,
     42, // Port
 )
-```
-
-If call-sites are uncomfortably long, consider refactoring:
-
-```go
-// Good:
-// Sometimes variadic arguments can be factored out
-replacements := []string{
-    "from", "to", // related values can be formatted adjacent to one another
-    "source", "dest",
-    "original", "new",
-}
-
-// Use the replacement struct as inputs to NewReplacer.
-replacer := strings.NewReplacer(replacements...)
 ```
 
 If the API cannot be changed or if the local call is unusual (whether or not the
@@ -2110,7 +2068,7 @@ exclusively at
 func MustParse(version string) *Version {
     v, err := Parse(version)
     if err != nil {
-        log.Fatalf("MustParse(%q) = _, %v", version, err)
+        panic(fmt.Sprintf("MustParse(%q) = _, %v", version, err))
     }
     return v
 }
@@ -2119,8 +2077,6 @@ func MustParse(version string) *Version {
 // set the value in `init`.
 var DefaultVersion = MustParse("1.2.3")
 ```
-
-**Note:** `log.Fatalf` is not the standard library log. See [#logging].
 
 The same convention may be used in test helpers that only stop the current test
 (using `t.Fatal`). Such helpers are often convenient in creating test values,
@@ -2133,7 +2089,7 @@ func mustMarshalAny(t *testing.T, m proto.Message) *anypb.Any {
   t.Helper()
   any, err := anypb.New(m)
   if err != nil {
-    t.Fatalf("MustMarshalAny(t, m) = %v; want %v", err, nil)
+    t.Fatalf("mustMarshalAny(t, m) = %v; want %v", err, nil)
   }
   return any
 }
@@ -2189,8 +2145,8 @@ func Version(o *servicepb.Object) (*version.Version, error) {
 When you spawn goroutines, make it clear when or whether they exit.
 
 Goroutines can leak by blocking on channel sends or receives. The garbage
-collector will not terminate a goroutine even if the channels it is blocked on
-are unreachable.
+collector will not terminate a goroutine blocked on a channel even if no other
+goroutine has a reference to the channel.
 
 Even when goroutines do not leak, leaving them in-flight when they are no longer
 needed can cause other subtle and hard-to-diagnose problems. Sending on a
@@ -2764,11 +2720,11 @@ See also:
 
 ### Logging
 
-Go programs in the Google codebase use a variant of the
-[standard `log` package]. It has a similar but more powerful interface and
-interoperates well with internal Google systems. An open source version of this
-library is available as [package `glog`], and open source Google projects may
-use that, but this guide refers to it as `log` throughout.
+Go programs in the Google codebase use a variant of the standard [`log`]
+package. It has a similar but more powerful interface and interoperates well
+with internal Google systems. An open source version of this library is
+available as [package `glog`], and open source Google projects may use that, but
+this guide refers to it as `log` throughout.
 
 **Note:** For abnormal program exits, this library uses `log.Fatal` to abort
 with a stacktrace, and `log.Exit` to stop without one. There is no `log.Panic`
@@ -2785,7 +2741,8 @@ See also:
 *   When and how to use the log package to
     [stop the program](best-practices#checks-and-panics)
 
-[standard `log` package]: https://pkg.go.dev/log
+[`log`]: https://pkg.go.dev/log
+[`log/slog`]: https://pkg.go.dev/log/slog
 [package `glog`]: https://pkg.go.dev/github.com/golang/glog
 [`log.Exit`]: https://pkg.go.dev/github.com/golang/glog#Exit
 [`log.Fatal`]: https://pkg.go.dev/github.com/golang/glog#Fatal
@@ -2978,15 +2935,15 @@ right:
 // Bad:
 package assert
 
-func IsNotNil(t *testing.T, name string, val interface{}) {
+func IsNotNil(t *testing.T, name string, val any) {
     if val == nil {
-        t.Fatalf("data %s = nil, want not nil", name)
+        t.Fatalf("Data %s = nil, want not nil", name)
     }
 }
 
 func StringEq(t *testing.T, name, got, want string) {
     if got != want {
-        t.Fatalf("data %s = %q, want %q", name, got, want)
+        t.Fatalf("Data %s = %q, want %q", name, got, want)
     }
 }
 ```
@@ -3013,7 +2970,7 @@ want := BlogPost{
 }
 
 if !cmp.Equal(got, want) {
-    t.Errorf("blog post = %v, want = %v", got, want)
+    t.Errorf("Blog post = %v, want = %v", got, want)
 }
 ```
 
@@ -3029,7 +2986,7 @@ func TestBlogPost_VeritableRant(t *testing.T) {
     post := BlogPost{Body: "I am Gunnery Sergeant Hartman, your senior drill instructor."}
 
     if got, want := postLength(post), 60; got != want {
-        t.Errorf("length of post = %v, want %v", got, want)
+        t.Errorf("Length of post = %v, want %v", got, want)
     }
 }
 ```
@@ -3361,7 +3318,8 @@ than relying on parsing the error message.
 Within unit tests, it is common to only care whether an error occurred or not.
 If so, then it is sufficient to only test whether the error was non-nil when you
 expected an error. If you would like to test that the error semantically matches
-some other error, then consider using `cmp` with [`cmpopts.EquateErrors`].
+some other error, then consider using [`errors.Is`] or `cmp` with
+[`cmpopts.EquateErrors`].
 
 > **Note:** If a test uses [`cmpopts.EquateErrors`] but all of its `wantErr`
 > values are either `nil` or `cmpopts.AnyError`, then using `cmp` is
@@ -3370,9 +3328,10 @@ some other error, then consider using `cmp` with [`cmpopts.EquateErrors`].
 >
 > ```go
 > // Good:
-> gotErr := f(test.input) != nil
+> err := f(test.input)
+> gotErr := err != nil
 > if gotErr != test.wantErr {
->     t.Errorf("f(%q) returned err = %v, want error presence = %v", test.input, gotErr, test.wantErr)
+>     t.Errorf("f(%q) = %v, want error presence = %v", test.input, err, test.wantErr)
 > }
 > ```
 
@@ -3381,6 +3340,7 @@ See also
 
 [tott-350]: https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html
 [`cmpopts.EquateErrors`]: https://pkg.go.dev/github.com/google/go-cmp/cmp/cmpopts#EquateErrors
+[`errors.Is`]: https://pkg.go.dev/errors#Is
 
 <a id="test-structure"></a>
 
@@ -3471,6 +3431,9 @@ t.Run("check that there is no mention of scratched records or hovercrafts", ...)
 t.Run("AM/PM confusion", ...)
 ```
 
+See also
+[Go Tip #117: Subtest Names](https://google.github.io/styleguide/go/index.html#gotip).
+
 [Go test runner]: https://golang.org/cmd/go/#hdr-Testing_flags
 [identify the inputs]: #identify-the-input
 [special meaning for test filters]: https://blog.golang.org/subtests#:~:text=Perhaps%20a%20bit,match%20any%20tests
@@ -3491,39 +3454,37 @@ similar testing logic.
 [tests of `fmt.Sprintf`]: https://cs.opensource.google/go/go/+/master:src/fmt/fmt_test.go
 [tests for `net.Dial`]: https://cs.opensource.google/go/go/+/master:src/net/dial_test.go;l=318;drc=5b606a9d2b7649532fe25794fa6b99bd24e7697c
 
-Here is the minimal structure of a table-driven test, copied from the standard
-`strings` library. If needed, you may use different names, move the test slice
-into the test function, or add extra facilities such as subtests or setup and
-cleanup functions. Always keep [useful test failures](#useful-test-failures) in
-mind.
+Here is the minimal structure of a table-driven test. If needed, you may use
+different names or add extra facilities such as subtests or setup and cleanup
+functions. Always keep [useful test failures](#useful-test-failures) in mind.
 
 ```go
 // Good:
-var compareTests = []struct {
-    a, b string
-    i    int
-}{
-    {"", "", 0},
-    {"a", "", 1},
-    {"", "a", -1},
-    {"abc", "abc", 0},
-    {"ab", "abc", -1},
-    {"abc", "ab", 1},
-    {"x", "ab", 1},
-    {"ab", "x", -1},
-    {"x", "a", 1},
-    {"b", "x", -1},
-    // test runtime·memeq's chunked implementation
-    {"abcdefgh", "abcdefgh", 0},
-    {"abcdefghi", "abcdefghi", 0},
-    {"abcdefghi", "abcdefghj", -1},
-}
-
 func TestCompare(t *testing.T) {
-    for _, tt := range compareTests {
-        cmp := Compare(tt.a, tt.b)
-        if cmp != tt.i {
-            t.Errorf(`Compare(%q, %q) = %v`, tt.a, tt.b, cmp)
+    compareTests := []struct {
+        a, b string
+        want int
+    }{
+        {"", "", 0},
+        {"a", "", 1},
+        {"", "a", -1},
+        {"abc", "abc", 0},
+        {"ab", "abc", -1},
+        {"abc", "ab", 1},
+        {"x", "ab", 1},
+        {"ab", "x", -1},
+        {"x", "a", 1},
+        {"b", "x", -1},
+        // test runtime·memeq's chunked implementation
+        {"abcdefgh", "abcdefgh", 0},
+        {"abcdefghi", "abcdefghi", 0},
+        {"abcdefghi", "abcdefghj", -1},
+    }
+
+    for _, test := range compareTests {
+        got := Compare(test.a, test.b)
+        if got != test.want {
+            t.Errorf("Compare(%q, %q) = %v, want %v", test.a, test.b, got, test.want)
         }
     }
 }
@@ -3639,7 +3600,7 @@ func TestDecode(t *testing.T) {
       case prod:
         codex = setupCodex(t)
       default:
-        t.Fatalf("unknown codex type: %v", codex)
+        t.Fatalf("Unknown codex type: %v", codex)
       }
       output, err := Decode(test.input, codex)
       if got, want := output, test.output; got != want {
@@ -3673,7 +3634,7 @@ tests := []struct {
 }
 for i, d := range tests {
     if strings.ToUpper(d.input) != d.want {
-        t.Errorf("failed on case #%d", i)
+        t.Errorf("Failed on case #%d", i)
     }
 }
 ```

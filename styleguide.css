@@ -7,7 +7,13 @@ body {
   margin-left: 100px;
 }
 
-h1, h2, h3, h4, h5, h6, .toc_title {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.toc_title {
   color: #06c;
   margin-top: 2em;
   margin-bottom: 1em;
@@ -18,38 +24,47 @@ h1 {
   font-size: 18pt;
 }
 
-h2, .toc_title {
+h2,
+.toc_title {
   font-weight: bold;
   font-size: 12pt;
   margin-left: -40px;
 }
 
-h3, h4, h5, h6 {
+h3,
+h4,
+h5,
+h6 {
   font-size: 10pt;
   margin-left: -20px;
 }
 
-.toc_category, .toc_stylepoint {
+.toc_category,
+.toc_stylepoint {
   font-size: 10pt;
-  padding-top: .3em;
-  padding-bottom: .3em;
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
 }
 
 table {
   border-collapse: collapse;
 }
 
-td, th {
+td,
+th {
   border: 1px solid #ccc;
   padding: 2px 12px;
   font-size: 10pt;
 }
 
-.toc td, .toc th {
+.toc td,
+.toc th {
   border-width: 1px 5px;
 }
 
-code, samp, var {
+code,
+samp,
+var {
   color: #060;
 }
 
@@ -58,16 +73,9 @@ pre {
   display: block;
   color: #060;
   background-color: #f8fff8;
-  border-color: #f0fff0;
-  border-style: solid;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-right-width: 1px;
+  border: 1px solid #f0fff0;
   border-left-width: 5px;
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-top: 4px;
-  padding-bottom: 4px;
+  padding: 4px 12px;
 }
 
 pre.badcode {
@@ -79,8 +87,7 @@ pre.badcode {
 .showhide_button {
   float: left;
   cursor: pointer;
-  border-width: 1px;
-  border-style: solid;
+  border: 1px solid;
   border-color: #ddd #aaa #aaa #ddd;
   padding: 0 3px 1px;
   margin: 0 4px 8px 0;
@@ -93,9 +100,7 @@ pre.badcode {
   float: left;
   display: none;
   background-color: #f8f8ff;
-  border-color: #f0f0ff;
-  border-style: solid;
-  border-width: 1px;
+  border: 1px solid #f0f0ff;
   font-size: 75%;
   margin-top: 0;
   margin-left: -50px;
@@ -118,7 +123,7 @@ hr {
 .stylepoint_section {
   display: block;
   margin-bottom: 1em;
-  color: #5588ff;
+  color: #58f;
   font-family: sans-serif;
   font-size: 90%;
   font-weight: bold;
@@ -126,7 +131,7 @@ hr {
 }
 
 .stylepoint_subsection {
-  color: #667799;
+  color: #679;
   font-family: sans-serif;
   font-size: 90%;
   font-weight: bold;
@@ -134,7 +139,7 @@ hr {
 }
 
 .stylepoint_subsubsection {
-  color: #667799;
+  color: #679;
   font-family: sans-serif;
   font-size: 80%;
   font-weight: bold;
@@ -144,4 +149,3 @@ hr {
 .revision {
   text-align: right;
 }
-
