@@ -57,7 +57,9 @@ necessary to change a rule in the guide.</p>
 
 <p>The goals of the style guide as we currently see them are as follows:</p>
 <dl>
-<dt>Style rules should pull their weight</dt>
+
+<ol>  
+<li><dt><b>Style rules should pull their weight:</b></dt></li>
 <dd>The benefit of a style rule
 must be large enough to justify asking all of our engineers to
 remember it. The benefit is measured relative to the codebase we would
@@ -68,7 +70,7 @@ than the rules we do: for example, <code>goto</code> contravenes many
 of the following principles, but is already vanishingly rare, so the Style
 Guide doesn’t discuss it.</dd>
 
-<dt>Optimize for the reader, not the writer</dt>
+<li><dt><b>Optimize for the reader, not the writer:</b></dt></li>
 <dd>Our codebase (and most individual components submitted to it) is
 expected to continue for quite some time. As a result, more time will
 be spent reading most of our code than writing it. We explicitly
@@ -82,7 +84,7 @@ at the point of use is valuable (<code>std::unique_ptr</code>
 demonstrates the ownership transfer unambiguously at the call
 site). </dd>
 
-<dt>Be consistent with existing code</dt>
+<li><dt><b>Be consistent with existing code:</b></dt></li>
 <dd>Using one style consistently through our codebase lets us focus on
 other (more important) issues. Consistency also allows for automation:
 tools that format your code or adjust your <code>#include</code>s only
@@ -99,7 +101,7 @@ justification to do things in an old style without considering the
 benefits of the new style, or the tendency of the codebase to converge
 on newer styles over time.</dd>
 
-<dt>Be consistent with the broader C++ community when appropriate</dt>
+<li><dt><b>Be consistent with the broader C++ community when appropriate:</b></dt></li>
 <dd>Consistency with the way other organizations use C++ has value for
 the same reasons as consistency within our code base. If a feature in
 the C++ standard solves a problem, or if some idiom is widely known
@@ -111,7 +113,7 @@ prefer a homegrown or third-party library over a library defined in
 the C++ Standard, either out of perceived superiority or insufficient
 value to transition the codebase to the standard interface.</dd>
 
-<dt>Avoid surprising or dangerous constructs</dt>
+<li><dt><b>Avoid surprising or dangerous constructs:</b></dt></li>
 <dd>C++ has features that are more surprising or dangerous than one
 might think at a glance. Some style guide restrictions are in place to
 prevent falling into these pitfalls. There is a high bar for style
@@ -119,8 +121,8 @@ guide waivers on such restrictions, because waiving such rules often
 directly risks compromising program correctness.
 </dd>
 
-<dt>Avoid constructs that our average C++ programmer would find tricky
-or hard to maintain</dt>
+<li><dt><b>Avoid constructs that our average C++ programmer would find tricky
+or hard to maintain:</b></dt></li>
 <dd>C++ has features that may not be generally appropriate because of
 the complexity they introduce to the code. In widely used
 code, it may be more acceptable to use
@@ -135,7 +137,7 @@ changes over time: even if everyone that works with some piece of code
 currently understands it, such understanding is not guaranteed to hold a
 few years from now.</dd>
 
-<dt>Be mindful of our scale</dt>
+<li><dt><b>Be mindful of our scale:</b></dt></li>
 <dd>With a codebase of 100+ million lines and thousands of engineers,
 some mistakes and simplifications for one engineer can become costly
 for many. For instance it's particularly important to
@@ -144,12 +146,12 @@ codebase of hundreds of millions of lines are difficult to work with
 and hard to avoid if everyone puts things into the global
 namespace.</dd>
 
-<dt>Concede to optimization when necessary</dt>
+<li><dt><b>Concede to optimization when necessary:</b></dt></li>
 <dd>Performance optimizations can sometimes be necessary and
 appropriate, even when they conflict with the other principles of this
 document.</dd>
 </dl>
-
+</ol>
 <p>The intent of this document is to provide maximal guidance with
 reasonable restriction. As always, common sense and good taste should
 prevail. By this we specifically refer to the established conventions
@@ -521,6 +523,16 @@ system-specific code small and localized. Example:</p>
 </pre>
 
 <h2 id="Scoping">Scoping</h2>
+<p>Scoping refers to the visibility and accessibility of variables, functions,
+   and other identifiers within a program.</p>
+<p>Scoping helps prevent naming conflicts by limiting the visibility of identifiers to specific regions of code, 
+  such as within a function, block, or namespace.</p>
+<p>Global scope refers to identifiers that are accessible throughout the entire program, while local scope refers to identifiers 
+  that are only accessible within a specific block or function.</p>
+<p>Nested scopes occur when one scope is contained within another, allowing identifiers declared in an outer scope 
+    to be accessed by inner scopes, but not vice versa.</p>
+<p>Understanding scoping rules is essential for writing maintainable and error-free code, as it helps prevent unintended
+   side effects and promotes modular design.</p>
 
 <h3 id="Namespaces">Namespaces</h3>
 
