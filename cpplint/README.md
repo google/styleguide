@@ -1,3 +1,5 @@
+# cpplint
+
 This is automated checker to make sure a C++ file follows Google's C++ style
 guide (https://google.github.io/styleguide/cppguide.html). As it
 heavily relies on regular expressions, cpplint.py won't catch all violations of
@@ -8,7 +10,7 @@ and we welcome patches to improve it.
 The linting tool takes a list of files as input. For full usage instructions,
 please see the output of:
 
-  ./cpplint.py --help
+     ./cpplint.py --help
 
 Unit tests are provided in cpplint_unittest.py. This file can safely be ignored
 by end users who have downloaded this package and only want to run the lint
