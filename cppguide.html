@@ -824,8 +824,8 @@ for (int i = 0; i &lt; 1000000; ++i) {
 }
 </pre>
 
-<p>It may be more efficient to declare such a variable
-used in a loop outside that loop:</p>
+<p>It may be more efficient to declare such variables
+outside the loop, as in:</p>
 
 <pre>Foo f;  // My ctor and dtor get called once each.
 for (int i = 0; i &lt; 1000000; ++i) {
