@@ -6068,6 +6068,12 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
     else:
       lines = codecs.open(filename, 'r', 'utf8', 'replace').read().split('\n')
 
+    # Remove BOM
+    if lines and lines[0]:
+      ord0 = ord(lines[0][0])
+      if ord0 == 0xfeff:
+        lines[0] = lines[0][1:]
+
     # Remove trailing '\r'.
     # The -1 accounts for the extra trailing blank line we get from split()
     for linenum in range(len(lines) - 1):
