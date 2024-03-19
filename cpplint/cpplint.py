@@ -1143,6 +1143,7 @@ class FileInfo(object):
             os.path.exists(os.path.join(current_dir, ".hg")) or
             os.path.exists(os.path.join(current_dir, ".svn"))):
           root_dir = current_dir
+          break
         current_dir = os.path.dirname(current_dir)
 
       if (os.path.exists(os.path.join(root_dir, ".git")) or
