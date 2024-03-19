@@ -5196,7 +5196,7 @@ lists like other comma-separated lists.</p>
 <p>For by-reference captures, do not leave a space between the
 ampersand (<code>&amp;</code>) and the variable name.</p>
 <pre>int x = 0;
-auto x_plus_n = [&amp;x](int n) -&gt; int { return x + n; }
+auto x_plus_n = [&amp;x](int n) -&gt; int { return x + n; };
 </pre>
 <p>Short lambdas may be written inline as function arguments.</p>
 <pre>absl::flat_hash_set&lt;int&gt; to_remove = {7, 8, 9};
