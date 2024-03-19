@@ -1576,10 +1576,9 @@ Rationale: A function or destructor marked
 <code>override</code> or <code>final</code> that is
 not an override of a base class virtual function will
 not compile, and this helps catch common errors. The
-specifiers serve as documentation; if no specifier is
-present, the reader has to check all ancestors of the
-class in question to determine if the function or
-destructor is virtual or not.</p>
+specifiers serve as a typo check and also as documentation;
+you can enforce them by <code>gcc -Wsuggest-override</code>
+or <code>clang-tidy -checks=hicpp-use-override</code>.</p>
 
 <p>Multiple inheritance is permitted, but multiple <em>implementation</em>
 inheritance is strongly discouraged.</p>
