@@ -521,11 +521,13 @@ Property Value Type: object<br />Parent: -
   "error": {
     "code": 404,
     "message": "File Not Found",
-    "errors": [{
-      "domain": "Calendar",
-      "reason": "ResourceNotFoundException",
-      "message": "File Not Found
-    }]
+    "errors": [
+      {
+        "domain": "Calendar",
+        "reason": "ResourceNotFoundException",
+        "message": "File Not Found"
+      }
+    ]
   }
 }
 
