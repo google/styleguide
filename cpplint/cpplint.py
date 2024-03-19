@@ -955,7 +955,7 @@ class _CppLintState(object):
     for category, count in self.errors_by_category.iteritems():
       sys.stderr.write('Category \'%s\' errors found: %d\n' %
                        (category, count))
-    sys.stdout.write('Total errors found: %d\n' % self.error_count)
+    sys.stdout.write('Total error(s) found: %d\n' % self.error_count)
 
 _cpplint_state = _CppLintState()
 
@@ -1996,8 +1996,13 @@ def CheckHeaderFileIncluded(filename, include_state, error):
   for section_list in include_state.include_list:
     for f in section_list:
       if headername in f[0] or f[0] in headername:
+        # src/file.h is valid
+        return
+      if './' + os.path.basename(headerfile) in f[0]:
+        # ./file.h is valid assuming it compiles
         return
       if not first_include:
+        # Did not find matching pattern
         first_include = f[1]
 
   error(filename, first_include, 'build/include', 5,
@@ -4301,7 +4306,7 @@ def GetLineWidth(line):
           is_low_surrogate = 0xDC00 <= ord(uc) <= 0xDFFF
           if not is_wide_build and is_low_surrogate:
             width -= 1
-          
+
         width += 1
     return width
   else:
