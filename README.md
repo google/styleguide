@@ -1,4 +1,8 @@
 # Google Style Guides
+# Ad logo if applicable 
+// if headers are added, recommend using a table of contents
+
+# Table of Contents
 
 Every major open-source project has its own style guide: a set of conventions
 (sometimes arbitrary) about how to write code for that project. It is much
@@ -12,6 +16,13 @@ guidelines we use for Google code. If you are modifying a project that
 originated at Google, you may be pointed to this page to see the style guides
 that apply to that project.
 
+//if a project applies to other style guides how would this effect the contributor
+
+# How to use the Project 
+//include how to change Google originated projects to intended style guide
+// how to change style guides on Google
+
+# Style Guides
 
 *   [AngularJS Style Guide][angular]
 *   [Common Lisp Style Guide][cl]
@@ -33,11 +44,20 @@ This project also contains [cpplint][cpplint], a tool to assist with style guide
 compliance, and [google-c-style.el][emacs], an Emacs settings file for Google
 style.
 
+# Installation/Run Process
+
+// Add installation process 
+// Recommend description of installation process for different devices 
+
+# Additional Formats
+
 If your project requires that you create a new XML document format, the
 [XML Document Format Style Guide][xml] may be helpful. In addition to actual
 style rules, it also contains advice on designing your own vs. adapting an
 existing format, on XML instance document formatting, and on elements vs.
 attributes.
+
+# License
 
 The style guides in this project are licensed under the CC-By 3.0 License, which
 encourages you to share these documents. See
@@ -79,3 +99,10 @@ changes, but we are primarily optimizing for Google's internal needs.
 [xml]: https://google.github.io/styleguide/xmlstyle.html
 [dart]: https://www.dartlang.org/guides/language/effective-dart
 [ccl]: https://creativecommons.org/licenses/by/3.0/
+
+# Badges
+//include project badges
+//inform developers on what they are doing
+
+# Test 
+//include tests to see how style guides are implemented 
