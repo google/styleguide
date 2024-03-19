@@ -2217,6 +2217,9 @@ class CpplintTest(CpplintTestBase):
     self.TestLint('istringstream& LogFunc(istringstream& s);', '')
     # Returning a non-const reference from a function is OK.
     self.TestLint('int& g();', '')
+    # Passing signed or unsigned const references is OK.
+    self.TestLint('void foo(const unsigned int& bar);', '');
+    self.TestLint('void foo(const signed int& bar);', '');
     # Passing a const reference to a struct (using the struct keyword) is OK.
     self.TestLint('void foo(const struct tm& tm);', '')
     # Passing a const reference to a typename is OK.
