@@ -2901,6 +2901,7 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
       constructor_args[i] = constructor_arg
       i += 1
 
+    variadic_args = [arg for arg in constructor_args if '&&...' in arg]
     defaulted_args = [arg for arg in constructor_args if '=' in arg]
     noarg_constructor = (not constructor_args or  # empty arg list
                          # 'void' arg specifier
@@ -2911,7 +2912,10 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
                           # all but at most one arg defaulted
                           (len(constructor_args) >= 1 and
                            not noarg_constructor and
-                           len(defaulted_args) >= len(constructor_args) - 1))
+                           len(defaulted_args) >= len(constructor_args) - 1) or
+                          # variadic arguments with zero or one argument
+                          (len(constructor_args) <= 2 and
+                           len(variadic_args) >= 1))
     initializer_list_constructor = bool(
         onearg_constructor and
         Search(r'\bstd\s*::\s*initializer_list\b', constructor_args[0]))
@@ -2924,7 +2928,7 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
         onearg_constructor and
         not initializer_list_constructor and
         not copy_constructor):
-      if defaulted_args:
+      if defaulted_args or variadic_args:
         error(filename, linenum, 'runtime/explicit', 5,
               'Constructors callable with one argument '
               'should be marked explicit.')

@@ -1600,6 +1600,47 @@ class CpplintTest(CpplintTestBase):
             Foo(std::initializer_list<T> &arg) {}
           };""",
           '')
+      # Special case for variadic arguments
+      error_collector = ErrorCollector(self.assert_)
+      cpplint.ProcessFileData('foo.cc', 'cc',
+          ['class Foo {',
+          '  template<typename... Args>',
+          '  explicit Foo(const int arg, Args&&... args) {}',
+          '};'],
+          error_collector)
+      self.assertEquals(0, error_collector.ResultList().count(
+        'Constructors that require multiple arguments should not be marked '
+        'explicit.  [runtime/explicit] [0]'))
+      error_collector = ErrorCollector(self.assert_)
+      cpplint.ProcessFileData('foo.cc', 'cc',
+          ['class Foo {',
+          '  template<typename... Args>',
+          '  explicit Foo(Args&&... args) {}',
+          '};'],
+          error_collector)
+      self.assertEquals(0, error_collector.ResultList().count(
+        'Constructors that require multiple arguments should not be marked '
+        'explicit.  [runtime/explicit] [0]'))
+      error_collector = ErrorCollector(self.assert_)
+      cpplint.ProcessFileData('foo.cc', 'cc',
+          ['class Foo {',
+          '  template<typename... Args>',
+          '  Foo(const int arg, Args&&... args) {}',
+          '};'],
+          error_collector)
+      self.assertEquals(1, error_collector.ResultList().count(
+        'Constructors callable with one argument should be marked explicit.'
+        '  [runtime/explicit] [5]'))
+      error_collector = ErrorCollector(self.assert_)
+      cpplint.ProcessFileData('foo.cc', 'cc',
+          ['class Foo {',
+          '  template<typename... Args>',
+          '  Foo(Args&&... args) {}',
+          '};'],
+          error_collector)
+      self.assertEquals(1, error_collector.ResultList().count(
+        'Constructors callable with one argument should be marked explicit.'
+        '  [runtime/explicit] [5]'))
       # Anything goes inside an assembly block
       error_collector = ErrorCollector(self.assert_)
       cpplint.ProcessFileData('foo.cc', 'cc',
