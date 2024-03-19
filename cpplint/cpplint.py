@@ -2692,7 +2692,7 @@ class NestingState(object):
         # check if the keywords are not preceded by whitespaces.
         indent = access_match.group(1)
         if (len(indent) != classinfo.class_indent + 1 and
-            Match(r'^\s*$', indent)):
+            Match(r'^\s+$', indent)):
           if classinfo.is_struct:
             parent = 'struct ' + classinfo.name
           else:
