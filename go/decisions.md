@@ -69,6 +69,9 @@ exceptions to this principle:
     reuse identifiers, as is done in [`syscall`]. This is expected to be very
     rare in most codebases.
 
+**Note:** Filenames of source code are not Go identifiers and do not have to
+follow these conventions. They may contain underscores.
+
 [`syscall`]: https://pkg.go.dev/syscall#pkg-constants
 
 <a id="package-names"></a>
@@ -1065,7 +1068,7 @@ can get wrapped into an interface and thus become a non-nil value (see the
 func Bad() *os.PathError { /*...*/ }
 ```
 
-**Tip**: A function that takes a `context.Context` argument should usually
+**Tip**: A function that takes a [`context.Context`] argument should usually
 return an `error` so that the caller can determine if the context was cancelled
 while the function was running.
 
@@ -2178,7 +2181,7 @@ the scope of a function and factoring out the logic into
 important to document when and why the goroutines exit.
 
 Code that follows best practices around context usage often helps make this
-clear. It is conventionally managed with a `context.Context`:
+clear. It is conventionally managed with a [`context.Context`]:
 
 ```go
 // Good:
@@ -2776,7 +2779,7 @@ chain from incoming RPCs and HTTP requests to outgoing requests.
 
 [`context.Context`]: https://pkg.go.dev/context
 
-When passed to a function or method, `context.Context` is always the first
+When passed to a function or method, [`context.Context`] is always the first
 parameter.
 
 ```go
@@ -2794,15 +2797,16 @@ Exceptions are:
     [gRPC Generated Code documentation](https://grpc.io/docs/languages/go/generated-code/).
 
 *   In entrypoint functions (see below for examples of such functions), use
-    [`context.Background()`](https://pkg.go.dev/context/#Background).
+    [`context.Background()`] or, for tests,
+    [`tb.Context()`](https://pkg.go.dev/testing#TB.Context).
 
     *   In binary targets: `main`
     *   In general purpose code and libraries: `init`
     *   In tests: `TestXXX`, `BenchmarkXXX`, `FuzzXXX`
 
 > **Note**: It is very rare for code in the middle of a callchain to require
-> creating a base context of its own using `context.Background()`. Always prefer
-> taking a context from your caller, unless it's the wrong context.
+> creating a base context of its own using [`context.Background()`]. Always
+> prefer taking a context from your caller, unless it's the wrong context.
 >
 > You may come across server libraries (the implementation of Stubby, gRPC, or
 > HTTP in Google's server framework for Go) that construct a fresh context
@@ -2814,13 +2818,13 @@ Exceptions are:
 > cancelled.
 >
 > Unless you are implementing a server framework, you shouldn't create contexts
-> with `context.Background()` in library code. Instead, prefer using context
+> with [`context.Background()`] in library code. Instead, prefer using context
 > detachment, which is mentioned below, if there is an existing context
-> available. If you think you do need `context.Background()` outside of
+> available. If you think you do need [`context.Background()`] outside of
 > entrypoint functions, discuss it with the Google Go style mailing list before
 > committing to an implementation.
 
-The convention that `context.Context` comes first in functions also applies to
+The convention that [`context.Context`] comes first in functions also applies to
 test helpers.
 
 ```go
@@ -2835,6 +2839,14 @@ third party library outside Google's control. Such cases are very rare, and
 should be discussed with the Google Go style mailing list before implementation
 and readability review.
 
+**Note:** Go 1.24 added a [`(testing.TB).Context()`] method. In tests, prefer
+using [`(testing.TB).Context()`] over [`context.Background()`] to provide the
+initial [`context.Context`] used by the test. Helper functions, environment or
+test double setup, and other functions called from the test function body that
+require a context should have one explicitly passed.
+
+[`(testing.TB).Context()`]: https://pkg.go.dev/testing#TB.Context
+
 Code in the Google codebase that must spawn background operations which can run
 after the parent context has been cancelled can use an internal package for
 detachment. Follow [issue #40221](https://github.com/golang/go/issues/40221) for
@@ -2848,6 +2860,7 @@ See also:
 
 *   [Contexts and structs]
 
+[`context.Background()`]: https://pkg.go.dev/context/#Background
 [Contexts and structs]: https://go.dev/blog/context-and-structs
 
 <a id="custom-contexts"></a>
@@ -2855,7 +2868,8 @@ See also:
 #### Custom contexts
 
 Do not create custom context types or use interfaces other than
-`context.Context` in function signatures. There are no exceptions to this rule.
+[`context.Context`] in function signatures. There are no exceptions to this
+rule.
 
 Imagine if every team had a custom context. Every function call from package `p`
 to package `q` would have to determine how to convert a `p.Context` to a
@@ -3511,12 +3525,66 @@ func TestCompare(t *testing.T) {
 [identify the row numerically](#table-tests-identifying-the-row).
 
 When some test cases need to be checked using different logic from other test
-cases, it is more appropriate to write multiple test functions, as explained in
-[GoTip #50: Disjoint Table Tests]. The logic of your test code can get difficult
-to understand when each entry in a table has its own different conditional logic
-to check each output for its inputs. If test cases have different logic but
-identical setup, a sequence of [subtests](#subtests) within a single test
-function might make sense.
+cases, it is appropriate to write multiple test functions, as explained in
+[GoTip #50: Disjoint Table Tests].
+
+When the additional test cases are simple (e.g., basic error checking) and don't
+introduce conditionalized code flow in the table test's loop body, it's
+permissible to include that case in the existing test, though be careful using
+logic like this. What starts simple today can organically grow into something
+unmaintainable.
+
+For example:
+
+```go
+func TestDivide(t *testing.T) {
+    tests := []struct {
+        dividend, divisor int
+        want              int
+        wantErr           bool
+    }{
+        {
+            dividend: 4,
+            divisor:  2,
+            want:     2,
+        },
+        {
+            dividend: 10,
+            divisor:  2,
+            want:     5,
+        },
+        {
+            dividend: 1,
+            divisor:  0,
+            wantErr:  true,
+        },
+    }
+
+    for _, test := range tests {
+        got, err := Divide(test.dividend, test.divisor)
+        if (err != nil) != test.wantErr {
+            t.Errorf("Divide(%d, %d) error = %v, want error presence = %t", test.dividend, test.divisor, err, test.wantErr)
+        }
+
+        // In this example, we're only testing the value result when the tested function didn't fail.
+        if err != nil {
+            continue
+        }
+
+        if got != test.want {
+            t.Errorf("Divide(%d, %d) = %d, want %d", test.dividend, test.divisor, got, test.want)
+        }
+    }
+}
+```
+
+More complicated logic in your test code, like complex error checking based on
+conditional differences in test setup (often based on table test input
+parameters), can be [difficult to understand](guide#maintainability) when each
+entry in a table has specialized logic based on the inputs. If test cases have
+different logic but identical setup, a sequence of [subtests](#subtests) within
+a single test function might be more readable. A test helper may also be useful
+for simplifying test setup in order to maintain the readability of a test body.
 
 You can combine table-driven tests with multiple test functions. For example,
 when testing that a function's output exactly matches the expected output and
