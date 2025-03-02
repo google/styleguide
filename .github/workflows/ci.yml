@@ -13,8 +13,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Python 3.8 is the last non-EOL version. Also adapt tox.ini
-        python-version: ['3.8', 'pypy3.10', '3.12']
+        # Python 3.9 is the last non-EOL version. Also adapt tox.ini
+        python-version: ['3.9', 'pypy3.10', '3.13']
         os: [ubuntu-latest, windows-latest]
       fail-fast: false
 
@@ -29,11 +29,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: x64
           cache: 'pip'
-          cache-dependency-path: '**/test-requirements'
+          cache-dependency-path: 'pyproject.toml'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e .[dev]
-          python -m pip install 'tox-gh-actions<4.0.0'
       - name: Test with tox
-        run: tox
+        run: tox -e py

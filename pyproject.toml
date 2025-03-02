@@ -1,6 +1,77 @@
 [build-system]
-build-backend = "setuptools.build_meta:__legacy__"
-requires = [
-    "setuptools",
-    "wheel",
+build-backend = "setuptools.build_meta"
+
+requires = [ "setuptools>=61.2" ]
+
+[project]
+name = "cpplint"
+version = "2.0.0"
+description = "Automated checker to ensure C++ files follow Google's style guide"
+readme = "README.rst"
+keywords = [ "c++", "lint", "python" ]
+license = { text = "BSD-3-Clause" }
+maintainers = [ { name = "cpplint Developers" } ]
+requires-python = ">=3.9"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: End Users/Desktop",
+  "License :: Freely Distributable",
+  "License :: OSI Approved :: BSD License",
+  "Natural Language :: English",
+  "Programming Language :: C++",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Quality Assurance",
 ]
+dependencies = [  ]
+
+optional-dependencies.dev = [
+  "flake8>=4.0.1",
+  "parameterized",
+  "pylint>=2.11",
+  "pytest",
+  "pytest-cov",
+  "pytest-timeout",
+  "setuptools",
+  "testfixtures",
+  "tox<5",
+]
+optional-dependencies.test = [
+  "parameterized",
+  "pytest",
+  "pytest-cov",
+  "pytest-timeout",
+  "testfixtures",
+  "tox<5",
+]
+optional-dependencies.testing = [
+  "parameterized",
+  "pytest",
+  "pytest-cov",
+  "pytest-timeout",
+  "testfixtures",
+  "tox<5",
+]
+urls.Download = "https://github.com/cpplint/cpplint"
+urls.Homepage = "https://github.com/cpplint/cpplint"
+scripts.cpplint = "cpplint:main"
+
+[tool.setuptools]
+py-modules = [ "cpplint" ]
+include-package-data = false
+
+[tool.pytest.ini_options]
+python_files = [ "*test.py" ]
+testpaths = [ "." ]
+required_plugins = [ "pytest-cov", "pytest-timeout" ]
+timeout = 60
+# fail if coverage is under 90%
+addopts = "--color=yes --cov-fail-under=90 --cov=cpplint"
+
+[tool.aliases]
+test = "pytest"
