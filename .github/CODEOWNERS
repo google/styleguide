@@ -2,9 +2,6 @@
 
 csharp-style.md @jbcoe
 htmlcssguide.html @tonyruscoe
-javaguide.html @dimo414 
 lispguide.xml @sfreilich
-pyguide.md @gpshead
-pylintrc @gpshead
-shellguide.md @dimo414 @eatnumber1 @vapier
+shellguide.md @eatnumber1 @vapier
 /go/ @chressie @gaal @katrinahoffert @kliegs @matttproud
