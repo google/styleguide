@@ -1068,7 +1068,7 @@ can get wrapped into an interface and thus become a non-nil value (see the
 func Bad() *os.PathError { /*...*/ }
 ```
 
-**Tip:**: A function that takes a [`context.Context`] argument should usually
+**Tip:** A function that takes a [`context.Context`] argument should usually
 return an `error` so that the caller can determine if the context was cancelled
 while the function was running.
 
