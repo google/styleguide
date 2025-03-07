@@ -14,6 +14,11 @@ repos:
         additional_dependencies:
           - tomli
 
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.2
+    hooks:
+      - id: flake8
+  
   - repo: https://github.com/tox-dev/pyproject-fmt
     rev: v2.5.1
     hooks:

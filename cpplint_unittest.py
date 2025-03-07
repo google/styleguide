@@ -231,6 +231,7 @@ class CpplintTestBase(unittest.TestCase):
   # Perform lint and make sure one of the errors is what we want
   def TestLintContains(self, code, expected_message):
     self.assertTrue(expected_message in self.PerformSingleLineLint(code))
+
   def TestLintNotContains(self, code, expected_message):
     self.assertFalse(expected_message in self.PerformSingleLineLint(code))
 
@@ -1150,7 +1151,7 @@ class CpplintTest(CpplintTestBase):
         """#include "base/foobar.h"
            boost::range::transform(input, std::back_inserter(output), square);
         """,
-        '') # Avoid false positives on transform in other namespaces.
+        '')  # Avoid false positives on transform in other namespaces.
     self.TestIncludeWhatYouUse(
         """#include "base/foobar.h"
            bool foobar = std::min_element(a.begin(), a.end());

@@ -28,6 +28,8 @@ ignore =
     E128,
     # unexpected indentation
     E116,
+    # continuation line unaligned for hanging indent
+    E131,
     # too many blank lines
     E303,
     # missing whitespace around arithmetic operator

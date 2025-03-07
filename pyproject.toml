@@ -31,7 +31,6 @@ classifiers = [
 dependencies = [  ]
 
 optional-dependencies.dev = [
-  "flake8>=4.0.1",
   "parameterized",
   "pylint>=2.11",
   "pytest",
