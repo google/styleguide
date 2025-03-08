@@ -65,6 +65,7 @@ py-modules = [ "cpplint" ]
 include-package-data = false
 
 [tool.ruff]
+lint.extend-select = [ "PT" ]
 lint.ignore = [ "E701" ]
 
 [tool.pytest.ini_options]

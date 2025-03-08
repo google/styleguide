@@ -1769,7 +1769,9 @@ def _ShouldPrintError(category, confidence, filename, linenum):
       if category_match and file_match and line_match:
         is_filtered = False
     else:
-      assert False  # should have been checked for in SetFilter.
+      # should have been checked for in SetFilter.
+      msg = f'Invalid filter: {one_filter}'
+      raise ValueError(msg)
   if is_filtered:
     return False
 

@@ -36,4 +36,4 @@ ignore =
     E226,
     # test for membership should be 'not in'
     E713,
-max-line-length=120
+max-line-length=288

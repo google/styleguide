@@ -38,7 +38,7 @@ import subprocess
 import unittest
 import shutil
 import tempfile
-from pytest import mark
+import pytest
 from testfixtures import compare
 
 BASE_CMD = sys.executable + ' ' + os.path.abspath('./cpplint.py ')
@@ -77,9 +77,9 @@ class UsageTest(unittest.TestCase):
 
     def testHelp(self):
         (status, out, err) = RunShellCommand(BASE_CMD, '--help')
-        self.assertEqual(0, status)
-        self.assertEqual(b'', out)
-        self.assertTrue(err.startswith(b'\nSyntax: cpplint'))
+        assert 0 == status
+        assert b'' == out
+        assert err.startswith(b'\nSyntax: cpplint')
 
 class TemporaryFolderClassSetup(object):
     """
@@ -129,7 +129,7 @@ class TemporaryFolderClassSetup(object):
                 if f.endswith('.def'):
                     count += 1
                     self._checkDef(os.path.join(dirpath, f))
-        self.assertEqual(count, expectedDefs)
+        assert count == expectedDefs
 
     def _checkDef(self, path):
         """runs command and compares to expected output from def file"""
@@ -166,7 +166,7 @@ class TemporaryFolderClassSetup(object):
         # command to reproduce, do not forget first two lines have special meaning
         print("\ncd " + cwd + " && " + cmd + ' '  + args + " 2> <filename>")
         (status, out, err) = RunShellCommand(cmd, args, cwd)
-        self.assertEqual(expected_status, status, 'bad command status %s' % status)
+        assert expected_status == status, 'bad command status %s' % status
         prefix = 'Failed check in %s comparing to %s for command: %s' % (cwd, definition_file, cmd)
         compare('\n'.join(expected_err), err.decode('utf8'), prefix=prefix, show_whitespace=True)
         compare('\n'.join(expected_out), out.decode('utf8'), prefix=prefix, show_whitespace=True)
@@ -190,7 +190,7 @@ class NoRepoSignatureTests(TemporaryFolderClassSetup, unittest.TestCase):
     def testBoostSample(self):
         self.checkAllInFolder('./samples/boost-sample', 4)
 
-    @mark.timeout(180)
+    @pytest.mark.timeout(180)
     def testProtobufSample(self):
         self.checkAllInFolder('./samples/protobuf-sample', 1)
 
