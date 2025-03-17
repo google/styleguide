@@ -127,11 +127,19 @@ lint.ignore = [
   "FBT003", # flake8-boolean-trap
   "FIX002", # flake8-fixme
   "ISC003", # flake8-implicit-str-concat
-  "N802",   # invalid-function-name
   "PIE790", # Unnecessary `pass` statement
 ]
-lint.per-file-ignores."cpplint.py" = [ "ICN001", "PERF401", "PLR5501", "PLW0603", "PLW2901", "SIM102", "SIM108" ]
-lint.per-file-ignores."cpplint_unittest.py" = [ "FLY002", "PLW0604", "SIM115", "UP031" ]
+lint.per-file-ignores."cpplint.py" = [
+  "ICN001",
+  "N802",
+  "PERF401",
+  "PLR5501",
+  "PLW0603",
+  "PLW2901",
+  "SIM102",
+  "SIM108",
+]
+lint.per-file-ignores."cpplint_unittest.py" = [ "FLY002", "N802", "PLW0604", "SIM115", "UP031" ]
 lint.mccabe.max-complexity = 29
 lint.pylint.allow-magic-value-types = [ "bytes", "int", "str" ]
 lint.pylint.max-args = 10 # Default is 5

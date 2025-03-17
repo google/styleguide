@@ -76,7 +76,7 @@ def run_shell_command(cmd: str, args: str, cwd="."):
 
 
 class TestUsage:
-    def testHelp(self):
+    def test_help(self):
         (status, out, err) = run_shell_command(BASE_CMD, "--help")
         assert status == 0
         assert out == b""
@@ -186,7 +186,7 @@ class TestNoRepoSignature(TemporaryFolderClassSetup):
         name_func=lambda fun, _, x: f"test{x.args[0].capitalize()}Sample-{x.args[1]}",
     )
     @pytest.mark.timeout(180)
-    def testSamples(self, folder, case):
+    def test_samples(self, folder, case):
         self.check_def(os.path.join(f"./samples/{folder}-sample", case + ".def"))
 
 
@@ -198,7 +198,7 @@ class TestGitRepoSignature(TemporaryFolderClassSetup):
         with open(os.path.join(root, ".git"), "a"):
             pass
 
-    def testCodeliteSample(self):
+    def test_codelite_sample(self):
         self.check_all_in_folder("./samples/codelite-sample", 1)
 
 
@@ -210,7 +210,7 @@ class TestMercurialRepoSignature(TemporaryFolderClassSetup):
         with open(os.path.join(root, ".hg"), "a"):
             pass
 
-    def testCodeliteSample(self):
+    def test_codelite_sample(self):
         self.check_all_in_folder("./samples/codelite-sample", 1)
 
 
@@ -222,7 +222,7 @@ class TestSvnRepoSignature(TemporaryFolderClassSetup):
         with open(os.path.join(root, ".svn"), "a"):
             pass
 
-    def testCodeliteSample(self):
+    def test_codelite_sample(self):
         self.check_all_in_folder("./samples/codelite-sample", 1)
 
 
