@@ -5,6 +5,20 @@
 # Its canonical open-source location is:
 #   https://google.github.io/styleguide/pylintrc
 
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 [MAIN]
 
 # Files or directories to be skipped. They should be base names, not paths.
@@ -141,6 +155,9 @@ output-format=text
 # Tells whether to display a full report or only the messages
 reports=no
 
+# Activate the evaluation score.
+score=no
+
 # Python expression which should return a note less than 10 (10 is the highest
 # note). You have access to the variables errors warning, statement which
 # respectively contain the number of errors / warnings messages and the total
@@ -257,9 +274,8 @@ max-module-lines=99999
 
 # String used as indentation unit.  The internal Google style guide mandates 2
 # spaces.  Google's externaly-published style guide says 4, consistent with
-# PEP 8.  Here, we use 2 spaces, for conformity with many open-sourced Google
-# projects (like TensorFlow).
-indent-string='  '
+# PEP 8.
+indent-string='    '
 
 # Number of spaces of indent required inside a hanging  or continued line.
 indent-after-paren=4

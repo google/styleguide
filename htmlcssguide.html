@@ -5,7 +5,7 @@
 <title>Google HTML/CSS Style Guide</title>
 <link rel="stylesheet" href="javaguide.css">
 <script src="include/styleguide.js"></script>
-<link rel="shortcut icon" href="https://www.google.com/favicon.ico">
+<link rel="shortcut icon" href="/styleguide/favicon.ico">
 <script src="include/jsguide.js"></script>
 </head>
 <body onload="initStyleGuide();">
@@ -15,9 +15,9 @@
 
 <p>This document defines formatting and style rules for HTML and CSS. It aims at
 improving collaboration, code quality, and enabling supporting infrastructure.
-It applies to raw, working files that use HTML and CSS, including GSS files.
-Tools are free to obfuscate, minify, and compile as long as the general code
-quality is maintained.</p>
+It applies to raw, working files that use HTML and CSS, including Sass and GSS
+files. Tools are free to obfuscate, minify, and compile as long as the general
+code quality is maintained.</p>
 
 <h2 id="General" class="numbered">General</h2>
 
@@ -143,16 +143,14 @@ depends on the project’s complexity.)</p>
 <p>Highlight todos by using the keyword <code>TODO</code> only, not other common formats like
 <code>@@</code>.</p>
 
-<p>Append a contact (username or mailing list) in parentheses as with the format
-<code>TODO(contact)</code>.</p>
+<p>Append action items after a colon as in <code>TODO: action
+item</code>.</p>
 
-<p>Append action items after a colon as in <code>TODO: action item</code>.</p>
-
-<pre><code class="language-django external good">{# TODO(john.doe): revisit centering #}
+<pre><code class="language-django external good">{# TODO: Revisit centering. #}
 &lt;center&gt;Test&lt;/center&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- TODO: remove optional tags --&gt;
+<pre><code class="language-html good">&lt;!-- TODO: Remove optional tags. --&gt;
 &lt;ul&gt;
   &lt;li&gt;Apples&lt;/li&gt;
   &lt;li&gt;Oranges&lt;/li&gt;
@@ -165,13 +163,17 @@ depends on the project’s complexity.)</p>
 
 <h4 id="Document_Type" class="numbered">Document Type</h4>
 
-<p>Use HTML5.</p>
+<p>Use <code>&lt;!doctype html&gt;</code>.</p>
 
-<p>HTML5 (HTML syntax) is preferred for all HTML documents: <code>&lt;!DOCTYPE html&gt;</code>.</p>
+<p>Always put your HTML in
+<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Quirks_Mode_and_Standards_Mode">no-quirks mode</a>
+by including <code>&lt;!doctype html&gt;</code> at the beginning of the document.</p>
 
-<p>(It’s recommended to use HTML, as <code>text/html</code>. Do not use XHTML. XHTML, as
-<a href="https://hixie.ch/advocacy/xhtml"><code>application/xhtml+xml</code></a>, lacks both browser
-and infrastructure support and offers less room for optimization than HTML.)</p>
+<p>A document without a doctype is rendered in “quirks mode”, and one with a
+different doctype may be rendered in “limited-quirks mode”. These modes don’t
+follow the widely-understood, widely-documented behavior for various core HTML
+and CSS constructs, and are likely to cause subtle failures and
+incompatibilities especially when re-using code that expects no-quirks mode.</p>
 
 <h4 id="HTML_Validity" class="numbered">HTML Validity</h4>
 
@@ -194,7 +196,7 @@ HTML usage.</p>
 </code></pre>
 
 <pre><code class="language-html good">&lt;!-- Recommended --&gt;
-&lt;!DOCTYPE html&gt;
+&lt;!doctype html&gt;
 &lt;meta charset="utf-8"&gt;
 &lt;title&gt;Test&lt;/title&gt;
 &lt;article&gt;This is only a test.&lt;/article&gt;
@@ -263,7 +265,7 @@ maintenance reasons. It is always more expensive to change HTML documents and
 templates than it is to update style sheets and scripts.</p>
 
 <pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
-&lt;!DOCTYPE html&gt;
+&lt;!doctype html&gt;
 &lt;title&gt;HTML sucks&lt;/title&gt;
 &lt;link rel="stylesheet" href="base.css" media="screen"&gt;
 &lt;link rel="stylesheet" href="grid.css" media="screen"&gt;
@@ -276,7 +278,7 @@ templates than it is to update style sheets and scripts.</p>
 </code></pre>
 
 <pre><code class="language-html good">&lt;!-- Recommended --&gt;
-&lt;!DOCTYPE html&gt;
+&lt;!doctype html&gt;
 &lt;title&gt;My first CSS-only redesign&lt;/title&gt;
 &lt;link rel="stylesheet" href="default.css"&gt;
 &lt;h1&gt;My first CSS-only redesign&lt;/h1&gt;
@@ -320,7 +322,7 @@ For consistency and simplicity reasons it’s best served omitting all optional
 tags, not just a selection.)</p>
 
 <pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
-&lt;!DOCTYPE html&gt;
+&lt;!doctype html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;Spending money, spending bytes&lt;/title&gt;
@@ -332,7 +334,7 @@ tags, not just a selection.)</p>
 </code></pre>
 
 <pre><code class="language-html good">&lt;!-- Recommended --&gt;
-&lt;!DOCTYPE html&gt;
+&lt;!doctype html&gt;
 &lt;title&gt;Saving money, saving bytes&lt;/title&gt;
 &lt;p&gt;Qed.
 </code></pre>

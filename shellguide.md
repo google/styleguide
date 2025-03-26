@@ -7,14 +7,6 @@ See README.md for details.
 # Shell Style Guide
 
 
-<!-- The revision number is maintained manually.
-     The major number is:
-       1 = shell.xml
-       2 = shell.md
-     The major number is also hard-coded at the bottom of this file. -->
-
-Revision 2.02
-
 Authored, revised and maintained by many Googlers.
 
 ## Table of Contents
@@ -69,18 +61,16 @@ used for widespread deployment.
 
 Some guidelines:
 
-*   If you're mostly calling other utilities and are doing relatively
-    little data manipulation, shell is an acceptable choice for the task.
+*   If you're mostly calling other utilities and are doing relatively little
+    data manipulation, shell is an acceptable choice for the task.
 *   If performance matters, use something other than shell.
-*   If you are writing a script that is more than 100 lines long, or
-    that uses non-straightforward control flow logic, you should
-    rewrite it in a more structured language *now*. Bear in
-    mind that scripts grow. Rewrite your script early to avoid a more
-    time-consuming rewrite at a later date.
-*   When assessing the complexity of your code (e.g. to decide whether
-    to switch languages) consider whether the code is easily
-    maintainable by people other than its author.
-
+*   If you are writing a script that is more than 100 lines long, or that uses
+    non-straightforward control flow logic, you should rewrite it in a more
+    structured language *now*. Bear in mind that scripts grow. Rewrite your
+    script early to avoid a more time-consuming rewrite at a later date.
+*   When assessing the complexity of your code (e.g. to decide whether to switch
+    languages) consider whether the code is easily maintainable by people other
+    than its author. 
 
 <a id="s2-shell-files-and-interpreter-invocation"></a>
 
@@ -90,19 +80,21 @@ Some guidelines:
 
 ### File Extensions
 
-Executables should have no extension (strongly preferred) or a
-`.sh` extension. Libraries must have a `.sh`
-extension and should not be executable.
+Executables should have a `.sh` extension or no extension.
 
-It is not necessary to know what language a program is written in when
-executing it and shell doesn't require an extension so we prefer not
-to use one for executables.
+-   If the executable will have a build rule that renames the source file
+    then prefer to use a `.sh` extension.
+    This enables you to use the recommended naming convention, with a source
+    file like `foo.sh` and a build rule named `foo`.
+-   If the executable will be added directly to the user's `PATH`, then prefer
+    to use no extension. It is not necessary to know what language a program is
+    written in when executing it and shell doesn't require an extension so we
+    prefer not to use one for executables that will be directly invoked by
+    users. At the same time, consider whether it is preferable to deploy the
+    output of a build rule rather than deploying the source file directly.
+-   If neither of the above apply, then either choice is acceptable.
 
-However, for libraries it's important to know what language it is and
-sometimes there's a need to have similar libraries in different
-languages. This allows library files with identical purposes but
-different languages to be identically named except for the
-language-specific suffix.
+Libraries must have a `.sh` extension and should not be executable.
 
 <a id="s2.2-suid-sgid"></a>
 
@@ -184,8 +176,8 @@ All function header comments should describe the intended API behaviour using:
 *   Globals: List of global variables used and modified.
 *   Arguments: Arguments taken.
 *   Outputs: Output to STDOUT or STDERR.
-*   Returns: Returned values other than the default exit status of the
-    last command run.
+*   Returns: Returned values other than the default exit status of the last
+    command run.
 
 Example:
 
@@ -406,11 +398,10 @@ done
 ### Case statement
 
 *   Indent alternatives by 2 spaces.
-*   A one-line alternative needs a space after the close parenthesis of
-    the pattern and before the `;;`.
-*   Long or multi-command alternatives should be split over multiple
-    lines with the pattern, actions, and `;;` on separate
-    lines.
+*   A one-line alternative needs a space after the close parenthesis of the
+    pattern and before the `;;`.
+*   Long or multi-command alternatives should be split over multiple lines with
+    the pattern, actions, and `;;` on separate lines.
 
 The matching expressions are indented one level from the `case` and `esac`.
 Multiline actions are indented another level. In general, there is no need to
@@ -475,42 +466,42 @@ They are listed in order of precedence.
 *   Don't brace-delimit single character shell specials / positional parameters,
     unless strictly necessary or avoiding deep confusion.
 
-    Prefer brace-delimiting all other variables.
+Prefer brace-delimiting all other variables.
 
-    ```shell
-    # Section of *recommended* cases.
+```shell
+# Section of *recommended* cases.
 
-    # Preferred style for 'special' variables:
-    echo "Positional: $1" "$5" "$3"
-    echo "Specials: !=$!, -=$-, _=$_. ?=$?, #=$# *=$* @=$@ \$=$$ …"
+# Preferred style for 'special' variables:
+echo "Positional: $1" "$5" "$3"
+echo "Specials: !=$!, -=$-, _=$_. ?=$?, #=$# *=$* @=$@ \$=$$ …"
 
-    # Braces necessary:
-    echo "many parameters: ${10}"
+# Braces necessary:
+echo "many parameters: ${10}"
 
-    # Braces avoiding confusion:
-    # Output is "a0b0c0"
-    set -- a b c
-    echo "${1}0${2}0${3}0"
+# Braces avoiding confusion:
+# Output is "a0b0c0"
+set -- a b c
+echo "${1}0${2}0${3}0"
 
-    # Preferred style for other variables:
-    echo "PATH=${PATH}, PWD=${PWD}, mine=${some_var}"
-    while read -r f; do
-      echo "file=${f}"
-    done < <(find /tmp)
-    ```
+# Preferred style for other variables:
+echo "PATH=${PATH}, PWD=${PWD}, mine=${some_var}"
+while read -r f; do
+  echo "file=${f}"
+done < <(find /tmp)
+```
 
-    ```shell
-    # Section of *discouraged* cases
+```shell
+# Section of *discouraged* cases
 
-    # Unquoted vars, unbraced vars, brace-delimited single letter
-    # shell specials.
-    echo a=$avar "b=$bvar" "PID=${$}" "${1}"
+# Unquoted vars, unbraced vars, brace-delimited single letter
+# shell specials.
+echo a=$avar "b=$bvar" "PID=${$}" "${1}"
 
-    # Confusing use: this is expanded as "${1}0${2}0${3}0",
-    # not "${10}${20}${30}
-    set -- a b c
-    echo "$10$20$30"
-    ```
+# Confusing use: this is expanded as "${1}0${2}0${3}0",
+# not "${10}${20}${30}
+set -- a b c
+echo "$10$20$30"
+```
 
 NOTE: Using braces in `${var}` is *not* a form of quoting. "Double quotes" must
 be used *as well*.
@@ -866,11 +857,11 @@ mybinary $(get_arguments)
 
 #### Arrays Pros
 
-*   Using Arrays allows lists of things without confusing quoting
-    semantics. Conversely, not using arrays leads to misguided
-    attempts to nest quoting inside a string.
-*   Arrays make it possible to safely store sequences/lists of
-    arbitrary strings, including strings containing whitespace.
+*   Using Arrays allows lists of things without confusing quoting semantics.
+    Conversely, not using arrays leads to misguided attempts to nest quoting
+    inside a string.
+*   Arrays make it possible to safely store sequences/lists of arbitrary
+    strings, including strings containing whitespace.
 
 <a id="s6.7.2-arrays-cons"></a>
 
@@ -1350,5 +1341,3 @@ no clear technical argument, nor a long-term direction. Consistency should not
 generally be used as a justification to do things in an old style without
 considering the benefits of the new style, or the tendency of the codebase to
 converge on newer styles over time.
-
-Revision 2.03

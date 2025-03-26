@@ -1299,7 +1299,7 @@ pretty much impossible to recover from.
 #### 2.17.4 Decision 
 
 Use decorators judiciously when there is a clear advantage. Decorators should
-follow the same import and naming guidelines as functions. Decorator pydoc
+follow the same import and naming guidelines as functions. A decorator docstring
 should clearly state that the function is a decorator. Write unit tests for
 decorators.
 
@@ -1468,14 +1468,12 @@ Use other `from __future__` import statements as you see fit.
 <a id="typed-code"></a>
 ### 2.21 Type Annotated Code 
 
-You can annotate Python code with type hints according to
-[PEP-484](https://peps.python.org/pep-0484/), and type-check the code at build
-time with a type checking tool like [pytype](https://github.com/google/pytype).
-
-Type annotations can be in the source or in a
-[stub pyi file](https://peps.python.org/pep-0484/#stub-files). Whenever
-possible, annotations should be in the source. Use pyi files for third-party or
-extension modules.
+You can annotate Python code with
+[type hints](https://docs.python.org/3/library/typing.html). Type-check the code
+at build time with a type checking tool like [pytype](https://github.com/google/pytype).
+In most cases, when feasible, type annotations are in source files. For
+third-party or extension modules, annotations can be in
+[stub `.pyi` files](https://peps.python.org/pep-0484/#stub-files).
 
 
 <a id="s2.21.1-definition"></a>
@@ -1491,8 +1489,7 @@ return values:
 def func(a: int) -> list[int]:
 ```
 
-You can also declare the type of a variable using similar
-[PEP-526](https://peps.python.org/pep-0526/) syntax:
+You can also declare the type of a variable using similar syntax:
 
 ```python
 a: SomeType = some_func()
@@ -1666,6 +1663,9 @@ No:  # See details at
 
 Make note of the indentation of the elements in the line continuation examples
 above; see the [indentation](#s3.4-indentation) section for explanation.
+
+[Docstring](#docstrings) summary lines must remain within the 80 character
+limit.
 
 In all other cases where a line exceeds 80 characters, and the
 [Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
@@ -2012,7 +2012,7 @@ examples.
 Typical usage example:
 
   foo = ClassFoo()
-  bar = foo.FunctionBar()
+  bar = foo.function_bar()
 """
 ```
 
@@ -2868,9 +2868,11 @@ change in complexity.
 `send_acronym_via_https`.
 
 
-Function names, variable names, and filenames should be descriptive; avoid
-abbreviation. In particular, do not use abbreviations that are ambiguous or
-unfamiliar to readers outside your project, and do not abbreviate by deleting
+Names should be descriptive. This includes functions, classes, variables,
+attributes, files and any other type of named entities.
+
+Avoid abbreviation. In particular, do not use abbreviations that are ambiguous
+or unfamiliar to readers outside your project, and do not abbreviate by deleting
 letters within a word.
 
 Always use a `.py` filename extension. Never use dashes.
@@ -2888,6 +2890,8 @@ Always use a `.py` filename extension. Never use dashes.
     -   `f` as a file handle in `with` statements
     -   private [type variables](#typing-type-var) with no constraints (e.g.
         `_T = TypeVar("_T")`, `_P = ParamSpec("_P")`)
+    -   names that match established notation in a reference paper or algorithm
+        (see [Mathematical Notation](#math-notation))
 
     Please be mindful not to abuse single-character naming. Generally speaking,
     descriptiveness should be proportional to the name's scope of visibility.
@@ -3039,13 +3043,20 @@ containing `exec "$0.py" "$@"`.
 <a id="math-notation"></a>
 #### 3.16.5 Mathematical Notation 
 
-For mathematically heavy code, short variable names that would otherwise violate
+For mathematically-heavy code, short variable names that would otherwise violate
 the style guide are preferred when they match established notation in a
-reference paper or algorithm. When doing so, reference the source of all naming
-conventions in a comment or docstring or, if the source is not accessible,
-clearly document the naming conventions. Prefer PEP8-compliant
-`descriptive_names` for public APIs, which are much more likely to be
-encountered out of context.
+reference paper or algorithm.
+
+When using names based on established notation:
+
+1.  Cite the source of all naming conventions, preferably with a hyperlink to
+    academic resource itself, in a comment or docstring. If the source is not
+    accessible, clearly document the naming conventions.
+2.  Prefer PEP8-compliant `descriptive_names` for public APIs, which are much
+    more likely to be encountered out of context.
+3.  Use a narrowly-scoped `pylint: disable=invalid-name` directive to silence
+    warnings. For just a few variables, use the directive as an endline comment
+    for each one; for more, apply the directive at the beginning of a block.
 
 <a id="main"></a>
 ### 3.17 Main 
@@ -3121,7 +3132,8 @@ the function into smaller and more manageable pieces.
 <a id="typing-general"></a>
 #### 3.19.1 General Rules 
 
-*   Familiarize yourself with [PEP-484](https://peps.python.org/pep-0484/).
+*   Familiarize yourself with
+    [type hints](https://docs.python.org/3/library/typing.html).
 
 *   Annotating `self` or `cls` is generally not necessary.
     [`Self`](https://docs.python.org/3/library/typing.html#typing.Self) can be
@@ -3325,9 +3337,9 @@ purposes, `None` is an alias for `NoneType`. If an argument can be `None`, it
 has to be declared! You can use `|` union type expressions (recommended in new
 Python 3.10+ code), or the older `Optional` and `Union` syntaxes.
 
-Use explicit `X | None` instead of implicit. Earlier versions of PEP 484 allowed
-`a: str = None` to be interpreted as `a: str | None = None`, but that is no
-longer the preferred behavior.
+Use explicit `X | None` instead of implicit. Earlier versions of type checkers
+allowed `a: str = None` to be interpreted as `a: str | None = None`, but that is
+no longer the preferred behavior.
 
 ```python
 Yes:
@@ -3435,8 +3447,8 @@ c: tuple[int, str, float] = (1, "2", 3.5)
 #### 3.19.10 Type variables 
 
 The Python type system has
-[generics](https://peps.python.org/pep-0484/#generics). A type variable, such as
-`TypeVar` and `ParamSpec`, is a common way to use them.
+[generics](https://docs.python.org/3/library/typing.html#generics). A type
+variable, such as `TypeVar` and `ParamSpec`, is a common way to use them.
 
 Example:
 
@@ -3548,12 +3560,25 @@ type and an existing name in a module, import it using `import x as y`.
 from typing import Any as AnyType
 ```
 
-Prefer to use built-in types as annotations where available. Python supports
-type annotations using parametric container types via
-[PEP-585](https://peps.python.org/pep-0585/), introduced in Python 3.9.
+When annotating function signatures, prefer abstract container types like
+`collections.abc.Sequence` over concrete types like `list`. If you need to use a
+concrete type (for example, a `tuple` of typed elements), prefer built-in types
+like `tuple` over the parametric type aliases from the `typing` module (e.g.,
+`typing.Tuple`).
 
 ```python
-def generate_foo_scores(foo: set[str]) -> list[float]:
+from typing import List, Tuple
+
+def transform_coordinates(original: List[Tuple[float, float]]) ->
+    List[Tuple[float, float]]:
+  ...
+```
+
+```python
+from collections.abc import Sequence
+
+def transform_coordinates(original: Sequence[tuple[float, float]]) ->
+    Sequence[tuple[float, float]]:
   ...
 ```
 
@@ -3621,8 +3646,10 @@ def my_method(self, var: "some_mod.SomeType") -> None:
 <a id="generics"></a>
 #### 3.19.15 Generics 
 
-When annotating, prefer to specify type parameters for generic types; otherwise,
-[the generics' parameters will be assumed to be `Any`](https://peps.python.org/pep-0484/#the-any-type).
+When annotating, prefer to specify type parameters for
+[generic](https://docs.python.org/3/library/typing.html#generics) types in a
+parameter list; otherwise, the generics' parameters will be assumed to be
+[`Any`](https://docs.python.org/3/library/typing.html#the-any-type).
 
 ```python
 # Yes:
