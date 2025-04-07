@@ -349,50 +349,94 @@ void test(D* x) { f(x); }  // Calls f(B*)
 <p>Try to avoid forward declarations of entities
 defined in another project.</p>
 
-<h3 id="Inline_Functions">Inline Functions</h3>
+<a id="Inline_Functions"></a>
+<h3 id="Defining_Functions_in_Header_Files">Defining Functions in Header Files</h3>
 
-<p>Define functions inline only when they are small, say, 10
-lines or fewer.</p>
+<p>Include the definition of a function at its point of declaration in a header file only
+when the definition is short. If the definition otherwise has a reason be in the header,
+put it in an internal part of the file. If necessary to make the definition ODR-safe, mark
+it with an <code>inline</code> specifier.</p>
 
 <p class="definition"></p>
-<p>You can declare functions in a way that allows the compiler to expand
-them inline rather than calling them through the usual
-function call mechanism.</p>
+<p>Functions defined in header files are sometimes referred to as "inline functions",
+which is a somewhat overloaded term that refers to several distinct but overlapping
+situations:</p>
+
+<ol>
+  <li>A <em>textually inline</em> symbol's definition is exposed to the reader at
+  the point of declaration.</li>
+  <li>A function or variable defined in a header file is <em>expandable inline</em>
+  since its definition is available for
+  <a href="https://en.wikipedia.org/wiki/Inline_expansion">inline expansion</a>
+  by the compiler, which can lead to more efficient object code.</li>
+  <li><em>ODR-safe</em> entities do not violate the
+  <a href="https://en.cppreference.com/w/cpp/language/definition">"One Definition Rule"</a>,
+  which often requires the <a href="https://en.cppreference.com/w/cpp/language/inline">inline</a>
+  keyword for things defined in header files
+  .</li>
+</ol>
+
+<p>While functions tend to be a more common source of confusion, these definitions apply to
+variables as well, and so do the rules here.</p>
 
 <p class="pros"></p>
-<p>Inlining a function can generate more efficient object
-code, as long as the inlined function is small. Feel free
-to inline accessors and mutators, and other short,
-performance-critical functions.</p>
+
+<ul>
+<li>Defining a function textually in-line reduces boilerplate code for simple functions
+like accessors and mutators.</li>
+
+<li> As noted above, function definitions in header files <i>can</i> lead to
+more efficient object code for small functions due to inline expansion by the
+compiler.</li>
+
+<li>Function templates and <code>constexpr</code> functions generally need to
+be defined in the header file that declares them (but not necessarily the public part).</li>
+</ul>
 
 <p class="cons"></p>
-<p>Overuse of inlining can actually make programs slower.
-Depending on a function's size, inlining it can cause the
-code size to increase or decrease. Inlining a very small
-accessor function will usually decrease code size while
-inlining a very large function can dramatically increase
-code size. On modern processors smaller code usually runs
-faster due to better use of the instruction cache.</p>
+
+<ul>
+<li>Embedding a function definition in the public API makes the API harder to skim,
+and incurs cognitive overhead for readers of that API- the more complex the function
+the higher the cost.</li>
+
+<li>Public definitions expose implementation details that are at best harmless and
+often extraneous.</li>
+</ul>
 
 <p class="decision"></p>
-<p>A decent rule of thumb is to not inline a function if
-it is more than 10 lines long. Beware of destructors,
-which are often longer than they appear because of
-implicit member- and base-destructor calls!</p>
+<p>Only define a function at its public declaration if it is short, say, 10 lines or fewer. Put
+longer function bodies in the <code>.cc</code> file unless they must be in the header for
+performance or technical reasons.</p>
 
-<p>Another useful rule of thumb: it's typically not cost
-effective to inline functions with loops or switch
-statements (unless, in the common case, the loop or
-switch statement is never executed).</p>
+<p>Even if a definition must be in the header, this is not a sufficient reason to put it within
+the public part. Instead, the definition can be in an internal part of the header, such as the
+<a href="#Access_Control">private</a> section of a class, within a namespace that includes the word
+<code>internal</code>, or below a comment like <code>// Implementation details only
+below here</code>.</p>
 
-<p>It is important to know that functions are not always
-inlined even if they are declared as such; for example,
-virtual and recursive functions are not normally inlined.
-Usually recursive functions should not be inline. The
-main reason for making a virtual function inline is to
-place its definition in the class, either for convenience
-or to document its behavior, e.g., for accessors and
-mutators.</p>
+<p>Once a definition is in a header file, it must be ODR-safe by having the <code>inline</code>
+specifier or being implicitly specified inline by being a function template or defined in a class
+body when first declared.</p>
+
+<pre class="goodcode">template &lt;typename T&gt;
+class Foo {
+ public:
+  int bar() { return bar_; }
+
+  void MethodWithHugeBody();
+
+ private:
+  int bar_;
+};
+
+// Implementation details only below here
+
+template &lt;typename T&gt;
+void Foo&lt;T&gt;::MethodWithHugeBody() {
+  ...
+}
+</pre>
 
 <h3 id="Names_and_Order_of_Includes">Names and Order of Includes</h3>
 
@@ -696,6 +740,13 @@ inline void my_inline_function() {
 <pre class="badcode">// We shouldn't use this internal name in non-absl code.
 using ::absl::container_internal::ImplementationDetail;
 </pre>
+
+    <p>Note that there is still a risk of collision between libraries within a
+    nested <code>internal</code> namespace, so give each library within a
+    namespace a unique internal namespace by adding the library's
+    filename. E.g. <code>gshoe/widget.h</code> would use
+    <code>gshoe::internal_widget</code> as opposed to just
+    <code>gshoe::internal</code>.</p>
   </li>
 
   <li><p>Single-line nested namespace declarations
@@ -993,7 +1044,7 @@ does not make an observable difference. For example:</p>
     <code>string_view</code>, character array, or character pointer, pointing
     to a string literal. String literals have static storage duration already
     and are usually sufficient.
-    See <a href="https://abseil.io/tips/140">TotW #140.</a></li>
+    See <a href="https://abseil.io/tips/140">TotW #140</a>.</li>
   <li>Maps, sets, and other dynamic containers: if you require a static, fixed
     collection, such as a set to search against or a lookup table, you cannot
     use the dynamic containers from the standard library as a static variable,
@@ -1185,7 +1236,8 @@ for your code ,
 terminating the program may be an appropriate error handling
 response. Otherwise, consider a factory function
 or <code>Init()</code> method as described in
-<a href="https://abseil.io/tips/42">TotW #42</a>.
+<a href="https://abseil.io/tips/42">TotW #42</a>
+.
 Avoid <code>Init()</code> methods on objects with
 no other states that affect which public methods may be called
 (semi-constructed objects of this form are particularly hard to work
@@ -1794,9 +1846,10 @@ Functions</a> for more details.</p>
 <p>The output of a C++ function is naturally provided via
 a return value and sometimes via output parameters (or in/out parameters).</p>
 
-<p>Prefer using return values over output parameters: they
-improve readability, and often provide the same or better
-performance.</p>
+<p>Prefer using return values over output parameters:
+they improve readability, and often provide the same or better performance.
+See
+<a href="https://abseil.io/tips/176">TotW #176</a>.</p>
 
 <p>Prefer to return by value or, failing that, return by reference.
 Avoid returning a raw pointer unless it can be null.</p>
@@ -1818,8 +1871,7 @@ In some cases reference parameters can bind to temporaries, leading to lifetime
 bugs. Instead, find a way to eliminate the lifetime requirement
 (for example, by copying the parameter), or pass retained parameters by
 pointer and document the lifetime and non-null requirements.
-
-</p>
+See <a href="https://abseil.io/tips/116">TotW 116</a> for more.</p>
 
 <p>When ordering function parameters, put all input-only
 parameters before any output parameters. In particular,
@@ -1883,10 +1935,9 @@ instead.</p>
 identically-named function to take different arguments.
 It may be necessary for templatized code, and it can be
 convenient for Visitors.</p>
-<p>Overloading based on <code>const</code> or ref qualification may make utility
-  code more usable, more efficient, or both.
-  (See <a href="http://abseil.io/tips/148">TotW 148</a> for more.)
-</p>
+<p>Overloading based on <code>const</code> or ref qualification
+may make utility code more usable, more efficient, or both.
+See <a href="https://abseil.io/tips/148">TotW #148</a> for more.</p>
 
 <p class="cons"></p>
 <p>If a function is overloaded by the argument types alone,
@@ -2171,7 +2222,7 @@ tool. </p>
 how to run <code>cpplint.py</code> from their project
 tools. If the project you are contributing to does not,
 you can download
-<a href="https://raw.githubusercontent.com/cpplint/cpplint/HEAD/cpplint.py">
+<a href="https://raw.githubusercontent.com/google/styleguide/gh-pages/cpplint/cpplint.py">
 <code>cpplint.py</code></a> separately.</p>
 </div>
 
@@ -2620,6 +2671,10 @@ casts when explicit type conversion is necessary.
   will not compile if conversion can result in information loss.  The
   syntax is also concise.</li>
 
+  <li>When explicitly converting to a class type, use a function-style cast.
+  E.g. prefer <code>std::string(some_cord)</code> to
+  <code>static_cast&lt;std::string&gt;(some_cord)</code>.</li>
+
   <li>Use <code>absl::implicit_cast</code>
   to safely cast up a type hierarchy,
   e.g., casting a <code>Foo*</code> to a
@@ -2845,13 +2900,9 @@ many other contexts as well. In particular:</p>
 
   <li>For a function parameter passed by value, <code>const</code> has
   no effect on the caller, thus is not recommended in function
-  declarations. See
+  declarations. See <a href="https://abseil.io/tips/109">TotW #109</a>.</li>
 
-
-  <a href="https://abseil.io/tips/109">TotW #109</a>.
-
-
-  </li><li>Declare methods to be <code>const</code> unless they
+  <li>Declare methods to be <code>const</code> unless they
   alter the logical state of the object (or enable the user to modify
   that state, e.g., by returning a non-<code>const</code> reference, but that's
   rare), or they can't safely be invoked concurrently.</li>
@@ -2933,7 +2984,7 @@ enable their use with <code>constexpr</code>. Do not use
  is
 <code>int</code>. If a program needs an integer type of a
 different size, use an exact-width integer type from
-<code>&lt;cstdint&gt;</code>, such as
+<code>&lt;stdint.h&gt;</code>, such as
 <code>int16_t</code>. If you have a
 value that could ever be greater than or equal to 2^31,
 use a 64-bit type such as <code>int64_t</code>.
@@ -2960,7 +3011,7 @@ compiler and architecture.</p>
 <p class="decision"></p>
 
 <p>
-The standard library header <code>&lt;cstdint&gt;</code> defines types
+The standard library header <code>&lt;stdint.h&gt;</code> defines types
 like <code>int16_t</code>, <code>uint32_t</code>,
 <code>int64_t</code>, etc. You should always use
 those in preference to <code>short</code>, <code>unsigned
@@ -3883,7 +3934,7 @@ or tests.</p>
 <p>C++20 introduces "modules", a new language feature designed as an
 alternative to textual inclusion of header files. It introduces three
 new keywords to support
-this: <code>module</code>, export,
+this: <code>module</code>, <code>export</code>,
 and <code>import</code>.
 
 </p><p>Modules are a big shift in how C++ is written and compiled, and we
@@ -4245,29 +4296,59 @@ declaration of that entity. The pattern-matching engine in our
 brains relies a great deal on these naming rules.
 </p>
 
-<p>Naming rules are pretty arbitrary, but
+<p>Style rules about naming are pretty arbitrary, but
  we feel that
 consistency is more important than individual preferences in this
 area, so regardless of whether you find them sensible or not,
 the rules are the rules.</p>
 
-<h3 id="General_Naming_Rules">General Naming Rules</h3>
+<p>For the purposes of the naming rules below, a "word" is anything that you
+would write in English without internal spaces. Either words are all lowercase,
+with underscores between words
+("<a href="https://en.wikipedia.org/wiki/Snake_case">snake_case</a>"), or words
+are mixed case with the first letter of each word capitalized
+("<a href="https://en.wikipedia.org/wiki/Camel_case">camelCase</a>" or
+"<a href="https://en.wiktionary.org/wiki/Pascal_case">PascalCase</a>").
 
-<p>Optimize for readability using names that would be clear
-even to people on a different team.</p>
+</p><h3 id="General_Naming_Rules">Choosing Names</h3>
 
-<p>Use names that describe the purpose or intent of the object.
-Do not worry about saving horizontal space as it is far
-more important to make your code immediately
-understandable by a new reader. Minimize the use of
-abbreviations that would likely be unknown to someone outside
-your project (especially acronyms and initialisms). Do not
-abbreviate by deleting letters within a word. As a rule of thumb,
-an abbreviation is probably OK if it's listed in
- Wikipedia. Generally speaking, descriptiveness should be
-proportional to the name's scope of visibility. For example,
-<code>n</code> may be a fine name within a 5-line function,
-but within the scope of a class, it's likely too vague.</p>
+<p>Give things names that make their purpose or intent understandable to a new
+reader, even someone on a different team than the owners. Do not worry about
+saving horizontal space as it is far more important to make your code
+immediately understandable by a new reader.</p>
+
+<p>Consider the context in which the name will be used. A name should be
+descriptive even if it is used far from the code that makes it available for
+use. However, a name should not distract the reader by repeating information
+that's present in the immediate context. Generally, this means that
+descriptiveness should be proportional to the name's scope of visibility. A free
+function declared in a header should probably mention the header's library,
+while a local variable probably shouldn't explain what function it's within.</p>
+
+<p>Minimize the use of abbreviations that would likely be unknown to someone
+outside your project (especially acronyms and initialisms). Do not abbreviate by
+deleting letters within a word. When an abbreviation is used, prefer to
+capitalize it as a single "word", e.g., <code>StartRpc()</code> rather than
+<code>StartRPC()</code>. As a rule of thumb, an abbreviation is probably OK
+if it's listed in
+
+Wikipedia. Note that certain universally-known abbreviations are OK, such as
+<code>i</code> for a loop index and <code>T</code> for a template
+parameter.</p>
+
+<p>The names you see most frequently are not like most names; a small number of
+"vocabulary" names are reused so widely that they are always in context. These
+names tend to be short or even abbreviated and their full meaning comes from
+explicit long-form documentation rather than from just comments on their
+definition and the words within the names. E.g. <code>absl::Status</code> has a
+dedicated
+
+<a href="https://abseil.io/docs/cpp/guides/status">page
+in a devguide</a>,
+documenting its proper use. You probably won't define new vocabulary names very
+often, but if you do, get
+additional design review to make sure the chosen names work well when
+used widely.</p>
 
 <pre>class MyClass {
  public:
@@ -4279,8 +4360,12 @@ but within the scope of a class, it's likely too vague.</p>
     }
     return n;
   }
-  void DoSomethingImportant() {
+  // Function comment doesn't need to explain that this returns non-OK on
+  // failure as that is implied by the `absl::Status` return type, but it
+  // might document behavior for some specific codes.
+  absl::Status DoSomethingImportant() {
     std::string fqdn = ...;  // Well-known abbreviation for Fully Qualified Domain Name
+    return absl::OkStatus();
   }
  private:
   const int kMaxAllowedConnections = ...;  // Clear meaning within context
@@ -4297,7 +4382,8 @@ but within the scope of a class, it's likely too vague.</p>
     }
     return total_number_of_foo_errors;
   }
-  void DoSomethingImportant() {
+  // A return type with a generic name is unclear without widespread education.
+  Result DoSomethingImportant() {
     int cstmr_id = ...;  // Deletes internal letters
   }
  private:
@@ -4305,27 +4391,7 @@ but within the scope of a class, it's likely too vague.</p>
 };
 </pre>
 
-<p>Note that certain universally-known abbreviations are OK, such as
-<code>i</code> for an iteration variable and <code>T</code> for a
-template parameter.</p>
-
-<p>For the purposes of the naming rules below, a "word" is anything that you
-would write in English without internal spaces. This includes abbreviations,
-such as acronyms and initialisms. For names written in mixed case (also
-sometimes referred to as
-"<a href="https://en.wikipedia.org/wiki/Camel_case">camel case</a>" or
-"<a href="https://en.wiktionary.org/wiki/Pascal_case">Pascal case</a>"), in
-which the first letter of each word is capitalized, prefer to capitalize
-abbreviations as single words, e.g., <code>StartRpc()</code> rather than
-<code>StartRPC()</code>.</p>
-
-<p>Template parameters should follow the naming style for their
-category: type template parameters should follow the rules for
-<a href="#Type_Names">type names</a>, and non-type template
-parameters should follow the rules for <a href="#Variable_Names">
-variable names</a>.
-
-</p><h3 id="File_Names">File Names</h3>
+<h3 id="File_Names">File Names</h3>
 
 <p>Filenames should be all lowercase and can include
 underscores (<code>_</code>) or dashes (<code>-</code>).
@@ -4410,13 +4476,19 @@ Concept names follow the same rules as <a href="#Type_Names">type names</a>.
 
 <p>Data members of classes, both static and non-static, are
 named like ordinary nonmember variables, but with a
-trailing underscore.</p>
+trailing underscore. The exception to this is static constant
+class members, which should follow the rules for
+<a href="#Constant_Names">naming constants</a>.</p>
 
 <pre>class TableInfo {
+ public:
   ...
+  static const int kTableVersion = 3;  // OK - constant naming.
+  ...
+
  private:
-  std::string table_name_;  // OK - underscore at end.
-  static Pool&lt;TableInfo&gt;* pool_;  // OK.
+  std::string table_name_;             // OK - underscore at end.
+  static Pool&lt;TableInfo&gt;* pool_;       // OK.
 };
 </pre>
 
@@ -4451,10 +4523,10 @@ const int kAndroid8_0_0 = 24;  // Android 8.0.0
 
 <p>All such variables with static storage duration (i.e., statics and globals,
 see <a href="http://en.cppreference.com/w/cpp/language/storage_duration#Storage_duration">
-Storage Duration</a> for details) should be named this way, including those in templates where
-different instantiations of the template may have different values.  This convention is optional for
-variables of other storage classes, e.g., automatic variables; otherwise the usual variable naming
-rules apply. For example:</p>
+Storage Duration</a> for details) should be named this way, including those that are static constant
+class data members and those in templates where different instantiations of the template
+may have different values.  This convention is optional for variables of other storage classes,
+e.g., automatic variables; otherwise the usual variable naming rules apply. For example:</p>
 
 <pre>void ComputeFoo(absl::string_view suffix) {
   // Either of these is acceptable.
@@ -4496,41 +4568,22 @@ set_count(int count)</code>.</p>
 
 <h3 id="Namespace_Names">Namespace Names</h3>
 
-<p>Namespace names are all lower-case, with words separated by underscores.
-Top-level namespace names are based on the project name
-. Avoid collisions
-between nested namespaces and well-known top-level namespaces.</p>
+<p>Namespace names are <code>snake_case</code> (all lowercase, with underscores
+between words).</p>
 
-<p>The name of a top-level namespace should usually be the
-name of the project or team whose code is contained in that
-namespace. The code in that namespace should usually be in
-a directory whose basename matches the namespace name (or in
-subdirectories thereof).</p>
+<p>When <a href="#General_Naming_Rules">choosing names</a> for namespaces, note
+that names must be fully qualified when used in a header outside the namespace,
+because <a href="#Aliases">unqualified Aliases are generally banned</a>.</p>
 
+<p>Top-level namespaces must be globally unique and recognizable, so each one
+should be owned by a single project or team, with a name based on the name of
+that project or team. Usually, all code in the namespace should be under one or
+more directories with the same name as the namespace.</p>
 
-
-<p>Keep in mind that the <a href="#General_Naming_Rules">rule
-against abbreviated names</a> applies to namespaces just as much
-as variable names. Code inside the namespace seldom needs to
-mention the namespace name, so there's usually no particular need
-for abbreviation anyway.</p>
-
-<p>Avoid nested namespaces that match well-known top-level
-namespaces. Collisions between namespace names can lead to surprising
-build breaks because of name lookup rules. In particular, do not
-create any nested <code>std</code> namespaces. Prefer unique project
-identifiers
-(<code>websearch::index</code>, <code>websearch::index_util</code>)
-over collision-prone names like <code>websearch::util</code>. Also avoid overly deep nesting
-  namespaces (<a href="https://abseil.io/tips/130">TotW #130</a>).</p>
-
-<p>For <code>internal</code> namespaces, be wary of other code being
-added to the same <code>internal</code> namespace causing a collision
-(internal helpers within a team tend to be related and may lead to
-collisions). In such a situation, using the filename to make a unique
-internal name is helpful
-(<code>websearch::index::frobber_internal</code> for use
-in <code>frobber.h</code>).</p>
+<p>Nested namespaces should avoid the names of well-known top-level namespaces,
+especially <code>std</code> and <code>absl</code>, because in C++, nested
+namespaces do not protect from collisions with names in other namespaces
+(see <a href="https://abseil.io/tips/130">TotW #130</a>).</p>
 
 <h3 id="Enumerator_Names">Enumerator Names</h3>
 
@@ -4563,7 +4616,15 @@ naming.</p>
 
 
 
-<h3 id="Macro_Names">Macro Names</h3>
+<h3 id="Template_Parameter_Names">Template Parameter Names</h3>
+
+<p>Template parameters should follow the naming style for their
+category: type template parameters should follow the rules for naming
+<a href="#Type_Names">types</a>, and non-type template
+parameters should follow the rules for naming <a href="#Variable_Names">
+variables</a> or <a href="#Constant_Names">constants</a>.
+
+</p><h3 id="Macro_Names">Macro Names</h3>
 
 <p>You're not really going to <a href="#Preprocessor_Macros">
 define a macro</a>, are you? If you do, they're like this:
@@ -4577,6 +4638,12 @@ named with all capitals and underscores, and with a project-specific prefix.</p>
 
 <pre>#define MYPROJECT_ROUND(x) ...
 </pre>
+
+<h3 id="Naming_Aliases">Aliases</h3>
+
+<p>The name for an <a href="#Aliases">alias</a> follows the same principles as
+any other new name, applied in the context where the alias is defined rather
+than where the original name appears.</p>
 
 <h3 id="Exceptions_to_Naming_Rules">Exceptions to Naming Rules</h3>
 
@@ -4620,8 +4687,7 @@ one may be you!</p>
 <p>Use either the <code>//</code> or <code>/* */</code>
 syntax, as long as you are consistent.</p>
 
-<p>You can use either the <code>//</code> or the <code>/*
-*/</code> syntax; however, <code>//</code> is
+<p>While either syntax is acceptable, <code>//</code> is
 <em>much</em> more common. Be consistent with how you
 comment and what style you use where.</p>
 
@@ -4910,7 +4976,8 @@ the example above would be obvious:</p>
 }
 </pre>
 
-<h3 id="Punctuation,_Spelling_and_Grammar">Punctuation, Spelling, and Grammar</h3>
+<a id="Punctuation,_Spelling_and_Grammar"></a>
+<h3 id="Punctuation_Spelling_and_Grammar">Punctuation, Spelling, and Grammar</h3>
 
 <p>Pay attention to punctuation, spelling, and grammar; it is
 easier to read well-written comments than badly written
