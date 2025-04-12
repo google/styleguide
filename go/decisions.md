@@ -96,8 +96,15 @@ must be renamed at import time to a name that is suitable for use in Go code.
 An exception to this is that package names that are only imported by generated
 code may contain underscores. Specific examples include:
 
-*   Using the `_test` suffix for an external test package, for example an
-    integration test
+*   Using the `_test` suffix for unit tests that only exercise the exported API
+    of a package (package `testing` calls these
+    ["black box tests"](https://pkg.go.dev/testing)). For example, a package
+    `linkedlist` must define its black box unit tests in a package named
+    `linkedlist_test` (not `linked_list_test`)
+
+*   Using underscores and the `_test` suffix for packages that specify
+    functional or integration tests. For example, a linked list service
+    integration test could be named `linked_list_service_test`
 
 *   Using the `_test` suffix for
     [package-level documentation examples](https://go.dev/blog/examples)
@@ -3401,11 +3408,15 @@ command line for users of test filtering. When you use `t.Run` to create a
 subtest, the first argument is used as a descriptive name for the test. To
 ensure that test results are legible to humans reading the logs, choose subtest
 names that will remain useful and readable after escaping. Think of subtest
-names more like a function identifier than a prose description. The test runner
-replaces spaces with underscores, and escapes non-printing characters. If your
-test data benefits from a longer description, consider putting the description
-in a separate field (perhaps to be printed using `t.Log` or alongside failure
-messages).
+names more like a function identifier than a prose description.
+
+The test runner replaces spaces with underscores, and escapes non-printing
+characters. To ensure accurate correlation between test logs and source code, it
+is recommended to avoid using these characters in subtest names.
+
+If your test data benefits from a longer description, consider putting the
+description in a separate field (perhaps to be printed using `t.Log` or
+alongside failure messages).
 
 Subtests may be run individually using flags to the [Go test runner] or Bazel
 [test filter], so choose descriptive names that are also easy to type.
