@@ -1561,8 +1561,8 @@ const numbers = ['11', '5', '10'].map(parseInt);
 <p>Instead, prefer passing an arrow-function that explicitly forwards parameters to
 the named callback.</p>
 
-<pre><code class="language-ts good">// GOOD: we only forward the string (and an explicit radix)
-const numbers = ['11', '5', '3'].map((n) =&gt; parseInt(n,10));
+<pre><code class="language-ts good">// GOOD: Arguments are explicitly passed to the callback
+const numbers = ['11', '5', '3'].map((n) =&gt; parseInt(n, 10));
 // &gt; [11, 5, 3]
 
 // GOOD: Function is locally defined and is designed to be used as a callback
