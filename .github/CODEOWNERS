@@ -1,0 +1,6 @@
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#codeowners-syntax
+
+csharp-style.md @jbcoe
+htmlcssguide.html @tonyruscoe
+shellguide.md @eatnumber1 @vapier
+/go/ @chressie @gaal @katrinahoffert @kliegs @matttproud

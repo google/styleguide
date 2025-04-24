@@ -5,33 +5,33 @@
 *Clay becomes pottery through craft, but it's the emptiness that makes a pot
 useful.*
 
-\- [Laozi](http://ctext.org/dictionary.pl?if=en&id=11602)
+\- [Laozi](https://ctext.org/dictionary.pl?if=en&id=11602)
 
 Contents:
 
 1.  [Radical simplicity](#radical-simplicity)
 1.  [Readable source text](#readable-source-text)
 1.  [Minimum viable documentation](#minimum-viable-documentation)
-1.  [Better is better than perfect](#better-is-better-than-perfect)
+1.  [Better is better than best](#better-is-better-than-best)
 
 ## Radical simplicity
 
-* **Scalability and interoperability** are more important than a menagerie of
-  unessential features. Scale comes from simplicity, speed, and ease.
-  Interoperability comes from unadorned, digestable content.
+*   **Scalability and interoperability** are more important than a menagerie of
+    unessential features. Scale comes from simplicity, speed, and ease.
+    Interoperability comes from unadorned, digestible content.
 
-* **Fewer distractions** make for better writing and more productive reading.
+*   **Fewer distractions** make for better writing and more productive reading.
 
-* **New features should never interfere with the simplest use case** and should
-  remain invisible to users who don't need them.
+*   **New features should never interfere with the simplest use case** and
+    should remain invisible to users who don't need them.
 
-* **This guide is designed for the average engineer** -- the busy,
-  just-want-to-go-back-to-coding engineer. Large and complex documentation is
-  possible but not the primary focus.
+*   **Markdown is designed for the average engineer** -- the busy,
+    just-want-to-go-back-to-coding engineer. Large and complex documentation is
+    possible but not the primary focus.
 
-* **Minimizing context switching makes people happier.** Engineers should be
-  able to interact with documentation using the same tools they use to read and
-  write code.
+*   **Minimizing context switching makes people happier.** Engineers should be
+    able to interact with documentation using the same tools they use to read
+    and write code.
 
 ## Readable source text
 
@@ -61,11 +61,13 @@ Contents:
   majority of users need only a small fraction of the author's total knowledge,
   but they need it quickly and often.
 
-## Better is better than perfect
+## Better is better than best
 
-* **Incremental improvement is better than prolonged debate**. Patience and
-  tolerance of imperfection allow projects to evolve organically.
+*   **Incremental improvement is better than prolonged debate**. Patience and
+    tolerance of imperfection allow projects to evolve organically.
 
-* **Don't lick the cookie, pass the plate**. We're drowning in potentially
-  impactful projects. Choose only those you can really handle and release those
-  you can't.
+*   **Don't
+    [lick the cookie](https://community.redhat.com/blog/2018/09/dont-lick-the-cookie/),
+    pass the plate**. Ideas are cheap. We're drowning in potentially impactful
+    projects. Choose only those you can really handle and release those you
+    can't.
