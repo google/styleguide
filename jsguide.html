@@ -2827,20 +2827,19 @@ comment on the preceding line.</p>
 
 <pre><code class="language-js prettyprint good">/**
  * A useful type union, which is reused often.
- * @typedef {!Bandersnatch|!BandersnatchType}
+ * @typedef {!FruitType|!FruitTypeEnum}
  */
 let CoolUnionType;
-
-
+ 
 /**
- * Types of bandersnatches.
+ * Types of fruits.
  * @enum {string}
  */
-const BandersnatchType = {
-  /** This kind is really frumious. */
-  FRUMIOUS: 'frumious',
-  /** The less-frumious kind. */
-  MANXOME: 'manxome',
+const FruitTypeEnum = {
+  /** This kind is very sour. */
+  SOUR: 'sour',
+  /** The less-sour kind. */
+  SWEET: 'sweet',
 };
 </code></pre>
 
