@@ -9,7 +9,7 @@
   
   <address>
     Nate Soares<br/>
-    Joshua Hoak<br/>
+    Artemis Sparks<br/>
     David Barnett<br/>
   </address>
 
@@ -110,7 +110,7 @@
     <STYLEPOINT title="Catching Exceptions">
       <SUMMARY>Match error codes, not error text.</SUMMARY>
       <BODY>
-        <p>Error text may be locale dependant.</p>
+        <p>Error text may be locale dependent.</p>
       </BODY>
     </STYLEPOINT>
   </CATEGORY>
@@ -406,7 +406,7 @@
   
   <address>
     Nate Soares<br/>
-    Joshua Hoak<br/>
+    Artemis Sparks<br/>
     David Barnett<br/>
   </address>
 </GUIDE>

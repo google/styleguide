@@ -23,7 +23,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
           <HEAD>
               <TITLE><xsl:value-of select="@title"/></TITLE>
               <META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-              <LINK HREF="https://www.google.com/favicon.ico" type="image/x-icon"
+              <LINK HREF="/styleguide/favicon.ico" type="image/x-icon"
                     rel="shortcut icon"/>
               <LINK HREF="styleguide.css"
                     type="text/css" rel="stylesheet"/>
@@ -687,7 +687,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions">
        - c: the indentation of the current python block, in other words, the
             indentation of the first line of this block, which is the
             indentation of the last line we saw that ended with a colon.
-       - d: the "total" indentation of the line, ignorng possible "Yes:" or
+       - d: the "total" indentation of the line, ignoring possible "Yes:" or
             "No:" text on the line.
 
        For example, for the last line of the following code snippet, the

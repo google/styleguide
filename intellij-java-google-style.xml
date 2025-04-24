@@ -33,8 +33,9 @@
   <option name="JD_KEEP_EMPTY_EXCEPTION" value="false" />
   <option name="JD_KEEP_EMPTY_RETURN" value="false" />
   <option name="KEEP_CONTROL_STATEMENT_IN_ONE_LINE" value="false" />
+  <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
   <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
-  <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="1" />
+  <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="0" />
   <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
   <option name="ALIGN_MULTILINE_FOR" value="false" />
   <option name="CALL_PARAMETERS_WRAP" value="1" />
@@ -53,6 +54,7 @@
   <option name="DOWHILE_BRACE_FORCE" value="3" />
   <option name="WHILE_BRACE_FORCE" value="3" />
   <option name="FOR_BRACE_FORCE" value="3" />
+  <option name="SPACE_BEFORE_ARRAY_INITIALIZER_LBRACE" value="true" />
   <AndroidXmlCodeStyleSettings>
     <option name="USE_CUSTOM_SETTINGS" value="true" />
     <option name="LAYOUT_SETTINGS">

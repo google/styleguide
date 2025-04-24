@@ -1,11 +1,12 @@
 <?xml version = '1.0'?>
 <?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
 <GUIDE title="Google JavaScript Style Guide">
+  <p style="position: fixed; left: 0; top: 0; padding: 0.5em; margin: 0; background-color: #fef6e0; text-align: center; width: 100%; font-weight: bold;">
+    Please note: This guide is old and is not being updated. It is retained
+    as a reference as it was written for pre-ECMAScript 6th Edition features.
+    Please use the <a href="jsguide.html">newer guide</a> instead.
+  </p>
   <p class="revision">
-    Please note: there's a newer version of this guide that includes
-    ECMAScript 6th Edition features. It lives <a href="jsguide.html">here</a>.
-    You should probably be using that for new code.
-
     Revision 2.93
   </p>
 
@@ -3072,7 +3073,7 @@
                     /**
                      * Whether to cancel the event in internal capture/bubble processing.
                      * @public {boolean}
-                     * @suppress {visiblity} Referencing this outside this package is strongly
+                     * @suppress {visibility} Referencing this outside this package is strongly
                      * discouraged.
                      */
                      goog.events.Event.prototype.propagationStopped_ = false;
