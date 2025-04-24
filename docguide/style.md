@@ -820,7 +820,7 @@ Transport        | Favored by     | Advantages
 ---------------- | -------------- | -----------------------------------------------
 Swallow          | Coconuts       | [Fast when unladen][airspeed]
 Bicycle          | Miss Gulch     | [Weatherproof][tornado_proofing]
-X-34 landspeeder | Whiny farmboys | [Cheap][tosche_station] since the X-38 came out
+X-34 landspeeder | Whiny farmboys | [Cheap][tosche_station] since the XP-38 came out
 
 ﻿[airspeed]: http://google3/airspeed.h
 ﻿[tornado_proofing]: http://google3/kansas/
