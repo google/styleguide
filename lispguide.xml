@@ -738,7 +738,7 @@ Robert Brown
       </p>
       <p>
         After that description, every file should start the code itself with an
-        <code>(in-package :<em>package-name</em>)</code> form.
+        <code>(in-package #:<em>package-name</em>)</code> form.
       </p>
       <p>
         After that <code>in-package</code> form,
@@ -805,8 +805,8 @@ Robert Brown
       <p>
         You should strive to keep top-level forms,
         including comments but excluding the documentation string, of
-        appropriate length; preferrably short.  Forms extending beyond a
-        single page should be rare and their use should be justfied.
+        appropriate length; preferably short.  Forms extending beyond a
+        single page should be rare and their use should be justified.
         This applies to each of the forms in an <code>eval-when</code>,
         rather than to the <code>eval-when</code> itself.
         Additionally, <code>defpackage</code> forms may be longer,
@@ -2087,7 +2087,7 @@ Robert Brown
       </p>
       <CODE_SNIPPET>
         (defmethod print-object ((p person) stream)
-          (print-unprintable-object (p stream :type t :identity t)
+          (print-unreadable-object (p stream :type t :identity t)
             (with-slots (first-name last-name) p
               (safe-format stream "~a ~a" first-name last-name))))
       </CODE_SNIPPET>
@@ -3038,7 +3038,7 @@ Robert Brown
   </STYLEPOINT>
   <STYLEPOINT title="Identity, Equality and Comparisons">
     <SUMMARY>
-      You should the appropriate predicates when comparing objects.
+      You should use the appropriate predicates when comparing objects.
     </SUMMARY>
     <BODY>
       <p>
@@ -3116,7 +3116,7 @@ Robert Brown
         You must not use exact comparison on floating point numbers,
         since the vague nature of floating point arithmetic
         can produce little "errors" in numeric value.
-        You should compare absolute values to a threshhold.
+        You should compare absolute values to a threshold.
       </p>
       <p>
         You must use <code>=</code> to compare numbers,
@@ -3256,7 +3256,7 @@ Robert Brown
           as the number to choose a clause.
           The same as no parameters in all other ways.
           Here's the full hairy example:
-          <code>"Items:~#[ none~; ~S~; ~S and ~S~:;~@{~#[~; and~] ~S~^ ,~}~]."</code>
+          <code>"Items: ~#[ none~; ~S~; ~S and ~S~:;~@{~S~^~#[~; and ~:;, ~]~}~]."</code>
         </dd>
       </dl>
     </BODY>
@@ -3545,7 +3545,7 @@ Robert Brown
     <SUMMARY>
       You should not use <code>NCONC</code>;
       you should use <code>APPEND</code> instead,
-      or better, better data structures.
+      or better data structures.
     </SUMMARY>
     <BODY>
       <p>
