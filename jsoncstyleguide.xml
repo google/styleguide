@@ -21,7 +21,7 @@ This style guide contains many details that are initially hidden from view.  The
 </STYLEPOINT>
 </CATEGORY>
 <CATEGORY title="Introduction">
-<p>This style guide documents guidelines and recommendations for building JSON APIs at Google.  In general, JSON APIs should follow the spec found at <a href="http://www.json.org">JSON.org</a>.  This style guide clarifies and standardizes specific cases so that JSON APIs from Google have a standard look and feel.  These guidelines are applicable to JSON requests and responses in both RPC-based and REST-based APIs.</p>
+<p>This style guide documents guidelines and recommendations for building JSON APIs at Google.  In general, JSON APIs should follow the spec found at <a href="https://www.json.org">JSON.org</a>.  This style guide clarifies and standardizes specific cases so that JSON APIs from Google have a standard look and feel.  These guidelines are applicable to JSON requests and responses in both RPC-based and REST-based APIs.</p>
 </CATEGORY>
 <CATEGORY title="Definitions">
 <p>For the purposes of this style guide, we define the following terms:</p><ul><li><b>property</b> - a name/value pair inside a JSON object.</li><li><b>property name</b> - the name (or key) portion of the property.</li><li><b>property value</b> - the value portion of the property.</li></ul>
@@ -129,8 +129,8 @@ JSON maps can use any Unicode character in key names.
   // The "thumbnails" property is a map that maps
   // a pixel size to the thumbnail url of that size.
   "thumbnails": {
-    "72": "http://url.to.72px.thumbnail",
-    "144": "http://url.to.144px.thumbnail"
+    "72": "https://url.to.72px.thumbnail",
+    "144": "https://url.to.144px.thumbnail"
   }
 }
 
@@ -212,10 +212,10 @@ Avoid naming conflicts by choosing a new property name or versioning the API.
 <CATEGORY title="Property Value Guidelines">
 <STYLEPOINT title="Property Value Format">
 <SUMMARY>
-Property values must be Unicode booleans, numbers, strings, objects, arrays, or <code>null</code>.
+Property values must be booleans, numbers, Unicode strings, objects, arrays, or <code>null</code>.
 </SUMMARY>
 <BODY>
-<p>The spec at <a href="http://www.json.org">JSON.org</a> specifies exactly what type of data is allowed in a property value. This includes Unicode booleans, numbers, strings, objects, arrays, and <code>null</code>. JavaScript expressions are not allowed. APIs should support that spec for all values, and should choose the data type most appropriate for a particular property (numbers to represent numbers, etc.).</p><p>Good:</p>
+<p>The spec at <a href="https://www.json.org">JSON.org</a> specifies exactly what type of data is allowed in a property value. This includes booleans, numbers, Unicode strings, objects, arrays, and <code>null</code>. JavaScript expressions are not allowed. APIs should support that spec for all values, and should choose the data type most appropriate for a particular property (numbers to represent numbers, etc.).</p><p>Good:</p>
 <CODE_SNIPPET>
 {
   "canPigsFly": null,     // null
@@ -334,7 +334,7 @@ Latitudes/Longitudes should be formatted as recommended by ISO 6709.
 </STYLEPOINT>
 </CATEGORY>
 <CATEGORY title="JSON Structure &amp; Reserved Property Names">
-<p>In order to maintain a consistent interface across APIs, JSON objects should follow the structure outlined below.  This structure applies to both requests and responses made with JSON.  Within this structure, there are certain property names that are reserved for specific uses.  These properties are NOT required; in other words, each reserved property may appear zero or one times.  But if a service needs these properties, this naming convention is recommend.  Here is a schema of the JSON structure, represented in <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Forderly-json.org%2F">Orderly</a> format (which in turn can be compiled into a <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fjson-schema.org%2F">JSONSchema</a>).  You can few examples of the JSON structure at the end of this guide.</p>
+<p>In order to maintain a consistent interface across APIs, JSON objects should follow the structure outlined below.  This structure applies to both requests and responses made with JSON.  Within this structure, there are certain property names that are reserved for specific uses.  These properties are NOT required; in other words, each reserved property may appear zero or one times.  But if a service needs these properties, this naming convention is recommended.  Here is a schema of the JSON structure, represented in <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Forderly-json.org%2F">Orderly</a> format (which in turn can be compiled into a <a href="https://www.google.com/url?sa=D&amp;q=http%3A%2F%2Fjson-schema.org%2F">JSONSchema</a>).  You can few examples of the JSON structure at the end of this guide.</p>
 <CODE_SNIPPET>
 object {
   string apiVersion?;
@@ -661,7 +661,7 @@ Property Value Type: array<br />Parent: <code>data</code>
 </STYLEPOINT>
 </CATEGORY>
 <CATEGORY title="Reserved Property Names for Paging">
-<p>The following properties are located in the <code>data</code> object, and help page through a list of items.  Some of the language and concepts are borrowed from the <a href="http://www.opensearch.org/Home">OpenSearch specification</a>.</p><p>The paging properties below allow for various styles of paging, including:</p><ul><li>Previous/Next paging - Allows user's to move forward and backward through a list, one page at a time.  The <code>nextLink</code> and <code>previousLink</code> properties (described in the "Reserved Property Names for Links" section below) are used for this style of paging.</li><li>Index-based paging - Allows user's to jump directly to a specific item position within a list of items.  For example, to load 10 items starting at item 200, the developer may point the user to a url with the query string <code>?startIndex=200</code>.</li><li>Page-based paging - Allows user's to jump directly to a specific page within the items.  This is similar to index-based paging, but saves the developer the extra step of having to calculate the item index for a new page of items.  For example, rather than jump to item number 200, the developer could jump to page 20.  The urls during page-based paging could use the query string <code>?page=1</code> or <code>?page=20</code>.  The <code>pageIndex</code> and <code>totalPages</code> properties are used for this style of paging.</li></ul><p>An example of how to use these properties to implement paging can be found at the end of this guide.</p>
+<p>The following properties are located in the <code>data</code> object, and help page through a list of items.  Some of the language and concepts are borrowed from the <a href="https://www.opensearch.org/">OpenSearch specification</a>.</p><p>The paging properties below allow for various styles of paging, including:</p><ul><li>Previous/Next paging - Allows user's to move forward and backward through a list, one page at a time.  The <code>nextLink</code> and <code>previousLink</code> properties (described in the "Reserved Property Names for Links" section below) are used for this style of paging.</li><li>Index-based paging - Allows user's to jump directly to a specific item position within a list of items.  For example, to load 10 items starting at item 200, the developer may point the user to a url with the query string <code>?startIndex=200</code>.</li><li>Page-based paging - Allows user's to jump directly to a specific page within the items.  This is similar to index-based paging, but saves the developer the extra step of having to calculate the item index for a new page of items.  For example, rather than jump to item number 200, the developer could jump to page 20.  The urls during page-based paging could use the query string <code>?page=1</code> or <code>?page=20</code>.  The <code>pageIndex</code> and <code>totalPages</code> properties are used for this style of paging.</li></ul><p>An example of how to use these properties to implement paging can be found at the end of this guide.</p>
 <STYLEPOINT title="data.currentItemCount">
 <SUMMARY>
 Property Value Type: integer<br />Parent: <code>data</code>
@@ -935,7 +935,7 @@ Property Value Type: string<br />Parent: <code>error.errors</code>
 <CODE_SNIPPET>
 {
   "error":{
-    "code": 404
+    "code": 404,
     "message": "File Not Found",
     "errors": [{"message": "File Not Found"}]
   }
@@ -985,7 +985,7 @@ Property Value Type: string<br />Parent: <code>error.errors</code>
 <CODE_SNIPPET>
 {
   "error":{
-    "errors": [{"extendedHelper": "http://url.to.more.details.example.com/"}]
+    "errors": [{"extendedHelper": "https://url.to.more.details.example.com/"}]
   }
 }
 
