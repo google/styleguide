@@ -38,8 +38,8 @@ avoids giving <em>advice</em> that isn't clearly enforceable (whether by human o
 <p>In this document, unless otherwise clarified:</p>
 
 <ol>
-  <li>The term <em>class</em> is used inclusively to mean an "ordinary" class, enum class,
-  interface or annotation type (<code class="prettyprint lang-java">@interface</code>).</li>
+  <li>The term <em>class</em> is used inclusively to mean an "ordinary" class, record class, enum
+  class, interface or annotation type (<code class="prettyprint lang-java">@interface</code>).</li>
 
   <li>The term <em>member</em> (of a class) is used inclusively to mean a nested class, field,
   method, <em>or constructor</em>; that is, all top-level contents of a class except initializers
@@ -62,8 +62,8 @@ code. Optional formatting choices made in examples should not be enforced as rul
 
 <h3 id="s2.1-file-name">2.1 File name</h3>
 
-<p>The source file name consists of the case-sensitive name of the top-level class it contains
-(of which there is <a href="#s3.4.1-one-top-level-class">exactly one</a>), plus the
+<p>For a source file containing classes, the file name consists of the case-sensitive name of the
+top-level class (of which there is <a href="#s3.4.1-one-top-level-class">exactly one</a>), plus the
 <code>.java</code> extension.</p>
 
 <h3 id="s2.2-file-encoding">2.2 File encoding: UTF-8</h3>
@@ -94,6 +94,7 @@ anywhere in a source file. This implies that:</p>
 <code class="prettyprint lang-java">\n</code>,
 <code class="prettyprint lang-java">\f</code>,
 <code class="prettyprint lang-java">\r</code>,
+<code class="prettyprint lang-java">\s</code>,
 <code class="prettyprint lang-java">\"</code>,
 <code class="prettyprint lang-java">\'</code> and
 <code class="prettyprint lang-java">\\</code>), that sequence
@@ -157,7 +158,7 @@ programs are <strong>broken</strong> and they must be <strong>fixed</strong>.</p
 <h2 id="s3-source-file-structure">3 Source file structure</h2>
 
 <div>
-<p>A source file consists of, <strong>in order</strong>:</p>
+<p>An ordinary source file consists of, <strong>in order</strong>:</p>
 
 <ol>
   <li>License or copyright information, if present</li>
@@ -168,6 +169,11 @@ programs are <strong>broken</strong> and they must be <strong>fixed</strong>.</p
 </div>
 
 <p><strong>Exactly one blank line</strong> separates each section that is present.</p>
+
+<p>A <code>package-info.java</code> file is the same, but without the top-level class.</p>
+
+<p>A <code>module-info.java</code> file does not contain a package statement and replaces the
+single top-level class with a module declaration, but otherwise follows the same structure.</p>
 
 <h3 id="s3.1-copyright-statement">3.1 License or copyright information, if present</h3>
 
@@ -245,6 +251,22 @@ members in between. The same applies to multiple constructors (which always have
 This rule applies even when modifiers such as <code class="prettyprint lang-java">static</code> or
 <code class="prettyprint lang-java">private</code> differ between the methods.</p>
 
+<h3 id="s3.5-module-declaration">3.5 Module declaration</h3>
+
+<h4 id="s3.5.1-ordering-module-directives">3.5.1 Ordering and spacing of module directives</h4>
+
+<p>Module directives are ordered as follows:</p>
+
+<ol>
+  <li>All <code>requires</code> directives in a single block.</li>
+  <li>All <code>exports</code> directives in a single block.</li>
+  <li>All <code>opens</code> directives in a single block.</li>
+  <li>All <code>uses</code> directives in a single block.</li>
+  <li>All <code>provides</code> directives in a single block.</li>
+</ol>
+
+<p>A single blank line separates each block that is present.</p>
+
 <h2 id="s4-formatting">4 Formatting</h2>
 
 <p class="terminology"><strong>Terminology Note:</strong> <em>block-like construct</em> refers to
@@ -289,7 +311,7 @@ for <em>nonempty</em> blocks and block-like constructs:</p>
 <p>Exception: In places where these rules allow a single statement ending with a semicolon
 (<code class="prettyprint lang-java">;</code>), a block of statements can appear, and the opening
 brace of this block is preceded by a line break. Blocks like these are typically introduced to
-limit the scope of local variables, for example inside switch statements.</p>
+limit the scope of local variables.</p>
 
 <p>Examples:</p>
 
@@ -384,6 +406,8 @@ you may choose to wrap the line earlier than where this rule strictly requires.<
   3.2 <a href="#s3.2-package-statement">Package statement</a> and
   3.3 <a href="#s3.3-import-statements">Import statements</a>).</li>
 
+  <li>Contents of <a href="s4.8.9-text-blocks">text blocks</a>.</li>
+
   <li>Command lines in a comment that may be copied-and-pasted into a shell.</li>
 
   <li>Very long identifiers, on the rare occasions they are called for, are allowed to exceed the
@@ -442,22 +466,28 @@ without the need to line-wrap.</p>
     </ul>
   </li>
 
-  <li>A method or constructor name stays attached to the open parenthesis
+  <li>A method, constructor, or record-class name stays attached to the open parenthesis
   (<code class="prettyprint lang-java">(</code>) that follows it.</li>
 
   <li>A comma (<code class="prettyprint lang-java">,</code>) stays attached to the token that
   precedes it.</li>
 
-  <li>A line is never broken adjacent to the arrow in a lambda, except that a
-  break may come immediately after the arrow if the body of the lambda consists
-  of a single unbraced expression. Examples:
+  <li>A line is never broken adjacent to the arrow in a lambda or a switch rule, except that a
+  break may come immediately after the arrow if the text following it consists of a single unbraced
+  expression. Examples:
 <pre class="prettyprint lang-java">MyLambda&lt;String, Long, Object&gt; lambda =
     (String label, Long value, Object obj) -&gt; {
-        ...
+      ...
     };
 
 Predicate&lt;String&gt; predicate = str -&gt;
     longExpressionInvolving(str);
+
+switch (x) {
+  case ColorPoint(Color color, Point(int x, int y)) -&gt;
+      handleColorPoint(color, x, y);
+  ...
+}
 </pre>
   </li>
 </ol>
@@ -550,7 +580,9 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
     <code class="prettyprint lang-java">for</code> ("foreach") statement</li>
 
     <li>the arrow in a lambda expression:
-    <code class="prettyprint lang-java">(String str) -&gt; str.length()</code></li>
+    <code class="prettyprint lang-java">(String str) -&gt; str.length()</code><br>
+    or switch rule:
+    <code class="prettyprint lang-java">case "FOO" -&gt; bar();</code></li>
   </ul>
     but not
 
@@ -693,28 +725,57 @@ new int[] {             3,
 <code class="prettyprint lang-java">String[] args</code>, not
 <code class="badcode">String args[]</code>.</p>
 
-<h4 id="s4.8.4-switch">4.8.4 Switch statements</h4>
+<h4 id="s4.8.4-switch">4.8.4 Switch statements and expressions</h4>
 
 
 
-<p class="terminology"><strong>Terminology Note:</strong> Inside the braces of a
-<em>switch block</em> are one or more <em>statement groups</em>. Each statement group consists of
-one or more <em>switch labels</em> (either <code class="prettyprint lang-java">case FOO:</code> or
-<code class="prettyprint lang-java">default:</code>), followed by one or more statements (or, for
-the <em>last</em> statement group, <em>zero</em> or more statements).</p>
+<p>For historical reasons, the Java language has two distinct syntaxes for <code class="prettyprint lang-java">switch</code>, which we can call <em>old-style</em> and
+<em>new-style</em>. New-style switches use an arrow
+(<code class="prettyprint lang-java">-&gt;</code>) after the switch labels, while old-style switches
+use a colon (<code class="prettyprint lang-java">:</code>).
+
+</p><p class="terminology"><strong>Terminology Note:</strong> Inside the braces of a
+<em>switch block</em> are either one or more <em>switch rules</em> (new-style);
+or one or more <em>statement groups</em> (old-style). A <em>switch
+rule</em> consists of a <em>switch label</em> (<code class="prettyprint lang-java">case ...</code>
+or <code class="prettyprint lang-java">default</code>) followed by <code class="prettyprint lang-java">-&gt;</code> and an expression, block, or <code class="prettyprint
+lang-java">throw</code>. A statement group consists of one or more switch labels each followed by
+a colon, then one or more statements, or, for the <em>last</em> statement group, <em>zero</em> or
+more statements. (These definitions match the Java Language Specification,
+<a href="https://docs.oracle.com/javase/specs/jls/se21/html/jls-14.html#jls-14.11">§14.11</a>.)</p>
 
 <h5 id="s4.8.4.1-switch-indentation">4.8.4.1 Indentation</h5>
 
-<p>As with any other block, the contents of a switch block are indented +2.</p>
+<p>As with any other block, the contents of a switch block are indented +2. Each switch label
+starts with this +2 indentation.</p>
 
-<p>After a switch label, there is a line break, and the indentation level is increased +2, exactly
-as if a block were being opened. The following switch label returns to the previous indentation
-level, as if a block had been closed.</p>
+<p>In a new-style switch, a switch rule can be written on a single line if it otherwise follows
+Google style. (It must not exceed the column limit, and if it contains a non-empty block then
+there must be a line break after <code class="prettyprint lang-java">{</code>.) The line-wrapping
+rules of <a href="#s4.5-line-wrapping">Section 4.5</a> apply, including the +4 indent for
+continuation lines. For a switch rule with a non-empty block after the arrow, the same rules apply
+as for blocks elsewhere: lines between <code class="prettyprint lang-java">{</code> and
+<code class="prettyprint lang-java">}</code> are indented a further +2 relative to the line with the
+switch label.
+
+</p><pre class="prettyprint lang-java">switch (number) {
+  case 0, 1 -&gt; handleZeroOrOne();
+  case 2 -&gt;
+      handleTwoWithAnExtremelyLongMethodCallThatWouldNotFitOnTheSameLine();
+  default -&gt; {
+    logger.atInfo().log("Surprising number %s", number);
+    handleSurprisingNumber(number);
+  }
+}
+</pre>
+
+<p>In an old-style switch, the colon of each switch label is followed by a line break. The
+statements within a statement group start with a further +2 indentation.</p>
 
 <a id="fallthrough"></a>
 <h5 id="s4.8.4.2-switch-fall-through">4.8.4.2 Fall-through: commented</h5>
 
-<p>Within a switch block, each statement group either terminates abruptly (with a
+<p>Within an old-style switch block, each statement group either terminates abruptly (with a
 <code class="prettyprint lang-java">break</code>,
 <code class="prettyprint lang-java">continue</code>,
 <code class="prettyprint lang-java">return</code> or thrown exception), or is marked with a comment
@@ -727,7 +788,7 @@ the last statement group of the switch block. Example:</p>
   case 1:
   case 2:
     prepareOneOrTwo();
-    // fall through
+  // fall through
   case 3:
     handleOneTwoOrThree();
     break;
@@ -739,17 +800,28 @@ the last statement group of the switch block. Example:</p>
 <p>Notice that no comment is needed after <code class="prettyprint lang-java">case 1:</code>, only
 at the end of the statement group.</p>
 
-<h5 id="s4.8.4.3-switch-default">4.8.4.3 Presence of the <code>default</code> label</h5>
+<p>There is no fall-through in new-style switches.</p>
 
-<p>Each switch statement includes a <code class="prettyprint lang-java">default</code> statement
-group, even if it contains no code.</p>
+<h5 id="s4.8.4.3-switch-default">4.8.4.3 Exhaustiveness and presence of the <code>default</code> label</h5>
 
-<p><strong>Exception:</strong> A switch statement for an <code>enum</code> type <em>may</em> omit
-the <code class="prettyprint lang-java">default</code> statement group, <em>if</em> it includes
-explicit cases covering <em>all</em> possible values of that type. This enables IDEs or other static
-analysis tools to issue a warning if any cases were missed.
+<p>The Java language requires switch expressions and many kinds of switch statements to be
+<em>exhaustive</em>. That effectively means that every possible value that could be switched on will
+be matched by one of the switch labels. A switch is exhaustive if it has a <code class="prettyprint lang-java">default</code> label, but also for example if the value being switched
+on is an enum and every value of the enum is matched by a switch label. Google Style requires
+<em>every</em> switch to be exhaustive, even those where the language itself does not require it.
+This may require adding a <code class="prettyprint lang-java">default</code> label, even if it
+contains no code.</p>
 
-</p>
+<h5 id="s4.8.4.4-switch-expressions">4.8.4.4 Switch expressions</h5>
+
+<p>Switch expressions must be new-style switches:</p>
+
+<pre class="prettyprint lang-java">  return switch (list.size()) {
+    case 0 -&gt; "";
+    case 1 -&gt; list.getFirst();
+    default -&gt; String.join(", ", list);
+  };
+</pre>
 
 <a id="annotations"></a>
 <h4 id="s4.8.5-annotations">4.8.5 Annotations</h4>
@@ -765,17 +837,28 @@ annotation if it is meta-annotated with
 public @Nullable Person getPersonByName(String name);
 </pre>
 
-<h5 id="s4.8.5.2-class-annotation-style">4.8.5.2 Class annotations</h5>
+<h5 id="s4.8.5.2-class-annotation-style">4.8.5.2 Class, package, and module annotations</h5>
 
-<p>Annotations applying to a class appear immediately after the
+<p>Annotations applying to a class, package, or module declaration appear immediately after the
 documentation block, and each annotation is listed on a line of its own (that is, one annotation
 per line). These line breaks do not constitute line-wrapping (Section
 4.5, <a href="#s4.5-line-wrapping">Line-wrapping</a>), so the indentation level is not
-increased. Example:</p>
+increased. Examples:</p>
 
-<pre class="prettyprint lang-java">@Deprecated
+<pre class="prettyprint lang-java">/** This is a class. */
+@Deprecated
 @CheckReturnValue
 public final class Frozzler { ... }
+</pre>
+<pre class="prettyprint lang-java">/** This is a package. */
+@Deprecated
+@CheckReturnValue
+package com.example.frozzler;
+</pre>
+<pre class="prettyprint lang-java">/** This is a module. */
+@Deprecated
+@SuppressWarnings("CheckReturnValue")
+module com.example.frozzler { ... }
 </pre>
 
 <h5 id="s4.8.5.3-method-annotation-style">4.8.5.3 Method and constructor annotations</h5>
@@ -839,7 +922,35 @@ Such a comment renders the line non-blank.</p>
 re-wrap the lines when necessary (paragraph-style). Most formatters don't re-wrap lines in
 <code class="prettyprint lang-java">// ...</code> style comment blocks.</p>
 
+<a id="todo"></a>
+<h5 id="s4.8.6.2-todo-comments">4.8.6.2 TODO comments</h5>
 
+
+
+<div>
+<p>Use <code>TODO</code> comments for code that is temporary, a short-term solution, or good-enough
+  but not perfect.</p>
+
+<p>A <code>TODO</code> comment begins with the word <code>TODO</code> in all caps, a following
+  colon, and a link to a resource that contains the context, ideally a bug reference. A bug
+  reference is preferable because bugs are tracked and have follow-up comments. Follow this piece of
+  context with an explanatory string introduced with a hyphen <code>-</code>.</p>
+
+<p>The purpose is to have a consistent <code>TODO</code> format that can be searched to find out how
+  to get more details.</p>
+
+<pre class="good">// TODO: crbug.com/12345678 - Remove this after the 2047q4 compatibility window expires.
+</pre>
+
+<p>Avoid adding TODOs that refer to an individual or team as the context:</p>
+
+<pre class="bad">// TODO: @yourusername - File an issue and use a '*' for repetition.
+</pre>
+
+<p>If your <code>TODO</code> is of the form "At a future date do something" make sure that you
+  either include a very specific date ("Fix by November 2005") or a very specific event ("Remove
+  this code when all clients can handle XML responses.").</p>
+</div>
 
 <a id="modifiers"></a>
 <h4 id="s4.8.7-modifiers">4.8.7 Modifiers</h4>
@@ -848,8 +959,14 @@ re-wrap the lines when necessary (paragraph-style). Most formatters don't re-wra
 recommended by the Java Language Specification:
 </p>
 
-<pre>public protected private abstract default static final transient volatile synchronized native strictfp
+<pre>public protected private abstract default static final sealed non-sealed
+  transient volatile synchronized native strictfp
 </pre>
+
+<p>Modifiers on <code>requires</code> module directives, when present, appear in the following
+order:</p>
+
+<pre>transitive static</pre>
 
 <h4 id="s4.8.8-numeric-literals">4.8.8 Numeric Literals</h4>
 
@@ -857,8 +974,20 @@ recommended by the Java Language Specification:
 lowercase (to avoid confusion with the digit <code>1</code>). For example, <code>3000000000L</code>
 rather than <code class="badcode">3000000000l</code>.</p>
 
+<h4 id="s4.8.9-text-blocks">4.8.9 Text Blocks</h4>
+
+<p>The opening <code>"""</code> of a text block is always on a new line. That line may
+  either follow the same indentation rules as other constructs, or it may have no indentation at all
+  (so it starts at the left margin). The closing <code>"""</code> is on a new line
+  with the same indentation as the opening <code>"""</code>, and may be followed on the
+  same line by further code. Each line of text in the text block is indented at least as much as the
+  opening and closing <code>"""</code>. (If a line is indented further, then the string
+  literal defined by the text block will have space at the start of that line.)
+
+</p><p>The contents of a text block may exceed the <a href="#columnlimit">column limit</a>.
+
 <a id="naming"></a>
-<h2 id="s5-naming">5 Naming</h2>
+</p><h2 id="s5-naming">5 Naming</h2>
 
 <h3 id="s5.1-identifier-names">5.1 Rules common to all identifiers</h3>
 
@@ -874,10 +1003,10 @@ names are not Google Style: <code class="badcode">name_</code>, <code class="bad
 
 <h3 id="s5.2-specific-identifier-names">5.2 Rules by identifier type</h3>
 
-<h4 id="s5.2.1-package-names">5.2.1 Package names</h4>
+<h4 id="s5.2.1-package-names">5.2.1 Package and module names</h4>
 
-<p>Package names use only lowercase letters and digits (no underscores). Consecutive words are
-simply concatenated together. For example, <code>com.example.deepspace</code>, not
+<p>Package and module names use only lowercase letters and digits (no underscores). Consecutive
+words are simply concatenated together. For example, <code>com.example.deepspace</code>, not
 <code class="badcode">com.example.deepSpace</code> or
 <code class="badcode">com.example.deep_space</code>.</p>
 
@@ -1017,10 +1146,15 @@ predictability, Google Style specifies the following (nearly) deterministic sche
   </ul>
   </li>
 
-  <li>Finally, join all the words into a single identifier.</li>
+  <li>Finally, join all the words into a single identifier. Note that the casing of the original
+  words is almost entirely disregarded.</li>
 </ol>
 
-<p>Note that the casing of the original words is almost entirely disregarded. Examples:</p>
+<p>In very rare circumstances (for example, multipart version numbers), you may need to use
+underscores to separate adjacent numbers, since numbers do not have upper and lower case variants.
+</p>
+
+<p>Examples:</p>
 
 <table>
   <tbody><tr>
@@ -1059,6 +1193,11 @@ predictability, Google Style specifies the following (nearly) deterministic sche
     <td><code class="prettyprint lang-java">turnOn2sv</code></td>
     <td><code class="badcode">turnOn2Sv</code></td>
   </tr>
+  <tr>
+    <td>"Guava 33.4.6"</td>
+    <td><code class="prettyprint lang-java">guava33_4_6</code></td>
+    <td><code class="badcode">guava3346</code></td>
+  </tr>
 </tbody></table>
 
 <p>*Acceptable, but not recommended.</p>
@@ -1075,8 +1214,8 @@ language: for example "nonempty" and "non-empty" are both correct, so the method
 
 <p>A method is marked with the <code class="prettyprint lang-java">@Override</code> annotation
 whenever it is legal.  This includes a class method overriding a superclass method, a class method
-implementing an interface method, and an interface method respecifying a superinterface
-method.</p>
+implementing an interface method, an interface method respecifying a superinterface method, and an
+explicitly declared accessor method for a record component.</p>
 
 <p class="exception"><strong>Exception:</strong>
 <code class="prettyprint lang-java">@Override</code> may be omitted when the parent method is
@@ -1085,7 +1224,7 @@ method.</p>
 <a id="caughtexceptions"></a>
 <h3 id="s6.2-caught-exceptions">6.2 Caught exceptions: not ignored</h3>
 
-<p>Except as noted below, it is very rarely correct to do nothing in response to a caught
+<p>It is very rarely correct to do nothing in response to a caught
 exception. (Typical responses are to log it, or if it is considered "impossible", rethrow it as an
 <code class="prettyprint lang-java">AssertionError</code>.)</p>
 
@@ -1099,18 +1238,6 @@ justified is explained in a comment.</p>
   // it's not numeric; that's fine, just continue
 }
 return handleTextResponse(response);
-</pre>
-
-<p class="exception"><strong>Exception:</strong> In tests, a caught exception may be ignored
-without comment <em>if</em> its name is or begins with <code class="prettyprint lang-java">expected</code>. The
-following is a very common idiom for ensuring that the code under test <em>does</em> throw an
-exception of the expected type, so a comment is unnecessary here.</p>
-
-<pre class="prettyprint lang-java">try {
-  emptyStack.pop();
-  fail();
-} catch (NoSuchElementException expected) {
-}
 </pre>
 
 <h3 id="s6.3-static-members">6.3 Static members: qualified using class</h3>
@@ -1156,7 +1283,7 @@ public int method(String p1) { ... }
 
 <p>The basic form is always acceptable. The single-line form may be substituted when the entirety
 of the Javadoc block (including comment markers) can fit on a single line. Note that this only
-applies when there are no block tags such as <code>@return</code>.</p>
+applies when there are no block tags such as <code>@param</code>.</p>
 
 <h4 id="s7.1.2-javadoc-paragraphs">7.1.2 Paragraphs</h4>
 
@@ -1191,32 +1318,32 @@ punctuated as if it were a complete sentence.</p>
 <p class="tip"><strong>Tip:</strong> A common mistake is to write simple Javadoc in the form
 <code class="badcode prettyprint lang-java">/** @return the customer ID */</code>. This is
 incorrect, and should be changed to
-<code class="prettyprint lang-java">/** Returns the customer ID. */</code>.</p>
+<code class="prettyprint lang-java">/** Returns the customer ID. */</code> or
+<code class="prettyprint lang-java">/** {@return the customer ID} */</code>.</p>
 
 <a id="s7.3.3-javadoc-optional"></a>
 <h3 id="s7.3-javadoc-where-required">7.3 Where Javadoc is used</h3>
 
-<p>At the <em>minimum</em>, Javadoc is present for every
-<code class="prettyprint lang-java">public</code> class, and every
-<code class="prettyprint lang-java">public</code> or
-<code class="prettyprint lang-java">protected</code> member of such a class, with a few exceptions
-noted below.</p>
+<p>At the <em>minimum</em>, Javadoc is present for every <em>visible</em> class, member, or record
+component, with a few exceptions noted below. A top-level class is visible if it is <code class="prettyprint lang-java">public</code>; a member is visible if it is <code class="prettyprint
+lang-java">public</code> or <code class="prettyprint lang-java">protected</code> and its containing
+class is visible; and a record component is visible if its containing record is visible.
 
-<p>Additional Javadoc content may also be present, as explained in Section 7.3.4,
+</p><p>Additional Javadoc content may also be present, as explained in Section 7.3.4,
 <a href="#s7.3.4-javadoc-non-required">Non-required Javadoc</a>.</p>
 
 <h4 id="s7.3.1-javadoc-exception-self-explanatory">7.3.1 Exception: self-explanatory members</h4>
 
-<p>Javadoc is optional for "simple, obvious" members like
-<code class="prettyprint lang-java">getFoo()</code>, in cases where there <em>really and truly</em>
- is nothing else worthwhile to say but "Returns the foo".</p>
+<p>Javadoc is optional for "simple, obvious" members and record components, such as a
+<code class="prettyprint lang-java">getFoo()</code> method, <em>if</em> there <em>really and
+truly</em> is nothing else worthwhile to say but "the foo".</p>
 
 <p class="note"><strong>Important:</strong> it is not appropriate to cite this exception to justify
-omitting relevant information that a typical reader might need to know. For example, for a method
-named <code class="prettyprint lang-java">getCanonicalName</code>, don't omit its documentation
-(with the rationale that it would say only
-<code class="badcode">/** Returns the canonical name. */</code>) if a typical reader may have no idea
-what the term "canonical name" means!</p>
+omitting relevant information that a typical reader might need to know. For example, for a record
+component named <code class="prettyprint lang-java">canonicalName</code>, don't omit its
+documentation (with the rationale that it would say only
+<code class="badcode">@param canonicalName the canonical name</code>) if a typical reader may have
+no idea what the term "canonical name" means!</p>
 
 <h4 id="s7.3.2-javadoc-exception-overrides">7.3.2 Exception: overrides</h4>
 
@@ -1228,7 +1355,7 @@ what the term "canonical name" means!</p>
 
 <h4 id="s7.3.4-javadoc-non-required">7.3.4 Non-required Javadoc</h4>
 
-<p>Other classes and members have Javadoc <em>as needed or desired</em>.
+<p>Other classes, members, and record components have Javadoc <em>as needed or desired</em>.
 
 </p><p>Whenever an implementation comment would be used to define the overall purpose or behavior of a
 class or member, that comment is written as Javadoc instead (using <code>/**</code>).</p>
