@@ -3,18 +3,20 @@
 <html>
 <head>
     <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <base target="_blank">
+    <script src="include/styleguide.js"></script>
     <link href="/styleguide/favicon.ico" type="image/x-icon" rel="shortcut icon">
+    <script src="include/jsguide.js"></script>
     <link rel="stylesheet" type="text/css" href="styleguide.css">
-    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
-    <script language="javascript" src="/eng/doc/devguide/include/styleguide.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <title>Google's AngularJS Style Guide</title>
     <style type="text/css"><!--
     th { background-color: #ddd; }
     //--></style>
 </head>
-<body onload="prettyPrint();initStyleGuide();">
+<body onload="initStyleGuide();">
 <h1 class="external">An AngularJS Style Guide for Closure Users at Google</h1>
+
+<h2 id="Background" class="ignoreLink">Background</h2>
 
 <p class="external">This is the external version of a document that was primarily written for Google
     engineers. It describes a recommended style for AngularJS apps that use Closure, as used
@@ -41,35 +43,6 @@
     pseudoclassical,
     <a href="https://books.google.com/books/about/JavaScript.html?id=PXa2bby0oQ0C">
         Javascript, the Good Parts</a> as a counter.)</p>
-
-<h5>1 Angular Language Rules</h5>
-<ul>
-    <li> <a target="_self" href="#googprovide">Manage dependencies with Closure's goog.require and
-        goog.provide</a>
-    <li> <a target="_self" href="#modules"> Modules</a>
-    <li> <a target="_self" href="#moduledeps"> Modules should reference other modules using the
-        "name" property</a>
-    <li> <a target="_self" href="#externs">Use the provided Angular externs file</a>
-    <li> <a target="_self" href="#compilerflags">JSCompiler Flags</a>
-    <li> <a target="_self" href="#controllers">Controllers and Scopes</a>
-    <li> <a target="_self" href="#directives">Directives</a>
-    <li> <a target="_self" href="#services">Services</a>
-</ul>
-<h5>2 Angular Style Rules</h5>
-<ul>
-    <li><a target="_self" href="#dollarsign">Reserve $ for Angular properties and services
-    </a>
-    <li><a target="_self" href="#customelements">Custom elements.</a>
-</ul>
-<h5>3 Angular Tips, Tricks, and Best Practices</h5>
-<ul>
-    <li><a target="_self" href="#testing">Testing</a>
-    <li><a target="_self" href="#appstructure">Consider using the Best Practices for App Structure</a>
-    <li><a target="_self" href="#scopeinheritance">Be aware of how scope inheritance works</a>
-    <li><a target="_self" href="#nginject">Use @ngInject for easy dependency injection compilation</a>
-</ul>
-
-<h5><a target="_self" href="#bestpractices">4 Best practices links and docs</a></h5>
 
 <h2>1 Angular Language Rules</h2>
 
