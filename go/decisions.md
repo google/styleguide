@@ -405,7 +405,7 @@ If the value appears in multiple forms, this can be clarified either with an
 extra word like `raw` and `parsed` or with the underlying representation:
 
 ```go
-// Good:
+// Bad:
 limitStr := r.FormValue("limit")
 limit, err := strconv.Atoi(limitStr)
 ```
