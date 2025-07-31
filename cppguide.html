@@ -23,7 +23,7 @@ code more bug-prone and harder to read and maintain.</p>
 <p>The goal of this guide is to manage this complexity by
 describing in detail the dos and don'ts of writing C++
 code. These rules exist to
-keep  the code base manageable while still allowing
+keep  the codebase manageable while still allowing
 coders to use C++ language features productively.</p>
 
 <p><em>Style</em>, also known as readability, is what we call
@@ -63,10 +63,10 @@ must be large enough to justify asking all of our engineers to
 remember it. The benefit is measured relative to the codebase we would
 get without the rule, so a rule against a very harmful practice may
 still have a small benefit if people are unlikely to do it
-anyway. This principle mostly explains the rules we don’t have, rather
+anyway. This principle mostly explains the rules we don't have, rather
 than the rules we do: for example, <code>goto</code> contravenes many
 of the following principles, but is already vanishingly rare, so the Style
-Guide doesn’t discuss it.</dd>
+Guide doesn't discuss it.</dd>
 
 <dt>Optimize for the reader, not the writer</dt>
 <dd>Our codebase (and most individual components submitted to it) is
@@ -101,7 +101,7 @@ on newer styles over time.</dd>
 
 <dt>Be consistent with the broader C++ community when appropriate</dt>
 <dd>Consistency with the way other organizations use C++ has value for
-the same reasons as consistency within our code base. If a feature in
+the same reasons as consistency within our codebase. If a feature in
 the C++ standard solves a problem, or if some idiom is widely known
 and accepted, that's an argument for using it. However, sometimes
 standard features and idioms are flawed, or were just designed without
@@ -240,7 +240,7 @@ project <code>foo</code> should have the following
 guard:</p>
 </div>
 
-<pre>#ifndef FOO_BAR_BAZ_H_
+<pre class="goodcode">#ifndef FOO_BAR_BAZ_H_
 #define FOO_BAR_BAZ_H_
 
 ...
@@ -275,7 +275,7 @@ includes <code>bar.h</code>.</p>
 <p class="definition"></p>
 <p>A "forward declaration" is a declaration of an entity
   without an associated definition.</p>
-<pre>// In a C++ source file:
+<pre class="neutralcode">// In a C++ source file:
 class B;
 void FuncInB();
 extern int variable_in_b;
@@ -319,7 +319,7 @@ ABSL_DECLARE_FLAG(flag_in_b);
   Replacing an <code>#include</code> with a forward
   declaration can silently change the meaning of
   code:
-<pre>// b.h:
+<pre class="neutralcode">// b.h:
 struct B {};
 struct D : B {};
 
@@ -455,7 +455,7 @@ directory without use of UNIX directory aliases
 <code>google-awesome-project/src/base/logging.h</code>
 should be included as:</p>
 
-<pre>#include "base/logging.h"
+<pre class="goodcode">#include "base/logging.h"
 </pre>
 
 <p>Headers should only be included using an angle-bracketed path if the library
@@ -463,11 +463,11 @@ requires you to do so. In particular, the following headers require angle
 brackets:</p>
 
 <ul>
-<li>C and C++ standard library headers (e.g. <code>&lt;stdlib.h&gt;</code>
+<li>C and C++ standard library headers (e.g., <code>&lt;stdlib.h&gt;</code>
   and <code>&lt;string&gt;</code>).</li>
-<li>POSIX, Linux, and Windows system headers (e.g. <code>&lt;unistd.h&gt;</code>
+<li>POSIX, Linux, and Windows system headers (e.g., <code>&lt;unistd.h&gt;</code>
   and <code>&lt;windows.h&gt;</code>).</li>
-<li>In rare cases, third_party libraries (e.g. <code>&lt;Python.h&gt;</code>).</li>
+<li>In rare cases, third_party libraries (e.g., <code>&lt;Python.h&gt;</code>).</li>
 </ul>
 
 <p>In <code><var>dir/foo</var>.cc</code> or
@@ -535,7 +535,7 @@ this rule and should be fixed when convenient.</p>
 <code>google-awesome-project/src/foo/internal/fooserver.cc</code>
 might look like this:</p>
 
-<pre>#include "foo/server/fooserver.h"
+<pre class="goodcode">#include "foo/server/fooserver.h"
 
 #include &lt;sys/types.h&gt;
 #include &lt;unistd.h&gt;
@@ -555,13 +555,11 @@ conditional includes. Such code can put conditional
 includes after other includes. Of course, keep your
 system-specific code small and localized. Example:</p>
 
-<pre>#include "foo/public/fooserver.h"
+<pre class="goodcode">#include "foo/public/fooserver.h"
 
-#include "base/port.h"  // For LANG_CXX11.
-
-#ifdef LANG_CXX11
-#include &lt;initializer_list&gt;
-#endif  // LANG_CXX11
+#ifdef _WIN32
+#include &lt;windows.h&gt;
+#endif  // _WIN32
 </pre>
 
 <h2 id="Scoping">Scoping</h2>
@@ -640,7 +638,7 @@ namespaces, this can add a lot of clutter.</p>
   gflags</a> definitions/declarations
   and forward declarations of classes from other namespaces.</p>
 
-<pre>// In the .h file
+<pre class="goodcode">// In the .h file
 namespace mynamespace {
 
 // All declarations are within the namespace scope.
@@ -654,7 +652,7 @@ class MyClass {
 }  // namespace mynamespace
 </pre>
 
-<pre>// In the .cc file
+<pre class="goodcode">// In the .cc file
 namespace mynamespace {
 
 // Definition of functions is within scope of the namespace.
@@ -668,7 +666,7 @@ void MyClass::Foo() {
   <p>More complex <code>.cc</code> files might have additional details,
   like flags or using-declarations.</p>
 
-<pre>#include "a.h"
+<pre class="goodcode">#include "a.h"
 
 ABSL_FLAG(bool, someflag, false, "a flag");
 
@@ -710,25 +708,29 @@ using namespace foo;
   <li><p>Do not use <i>Namespace aliases</i> at namespace scope
   in header files except in explicitly marked
   internal-only namespaces, because anything imported into a namespace
-  in a header file becomes part of the public
-  API exported by that file.</p>
+  in a header file becomes part of the public API exported by that file.
+  Namespace aliases can be used when those conditions don't apply, but
+  they must have <a href="#Naming_Aliases">appropriate names</a>.</p>
 
-<pre>// Shorten access to some commonly used names in .cc files.
-namespace baz = ::foo::bar::baz;
-</pre>
-
-<pre>// Shorten access to some commonly used names (in a .h file).
+<pre class="goodcode">// In a .h file, an alias must not be a separate API, or must be hidden in an
+// implementation detail.
 namespace librarian {
+
 namespace internal {  // Internal, not part of the API.
 namespace sidetable = ::pipeline_diagnostics::sidetable;
 }  // namespace internal
 
 inline void my_inline_function() {
-  // namespace alias local to a function (or method).
+  // Local to a function.
   namespace baz = ::foo::bar::baz;
   ...
 }
+
 }  // namespace librarian
+</pre>
+
+<pre class="goodcode">// Remove uninteresting parts of some commonly used names in .cc files.
+namespace sidetable = ::pipeline_diagnostics::sidetable;
 </pre>
 
   </li><li>Do not use inline namespaces.</li>
@@ -744,7 +746,7 @@ using ::absl::container_internal::ImplementationDetail;
     <p>Note that there is still a risk of collision between libraries within a
     nested <code>internal</code> namespace, so give each library within a
     namespace a unique internal namespace by adding the library's
-    filename. E.g. <code>gshoe/widget.h</code> would use
+    filename. For example, <code>gshoe/widget.h</code> would use
     <code>gshoe::internal_widget</code> as opposed to just
     <code>gshoe::internal</code>.</p>
   </li>
@@ -779,7 +781,7 @@ Do not use internal linkage in <code>.h</code> files.</p>
 <p>Format unnamed namespaces like named namespaces. In the
   terminating comment, leave the namespace name empty:</p>
 
-<pre>namespace {
+<pre class="goodcode">namespace {
 ...
 }  // namespace
 </pre>
@@ -834,7 +836,7 @@ be used instead of declaration and assignment, e.g.,:</p>
 i = f();      // Bad -- initialization separate from declaration.
 </pre>
 
-<pre>int i = f();  // Good -- declaration has initialization.
+<pre class="goodcode">int i = f();  // Good -- declaration has initialization.
 </pre>
 
 
@@ -843,7 +845,7 @@ i = f();      // Bad -- initialization separate from declaration.
 f(jobs);      // Bad -- declaration separate from use.
 </pre>
 
-<pre>int jobs = NumJobs();
+<pre class="goodcode">int jobs = NumJobs();
 f(jobs);      // Good -- declaration immediately (or closely) followed by use.
 </pre>
 
@@ -852,15 +854,15 @@ v.push_back(1);  // Prefer initializing using brace initialization.
 v.push_back(2);
 </pre>
 
-<pre>std::vector&lt;int&gt; v = {1, 2};  // Good -- v starts initialized.
+<pre class="goodcode">std::vector&lt;int&gt; v = {1, 2};  // Good -- v starts initialized.
 </pre>
 
 <p>Variables needed for <code>if</code>, <code>while</code>
 and <code>for</code> statements should normally be declared
 within those statements, so that such variables are confined
-to those scopes.  E.g.:</p>
+to those scopes. For example:</p>
 
-<pre>while (const char* p = strchr(str, '/')) str = p + 1;
+<pre class="goodcode">while (const char* p = strchr(str, '/')) str = p + 1;
 </pre>
 
 <p>There is one caveat: if the variable is an object, its
@@ -878,7 +880,7 @@ for (int i = 0; i &lt; 1000000; ++i) {
 <p>It may be more efficient to declare such a variable
 used in a loop outside that loop:</p>
 
-<pre>Foo f;  // My ctor and dtor get called once each.
+<pre class="goodcode">Foo f;  // My ctor and dtor get called once each.
 for (int i = 0; i &lt; 1000000; ++i) {
   f.DoSomething(i);
 }
@@ -952,7 +954,7 @@ objects with static storage duration if they are trivially destructible.
 Fundamental types (like pointers and <code>int</code>) are trivially
 destructible, as are arrays of trivially destructible types. Note that
 variables marked with <code>constexpr</code> are trivially destructible.</p>
-<pre>const int kNum = 10;  // Allowed
+<pre class="goodcode">const int kNum = 10;  // Allowed
 
 struct X { int n; };
 const X kX[] = {{1}, {2}, {3}};  // Allowed
@@ -1029,7 +1031,7 @@ it is forbidden. However, we do permit it if no aspect of the program depends
 on the sequencing of this initialization with respect to all other
 initializations. Under those restrictions, the ordering of the initialization
 does not make an observable difference. For example:</p>
-<pre>int p = getpid();  // Allowed, as long as no other static variable
+<pre class="goodcode">int p = getpid();  // Allowed, as long as no other static variable
                    // uses p in its own initialization.</pre>
 
 <p>Dynamic initialization of static local variables is allowed (and common).</p>
@@ -1088,7 +1090,7 @@ attribute. Prefer
 <p class="definition"></p>
 <p>Variables can be declared with the
 <code>thread_local</code> specifier:</p>
-<pre>thread_local Foo foo = ...;
+<pre class="neutralcode">thread_local Foo foo = ...;
 </pre>
 <p>Such a variable is actually a collection of objects, so that when different
 threads access it, they are actually accessing different objects.
@@ -1158,7 +1160,7 @@ get a particularly hard to diagnose use-after-free.</p>
     <code>constinit</code></a>
   (or <code>constexpr</code>, but that should be rare):</p>
 
-  <pre>   constinit thread_local Foo foo = ...;
+  <pre class="goodcode">   constinit thread_local Foo foo = ...;
   </pre>
 
   <p><code>thread_local</code> variables inside a function have no initialization
@@ -1167,7 +1169,7 @@ get a particularly hard to diagnose use-after-free.</p>
     namespace-scope <code>thread_local</code> by defining a function or
     static method that exposes it:</p>
 
-<pre>Foo&amp; MyThreadLocalFoo() {
+<pre class="goodcode">Foo&amp; MyThreadLocalFoo() {
   thread_local Foo result = ComplicatedInitialization();
   return result;
 }
@@ -1272,7 +1274,7 @@ or a conversion operator, to ensure that it can only be
 used when the destination type is explicit at the point of use,
 e.g., with a cast. This applies not only to implicit conversions, but to
 list initialization syntax:</p>
-<pre>class Foo {
+<pre class="neutralcode">class Foo {
   explicit Foo(int x, double y);
   ...
 };
@@ -1440,7 +1442,7 @@ moves. Explicitly declaring or deleting all four copy/move operations is
 permitted, but not required. If you provide a copy or move assignment operator,
 you must also provide the corresponding constructor.</p>
 
-<pre>class Copyable {
+<pre class="goodcode">class Copyable {
  public:
   Copyable(const Copyable&amp; other) = default;
   Copyable&amp; operator=(const Copyable&amp; other) = default;
@@ -1682,7 +1684,7 @@ creating objects of user-defined types.</p>
 
   <li>Finding the call sites for overloaded operators may
   require a search tool that's aware of C++ syntax, rather
-  than e.g., grep.</li>
+  than, e.g., grep.</li>
 
   <li>If you get the argument type of an overloaded operator
   wrong, you may get a different overload rather than a
@@ -1834,8 +1836,8 @@ following order:</p>
 <p>Do not put large method definitions inline in the
 class definition. Usually, only trivial or
 performance-critical, and very short, methods may be
-defined inline. See <a href="#Inline_Functions">Inline
-Functions</a> for more details.</p>
+defined inline. See <a href="#Defining_Functions_in_Header_Files">Defining
+Functions in Header Files</a> for more details.</p>
 
 <h2 id="Functions">Functions</h2>
 
@@ -1923,7 +1925,7 @@ takes <code>const char*</code>. However, in this case consider
 </code>
 instead.</p>
 
-<pre>class MyClass {
+<pre class="neutralcode">class MyClass {
  public:
   void Analyze(const std::string &amp;text);
   void Analyze(const char *text, size_t textlen);
@@ -1952,9 +1954,14 @@ function.</p>
 between variants. These overloads may vary in types, qualifiers, or
 argument count. However, a reader of such a call must not need to know
 which member of the overload set is chosen, only that <b>something</b>
-from the set is being called. If you can document all entries in the
-overload set with a single comment in the header, that is a good sign
-that it is a well-designed overload set.</p>
+from the set is being called.</p>
+
+<p>To reflect this unified design, prefer a single, comprehensive "umbrella"
+comment that documents the entire overload set and is placed before the first
+declaration.</p>
+
+<p>Where a reader might have difficulty connecting the umbrella
+comment to a specific overload, it's okay to have a comment for specific overloads.</p>
 
 <h3 id="Default_Arguments">Default Arguments</h3>
 
@@ -2014,13 +2021,13 @@ doubt, use overloads.</p>
 <p class="definition"></p>
 <p>C++ allows two different forms of function declarations. In the older
   form, the return type appears before the function name. For example:</p>
-<pre>int foo(int x);
+<pre class="neutralcode">int foo(int x);
 </pre>
 <p>The newer form uses the <code>auto</code>
   keyword before the function name and a trailing return type after
   the argument list. For example, the declaration above could
   equivalently be written:</p>
-<pre>auto foo(int x) -&gt; int;
+<pre class="neutralcode">auto foo(int x) -&gt; int;
 </pre>
 <p>The trailing return type is in the function's scope. This doesn't
   make a difference for a simple case like <code>int</code> but it matters
@@ -2038,11 +2045,11 @@ doubt, use overloads.</p>
   after the function's parameter list has already appeared. This is
   particularly true when the return type depends on template parameters.
   For example:</p>
-  <pre>    template &lt;typename T, typename U&gt;
+  <pre class="neutralcode">    template &lt;typename T, typename U&gt;
     auto add(T t, U u) -&gt; decltype(t + u);
   </pre>
   versus
-  <pre>    template &lt;typename T, typename U&gt;
+  <pre class="neutralcode">    template &lt;typename T, typename U&gt;
     decltype(declval&lt;T&amp;&gt;() + declval&lt;U&amp;&gt;()) add(T t, U u);
   </pre>
 
@@ -2050,7 +2057,7 @@ doubt, use overloads.</p>
 <p>Trailing return type syntax is relatively new and it has no
   analogue in C++-like languages such as C and Java, so some readers may
   find it unfamiliar.</p>
-<p>Existing code bases have an enormous number of function
+<p>Existing codebases have an enormous number of function
   declarations that aren't going to get changed to use the new syntax,
   so the realistic choices are using the old syntax only or using a mixture
   of the two. Using a single version is better for uniformity of style.</p>
@@ -2187,7 +2194,7 @@ or passing a pointer or reference without transferring
 ownership. Prefer to use <code>std::unique_ptr</code> to
 make ownership transfer explicit. For example:</p>
 
-<pre>std::unique_ptr&lt;Foo&gt; FooFactory();
+<pre class="goodcode">std::unique_ptr&lt;Foo&gt; FooFactory();
 void FooConsumer(std::unique_ptr&lt;Foo&gt; ptr);
 </pre>
 
@@ -2222,7 +2229,7 @@ tool. </p>
 how to run <code>cpplint.py</code> from their project
 tools. If the project you are contributing to does not,
 you can download
-<a href="https://raw.githubusercontent.com/google/styleguide/gh-pages/cpplint/cpplint.py">
+<a href="https://raw.githubusercontent.com/cpplint/cpplint/HEAD/cpplint.py">
 <code>cpplint.py</code></a> separately.</p>
 </div>
 
@@ -2270,7 +2277,7 @@ rules apply. Such a reference is called a forwarding reference.</p>
   <code>std::unique_ptr</code>.</li>
 
   <li><a href="#Forwarding_references">Forwarding references</a> which
-  use the rvalue reference token, make it possible to write a
+  use the rvalue reference token make it possible to write a
   generic function wrapper that forwards its arguments to
   another function, and works whether or not its
   arguments are temporary objects and/or const.
@@ -2330,7 +2337,7 @@ of <code>friend</code> is to have a
 <code>Foo</code> so that it can construct the inner state
 of <code>Foo</code> correctly, without exposing this
 state to the world. In some cases it may be useful to
-make a unittest class a friend of the class it tests.</p>
+make a unit test class a friend of the class it tests.</p>
 
 <p>Friends extend, but do not break, the encapsulation
 boundary of a class. In some cases this is better than
@@ -2523,7 +2530,7 @@ move-constructing objects), or on whether allocation can throw
 standard default allocation). Note in many cases the only
 possible cause for an exception is allocation failure (we
 believe move constructors should not throw except due to
-allocation failure), and there are many applications where it’s
+allocation failure), and there are many applications where it's
 appropriate to treat memory exhaustion as a fatal error rather
 than an exceptional condition that your program should attempt
 to recover from.  Even for other
@@ -2531,7 +2538,7 @@ potential failures you should prioritize interface simplicity
 over supporting all possible exception throwing scenarios:
 instead of writing a complicated <code>noexcept</code> clause
 that depends on whether a hash function can throw, for example,
-simply document that your component doesn’t support hash
+simply document that your component doesn't support hash
 functions throwing and make it unconditionally
 <code>noexcept</code>.</p>
 
@@ -2562,7 +2569,7 @@ relationship between objects and their mocks.</p>
 <p>RTTI is useful when considering multiple abstract
 objects. Consider</p>
 
-<pre>bool Base::Equal(Base* other) = 0;
+<pre class="neutralcode">bool Base::Equal(Base* other) = 0;
 bool Derived::Equal(Base* other) {
   Derived* that = dynamic_cast&lt;Derived*&gt;(other);
   if (that == nullptr)
@@ -2585,7 +2592,7 @@ must be examined when making further changes.</p>
 <p class="decision"></p>
 <p>RTTI has legitimate uses but is prone to abuse, so you
 must be careful when using it. You may use it freely in
-unittests, but avoid it when possible in other code. In
+unit tests, but avoid it when possible in other code. In
 particular, think twice before using RTTI in new code. If
 you find yourself needing to write code that behaves
 differently based on the class of an object, consider one
@@ -2671,8 +2678,8 @@ casts when explicit type conversion is necessary.
   will not compile if conversion can result in information loss.  The
   syntax is also concise.</li>
 
-  <li>When explicitly converting to a class type, use a function-style cast.
-  E.g. prefer <code>std::string(some_cord)</code> to
+  <li>When explicitly converting to a class type, use a function-style cast;
+  e.g., prefer <code>std::string(some_cord)</code> to
   <code>static_cast&lt;std::string&gt;(some_cord)</code>.</li>
 
   <li>Use <code>absl::implicit_cast</code>
@@ -2775,7 +2782,7 @@ develop experience with it in order to use it effectively.</li>
 
 <li>Resolving the many overloads of <code>&lt;&lt;</code> is
 extremely costly for the compiler. When used pervasively in a
-large code base, it can consume as much as 20% of the parsing
+large codebase, it can consume as much as 20% of the parsing
 and semantic analysis time.</li>
 </ul>
 
@@ -2853,7 +2860,7 @@ needs the result of the postfix increment/decrement expression.</p>
 
 <p>In APIs, use <code>const</code> whenever it makes sense.
 <code>constexpr</code> is a better choice for some uses of
-const.</p>
+<code>const</code>.</p>
 
 <p class="definition"></p>
 <p> Declared variables and parameters can be preceded
@@ -3015,7 +3022,7 @@ The standard library header <code>&lt;stdint.h&gt;</code> defines types
 like <code>int16_t</code>, <code>uint32_t</code>,
 <code>int64_t</code>, etc. You should always use
 those in preference to <code>short</code>, <code>unsigned
-long long</code> and the like, when you need a guarantee
+long long</code>, and the like, when you need a guarantee
 on the size of an integer. Prefer to omit the <code>std::</code>
 prefix for these types, as the extra 5 characters do
 not merit the added clutter. Of the built-in integer types, only
@@ -3114,7 +3121,7 @@ single processor.</p>
   <li>
   Use <a href="#Casting">braced-initialization</a> as needed to create
   64-bit constants. For example:
-<pre>int64_t my_value{0x123456789};
+<pre class="goodcode">int64_t my_value{0x123456789};
 uint64_t my_mask{uint64_t{3} &lt;&lt; 48};
 </pre>
   </li>
@@ -3236,14 +3243,14 @@ to any particular variable, such as code that manages an
 external or internal data format where a variable of an
 appropriate C++ type is not convenient.</p>
 
-<pre>MyStruct data;
+<pre class="goodcode">MyStruct data;
 memset(&amp;data, 0, sizeof(data));
 </pre>
 
 <pre class="badcode">memset(&amp;data, 0, sizeof(MyStruct));
 </pre>
 
-<pre>if (raw_size &lt; sizeof(int)) {
+<pre class="goodcode">if (raw_size &lt; sizeof(int)) {
   LOG(ERROR) &lt;&lt; "compressed record not big enough for count: " &lt;&lt; raw_size;
   return false;
 }
@@ -3300,7 +3307,7 @@ auto d{42};   // d is an int, not a std::initializer_list&lt;int&gt;
     rather than by an explicit <code>auto</code>. Confusingly,
     <a href="#trailing_return">trailing return type</a> syntax for functions
     also uses <code>auto</code> in the return-type position, but that doesn't
-    rely on type deduction; it's just an alternate syntax for an explicit
+    rely on type deduction; it's just an alternative syntax for an explicit
     return type.
   </dd>
   <dt><a href="https://isocpp.org/wiki/faq/cpp14-language#generic-lambdas">Generic lambdas</a></dt>
@@ -3434,8 +3441,8 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   Note that class template argument deduction is also subject to a
   <a href="#CTAD">separate style rule</a>.</p>
 
-<p>Do not use <code>decltype(auto)</code> if a simpler option will work,
-  because it's a fairly obscure feature, so it has a high cost in code
+<p>Do not use <code>decltype(auto)</code> if a simpler option will work;
+  because it's a fairly obscure feature, it has a high cost in code
   clarity.</p>
 
 <h4>Return type deduction</h4>
@@ -3485,7 +3492,7 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   field names. We recommend using a comment to indicate the name of the
   underlying field, if it doesn't match the name of the binding, using the
   same syntax as for function parameter comments:</p>
-  <pre>auto [/*field_name1=*/bound_name1, /*field_name2=*/bound_name2] = ...</pre>
+  <pre class="goodcode">auto [/*field_name1=*/bound_name1, /*field_name2=*/bound_name2] = ...</pre>
 <p>As with function parameter comments, this can enable tools to detect if
   you get the order of the fields wrong.</p>
 
@@ -3603,7 +3610,7 @@ when the lambda will escape the current scope.</p>
 function objects. They're often useful when passing
 functions as arguments. For example:</p>
 
-<pre>std::sort(v.begin(), v.end(), [](int x, int y) {
+<pre class="neutralcode">std::sort(v.begin(), v.end(), [](int x, int y) {
   return Weight(x) &lt; Weight(y);
 });
 </pre>
@@ -3613,7 +3620,7 @@ explicitly by name, or implicitly using a default capture. Explicit captures
 require each variable to be listed, as
 either a value or reference capture:</p>
 
-<pre>int weight = 3;
+<pre class="neutralcode">int weight = 3;
 int sum = 0;
 // Captures `weight` by value and `sum` by reference.
 std::for_each(v.begin(), v.end(), [weight, &amp;sum](int x) {
@@ -3625,7 +3632,7 @@ std::for_each(v.begin(), v.end(), [weight, &amp;sum](int x) {
 <p>Default captures implicitly capture any variable referenced in the
 lambda body, including <code>this</code> if any members are used:</p>
 
-<pre>const std::vector&lt;int&gt; lookup_table = ...;
+<pre class="neutralcode">const std::vector&lt;int&gt; lookup_table = ...;
 std::vector&lt;int&gt; indices = ...;
 // Captures `lookup_table` by reference, sorts `indices` by the value
 // of the associated element in `lookup_table`.
@@ -3637,7 +3644,7 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
 <p>A variable capture can also have an explicit initializer, which can
   be used for capturing move-only variables by value, or for other situations
   not handled by ordinary reference or value captures:</p>
-  <pre>std::unique_ptr&lt;Foo&gt; foo = ...;
+  <pre class="neutralcode">std::unique_ptr&lt;Foo&gt; foo = ...;
 [foo = std::move(foo)] () {
   ...
 }</pre>
@@ -3717,7 +3724,7 @@ For example, instead of:
 // and the enclosing object could have been destroyed.
 </pre>
 prefer to write:
-<pre>{
+<pre class="goodcode">{
   Foo foo;
   ...
   executor-&gt;Schedule([&amp;foo] { Frobnicate(foo); })
@@ -3800,7 +3807,7 @@ over a large number of uses.</p>
 complicated template techniques; think about whether the average
 member of your team will be able to understand your code well enough
 to maintain it after you switch to another project, or whether a
-non-C++ programmer or someone casually browsing the code base will be
+non-C++ programmer or someone casually browsing the codebase will be
 able to understand the error messages or trace the flow of a function
 they want to call.  If you're using recursive template instantiations
 or type lists or metafunctions or expression templates, or relying on
@@ -3940,23 +3947,68 @@ and <code>import</code>.
 </p><p>Modules are a big shift in how C++ is written and compiled, and we
 are still assessing how they may fit into Google's C++ ecosystem in
 the future. Furthermore, they are not currently well-supported by our
-build-systems, compilers, and other tooling, and need further
-exploration as to the best-practices when writing and using them.</p>
+build systems, compilers, and other tooling, and need further
+exploration as to the best practices when writing and using them.</p>
 
 
 
 <h3 id="coroutines">Coroutines</h3>
 
-<p>Do not use coroutines (yet).</p>
 
-<p>Do not include the <code>&lt;coroutine&gt;</code> header,
-or use the <code>co_await</code>, <code>co_yield</code>,
-or <code>co_return</code> keywords.</p>
+<p>Only use C++20 coroutines via libraries that have been
+  approved by your project leads.</p>
 
-<p>NOTE: this ban is expected to be temporary, while further
-guidance is being developed.
+<p class="definition"></p>
+<p>C++20 introduced
+<a href="https://en.cppreference.com/w/cpp/language/coroutines.html">coroutines</a>:
+functions that can suspend and resume
+executing later. They are especially convenient for asynchronous
+programming, where they can provide substantial improvements over
+traditional callback-based frameworks.</p>
 
-</p>
+<p>Unlike most other programming languages (Kotlin, Rust, TypeScript, etc.),
+C++ does not provide a concrete implementation of coroutines.
+Instead, it requires users to implement their own awaitable type (using a
+<a href="https://en.cppreference.com/w/cpp/language/coroutines#Promise">
+  promise type</a>) which determines coroutine parameter types, how coroutines
+are executed, and allows running user-defined code during different stages
+of their execution.</p>
+
+<p class="pros"></p>
+<ul>
+  <li>Coroutines can be used to implement safe and efficient libraries suited
+    for specific tasks, such as asynchronous programming.</li>
+  <li>Coroutines are syntactically almost identical to non-coroutine functions,
+    which can make them substantially more readable than alternatives.</li>
+  <li>The high degree of customization makes it possible to insert more
+    detailed debugging information into coroutines, compared to
+    alternatives.</li>
+</ul>
+
+<p class="cons"></p>
+<ul>
+  <li>There is no standard coroutine promise type, and each user-defined
+    implementation is likely going to be unique in some aspect.</li>
+  <li>Because of load-bearing interactions between the return type, the
+    various customizable hooks in the promise type, and compiler-generated
+    code, coroutine semantics are extremely difficult to deduce from reading
+    user code.</li>
+  <li>The many customizable aspects of coroutines introduce a large number
+    of pitfalls, especially around dangling references and race
+    conditions.</li>
+</ul>
+
+<p>In summary, designing a high-quality and interoperable coroutine library
+requires a large amount of difficult work, careful thought, and extensive
+documentation.</p>
+
+<p class="decision"></p>
+
+
+
+<p>Use only coroutine libraries that have been approved for
+  project-wide use by your project leads. Do not roll your own promise or
+  awaitable types.</p>
 
 <h3 id="Boost">Boost</h3>
 
@@ -4067,7 +4119,7 @@ the future.</p>
 
 <p>As with <a href="#Boost">Boost</a>, some modern C++
 library functionality encourages coding practices that hamper
-readability—for example by removing
+readability — for example by removing
 checked redundancy (such as type names) that may be
 helpful to readers, or by encouraging template
 metaprogramming. Other extensions duplicate functionality
@@ -4126,7 +4178,7 @@ and conversion costs.</p>
     <li>Even if they are supported in all targeted compilers, the extensions
       are often not well-specified, and there may be subtle behavior differences
       between compilers.</li>
-    <li>Nonstandard extensions add to the language features that a reader must
+    <li>Nonstandard extensions add features to the language that a reader must
       know to understand the code.</li>
     <li>Nonstandard extensions require additional work to port across architectures.</li>
   </ul>
@@ -4144,7 +4196,7 @@ and conversion costs.</p>
 
 <p class="definition"></p>
 <p>There are several ways to create names that are aliases of other entities:</p>
-<pre>using Bar = Foo;
+<pre class="neutralcode">using Bar = Foo;
 typedef Foo Bar;  // But prefer `using` in C++ code.
 using ::other_namespace::Foo;
 using enum MyEnumType;  // Creates aliases for all enumerators in MyEnumType.
@@ -4176,11 +4228,11 @@ using enum MyEnumType;  // Creates aliases for all enumerators in MyEnumType.
       changes difficult.</li>
     <li>It can be tempting to create a public alias that is only intended for use
       in the implementation, without considering its impact on the API, or on maintainability.</li>
-    <li>Aliases can create risk of name collisions</li>
-    <li>Aliases can reduce readability by giving a familiar construct an unfamiliar name</li>
+    <li>Aliases can create risk of name collisions.</li>
+    <li>Aliases can reduce readability by giving a familiar construct an unfamiliar name.</li>
     <li>Type aliases can create an unclear API contract:
       it is unclear whether the alias is guaranteed to be identical to the type it aliases,
-      to have the same API, or only to be usable in specified narrow ways</li>
+      to have the same API, or only to be usable in specified narrow ways.</li>
   </ul>
 
 <p class="decision"></p>
@@ -4192,11 +4244,11 @@ it's currently aliased to, or whether a more limited compatibility is
 intended. This lets the user know whether they can treat the types as
 substitutable or whether more specific rules must be followed, and can help the
 implementation retain some degree of freedom to change the alias.</p>
-<p>Don't put namespace aliases in your public API. (See also <a href="#Namespaces">Namespaces</a>).
+<p>Don't put namespace aliases in your public API. (See also <a href="#Namespaces">Namespaces</a>.)
 </p>
 
 <p>For example, these aliases document how they are intended to be used in client code:</p>
-<pre>namespace mynamespace {
+<pre class="goodcode">namespace mynamespace {
 // Used to store field measurements. DataPoint may change from Bar* to some internal type.
 // Client code should treat it as an opaque pointer.
 using DataPoint = ::foo::Bar*;
@@ -4218,9 +4270,9 @@ typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&g
 </pre>
 
 <p>However, local convenience aliases are fine in function definitions, <code>private</code>
-  sections of classes, explicitly marked internal namespaces, and in <code>.cc</code> files:</p>
+  sections of classes, explicitly-marked internal namespaces, and in <code>.cc</code> files:</p>
 
-<pre>// In a .cc file
+<pre class="goodcode">// In a .cc file
 using ::foo::Bar;
 </pre>
 
@@ -4231,7 +4283,7 @@ have a <code>default</code> case (in the case of an enumerated value, the
 compiler will warn you if any values are not handled). If the default case
 should never execute, treat this as an error. For example:
 
-</p><pre>switch (var) {
+</p><pre class="goodcode">switch (var) {
   case 0: {
     ...
     break;
@@ -4252,7 +4304,7 @@ be placed at a point of execution where a fall-through to the next case label
 occurs. A common exception is consecutive case labels without intervening code,
 in which case no annotation is needed.</p>
 
-<pre>switch (x) {
+<pre class="goodcode">switch (x) {
   case 41:  // No annotation needed here.
   case 43:
     if (dont_be_picky) {
@@ -4340,8 +4392,8 @@ parameter.</p>
 "vocabulary" names are reused so widely that they are always in context. These
 names tend to be short or even abbreviated and their full meaning comes from
 explicit long-form documentation rather than from just comments on their
-definition and the words within the names. E.g. <code>absl::Status</code> has a
-dedicated
+definition and the words within the names. For example, <code>absl::Status</code>
+has a dedicated
 
 <a href="https://abseil.io/docs/cpp/guides/status">page
 in a devguide</a>,
@@ -4350,7 +4402,7 @@ often, but if you do, get
 additional design review to make sure the chosen names work well when
 used widely.</p>
 
-<pre>class MyClass {
+<pre class="goodcode">class MyClass {
  public:
   int CountFooErrors(const std::vector&lt;Foo&gt;&amp; foos) {
     int n = 0;  // Clear meaning given limited scope and context
@@ -4435,7 +4487,7 @@ enums, and type template parameters — have the same naming convention.
 Type names should start with a capital letter and have a capital letter
 for each new word. No underscores. For example:</p>
 
-<pre>// classes and structs
+<pre class="goodcode">// classes and structs
 class UrlTable { ...
 class UrlTableTester { ...
 struct UrlTableProperties { ...
@@ -4466,7 +4518,7 @@ Concept names follow the same rules as <a href="#Type_Names">type names</a>.
 
 <p>For example:</p>
 
-<pre>std::string table_name;  // OK - snake_case.
+<pre class="goodcode">std::string table_name;  // OK - snake_case.
 </pre>
 
 <pre class="badcode">std::string tableName;   // Bad - mixed case.
@@ -4480,7 +4532,7 @@ trailing underscore. The exception to this is static constant
 class members, which should follow the rules for
 <a href="#Constant_Names">naming constants</a>.</p>
 
-<pre>class TableInfo {
+<pre class="goodcode">class TableInfo {
  public:
   ...
   static const int kTableVersion = 3;  // OK - constant naming.
@@ -4498,7 +4550,7 @@ class members, which should follow the rules for
 are named like ordinary nonmember variables. They do not have
 the trailing underscores that data members in classes have.</p>
 
-<pre>struct UrlTableProperties {
+<pre class="goodcode">struct UrlTableProperties {
   std::string name;
   int num_entries;
   static Pool&lt;UrlTableProperties&gt;* pool;
@@ -4517,7 +4569,7 @@ the duration of the program, are named with a leading "k" followed
 by mixed case. Underscores can be used as separators in the rare cases
 where capitalization cannot be used for separation. For example:</p>
 
-<pre>const int kDaysInAWeek = 7;
+<pre class="goodcode">const int kDaysInAWeek = 7;
 const int kAndroid8_0_0 = 24;  // Android 8.0.0
 </pre>
 
@@ -4528,7 +4580,7 @@ class data members and those in templates where different instantiations of the 
 may have different values.  This convention is optional for variables of other storage classes,
 e.g., automatic variables; otherwise the usual variable naming rules apply. For example:</p>
 
-<pre>void ComputeFoo(absl::string_view suffix) {
+<pre class="goodcode">void ComputeFoo(absl::string_view suffix) {
   // Either of these is acceptable.
   const absl::string_view kPrefix = "prefix";
   const absl::string_view prefix = "prefix";
@@ -4545,26 +4597,23 @@ e.g., automatic variables; otherwise the usual variable naming rules apply. For 
 
 <h3 id="Function_Names">Function Names</h3>
 
-<p>Regular functions have mixed case; accessors and mutators may be named
-like variables.</p>
+<p>Ordinarily, functions follow <a href="https://en.wiktionary.org/wiki/Pascal_case">PascalCase</a>:
+start with a capital letter and have a capital letter for each new word.</p>
 
-<p>Ordinarily, functions should start with a capital letter and have a
-capital letter for each new word.</p>
-
-<pre>AddTableEntry()
+<pre class="goodcode">AddTableEntry()
 DeleteUrl()
 OpenFileOrDie()
 </pre>
 
-<p>(The same naming rule applies to class- and namespace-scope
+<p>The same naming rule applies to class- and namespace-scope
 constants that are exposed as part of an API and that are intended to look
 like functions, because the fact that they're objects rather than functions
-is an unimportant implementation detail.)</p>
+is an unimportant implementation detail.</p>
 
-<p>Accessors and mutators (get and set functions) may be named like
-variables. These often correspond to actual member variables, but this is
-not required. For example, <code>int count()</code> and <code>void
-set_count(int count)</code>.</p>
+<p>Accessors and mutators (get and set functions) may be named like variables,
+in <code>snake_case</code>. These often correspond to actual member variables,
+but this is not required. For example, <code>int count()</code> and
+<code>void set_count(int count)</code>.</p>
 
 <h3 id="Namespace_Names">Namespace Names</h3>
 
@@ -4594,7 +4643,7 @@ namespaces do not protect from collisions with names in other namespaces
 
 
 
-<pre>enum class UrlTableError {
+<pre class="goodcode">enum class UrlTableError {
   kOk = 0,
   kOutOfMemory,
   kMalformedInput,
@@ -4636,7 +4685,7 @@ of macros</a>; in general macros should <em>not</em> be used.
 However, if they are absolutely needed, then they should be
 named with all capitals and underscores, and with a project-specific prefix.</p>
 
-<pre>#define MYPROJECT_ROUND(x) ...
+<pre class="neutralcode">#define MYPROJECT_ROUND(x) ...
 </pre>
 
 <h3 id="Naming_Aliases">Aliases</h3>
@@ -4731,7 +4780,7 @@ author line.</p>
 accompanying comment that describes what it is for and how it should
 be used.</p>
 
-<pre>// Iterates over the contents of a GargantuanTable.
+<pre class="goodcode">// Iterates over the contents of a GargantuanTable.
 // Example:
 //    std::unique_ptr&lt;GargantuanTableIterator&gt; iter = table-&gt;NewIterator();
 //    for (iter-&gt;Seek("foo"); !iter-&gt;done(); iter-&gt;Next()) {
@@ -4795,7 +4844,7 @@ declaration:</p>
   if it is.</li>
 
   <li>For each output or input/output argument, what happens to any state that argument
-    is in. (E.g. is the state appended to or overwritten?).
+    is in (e.g., is the state appended to or overwritten?).
 
   </li><li>If there are any performance implications of how a
   function is used.</li>
@@ -4803,7 +4852,7 @@ declaration:</p>
 
 <p>Here is an example:</p>
 
-<pre>// Returns an iterator for this table, positioned at the first entry
+<pre class="goodcode">// Returns an iterator for this table, positioned at the first entry
 // lexically greater than or equal to `start_word`. If there is no
 // such entry, returns a null pointer. The client must not use the
 // iterator after the underlying GargantuanTable has been destroyed.
@@ -4872,7 +4921,7 @@ num_events_;</code>), no comment is needed.</p>
 of sentinel values, such as nullptr or -1, when they are not
 obvious. For example:</p>
 
-<pre>private:
+<pre class="goodcode">private:
  // Used to bounds-check table accesses. -1 means
  // that we don't yet know how many entries the table has.
  int num_total_entries_;
@@ -4884,7 +4933,7 @@ obvious. For example:</p>
 are, what they are used for, and (if unclear) why they need to be
 global. For example:</p>
 
-<pre>// The total number of test cases that we run through in this regression test.
+<pre class="goodcode">// The total number of test cases that we run through in this regression test.
 const int kNumTestCases = 6;
 </pre>
 
@@ -4938,7 +4987,7 @@ const DecimalNumber product = CalculateProduct(values, 7, false, nullptr);
 
 <p>versus:</p>
 
-<pre>ProductOptions options;
+<pre class="goodcode">ProductOptions options;
 options.set_precision_decimals(7);
 options.set_use_cache(ProductOptions::kDontUseCache);
 const DecimalNumber product =
@@ -4949,8 +4998,8 @@ const DecimalNumber product =
 
 <p>Do not state the obvious. In particular, don't literally describe what
 code does, unless the behavior is nonobvious to a reader who understands
-C++ well. Instead, provide higher level comments that describe <i>why</i>
-the code does what it does, or make the code self describing.</p>
+C++ well. Instead, provide higher-level comments that describe <i>why</i>
+the code does what it does, or make the code self-describing.</p>
 
 Compare this:
 
@@ -4962,7 +5011,7 @@ if (std::find(v.begin(), v.end(), element) != v.end()) {
 
 To this:
 
-<pre>// Process "element" unless it was already processed.
+<pre class="goodcode">// Process "element" unless it was already processed.
 if (std::find(v.begin(), v.end(), element) != v.end()) {
   Process(element);
 }
@@ -4971,7 +5020,7 @@ if (std::find(v.begin(), v.end(), element) != v.end()) {
 <p>Self-describing code doesn't need a comment. The comment from
 the example above would be obvious:</p>
 
-<pre>if (!IsAlreadyProcessed(element)) {
+<pre class="goodcode">if (!IsAlreadyProcessed(element)) {
   Process(element);
 }
 </pre>
@@ -5002,29 +5051,26 @@ goal.</p>
 <p>Use <code>TODO</code> comments for code that is temporary,
 a short-term solution, or good-enough but not perfect.</p>
 
-<p><code>TODO</code>s should include the string
-<code>TODO</code> in all caps, followed by the
+<div>
 
-bug ID, name, e-mail address, or other
-identifier
+<p><code>TODO</code>s should include the string
+<code>TODO</code> in all caps, followed by the bug ID, name, e-mail address, or other identifier
 of the person or issue with the best context
 about the problem referenced by the <code>TODO</code>.
 
-</p>
-
-<div>
-<pre>// TODO: bug 12345678 - Remove this after the 2047q4 compatibility window expires.
+</p><pre class="goodcode">// TODO: bug 12345678 - Remove this after the 2047q4 compatibility window expires.
 // TODO: example.com/my-design-doc - Manually fix up this code the next time it's touched.
 // TODO(bug 12345678): Update this list after the Foo service is turned down.
 // TODO(John): Use a "\*" here for concatenation operator.
 </pre>
-</div>
 
 <p>If your <code>TODO</code> is of the form "At a future
 date do something" make sure that you either include a
 very specific date ("Fix by November 2005") or a very
 specific event ("Remove this code when all clients can
 handle XML responses.").</p>
+
+</div>
 
 <h2 id="Formatting">Formatting</h2>
 
@@ -5090,8 +5136,8 @@ can easily show longer lines.</p>
 
   <li>a string literal that cannot easily be wrapped at 80 columns.
   This may be because it contains URIs or other semantically-critical pieces,
-  or because the literal contains an embedded language, or a multiline
-  literal whose newlines are significant like help messages.
+  or because the literal contains an embedded language, or because it is a
+  multiline literal whose newlines are significant, such as help messages.
   In these cases, breaking up the literal would
   reduce readability, searchability, ability to click links, etc. Except for
   test code, such literals should appear at namespace scope near the top of a
@@ -5105,9 +5151,9 @@ can easily show longer lines.</p>
 
   <li>an include statement.</li>
 
-  <li>a <a href="#The__define_Guard">header guard</a></li>
+  <li>a <a href="#The__define_Guard">header guard.</a></li>
 
-  <li>a using-declaration</li>
+  <li>a using-declaration.</li>
 </ul>
 
 <h3 id="Non-ASCII_Characters">Non-ASCII Characters</h3>
@@ -5121,7 +5167,7 @@ rare. However, in certain cases it is appropriate to
 include such words in your code. For example, if your
 code parses data files from foreign sources, it may be
 appropriate to hard-code the non-ASCII string(s) used in
-those data files as delimiters. More commonly, unittest
+those data files as delimiters. More commonly, unit test
 code (which does not  need to be localized) might
 contain non-ASCII strings. In such cases, you should use
 UTF-8, since that is  an encoding
@@ -5166,7 +5212,7 @@ not fit on a single line as you would wrap arguments in a
 <p>Functions look like this:</p>
 
 
-<pre>ReturnType ClassName::FunctionName(Type par_name1, Type par_name2) {
+<pre class="goodcode">ReturnType ClassName::FunctionName(Type par_name1, Type par_name2) {
   DoSomething();
   ...
 }
@@ -5174,7 +5220,7 @@ not fit on a single line as you would wrap arguments in a
 
 <p>If you have too much text to fit on one line:</p>
 
-<pre>ReturnType ClassName::ReallyLongFunctionName(Type par_name1, Type par_name2,
+<pre class="goodcode">ReturnType ClassName::ReallyLongFunctionName(Type par_name1, Type par_name2,
                                              Type par_name3) {
   DoSomething();
   ...
@@ -5183,7 +5229,7 @@ not fit on a single line as you would wrap arguments in a
 
 <p>or if you cannot fit even the first parameter:</p>
 
-<pre>ReturnType LongClassName::ReallyReallyReallyLongFunctionName(
+<pre class="goodcode">ReturnType LongClassName::ReallyReallyReallyLongFunctionName(
     Type par_name1,  // 4 space indent
     Type par_name2,
     Type par_name3) {
@@ -5231,9 +5277,9 @@ not fit on a single line as you would wrap arguments in a
   <li>Wrapped parameters have a 4 space indent.</li>
 </ul>
 
-<p>Unused parameters that are obvious from context may be omitted:</p>
+<p>Unused parameters that are obvious from context may omit the name:</p>
 
-<pre>class Foo {
+<pre class="goodcode">class Foo {
  public:
   Foo(const Foo&amp;) = delete;
   Foo&amp; operator=(const Foo&amp;) = delete;
@@ -5243,7 +5289,7 @@ not fit on a single line as you would wrap arguments in a
 <p>Unused parameters that might not be obvious should comment out the variable
 name in the function definition:</p>
 
-<pre>class Shape {
+<pre class="goodcode">class Shape {
  public:
   virtual void Rotate(double radians) = 0;
 };
@@ -5264,7 +5310,7 @@ void Circle::Rotate(double) {}
 <p>Attributes, and macros that expand to attributes, appear at the very
 beginning of the function declaration or definition, before the
 return type:</p>
-<pre>  ABSL_ATTRIBUTE_NOINLINE void ExpensiveFunction();
+<pre class="goodcode">  ABSL_ATTRIBUTE_NOINLINE void ExpensiveFunction();
   [[nodiscard]] bool IsOk();
 </pre>
 
@@ -5275,11 +5321,11 @@ lists like other comma-separated lists.</p>
 
 <p>For by-reference captures, do not leave a space between the
 ampersand (<code>&amp;</code>) and the variable name.</p>
-<pre>int x = 0;
+<pre class="goodcode">int x = 0;
 auto x_plus_n = [&amp;x](int n) -&gt; int { return x + n; }
 </pre>
 <p>Short lambdas may be written inline as function arguments.</p>
-<pre>absl::flat_hash_set&lt;int&gt; to_remove = {7, 8, 9};
+<pre class="goodcode">absl::flat_hash_set&lt;int&gt; to_remove = {7, 8, 9};
 std::vector&lt;int&gt; digits = {3, 9, 1, 8, 4, 7, 1};
 digits.erase(std::remove_if(digits.begin(), digits.end(), [&amp;to_remove](int i) {
                return to_remove.contains(i);
@@ -5322,7 +5368,7 @@ minimum number of lines, including placing multiple arguments
 on each line where appropriate.</p>
 
 <p>Function calls have the following format:</p>
-<pre>bool result = DoSomething(argument1, argument2, argument3);
+<pre class="goodcode">bool result = DoSomething(argument1, argument2, argument3);
 </pre>
 
 <p>If the arguments do not all fit on one line, they
@@ -5330,13 +5376,13 @@ should be broken up onto multiple lines, with each
 subsequent line aligned with the first argument. Do not
 add spaces after the open paren or before the close
 paren:</p>
-<pre>bool result = DoSomething(averyveryveryverylongargument1,
+<pre class="goodcode">bool result = DoSomething(averyveryveryverylongargument1,
                           argument2, argument3);
 </pre>
 
 <p>Arguments may optionally all be placed on subsequent
 lines with a four space indent:</p>
-<pre>if (...) {
+<pre class="goodcode">if (...) {
   ...
   ...
   if (...) {
@@ -5360,13 +5406,13 @@ better addressed with the following techniques.</p>
 readability due to the complexity or confusing nature of the
 expressions that make up some arguments, try creating
 variables that capture those arguments in a descriptive name:</p>
-<pre>int my_heuristic = scores[x] * y + bases[x];
+<pre class="goodcode">int my_heuristic = scores[x] * y + bases[x];
 bool result = DoSomething(my_heuristic, x, y, z);
 </pre>
 
 <p>Or put the confusing argument on its own line with
 an explanatory comment:</p>
-<pre>bool result = DoSomething(scores[x] * y + bases[x],  // Score heuristic.
+<pre class="goodcode">bool result = DoSomething(scores[x] * y + bases[x],  // Score heuristic.
                           x, y, z);
 </pre>
 
@@ -5378,7 +5424,7 @@ which is made more readable rather than a general policy.</p>
 <p>Sometimes arguments form a structure that is important
 for readability. In those cases, feel free to format the
 arguments according to that structure:</p>
-<pre>// Transform the widget by a 3x3 matrix.
+<pre class="goodcode">// Transform the widget by a 3x3 matrix.
 my_widget.Transform(x1, x2, x3,
                     y1, y2, y3,
                     z1, z2, z3);
@@ -5394,7 +5440,7 @@ variable name), format as if the <code>{}</code> were the
 parentheses of a function call with that name. If there
 is no name, assume a zero-length name.</p>
 
-<pre>// Examples of braced init list on a single line.
+<pre class="goodcode">// Examples of braced init list on a single line.
 return {foo, bar};
 functioncall({foo, bar});
 std::pair&lt;int, int&gt; p{foo, bar};
@@ -5427,7 +5473,7 @@ MyType m = {  // Here, you could also break before {.
 <p>At a high level, looping or branching statements consist of the following
 <strong>components</strong>:
 </p><ul>
-  <li>One or more <strong>statement keywords</strong> (e.g. <code>if</code>,
+  <li>One or more <strong>statement keywords</strong> (e.g., <code>if</code>,
   <code>else</code>, <code>switch</code>, <code>while</code>, <code>do</code>,
   or <code>for</code>).</li>
   <li>One <strong>condition or iteration specifier</strong>, inside
@@ -5445,12 +5491,12 @@ For these statements:
   closing parenthesis or another semicolon.</li>
   <li>Inside the condition or iteration specifier, do not put a space after the
   opening parenthesis or before the closing parenthesis.</li>
-  <li>Put any controlled statements inside blocks (i.e. use curly braces).</li>
+  <li>Put any controlled statements inside blocks (i.e., use curly braces).</li>
   <li>Inside the controlled blocks, put one line break immediately after the
   opening brace, and one line break immediately before the closing brace.</li>
 </ul>
 
-<pre>if (condition) {                   // Good - no spaces inside parentheses, space before brace.
+<pre class="goodcode">if (condition) {                   // Good - no spaces inside parentheses, space before brace.
   DoOneThing();                    // Good - two-space indent.
   DoAnotherThing();
 } else if (int a = f(); a != 3) {  // Good - closing brace on new line, else on same line.
@@ -5539,7 +5585,7 @@ projects require curly braces always.</p>
 braces or not, depending on your preference. If you do include curly braces,
 they should be placed as shown below.</p>
 
-<pre>switch (var) {
+<pre class="goodcode">switch (var) {
   case 0: {  // 2 space indent
     Foo();   // 4 space indent
     break;
@@ -5553,7 +5599,7 @@ they should be placed as shown below.</p>
 <p>Empty loop bodies should use either an empty pair of braces or
 <code>continue</code> with no braces, rather than a single semicolon.</p>
 
-<pre>while (condition) {}  // Good - `{}` indicates no logic.
+<pre class="goodcode">while (condition) {}  // Good - `{}` indicates no logic.
 while (condition) {
   // Comments are okay, too
 }
@@ -5563,7 +5609,7 @@ while (condition) continue;  // Good - `continue` indicates no logic.
 <pre class="badcode">while (condition);  // Bad - looks like part of `do-while` loop.
 </pre>
 
-<h3 id="Pointer_and_Reference_Expressions">Pointer and Reference Expressions</h3>
+<h3 id="Pointer_and_Reference_Expressions">Pointer and Reference Expressions and Types</h3>
 
 <p>No spaces around period or arrow. Pointer operators do not
 have trailing spaces.</p>
@@ -5571,7 +5617,7 @@ have trailing spaces.</p>
 <p>The following are examples of correctly-formatted
 pointer and reference expressions:</p>
 
-<pre>x = *p;
+<pre class="goodcode">x = *p;
 p = &amp;x;
 x = r.y;
 x = r-&gt;y;
@@ -5587,37 +5633,26 @@ x = r-&gt;y;
    <code>*</code> or <code>&amp;</code>.</li>
 </ul>
 
-<p>When referring to a pointer or reference (variable declarations or definitions, arguments,
-return types, template parameters, etc), you may place the space before or after the
-asterisk/ampersand. In the trailing-space style, the space is elided in some cases (template
-parameters, etc).</p>
+<p>When referring to a pointer or reference (variable declarations or definitions, arguments, return
+types, template parameters, etc.), you must not place a space before the asterisk/ampersand. Use a
+space to separate the type from the declared name (if present).</p>
 
-<pre>// These are fine, space preceding.
-char *c;
-const std::string &amp;str;
-int *GetPointer();
-std::vector&lt;char *&gt;
-
-// These are fine, space following (or elided).
+<pre class="goodcode">// These are fine.
 char* c;
 const std::string&amp; str;
 int* GetPointer();
 std::vector&lt;char*&gt;  // Note no space between '*' and '&gt;'
 </pre>
 
-<p>You should do this consistently within a single
-file.
-When modifying an existing file, use the style in
-that file.</p>
-
 <p>It is allowed (if unusual) to declare multiple variables in the same
 declaration, but it is disallowed if any of those have pointer or
 reference decorations. Such declarations are easily misread.</p>
-<pre>// Fine if helpful for readability.
+<pre class="neutralcode">// Fine if helpful for readability.
 int x, y;
 </pre>
 <pre class="badcode">int x, *y;  // Disallowed - no &amp; or * in multiple declaration
-int* x, *y;  // Disallowed - no &amp; or * in multiple declaration; inconsistent spacing
+int *x, *y;  // Disallowed - no &amp; or * in multiple declaration
+int *x;  // Disallowed - &amp; or * must be left of the space
 char * c;  // Bad - spaces on both sides of *
 const std::string &amp; str;  // Bad - spaces on both sides of &amp;
 </pre>
@@ -5631,7 +5666,7 @@ consistent in how you break up the lines.</p>
 <p>In this example, the logical AND operator is always at
 the end of the lines:</p>
 
-<pre>if (this_one_thing &gt; this_other_thing &amp;&amp;
+<pre class="goodcode">if (this_one_thing &gt; this_other_thing &amp;&amp;
     a_third_thing == a_fourth_thing &amp;&amp;
     yet_another &amp;&amp; last_one) {
   ...
@@ -5659,7 +5694,7 @@ expression with parentheses.</p>
 <p>Use parentheses in <code>return expr;</code> only
 where you would use them in <code>x = expr;</code>.</p>
 
-<pre>return result;                  // No parentheses in the simple case.
+<pre class="goodcode">return result;                  // No parentheses in the simple case.
 // Parentheses OK to make a complex expression more readable.
 return (some_long_condition &amp;&amp;
         another_condition);
@@ -5677,7 +5712,7 @@ return(result);                // return is not a function!
 <code>()</code>, and <code>{}</code>; the following are
 all correct:</p>
 
-<pre>int x = 3;
+<pre class="goodcode">int x = 3;
 int x(3);
 int x{3};
 std::string name = "Some Name";
@@ -5694,7 +5729,7 @@ will call a default constructor if available. To force the
 non-<code>std::initializer_list</code> constructor, use parentheses
 instead of braces.</p>
 
-<pre>std::vector&lt;int&gt; v(100, 1);  // A vector containing 100 items: All 1s.
+<pre class="goodcode">std::vector&lt;int&gt; v(100, 1);  // A vector containing 100 items: All 1s.
 std::vector&lt;int&gt; v{100, 1};  // A vector containing 2 items: 100 and 1.
 </pre>
 
@@ -5702,7 +5737,7 @@ std::vector&lt;int&gt; v{100, 1};  // A vector containing 2 items: 100 and 1.
 types. This can prevent some types of programming
 errors.</p>
 
-<pre>int pi(3.14);  // OK -- pi == 3.
+<pre class="goodcode">int pi(3.14);  // OK -- pi == 3.
 int pi{3.14};  // Compile error: narrowing conversion.
 </pre>
 
@@ -5715,7 +5750,7 @@ always be at the beginning of the line.</p>
 of indented code, the directives should start at the
 beginning of the line.</p>
 
-<pre>// Good - directives at beginning of line
+<pre class="goodcode">// Good - directives at beginning of line
   if (lopsided_score) {
 #if DISASTER_PENDING      // Correct -- Starts at beginning of line
     DropEverything();
@@ -5738,7 +5773,7 @@ beginning of the line.</p>
 
 <h3 id="Class_Format">Class Format</h3>
 
-<p>Sections in <code>public</code>, <code>protected</code> and
+<p>Sections in <code>public</code>, <code>protected</code>, and
 <code>private</code> order, each indented one space.</p>
 
 <p>The basic format for a class definition (lacking the
@@ -5746,7 +5781,7 @@ comments, see <a href="#Class_Comments">Class
 Comments</a> for a discussion of what comments are
 needed) is:</p>
 
-<pre>class MyClass : public OtherClass {
+<pre class="goodcode">class MyClass : public OtherClass {
  public:      // Note the 1 space indent!
   MyClass();  // Regular 2 space indent.
   explicit MyClass(int var);
@@ -5800,7 +5835,7 @@ with subsequent lines indented four spaces.</p>
 
 <p>The acceptable formats for initializer lists are:</p>
 
-<pre>// When everything fits on one line:
+<pre class="goodcode">// When everything fits on one line:
 MyClass::MyClass(int var) : some_var_(var) {
   DoSomething();
 }
@@ -5833,7 +5868,7 @@ MyClass::MyClass(int var)
 <p><a href="#Namespaces">Namespaces</a> do not add an
 extra level of indentation. For example, use:</p>
 
-<pre>namespace {
+<pre class="goodcode">namespace {
 
 void foo() {  // Correct.  No extra indentation within namespace.
   ...
@@ -5861,7 +5896,7 @@ trailing whitespace at the end of a line.</p>
 
 <h4>General</h4>
 
-<pre>int i = 0;  // Two spaces before end-of-line comments.
+<pre class="goodcode">int i = 0;  // Two spaces before end-of-line comments.
 
 void f(bool b) {  // Open braces should always have a space before them.
   ...
@@ -5882,17 +5917,17 @@ class Foo : public Bar {
 </pre>
 
 <p>Adding trailing whitespace can cause extra work for
-others editing the same file, when they merge, as can
-removing existing trailing whitespace. So: Don't
+others editing the same file when they merge, as can
+removing existing trailing whitespace. So, don't
 introduce trailing whitespace. Remove it if you're
 already changing that line, or do it in a separate
 clean-up
-operation (preferably when no-one
+operation (preferably when no one
 else is working on the file).</p>
 
 <h4>Loops and Conditionals</h4>
 
-<pre>if (b) {          // Space after the keyword in conditions and loops.
+<pre class="goodcode">if (b) {          // Space after the keyword in conditions and loops.
 } else {          // Spaces around else.
 }
 while (test) {}   // There is usually no space inside parentheses.
@@ -5920,7 +5955,7 @@ switch (i) {
 
 <h4>Operators</h4>
 
-<pre>// Assignment operators always have spaces around them.
+<pre class="goodcode">// Assignment operators always have spaces around them.
 x = 0;
 
 // Other binary operators usually have spaces around them, but it's
@@ -5939,7 +5974,7 @@ if (x &amp;&amp; !y)
 
 <h4>Templates and Casts</h4>
 
-<pre>// No spaces inside the angle brackets (&lt; and &gt;), before
+<pre class="goodcode">// No spaces inside the angle brackets (&lt; and &gt;), before
 // &lt;, or between &gt;( in a cast
 std::vector&lt;std::string&gt; x;
 y = static_cast&lt;char*&gt;(x);
@@ -5950,43 +5985,16 @@ std::vector&lt;char *&gt; x;
 
 <h3 id="Vertical_Whitespace">Vertical Whitespace</h3>
 
-<p>Minimize use of vertical whitespace.</p>
+<p>Use vertical whitespace sparingly; unnecessary blank lines make it harder to
+see overall code structure. Use blank lines only where they aid the reader in
+understanding the structure.</p>
 
-<p>This is more a principle than a rule: don't use blank lines when
-you don't have to. In particular, don't put more than one or two blank
-lines between functions, resist starting functions with a blank line,
-don't end functions with a blank line, and be sparing with your use of
-blank lines. A blank line within a block of code serves like a
-paragraph break in prose: visually separating two thoughts.</p>
-
-<p>The basic principle is: The more code that fits on one screen, the
-easier it is to follow and understand the control flow of the
-program. Use whitespace purposefully to provide separation in that
-flow.</p>
-
-<p>Some rules of thumb to help when blank lines may be
-useful:</p>
-
-<ul>
-  <li>Blank lines at the beginning or end of a function
-  do not help readability.</li>
-
-  <li>Blank lines inside a chain of if-else blocks may
-  well help readability.</li>
-
-  <li>A blank line before a comment line usually helps
-  readability — the introduction of a new comment suggests
-  the start of a new thought, and the blank line makes it clear
-  that the comment goes with the following thing instead of the
-  preceding.</li>
-
-  <li>Blank lines immediately inside a declaration of a namespace or block of
-  namespaces may help readability by visually separating the load-bearing
-  content from the (largely non-semantic) organizational wrapper. Especially
-  when the first declaration inside the namespace(s) is preceded by a comment,
-  this becomes a special case of the previous rule, helping the comment to
-  "attach" to the subsequent declaration.</li>
-</ul>
+<p>Do not add blank lines where indentation already provides clear delineation,
+such as at the start or end of a code block. Do use blank lines to separate code
+into closely related chunks, analogous to paragraph breaks in prose. Within a
+statement or declaration, usually only insert line breaks to stay within
+the <a href="#Line_Length">line length limit</a>, or to attach a comment to only
+part of the contents.</p>
 
 <h2 id="Exceptions_to_the_Rules">Exceptions to the Rules</h2>
 
