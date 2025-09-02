@@ -14,7 +14,6 @@
 <div id="tocDiv" class="vertical_toc"></div>
 
 <div class="main_body">
-
 <h2 id="s1-introduction">1 Introduction</h2>
 
 <p>This document serves as the <strong>complete</strong> definition of Google's coding standards for
@@ -38,12 +37,11 @@ avoids giving <em>advice</em> that isn't clearly enforceable (whether by human o
 <p>In this document, unless otherwise clarified:</p>
 
 <ol>
-  <li>The term <em>class</em> is used inclusively to mean an "ordinary" class, record class, enum
+  <li>The term <em>class</em> is used inclusively to mean a normal class, record class, enum
   class, interface or annotation type (<code class="prettyprint lang-java">@interface</code>).</li>
 
   <li>The term <em>member</em> (of a class) is used inclusively to mean a nested class, field,
-  method, <em>or constructor</em>; that is, all top-level contents of a class except initializers
-  and comments.
+  method, <em>or constructor</em>; that is, all top-level contents of a class except initializers.
 
   </li><li>The term <em>comment</em> always refers to <em>implementation</em> comments. We do not
   use the phrase "documentation comments", and instead use the common term "Javadoc."</li>
@@ -79,7 +77,8 @@ character</strong> (<strong>0x20</strong>) is the only whitespace character that
 anywhere in a source file. This implies that:</p>
 
 <ol>
-  <li>All other whitespace characters in string and character literals are escaped.</li>
+  <li>All other whitespace characters are escaped in <code>char</code> and string literals and in
+    text blocks.</li>
 
   <li>Tab characters are <strong>not</strong> used for indentation.</li>
 </ol>
@@ -158,22 +157,22 @@ programs are <strong>broken</strong> and they must be <strong>fixed</strong>.</p
 <h2 id="s3-source-file-structure">3 Source file structure</h2>
 
 <div>
-<p>An ordinary source file consists of, <strong>in order</strong>:</p>
+<p>An ordinary source file consists of these sections, <strong>in order</strong>:</p>
 
 <ol>
   <li>License or copyright information, if present</li>
-  <li>Package statement</li>
-  <li>Import statements</li>
-  <li>Exactly one top-level class</li>
+  <li>Package declaration</li>
+  <li>Imports</li>
+  <li>Exactly one top-level class declaration</li>
 </ol>
 </div>
 
 <p><strong>Exactly one blank line</strong> separates each section that is present.</p>
 
-<p>A <code>package-info.java</code> file is the same, but without the top-level class.</p>
+<p>A <code>package-info.java</code> file is the same, but without the class declaration.</p>
 
-<p>A <code>module-info.java</code> file does not contain a package statement and replaces the
-single top-level class with a module declaration, but otherwise follows the same structure.</p>
+<p>A <code>module-info.java</code> file does not contain a package declaration and replaces the
+class declaration with a module declaration, but otherwise follows the same structure.</p>
 
 <h3 id="s3.1-copyright-statement">3.1 License or copyright information, if present</h3>
 
@@ -181,38 +180,39 @@ single top-level class with a module declaration, but otherwise follows the same
 
 
 
-<h3 id="s3.2-package-statement">3.2 Package statement</h3>
+<a id="s3.2-package-statement"></a>
+<h3 id="s3.2-package-declaration">3.2 Package declaration</h3>
 
-<p>The package statement is <strong>not line-wrapped</strong>. The column limit (Section 4.4,
-<a href="#s4.4-column-limit">Column limit: 100</a>) does not apply to package statements.</p>
+<p>The package declaration is <strong>not line-wrapped</strong>. The column limit (Section 4.4,
+<a href="#s4.4-column-limit">Column limit: 100</a>) does not apply to package declarations.</p>
 
 <a id="imports"></a>
-<h3 id="s3.3-import-statements">3.3 Import statements</h3>
+<h3 id="s3.3-import-statements">3.3 Imports</h3>
 
 <h4 id="s3.3.1-wildcard-imports">3.3.1 No wildcard imports</h4>
 
-<p><strong>Wildcard imports</strong>, static or otherwise, <strong>are not used</strong>.</p>
+<p><strong>Wildcard ("on-demand") imports</strong>, static or otherwise, <strong>are not
+  used</strong>.</p>
 
 <h4 id="s3.3.2-import-line-wrapping">3.3.2 No line-wrapping</h4>
 
-<p>Import statements are <strong>not line-wrapped</strong>. The column limit (Section 4.4,
-<a href="#s4.4-column-limit">Column limit: 100</a>) does not apply to import
-statements.</p>
+<p>Imports are <strong>not line-wrapped</strong>. The column limit (Section 4.4,
+<a href="#s4.4-column-limit">Column limit: 100</a>) does not apply to imports.</p>
 
 <h4 id="s3.3.3-import-ordering-and-spacing">3.3.3 Ordering and spacing</h4>
 
 <p>Imports are ordered as follows:</p>
 
 <ol>
-  <li>All static imports in a single block.</li>
-  <li>All non-static imports in a single block.</li>
+  <li>All static imports in a single group.</li>
+  <li>All non-static imports in a single group.</li>
 </ol>
 
 <p>If there are both static and non-static imports, a single blank line separates the two
-blocks. There are no other blank lines between import statements.</p>
+groups. There are no other blank lines between imports.</p>
 
-<p>Within each block the imported names appear in ASCII sort order. (<strong>Note:</strong>
-this is not the same as the import <em>statements</em> being in ASCII sort order, since '.'
+<p>Within each group the imported names appear in ASCII sort order. (<strong>Note:</strong>
+this is not the same as the import <em>lines</em> being in ASCII sort order, since '.'
 sorts before ';'.)</p>
 
 
@@ -247,9 +247,9 @@ ordering.</p>
 <h5 id="s3.4.2.1-overloads-never-split">3.4.2.1 Overloads: never split</h5>
 
 <p>Methods of a class that share the same name appear in a single contiguous group with no other
-members in between. The same applies to multiple constructors (which always have the same name).
-This rule applies even when modifiers such as <code class="prettyprint lang-java">static</code> or
-<code class="prettyprint lang-java">private</code> differ between the methods.</p>
+  members in between. The same applies to multiple constructors. This rule applies even when
+  modifiers such as <code class="prettyprint lang-java">static</code> or
+  <code class="prettyprint lang-java">private</code> differ between the methods or constructors.</p>
 
 <h3 id="s3.5-module-declaration">3.5 Module declaration</h3>
 
@@ -270,7 +270,7 @@ This rule applies even when modifiers such as <code class="prettyprint lang-java
 <h2 id="s4-formatting">4 Formatting</h2>
 
 <p class="terminology"><strong>Terminology Note:</strong> <em>block-like construct</em> refers to
-the body of a class, method or constructor. Note that, by Section 4.8.3.1 on
+the body of a class, method, constructor, or switch. Note that, by Section 4.8.3.1 on
 <a href="#s4.8.3.1-array-initializers">array initializers</a>, any array initializer
 <em>may</em> optionally be treated as if it were a block-like construct.</p>
 
@@ -291,9 +291,8 @@ body is empty or contains only a single statement.</p>
 
 <h4 id="s4.1.2-blocks-k-r-style">4.1.2 Nonempty blocks: K &amp; R style</h4>
 
-<p>Braces follow the Kernighan and Ritchie style
-("<a href="https://blog.codinghorror.com/new-programming-jargon/#3">Egyptian brackets</a>")
-for <em>nonempty</em> blocks and block-like constructs:</p>
+<p>Braces follow the Kernighan and Ritchie style for <em>nonempty</em> blocks and block-like
+  constructs:</p>
 
 <ul>
   <li>No line break before the opening brace, except as detailed below.</li>
@@ -401,12 +400,11 @@ you may choose to wrap the line earlier than where this rule strictly requires.<
   <li>Lines where obeying the column limit is not possible (for example, a long URL in Javadoc,
   or a long JSNI method reference).</li>
 
-  <li><code class="prettyprint lang-java">package</code> and
-  <code class="prettyprint lang-java">import</code> statements (see Sections
-  3.2 <a href="#s3.2-package-statement">Package statement</a> and
-  3.3 <a href="#s3.3-import-statements">Import statements</a>).</li>
+  <li><code class="prettyprint lang-java">package</code> declarations and
+  imports (see Sections 3.2 <a href="#s3.2-package-statement">Package declarations</a> and
+  3.3 <a href="#s3.3-import-statements">Imports</a>).</li>
 
-  <li>Contents of <a href="s4.8.9-text-blocks">text blocks</a>.</li>
+  <li>Contents of <a href="#s4.8.9-text-blocks">text blocks</a>.</li>
 
   <li>Command lines in a comment that may be copied-and-pasted into a shell.</li>
 
@@ -420,7 +418,7 @@ you may choose to wrap the line earlier than where this rule strictly requires.<
 
 <h3 id="s4.5-line-wrapping">4.5 Line-wrapping</h3>
 
-<p class="terminology"><strong>Terminology Note:</strong> When code that might otherwise legally
+<p class="terminology"><strong>Terminology Note:</strong> When code that might otherwise
 occupy a single line is divided into multiple lines, this activity is called
 <em>line-wrapping</em>.</p>
 
@@ -461,7 +459,7 @@ without the need to line-wrap.</p>
   <li>When a line is broken at an <em>assignment</em> operator the break typically comes
   <em>after</em> the symbol, but either way is acceptable.
     <ul>
-      <li>This also applies to the "assignment-operator-like" colon in an enhanced
+      <li>This also applies to the colon in an enhanced
       <code class="prettyprint lang-java">for</code> ("foreach") statement.</li>
     </ul>
   </li>
@@ -511,7 +509,7 @@ previous lines.</p>
 
 <h3 id="s4.6-whitespace">4.6 Whitespace</h3>
 
-<h4 id="s4.6.1-vertical-whitespace">4.6.1 Vertical Whitespace</h4>
+<h4 id="s4.6.1-vertical-whitespace">4.6.1 Vertical whitespace (blank lines)</h4>
 
 <p>A single blank line always appears:</p>
 
@@ -529,7 +527,7 @@ previous lines.</p>
 
   <li>As required by other sections of this document (such as Section 3,
   <a href="#s3-source-file-structure">Source file structure</a>, and Section 3.3,
-  <a href="#s3.3-import-statements">Import statements</a>).</li>
+  <a href="#s3.3-import-statements">Imports</a>).</li>
 </ol>
 
 <p>A single blank line may also appear anywhere it improves readability, for example between
@@ -541,18 +539,19 @@ discouraged.
 
 <h4 id="s4.6.2-horizontal-whitespace">4.6.2 Horizontal whitespace</h4>
 
-<p>Beyond where required by the language or other style rules, and apart from literals, comments and
-Javadoc, a single ASCII space also appears in the following places <strong>only</strong>.</p>
+<p>Beyond where required by the language or other style rules, and apart from within literals,
+comments and Javadoc, a single ASCII space also appears in the following places
+<strong>only</strong>.</p>
 
 <ol>
-  <li>Separating any reserved word, such as
+  <li>Separating any keyword, such as
   <code class="prettyprint lang-java">if</code>,
   <code class="prettyprint lang-java">for</code> or
   <code class="prettyprint lang-java">catch</code>, from an open parenthesis
   (<code class="prettyprint lang-java">(</code>)
   that follows it on that line</li>
 
-  <li>Separating any reserved word, such as
+  <li>Separating any keyword, such as
   <code class="prettyprint lang-java">else</code> or
   <code class="prettyprint lang-java">catch</code>, from a closing curly brace
   (<code class="prettyprint lang-java">}</code>) that precedes it on that line</li>
@@ -563,14 +562,14 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
     <li><code class="prettyprint lang-java">@SomeAnnotation({a, b})</code> (no space is used)</li>
 
     <li><code class="prettyprint lang-java">String[][] x = {{"foo"}};</code> (no space is required
-    between <code class="prettyprint lang-java">{{</code>, by item 9 below)</li>
+    between <code class="prettyprint lang-java">{{</code>, by item 10 below)</li>
   </ul>
   </li>
 
   <li>On both sides of any binary or ternary operator. This also applies to the following
   "operator-like" symbols:
   <ul>
-    <li>the ampersand in a conjunctive type bound:
+    <li>the ampersand that separates multiple type bounds:
     <code class="prettyprint lang-java">&lt;T extends Foo &amp; Bar&gt;</code></li>
 
     <li>the pipe for a catch block that handles multiple exceptions:
@@ -603,7 +602,7 @@ Javadoc, a single ASCII space also appears in the following places <strong>only<
   <li>Between a double slash (<code class="prettyprint lang-java">//</code>) which begins a comment
   and the comment's text. Multiple spaces are allowed.</li>
 
-  <li>Between the type and variable of a declaration:
+  <li>Between the type and identifier of a declaration:
   <code class="prettyprint lang-java">List&lt;String&gt; list</code></li>
 
   <li><em>Optional</em> just inside both braces of an array initializer
@@ -638,13 +637,12 @@ private int   x;      // permitted, but future edits
 private Color color;  // may leave it unaligned
 </pre>
 
-<p class="tip"><strong>Tip:</strong> Alignment can aid readability, but attempts to preserve
-alignment for its own sake create future problems. For example, consider a change that touches only
+<p class="tip"><strong>Tip:</strong> Alignment can aid readability, but attempting to preserve
+alignment for its own sake creates future problems. For example, consider a change that touches only
 one line. If that change disrupts the previous alignment, it's important **not** to introduce
 additional changes on nearby lines simply to realign them. Introducing formatting changes on
 otherwise unaffected lines corrupts version history, slows down reviewers, and exacerbates merge
-conflicts. These practical concerns
-take priority over alignment.</p>
+conflicts. These practical concerns take priority over alignment.</p>
 
 <a id="parentheses"></a>
 <h3 id="s4.7-grouping-parentheses">4.7 Grouping parentheses: recommended</h3>
@@ -658,7 +656,7 @@ operator precedence table memorized.</p>
 
 <h4 id="s4.8.1-enum-classes">4.8.1 Enum classes</h4>
 
-<p>After each comma that follows an enum constant, a line break is optional. Additional blank
+<p>After the comma that follows an enum constant, a line break is optional. Additional blank
 lines (usually just one) are also allowed. This is one possibility:
 
 </p><pre class="prettyprint lang-java">private enum Answer {
@@ -770,7 +768,7 @@ switch label.
 </pre>
 
 <p>In an old-style switch, the colon of each switch label is followed by a line break. The
-statements within a statement group start with a further +2 indentation.</p>
+statements within a statement group are indented a further +2.</p>
 
 <a id="fallthrough"></a>
 <h5 id="s4.8.4.2-switch-fall-through">4.8.4.2 Fall-through: commented</h5>
