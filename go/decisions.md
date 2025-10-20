@@ -80,10 +80,10 @@ follow these conventions. They may contain underscores.
 
 <a id="TOC-PackageNames"></a>
 
-Go package names should be short and contain only lowercase letters. A package
-name composed of multiple words should be left unbroken in all lowercase. For
-example, the package [`tabwriter`] is not named `tabWriter`, `TabWriter`, or
-`tab_writer`.
+In Go, package names must be concise and use only lowercase letters and numbers
+(e.g., [`k8s`], [`oauth2`]). Multi-word package names should remain unbroken and
+in all lowercase (e.g., [`tabwriter`] instead of `tabWriter`, `TabWriter`, or
+`tab_writer`).
 
 Avoid selecting package names that are likely to be [shadowed] by commonly used
 local variable names. For example, `usercount` is a better package name than
@@ -110,10 +110,12 @@ code may contain underscores. Specific examples include:
     [package-level documentation examples](https://go.dev/blog/examples)
 
 [`tabwriter`]: https://pkg.go.dev/text/tabwriter
+[`k8s`]: https://pkg.go.dev/k8s.io/client-go/kubernetes
+[`oauth2`]: https://pkg.go.dev/golang.org/x/oauth2
 [shadowed]: best-practices#shadowing
 
 Avoid uninformative package names like `util`, `utility`, `common`, `helper`,
-`models`, and so on that would tempt users of the package to
+`model`, `testhelper`, and so on that would tempt users of the package to
 [rename it when importing](#import-renaming). See:
 
 *   [Guidance on so-called "utility packages"](best-practices#util-packages)
@@ -406,14 +408,14 @@ extra word like `raw` and `parsed` or with the underlying representation:
 
 ```go
 // Good:
-limitStr := r.FormValue("limit")
-limit, err := strconv.Atoi(limitStr)
+limitRaw := r.FormValue("limit")
+limit, err := strconv.Atoi(limitRaw)
 ```
 
 ```go
 // Good:
-limitRaw := r.FormValue("limit")
-limit, err := strconv.Atoi(limitRaw)
+limitStr := r.FormValue("limit")
+limit, err := strconv.Atoi(limitStr)
 ```
 
 <a id="repetitive-in-context"></a>
@@ -859,13 +861,14 @@ should not require renaming.) In the event of a name collision, prefer to rename
 the most local or project-specific import.
 
 Generated protocol buffer packages *must* be renamed to remove underscores from
-their names, and their local names must have a `pb` suffix. See [proto and stub
-best practices] for more information.
+their names, and their local names must have a `pb` suffix. See
+[proto and stub best practices](best-practices#import-protos) for more
+information.
 
 ```go
 // Good:
 import (
-    fspb "path/to/package/foo_service_go_proto"
+    foosvcpb "path/to/package/foo_service_go_proto"
 )
 ```
 
@@ -893,11 +896,16 @@ in scope.
 
 ### Import grouping
 
-Imports should be organized in two groups:
+Imports should be organized into the following groups, in order:
 
-*   Standard library packages
+1.  Standard library packages
 
-*   Other (project and vendored) packages
+1.  Other (project and vendored) packages
+
+1.  Protocol Buffer imports (e.g., `fpb "path/to/foo_go_proto"`)
+
+1.  Import for [side-effects](https://go.dev/doc/effective_go#blank_import)
+    (e.g., `_ "path/to/package"`)
 
 ```go
 // Good:
@@ -911,34 +919,6 @@ import (
     "github.com/dsnet/compress/flate"
     "golang.org/x/text/encoding"
     "google.golang.org/protobuf/proto"
-    foopb "myproj/foo/proto/proto"
-    _ "myproj/rpc/protocols/dial"
-    _ "myproj/security/auth/authhooks"
-)
-```
-
-It is acceptable to split the project packages into multiple groups if you want
-a separate group, as long as the groups have some meaning. Common reasons to do
-this:
-
-*   renamed imports
-*   packages imported for their side-effects
-
-Example:
-
-```go
-// Good:
-package main
-
-import (
-    "fmt"
-    "hash/adler32"
-    "os"
-
-
-    "github.com/dsnet/compress/flate"
-    "golang.org/x/text/encoding"
-    "google.golang.org/protobuf/proto"
 
     foopb "myproj/foo/proto/proto"
 
@@ -946,23 +926,6 @@ import (
     _ "myproj/security/auth/authhooks"
 )
 ```
-
-**Note:** Maintaining optional groups - splitting beyond what is necessary for
-the mandatory separation between standard library and Google imports - is not
-supported by the [goimports] tool. Additional import subgroups require attention
-on the part of both authors and reviewers to maintain in a conforming state.
-
-[goimports]: golang.org/x/tools/cmd/goimports
-
-Google programs that are also AppEngine apps should have a separate group for
-AppEngine imports.
-
-Gofmt takes care of sorting each group by import path. However, it does not
-automatically separate imports into groups. The popular [goimports] tool
-combines Gofmt and import management, separating imports into groups based on
-the decision above. It is permissible to let [goimports] manage import
-arrangement entirely, but as a file is revised its import list must remain
-internally consistent.
 
 <a id="import-blank"></a>
 
@@ -3160,8 +3123,40 @@ Prefer calling `t.Error` over `t.Fatal` for reporting a mismatch. When comparing
 several different properties of a function's output, use `t.Error` for each of
 those comparisons.
 
-Calling `t.Fatal` is primarily useful for reporting an unexpected error
-condition, when subsequent comparison failures are not going to be meaningful.
+```go
+// Good:
+gotMean, gotVariance, err := MyDistribution(input)
+if err != nil {
+  t.Fatalf("MyDistribution(%v) returned unexpected error: %v", input, err)
+}
+if diff := cmp.Diff(wantMean, gotMean); diff != "" {
+  t.Errorf("MyDistribution(%v) returned unexpected difference in mean value (-want +got):\n%s", input, diff)
+}
+if diff := cmp.Diff(wantVariance, gotVariance); diff != "" {
+  t.Errorf("MyDistribution(%v) returned unexpected difference in variance value (-want +got):\n%s", input, diff)
+}
+```
+
+Calling `t.Fatal` is primarily useful for reporting an unexpected condition
+(such as an error or output mismatch) when subsequent failures would be
+meaningless or even mislead the investigator. Note how the code below calls
+`t.Fatalf` and *then* `t.Errorf`:
+
+```go
+// Good:
+gotEncoded := Encode(input)
+if gotEncoded != wantEncoded {
+  t.Fatalf("Encode(%q) = %q, want %q", input, gotEncoded, wantEncoded)
+  // It doesn't make sense to decode from unexpected encoded input.
+}
+gotDecoded, err := Decode(gotEncoded)
+if err != nil {
+  t.Fatalf("Decode(%q) returned unexpected error: %v", gotEncoded, err)
+}
+if gotDecoded != input {
+  t.Errorf("Decode(%q) = %q, want %q", gotEncoded, gotDecoded, input)
+}
+```
 
 For table-driven test, consider using subtests and use `t.Fatal` rather than
 `t.Error` and `continue`. See also
@@ -3372,8 +3367,7 @@ some other error, then consider using [`errors.Is`] or `cmp` with
 > ```go
 > // Good:
 > err := f(test.input)
-> gotErr := err != nil
-> if gotErr != test.wantErr {
+> if gotErr := err != nil; gotErr != test.wantErr {
 >     t.Errorf("f(%q) = %v, want error presence = %v", test.input, err, test.wantErr)
 > }
 > ```
