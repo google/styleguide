@@ -754,6 +754,12 @@ using ::absl::container_internal::ImplementationDetail;
   <li><p>Single-line nested namespace declarations
 
     are preferred in new code, but are not required.</p>
+<pre class="goodcode">namespace my_project::my_component {
+
+  ...
+
+}  // namespace my_project::my_component
+</pre>
   </li>
 </ul>
 
@@ -1519,11 +1525,12 @@ defining.</p>
 
 <p><code>structs</code> should be used for passive objects that carry
 data, and may have associated constants. All fields must be public. The
-struct must not have invariants that imply relationships between
+struct type itself must not have invariants that imply relationships between
 different fields, since direct user access to those fields may
-break those invariants. Constructors, destructors, and helper methods may
-be present; however, these methods must not require or enforce any
-invariants.</p>
+break those invariants, but users of a struct may have requirements and
+guarantees on particular uses of it. Constructors, destructors, and helper
+methods may be present; however, these methods must not require or enforce
+any invariants.</p>
 
 <p>If more functionality or invariants are required, or struct has wide visibility and expected to
 evolve, then a <code>class</code> is more appropriate. If in doubt, make it a <code>class</code>.
@@ -1927,8 +1934,8 @@ instead.</p>
 
 <pre class="neutralcode">class MyClass {
  public:
-  void Analyze(const std::string &amp;text);
-  void Analyze(const char *text, size_t textlen);
+  void Analyze(const std::string&amp; text);
+  void Analyze(const char* text, size_t textlen);
 };
 </pre>
 
@@ -2021,13 +2028,13 @@ doubt, use overloads.</p>
 <p class="definition"></p>
 <p>C++ allows two different forms of function declarations. In the older
   form, the return type appears before the function name. For example:</p>
-<pre class="neutralcode">int foo(int x);
+<pre class="neutralcode">int Foo(int x);
 </pre>
 <p>The newer form uses the <code>auto</code>
   keyword before the function name and a trailing return type after
   the argument list. For example, the declaration above could
   equivalently be written:</p>
-<pre class="neutralcode">auto foo(int x) -&gt; int;
+<pre class="neutralcode">auto Foo(int x) -&gt; int;
 </pre>
 <p>The trailing return type is in the function's scope. This doesn't
   make a difference for a simple case like <code>int</code> but it matters
@@ -2046,17 +2053,16 @@ doubt, use overloads.</p>
   particularly true when the return type depends on template parameters.
   For example:</p>
   <pre class="neutralcode">    template &lt;typename T, typename U&gt;
-    auto add(T t, U u) -&gt; decltype(t + u);
+    auto Add(T t, U u) -&gt; decltype(t + u);
   </pre>
   versus
   <pre class="neutralcode">    template &lt;typename T, typename U&gt;
-    decltype(declval&lt;T&amp;&gt;() + declval&lt;U&amp;&gt;()) add(T t, U u);
+    decltype(declval&lt;T&amp;&gt;() + declval&lt;U&amp;&gt;()) Add(T t, U u);
   </pre>
 
 <p class="cons"></p>
-<p>Trailing return type syntax is relatively new and it has no
-  analogue in C++-like languages such as C and Java, so some readers may
-  find it unfamiliar.</p>
+<p>Trailing return type syntax has no analogue in C++-like languages
+  such as C and Java, so some readers may find it unfamiliar.</p>
 <p>Existing codebases have an enormous number of function
   declarations that aren't going to get changed to use the new syntax,
   so the realistic choices are using the old syntax only or using a mixture
@@ -2169,8 +2175,8 @@ all copies, and the object is deleted when the last
   where the resource releases take place.</li>
 
   <li><code>std::unique_ptr</code> expresses ownership
-  transfer using move semantics, which are
-  relatively new and may confuse some programmers.</li>
+  transfer using move semantics, which can be complex and
+  may confuse some programmers.</li>
 
   <li>Shared ownership can be a tempting alternative to
   careful ownership design, obfuscating the design of a
@@ -2925,7 +2931,7 @@ be clearly documented as "thread-unsafe".</p>
 
 <h4>Where to put the const</h4>
 
-<p>Some people favor the form <code>int const *foo</code>
+<p>Some people favor the form <code>int const* foo</code>
 to <code>const int* foo</code>. They argue that this is
 more readable because it's more consistent: it keeps the
 rule that <code>const</code> always follows the object
@@ -4493,10 +4499,10 @@ class UrlTableTester { ...
 struct UrlTableProperties { ...
 
 // typedefs
-typedef hash_map&lt;UrlTableProperties *, std::string&gt; PropertiesMap;
+typedef hash_map&lt;UrlTableProperties*, std::string&gt; PropertiesMap;
 
 // using aliases
-using PropertiesMap = hash_map&lt;UrlTableProperties *, std::string&gt;;
+using PropertiesMap = hash_map&lt;UrlTableProperties*, std::string&gt;;
 
 // enums
 enum class UrlTableError { ...
@@ -4696,8 +4702,8 @@ than where the original name appears.</p>
 
 <h3 id="Exceptions_to_Naming_Rules">Exceptions to Naming Rules</h3>
 
-<p>If you are naming something that is analogous to an
-existing C or C++ entity then you can follow the existing
+<p>If you are naming something that is analogous to an existing C or C++
+entity (or a Rust entity via interop), then you can follow the existing
 naming convention scheme.</p>
 
 <dl>
@@ -5056,9 +5062,10 @@ a short-term solution, or good-enough but not perfect.</p>
 <p><code>TODO</code>s should include the string
 <code>TODO</code> in all caps, followed by the bug ID, name, e-mail address, or other identifier
 of the person or issue with the best context
-about the problem referenced by the <code>TODO</code>.
+about the problem referenced by the <code>TODO</code>.</p>
+<p>Recommended styles are (in order of preference):</p>
 
-</p><pre class="goodcode">// TODO: bug 12345678 - Remove this after the 2047q4 compatibility window expires.
+<pre class="goodcode">// TODO: bug 12345678 - Remove this after the 2047q4 compatibility window expires.
 // TODO: example.com/my-design-doc - Manually fix up this code the next time it's touched.
 // TODO(bug 12345678): Update this list after the Foo service is turned down.
 // TODO(John): Use a "\*" here for concatenation operator.
@@ -5979,8 +5986,8 @@ if (x &amp;&amp; !y)
 std::vector&lt;std::string&gt; x;
 y = static_cast&lt;char*&gt;(x);
 
-// Spaces between type and pointer are OK, but be consistent.
-std::vector&lt;char *&gt; x;
+// No spaces between type and pointer.
+std::vector&lt;char*&gt; x;
 </pre>
 
 <h3 id="Vertical_Whitespace">Vertical Whitespace</h3>
@@ -6048,7 +6055,7 @@ style:</p>
   and encouraged, that you use these types when calling
   Windows API functions. Even so, keep as close as you
   can to the underlying C++ types. For example, use
-  <code>const TCHAR *</code> instead of
+  <code>const TCHAR*</code> instead of
   <code>LPCTSTR</code>.</li>
 
   <li>When compiling with Microsoft Visual C++, set the
