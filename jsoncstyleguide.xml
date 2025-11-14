@@ -201,7 +201,7 @@ Avoid naming conflicts by choosing a new property name or versioning the API.
   "data": {
     "recipeName": "pizza",
     "ingredients": "Some new property",
-    "recipeIngredients": ["tomatos", "cheese", "sausage"]
+    "recipeIngredients": ["tomatoes", "cheese", "sausage"]
   }
 }
 
