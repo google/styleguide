@@ -1,12 +1,16 @@
+/* Base Styles */
 body {
-  background-color: #fff;
-  color: #333;
-  font-family: sans-serif;
-  font-size: 10pt;
-  margin-right: 100px;
-  margin-left: 100px;
+  background-color: #fcfcfd;
+  color: #2d3748;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 auto;
+  padding: 0 2rem;
+  max-width: 800px;
 }
 
+/* Headings — Clean, bold, with better spacing */
 h1,
 h2,
 h3,
@@ -14,138 +18,176 @@ h4,
 h5,
 h6,
 .toc_title {
-  color: #06c;
+  color: #2563eb; /* Modern, accessible blue (was #06c) */
   margin-top: 2em;
-  margin-bottom: 1em;
+  margin-bottom: 0.75em;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 h1 {
   text-align: center;
-  font-size: 18pt;
+  font-size: 28px;
+  margin-top: 1.5em;
+  margin-bottom: 1.2em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid #eee;
 }
 
 h2,
 .toc_title {
-  font-weight: bold;
-  font-size: 12pt;
-  margin-left: -40px;
+  font-size: 20px;
+  margin-left: 0;
+  padding-left: 0;
+  border-left: 3px solid #2563eb;
+  padding-left: 12px;
 }
 
 h3,
 h4,
 h5,
 h6 {
-  font-size: 10pt;
-  margin-left: -20px;
+  font-size: 17px;
+  margin-left: 0;
+  font-weight: 600;
 }
 
+/* Table of Contents */
 .toc_category,
 .toc_stylepoint {
-  font-size: 10pt;
-  padding-top: 0.3em;
-  padding-bottom: 0.3em;
+  font-size: 15px;
+  padding: 0.4em 0;
+  line-height: 1.5;
 }
 
+/* Tables */
 table {
+  width: 100%;
   border-collapse: collapse;
+  margin: 1.2em 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 td,
 th {
-  border: 1px solid #ccc;
-  padding: 2px 12px;
-  font-size: 10pt;
+  border: 1px solid #e2e8f0;
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 14px;
 }
 
 .toc td,
 .toc th {
-  border-width: 1px 5px;
+  border-width: 1px 8px;
+  border-color: transparent;
 }
 
+/* Code & Preformatted */
 code,
 samp,
 var {
-  color: #060;
+  color: #0d9488; /* Teal — more modern than dark green */
+  background-color: #f0fdfa;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.95em;
 }
 
 pre {
-  font-size: 10pt;
   display: block;
-  color: #060;
-  background-color: #f8fff8;
-  border: 1px solid #f0fff0;
-  border-left-width: 5px;
-  padding: 4px 12px;
+  font-size: 14px;
+  color: #0d9488;
+  background-color: #f0fdfa;
+  border-left: 4px solid #0d9488;
+  border-radius: 0 6px 6px 0;
+  padding: 14px 18px;
+  margin: 1.4em 0;
+  overflow-x: auto;
+  font-family: 'SFMono-Regular', Consolas, monospace;
 }
 
 pre.badcode {
-  color: #c00;
-  background-color: #fff8f8;
-  border-color: #fff0f0;
+  color: #dc2626; /* Vibrant red */
+  background-color: #fef2f2;
+  border-left-color: #dc2626;
 }
 
-.showhide_button {
-  float: left;
+/* Buttons */
+.showhide_button,
+.link_button {
   cursor: pointer;
-  border: 1px solid;
-  border-color: #ddd #aaa #aaa #ddd;
-  padding: 0 3px 1px;
-  margin: 0 4px 8px 0;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
+  border: none;
+  padding: 4px 10px;
+  margin: 0 6px 10px 0;
+  border-radius: 5px;
+  background-color: #f1f5f9;
+  color: #3b82f6;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.showhide_button:hover,
+.link_button:hover {
+  background-color: #e0e7ff;
 }
 
 .link_button {
-  float: left;
-  display: none;
-  background-color: #f8f8ff;
-  border: 1px solid #f0f0ff;
-  font-size: 75%;
-  margin-top: 0;
-  margin-left: -50px;
-  padding: 4px;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
+  display: inline-block;
+  margin-left: 0;
+  float: none;
 }
 
+/* Address & HR */
 address {
   text-align: right;
+  font-style: normal;
+  color: #64748b;
+  margin-top: 2em;
+  font-size: 14px;
 }
 
 hr {
-  margin-top: 3.5em;
-  border-width: 1px;
-  color: #fff;
+  margin: 3em 0;
+  border: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e2e8f0, transparent);
 }
 
+/* Stylepoint Sections — Refined hierarchy */
 .stylepoint_section {
   display: block;
-  margin-bottom: 1em;
-  color: #58f;
-  font-family: sans-serif;
-  font-size: 90%;
-  font-weight: bold;
-  margin-left: -2%;
-}
-
-.stylepoint_subsection {
-  color: #679;
-  font-family: sans-serif;
-  font-size: 90%;
-  font-weight: bold;
-  margin-left: -1%;
-}
-
-.stylepoint_subsubsection {
-  color: #679;
-  font-family: sans-serif;
-  font-size: 80%;
-  font-weight: bold;
+  margin: 1.5em 0 1em;
+  color: #1d4ed8; /* Deeper blue for emphasis */
+  font-weight: 700;
+  font-size: 16px;
+  font-family: inherit;
   margin-left: 0;
 }
 
+.stylepoint_subsection,
+.stylepoint_subsubsection {
+  color: #475569;
+  font-weight: 600;
+  font-family: inherit;
+  margin-left: 0;
+}
+
+.stylepoint_subsection {
+  font-size: 15px;
+}
+
+.stylepoint_subsubsection {
+  font-size: 14px;
+}
+
+/* Revision */
 .revision {
   text-align: right;
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 2em;
 }
