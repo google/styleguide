@@ -1,6 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
+  <!-- head part-->
+  <hr style="height: 5px; background-color: black; border: none;">
+
 <meta charset="utf-8">
 <title>Google Java Style Guide</title>
 <link rel="stylesheet" href="javaguide.css">
@@ -8,7 +12,11 @@
 <link rel="shortcut icon" href="/styleguide/favicon.ico">
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
 </head>
+
+
+ <!-- head part-->
 <body onload="initStyleGuide();">
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <div id="content">
 <h1>Google Java Style Guide</h1>
 <div id="tocDiv" class="vertical_toc"></div>
@@ -32,7 +40,7 @@ avoids giving <em>advice</em> that isn't clearly enforceable (whether by human o
 
 
 
-<h3 id="s1.1-terminology">1.1 Terminology notes</h3>
+<h3 id="s1.1-terminology">1.1 Terminology Notes</h3>
 
 <p>In this document, unless otherwise clarified:</p>
 
@@ -49,28 +57,29 @@ avoids giving <em>advice</em> that isn't clearly enforceable (whether by human o
 
 <p>Other "terminology notes" will appear occasionally throughout the document.</p>
 
-<h3 id="s1.2-guide-notes">1.2 Guide notes</h3>
+<h3 id="s1.2-guide-notes">1.2 Guide Notes</h3>
 
 <p>Example code in this document is <strong>non-normative</strong>. That is, while the examples
 are in Google Style, they may not illustrate the <em>only</em> stylish way to represent the
 code. Optional formatting choices made in examples should not be enforced as rules.</p>
+<hr style="height: 5px; background-color: black; border: none;">
 
 
-<h2 id="s2-source-file-basics">2 Source file basics</h2>
+<h2 id="s2-source-file-basics">2 Source File Basics</h2>
 
-<h3 id="s2.1-file-name">2.1 File name</h3>
+<h3 id="s2.1-file-name">2.1 File Name</h3>
 
 <p>For a source file containing classes, the file name consists of the case-sensitive name of the
 top-level class (of which there is <a href="#s3.4.1-one-top-level-class">exactly one</a>), plus the
 <code>.java</code> extension.</p>
 
-<h3 id="s2.2-file-encoding">2.2 File encoding: UTF-8</h3>
+<h3 id="s2.2-file-encoding">2.2 File Encoding: UTF-8</h3>
 
 <p>Source files are encoded in <strong>UTF-8</strong>.</p>
 
-<h3 id="s2.3-special-characters">2.3 Special characters</h3>
+<h3 id="s2.3-special-characters">2.3 Special Characters</h3>
 
-<h4 id="s2.3.1-whitespace-characters">2.3.1 Whitespace characters</h4>
+<h4 id="s2.3.1-whitespace-characters">2.3.1 Whitespace Characters</h4>
 
 <p>Aside from the line terminator sequence, the <strong>ASCII horizontal space
 character</strong> (<strong>0x20</strong>) is the only whitespace character that appears
@@ -83,7 +92,7 @@ anywhere in a source file. This implies that:</p>
   <li>Tab characters are <strong>not</strong> used for indentation.</li>
 </ol>
 
-<h4 id="s2.3.2-special-escape-sequences">2.3.2 Special escape sequences</h4>
+<h4 id="s2.3.2-special-escape-sequences">2.3.2 Special Escape Sequences</h4>
 
 <p>For any character that has a
 <a href="http://docs.oracle.com/javase/tutorial/java/data/characters.html">
@@ -154,7 +163,9 @@ programs are <strong>broken</strong> and they must be <strong>fixed</strong>.</p
 
 
 <a id="filestructure"></a>
-<h2 id="s3-source-file-structure">3 Source file structure</h2>
+<hr style="height: 5px; background-color: black; border: none;">
+
+<h2 id="s3-source-file-structure">3 Source File Structure</h2>
 
 <div>
 <p>An ordinary source file consists of these sections, <strong>in order</strong>:</p>
@@ -189,9 +200,9 @@ class declaration with a module declaration, but otherwise follows the same stru
 <a id="imports"></a>
 <h3 id="s3.3-import-statements">3.3 Imports</h3>
 
-<h4 id="s3.3.1-wildcard-imports">3.3.1 No wildcard imports</h4>
+<h4 id="s3.3.1-wildcard-imports">3.3.1 No wildcard Imports</h4>
 
-<p><strong>Wildcard ("on-demand") imports</strong>, static or otherwise, <strong>are not
+<p><strong>Wildcard ("on-demand") Imports</strong>, static or otherwise, <strong>are not
   used</strong>.</p>
 
 <h4 id="s3.3.2-import-line-wrapping">3.3.2 No line-wrapping</h4>
@@ -222,7 +233,7 @@ sorts before ';'.)</p>
 <p>Static import is not used for static nested classes. They are imported with
 normal imports.</p>
 
-<h3 id="s3.4-class-declaration">3.4 Class declaration</h3>
+<h3 id="s3.4-class-declaration">3.4 Class Declaration</h3>
 
 <a id="oneclassperfile"></a>
 <h4 id="s3.4.1-one-top-level-class">3.4.1 Exactly one top-level class declaration</h4>
@@ -266,6 +277,8 @@ ordering.</p>
 </ol>
 
 <p>A single blank line separates each block that is present.</p>
+<hr style="height: 5px; background-color: black; border: none;">
+
 
 <h2 id="s4-formatting">4 Formatting</h2>
 
@@ -985,9 +998,11 @@ rather than <code class="badcode">3000000000l</code>.</p>
 </p><p>The contents of a text block may exceed the <a href="#columnlimit">column limit</a>.
 
 <a id="naming"></a>
+<hr style="height: 5px; background-color: black; border: none;">
+
 </p><h2 id="s5-naming">5 Naming</h2>
 
-<h3 id="s5.1-identifier-names">5.1 Rules common to all identifiers</h3>
+<h3 id="s5.1-identifier-names">5.1 Rules Common To All Identifiers</h3>
 
 <p>Identifiers use only ASCII letters and digits, and, in a small number of cases noted below,
 underscores. Thus each valid identifier name is matched by the regular expression
@@ -999,9 +1014,9 @@ names are not Google Style: <code class="badcode">name_</code>, <code class="bad
 
 
 
-<h3 id="s5.2-specific-identifier-names">5.2 Rules by identifier type</h3>
+<h3 id="s5.2-specific-identifier-names">5.2 Rules By Identifier Type</h3>
 
-<h4 id="s5.2.1-package-names">5.2.1 Package and module names</h4>
+<h4 id="s5.2.1-package-names">5.2.1 Package and Module Names</h4>
 
 <p>Package and module names use only lowercase letters and digits (no underscores). Consecutive
 words are simply concatenated together. For example, <code>com.example.deepspace</code>, not
@@ -1072,7 +1087,7 @@ static final String[] nonEmptyArray = {"these", "can", "change"};
 
 <p>These names are typically nouns or noun phrases.</p>
 
-<h4 id="s5.2.5-non-constant-field-names">5.2.5 Non-constant field names</h4>
+<h4 id="s5.2.5-non-constant-field-names">5.2.5 Non-Constant Field Names</h4>
 
 <p>Non-constant field names (static or otherwise) are written
 in <a href="#s5.3-camel-case">lowerCamelCase</a>.</p>
@@ -1205,6 +1220,10 @@ language: for example "nonempty" and "non-empty" are both correct, so the method
 <code class="prettyprint lang-java">checkNonempty</code> and
 <code class="prettyprint lang-java">checkNonEmpty</code> are likewise both correct.</p>
 
+<hr style="height: 5px; background-color: black; border: none;">
+
+
+
 
 <h2 id="s6-programming-practices">6 Programming Practices</h2>
 
@@ -1238,7 +1257,7 @@ justified is explained in a comment.</p>
 return handleTextResponse(response);
 </pre>
 
-<h3 id="s6.3-static-members">6.3 Static members: qualified using class</h3>
+<h3 id="s6.3-static-members">6.3 Static Members: Qualified Using Class</h3>
 
 <p>When a reference to a static class member must be qualified, it is qualified with that class's
 name, not with a reference or expression of that class's type.</p>
@@ -1250,13 +1269,15 @@ Foo.aStaticMethod(); // good
 </pre>
 
 <a id="finalizers"></a>
-<h3 id="s6.4-finalizers">6.4 Finalizers: not used</h3>
+<h3 id="s6.4-finalizers">6.4 Finalizers: Not Used</h3>
 
 <p>Do not override <code class="prettyprint lang-java">Object.finalize</code>. Finalization support
 is <a href="https://openjdk.org/jeps/421"><em>scheduled for removal</em></a>.</p>
 
 
 <a id="javadoc"></a>
+<hr style="height: 5px; background-color: black; border: none;">
+
 <h2 id="s7-javadoc">7 Javadoc</h2>
 
 
@@ -1360,8 +1381,11 @@ class or member, that comment is written as Javadoc instead (using <code>/**</co
 
 <p>Non-required Javadoc is not strictly required to follow the formatting rules of Sections
 7.1.1, 7.1.2, 7.1.3, and 7.2, though it is of course recommended.</p>
+<hr style="height: 5px; background-color: black; border: none;">
 
 
+<h2>****************************EOF***************************</h2>
+<hr style="height: 5px; background-color: black; border: none;">
 
 </div>
 </div>
