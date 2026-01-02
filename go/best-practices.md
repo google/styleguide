@@ -728,31 +728,7 @@ changed.
 
 ### Import ordering
 
-Imports are typically grouped into the following two (or more) blocks, in order:
-
-1.  Standard library imports (e.g., `"fmt"`)
-1.  imports (e.g., "/path/to/somelib")
-1.  (optional) Protobuf imports (e.g., `fpb "path/to/foo_go_proto"`)
-1.  (optional) Side-effect imports (e.g., `_ "path/to/package"`)
-
-If a file does not have a group for one of the optional categories above, the
-relevant imports are included in the project import group.
-
-Any import grouping that is clear and easy to understand is generally fine. For
-example, a team may choose to group gRPC imports separately from protobuf
-imports.
-
-> **Note:** For code maintaining only the two mandatory groups (one group for
-> the standard library and one for all other imports), the `goimports` tool
-> produces output consistent with this guidance.
->
-> However, `goimports` has no knowledge of groups beyond the mandatory ones; the
-> optional groups are prone to invalidation by the tool. When optional groups
-> are used, attention on the part of both authors and reviewers is required to
-> ensure that groupings remain compliant.
->
-> Either approach is fine, but do not leave the imports section in an
-> inconsistent, partially grouped state.
+See the [Go Style Decisions: Import grouping](decisions.md#import-grouping).
 
 <a id="error-handling"></a>
 
@@ -905,43 +881,14 @@ to know if using status codes is the right choice.
 
 ### Adding information to errors
 
-Any function returning an error should strive to make the error value useful.
-Often, the function is in the middle of a callchain and is merely propagating an
-error from some other function that it called (maybe even from another package).
-Here there is an opportunity to annotate the error with extra information, but
-the programmer should ensure there's sufficient information in the error without
-adding duplicate or irrelevant detail. If you're unsure, try triggering the
-error condition during development: that's a good way to assess what the
-observers of the error (either humans or code) will end up with.
-
-Convention and good documentation help. For example, the standard package `os`
-advertises that its errors contain path information when it is available. This
-is a useful style, because callers getting back an error don't need to annotate
-it with information that they had already provided the failing function.
+When adding information to errors, avoid redundant information that the
+underlying error already provides. The `os` package, for instance, already
+includes path information in its errors.
 
 ```go
 // Good:
 if err := os.Open("settings.txt"); err != nil {
-    return err
-}
-
-// Output:
-//
-// open settings.txt: no such file or directory
-```
-
-If there is something interesting to say about the *meaning* of the error, of
-course it can be added. Just consider which level of the callchain is best
-positioned to understand this meaning.
-
-```go
-// Good:
-if err := os.Open("settings.txt"); err != nil {
-    // We convey the significance of this error to us. Note that the current
-    // function might perform more than one file operation that can fail, so
-    // these annotations can also serve to disambiguate to the caller what went
-    // wrong.
-    return fmt.Errorf("launch codes unavailable: %v", err)
+  return fmt.Errorf("launch codes unavailable: %v", err)
 }
 
 // Output:
@@ -949,12 +896,14 @@ if err := os.Open("settings.txt"); err != nil {
 // launch codes unavailable: open settings.txt: no such file or directory
 ```
 
-Contrast with the redundant information here:
+Here, "launch codes unavailable" adds specific meaning to the `os.Open` error
+that's relevant to the current function's context, without duplicating the
+underlying file path information.
 
 ```go
 // Bad:
 if err := os.Open("settings.txt"); err != nil {
-    return fmt.Errorf("could not open settings.txt: %w", err)
+  return fmt.Errorf("could not open settings.txt: %v", err)
 }
 
 // Output:
@@ -962,83 +911,130 @@ if err := os.Open("settings.txt"); err != nil {
 // could not open settings.txt: open settings.txt: no such file or directory
 ```
 
-When adding information to a propagated error, you can either wrap the error or
-present a fresh error. Wrapping the error with the `%w` verb in `fmt.Errorf`
-allows callers to access data from the original error. This can be very useful
-at times, but in other cases these details are misleading or uninteresting to
-the caller. See the
-[blog post on error wrapping](https://blog.golang.org/go1.13-errors) for more
-information. Wrapping errors also expands the API surface of your package in a
-non-obvious way, and this can cause breakages if you change the implementation
-details of your package.
-
-It is best to avoid using `%w` unless you also document (and have tests that
-validate) the underlying errors that you expose. If you do not expect your
-caller to call `errors.Unwrap`, `errors.Is` and so on, don't bother with `%w`.
-
-The same concept applies to [structured errors](#error-structure) like
-[`*status.Status`][status] (see [canonical codes]). For example, if your server
-sends malformed requests to a backend and receives an `InvalidArgument` code,
-this code should *not* be propagated to the client, assuming that the client has
-done nothing wrong. Instead, return an `Internal` canonical code to the client.
-
-However, annotating errors helps automated logging systems preserve the status
-payload of an error. For example, annotating the error is appropriate in an
-internal function:
-
-```go
-// Good:
-func (s *Server) internalFunction(ctx context.Context) error {
-    // ...
-    if err != nil {
-        return fmt.Errorf("couldn't find remote file: %w", err)
-    }
-}
-```
-
-Code directly at system boundaries (typically RPC, IPC, storage, and similar)
-should report errors using the canonical error space. It is the responsibility
-of code here to handle domain-specific errors and represent them canonically.
-For example:
+Don't add an annotation if its sole purpose is to indicate a failure without
+adding new information. The presence of an error sufficiently conveys the
+failure to the caller.
 
 ```go
 // Bad:
-func (*FortuneTeller) SuggestFortune(context.Context, *pb.SuggestionRequest) (*pb.SuggestionResponse, error) {
-    // ...
-    if err != nil {
-        return nil, fmt.Errorf("couldn't find remote file: %w", err)
-    }
-}
+return fmt.Errorf("failed: %v", err) // just return err instead
 ```
 
-```go
-// Good:
-import (
-    "google.golang.org/grpc/codes"
-    "google.golang.org/grpc/status"
-)
-func (*FortuneTeller) SuggestFortune(context.Context, *pb.SuggestionRequest) (*pb.SuggestionResponse, error) {
-    // ...
-    if err != nil {
-        // Or use fmt.Errorf with the %w verb if deliberately wrapping an
-        // error which the caller is meant to unwrap.
-        return nil, status.Errorf(codes.Internal, "couldn't find fortune database", status.ErrInternal)
-    }
-}
-```
+The
+[choice between `%v` and `%w` when wrapping errors](https://go.dev/blog/go1.13-errors#whether-to-wrap)
+with `fmt.Errorf` is a nuanced decision that significantly impacts how errors
+are propagated handled, inspected, and documented within your application. The
+core principle is to make error values useful to their observers, whether those
+observers are humans or code.
+
+1.  **`%v` for simple annotation or new error**
+
+    The `%v` verb is your general-purpose tool for string formatting of any Go
+    value, including errors. When used with `fmt.Errorf`, it embeds the string
+    representation of an error (what its `Error()` method returns) into a new
+    error value, dropping any structured information from the original error.
+    Examples to use `%v`:
+
+    *   Adding interesting, non-redundant context: as in the example above.
+
+    *   Logging or displaying errors: When the primary goal is to present a
+        human-readable error message in logs or to a user, and you don't intend
+        for the caller to programmatically `errors.Is` or `errors.As` the error
+        (Note: `errors.Unwrap` is generally not recommended here as it doesn't
+        handle multi-errors).
+
+    *   Creating fresh, independent errors: Sometimes it is necessary to
+        transform an error into a new error message, thereby hiding the
+        specifics of the original error. This practice is particularly
+        beneficial at system boundaries, including but not limited to RPC, IPC,
+        and storage, where we translate domain-specific errors into a canonical
+        error space.
+
+        ```go
+        // Good:
+        func (*FortuneTeller) SuggestFortune(context.Context, *pb.SuggestionRequest) (*pb.SuggestionResponse, error) {
+          // ...
+          if err != nil {
+            return nil, fmt.Errorf("couldn't find fortune database: %v", err)
+          }
+        }
+        ```
+
+        We could also explicitly annotate RPC code `Internal` to the example
+        above.
+
+        ```go
+        // Good:
+        import (
+          "google.golang.org/grpc/codes"
+          "google.golang.org/grpc/status"
+        )
+
+        func (*FortuneTeller) SuggestFortune(context.Context, *pb.SuggestionRequest) (*pb.SuggestionResponse, error) {
+          // ...
+          if err != nil {
+            // Or use fmt.Errorf with the %w verb if deliberately wrapping an
+            // error which the caller is meant to unwrap.
+            return nil, status.Errorf(codes.Internal, "couldn't find fortune database", status.ErrInternal)
+          }
+        }
+        ```
+
+1.  **`%w` (wrap) for programmatic inspection and error chaining**
+
+    The `%w` verb is specifically designed for error wrapping. It creates a new
+    error that provides an `Unwrap()` method, allowing callers to
+    programmatically inspect the error chain using `errors.Is` and `errors.As`.
+    Examples to use `%w`:
+
+    *   Adding context while preserving the original error for programmatic
+        inspection: This is the primary use case within helpers of your
+        application. You want to enrich an error with additional context (e.g.,
+        what operation was being performed when it failed) but still allow the
+        caller to check if the underlying error is a specific sentinel error or
+        type.
+
+        ```go
+        // Good:
+        func (s *Server) internalFunction(ctx context.Context) error {
+          // ...
+          if err != nil {
+            return fmt.Errorf("couldn't find remote file: %w", err)
+          }
+        }
+        ```
+
+        This allows a higher-level function to do `errors.Is(err,
+        fs.ErrNotExist)` if the underlying error was `fs.ErrNotExist`, even
+        though it's wrapped.
+
+        At points where your system interacts with external systems like RPC,
+        IPC, or storage, it's often better to translate domain-specific errors
+        into a standardized error space (e.g., gRPC status codes) rather than
+        simply wrapping the raw underlying error with `%w`. The client typically
+        doesn't care about the exact internal file system error; they care about
+        the canonical result (e.g., `Internal`, `NotFound`, `PermissionDenied`).
+
+    *   When you explicitly document and test the underlying errors you expose:
+        If your package's API guarantees that certain underlying errors can be
+        unwrapped and checked by callers (e.g., "this function might return
+        `ErrInvalidConfig` wrapped within a more general error"), then `%w` is
+        appropriate. This forms part of your package's contract.
 
 See also:
 
 *   [Error Documentation Conventions](#documentation-conventions-errors)
+*   [Blog post on error wrapping](https://blog.golang.org/go1.13-errors)
 
 <a id="error-percent-w"></a>
 
 ### Placement of %w in errors
 
-Prefer to place `%w` at the end of an error string.
+Prefer to place `%w` at the end of an error string *if* you are to use
+[error wrapping](https://go.dev/blog/go1.13-errors) with the `%w` formatting
+verb.
 
-Errors can be wrapped with
-[the `%w` verb](https://blog.golang.org/go1.13-errors), or by placing them in a
+Errors can be wrapped with the `%w` verb, or by placing them in a
 [structured error](https://google.github.io/styleguide/go/index.html#gotip) that
 implements `Unwrap() error` (ex:
 [`fs.PathError`](https://pkg.go.dev/io/fs#PathError)).
@@ -1881,7 +1877,7 @@ It's acceptable to use value types for local variables of composites (such as
 structs and arrays) even if they contain such uncopyable fields. However, if the
 composite is returned by the function, or if all accesses to it end up needing
 to take an address anyway, prefer declaring the variable as a pointer type at
-the outset. Similarly, protobufs should be declared as pointer types.
+the outset. Similarly, protobuf messages should be declared as pointer types.
 
 ```go
 // Good:
@@ -2768,7 +2764,7 @@ func badSetup(t *testing.T) {
     }
 }
 
-func mustGoodSetup(t *testing.T) {
+func goodSetup(t *testing.T) {
     t.Helper()
     if err := paint("lilac"); err != nil {
         t.Fatalf("Could not paint the house under test: %v", err)
@@ -2781,7 +2777,7 @@ func TestBad(t *testing.T) {
 }
 
 func TestGood(t *testing.T) {
-    mustGoodSetup(t) // line 32
+    goodSetup(t) // line 32
     // ...
 }
 ```
@@ -3141,11 +3137,11 @@ func TestRegression682831(t *testing.T) {
 ```
 
 The reason that common teardown is tricky is there is no uniform place to
-register cleanup routines. If the setup function (in this case `loadDataset`)
-relies on a context, `sync.Once` may be problematic. This is because the second
-of two racing calls to the setup function would need to wait for the first call
-to finish before returning. This period of waiting cannot be easily made to
-respect the context's cancellation.
+register cleanup routines. If the setup function (in this case
+`mustLoadDataset`) relies on a context, `sync.Once` may be problematic. This is
+because the second of two racing calls to the setup function would need to wait
+for the first call to finish before returning. This period of waiting cannot be
+easily made to respect the context's cancellation.
 
 <a id="string-concat"></a>
 

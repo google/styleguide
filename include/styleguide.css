@@ -59,10 +59,13 @@ code, samp, var {
 }
 
 pre {
-  padding:6px 10px;
-  background-color:#FAFAFA;
-  border:1px solid #bbb;
-  overflow:auto;
+  background-color: #e9e9e9;
+  color: #333;
+  border-color: #f9f9f9;
+  border-style: solid;
+  border-width: 1px 1px 1px 5px;
+  overflow: auto;
+  padding: 6px 12px;
 }
 
 pre.prettyprint {
@@ -70,14 +73,16 @@ pre.prettyprint {
   border:1px solid #bbb !important;
 }
 
-code.bad, code.badcode {
-  color: magenta;
+pre.bad, pre.badcode {
+  background-color: #ffe6d8;
+  border-color: #fff0f0;
+  color: #c00;
 }
 
-pre.bad, pre.badcode {
-  background-color:#ffe6d8;
-  border-top:1px inset #a03;
-  border-left:1px inset #a03;
+pre.good, pre.goodcode {
+  background-color: #e8fff6;
+  color: #060;
+  border-color: #f0fff0;
 }
 
 hr {
