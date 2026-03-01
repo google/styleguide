@@ -69,7 +69,7 @@ general, the author should always be able to invoke the "Better/Best Rule."
 
 Fast iteration is your friend. To get long-term improvement, **authors must stay
 productive** when making short-term improvements. Set lower standards for each
-CL, so that **more such CLs** can happen.
+CL (Changelist), so that **more such CLs** can happen.
 
 As a reviewer of a documentation CL:
 
