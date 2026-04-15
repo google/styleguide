@@ -183,7 +183,12 @@ class declaration with a module declaration, but otherwise follows the same stru
 <a id="s3.2-package-statement"></a>
 <h3 id="s3.2-package-declaration">3.2 Package declaration</h3>
 
-<p>The package declaration is <strong>not line-wrapped</strong>. The column limit (Section 4.4,
+<p>Every source file must have a package declaration. <a href="https://openjdk.org/jeps/512">
+Compact source files</a> are not used. (This rule obviously does not apply to
+<code>module-info.java</code> files, which have a different syntax that does not include a
+package declaration.)
+
+</p><p>The package declaration is <strong>not line-wrapped</strong>. The column limit (Section 4.4,
 <a href="#s4.4-column-limit">Column limit: 100</a>) does not apply to package declarations.</p>
 
 <a id="imports"></a>
@@ -193,6 +198,16 @@ class declaration with a module declaration, but otherwise follows the same stru
 
 <p><strong>Wildcard ("on-demand") imports</strong>, static or otherwise, <strong>are not
   used</strong>.</p>
+
+<h4 id="s3.3.1.1-module-imports">3.3.1.1 No module imports</h4>
+
+<p><a href="https://docs.oracle.com/en/java/javase/25/language/module-import-declarations.html">
+Module imports</a> <strong>are not used</strong>.</p>
+
+<p>Example:</p>
+
+<pre class="prettyprint lang-java">import module java.base;
+</pre>
 
 <h4 id="s3.3.2-import-line-wrapping">3.3.2 No line-wrapping</h4>
 
@@ -855,7 +870,7 @@ package com.example.frozzler;
 </pre>
 <pre class="prettyprint lang-java">/** This is a module. */
 @Deprecated
-@SuppressWarnings("CheckReturnValue")
+@SuppressWarnings("CheckReturnValue") // TODO: b/123 - Fix existing CRV violations.
 module com.example.frozzler { ... }
 </pre>
 
@@ -869,8 +884,9 @@ module com.example.frozzler { ... }
 public String getNameIfPresent() { ... }
 </pre>
 
-<p class="exception"><strong>Exception:</strong> A <em>single</em> parameterless annotation
-<em>may</em> instead appear together with the first line of the signature, for example:</p>
+<p class="exception"><strong>Exception:</strong> If the method or constructor only has a
+<em>single</em>, <em>parameterless</em> annotation, it <em>may</em> appear together with the first
+line of the signature, for example:</p>
 
 <pre class="prettyprint lang-java">@Override public int hashCode() { ... }
 </pre>
@@ -1111,6 +1127,14 @@ be styled as constants.</p>
   <code class="prettyprint lang-java">FooBarT</code>).</li>
 </ul>
 
+<h4 id="s5.2.9-unnamed-variables">5.2.9 Unnamed variables</h4>
+
+<p>The <code class="prettyprint lang-java">_</code> syntax for unnamed variables and parameters is
+allowed wherever it is applicable. For example:</p>
+
+<pre class="prettyprint lang-java">Predicate&lt;String&gt; alwaysTrue = _ -&gt; true;
+</pre>
+
 <a id="acronyms"></a>
 <a id="camelcase"></a>
 <h3 id="s5.3-camel-case">5.3 Camel case: defined</h3>
@@ -1232,7 +1256,7 @@ justified is explained in a comment.</p>
 <pre class="prettyprint lang-java">try {
   int i = Integer.parseInt(response);
   return handleNumericResponse(i);
-} catch (NumberFormatException ok) {
+} catch (NumberFormatException _) {
   // it's not numeric; that's fine, just continue
 }
 return handleTextResponse(response);
