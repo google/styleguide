@@ -257,7 +257,7 @@ if err := doSomething(); err == nil { // if NO error
 }
 ```
 
-[Table-driven testing]: https://github.com/golang/go/wiki/TableDrivenTests
+[Table-driven testing]: https://go.dev/wiki/TableDrivenTests
 [error handling]: https://go.dev/blog/errors-are-values
 ["boosting"]: best-practices#signal-boost
 
