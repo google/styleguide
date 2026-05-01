@@ -346,8 +346,21 @@ void test(D* x) { f(x); }  // Calls f(B*)
 </ul>
 
 <p class="decision"></p>
-<p>Try to avoid forward declarations of entities
-defined in another project.</p>
+<p>Do not use forward declarations of entities that your project
+  does not own.</p>
+
+<p>For entities that you do own:
+  </p><ul>
+    <li>Try to make the header for a declaration cheap enough
+    to easily include it directly.</li>
+
+    <li>If the full header is too expensive to include,
+    try to speed up the header's compilation.</li>
+
+    <li>If your best engineering judgment is that a forward
+    declaration is a better way to fix a slowdown, exercise
+    that judgment and use a forward declaration.</li>
+  </ul>
 
 <a id="Inline_Functions"></a>
 <h3 id="Defining_Functions_in_Header_Files">Defining Functions in Header Files</h3>
@@ -718,7 +731,7 @@ namespace librarian {
 
 namespace internal {  // Internal, not part of the API.
 namespace sidetable = ::pipeline_diagnostics::sidetable;
-}  // namespace internal
+}
 
 inline void my_inline_function() {
   // Local to a function.
@@ -1583,7 +1596,7 @@ methods); all other inheritance is "implementation
 inheritance".</p>
 
 <p class="pros"></p>
-<p>Implementation inheritance reduces code size by re-using
+<p>Implementation inheritance reduces code size by reusing
 the base class code as it specializes an existing type.
 Because inheritance is a compile-time declaration, you
 and the compiler can understand the operation and detect
@@ -1880,7 +1893,9 @@ In some cases reference parameters can bind to temporaries, leading to lifetime
 bugs. Instead, find a way to eliminate the lifetime requirement
 (for example, by copying the parameter), or pass retained parameters by
 pointer and document the lifetime and non-null requirements.
-See <a href="https://abseil.io/tips/116">TotW 116</a> for more.</p>
+See <a href="https://abseil.io/tips/116">TotW 116</a> for more.
+
+</p>
 
 <p>When ordering function parameters, put all input-only
 parameters before any output parameters. In particular,
@@ -2091,6 +2106,33 @@ C++ that may differ from what you see elsewhere.</p>
 
 
 
+<h3 id="cpplint">cpplint</h3>
+
+<p>Use <code>cpplint.py</code> to detect style errors.</p>
+
+<p><code>cpplint.py</code>
+is a tool that reads a source file and identifies many
+style errors. It is not perfect, and has both false
+positives and false negatives, but it is still a valuable
+tool. </p>
+
+
+
+<div>
+<p>Some projects have instructions on
+how to run <code>cpplint.py</code> from their project
+tools. If the project you are contributing to does not,
+you can download
+<a href="https://raw.githubusercontent.com/cpplint/cpplint/HEAD/cpplint.py">
+<code>cpplint.py</code></a> separately.</p>
+</div>
+
+
+
+
+
+<h2 id="Other_C++_Features">Other C++ Features</h2>
+
 <h3 id="Ownership_and_Smart_Pointers">Ownership and Smart Pointers</h3>
 
 <p>Prefer to have single, fixed owners for dynamically
@@ -2218,31 +2260,6 @@ do use shared ownership, prefer to use
 <p>Never use <code>std::auto_ptr</code>. Instead, use
 <code>std::unique_ptr</code>.</p>
 
-<h3 id="cpplint">cpplint</h3>
-
-<p>Use <code>cpplint.py</code> to detect style errors.</p>
-
-<p><code>cpplint.py</code>
-is a tool that reads a source file and identifies many
-style errors. It is not perfect, and has both false
-positives and false negatives, but it is still a valuable
-tool. </p>
-
-
-
-<div>
-<p>Some projects have instructions on
-how to run <code>cpplint.py</code> from their project
-tools. If the project you are contributing to does not,
-you can download
-<a href="https://raw.githubusercontent.com/cpplint/cpplint/HEAD/cpplint.py">
-<code>cpplint.py</code></a> separately.</p>
-</div>
-
-
-
-<h2 id="Other_C++_Features">Other C++ Features</h2>
-
 <h3 id="Rvalue_references">Rvalue References</h3>
 
 <p>Use rvalue references only in certain special cases listed below.</p>
@@ -2292,7 +2309,7 @@ rules apply. Such a reference is called a forwarding reference.</p>
 
 <p class="cons"></p>
 <ul>
-  <li>Rvalue references are not yet widely understood. Rules like reference
+  <li>Rvalue references are not widely understood. Rules like reference
   collapsing and the special deduction rule for forwarding references
   are somewhat obscure.</li>
 
@@ -2621,11 +2638,13 @@ of the following alternatives to querying the type:</p>
 instance of a base class is in fact an instance of a
 particular derived class, then a
 <code>dynamic_cast</code> may be used freely on the
-object.  Usually one
-can use a <code>static_cast</code> as an alternative in
-such situations.</p>
+object. Usually
 
-<p>Decision trees based on type are a strong indication
+<a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/casts.h">
+<code>absl::down_cast</code></a> provides an even better
+alternative.
+
+</p><p>Decision trees based on type are a strong indication
 that your code is on the wrong track.</p>
 
 <pre class="badcode">if (typeid(*data) == typeid(D1)) {
@@ -2676,7 +2695,12 @@ them.</p>
 <p class="decision"></p>
 <p>In general, do not use C-style casts. Instead, use these C++-style
 casts when explicit type conversion is necessary.
-</p>
+Some are part of the standard C++ language,
+and some are defined in
+
+<a href="https://github.com/abseil/abseil-cpp/blob/master/absl/base/casts.h">
+  <code>absl/base/casts.h</code></a>. Use the first that
+<b>correctly applies</b>:</p>
 
 <ul>
   <li>Use brace initialization to convert arithmetic types
@@ -2704,7 +2728,10 @@ casts when explicit type conversion is necessary.
   subclass.  In this last case, you must be sure your object is
   actually an instance of the subclass.</li>
 
-
+  <li>Use <code>absl::down_cast</code>
+  to cast a pointer from a superclass
+  to a subclass. You must be sure your object is actually
+  an instance of the subclass.</li>
 
   <li>Use <code>const_cast</code> to remove the
   <code>const</code> qualifier (see <a href="#Use_of_const">const</a>).</li>
@@ -3029,9 +3056,7 @@ like <code>int16_t</code>, <code>uint32_t</code>,
 <code>int64_t</code>, etc. You should always use
 those in preference to <code>short</code>, <code>unsigned
 long long</code>, and the like, when you need a guarantee
-on the size of an integer. Prefer to omit the <code>std::</code>
-prefix for these types, as the extra 5 characters do
-not merit the added clutter. Of the built-in integer types, only
+on the size of an integer. Of the built-in integer types, only
 <code>int</code> should be used. When appropriate, you
 are welcome to use standard type aliases like
 <code>size_t</code> and <code>ptrdiff_t</code>.</p>
@@ -3060,6 +3085,9 @@ will never be negative. Instead, use
 assertions for this.</p>
 
 
+
+<p>Prefer to omit the <code>std::</code> prefix on standard library
+integer types, as the extra 5 characters do not merit the added clutter.</p>
 
 <p>If your code is a container that returns a size, be
 sure to use a type that will accommodate any possible
@@ -3282,6 +3310,10 @@ be deduced by the compiler, rather than spelled out explicitly in the code:</p>
 void f(T t);
 
 f(0);  // Invokes f&lt;int&gt;(0)</pre>
+  A lambda expression can also have template parameters, which are deduced in the same way:
+  <pre class="neutralcode">// Sort `vec` in decreasing order
+std::sort(vec.begin(), vec.end(), []&lt;typename T&gt;(T lhs, T rhs) { return lhs &gt; rhs; });
+</pre>
   </dd>
   <dt><a href="https://en.cppreference.com/w/cpp/language/auto"><code>auto</code> variable declarations</a></dt>
   <dd>A variable declaration can use the <code>auto</code> keyword in place
@@ -3316,11 +3348,10 @@ auto d{42};   // d is an int, not a std::initializer_list&lt;int&gt;
     rely on type deduction; it's just an alternative syntax for an explicit
     return type.
   </dd>
-  <dt><a href="https://isocpp.org/wiki/faq/cpp14-language#generic-lambdas">Generic lambdas</a></dt>
-  <dd>A lambda expression can use the <code>auto</code> keyword in place of
-    one or more of its parameter types. This causes the lambda's call operator
-    to be a function template instead of an ordinary function, with a separate
-    template parameter for each <code>auto</code> function parameter:
+  <dt><a href="https://en.cppreference.com/w/cpp/language/auto.html"><code>auto</code> parameters</a></dt>
+  <dd>A function or lambda expression can use the <code>auto</code> keyword in place of
+    one or more of its parameter types. This causes it to be a function template instead of an
+    ordinary function, with a separate template parameter for each <code>auto</code> function parameter:
     <pre class="neutralcode">// Sort `vec` in decreasing order
 std::sort(vec.begin(), vec.end(), [](auto lhs, auto rhs) { return lhs &gt; rhs; });</pre>
   </dd>
@@ -3447,9 +3478,17 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   Note that class template argument deduction is also subject to a
   <a href="#CTAD">separate style rule</a>.</p>
 
+<p>Explicit types for elements of <code>map</code>-like containers are easy to
+  get wrong. In those cases <a href="#Structured_Bindings">structured
+  bindings</a> for the key and value are almost always clearer than a single
+  variable representing the pair.</p>
+
 <p>Do not use <code>decltype(auto)</code> if a simpler option will work;
   because it's a fairly obscure feature, it has a high cost in code
   clarity.</p>
+
+<p> See <a href="https://abseil.io/tips/232">TotW #232</a> for more details on
+  when to use <code>auto</code> for variable declarations.</p>
 
 <h4>Return type deduction</h4>
 
@@ -3462,16 +3501,30 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   <em>is</em> the interface. In particular, public functions in header files
   should almost never have deduced return types.</p>
 
-<h4>Parameter type deduction</h4>
+<h4>Function parameter type deduction</h4>
 
-<p><code>auto</code> parameter types for lambdas should be used with caution,
-  because the actual type is determined by the code that calls the lambda,
-  rather than by the definition of the lambda. Consequently, an explicit
-  type will almost always be clearer unless the lambda is explicitly called
-  very close to where it's defined (so that the reader can easily see both),
-  or the lambda is passed to an interface so well-known that it's
-  obvious what arguments it will eventually be called with (e.g.,
-  the <code>std::sort</code> example above).</p>
+<p>Avoid using parameter type deduction (using either <code>auto</code> or template
+  parameters) if you can give the parameter a specific type instead. If it will only
+  be called with one type, it will almost always be clearer to make that type explicit,
+  unless it is called very close to where it's defined (so that the reader can easily
+  see both), or it's a lambda being passed to an interface so well-known that it's
+  obvious what type it will eventually be called with (e.g., the <code>std::sort</code>
+  example above)</p>
+
+<p>Do not use <code>auto</code> parameters in non-lambda functions. Use named template parameters
+  instead, because they are more explicit about the fact that the function is a template:</p>
+  <pre class="badcode">void F(auto arg) { ... }
+</pre>
+<pre class="goodcode">template &lt;typename T&gt;
+void F(T arg) { ... }
+</pre>
+
+<p>In a lambda expression, if you need to refer to the type of a parameter, prefer to make that
+  type a template parameter:</p>
+  <pre class="badcode">[](auto x) { decltype(x) y; ... }
+</pre>
+  <pre class="goodcode">[]&lt;typename T&gt;(T x) { T y; ... }
+</pre>
 
 <h4>Lambda init captures</h4>
 
@@ -3491,6 +3544,13 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   but note that you generally <a href="#Structs_vs._Tuples">shouldn't use
     pairs or tuples</a> unless a pre-existing API like <code>insert</code>
   forces you to.</p>
+
+<p>The elements of containers like <code>std::map&lt;K, V&gt;</code> benefit
+  especially from structured bindings; not only can the two parts of the pair be
+  given more specific names, but the use of type deduction dodges the common bug
+  of failing to <code>const</code>-qualify the key type of the element, which
+  often surprisingly succeeds in compiling by introducing unintended
+  copying.</p>
 
 <p>If the object being bound is a struct, it may sometimes be helpful to
   provide names that are more specific to your usage, but keep in mind that
@@ -4016,115 +4076,12 @@ documentation.</p>
   project-wide use by your project leads. Do not roll your own promise or
   awaitable types.</p>
 
-<h3 id="Boost">Boost</h3>
-
-<p>Use only approved libraries from the Boost library
-collection.</p>
-
-<p class="definition"></p>
-<p> The
-<a href="https://www.boost.org/">
-Boost library collection</a> is a popular collection of
-peer-reviewed, free, open-source C++ libraries.</p>
-
-<p class="pros"></p>
-<p>Boost code is generally very high-quality, is widely
-portable, and fills many important gaps in the C++
-standard library, such as type traits and better binders.</p>
-
-<p class="cons"></p>
-<p>Some Boost libraries encourage coding practices which can
-hamper readability, such as metaprogramming and other
-advanced template techniques, and an excessively
-"functional" style of programming. </p>
-
-<p class="decision"></p>
-
-
-
-<div>
-<p>In order to maintain a high level of readability for
-all contributors who might read and maintain code, we
-only allow an approved subset of Boost features.
-Currently, the following libraries are permitted:</p>
-
-<ul>
-  <li>
-  <a href="https://www.boost.org/libs/utility/call_traits.htm">
-  Call Traits</a> from <code>boost/call_traits.hpp</code></li>
-
-  <li><a href="https://www.boost.org/libs/utility/compressed_pair.htm">
-  Compressed Pair</a> from  <code>boost/compressed_pair.hpp</code></li>
-
-  <li><a href="https://www.boost.org/libs/graph/">
-  The Boost Graph Library (BGL)</a> from <code>boost/graph</code>,
-  except serialization (<code>adj_list_serialize.hpp</code>) and
-   parallel/distributed algorithms and data structures
-   (<code>boost/graph/parallel/*</code> and
-   <code>boost/graph/distributed/*</code>).</li>
-
-  <li><a href="https://www.boost.org/libs/property_map/">
-  Property Map</a> from <code>boost/property_map</code>, except
-  parallel/distributed property maps (<code>boost/property_map/parallel/*</code>).</li>
-
-  <li><a href="https://www.boost.org/libs/iterator/">
-  Iterator</a> from <code>boost/iterator</code></li>
-
-  <li>The part of <a href="https://www.boost.org/libs/polygon/">
-  Polygon</a> that deals with Voronoi diagram
-  construction and doesn't depend on the rest of
-  Polygon:
-  <code>boost/polygon/voronoi_builder.hpp</code>,
-  <code>boost/polygon/voronoi_diagram.hpp</code>, and
-  <code>boost/polygon/voronoi_geometry_type.hpp</code></li>
-
-  <li><a href="https://www.boost.org/libs/bimap/">
-  Bimap</a> from <code>boost/bimap</code></li>
-
-  <li><a href="https://www.boost.org/libs/math/doc/html/dist.html">
-  Statistical Distributions and Functions</a> from
-  <code>boost/math/distributions</code></li>
-
-  <li><a href="https://www.boost.org/libs/math/doc/html/special.html">
-  Special Functions</a> from <code>boost/math/special_functions</code></li>
-
-  <li><a href="https://www.boost.org/libs/math/doc/html/root_finding.html">
-  Root Finding &amp; Minimization Functions</a> from <code>boost/math/tools</code></li>
-
-  <li><a href="https://www.boost.org/libs/multi_index/">
-  Multi-index</a> from <code>boost/multi_index</code></li>
-
-  <li><a href="https://www.boost.org/libs/heap/">
-  Heap</a> from <code>boost/heap</code></li>
-
-  <li>The flat containers from
-  <a href="https://www.boost.org/libs/container/">Container</a>:
-  <code>boost/container/flat_map</code>, and
-  <code>boost/container/flat_set</code></li>
-
-  <li><a href="https://www.boost.org/libs/intrusive/">Intrusive</a>
-  from <code>boost/intrusive</code>.</li>
-
-  <li><a href="https://www.boost.org/libs/sort/">The
-  <code>boost/sort</code> library</a>.</li>
-
-  <li><a href="https://www.boost.org/libs/preprocessor/">Preprocessor</a>
-  from <code>boost/preprocessor</code>.</li>
-</ul>
-
-<p>We are actively considering adding other Boost
-features to the list, so this list may be expanded in
-the future.</p>
-</div>
-
-
 
 
 <h3 id="Disallowed_Stdlib">Disallowed standard library features</h3>
 
 
-<p>As with <a href="#Boost">Boost</a>, some modern C++
-library functionality encourages coding practices that hamper
+<p>Some modern C++ library functionality encourages coding practices that hamper
 readability — for example by removing
 checked redundancy (such as type names) that may be
 helpful to readers, or by encouraging template
@@ -4154,6 +4111,51 @@ and conversion costs.</p>
 
 
 </ul>
+
+<h3 id="Third_party_Libraries">Third-party Libraries</h3>
+
+<p>When choosing to use third-party libraries, be consistent with the code
+  around you.</p>
+
+<p class="definition"></p>
+<p>A third-party library is a library that is not primarily developed in the
+  same repository as your code.</p>
+
+<p class="pros"></p>
+<ul>
+  <li>Reusing high-quality third-party libraries can avoid vast amounts of
+    work duplicating their functionality.</li>
+  <li>Some third-party libraries are so well-established in their problem
+    domain that avoiding them would actually make the code harder to read.</li>
+</ul>
+
+<p class="cons"></p>
+<ul>
+  <li>Third-party libraries may have different programming practices than ours.
+    In some cases this can be "viral", making it harder for code that uses the
+    library to follow our style and programming practices.</li>
+  <li>Third-party libraries can carry many hidden support burdens, such as license
+    compliance, monitoring and patching vulnerabilities, and dealing with breaking
+    changes from upstream.</li>
+</ul>
+
+<p class="decision"></p>
+<p>When choosing a library to solve a particular problem, first check if there's
+  already a library that your codebase typically uses for that kind of problem.
+  If so, use it. If not, prefer libraries from the following sources, in roughly
+  decreasing order of priority:</p>
+
+<ul>
+  <li><a href="https://abseil.io/">Abseil</a>
+    .</li>
+  <li>The C++ standard library (except as discussed <a href="#Disallowed_Stdlib">here</a>)</li>
+  <li>Existing first-party libraries in the codebase.</li>
+  <li>Third-party libraries</li>
+</ul>
+
+<p>If you choose to use a third-party library, make sure to follow
+
+  your codebase's policies for third-party code.</p>
 
 <h3 id="Nonstandard_Extensions">Nonstandard Extensions</h3>
 
@@ -4546,7 +4548,7 @@ class members, which should follow the rules for
 
  private:
   std::string table_name_;             // OK - underscore at end.
-  static Pool&lt;TableInfo&gt;* pool_;       // OK.
+  static Pool&lt;TableInfo&gt;* absl_nullable pool_;       // OK.
 };
 </pre>
 
@@ -4559,7 +4561,7 @@ the trailing underscores that data members in classes have.</p>
 <pre class="goodcode">struct UrlTableProperties {
   std::string name;
   int num_entries;
-  static Pool&lt;UrlTableProperties&gt;* pool;
+  static Pool&lt;UrlTableProperties&gt;* absl_nullable pool;
 };
 </pre>
 
@@ -4846,8 +4848,10 @@ declaration:</p>
   call. This is quite common for pointer/reference arguments to
   constructors.</li>
 
-  <li>For each pointer argument, whether it is allowed to be null and what happens
-  if it is.</li>
+  <li>For each pointer argument, whether it is allowed
+  to be null and what happens if it is.</li>
+
+
 
   <li>For each output or input/output argument, what happens to any state that argument
     is in (e.g., is the state appended to or overwritten?).
@@ -5651,6 +5655,8 @@ int* GetPointer();
 std::vector&lt;char*&gt;  // Note no space between '*' and '&gt;'
 </pre>
 
+
+
 <p>It is allowed (if unusual) to declare multiple variables in the same
 declaration, but it is disallowed if any of those have pointer or
 reference decorations. Such declarations are easily misread.</p>
@@ -5792,11 +5798,12 @@ needed) is:</p>
  public:      // Note the 1 space indent!
   MyClass();  // Regular 2 space indent.
   explicit MyClass(int var);
+  MyClass(const MyClass&amp; other);
+  MyClass&amp; operator=(const MyClass&amp; other);
   ~MyClass() {}
 
   void SomeFunction();
-  void SomeFunctionThatDoesNothing() {
-  }
+  void SomeFunctionThatDoesNothing() {}
 
   void set_some_var(int var) { some_var_ = var; }
   int some_var() const { return some_var_; }
