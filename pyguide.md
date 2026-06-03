@@ -2250,6 +2250,15 @@ Public attributes, excluding [properties](#properties), should be documented
 here in an `Attributes` section and follow the same formatting as a
 [function's `Args`](#doc-function-args) section.
 
+Subclasses should explicitly list inherited public attributes when they are part
+of the subclass interface, but should not duplicate the parent class's full
+attribute description or use vague references such as "See parent." Instead,
+reference the parent class definition:
+
+```text
+name: Inherited from :class:`ParentClassName`. See `ParentClassName` for details.
+```
+
 ```python
 class SampleClass:
     """Summary of class here.
@@ -2274,6 +2283,26 @@ class SampleClass:
     @property
     def butter_sticks(self) -> int:
         """The number of butter sticks we have."""
+```
+
+For inherited attributes:
+
+```python
+class Fruit:
+    """A piece of fruit.
+
+    Attributes:
+        weight: The weight of the fruit in grams.
+    """
+
+
+class Apple(Fruit):
+    """An apple.
+
+    Attributes:
+        weight: Inherited from :class:`Fruit`. See `Fruit` for details.
+        variety: The variety of the apple.
+    """
 ```
 
 All class docstrings should start with a one-line summary that describes what
