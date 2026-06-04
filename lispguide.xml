@@ -2054,7 +2054,7 @@ Robert Brown
         but sometimes, fixups are necessary to resolve forward references,
         and intercession is allowed then.
         MOP intercession is a great tool for interactive development,
-        and you may enjoy it while developping and debugging;
+        and you may enjoy it while developing and debugging;
         but you should not use it in normal applications.
       </p>
       <p>
