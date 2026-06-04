@@ -1,0 +1,1 @@
+../../../../go/best-practices.md

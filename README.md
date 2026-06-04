@@ -75,11 +75,11 @@ primarily optimizing for Google's internal needs.
 
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
+<!-- START_STYLEGUIDES -->
 [cpp]: https://google.github.io/styleguide/cppguide.html
 [csharp]: https://google.github.io/styleguide/csharp-style.html
 [swift]: https://google.github.io/swift/
 [objc]: objcguide.md
-[gh-tracker]: https://github.com/google/styleguide/issues
 [go]: go/
 [java]: https://google.github.io/styleguide/javaguide.html
 [json]: https://google.github.io/styleguide/jsoncstyleguide.xml
@@ -94,9 +94,13 @@ primarily optimizing for Google's internal needs.
 [angular]: https://google.github.io/styleguide/angularjs-google-style.html
 [cl]: https://google.github.io/styleguide/lispguide.xml
 [vim]: https://google.github.io/styleguide/vimscriptguide.xml
-[emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
 [xml]: https://google.github.io/styleguide/xmlstyle.html
 [dart]: https://www.dartlang.org/guides/language/effective-dart
+<!-- END_STYLEGUIDES -->
+
+[gh-tracker]: https://github.com/google/styleguide/issues
+[emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
 [ccl]: https://creativecommons.org/licenses/by/3.0/
 [SCM]: https://en.wikipedia.org/wiki/Source_control_management
 [VCS]: https://en.wikipedia.org/wiki/Version_control_system
+
