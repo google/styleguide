@@ -11,6 +11,10 @@ were developed in collaboration with the internal R user community. The rest of
 this document explains Google's primary differences with the Tidyverse guide,
 and why these differences exist.
 
+Google uses the [styler](https://github.com/r-lib/styler) package on every
+checked in file to ensure code consistency and help reviewers focus on more
+important issues.
+
 ## Syntax
 
 ### Naming conventions
