@@ -11,6 +11,7 @@
 <body onload="initStyleGuide();">
 <div id="content">
 <h1>Google HTML/CSS Style Guide</h1>
+<div id="toc" style="background-color: red; padding: 10px; padding-left:15%;border-radius: 30px;">
 <h2 id="Background" class="numbered">Background</h2>
 
 <p>This document defines formatting and style rules for HTML and CSS. It aims at
@@ -18,132 +19,132 @@ improving collaboration, code quality, and enabling supporting infrastructure.
 It applies to raw, working files that use HTML and CSS, including Sass and GSS
 files. Tools are free to obfuscate, minify, and compile as long as the general
 code quality is maintained.</p>
-
+</div>
 <h2 id="General" class="numbered">General</h2>
 
-<h3 id="General_Style_Rules" class="numbered">General Style Rules</h3>
+<h3 id="General_Style_Rules" class="numbered" style="margin-left: 100px;">General Style Rules</h3>
 
-<h4 id="Protocol" class="numbered">Protocol</h4>
+<h4 id="Protocol" style="margin-left: 100px;">Protocol</h4>
 
-<p>Use HTTPS for embedded resources where possible.</p>
+<p style="margin-left: 100px;">Use HTTPS for embedded resources where possible.</p>
 
-<p>Always use HTTPS (<code>https:</code>) for images and other media files, style sheets, and
+<p style="margin-left: 100px;">Always use HTTPS (<code>https:</code>) for images and other media files, style sheets, and
 scripts, unless the respective files are not available over HTTPS.</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended: omits the protocol --&gt;
+<pre style="margin-left: 100px;background-color: black; border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended: omits the protocol --&gt;
 &lt;script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"&gt;&lt;/script&gt;
 
 &lt;!-- Not recommended: uses HTTP --&gt;
 &lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"&gt;&lt;/script&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="margin-left: 100px; background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"&gt;&lt;/script&gt;
 </code></pre>
 
-<pre><code class="language-css bad">/* Not recommended: omits the protocol */
+<pre style="margin-left: 100px; background-color: black; border-radius: 10px; padding: 45px;"><code class="language-css bad">/* Not recommended: omits the protocol */
 @import '//fonts.googleapis.com/css?family=Open+Sans';
 
 /* Not recommended: uses HTTP */
 @import 'http://fonts.googleapis.com/css?family=Open+Sans';
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="margin-left: 100px; background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 @import 'https://fonts.googleapis.com/css?family=Open+Sans';
 </code></pre>
 
-<h3 id="General_Formatting_Rules" class="numbered">General Formatting Rules</h3>
+<h3 id="General_Formatting_Rules" class="numbered" style="margin-left: 100px;">General Formatting Rules</h3>
 
-<h4 id="Indentation" class="numbered">Indentation</h4>
+<h4 id="Indentation" style="margin-left: 100px;">Indentation</h4>
 
-<p>Indent by 2 spaces at a time.</p>
+<p style="margin-left: 100px;">Indent by 2 spaces at a time.</p>
 
-<p>Don’t use tabs or mix tabs and spaces for indentation.</p>
+<p style="margin-left: 100px;">Don’t use tabs or mix tabs and spaces for indentation.</p>
 
-<pre><code class="language-html good">&lt;ul&gt;
+<pre style="margin-left: 100px; background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;ul&gt;
   &lt;li&gt;Fantastic
   &lt;li&gt;Great
 &lt;/ul&gt;
 </code></pre>
 
-<pre><code class="language-css good">.example {
+<pre style="margin-left: 100px;"><code class="language-css good">.example {
   color: blue;
 }
 </code></pre>
 
-<h4 id="Capitalization" class="numbered">Capitalization</h4>
+<h4 id="Capitalization" style="margin-left: 100px;">Capitalization</h4>
 
-<p>Use only lowercase.</p>
+<p style="margin-left: 100px;">Use only lowercase.</p>
 
-<p>All code has to be lowercase: This applies to HTML element names, attributes,
+<p style="margin-left: 100px;">All code has to be lowercase: This applies to HTML element names, attributes,
 attribute values (unless <code>text/CDATA</code>), CSS selectors, properties, and property
 values (with the exception of strings).</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="margin-left: 100px;"><code class="language-html bad" style="background-color: black; border-radius: 10px; padding: 45px;">&lt;!-- Not recommended --&gt;
 &lt;A HREF="/"&gt;Home&lt;/A&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="margin-left: 100px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;img src="google.png" alt="Google"&gt;
 </code></pre>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="margin-left: 100px;"><code class="language-css bad" style="background-color: black; border-radius: 10px; padding: 45px;">/* Not recommended */
 color: #E5E5E5;
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="margin-left: 100px;"><code class="language-css good">/* Recommended */
 color: #e5e5e5;
 </code></pre>
 
-<h4 id="Trailing_Whitespace" class="numbered">Trailing Whitespace</h4>
+<h4 id="Trailing_Whitespace" style="margin-left: 100px;">Trailing Whitespace</h4>
 
-<p>Remove trailing white spaces.</p>
+<p style="margin-left: 100px;">Remove trailing white spaces.</p>
 
-<p>Trailing white spaces are unnecessary and can complicate diffs.</p>
+<p style="margin-left: 100px;">Trailing white spaces are unnecessary and can complicate diffs.</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="margin-left: 100px; background-color: black; border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;p&gt;What?_
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="margin-left: 100px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;p&gt;Yes please.
 </code></pre>
 
-<h3 id="General_Meta_Rules" class="numbered">General Meta Rules</h3>
+<h3 id="General_Meta_Rules" class="numbered" style="margin-left: 100px;">General Meta Rules</h3>
 
-<h4 id="Encoding" class="numbered">Encoding</h4>
+<h4 id="Encoding" style="margin-left: 100px;">Encoding</h4>
 
-<p>Use UTF-8 (no BOM).</p>
+<p style="margin-left: 100px;">Use UTF-8 (no BOM).</p>
 
-<p>Make sure your editor uses UTF-8 as character encoding, without a byte order
+<p style="margin-left: 100px;">Make sure your editor uses UTF-8 as character encoding, without a byte order
 mark.</p>
 
-<p>Specify the encoding in HTML templates and documents via <code>&lt;meta
+<p style="margin-left: 100px;">Specify the encoding in HTML templates and documents via <code>&lt;meta
 charset="utf-8"&gt;</code>. Do not specify the encoding of style sheets as these assume
 UTF-8.</p>
 
 <p>(More on encodings and when and how to specify them can be found in
 <a href="https://www.w3.org/International/tutorials/tutorial-char-enc/">Handling character encodings in HTML and CSS</a>.)</p>
 
-<h4 id="Comments" class="numbered">Comments</h4>
+<h4 id="Comments" style="margin-left: 100px;">Comments</h4>
 
-<p>Explain code as needed, where possible.</p>
+<p style="margin-left: 100px;">Explain code as needed, where possible.</p>
 
-<p>Use comments to explain code: What does it cover, what purpose does it serve,
+<p style="margin-left: 100px;">Use comments to explain code: What does it cover, what purpose does it serve,
 why is respective solution used or preferred?</p>
 
 <p>(This item is optional as it is not deemed a realistic expectation to always
 demand fully documented code. Mileage may vary heavily for HTML and CSS code and
 depends on the project’s complexity.)</p>
 
-<h4 id="Action_Items" class="numbered">Action Items</h4>
+<h4 id="Action_Items" style="margin-left: 100px;">Action Items</h4>
 
-<p>Mark todos and action items with <code>TODO</code>.</p>
+<p style="margin-left: 100px;">Mark todos and action items with <code>TODO</code>.</p>
 
-<p>Highlight todos by using the keyword <code>TODO</code> only, not other common formats like
+<p style="margin-left: 100px;">Highlight todos by using the keyword <code>TODO</code> only, not other common formats like
 <code>@@</code>.</p>
 
-<p>Append action items after a colon as in <code>TODO: action
+<p style="margin-left: 100px;">Append action items after a colon as in <code>TODO: action
 item</code>.</p>
 
 <pre><code class="language-django external good">{# TODO: Revisit centering. #}

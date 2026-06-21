@@ -69,7 +69,7 @@ pre {
 }
 
 pre.prettyprint {
-  padding:6px 10px !important;
+  /* padding:6px 10px !important; */
   border:1px solid #bbb !important;
 }
 

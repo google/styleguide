@@ -433,7 +433,7 @@ pre {
 }
 
 pre.prettyprint {
-  padding: 6px 10px !important;
+  /* padding: 6px 10px !important; */
   border: 1px solid #bbb !important;
 }
 
@@ -463,11 +463,11 @@ pre.badcode {
 
 @media print {
   .str {
-    color: #060;
+    color: rgb(0, 255, 0);
   }
 
   .kwd {
-    color: #006;
+    color: rgb(44, 44, 241);
     font-weight: bold;
   }
 
@@ -482,7 +482,7 @@ pre.badcode {
   }
 
   .lit {
-    color: #044;
+    color: rgb(0, 255, 255);
   }
 
   .pun,
@@ -496,7 +496,7 @@ pre.badcode {
   }
 
   .tag {
-    color: #006;
+    color: rgb(70, 70, 255);
     font-weight: bold;
   }
 
@@ -505,7 +505,9 @@ pre.badcode {
   }
 
   .atv {
-    color: #060;
+    color: rgb(0, 255, 0);
+    font-weight: bold;
+    font-size: 10px;
   }
 
   h1 {
