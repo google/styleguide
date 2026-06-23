@@ -8,13 +8,13 @@
 <link rel="shortcut icon" href="/styleguide/favicon.ico">
 <script src="include/jsguide.js"></script>
 </head>
-<body onload="initStyleGuide();">
+<body onload="initStyleGuide();" style="background-color: black; color: white;">
 <div id="content">
 <h1>Google HTML/CSS Style Guide</h1>
-<div id="toc" style="background-color: red; padding: 10px; padding-left:15%;border-radius: 30px;">
+<div id="toc">
 <h2 id="Background" class="numbered">Background</h2>
 
-<p>This document defines formatting and style rules for HTML and CSS. It aims at
+<p style="margin-left: 100px;">This document defines formatting and style rules for HTML and CSS. It aims at
 improving collaboration, code quality, and enabling supporting infrastructure.
 It applies to raw, working files that use HTML and CSS, including Sass and GSS
 files. Tools are free to obfuscate, minify, and compile as long as the general
@@ -31,7 +31,7 @@ code quality is maintained.</p>
 <p style="margin-left: 100px;">Always use HTTPS (<code>https:</code>) for images and other media files, style sheets, and
 scripts, unless the respective files are not available over HTTPS.</p>
 
-<pre style="margin-left: 100px;background-color: black; border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended: omits the protocol --&gt;
+<pre style="margin-left: 100px;background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended: omits the protocol --&gt;
 &lt;script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"&gt;&lt;/script&gt;
 
 &lt;!-- Not recommended: uses HTTP --&gt;
@@ -42,7 +42,7 @@ scripts, unless the respective files are not available over HTTPS.</p>
 &lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"&gt;&lt;/script&gt;
 </code></pre>
 
-<pre style="margin-left: 100px; background-color: black; border-radius: 10px; padding: 45px;"><code class="language-css bad">/* Not recommended: omits the protocol */
+<pre style="margin-left: 100px; background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-css bad">/* Not recommended: omits the protocol */
 @import '//fonts.googleapis.com/css?family=Open+Sans';
 
 /* Not recommended: uses HTTP */
@@ -67,7 +67,7 @@ scripts, unless the respective files are not available over HTTPS.</p>
 &lt;/ul&gt;
 </code></pre>
 
-<pre style="margin-left: 100px;"><code class="language-css good">.example {
+<pre style="margin-left: 100px; background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">.example {
   color: blue;
 }
 </code></pre>
@@ -80,7 +80,7 @@ scripts, unless the respective files are not available over HTTPS.</p>
 attribute values (unless <code>text/CDATA</code>), CSS selectors, properties, and property
 values (with the exception of strings).</p>
 
-<pre style="margin-left: 100px; background-color: black; border-radius: 10px; padding: 45px;"><code class="language-html bad"">&lt;!-- Not recommended --&gt;
+<pre style="margin-left: 100px; background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad"">&lt;!-- Not recommended --&gt;
 &lt;A HREF="/"&gt;Home&lt;/A&gt;
 </code></pre>
 
@@ -88,7 +88,7 @@ values (with the exception of strings).</p>
 &lt;img src="google.png" alt="Google"&gt;
 </code></pre>
 
-<pre style="margin-left: 100px; background-color: black; border-radius: 10px; padding: 45px;"><code class="language-css bad" style="background-color: black; border-radius: 10px; padding: 45px;">/* Not recommended */
+<pre style="margin-left: 100px; background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-css bad" style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;">/* Not recommended */
 color: #E5E5E5;
 </code></pre>
 
@@ -102,7 +102,7 @@ color: #e5e5e5;
 
 <p style="margin-left: 100px;">Trailing white spaces are unnecessary and can complicate diffs.</p>
 
-<pre style="margin-left: 100px; background-color: black; border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="margin-left: 100px; background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;p&gt;What?_
 </code></pre>
 
@@ -162,7 +162,7 @@ item</code>.</p>
 
 <h3 id="HTML_Style_Rules" class="numbered">HTML Style Rules</h3>
 
-<h4 id="Document_Type" class="numbered">Document Type</h4>
+<h4 id="Document_Type">Document Type</h4>
 
 <p>Use <code>&lt;!doctype html&gt;</code>.</p>
 
@@ -176,7 +176,7 @@ follow the widely-understood, widely-documented behavior for various core HTML
 and CSS constructs, and are likely to cause subtle failures and
 incompatibilities especially when re-using code that expects no-quirks mode.</p>
 
-<h4 id="HTML_Validity" class="numbered">HTML Validity</h4>
+<h4 id="HTML_Validity" >HTML Validity</h4>
 
 <p>Use valid HTML where possible.</p>
 
@@ -191,19 +191,19 @@ to test.</p>
 learning about technical requirements and constraints, and that ensures proper
 HTML usage.</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;title&gt;Test&lt;/title&gt;
 &lt;article&gt;This is only a test.
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;!doctype html&gt;
 &lt;meta charset="utf-8"&gt;
 &lt;title&gt;Test&lt;/title&gt;
 &lt;article&gt;This is only a test.&lt;/article&gt;
 </code></pre>
 
-<h4 id="Semantics" class="numbered">Semantics</h4>
+<h4 id="Semantics">Semantics</h4>
 
 <p>Use HTML according to its purpose.</p>
 
@@ -214,15 +214,15 @@ paragraphs, <code>a</code> elements for anchors, etc.</p>
 <p>Using HTML according to its purpose is important for accessibility, reuse, and
 code efficiency reasons.</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;div onclick="goToRecommendations();"&gt;All recommendations&lt;/div&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;a href="recommendations/"&gt;All recommendations&lt;/a&gt;
 </code></pre>
 
-<h4 id="Multimedia_Fallback" class="numbered">Multimedia Fallback</h4>
+<h4 id="Multimedia_Fallback">Multimedia Fallback</h4>
 
 <p>Provide alternative contents for multimedia.</p>
 
@@ -238,15 +238,15 @@ may have no way of understanding what video or audio contents are about either.<
 whose purpose is purely decorative which you cannot immediately use CSS for, use
 no alternative text, as in <code>alt=""</code>.)</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;img src="spreadsheet.png"&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;img src="spreadsheet.png" alt="Spreadsheet screenshot."&gt;
 </code></pre>
 
-<h4 id="Separation_of_Concerns" class="numbered">Separation of Concerns</h4>
+<h4 id="Separation_of_Concerns">Separation of Concerns</h4>
 
 <p>Separate structure from presentation from behavior.</p>
 
@@ -265,7 +265,7 @@ sheets and scripts as possible from documents and templates.</p>
 maintenance reasons. It is always more expensive to change HTML documents and
 templates than it is to update style sheets and scripts.</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;!doctype html&gt;
 &lt;title&gt;HTML sucks&lt;/title&gt;
 &lt;link rel="stylesheet" href="base.css" media="screen"&gt;
@@ -278,7 +278,7 @@ templates than it is to update style sheets and scripts.</p>
   my website without doing everything all over again!&lt;/center&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;!doctype html&gt;
 &lt;title&gt;My first CSS-only redesign&lt;/title&gt;
 &lt;link rel="stylesheet" href="default.css"&gt;
@@ -289,7 +289,7 @@ templates than it is to update style sheets and scripts.</p>
 &lt;p&gt;It’s awesome!
 </code></pre>
 
-<h4 id="Entity_References" class="numbered">Entity References</h4>
+<h4 id="Entity_References" >Entity References</h4>
 
 <p>Do not use entity references.</p>
 
@@ -300,15 +300,15 @@ well as among teams.</p>
 <p>The only exceptions apply to characters with special meaning in HTML (like <code>&lt;</code>
 and <code>&amp;</code>) as well as control or “invisible” characters (like no-break spaces).</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 The currency symbol for the Euro is &amp;ldquo;&amp;eur;&amp;rdquo;.
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 The currency symbol for the Euro is “€”.
 </code></pre>
 
-<h4 id="Optional_Tags" class="numbered">Optional Tags</h4>
+<h4 id="Optional_Tags">Optional Tags</h4>
 
 <p>Omit optional tags (optional).</p>
 
@@ -322,7 +322,7 @@ as it’s significantly different from what web developers are typically taught.
 For consistency and simplicity reasons it’s best served omitting all optional
 tags, not just a selection.)</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;!doctype html&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -334,13 +334,13 @@ tags, not just a selection.)</p>
 &lt;/html&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;!doctype html&gt;
 &lt;title&gt;Saving money, saving bytes&lt;/title&gt;
 &lt;p&gt;Qed.
 </code></pre>
 
-<h4 id="type_Attributes" class="numbered"><code>type</code> Attributes</h4>
+<h4 id="type_Attributes"><code>type</code> Attributes</h4>
 
 <p>Omit <code>type</code> attributes for style sheets and scripts.</p>
 
@@ -353,25 +353,25 @@ and
 <a href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type"><code>text/javascript</code></a>
 as defaults. This can be safely done even for older browsers.</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;link rel="stylesheet" href="https://www.google.com/css/maia.css"
     type="text/css"&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;link rel="stylesheet" href="https://www.google.com/css/maia.css"&gt;
 </code></pre>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;script src="https://www.google.com/js/gweb/analytics/autotrack.js"
     type="text/javascript"&gt;&lt;/script&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;script src="https://www.google.com/js/gweb/analytics/autotrack.js"&gt;&lt;/script&gt;
 </code></pre>
 
-<h4 id="id_Attributes" class="numbered"><code>id</code> Attributes</h4>
+<h4 id="id_Attributes" ><code>id</code> Attributes</h4>
 
 <p>Avoid unnecessary <code>id</code> attributes.</p>
 
@@ -387,11 +387,11 @@ which may cause unexpected behavior. While <code>id</code> attribute values cont
 hyphen are still available as property names, these cannot be referenced as
 global JavaScript variables.</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended: `window.userProfile` will resolve to reference the &lt;div&gt; node --&gt;
+<pre style="background-color: rgb(255, 200, 200); border-radius: 10px; padding: 45px;"><code class="language-html bad">&lt;!-- Not recommended: `window.userProfile` will resolve to reference the &lt;div&gt; node --&gt;
 &lt;div id="userProfile"&gt;&lt;/div&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended: `id` attribute is required and its value includes a hyphen --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended: `id` attribute is required and its value includes a hyphen --&gt;
 &lt;div aria-describedby="user-profile"&gt;
   …
   &lt;div id="user-profile"&gt;&lt;/div&gt;
@@ -401,7 +401,7 @@ global JavaScript variables.</p>
 
 <h3 id="HTML_Formatting_Rules" class="numbered">HTML Formatting Rules</h3>
 
-<h4 id="General_Formatting" class="numbered">General Formatting</h4>
+<h4 id="General_Formatting">General Formatting</h4>
 
 <p>Use a new line for every block, list, or table element, and indent every such
 child element.</p>
@@ -416,19 +416,19 @@ on a new line.</p>
 put all <code>li</code> elements in one line. A linter is encouraged to throw a warning
 instead of an error.)</p>
 
-<pre><code class="language-html good">&lt;blockquote&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;blockquote&gt;
   &lt;p&gt;&lt;em&gt;Space&lt;/em&gt;, the final frontier.&lt;/p&gt;
 &lt;/blockquote&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;ul&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;" ><code class="language-html good">&lt;ul&gt;
   &lt;li&gt;Moe
   &lt;li&gt;Larry
   &lt;li&gt;Curly
 &lt;/ul&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;table&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;table&gt;
   &lt;thead&gt;
     &lt;tr&gt;
       &lt;th scope="col"&gt;Income
@@ -440,7 +440,7 @@ instead of an error.)</p>
 &lt;/table&gt;
 </code></pre>
 
-<h4 id="HTML_Line-Wrapping" class="numbered">HTML Line-Wrapping</h4>
+<h4 id="HTML_Line-Wrapping" >HTML Line-Wrapping</h4>
 
 <p>Break long lines (optional).</p>
 
@@ -451,7 +451,7 @@ wrapping long lines if it significantly improves readability.</p>
 wrapped attributes from child elements. Lines should be wrapped consistently
 within a project, ideally enforced by automated code formatting tools.</p>
 
-<pre><code class="language-html good">&lt;button
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;" ><code class="language-html good">&lt;button
   mat-icon-button
   color="primary"
   class="menu-button"
@@ -461,13 +461,13 @@ within a project, ideally enforced by automated code formatting tools.</p>
 &lt;/button&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;button mat-icon-button color="primary" class="menu-button"
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;button mat-icon-button color="primary" class="menu-button"
     (click)="openMenu()"&gt;
   &lt;mat-icon&gt;menu&lt;/mat-icon&gt;
 &lt;/button&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;button
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;button
     mat-icon-button
     color="primary"
     class="menu-button"
@@ -476,7 +476,7 @@ within a project, ideally enforced by automated code formatting tools.</p>
 &lt;/button&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;button mat-icon-button
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;button mat-icon-button
         color="primary"
         class="menu-button"
         (click)="openMenu()"&gt;
@@ -484,18 +484,18 @@ within a project, ideally enforced by automated code formatting tools.</p>
 &lt;/button&gt;
 </code></pre>
 
-<h4 id="HTML_Quotation_Marks" class="numbered">HTML Quotation Marks</h4>
+<h4 id="HTML_Quotation_Marks" >HTML Quotation Marks</h4>
 
 <p>When quoting attributes values, use double quotation marks.</p>
 
 <p>Use double (<code>""</code>) rather than single quotation marks (<code>''</code>) around attribute
 values.</p>
 
-<pre><code class="language-html bad">&lt;!-- Not recommended --&gt;
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-html bad">&lt;!-- Not recommended --&gt;
 &lt;a class='maia-button maia-button-secondary'&gt;Sign in&lt;/a&gt;
 </code></pre>
 
-<pre><code class="language-html good">&lt;!-- Recommended --&gt;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-html good">&lt;!-- Recommended --&gt;
 &lt;a class="maia-button maia-button-secondary"&gt;Sign in&lt;/a&gt;
 </code></pre>
 
@@ -503,7 +503,7 @@ values.</p>
 
 <h3 id="CSS_Style_Rules" class="numbered">CSS Style Rules</h3>
 
-<h4 id="CSS_Validity" class="numbered">CSS Validity</h4>
+<h4 id="CSS_Validity">CSS Validity</h4>
 
 <p>Use valid CSS where possible.</p>
 
@@ -518,7 +518,7 @@ to test.</p>
 CSS code that may not have any effect and can be removed, and that ensures
 proper CSS usage.</p>
 
-<h4 id="ID_and_Class_Naming" class="numbered">Class Naming</h4>
+<h4 id="ID_and_Class_Naming">Class Naming</h4>
 
 <p>Use meaningful or generic class names.</p>
 
@@ -534,7 +534,7 @@ meaning different from their siblings. They are typically needed as “helpers.�
 <p>Using functional or generic names reduces the probability of unnecessary
 document or template changes.</p>
 
-<pre><code class="language-css bad">/* Not recommended: meaningless */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended: meaningless */
 .yee-1901 {}
 
 /* Not recommended: presentational */
@@ -542,7 +542,7 @@ document or template changes.</p>
 .clear {}
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended: specific */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended: specific */
 .gallery {}
 .login {}
 .video {}
@@ -552,7 +552,7 @@ document or template changes.</p>
 .alt {}
 </code></pre>
 
-<h4 id="ID_and_Class_Name_Style" class="numbered">Class Name Style</h4>
+<h4 id="ID_and_Class_Name_Style" >Class Name Style</h4>
 
 <p>Use class names that are as short as possible but as long as necessary.</p>
 
@@ -561,17 +561,17 @@ document or template changes.</p>
 <p>Using class names this way contributes to acceptable levels of understandability
 and code efficiency.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 .navigation {}
 .atr {}
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 .nav {}
 .author {}
 </code></pre>
 
-<h4 id="ID_and_Class_Name_Delimiters" class="numbered">Class Name Delimiters</h4>
+<h4 id="ID_and_Class_Name_Delimiters" >Class Name Delimiters</h4>
 
 <p>Separate words in class names by a hyphen.</p>
 
@@ -579,14 +579,14 @@ and code efficiency.</p>
 (including none at all) other than hyphens, in order to improve understanding
 and scannability.</p>
 
-<pre><code class="language-css bad">/* Not recommended: does not separate the words “demo” and “image” */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended: does not separate the words “demo” and “image” */
 .demoimage {}
 
 /* Not recommended: uses underscore instead of hyphen */
 .error_status {}
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 .video-id {}
 .ads-sample {}
 </code></pre>
@@ -602,11 +602,11 @@ identifiers followed by a dash.</p>
 <p>Using namespaces helps preventing naming conflicts and can make maintenance
 easier, for example in search and replace operations.</p>
 
-<pre><code class="language-css good">.adw-help {} /* AdWords */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">.adw-help {} /* AdWords */
 .maia-note {} /* Maia */
 </code></pre>
 
-<h4 id="Type_Selectors" class="numbered">Type Selectors</h4>
+<h4 id="Type_Selectors" >Type Selectors</h4>
 
 <p>Avoid qualifying class names with type selectors.</p>
 
@@ -616,17 +616,17 @@ conjunction with classes.</p>
 <p>Avoiding unnecessary ancestor selectors is useful for
 <a href="http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/">performance reasons</a>.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 ul.example {}
 div.error {}
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 .example {}
 .error {}
 </code></pre>
 
-<h4 id="ID_Selectors" class="numbered">ID Selectors</h4>
+<h4 id="ID_Selectors" >ID Selectors</h4>
 
 <p>Avoid ID selectors.</p>
 
@@ -634,15 +634,15 @@ div.error {}
 difficult to guarantee when a page contains many components worked on by many
 different engineers. Class selectors should be preferred in all situations.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 #example {}
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 .example {}
 </code></pre>
 
-<h4 id="Shorthand_Properties" class="numbered">Shorthand Properties</h4>
+<h4 id="Shorthand_Properties" >Shorthand Properties</h4>
 
 <p>Use shorthand properties where possible.</p>
 
@@ -653,7 +653,7 @@ where only one value is explicitly set.</p>
 
 <p>Using shorthand properties is useful for code efficiency and understandability.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 border-top-style: none;
 font-family: palatino, georgia, serif;
 font-size: 100%;
@@ -664,49 +664,49 @@ padding-right: 1em;
 padding-top: 0;
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 border-top: 0;
 font: 100%/1.6 palatino, georgia, serif;
 padding: 0 1em 2em;
 </code></pre>
 
-<h4 id="0_and_Units" class="numbered">0 and Units</h4>
+<h4 id="0_and_Units" >0 and Units</h4>
 
 <p>Omit unit specification after “0” values, unless required.</p>
 
 <p>Do not use units after <code>0</code> values unless they are required.</p>
 
-<pre><code class="language-css good">flex: 0px; /* This flex-basis component requires a unit. */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">flex: 0px; /* This flex-basis component requires a unit. */
 flex: 1 1 0px; /* Not ambiguous without the unit, but needed in IE11. */
 margin: 0;
 padding: 0;
 </code></pre>
 
-<h4 id="Leading_0s" class="numbered">Leading 0s</h4>
+<h4 id="Leading_0s" >Leading 0s</h4>
 
 <p>Always include leading “0”s in values.</p>
 
 <p>Put <code>0</code>s in front of values or lengths between -1 and 1.</p>
 
-<pre><code class="language-css good">font-size: 0.8em;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">font-size: 0.8em;
 </code></pre>
 
-<h4 id="Hexadecimal_Notation" class="numbered">Hexadecimal Notation</h4>
+<h4 id="Hexadecimal_Notation" >Hexadecimal Notation</h4>
 
 <p>Use 3 character hexadecimal notation where possible.</p>
 
 <p>For color values that permit it, 3 character hexadecimal notation is shorter and
 more succinct.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 color: #eebbcc;
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 color: #ebc;
 </code></pre>
 
-<h4 id="Important_Declarations" class="numbered">Important Declarations</h4>
+<h4 id="Important_Declarations" >Important Declarations</h4>
 
 <p>Avoid using <code>!important</code> declarations.</p>
 
@@ -715,19 +715,19 @@ reason about and compose styles. Use
 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity">selector specificity</a>
 to override properties instead.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 .example {
   font-weight: bold !important;
 }
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 .example {
   font-weight: bold;
 }
 </code></pre>
 
-<h4 id="Hacks" class="numbered">Hacks</h4>
+<h4 id="Hacks" >Hacks</h4>
 
 <p>Avoid user agent detection as well as CSS “hacks”—try a different approach
 first.</p>
@@ -743,7 +743,7 @@ frequently.</p>
 
 <h3 id="CSS_Formatting_Rules" class="numbered">CSS Formatting Rules</h3>
 
-<h4 id="Declaration_Order" class="numbered">Declaration Order</h4>
+<h4 id="Declaration_Order" >Declaration Order</h4>
 
 <p>Alphabetize declarations (optional).</p>
 
@@ -756,17 +756,17 @@ learn, remember, and manually maintain.</p>
 vendor-specific prefixes for a certain CSS property should be kept sorted (e.g.
 -moz prefix comes before -webkit).</p>
 
-<pre><code class="language-css good">background: fuchsia;
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">background: fuchsia;
 border: 1px solid;
 -moz-border-radius: 4px;
 -webkit-border-radius: 4px;
 border-radius: 4px;
-color: black;
+color: rgb(255, 200, 200);
 text-align: center;
 text-indent: 2em;
 </code></pre>
 
-<h4 id="Block_Content_Indentation" class="numbered">Block Content Indentation</h4>
+<h4 id="Block_Content_Indentation" >Block Content Indentation</h4>
 
 <p>Indent all block content.</p>
 
@@ -775,7 +775,7 @@ text-indent: 2em;
 that is rules within rules as well as declarations, so to reflect hierarchy and
 improve understanding.</p>
 
-<pre><code class="language-css good">@media screen, projection {
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">@media screen, projection {
 
   html {
     background: #fff;
@@ -785,47 +785,47 @@ improve understanding.</p>
 }
 </code></pre>
 
-<h4 id="Declaration_Stops" class="numbered">Declaration Stops</h4>
+<h4 id="Declaration_Stops" >Declaration Stops</h4>
 
 <p>Use a semicolon after every declaration.</p>
 
 <p>End every declaration with a semicolon for consistency and extensibility
 reasons.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 .test {
   display: block;
   height: 100px
 }
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 .test {
   display: block;
   height: 100px;
 }
 </code></pre>
 
-<h4 id="Property_Name_Stops" class="numbered">Property Name Stops</h4>
+<h4 id="Property_Name_Stops" >Property Name Stops</h4>
 
 <p>Use a space after a property name’s colon.</p>
 
 <p>Always use a single space between property and value (but no space between
 property and colon) for consistency reasons.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 h3 {
   font-weight:bold;
 }
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 h3 {
   font-weight: bold;
 }
 </code></pre>
 
-<h4 id="Declaration_Block_Separation" class="numbered">Declaration Block Separation</h4>
+<h4 id="Declaration_Block_Separation" >Declaration Block Separation</h4>
 
 <p>Use a space between the last selector and the declaration block.</p>
 
@@ -836,7 +836,7 @@ begins the
 <p>The opening brace should be on the same line as the last selector in a given
 rule.</p>
 
-<pre><code class="language-css bad">/* Not recommended: missing space */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended: missing space */
 .video{
   margin-top: 1em;
 }
@@ -848,25 +848,25 @@ rule.</p>
 }
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 .video {
   margin-top: 1em;
 }
 </code></pre>
 
-<h4 id="Selector_and_Declaration_Separation" class="numbered">Selector and Declaration Separation</h4>
+<h4 id="Selector_and_Declaration_Separation" >Selector and Declaration Separation</h4>
 
 <p>Separate selectors and declarations by new lines.</p>
 
 <p>Always start a new line for each selector and declaration.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 a:focus, a:active {
   position: relative; top: 1px;
 }
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 h1,
 h2,
 h3 {
@@ -875,13 +875,13 @@ h3 {
 }
 </code></pre>
 
-<h4 id="Rule_Separation" class="numbered">Rule Separation</h4>
+<h4 id="Rule_Separation" >Rule Separation</h4>
 
 <p>Separate rules by new lines.</p>
 
 <p>Always put a blank line (two line breaks) between rules.</p>
 
-<pre><code class="language-css good">html {
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">html {
   background: #fff;
 }
 
@@ -891,7 +891,7 @@ body {
 }
 </code></pre>
 
-<h4 id="CSS_Quotation_Marks" class="numbered">CSS Quotation Marks</h4>
+<h4 id="CSS_Quotation_Marks" >CSS Quotation Marks</h4>
 
 <p>Use single (<code>''</code>) rather than double (<code>""</code>) quotation marks for attribute
 selectors and property values.</p>
@@ -901,7 +901,7 @@ selectors and property values.</p>
 <p>Exception: If you do need to use the <code>@charset</code> rule, use double quotation
 marks—<a href="https://www.w3.org/TR/CSS21/syndata.html#charset">single quotation marks are not permitted</a>.</p>
 
-<pre><code class="language-css bad">/* Not recommended */
+<pre style="background-color: rgba(255, 200, 200); border-radius: 10px; padding: 45px;" ><code class="language-css bad">/* Not recommended */
 @import url("https://www.google.com/css/maia.css");
 
 html {
@@ -909,7 +909,7 @@ html {
 }
 </code></pre>
 
-<pre><code class="language-css good">/* Recommended */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Recommended */
 @import url(https://www.google.com/css/maia.css);
 
 html {
@@ -917,16 +917,16 @@ html {
 }
 </code></pre>
 
-<h3 id="CSS_Meta_Rules" class="numbered">CSS Meta Rules</h3>
+<h3 id="CSS_Meta_Rules" >CSS Meta Rules</h3>
 
-<h4 id="Section_Comments" class="numbered">Section Comments</h4>
+<h4 id="Section_Comments" >Section Comments</h4>
 
 <p>Group sections by a section comment (optional).</p>
 
 <p>If possible, group style sheet sections together by using comments. Separate
 sections with new lines.</p>
 
-<pre><code class="language-css good">/* Header */
+<pre style="background-color: rgb(177, 243, 177); border-radius: 10px; padding: 45px;"><code class="language-css good">/* Header */
 
 .adw-header {}
 
