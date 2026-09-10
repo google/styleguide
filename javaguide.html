@@ -858,19 +858,19 @@ per line). These line breaks do not constitute line-wrapping (Section
 4.5, <a href="#s4.5-line-wrapping">Line-wrapping</a>), so the indentation level is not
 increased. Examples:</p>
 
-<pre class="prettyprint lang-java">/** This is a class. */
+<pre class="prettyprint lang-java">/// This is a class.
 @Deprecated
 @CheckReturnValue
 public final class Frozzler { ... }
 </pre>
-<pre class="prettyprint lang-java">/** This is a package. */
+<pre class="prettyprint lang-java">/// This is a package.
 @Deprecated
 @CheckReturnValue
 package com.example.frozzler;
 </pre>
-<pre class="prettyprint lang-java">/** This is a module. */
+<pre class="prettyprint lang-java">/// This is a module.
 @Deprecated
-@SuppressWarnings("CheckReturnValue") // TODO: b/123 - Fix existing CRV violations.
+@SuppressWarnings("CheckReturnValue") // TODO(b/123): Fix existing CRV violations.
 module com.example.frozzler { ... }
 </pre>
 
@@ -1289,7 +1289,15 @@ is <a href="https://openjdk.org/jeps/421"><em>scheduled for removal</em></a>.</p
 
 <h4 id="s7.1.1-javadoc-multi-line">7.1.1 General form</h4>
 
-<p>The <em>basic</em> formatting of Javadoc blocks is as seen in this example:</p>
+<p>Both Markdown Javadoc and Traditional Javadoc are acceptable. Markdown Javadoc looks like this
+example:</p>
+
+<pre class="prettyprint lang-java">/// Javadoc text is written here,
+/// wrapped normally...
+public int method(String p1) { ... }
+</pre>
+
+<p>The <em>basic</em> formatting of Traditional Javadoc blocks is as seen in this example:</p>
 
 <pre class="prettyprint lang-java">/**
  * Multiple lines of Javadoc text are written here,
@@ -1309,11 +1317,15 @@ applies when there are no block tags such as <code>@param</code>.</p>
 
 <h4 id="s7.1.2-javadoc-paragraphs">7.1.2 Paragraphs</h4>
 
-<p>One blank line—that is, a line containing only the aligned leading asterisk
-(<code>*</code>)—appears between paragraphs, and before the group of block tags if present.
-Each paragraph except the first has <code>&lt;p&gt;</code> immediately before the first word, with
-no space after it. HTML tags for other block-level elements, such as <code>&lt;ul&gt;</code> or
-<code>&lt;table&gt;</code>, are <em>not</em> preceded with <code>&lt;p&gt;</code>.</p>
+<p>With Traditional Javadoc, one blank line—that is, a line containing only the aligned
+leading asterisk (<code>*</code>)—appears between paragraphs, and before the group of
+block tags if present. Each paragraph except the first has <code>&lt;p&gt;</code> immediately
+before the first word, with no space after it. HTML tags for other block-level elements, such
+as <code>&lt;ul&gt;</code> or <code>&lt;table&gt;</code>, are <em>not</em> preceded with
+<code>&lt;p&gt;</code>.</p>
+
+<p>With Markdown Javadoc, paragraphs are separated as usual for Markdown, by a line that is blank
+apart from the leading <code>///</code>. No <code>&lt;p&gt;</code> is needed.</p>
 
 <a id="s7.1.3-javadoc-at-clauses"></a>
 
@@ -1322,7 +1334,9 @@ no space after it. HTML tags for other block-level elements, such as <code>&lt;u
 <p>Any of the standard "block tags" that are used appear in the order <code>@param</code>,
 <code>@return</code>, <code>@throws</code>, <code>@deprecated</code>, and these four types never
 appear with an empty description. When a block tag doesn't fit on a single line, continuation lines
-are indented four (or more) spaces from the position of the <code>@</code>.
+are indented four (or more) spaces from the position of the <code>@</code> for Traditional Javadoc,
+and exactly two spaces for Markdown Javadoc. (A four-space indentation in Markdown is interpreted as
+an indented code block in some contexts.)
 </p>
 
 <h3 id="s7.2-summary-fragment">7.2 The summary fragment</h3>
@@ -1332,16 +1346,16 @@ fragment is very important: it is the only part of the text that appears in cert
 class and method indexes.</p>
 
 <p>This is a fragment—a noun phrase or verb phrase, not a complete sentence. It does
-<strong>not</strong> begin with <code class="badcode">A {@code Foo} is a...</code>, or
+<strong>not</strong> begin with <code class="badcode">A `Foo` is a...</code>, or
 <code class="badcode">This method returns...</code>, nor does it form a complete imperative sentence
 like <code class="badcode">Save the record.</code>. However, the fragment is capitalized and
 punctuated as if it were a complete sentence.</p>
 
 <p class="tip"><strong>Tip:</strong> A common mistake is to write simple Javadoc in the form
-<code class="badcode prettyprint lang-java">/** @return the customer ID */</code>. This is
+<code class="badcode prettyprint lang-java">/// @return the customer ID</code>. This is
 incorrect, and should be changed to
-<code class="prettyprint lang-java">/** Returns the customer ID. */</code> or
-<code class="prettyprint lang-java">/** {@return the customer ID} */</code>.</p>
+<code class="prettyprint lang-java">/// Returns the customer ID.</code> or
+<code class="prettyprint lang-java">/// {@return the customer ID}</code>.</p>
 
 <a id="s7.3.3-javadoc-optional"></a>
 <h3 id="s7.3-javadoc-where-required">7.3 Where Javadoc is used</h3>
@@ -1360,7 +1374,7 @@ class is visible; and a record component is visible if its containing record is 
 <code class="prettyprint lang-java">getFoo()</code> method, <em>if</em> there <em>really and
 truly</em> is nothing else worthwhile to say but "the foo".</p>
 
-<p class="note"><strong>Important:</strong> it is not appropriate to cite this exception to justify
+<p class="note important"><strong>Important:</strong> it is not appropriate to cite this exception to justify
 omitting relevant information that a typical reader might need to know. For example, for a record
 component named <code class="prettyprint lang-java">canonicalName</code>, don't omit its
 documentation (with the rationale that it would say only
@@ -1380,7 +1394,8 @@ no idea what the term "canonical name" means!</p>
 <p>Other classes, members, and record components have Javadoc <em>as needed or desired</em>.
 
 </p><p>Whenever an implementation comment would be used to define the overall purpose or behavior of a
-class or member, that comment is written as Javadoc instead (using <code>/**</code>).</p>
+class or member, that comment is written as Javadoc instead (using <code>///</code> or
+<code>/**</code>).</p>
 
 <p>Non-required Javadoc is not strictly required to follow the formatting rules of Sections
 7.1.1, 7.1.2, 7.1.3, and 7.2, though it is of course recommended.</p>
