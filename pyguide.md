@@ -278,15 +278,12 @@ package twice.
 <a id="imports-exemptions"></a>
 ##### 2.2.4.1 Exemptions 
 
-Exemptions from this rule:
+Symbols from the following modules, used to support static analysis and type
+checking, are exempt from this rule:
 
-*   Symbols from the following modules are used to support static analysis and
-    type checking:
-    *   [`typing` module](#typing-imports)
-    *   [`collections.abc` module](#typing-imports)
-    *   [`typing_extensions` module](https://github.com/python/typing_extensions/blob/main/README.md)
-*   Redirects from the
-    [six.moves module](https://six.readthedocs.io/#module-six.moves).
+*   [`typing` module](#typing-imports)
+*   [`collections.abc` module](#typing-imports)
+*   [`typing_extensions` module](https://github.com/python/typing_extensions/blob/main/README.md)
 
 <a id="s2.3-packages"></a>
 <a id="23-packages"></a>
@@ -2022,11 +2019,14 @@ Typical usage example:
 <a id="test-docs"></a>
 ##### 3.8.2.1 Test modules 
 
-Module-level docstrings for test files are not required. They should be included
-only when there is additional information that can be provided.
+Test modules do not require module level docstrings. Class docstrings are not
+required on subclasses of `unittest.TestCase` and method docstrings are not
+required on `test_` methods in subclasses of `unittest.TestCase`. A docstring
+that only repeats class or method name should be omitted.
 
-Examples include some specifics on how the test should be run, an explanation of
-an unusual setup pattern, dependency on the external environment, and so on.
+Docstrings should be included when they provide additional information, for
+example, providing specifics on how the test should be run or explaining an
+unusual setup pattern or external dependency.
 
 ```python
 """This blaze test uses golden files.
@@ -2041,6 +2041,13 @@ Docstrings that do not provide any new information should not be used.
 
 ```python
 """Tests for foo.bar."""
+```
+
+or
+
+```python
+  def test_foo_is_barred(self):
+    """Tests that bar is applied to foo."""
 ```
 
 <a id="s3.8.3-functions-and-methods"></a>
@@ -2197,6 +2204,28 @@ def fetch_smalltable_rows(
     """
 ```
 
+A decorated function's docstring must specify the function's behavior after the
+decorator has been applied to it, as that is the behavior its callers will
+observe.
+
+```python
+@contextlib.contextmanager
+def read_from_remote_filesystem(url: str) -> Iterator[RemoteFile]:
+    """Open a file for reading from a remote filesystem.
+
+    Args:
+      url: The address of the remote file.
+
+    Returns:
+      A context manager providing a reference to a remote file.
+    """
+    reader = remote_file_reader(url)
+    try:
+        yield reader
+    finally:
+        reader.close()
+```
+
 <a id="s3.8.3.1-overridden-methods"></a>
 
 <a id="overridden-method-docs"></a>
@@ -2204,14 +2233,14 @@ def fetch_smalltable_rows(
 
 A method that overrides a method from a base class does not need a docstring if
 it is explicitly decorated with
-[`@override`](https://typing-extensions.readthedocs.io/en/latest/#override)
-(from `typing_extensions` or `typing` modules), unless the overriding method's
-behavior materially refines the base method's contract, or details need to be
-provided (e.g., documenting additional side effects), in which case a docstring
-with at least those differences is required on the overriding method.
+[`@override`](https://typing.python.org/en/latest/spec/class-compat.html#override),
+unless the overriding method's behavior materially refines the base method's
+contract, or details need to be provided (e.g., documenting additional side
+effects), in which case a docstring with at least those differences is required
+on the overriding method.
 
 ```python
-from typing_extensions import override
+from typing import override
 
 class Parent:
   def do_something(self):
@@ -2305,6 +2334,9 @@ class CheeseShopAddress:
 class OutOfCheeseError(Exception):
   """Raised when no more cheese is available."""
 ```
+
+If a class is decorated, its docstrings must specify the behavior of the class
+after the decorator has been applied.
 
 <a id="s3.8.5-block-and-inline-comments"></a>
 <a id="comments-in-block-and-inline"></a>
@@ -2913,6 +2945,8 @@ Always use a `.py` filename extension. Never use dashes.
 <a id="naming-conventions"></a>
 #### 3.16.2 Naming Conventions 
 
+-   In general, follow [PEP 8 naming conventions][PEP-8-naming-conventions].
+
 -   "Internal" means internal to a module, or protected or private within a
     class.
 
@@ -2936,11 +2970,28 @@ Always use a `.py` filename extension. Never use dashes.
     a class. ("wait -- did I write `import StringIO` or `from StringIO import
     StringIO`?")
 
+    -   Note that [PEP 8 says][PEP-8-acronyms]: "When using acronyms in
+        CapWords, capitalize all the letters of the acronym. Thus
+        HTTPServerError is better than HttpServerError."
+
 -   New *unit test* files follow PEP 8 compliant lower\_with\_under method
     names, for example, `test_<method_under_test>_<state>`. For consistency(\*)
     with legacy modules that follow CapWords function names, underscores may
     appear in method names starting with `test` to separate logical components
     of the name. One possible pattern is `test<MethodUnderTest>_<state>`.
+
+[PEP-8-naming-conventions]: https://peps.python.org/pep-0008/#naming-conventions
+[PEP-8-acronyms]: https://peps.python.org/pep-0008/#descriptive-naming-styles
+
+<a id="naming-exemptions"></a>
+##### 3.16.2.1 Exemptions 
+
+The following exemptions apply to the general naming conventions above:
+
+-   When Python code is tightly coupled with an external or non-Python codebase,
+    such as foreign function interfaces (FFIs) to C++, consistency with the
+    other codebase may warrant following a different convention
+    ([Consistency](#consistency)).
 
 <a id="s3.16.3-file-naming"></a>
 <a id="3163-file-naming"></a>
@@ -3052,7 +3103,7 @@ When using names based on established notation:
 1.  Cite the source of all naming conventions, preferably with a hyperlink to
     academic resource itself, in a comment or docstring. If the source is not
     accessible, clearly document the naming conventions.
-2.  Prefer PEP8-compliant `descriptive_names` for public APIs, which are much
+2.  Prefer PEP 8-compliant `descriptive_names` for public APIs, which are much
     more likely to be encountered out of context.
 3.  Use a narrowly-scoped `pylint: disable=invalid-name` directive to silence
     warnings. For just a few variables, use the directive as an endline comment
@@ -3365,16 +3416,34 @@ def implicit_optional(a: str = None) -> str:
 <a id="type-aliases"></a>
 #### 3.19.6 Type Aliases 
 
-You can declare aliases of complex types. The name of an alias should be
-CapWorded. If the alias is used only in this module, it should be \_Private.
+You can declare aliases of complex types.
 
-Note that the `: TypeAlias` annotation is only supported in versions 3.10+.
+*   The name of an alias should be CapWorded. If the alias is used only in this
+    module, it should be \_Private.
+*   The alias should be type-annotated as `typing.TypeAlias`, to distinguish it
+    from a non-type global variable.
+*   Do not use type aliases as a substitute for the `from module import symbol`
+    idiom, which is [not allowed](#imports).
 
 ```python
+Yes:
 from typing import TypeAlias
 
 _LossAndGradient: TypeAlias = tuple[tf.Tensor, tf.Tensor]
 ComplexTFMap: TypeAlias = Mapping[str, _LossAndGradient]
+```
+
+```python
+No:
+import immutabledict
+
+immutabledict = immutabledict.immutabledict
+```
+
+```python
+# Acceptable for convenience (provided the alias is not used in a public API,
+# such as a public function's signature, of this module).
+_ShortName: TypeAlias = other_module.SignificantlyInconvenientlyLongName
 ```
 
 <a id="s3.19.7-ignoring-types"></a>
