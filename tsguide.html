@@ -1562,7 +1562,7 @@ const numbers = ['11', '5', '10'].map(parseInt);
 the named callback.</p>
 
 <pre><code class="language-ts good">// GOOD: Arguments are explicitly passed to the callback
-const numbers = ['11', '5', '3'].map((n) =&gt; parseInt(n));
+const numbers = ['11', '5', '3'].map((n) =&gt; parseInt(n, 10));
 // &gt; [11, 5, 3]
 
 // GOOD: Function is locally defined and is designed to be used as a callback
