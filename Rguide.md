@@ -18,7 +18,7 @@ and why these differences exist.
 Google prefers identifying functions with `BigCamelCase` to clearly distinguish
 them from other objects.
 
-```
+```r
 # Good
 DoNothing <- function() {
   return(invisible(NULL))
@@ -28,7 +28,7 @@ DoNothing <- function() {
 The names of private functions should begin with a dot. This helps communicate
 both the origin of the function and its intended use.
 
-```
+```r
 # Good
 .DoNothingPrivately <- function() {
   return(invisible(NULL))
@@ -48,7 +48,7 @@ The possibilities for creating errors when using `attach()` are numerous.
 
 We do not support using right-hand assignment.
 
-```
+```r
 # Bad
 iris %>%
   dplyr::summarize(max_petal = max(Petal.Width)) -> results
@@ -64,7 +64,7 @@ lines).
 Do not rely on R's implicit return feature. It is better to be clear about your
 intent to `return()` an object.
 
-```
+```r
 # Good
 AddValues <- function(x, y) {
   return(x + y)
@@ -80,7 +80,7 @@ AddValues <- function(x, y) {
 
 Users should explicitly qualify namespaces for all external functions.
 
-```
+```r
 # Good
 purrr::map()
 ```

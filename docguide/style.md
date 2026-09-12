@@ -502,7 +502,7 @@ $ bazel run :target -- --flag --foo=longlonglonglonglongvalue \
 If you need a code block within a list, make sure to indent it so as to not
 break the list:
 
-```markdown
+````markdown
 *   Bullet.
 
     ```c++
@@ -510,7 +510,7 @@ break the list:
     ```
 
 *   Next bullet.
-```
+````
 
 You can also create a nested code block with 4 spaces. Simply indent 4
 additional spaces from the list indentation:
