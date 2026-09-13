@@ -76,7 +76,7 @@ primarily optimizing for Google's internal needs.
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
 [cpp]: https://google.github.io/styleguide/cppguide.html
-[csharp]: https://google.github.io/styleguide/csharp-style.html
+[csharp]: csharp-style.md
 [swift]: https://google.github.io/swift/
 [objc]: objcguide.md
 [gh-tracker]: https://github.com/google/styleguide/issues
@@ -84,12 +84,12 @@ primarily optimizing for Google's internal needs.
 [java]: https://google.github.io/styleguide/javaguide.html
 [json]: https://google.github.io/styleguide/jsoncstyleguide.xml
 [kotlin]: https://developer.android.com/kotlin/style-guide
-[py]: https://google.github.io/styleguide/pyguide.html
-[r]: https://google.github.io/styleguide/Rguide.html
-[sh]: https://google.github.io/styleguide/shellguide.html
+[py]: pyguide.md
+[r]: Rguide.md
+[sh]: shellguide.md
 [htmlcss]: https://google.github.io/styleguide/htmlcssguide.html
 [js]: https://google.github.io/styleguide/jsguide.html
-[markdown]: https://google.github.io/styleguide/docguide/style.html
+[markdown]: docguide/style.md
 [ts]: https://google.github.io/styleguide/tsguide.html
 [angular]: https://google.github.io/styleguide/angularjs-google-style.html
 [cl]: https://google.github.io/styleguide/lispguide.xml
