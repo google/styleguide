@@ -456,8 +456,8 @@ void Foo&lt;T&gt;::MethodWithHugeBody() {
 <p>Include headers in the following order: Related header, C system headers,
 C++ standard library headers,
 other libraries' headers, your project's
-headers.</p>
-
+headers.
+The includes should be ordered alphabetically. This ordering should be case-sensitive, meaningthat uppercase and lowercase letters are considered to be different</p> 
 <p>
 All of a project's header files should be
 listed as descendants of the project's source
@@ -555,7 +555,6 @@ might look like this:</p>
 
 #include &lt;string&gt;
 #include &lt;vector&gt;
-
 #include "base/basictypes.h"
 #include "foo/server/bar.h"
 #include "third_party/absl/flags/flag.h"
@@ -581,12 +580,34 @@ system-specific code small and localized. Example:</p>
 
 <p>With few exceptions, place code in a namespace. Namespaces
 should have unique names based on the project name, and possibly
-its path. Do not use <i>using-directives</i> (e.g.,
-<code>using namespace foo</code>). Do not use
+its path. Do not use <i>using-namespace</i>directives (e.g.,
+<code>using namespace foo;</code>). Do not use
 inline namespaces. For unnamed namespaces, see
 <a href="#Internal_Linkage">Internal Linkage</a>.
 
+
 </p><p class="definition"></p>
+<h4>Using Declaration:</h4>
+<p>Using declaration are allowed and can be used to refer to specific symbol from a namespace. For example</p>
+<pre><code>Using ::foo::bar;</code></pre>
+
+<h4>Additional Note With an Example:</h4>
+
+<h5>Using NameSpace Directives: </h5>
+<p>Using namespace directives brings the all the specified symbols/built-in-types from the specified NameSpace into the whatever current scope you are in, which leads to naming conflict and confusion(ambiguity). Therefore, they should be avoided.</p>
+
+<p><strong>Example: </strong></p>
+<pre><code>//Avoid This Practice: 
+using namespace std;
+std::cout,std::endl or somethinglike std::string st = "Hello";</code></pre>
+
+<h5>Using Declarations:</h5>
+<p>Using Declarations allow you to bring namespace into current scope. This practice helps in avoiding the ambiguity(confusion) and which eventually keeps the code clear and manageable.</p>
+<p><strong>Example to Use:</strong></p>
+<pre><code>//Accepted 
+  using namespace std;
+  cout,abs() or string str = "Hello,World";</code></pre>
+
 <p>Namespaces subdivide the global scope
 into distinct, named scopes, and so are useful for preventing
 name collisions in the global scope.</p>
