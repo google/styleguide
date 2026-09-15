@@ -1,0 +1,8 @@
+[codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = .git*,*.css,.codespellrc,LICENSE
+check-hidden = true
+# Case sensitive etc. Python regex
+ignore-regex = \b(CLOS|oh noes|xmlns:\S+)\b|github\.com/dsnet/compress/flate|Use "\S+".* not "\S+"
+# Unfortunate/suboptimal choices of variables/words
+ignore-words-list = anumber,afile,statics
