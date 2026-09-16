@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HTTP/404 Page not found</title>
+<link rel="stylesheet" href="/styleguide/assets/css/style.css">
+<link rel="shortcut icon" href="/styleguide/favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+// Try to redirect for old guidelinks.
+window.onload = function() {
+  // Slice off the leading "/styleguide/".
+  const missingPage = location.pathname.substr(12);
+  const map = {
+    'cppguide.xml': 'cppguide.html',
+    'google-r-style.html': 'Rguide.html',
+    'htmlcssguide.xml': 'htmlcssguide.html',
+    'jsoncstyleguide.xml': 'jsoncstyleguide.html',
+    'objcguide.xml': 'objcguide.html',
+    'Rguide.xml': 'Rguide.html',
+    'shell.xml': 'shellguide.html',
+  };
+  const newPage = map[missingPage];
+  if (newPage) {
+    navigation.navigate(`/styleguide/${newPage}`);
+  }
+};
+</script>
+</head>
+<body>
+<div class="container-lg px-3 my-5 markdown-body">
+<h1><a href="/styleguide/">Google Style Guides</a></h1>
+<h1>Error: HTTP/404 File not found</h1>
+<p>
+Our guides have gone through format changes over the years, so try our
+<a href="/styleguide/">homepage</a> to see the latest available list.
+</p>
+</div>
+</body>
+</html>
