@@ -1,0 +1,93 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Check Agent Skills
+
+on:
+  push:
+    branches: [ main, master, gh-pages ]
+  pull_request:
+    branches: [ main, master, gh-pages ]
+
+jobs:
+  check-skills:
+    # Run the checks on the latest Ubuntu environment
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the repository code to access the files locally
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Extract the list of style guide reference keys from the README.md references block
+      - name: Extract Style Guide Keys from README.md
+        run: |
+          # Extract all style guide reference keys defined between the START/END markers,
+          # remove the brackets and colon, and sort the list alphabetically.
+          echo "Extracting style guide keys from README.md..."
+          README_KEYS=$(sed -n '/<!-- START_STYLEGUIDES -->/,/<!-- END_STYLEGUIDES -->/p' README.md \
+            | grep -E '^\[[a-zA-Z0-9_-]+\]:' \
+            | grep -o -E '^\[[a-zA-Z0-9_-]+\]' \
+            | tr -d '[]' \
+            | sort)
+          
+          # Write the list to a temporary file for differential comparison in a later step
+          echo "$README_KEYS" > readme_keys.tmp
+
+      # Step 3: Extract the list of style guide languages from SKILL.md and normalize them to keys
+      - name: Extract Style Guide Keys from SKILL.md
+        run: |
+          # Extract the Language column values from the Supported Style Guides table in SKILL.md,
+          # convert to lowercase, remove markdown formatting, and map them to their corresponding
+          # README reference keys (using a normalized sed translation map).
+          echo "Extracting style guide keys from SKILL.md..."
+          SKILL_KEYS=$(grep '|' skills/google-styleguide/SKILL.md \
+            | tail -n +3 \
+            | cut -d'|' -f2 \
+            | tr -d '* ' \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed -E -e 's/angularjs/angular/' \
+                     -e 's/commonlisp/cl/' \
+                     -e 's/c\+\+/cpp/' \
+                     -e 's/c#/csharp/' \
+                     -e 's/html\/css/htmlcss/' \
+                     -e 's/javascript/js/' \
+                     -e 's/objective-c/objc/' \
+                     -e 's/python/py/' \
+                     -e 's/shell/sh/' \
+                     -e 's/typescript/ts/' \
+                     -e 's/vimscript/vim/' \
+            | sort)
+          
+          # Write the list to a temporary file for differential comparison in a later step
+          echo "$SKILL_KEYS" > skill_keys.tmp
+
+      # Step 4: Compare the two sets of keys and fail if they have diverged
+      - name: Verify README.md and SKILL.md style guides are in sync
+        run: |
+          # Perform a differential comparison between the two sets of extracted reference keys
+          DIFF_OUT=$(diff readme_keys.tmp skill_keys.tmp || true)
+
+          # Clean up temporary files
+          rm -f readme_keys.tmp skill_keys.tmp
+
+          # Fail the build if any divergence is found
+          if [[ -n "$DIFF_OUT" ]]; then
+            echo "Error: README.md style guides and skills/google-styleguide/SKILL.md support different languages!" >&2
+            echo "Differences (- README.md, + SKILL.md):" >&2
+            echo "$DIFF_OUT" >&2
+            exit 1
+          else
+            echo "Success: README.md and skills/google-styleguide/SKILL.md supported languages are in sync!"
+            exit 0
+          fi
