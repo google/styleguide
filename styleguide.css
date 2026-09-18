@@ -69,6 +69,7 @@ var {
 }
 
 pre {
+  position: relative;
   font-size: 10pt;
   display: block;
   color: #060;
@@ -78,10 +79,22 @@ pre {
   padding: 4px 12px;
 }
 
+pre:before {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 1;
+  content: "GOOD CODE";
+}
+
 pre.badcode {
   color: #c00;
   background-color: #fff8f8;
   border-color: #fff0f0;
+}
+
+pre.badcode:before {
+  content: "BAD CODE";
 }
 
 .showhide_button {
