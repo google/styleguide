@@ -82,7 +82,7 @@ primarily optimizing for Google's internal needs.
 [gh-tracker]: https://github.com/google/styleguide/issues
 [go]: go/
 [java]: https://google.github.io/styleguide/javaguide.html
-[json]: https://google.github.io/styleguide/jsoncstyleguide.html
+[json]: https://google.github.io/styleguide/jsoncguide.html
 [kotlin]: https://developer.android.com/kotlin/style-guide
 [py]: pyguide.md
 [r]: Rguide.md
