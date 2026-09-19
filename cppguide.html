@@ -6123,3 +6123,26 @@ occasionally need to break on Windows:</p>
 </div>
 </body>
 </html>
+
+<h2 id="security‑coding‑best‑practice">Security Coding Best Practice Example</h2>
+<p>Below is a secure C++ code example following Google C++ Style Guide, to avoid null‑pointer dereference and integer overflow vulnerabilities:</p>
+<pre><code class="language‑cpp">#include &lt;stdexcept&gt;
+#include &lt;climits&gt;
+
+// Safe integer addition to prevent overflow
+int SafeAdd(int a, int b) {
+  if ((b &gt; 0 && a &gt; INT_MAX - b) || (b &lt; 0 && a &lt; INT_MIN - b)) {
+    throw std::overflow_error("Integer overflow prevented");
+  }
+  return a + b;
+}
+
+// Safe pointer access to avoid null‑pointer dereference
+int SafeAccess(int* ptr) {
+  if (ptr == nullptr) {
+    throw std::invalid_argument("Null pointer access blocked");
+  }
+  return *ptr;
+}
+</code></pre>
+<p><strong>Security Notes:</strong> Always validate input before operation; use defensive programming to avoid undefined behavior.</p>
