@@ -1,0 +1,662 @@
+<HTML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcq="http://purl.org/dc/qualifiers/1.0/" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fn="http://www.w3.org/2005/xpath-functions">
+<HEAD>
+<TITLE>Google Vimscript Style Guide</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<LINK HREF="/styleguide/favicon.ico" type="image/x-icon" rel="shortcut icon">
+<LINK HREF="styleguide.css" type="text/css" rel="stylesheet">
+<SCRIPT language="javascript" type="text/javascript">
+
+                function GetElementsByName(name) {
+                  // Workaround a bug on old versions of opera.
+                  if (document.getElementsByName) {
+                    return document.getElementsByName(name);
+                  } else {
+                    return [document.getElementById(name)];
+                  }
+                }
+
+                /**
+                 * @param {string} namePrefix The prefix of the body name.
+                 * @param {function(boolean): boolean} getVisibility Computes the new
+                 *     visibility state, given the current one.
+                 */
+                function ChangeVisibility(namePrefix, getVisibility) {
+                  var bodyName = namePrefix + '__body';
+                  var buttonName = namePrefix + '__button';
+                  var bodyElements = GetElementsByName(bodyName);
+                  var linkElement = GetElementsByName('link-' + buttonName)[0];
+                  if (bodyElements.length != 1) {
+                    throw Error('ShowHideByName() got the wrong number of bodyElements:  ' + 
+                        bodyElements.length);
+                  } else {
+                    var bodyElement = bodyElements[0];
+                    var buttonElement = GetElementsByName(buttonName)[0];
+                    var isVisible = bodyElement.style.display != "none";
+                    if (getVisibility(isVisible)) {
+                      bodyElement.style.display = "inline";
+                      linkElement.style.display = "block";
+                      buttonElement.innerHTML = '▽';
+                    } else {
+                      bodyElement.style.display = "none";
+                      linkElement.style.display = "none";
+                      buttonElement.innerHTML = '▶';
+                    }
+                  }
+                }
+
+                function ShowHideByName(namePrefix) {
+                  ChangeVisibility(namePrefix, function(old) { return !old; });
+                }
+
+                function ShowByName(namePrefix) {
+                  ChangeVisibility(namePrefix, function() { return true; });
+                }
+
+                function ShowHideAll() {
+                  var allButton = GetElementsByName("show_hide_all_button")[0];
+                  if (allButton.innerHTML == '▽') {
+                    allButton.innerHTML = '▶';
+                    SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '▶');
+                  } else {
+                    allButton.innerHTML = '▽';
+                    SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "inline", '▽');
+                  }
+                }
+
+                // Recursively sets state of all children
+                // of a particular node.
+                function SetHiddenState(root, newState, newButton) {
+                  for (var i = 0; i != root.length; i++) {
+                    SetHiddenState(root[i].childNodes, newState, newButton);
+                    if (root[i].className == 'showhide_button')  {
+                      root[i].innerHTML = newButton;
+                    }
+                    if (root[i].className == 'stylepoint_body' ||
+                        root[i].className == 'link_button')  {
+                      root[i].style.display = newState;
+                    }
+                  }
+                }
+
+
+                function EndsWith(str, suffix) {
+                  var l = str.length - suffix.length;
+                  return l >= 0 && str.indexOf(suffix, l) == l;
+                }
+
+                function RefreshVisibilityFromHashParam() {
+                  var hashRegexp = new RegExp('#([^&#]*)$');
+                  var hashMatch = hashRegexp.exec(window.location.href);
+                  var anchor = hashMatch && GetElementsByName(hashMatch[1])[0];
+                  var node = anchor;
+                  var suffix = '__body';
+                  while (node) {
+                    var id = node.id;
+                    var matched = id && EndsWith(id, suffix);
+                    if (matched) {
+                      var len = id.length - suffix.length;
+                      ShowByName(id.substring(0, len));
+                      if (anchor.scrollIntoView) {
+                        anchor.scrollIntoView();
+                      }
+
+                      return;
+                    }
+                    node = node.parentNode;
+                  }
+                }
+
+                window.onhashchange = RefreshVisibilityFromHashParam;
+
+                window.onload = function() {
+                  // if the URL contains "?showall=y", expand the details of all children
+                  var showHideAllRegex = new RegExp("[\\?&](showall)=([^&#]*)");
+                  var showHideAllValue = showHideAllRegex.exec(window.location.href);
+                  if (showHideAllValue != null) {
+                    if (showHideAllValue[2] == "y") {
+                      SetHiddenState(document.getElementsByTagName("body")[0].childNodes, 
+                          "inline", '▽');
+                    } else {
+                      SetHiddenState(document.getElementsByTagName("body")[0].childNodes, 
+                          "none", '▶');
+                    }
+                  }
+                  var showOneRegex = new RegExp("[\\?&](showone)=([^&#]*)");
+                  var showOneValue = showOneRegex.exec(window.location.href);
+                  if (showOneValue) {
+                    ShowHideByName(showOneValue[2]);
+                  }
+
+
+                  RefreshVisibilityFromHashParam();
+                }
+              </SCRIPT>
+</HEAD>
+<BODY>
+<H1>Google Vimscript Style Guide</H1>
+  <p class="revision">
+
+    Revision 1.1
+  </p>
+
+  
+  <address>
+    Nate Soares<br>
+    Artemis Sparks<br>
+    David Barnett<br>
+  </address>
+
+  <DIV style="margin-left: 50%; font-size: 75%;">
+<P>
+        Each style point has a summary for which additional information is available
+        by toggling the accompanying arrow button that looks this way:
+        <SPAN class="showhide_button" style="margin-left: 0; float: none">▶</SPAN>.
+        You may toggle all summaries with the big arrow button:
+      </P>
+<DIV style=" font-size: larger; margin-left: +2em;">
+<SPAN class="showhide_button" style="font-size: 180%; float: none" onclick="javascript:ShowHideAll()" name="show_hide_all_button" id="show_hide_all_button">▶</SPAN>
+        Toggle all summaries
+      </DIV>
+</DIV>
+<DIV class="toc">
+<DIV class="toc_title">Table of Contents</DIV>
+<TABLE>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Portability">Portability</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Strings">Strings</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Matching_Strings">Matching Strings</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Regular_Expressions">Regular Expressions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Dangerous_commands">Dangerous commands</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Fragile_commands">Fragile commands</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Catching_Exceptions">Catching Exceptions</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#General_Guidelines">General Guidelines</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Messaging">Messaging</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Type_checking">Type checking</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Python">Python</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Other_Languages">Other Languages</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Boilerplate">Boilerplate</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Plugin_layout">Plugin layout</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Functions">Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Commands">Commands</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Autocommands">Autocommands</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Mappings">Mappings</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Settings">Settings</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Style">Style</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Whitespace">Whitespace</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Naming">Naming</A></SPAN> </DIV></TD>
+</TR>
+</TABLE>
+</DIV>
+    <DIV class="">
+<H2 name="Background" id="Background">Background</H2>
+      <p>
+        This is a casual version of the vimscript style guide, because
+        vimscript is a casual language. When submitting vim plugin code, you
+        must adhere to these rules. For clarifications, justifications, and
+        explanations about the finer points of vimscript, please refer to the
+        <a href="vimscriptfull.xml">heavy guide</a>.
+      </p>
+    </DIV>
+  
+
+  <DIV class="">
+<H2 name="Portability" id="Portability">Portability</H2>
+    <p>
+      It's hard to get vimscript right. Many commands depend upon the user's
+      settings. By following these guidelines, you can hope to make your
+      scripts portable.
+    </p>
+    <DIV class="">
+<H3><A name="Strings" id="Strings">Strings</A></H3>
+<SPAN class="link_button" id="link-Strings__button" name="link-Strings__button"><A href="?showone=Strings#Strings">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Strings')" name="Strings__button" id="Strings__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Prefer single quoted strings</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Strings__body" id="Strings__body" style="display: none">
+        <p>
+          Double quoted strings are semantically different in vimscript, and
+          you probably don't want them (they break regexes).
+        </p>
+        <p>
+          Use double quoted strings when you need an escape sequence (such as
+          <code>"\n"</code>) or if you know it doesn't matter and you need to
+          embed single quotes.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Matching_Strings" id="Matching_Strings">Matching Strings</A></H3>
+<SPAN class="link_button" id="link-Matching_Strings__button" name="link-Matching_Strings__button"><A href="?showone=Matching_Strings#Matching_Strings">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Matching_Strings')" name="Matching_Strings__button" id="Matching_Strings__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        Use the <code>=~#</code> or <code>=~?</code> operator families over the
+        <code>=~</code> family.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Matching_Strings__body" id="Matching_Strings__body" style="display: none">
+        <p>
+          The matching behavior depends upon the user's ignorecase and smartcase
+          settings and on whether you compare them with the <code>=~</code>,
+          <code>=~#</code>, or <code>=~?</code> family of operators. Use the
+          <code>=~#</code> and <code>=~?</code> operator families explicitly
+          when comparing strings unless you explicitly need to honor the user's
+          case sensitivity settings.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Regular_Expressions" id="Regular_Expressions">Regular Expressions</A></H3>
+<SPAN class="link_button" id="link-Regular_Expressions__button" name="link-Regular_Expressions__button"><A href="?showone=Regular_Expressions#Regular_Expressions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Regular_Expressions')" name="Regular_Expressions__button" id="Regular_Expressions__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Prefix all regexes with <code>\m\C</code>.</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Regular_Expressions__body" id="Regular_Expressions__body" style="display: none">
+        <p>
+          In addition to the case sensitivity settings, regex behavior depends
+          upon the user's nomagic setting. To make regexes act like nomagic and
+          noignorecase are set, prepend all regexes with <code>\m\C</code>.
+        </p>
+        <p>
+          You are welcome to use other magic levels (<code>\v</code>) and case
+          sensitivities (<code>\c</code>) so long as they are intentional and
+          explicit.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Dangerous_commands" id="Dangerous_commands">Dangerous commands</A></H3>
+<SPAN class="link_button" id="link-Dangerous_commands__button" name="link-Dangerous_commands__button"><A href="?showone=Dangerous_commands#Dangerous_commands">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Dangerous_commands')" name="Dangerous_commands__button" id="Dangerous_commands__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Avoid commands with unintended side effects.</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Dangerous_commands__body" id="Dangerous_commands__body" style="display: none">
+        <p>
+          Avoid using <code>:s[ubstitute]</code> as it moves the cursor and
+          prints error messages. Prefer functions (such as
+          <code>search()</code>) better suited to scripts.
+        </p>
+        <p>
+          For many vim commands, functions exist that do the same thing with
+          fewer side effects. See <code>:help functions()</code> for a list of
+          built-in functions.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Fragile_commands" id="Fragile_commands">Fragile commands</A></H3>
+<SPAN class="link_button" id="link-Fragile_commands__button" name="link-Fragile_commands__button"><A href="?showone=Fragile_commands#Fragile_commands">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Fragile_commands')" name="Fragile_commands__button" id="Fragile_commands__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Avoid commands that rely on user settings.</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Fragile_commands__body" id="Fragile_commands__body" style="display: none">
+        <p>
+          Always use <code>normal!</code> instead of <code>normal</code>. The
+          latter depends upon the user's key mappings and could do anything.
+        </p>
+        <p>
+          Avoid <code>:s[ubstitute]</code>, as its behavior depends upon a
+          number of local settings.
+        </p>
+        <p>
+          The same applies to other commands not listed here.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Catching_Exceptions" id="Catching_Exceptions">Catching Exceptions</A></H3>
+<SPAN class="link_button" id="link-Catching_Exceptions__button" name="link-Catching_Exceptions__button"><A href="?showone=Catching_Exceptions#Catching_Exceptions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Catching_Exceptions')" name="Catching_Exceptions__button" id="Catching_Exceptions__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Match error codes, not error text.</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Catching_Exceptions__body" id="Catching_Exceptions__body" style="display: none">
+        <p>Error text may be locale dependent.</p>
+      </DIV></DIV>
+    </DIV>
+  </DIV>
+
+  <DIV class="">
+<H2 name="General_Guidelines" id="General_Guidelines">General Guidelines</H2>
+    
+    
+    <DIV class="">
+<H3><A name="Messaging" id="Messaging">Messaging</A></H3>
+<SPAN class="link_button" id="link-Messaging__button" name="link-Messaging__button"><A href="?showone=Messaging#Messaging">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Messaging')" name="Messaging__button" id="Messaging__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Message the user infrequently.</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Messaging__body" id="Messaging__body" style="display: none">
+        <p>
+          Loud scripts are annoying. Message the user only when:
+          <ul>
+            <li>A long-running process has kicked off.</li>
+            <li>An error has occurred.</li>
+          </ul>
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Type_checking" id="Type_checking">Type checking</A></H3>
+<SPAN class="link_button" id="link-Type_checking__button" name="link-Type_checking__button"><A href="?showone=Type_checking#Type_checking">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Type_checking')" name="Type_checking__button" id="Type_checking__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Use strict and explicit checks where possible.</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Type_checking__body" id="Type_checking__body" style="display: none">
+        <p>
+          Vimscript has unsafe, unintuitive behavior when dealing with some
+          types. For instance, <code>0 == 'foo'</code> evaluates to true.
+        </p>
+        <p>
+          Use strict comparison operators where possible. When comparing against
+          a string literal, use the <code>is#</code> operator. Otherwise, prefer
+          <code>maktaba#value#IsEqual</code> or check <code>type()</code>
+          explicitly.
+        </p>
+        <p>
+          Check variable types explicitly before using them. Use functions from
+          <code>maktaba#ensure</code>, or check <code>maktaba#value</code> or
+          <code>type()</code> and throw your own errors.
+        </p>
+        <p>
+          Use <code>:unlet</code> for variables that may change types,
+          particularly those assigned inside loops.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Python" id="Python">Python</A></H3>
+<SPAN class="link_button" id="link-Python__button" name="link-Python__button"><A href="?showone=Python#Python">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Python')" name="Python__button" id="Python__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Use sparingly.</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Python__body" id="Python__body" style="display: none">
+        <p>
+          Use python only when it provides critical functionality, for example
+          when writing threaded code.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Other_Languages" id="Other_Languages">Other Languages</A></H3>
+<SPAN class="link_button" id="link-Other_Languages__button" name="link-Other_Languages__button"><A href="?showone=Other_Languages#Other_Languages">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Other_Languages')" name="Other_Languages__button" id="Other_Languages__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Use vimscript instead.</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Other_Languages__body" id="Other_Languages__body" style="display: none">
+        <p>
+          Avoid using other scripting languages such as ruby and lua. We can
+          not guarantee that the end user's vim has been compiled with support
+          for non-vimscript languages.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Boilerplate" id="Boilerplate">Boilerplate</A></H3>
+<SPAN class="link_button" id="link-Boilerplate__button" name="link-Boilerplate__button"><A href="?showone=Boilerplate#Boilerplate">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Boilerplate')" name="Boilerplate__button" id="Boilerplate__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        Use <a href="https://github.com/google/maktaba">maktaba</a>.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Boilerplate__body" id="Boilerplate__body" style="display: none">
+        <p>
+          maktaba removes boilerplate, including:
+          <ul>
+            <li>Plugin creation</li>
+            <li>Error handling</li>
+            <li>Dependency checking</li>
+          </ul>
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Plugin_layout" id="Plugin_layout">Plugin layout</A></H3>
+<SPAN class="link_button" id="link-Plugin_layout__button" name="link-Plugin_layout__button"><A href="?showone=Plugin_layout#Plugin_layout">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Plugin_layout')" name="Plugin_layout__button" id="Plugin_layout__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Organize functionality into modular plugins</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Plugin_layout__body" id="Plugin_layout__body" style="display: none">
+        <p>
+          Group your functionality as a plugin, unified in one directory (or
+          code repository) which shares your plugin's name (with a "vim-" prefix
+          or ".vim" suffix if desired). It should be split into plugin/,
+          autoload/, etc. subdirectories as necessary, and it should declare
+          metadata in the addon-info.json format (see the
+          <a href="https://github.com/MarcWeber/vim-addon-manager/blob/master/doc/vim-addon-manager-additional-documentation.txt">VAM documentation</a> for details).
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Functions" id="Functions">Functions</A></H3>
+<SPAN class="link_button" id="link-Functions__button" name="link-Functions__button"><A href="?showone=Functions#Functions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Functions')" name="Functions__button" id="Functions__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        In the autoload/ directory, defined with <code>[!]</code> and
+        <code>[abort]</code>.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Functions__body" id="Functions__body" style="display: none">
+        <p>
+          Autoloading allows functions to be loaded on demand, which makes
+          startuptime faster and enforces function namespacing.
+        </p>
+        <p>
+          Script-local functions are welcome, but should also live in autoload/
+          and be called by autoloaded functions.
+        </p>
+        <p>
+          Non-library plugins should expose commands instead of functions.
+          Command logic should be extracted into functions and autoloaded.
+        </p>
+        <p>
+          <code>[!]</code> allows developers to reload their functions
+          without complaint.
+        </p>
+        <p>
+          <code>[abort]</code> forces the function to halt when it encounters
+          an error.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Commands" id="Commands">Commands</A></H3>
+<SPAN class="link_button" id="link-Commands__button" name="link-Commands__button"><A href="?showone=Commands#Commands">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Commands')" name="Commands__button" id="Commands__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        In the plugin/commands.vim or under the ftplugin/ directory, defined
+        without <code>[!]</code>.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Commands__body" id="Commands__body" style="display: none">
+        <p>
+          General commands go in <code>plugin/commands.vim</code>.
+          Filetype-specific commands go in <code>ftplugin/</code>.
+        </p>
+        <p>
+          Excluding <code>[!]</code> prevents your plugin from silently
+          clobbering existing commands.  Command conflicts should be resolved by
+          the user.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Autocommands" id="Autocommands">Autocommands</A></H3>
+<SPAN class="link_button" id="link-Autocommands__button" name="link-Autocommands__button"><A href="?showone=Autocommands#Autocommands">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Autocommands')" name="Autocommands__button" id="Autocommands__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        Place them in plugin/autocmds.vim, within augroups.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Autocommands__body" id="Autocommands__body" style="display: none">
+        <p>
+          Place all autocommands in augroups.
+        </p>
+        <p>
+          The augroup name should be unique. It should either be, or be prefixed
+          with, the plugin name.
+        </p>
+        <p>
+          Clear the augroup with <code>autocmd!</code> before defining new
+          autocommands in the augroup. This makes your plugin re-entrable.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Mappings" id="Mappings">Mappings</A></H3>
+<SPAN class="link_button" id="link-Mappings__button" name="link-Mappings__button"><A href="?showone=Mappings#Mappings">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Mappings')" name="Mappings__button" id="Mappings__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        Place them in <code>plugin/mappings.vim</code>, using
+        <code>maktaba#plugin#MapPrefix</code> to get a prefix.
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Mappings__body" id="Mappings__body" style="display: none">
+        <p>
+          All key mappings should be defined in
+          <code>plugin/mappings.vim</code>.
+        </p>
+        <p>
+          Partial mappings (see :help using-&lt;Plug&gt;.) should be defined in
+          <code>plugin/plugs.vim</code>.
+        </p>
+      </DIV></DIV>
+    </DIV>
+    <DIV class="">
+<H3><A name="Settings" id="Settings">Settings</A></H3>
+<SPAN class="link_button" id="link-Settings__button" name="link-Settings__button"><A href="?showone=Settings#Settings">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Settings')" name="Settings__button" id="Settings__button">▶</SPAN>
+      <DIV style="display:inline;" class="">Change settings locally</DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Settings__body" id="Settings__body" style="display: none">
+        <p>
+          Use <code>:setlocal</code> and <code>&amp;l:</code> instead of
+          <code>:set</code> and <code>&amp;</code> unless you have explicit
+          reason to do otherwise.
+        </p>
+      </DIV></DIV>
+    </DIV>
+  </DIV>
+
+  <DIV class="">
+<H2 name="Style" id="Style">Style</H2>
+    <p>
+      Follow google style conventions. When in doubt, treat vimscript style
+      like python style.
+    </p>
+
+    <DIV class="">
+<H3><A name="Whitespace" id="Whitespace">Whitespace</A></H3>
+<SPAN class="link_button" id="link-Whitespace__button" name="link-Whitespace__button"><A href="?showone=Whitespace#Whitespace">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Whitespace')" name="Whitespace__button" id="Whitespace__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        Similar to python.
+        
+        <br>
+        <br>
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Whitespace__body" id="Whitespace__body" style="display: none">
+        <ul>
+          <li>Use two spaces for indents</li>
+          <li>Do not use tabs</li>
+          <li>Use spaces around operators
+            <p>This does not apply to arguments to commands.</p>
+            <DIV class=""><PRE>let s:variable = "concatenated " . "strings"
+command -range=% MyCommand</PRE></DIV>
+          </li>
+          <li>Do not introduce trailing whitespace
+            <p>You need not go out of your way to remove it.</p>
+            <p>
+              Trailing whitespace is allowed in mappings which prep commands
+              for user input, such as
+              "<code>noremap &lt;leader&gt;gf :grep -f </code>".
+            </p>
+          </li>
+          <li>Restrict lines to 80 columns wide</li>
+          <li>Indent continued lines by four spaces</li>
+          <li>Do not align arguments of commands
+            <DIV class=""><PRE class="badcode">command -bang MyCommand  call myplugin#foo()
+command       MyCommand2 call myplugin#bar()</PRE></DIV>
+            <DIV class=""><PRE>command -bang MyCommand call myplugin#foo()
+command MyCommand2 call myplugin#bar()</PRE></DIV>
+          </li>
+        </ul>
+      </DIV></DIV>
+    </DIV>
+
+    <DIV class="">
+<H3><A name="Naming" id="Naming">Naming</A></H3>
+<SPAN class="link_button" id="link-Naming__button" name="link-Naming__button"><A href="?showone=Naming#Naming">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Naming')" name="Naming__button" id="Naming__button">▶</SPAN>
+      <DIV style="display:inline;" class="">
+        <p>
+          In general, use
+          <code>plugin-names-like-this</code>,
+          <code>FunctionNamesLikeThis</code>,
+          <code>CommandNamesLikeThis</code>,
+          <code>augroup_names_like_this</code>,
+          <code>variable_names_like_this</code>.
+        </p>
+        <p>Always prefix variables with their scope.</p>
+      </DIV>
+      <DIV class=""><DIV class="stylepoint_body" name="Naming__body" id="Naming__body" style="display: none">
+        <P class="">
+<SPAN class="stylepoint_subsection">plugin-names-like-this</SPAN>
+          <p>Keep them short and sweet.</p>
+          
+        </P>
+        <P class="">
+<SPAN class="stylepoint_subsection">FunctionNamesLikeThis</SPAN>
+          <p>Prefix script-local functions with <code>s:</code></p>
+          <p>Autoloaded functions may not have a scope prefix.</p>
+          <p>
+            Do not create global functions. Use autoloaded functions
+            instead.
+          </p>
+        </P>
+        <P class="">
+<SPAN class="stylepoint_subsection">CommandNamesLikeThis</SPAN>
+          <p>Prefer succinct command names over common command prefixes.</p>
+        </P>
+        <P class="">
+<SPAN class="stylepoint_subsection">variable_names_like_this</SPAN>
+          <p>Augroup names count as variables for naming purposes.</p>
+        </P>
+        <P class="">
+<SPAN class="stylepoint_subsection">Prefix all variables with their scope.</SPAN>
+          <ul>
+            <li>Global variables with <code>g:</code>
+</li>
+            <li>Script-local variables with <code>s:</code>
+</li>
+            <li>Function arguments with <code>a:</code>
+</li>
+            <li>Function-local variables with <code>l:</code>
+</li>
+            <li>Vim-predefined variables with <code>v:</code>
+</li>
+            <li>Buffer-local variables with <code>b:</code>
+</li>
+          </ul>
+          <p>
+            <code>g:</code>, <code>s:</code>, and <code>a:</code> must always
+            be used.
+          </p>
+          <p>
+            <code>b:</code> changes the variable semantics; use it when you
+            want buffer-local semantics.
+          </p>
+          <p>
+            <code>l:</code> and <code>v:</code> should be used for consistency,
+            future proofing, and to avoid subtle bugs. They are not strictly
+            required. Add them in new code but don’t go out of your way to add
+            them elsewhere.
+          </p>
+        </P>
+      </DIV></DIV>
+    </DIV>
+  </DIV>
+
+  <p align="right">
+    Revision 1.1
+  </p>
+
+  
+  <address>
+    Nate Soares<br>
+    Artemis Sparks<br>
+    David Barnett<br>
+  </address>
+</BODY>
+</HTML>
