@@ -1375,7 +1375,7 @@ Code should avoid redundant property access. Prefer to assign a property value
 to a local variable when the property value is not expected to change and needs
 to be used multiple times.
 
-```objc
+```objectivec
 // GOOD:
 
 UIView *view = self.view;
@@ -1384,7 +1384,7 @@ UIScrollView *scrollView = self.scrollView;
 [scrollView.trailingAnchor constraintEqualToAnchor:view.trailingAnchor].active = YES;
 ```
 
-```objc
+```objectivec
 // AVOID:
 
 [self.scrollView.loadingAnchor constraintEqualToAnchor:self.view.loadingAnchor].active = YES;
@@ -1394,7 +1394,7 @@ UIScrollView *scrollView = self.scrollView;
 When repeatedly referencing chained property invocations, prefer to capture the
 repeated expression in a local variable:
 
-```objc
+```objectivec
 // AVOID:
 
 foo.bar.baz.field1 = 10;
@@ -1402,7 +1402,7 @@ foo.bar.baz.field2 = @"Hello";
 foo.bar.baz.field3 = 2.71828183;
 ```
 
-```objc
+```objectivec
 // GOOD:
 
 Baz *baz = foo.bar.baz;
