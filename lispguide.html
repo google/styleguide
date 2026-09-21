@@ -1,6 +1,139 @@
-<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="styleguide.xsl"?>
-<GUIDE title="Google Common Lisp Style Guide">
+<HTML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcq="http://purl.org/dc/qualifiers/1.0/" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fn="http://www.w3.org/2005/xpath-functions">
+<HEAD>
+<TITLE>Google Common Lisp Style Guide</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<LINK HREF="/styleguide/favicon.ico" type="image/x-icon" rel="shortcut icon">
+<LINK HREF="styleguide.css" type="text/css" rel="stylesheet">
+<SCRIPT language="javascript" type="text/javascript">
+
+                function GetElementsByName(name) {
+                  // Workaround a bug on old versions of opera.
+                  if (document.getElementsByName) {
+                    return document.getElementsByName(name);
+                  } else {
+                    return [document.getElementById(name)];
+                  }
+                }
+
+                /**
+                 * @param {string} namePrefix The prefix of the body name.
+                 * @param {function(boolean): boolean} getVisibility Computes the new
+                 *     visibility state, given the current one.
+                 */
+                function ChangeVisibility(namePrefix, getVisibility) {
+                  var bodyName = namePrefix + '__body';
+                  var buttonName = namePrefix + '__button';
+                  var bodyElements = GetElementsByName(bodyName);
+                  var linkElement = GetElementsByName('link-' + buttonName)[0];
+                  if (bodyElements.length != 1) {
+                    throw Error('ShowHideByName() got the wrong number of bodyElements:  ' + 
+                        bodyElements.length);
+                  } else {
+                    var bodyElement = bodyElements[0];
+                    var buttonElement = GetElementsByName(buttonName)[0];
+                    var isVisible = bodyElement.style.display != "none";
+                    if (getVisibility(isVisible)) {
+                      bodyElement.style.display = "inline";
+                      linkElement.style.display = "block";
+                      buttonElement.innerHTML = '▽';
+                    } else {
+                      bodyElement.style.display = "none";
+                      linkElement.style.display = "none";
+                      buttonElement.innerHTML = '▶';
+                    }
+                  }
+                }
+
+                function ShowHideByName(namePrefix) {
+                  ChangeVisibility(namePrefix, function(old) { return !old; });
+                }
+
+                function ShowByName(namePrefix) {
+                  ChangeVisibility(namePrefix, function() { return true; });
+                }
+
+                function ShowHideAll() {
+                  var allButton = GetElementsByName("show_hide_all_button")[0];
+                  if (allButton.innerHTML == '▽') {
+                    allButton.innerHTML = '▶';
+                    SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "none", '▶');
+                  } else {
+                    allButton.innerHTML = '▽';
+                    SetHiddenState(document.getElementsByTagName("body")[0].childNodes, "inline", '▽');
+                  }
+                }
+
+                // Recursively sets state of all children
+                // of a particular node.
+                function SetHiddenState(root, newState, newButton) {
+                  for (var i = 0; i != root.length; i++) {
+                    SetHiddenState(root[i].childNodes, newState, newButton);
+                    if (root[i].className == 'showhide_button')  {
+                      root[i].innerHTML = newButton;
+                    }
+                    if (root[i].className == 'stylepoint_body' ||
+                        root[i].className == 'link_button')  {
+                      root[i].style.display = newState;
+                    }
+                  }
+                }
+
+
+                function EndsWith(str, suffix) {
+                  var l = str.length - suffix.length;
+                  return l >= 0 && str.indexOf(suffix, l) == l;
+                }
+
+                function RefreshVisibilityFromHashParam() {
+                  var hashRegexp = new RegExp('#([^&#]*)$');
+                  var hashMatch = hashRegexp.exec(window.location.href);
+                  var anchor = hashMatch && GetElementsByName(hashMatch[1])[0];
+                  var node = anchor;
+                  var suffix = '__body';
+                  while (node) {
+                    var id = node.id;
+                    var matched = id && EndsWith(id, suffix);
+                    if (matched) {
+                      var len = id.length - suffix.length;
+                      ShowByName(id.substring(0, len));
+                      if (anchor.scrollIntoView) {
+                        anchor.scrollIntoView();
+                      }
+
+                      return;
+                    }
+                    node = node.parentNode;
+                  }
+                }
+
+                window.onhashchange = RefreshVisibilityFromHashParam;
+
+                window.onload = function() {
+                  // if the URL contains "?showall=y", expand the details of all children
+                  var showHideAllRegex = new RegExp("[\\?&](showall)=([^&#]*)");
+                  var showHideAllValue = showHideAllRegex.exec(window.location.href);
+                  if (showHideAllValue != null) {
+                    if (showHideAllValue[2] == "y") {
+                      SetHiddenState(document.getElementsByTagName("body")[0].childNodes, 
+                          "inline", '▽');
+                    } else {
+                      SetHiddenState(document.getElementsByTagName("body")[0].childNodes, 
+                          "none", '▶');
+                    }
+                  }
+                  var showOneRegex = new RegExp("[\\?&](showone)=([^&#]*)");
+                  var showOneValue = showOneRegex.exec(window.location.href);
+                  if (showOneValue) {
+                    ShowHideByName(showOneValue[2]);
+                  }
+
+
+                  RefreshVisibilityFromHashParam();
+                }
+              </SCRIPT>
+</HEAD>
+<BODY>
+<H1>Google Common Lisp Style Guide</H1>
 
 
 <p align="right">
@@ -25,24 +158,101 @@ Robert Brown
 </p>
 
 
-<OVERVIEW>
-<CATEGORY title="Important Note">
-  <STYLEPOINT title="Note: Displaying Hidden Details in this Guide">
-     <SUMMARY>
+<DIV style="margin-left: 50%; font-size: 75%;">
+<P>
+        Each style point has a summary for which additional information is available
+        by toggling the accompanying arrow button that looks this way:
+        <SPAN class="showhide_button" style="margin-left: 0; float: none">▶</SPAN>.
+        You may toggle all summaries with the big arrow button:
+      </P>
+<DIV style=" font-size: larger; margin-left: +2em;">
+<SPAN class="showhide_button" style="font-size: 180%; float: none" onclick="javascript:ShowHideAll()" name="show_hide_all_button" id="show_hide_all_button">▶</SPAN>
+        Toggle all summaries
+      </DIV>
+</DIV>
+<DIV class="toc">
+<DIV class="toc_title">Table of Contents</DIV>
+<TABLE>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Meta-Guide">Meta-Guide</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Must,_Should,_May,_or_Not">Must, Should, May, or Not</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Permission_and_Forgiveness">Permission and Forgiveness</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Conventions">Conventions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Old_Code">Old Code</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Future_Topics">Future Topics</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#General_Guidelines">General Guidelines</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Principles">Principles</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Priorities">Priorities</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Architecture">Architecture</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Using_Libraries">Using Libraries</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Open-Sourcing_Code">Open-Sourcing Code</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Development_Process">Development Process</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Formatting">Formatting</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Spelling_and_Abbreviations">Spelling and Abbreviations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Line_length">Line length</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Indentation">Indentation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#File_Header">File Header</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Vertical_white_space">Vertical white space</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Horizontal_white_space">Horizontal white space</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Documentation">Documentation</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Document_everything">Document everything</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Comment_semicolons">Comment semicolons</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Grammar_and_punctuation">Grammar and punctuation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Attention_Required">Attention Required</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Domain-Specific_Languages">Domain-Specific Languages</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Naming">Naming</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Symbol_guidelines">Symbol guidelines</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Denote_intent,_not_content">Denote intent, not content</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Global_variables_and_constants">Global variables and constants</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Predicate_names">Predicate names</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Omit_library_prefixes">Omit library prefixes</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Packages">Packages</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Language_usage_guidelines">Language usage guidelines</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Mostly_Functional_Style">Mostly Functional Style</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Recursion">Recursion</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Special_variables">Special variables</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Assignment">Assignment</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Assertions_and_Conditions">Assertions and Conditions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Type_Checking">Type Checking</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#CLOS">CLOS</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Meta-language_guidelines">Meta-language guidelines</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Macros">Macros</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#EVAL-WHEN">EVAL-WHEN</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Read-time_evaluation">Read-time evaluation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#EVAL">EVAL</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#INTERN_and_UNINTERN">INTERN and UNINTERN</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Data_Representation">Data Representation</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#NIL:_empty-list,_false_and_I_Don_t_Know">NIL: empty-list, false and I Don't Know</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Do_not_abuse_lists">Do not abuse lists</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lists_vs._structures_vs._multiple_values">Lists vs. structures vs. multiple values</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lists_vs._Pairs">Lists vs. Pairs</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lists_vs._Arrays">Lists vs. Arrays</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Lists_vs._Sets">Lists vs. Sets</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Proper_Forms">Proper Forms</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Defining_Constants">Defining Constants</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Defining_Functions">Defining Functions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Conditional_Expressions">Conditional Expressions</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Identity,_Equality_and_Comparisons">Identity, Equality and Comparisons</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Iteration">Iteration</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#I/O">I/O</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Optimization">Optimization</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Avoid_Allocation">Avoid Allocation</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Unsafe_Operations">Unsafe Operations</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#DYNAMIC-EXTENT">DYNAMIC-EXTENT</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#REDUCE_vs_APPLY">REDUCE vs APPLY</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Avoid_NCONC">Avoid NCONC</A></SPAN> </DIV></TD>
+</TR>
+<TR valign="top" class="">
+<TD><DIV class="toc_category"><A href="#Pitfalls">Pitfalls</A></DIV></TD>
+<TD><DIV class="toc_stylepoint">
+<SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#__FUN_vs.__FUN">#'FUN vs. 'FUN</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#Pathnames">Pathnames</A></SPAN> <SPAN style="padding-right: 1em; white-space:nowrap;" class=""><A href="#SATISFIES">SATISFIES</A></SPAN> </DIV></TD>
+</TR>
+</TABLE>
+</DIV>
+<DIV class="">
+<H2 name="Important_Note" id="Important_Note">Important Note</H2>
+  <DIV class="">
+<H3><A name="Note:_Displaying_Hidden_Details_in_this_Guide" id="Note:_Displaying_Hidden_Details_in_this_Guide">Note: Displaying Hidden Details in this Guide</A></H3>
+<SPAN class="link_button" id="link-Note:_Displaying_Hidden_Details_in_this_Guide__button" name="link-Note:_Displaying_Hidden_Details_in_this_Guide__button"><A href="?showone=Note:_Displaying_Hidden_Details_in_this_Guide#Note:_Displaying_Hidden_Details_in_this_Guide">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Note:_Displaying_Hidden_Details_in_this_Guide')" name="Note:_Displaying_Hidden_Details_in_this_Guide__button" id="Note:_Displaying_Hidden_Details_in_this_Guide__button">▶</SPAN>
+     <DIV style="display:inline;" class="">
        This style guide contains many details
        that are initially hidden from view.
        They are marked by the triangle icon, which you see here on your left.
        Click it now. You should see "Hooray" appear below.
-     </SUMMARY>
-     <BODY>
+     </DIV>
+     <DIV class=""><DIV class="stylepoint_body" name="Note:_Displaying_Hidden_Details_in_this_Guide__body" id="Note:_Displaying_Hidden_Details_in_this_Guide__body" style="display: none">
        <p>
         Hooray!  Now you know you can expand points to get more details.
         Alternatively, there's an "expand all" at the top of this document.
        </p>
-     </BODY>
-  </STYLEPOINT>
-</CATEGORY>
-<CATEGORY title="Background">
+     </DIV></DIV>
+  </DIV>
+</DIV>
+<DIV class="">
+<H2 name="Background" id="Background">Background</H2>
   <p>
     Common Lisp is a powerful multiparadigm programming language.
     With great power comes great responsibility.
@@ -78,16 +288,21 @@ Robert Brown
     a look at Peter Norvig and Kent Pitman's
     <a HREF="http://norvig.com/luv-slides.ps">style guide</a>.
   </p>
-</CATEGORY>
-</OVERVIEW>
-<CATEGORY title="Meta-Guide">
-  <STYLEPOINT title="Must, Should, May, or Not">
-    <SUMMARY>
+</DIV>
+
+<DIV class="">
+<H2 name="Meta-Guide" id="Meta-Guide">Meta-Guide</H2>
+  <DIV class="">
+<H3><A name="Must,_Should,_May,_or_Not" id="Must,_Should,_May,_or_Not">Must, Should, May, or Not</A></H3>
+<SPAN class="link_button" id="link-Must,_Should,_May,_or_Not__button" name="link-Must,_Should,_May,_or_Not__button"><A href="?showone=Must,_Should,_May,_or_Not#Must,_Should,_May,_or_Not">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Must,_Should,_May,_or_Not')" name="Must,_Should,_May,_or_Not__button" id="Must,_Should,_May,_or_Not__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Each guideline's level of importance is indicated
       by use of the following keywords and phrases, adapted from
       <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Must,_Should,_May,_or_Not__body" id="Must,_Should,_May,_or_Not__body" style="display: none">
       <table>
         <tr>
           <th valign="top">MUST</th>
@@ -149,16 +364,20 @@ Robert Brown
         Unlike RFCs, we don't capitalize every instance of one of the above
         keywords when it is used.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Permission and Forgiveness">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Permission_and_Forgiveness" id="Permission_and_Forgiveness">Permission and Forgiveness</A></H3>
+<SPAN class="link_button" id="link-Permission_and_Forgiveness__button" name="link-Permission_and_Forgiveness__button"><A href="?showone=Permission_and_Forgiveness#Permission_and_Forgiveness">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Permission_and_Forgiveness')" name="Permission_and_Forgiveness__button" id="Permission_and_Forgiveness__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       There are cases where transgression of some of these rules
       is useful or even necessary.
       In some cases, you must seek permission or obtain forgiveness
       from the proper people.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Permission_and_Forgiveness__body" id="Permission_and_Forgiveness__body" style="display: none">
       <p>
         Permission comes from the owners of your project.
       </p>
@@ -171,13 +390,17 @@ Robert Brown
         the reviewer should add a signed approval to the comment at review time.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Conventions">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Conventions" id="Conventions">Conventions</A></H3>
+<SPAN class="link_button" id="link-Conventions__button" name="link-Conventions__button"><A href="?showone=Conventions#Conventions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Conventions')" name="Conventions__button" id="Conventions__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You MUST follow conventions. They are not optional.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Conventions__body" id="Conventions__body" style="display: none">
       <p>
         Some of these guidelines are motivated by universal principles of good programming.
         Some guidelines are motivated by technical peculiarities of Common Lisp.
@@ -209,13 +432,17 @@ Robert Brown
         so you know when best to defy conventions for good effect,
         and when not to fall into the pitfalls that the conventions are there to help avoid.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Old Code">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Old_Code" id="Old_Code">Old Code</A></H3>
+<SPAN class="link_button" id="link-Old_Code__button" name="link-Old_Code__button"><A href="?showone=Old_Code#Old_Code">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Old_Code')" name="Old_Code__button" id="Old_Code__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Fix old code as you go.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Old_Code__body" id="Old_Code__body" style="display: none">
       <p>
         A lot of our code was written before these guidelines existed.
         You should fix violations as you encounter them
@@ -227,15 +454,19 @@ Robert Brown
         so as not to make the merging of large branches
         more difficult than it already is.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Future Topics">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Future_Topics" id="Future_Topics">Future Topics</A></H3>
+<SPAN class="link_button" id="link-Future_Topics__button" name="link-Future_Topics__button"><A href="?showone=Future_Topics#Future_Topics">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Future_Topics')" name="Future_Topics__button" id="Future_Topics__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       There are many topics for additional standardization
       not covered by current version of this document,
       but deferred to future versions.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Future_Topics__body" id="Future_Topics__body" style="display: none">
       <ul>
         <li>
           File and directory structure
@@ -299,12 +530,17 @@ Robert Brown
           </ul>
         </li>
       </ul>
-    </BODY>
-  </STYLEPOINT>
-  </CATEGORY>
-<CATEGORY title="General Guidelines">
-  <STYLEPOINT title="Principles">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  </DIV>
+<DIV class="">
+<H2 name="General_Guidelines" id="General_Guidelines">General Guidelines</H2>
+  <DIV class="">
+<H3><A name="Principles" id="Principles">Principles</A></H3>
+<SPAN class="link_button" id="link-Principles__button" name="link-Principles__button"><A href="?showone=Principles#Principles">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Principles')" name="Principles__button" id="Principles__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       There are some basic principles for team software development
       that every developer must keep in mind.
       Whenever the detailed guidelines are inadequate, confusing or contradictory,
@@ -342,12 +578,16 @@ Robert Brown
           someone has to do to understand an area of code.
         </li>
       </ul>
-    </SUMMARY>
-    <BODY>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Priorities">
-    <SUMMARY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Principles__body" id="Principles__body" style="display: none">
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Priorities" id="Priorities">Priorities</A></H3>
+<SPAN class="link_button" id="link-Priorities__button" name="link-Priorities__button"><A href="?showone=Priorities#Priorities">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Priorities')" name="Priorities__button" id="Priorities__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       <p>
         When making decisions about how to write a given piece of
         code, aim for the following -ilities in this priority order:
@@ -369,8 +609,8 @@ Robert Brown
           Efficiency (of the Lisp code at runtime)
         </li>
       </ul>
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Priorities__body" id="Priorities__body" style="display: none">
       <p>
         Most of these are obvious.
       </p>
@@ -396,10 +636,14 @@ Robert Brown
         Don't add complexity to speed up something that runs rarely,
         since in the long run, it matters less whether such code is fast.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Architecture">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Architecture" id="Architecture">Architecture</A></H3>
+<SPAN class="link_button" id="link-Architecture__button" name="link-Architecture__button"><A href="?showone=Architecture#Architecture">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Architecture')" name="Architecture__button" id="Architecture__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       To build code that is robust and maintainable,
       it matters a lot how the code is divided into components,
       how these components communicate,
@@ -407,8 +651,8 @@ Robert Brown
       and more importantly
       how the programmers who develop these components communicate
       as these components evolve.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Architecture__body" id="Architecture__body" style="display: none">
       <p>
         If your work affects other groups, might be reusable across groups,
         adds new components, has an impact on other groups
@@ -422,16 +666,20 @@ Robert Brown
         If you don't know or don't care about these issues,
         ask someone who does.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Using Libraries">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Using_Libraries" id="Using_Libraries">Using Libraries</A></H3>
+<SPAN class="link_button" id="link-Using_Libraries__button" name="link-Using_Libraries__button"><A href="?showone=Using_Libraries#Using_Libraries">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Using_Libraries')" name="Using_Libraries__button" id="Using_Libraries__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Often, the smallest hammer is to use an existing library.
       Or one that doesn't exist yet.
       In such cases, you are encouraged to use or develop such a library,
       but you must take appropriate precautions.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Using_Libraries__body" id="Using_Libraries__body" style="display: none">
       <ul>
         <li>
           You MUST NOT start a new library
@@ -458,10 +706,14 @@ Robert Brown
         </li>
       </ul>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Open-Sourcing Code">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Open-Sourcing_Code" id="Open-Sourcing_Code">Open-Sourcing Code</A></H3>
+<SPAN class="link_button" id="link-Open-Sourcing_Code__button" name="link-Open-Sourcing_Code__button"><A href="?showone=Open-Sourcing_Code#Open-Sourcing_Code">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Open-Sourcing_Code')" name="Open-Sourcing_Code__button" id="Open-Sourcing_Code__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       <p>
         If you write a general-purpose library,
         or modify an existing open-source library,
@@ -470,8 +722,8 @@ Robert Brown
         have your project import it like any other open-source library.
       </p>
       
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Open-Sourcing_Code__body" id="Open-Sourcing_Code__body" style="display: none">
       <p>
         Use your judgment to distinguish
         general-purpose versus business-specific code,
@@ -491,15 +743,19 @@ Robert Brown
         is not directly usable by third parties.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Development Process">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Development_Process" id="Development_Process">Development Process</A></H3>
+<SPAN class="link_button" id="link-Development_Process__button" name="link-Development_Process__button"><A href="?showone=Development_Process#Development_Process">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Development_Process')" name="Development_Process__button" id="Development_Process__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Development process is outside the scope of this document.
       However, developers should remember at least these bits:
       get reviewed, write tests, eliminate warnings, run tests, avoid mass-changes.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Development_Process__body" id="Development_Process__body" style="display: none">
       <p>
       </p>
       <ul>
@@ -553,12 +809,17 @@ Robert Brown
           and give branch residents time to get back on the mainline
         </li>
       </ul>
-    </BODY>
-  </STYLEPOINT>
-</CATEGORY>
-<CATEGORY title="Formatting">
-  <STYLEPOINT title="Spelling and Abbreviations">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+</DIV>
+<DIV class="">
+<H2 name="Formatting" id="Formatting">Formatting</H2>
+  <DIV class="">
+<H3><A name="Spelling_and_Abbreviations" id="Spelling_and_Abbreviations">Spelling and Abbreviations</A></H3>
+<SPAN class="link_button" id="link-Spelling_and_Abbreviations__button" name="link-Spelling_and_Abbreviations__button"><A href="?showone=Spelling_and_Abbreviations#Spelling_and_Abbreviations">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Spelling_and_Abbreviations')" name="Spelling_and_Abbreviations__button" id="Spelling_and_Abbreviations__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       <p>
         You must use correct spelling in your comments,
         and most importantly in your identifiers.
@@ -574,8 +835,8 @@ Robert Brown
         lexical variables of limited scope in order to avoid overly-long
         symbol names.
       </p>
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Spelling_and_Abbreviations__body" id="Spelling_and_Abbreviations__body" style="display: none">
       <p>
         If you're not sure, consult a dictionary,
         Google for alternative spellings,
@@ -643,13 +904,17 @@ Robert Brown
         </li>
       </ul>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Line length">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Line_length" id="Line_length">Line length</A></H3>
+<SPAN class="link_button" id="link-Line_length__button" name="link-Line_length__button"><A href="?showone=Line_length#Line_length">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Line_length')" name="Line_length__button" id="Line_length__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should format source code so that no line is longer than 100 characters.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Line_length__body" id="Line_length__body" style="display: none">
       <p>
         Some line length restriction is better than none at all.
         While old text terminals used to make 80 columns the standard,
@@ -658,10 +923,14 @@ Robert Brown
         descriptive variables and function names.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Indentation">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Indentation" id="Indentation">Indentation</A></H3>
+<SPAN class="link_button" id="link-Indentation__button" name="link-Indentation__button"><A href="?showone=Indentation#Indentation">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Indentation')" name="Indentation__button" id="Indentation__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       <p>
         Indent your code the way a properly configured GNU Emacs does.
       </p>
@@ -671,8 +940,8 @@ Robert Brown
       <p>
         Indent carefully to make the code easier to understand.
       </p>
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Indentation__body" id="Indentation__body" style="display: none">
       <p>
         Common Lisp indentation in Emacs is provided by the cl-indent library.
         The latest version of cl-indent is packaged with
@@ -707,31 +976,31 @@ Robert Brown
         how many arguments the function takes
         or where an argument form starts and ends.
       </p>
-      <BAD_CODE_SNIPPET>
-        ;; Bad
-        (do-something first-argument second-argument (lambda (x)
-            (frob x)) fourth-argument last-argument)
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        ;; Better
-        (do-something first-argument
-                      second-argument
-                      #'(lambda (x) (frob x))
-                      fourth-argument
-                      last-argument)
-      </CODE_SNIPPET>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="File Header">
-    <SUMMARY>
+      <DIV class=""><PRE class="badcode">;; Bad
+(do-something first-argument second-argument (lambda (x)
+    (frob x)) fourth-argument last-argument)</PRE></DIV>
+      <DIV class=""><PRE>;; Better
+(do-something first-argument
+              second-argument
+              #'(lambda (x) (frob x))
+              fourth-argument
+              last-argument)</PRE></DIV>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="File_Header" id="File_Header">File Header</A></H3>
+<SPAN class="link_button" id="link-File_Header__button" name="link-File_Header__button"><A href="?showone=File_Header#File_Header">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('File_Header')" name="File_Header__button" id="File_Header__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       <p>
         You should include a description at the top of each source file.
       </p>
       <p>
         You should include neither authorship nor copyright information in a source file.
       </p>
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="File_Header__body" id="File_Header__body" style="display: none">
       <p>
         Every source file should begin with a brief description
         of the contents of that file.
@@ -746,12 +1015,10 @@ Robert Brown
         <code>(declaim (optimize ...))</code> declaration
         that is not covered by an <code>ASDF</code> <code>:around-compile</code> hook.
       </p>
-      <CODE_SNIPPET>
-        ;;;; Variable length encoding for integers and floating point numbers.
+      <DIV class=""><PRE>;;;; Variable length encoding for integers and floating point numbers.
 
-        (in-package #:varint)
-        (declaim #.*optimize-default*)
-      </CODE_SNIPPET>
+(in-package #:varint)
+(declaim #.*optimize-default*)</PRE></DIV>
       <p>
         You should not include authorship information at the top of a file:
         better information is available from version control,
@@ -767,13 +1034,17 @@ Robert Brown
       </p>
       
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Vertical white space">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Vertical_white_space" id="Vertical_white_space">Vertical white space</A></H3>
+<SPAN class="link_button" id="link-Vertical_white_space__button" name="link-Vertical_white_space__button"><A href="?showone=Vertical_white_space#Vertical_white_space">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Vertical_white_space')" name="Vertical_white_space__button" id="Vertical_white_space__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Vertical white space: one blank line between top-level forms.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Vertical_white_space__body" id="Vertical_white_space__body" style="display: none">
       <p>
         You should include one blank line between top-level forms,
         such as function definitions.
@@ -781,20 +1052,18 @@ Robert Brown
         between simple, closely related defining forms of the same kind,
         such as a group of related type declarations or constant definitions.
       </p>
-      <CODE_SNIPPET>
-        (defconstant +mix32+ #x12b9b0a1 "pi, an arbitrary number")
-        (defconstant +mix64+ #x2b992ddfa23249d6 "more digits of pi")
+      <DIV class=""><PRE>(defconstant +mix32+ #x12b9b0a1 "pi, an arbitrary number")
+(defconstant +mix64+ #x2b992ddfa23249d6 "more digits of pi")
 
-        (defconstant +golden-ratio32+ #x9e3779b9 "the golden ratio")
-        (defconstant +golden-ratio64+ #xe08c1d668b756f82 "more digits of the golden ratio")
+(defconstant +golden-ratio32+ #x9e3779b9 "the golden ratio")
+(defconstant +golden-ratio64+ #xe08c1d668b756f82 "more digits of the golden ratio")
 
-        (defmacro incf32 (x y)
-          "Like INCF, but for integers modulo 2**32"
-          `(setf ,x (logand (+ ,x ,y) #xffffffff)))
-        (defmacro incf64 (x y)
-          "Like INCF, but for integers modulo 2**64"
-          `(setf ,x (logand (+ ,x ,y) #xffffffffffffffff)))
-      </CODE_SNIPPET>
+(defmacro incf32 (x y)
+  "Like INCF, but for integers modulo 2**32"
+  `(setf ,x (logand (+ ,x ,y) #xffffffff)))
+(defmacro incf64 (x y)
+  "Like INCF, but for integers modulo 2**64"
+  `(setf ,x (logand (+ ,x ,y) #xffffffffffffffff)))</PRE></DIV>
       <p>
         Blank lines can be used to separate parts of a complicated function.
         Generally, however, you should break a large function into smaller ones
@@ -812,13 +1081,17 @@ Robert Brown
         Additionally, <code>defpackage</code> forms may be longer,
         since they may include long lists of symbols.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Horizontal white space">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Horizontal_white_space" id="Horizontal_white_space">Horizontal white space</A></H3>
+<SPAN class="link_button" id="link-Horizontal_white_space__button" name="link-Horizontal_white_space__button"><A href="?showone=Horizontal_white_space#Horizontal_white_space">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Horizontal_white_space')" name="Horizontal_white_space__button" id="Horizontal_white_space__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Horizontal white space: none around parentheses. No tabs.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Horizontal_white_space__body" id="Horizontal_white_space__body" style="display: none">
       <p>
         You must not include extra horizontal whitespace
         before or after parentheses or around symbols.
@@ -827,24 +1100,20 @@ Robert Brown
         You must not place right parentheses by themselves on a line.
         A set of consecutive trailing parentheses must appear on the same line.
       </p>
-      <BAD_CODE_SNIPPET>
-        ;; Very Bad
-        ( defun factorial ( limit )
-          ( let (( product 1 ))
-            ( loop for i from 1 upto limit
-                  do (setf product ( * product i ) ) )
-            product
-          )
-        )
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        ;; Better
-        (defun factorial (limit)
-          (let ((product 1))
-            (loop for i from 1 upto limit
-                  do (setf product (* product i)))
-            product))
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">;; Very Bad
+( defun factorial ( limit )
+  ( let (( product 1 ))
+    ( loop for i from 1 upto limit
+          do (setf product ( * product i ) ) )
+    product
+  )
+)</PRE></DIV>
+      <DIV class=""><PRE>;; Better
+(defun factorial (limit)
+  (let ((product 1))
+    (loop for i from 1 upto limit
+          do (setf product (* product i)))
+    product))</PRE></DIV>
       <p>
         You should use only one space between forms.
       </p>
@@ -855,35 +1124,27 @@ Robert Brown
         an important yet otherwise not visible symmetry
         that you want to emphasize.
       </p>
-      <BAD_CODE_SNIPPET>
-        ;; Bad
-        (let* ((low    1)
-               (high   2)
-               (sum    (+ (* low low) (* high high))))
-          ...)
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        ;; Better
-        (let* ((low 1)
-               (high 2)
-               (sum (+ (* low low) (* high high))))
-          ...))
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">;; Bad
+(let* ((low    1)
+       (high   2)
+       (sum    (+ (* low low) (* high high))))
+  ...)</PRE></DIV>
+      <DIV class=""><PRE>;; Better
+(let* ((low 1)
+       (high 2)
+       (sum (+ (* low low) (* high high))))
+  ...))</PRE></DIV>
       <p>
         You must align nested forms if they occur across more than one line.
       </p>
-      <BAD_CODE_SNIPPET>
-        ;; Bad
-        (defun munge (a b c)
-        (* (+ a b)
-        c))
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        ;; Better
-        (defun munge (a b c)
-          (* (+ a b)
-             c))
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">;; Bad
+(defun munge (a b c)
+(* (+ a b)
+c))</PRE></DIV>
+      <DIV class=""><PRE>;; Better
+(defun munge (a b c)
+  (* (+ a b)
+     c))</PRE></DIV>
       <p>
         The convention is that the body of a binding form
         is indented two spaces after the form.
@@ -892,13 +1153,11 @@ Robert Brown
         if the first argument is on its own line,
         it is aligned with the function name.
       </p>
-      <CODE_SNIPPET>
-        (multiple-value-bind (a b c d)
-            (function-returning-four-values x y)
-          (declare (ignore c))
-          (something-using a)
-          (also-using b d))
-      </CODE_SNIPPET>
+      <DIV class=""><PRE>(multiple-value-bind (a b c d)
+    (function-returning-four-values x y)
+  (declare (ignore c))
+  (something-using a)
+  (also-using b d))</PRE></DIV>
       <p>
         An exception to the rule against lonely parentheses
         is made for an <code>eval-when</code> form around several definitions;
@@ -912,17 +1171,22 @@ Robert Brown
         on how many spaces they represent.
         In Emacs, do <code>(setq-default indent-tabs-mode nil)</code>.
       </p>
-    </BODY>
-  </STYLEPOINT>
-</CATEGORY>
+    </DIV></DIV>
+  </DIV>
+</DIV>
 
-<CATEGORY title="Documentation">
-  <STYLEPOINT title="Document everything">
-    <SUMMARY>
+<DIV class="">
+<H2 name="Documentation" id="Documentation">Documentation</H2>
+  <DIV class="">
+<H3><A name="Document_everything" id="Document_everything">Document everything</A></H3>
+<SPAN class="link_button" id="link-Document_everything__button" name="link-Document_everything__button"><A href="?showone=Document_everything#Document_everything">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Document_everything')" name="Document_everything__button" id="Document_everything__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should use document strings on all visible functions
       to explain how to use your code.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Document_everything__body" id="Document_everything__body" style="display: none">
       <p>
         Unless some bit of code is painfully self-explanatory,
         document it with a documentation string (also known as docstring).
@@ -958,25 +1222,21 @@ Robert Brown
         such as function arguments.
         For example, "The value of LENGTH should be an integer."
       </p>
-      <CODE_SNIPPET>
-        (defun small-prime-number-p (n)
-          "Return T if N, an integer, is a prime number. Otherwise, return NIL."
-          (cond ((or (&lt; n 2))
-                 nil)
-                ((= n 2)
-                 t)
-                ((divisorp 2 n)
-                 nil)
-                (t
-                 (loop for i from 3 upto (sqrt n) by 2
-                       never (divisorp i n)))))
-      </CODE_SNIPPET>
-      <CODE_SNIPPET>
-        (defgeneric table-clear (table)
-          (:documentation
-            "Like clrhash, empties the TABLE of all
-            associations, and returns the table itself."))
-      </CODE_SNIPPET>
+      <DIV class=""><PRE>(defun small-prime-number-p (n)
+  "Return T if N, an integer, is a prime number. Otherwise, return NIL."
+  (cond ((or (&lt; n 2))
+         nil)
+        ((= n 2)
+         t)
+        ((divisorp 2 n)
+         nil)
+        (t
+         (loop for i from 3 upto (sqrt n) by 2
+               never (divisorp i n)))))</PRE></DIV>
+      <DIV class=""><PRE>(defgeneric table-clear (table)
+  (:documentation
+    "Like clrhash, empties the TABLE of all
+    associations, and returns the table itself."))</PRE></DIV>
       <p>
         A long docstring may usefully
         begin with a short, single-sentence summary,
@@ -987,15 +1247,13 @@ Robert Brown
         the symbol may be quoted by surrounding it with
         a back quote at the beginning and a single quote at the end.
         Emacs will highlight the type, and the highlighting serves
-        as a cue to the reader that <kbd>M-.</kbd>
+        as a cue to the reader that M-.
         will lead to the symbol's definition.
       </p>
-      <CODE_SNIPPET>
-        (defun bag-tag-expected-itinerary (bag-tag)
-          "Return a list of `legacy-pnr-pax-segment' objects representing
-          the expected itinerary of the `bag-tag' object, BAG-TAG."
-          ...)
-      </CODE_SNIPPET>
+      <DIV class=""><PRE>(defun bag-tag-expected-itinerary (bag-tag)
+  "Return a list of `legacy-pnr-pax-segment' objects representing
+  the expected itinerary of the `bag-tag' object, BAG-TAG."
+  ...)</PRE></DIV>
       <p>
         Every method of a generic function should be independently documented
         when the specialization affects what the method does,
@@ -1008,13 +1266,17 @@ Robert Brown
         the reason for the code in terms of fixing the bug.
         Adding the bug number, if any, is also recommended.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Comment semicolons">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Comment_semicolons" id="Comment_semicolons">Comment semicolons</A></H3>
+<SPAN class="link_button" id="link-Comment_semicolons__button" name="link-Comment_semicolons__button"><A href="?showone=Comment_semicolons#Comment_semicolons">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Comment_semicolons')" name="Comment_semicolons__button" id="Comment_semicolons__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You must use the appropriate number of semicolons to introduce comments.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Comment_semicolons__body" id="Comment_semicolons__body" style="display: none">
       <p>
         Comments are explanations to the future maintainers of the code.
         Even if you're the only person who will ever see and touch the code,
@@ -1061,63 +1323,69 @@ Robert Brown
           consecutive related end-of-line comments.
         </li>
       </ul>
-      <CODE_SNIPPET>
-        ;;;; project-euler.lisp
-        ;;;; File-level comments or comments for large sections of code.
+      <DIV class=""><PRE>;;;; project-euler.lisp
+;;;; File-level comments or comments for large sections of code.
 
-        ;;; Problems are described in more detail here:  https://projecteuler.net/
+;;; Problems are described in more detail here:  https://projecteuler.net/
 
-        ;;; Divisibility
-        ;;; Comments that describe a group of definitions.
+;;; Divisibility
+;;; Comments that describe a group of definitions.
 
-        (defun divisorp (d n)
-          (zerop (mod n d)))
+(defun divisorp (d n)
+  (zerop (mod n d)))
 
-        (defun proper-divisors (n)
-          ...)
+(defun proper-divisors (n)
+  ...)
 
-        (defun divisors (n)
-          (cons n (proper-divisors n)))
+(defun divisors (n)
+  (cons n (proper-divisors n)))
 
-        ;;; Prime numbers
+;;; Prime numbers
 
-        (defun small-prime-number-p (n)
-          (cond ((or (&lt; n 2))
-                 nil)
-                ((= n 2)   ; parenthetical remark here
-                 t)        ; continuation of the remark
-                ((divisorp 2 n)
-                 nil)  ; different remark
-                ;; Comment that applies to a section of code.
-                (t
-                 (loop for i from 3 upto (sqrt n) by 2
-                       never (divisorp i n)))))
-      </CODE_SNIPPET>
+(defun small-prime-number-p (n)
+  (cond ((or (&lt; n 2))
+         nil)
+        ((= n 2)   ; parenthetical remark here
+         t)        ; continuation of the remark
+        ((divisorp 2 n)
+         nil)  ; different remark
+        ;; Comment that applies to a section of code.
+        (t
+         (loop for i from 3 upto (sqrt n) by 2
+               never (divisorp i n)))))</PRE></DIV>
       <p>
         You should include a space between the semicolon and the text of the comment.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Grammar and punctuation">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Grammar_and_punctuation" id="Grammar_and_punctuation">Grammar and punctuation</A></H3>
+<SPAN class="link_button" id="link-Grammar_and_punctuation__button" name="link-Grammar_and_punctuation__button"><A href="?showone=Grammar_and_punctuation#Grammar_and_punctuation">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Grammar_and_punctuation')" name="Grammar_and_punctuation__button" id="Grammar_and_punctuation__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should punctuate documentation correctly.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Grammar_and_punctuation__body" id="Grammar_and_punctuation__body" style="display: none">
       <p>
         When a comment is a full sentence,
         you should capitalize the initial letter of the first word
         and end the comment with a period.
         In general, you should use correct punctuation.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Attention Required">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Attention_Required" id="Attention_Required">Attention Required</A></H3>
+<SPAN class="link_button" id="link-Attention_Required__button" name="link-Attention_Required__button"><A href="?showone=Attention_Required#Attention_Required">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Attention_Required')" name="Attention_Required__button" id="Attention_Required__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You must follow the convention of using TODO comments
       for code requiring special attention.
       For code using unobvious forms, you must include a comment.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Attention_Required__body" id="Attention_Required__body" style="display: none">
       <p>
         For comments requiring special attention, such as
         incomplete code, todo items, questions, breakage, and danger,
@@ -1147,9 +1415,7 @@ Robert Brown
         not just initials.
         
       </p>
-      <CODE_SNIPPET>
-        ;;--- TODO(george@gmail.com): Refactor to provide a better API.
-      </CODE_SNIPPET>
+      <DIV class=""><PRE>;;--- TODO(george@gmail.com): Refactor to provide a better API.</PRE></DIV>
       <p>
         Be specific when indicating times or software releases
         in a TODO comment and use
@@ -1157,21 +1423,23 @@ Robert Brown
         format for dates to make automated processing of such dates easier,
         e.g., 2038-01-20 for the end of the 32-bit signed <code>time_t</code>.
       </p>
-      <CODE_SNIPPET>
-        ;;--- TODO(brown): Remove this code after release 1.7 or before 2012-11-30.
-      </CODE_SNIPPET>
+      <DIV class=""><PRE>;;--- TODO(brown): Remove this code after release 1.7 or before 2012-11-30.</PRE></DIV>
       <p>
         For code that uses unobvious forms to accomplish a task, you must include a comment
         stating the purpose of the form and the task it accomplishes.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Domain-Specific Languages">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Domain-Specific_Languages" id="Domain-Specific_Languages">Domain-Specific Languages</A></H3>
+<SPAN class="link_button" id="link-Domain-Specific_Languages__button" name="link-Domain-Specific_Languages__button"><A href="?showone=Domain-Specific_Languages#Domain-Specific_Languages">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Domain-Specific_Languages')" name="Domain-Specific_Languages__button" id="Domain-Specific_Languages__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should document DSLs and
       any terse program in a DSL.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Domain-Specific_Languages__body" id="Domain-Specific_Languages__body" style="display: none">
       <p>
         You should design your Domain Specific Language
         to be easy to read and understand by people familiar with the domain.
@@ -1195,19 +1463,24 @@ Robert Brown
         it should be possible for someone to follow the logic of the code
         without actually parsing the regular expression.
       </p>
-    </BODY>
-  </STYLEPOINT>
+    </DIV></DIV>
+  </DIV>
 
-</CATEGORY>
+</DIV>
 
-<CATEGORY title="Naming">
-  <STYLEPOINT title="Symbol guidelines">
-    <SUMMARY>
+<DIV class="">
+<H2 name="Naming" id="Naming">Naming</H2>
+  <DIV class="">
+<H3><A name="Symbol_guidelines" id="Symbol_guidelines">Symbol guidelines</A></H3>
+<SPAN class="link_button" id="link-Symbol_guidelines__button" name="link-Symbol_guidelines__button"><A href="?showone=Symbol_guidelines#Symbol_guidelines">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Symbol_guidelines')" name="Symbol_guidelines__button" id="Symbol_guidelines__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should use lower case.
       You should follow the rules for <a href="#Spelling_and_Abbreviations">Spelling and Abbreviations</a>
       You should follow punctuation conventions.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Symbol_guidelines__body" id="Symbol_guidelines__body" style="display: none">
       <p>
         Use lower case for all symbols.
         Consistently using lower case makes searching for symbol names easier
@@ -1241,16 +1514,12 @@ Robert Brown
         See the section on <a href="#Spelling_and_Abbreviations">Spelling and Abbreviations</a>
         for guidelines on using abbreviations.
       </p>
-      <BAD_CODE_SNIPPET>
-        ;; Bad
-        (defvar *default-username* "Ann")
-        (defvar *max-widget-cnt* 200)
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        ;; Better
-        (defvar *default-user-name* "Ann")
-        (defvar *maximum-widget-count* 200)
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">;; Bad
+(defvar *default-username* "Ann")
+(defvar *max-widget-cnt* 200)</PRE></DIV>
+      <DIV class=""><PRE>;; Better
+(defvar *default-user-name* "Ann")
+(defvar *maximum-widget-count* 200)</PRE></DIV>
       <p>
         There are conventions in Common Lisp
         for the use of punctuation in symbols.
@@ -1261,14 +1530,18 @@ Robert Brown
         do not use overly short names like
         <code>i</code> and <code>zq</code>.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Denote intent, not content">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Denote_intent,_not_content" id="Denote_intent,_not_content">Denote intent, not content</A></H3>
+<SPAN class="link_button" id="link-Denote_intent,_not_content__button" name="link-Denote_intent,_not_content__button"><A href="?showone=Denote_intent,_not_content#Denote_intent,_not_content">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Denote_intent,_not_content')" name="Denote_intent,_not_content__button" id="Denote_intent,_not_content__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Name your variables according to their intent,
       not their content.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Denote_intent,_not_content__body" id="Denote_intent,_not_content__body" style="display: none">
       <p>
         You should name a variable according
         to the high-level concept that it represents,
@@ -1312,13 +1585,17 @@ Robert Brown
         then call it <code>row</code> rather than, say, <code>value</code>
         (this was a real case).
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Global variables and constants">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Global_variables_and_constants" id="Global_variables_and_constants">Global variables and constants</A></H3>
+<SPAN class="link_button" id="link-Global_variables_and_constants__button" name="link-Global_variables_and_constants__button"><A href="?showone=Global_variables_and_constants#Global_variables_and_constants">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Global_variables_and_constants')" name="Global_variables_and_constants__button" id="Global_variables_and_constants__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Name globals according to convention.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Global_variables_and_constants__body" id="Global_variables_and_constants__body" style="display: none">
       <p>
         The names of global constants should start and end
         with plus characters.
@@ -1347,18 +1624,20 @@ Robert Brown
         You should not use this trick,
         unless you first publish a library that abstracts it away.
       </p>
-      <CODE_SNIPPET>
-        (defconstant +hash-results+ #xbd49d10d10cbee50)
+      <DIV class=""><PRE>(defconstant +hash-results+ #xbd49d10d10cbee50)
 
-        (defvar *maximum-search-depth* 100)
-      </CODE_SNIPPET>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Predicate names">
-    <SUMMARY>
+(defvar *maximum-search-depth* 100)</PRE></DIV>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Predicate_names" id="Predicate_names">Predicate names</A></H3>
+<SPAN class="link_button" id="link-Predicate_names__button" name="link-Predicate_names__button"><A href="?showone=Predicate_names#Predicate_names">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Predicate_names')" name="Predicate_names__button" id="Predicate_names__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Names of predicate functions and variables end with a <code>"P"</code>.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Predicate_names__body" id="Predicate_names__body" style="display: none">
       <p>
         You should name boolean-valued functions and variables with a
         trailing <code>"P"</code> or <code>"-P"</code>,
@@ -1386,14 +1665,18 @@ Robert Brown
         you should not use such an alternative rule
         without a very good documented reason.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Omit library prefixes">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Omit_library_prefixes" id="Omit_library_prefixes">Omit library prefixes</A></H3>
+<SPAN class="link_button" id="link-Omit_library_prefixes__button" name="link-Omit_library_prefixes__button"><A href="?showone=Omit_library_prefixes#Omit_library_prefixes">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Omit_library_prefixes')" name="Omit_library_prefixes__button" id="Omit_library_prefixes__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should not include a library or package name
       as a prefix within the name of symbols.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Omit_library_prefixes__body" id="Omit_library_prefixes__body" style="display: none">
       <p>
         When naming a symbol (external or internal) in a package,
         you should not include the package name
@@ -1405,22 +1688,18 @@ Robert Brown
         (once as a package prefix,
         another time as a prefix within the symbol name).
       </p>
-      <BAD_CODE_SNIPPET>
-        ;; Bad
-        (in-package #:varint)
-        (defun varint-length64 () ... )
+      <DIV class=""><PRE class="badcode">;; Bad
+(in-package #:varint)
+(defun varint-length64 () ... )
 
-        (in-package #:client-code)
-        (defconst +padding+ (varint:varint-length64 +end-token+))
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        ;; Better
-        (in-package #:varint)
-        (defun length64 () ... )
+(in-package #:client-code)
+(defconst +padding+ (varint:varint-length64 +end-token+))</PRE></DIV>
+      <DIV class=""><PRE>;; Better
+(in-package #:varint)
+(defun length64 () ... )
 
-        (in-package #:client-code)
-        (defconst +padding+ (varint:length64 +end-token+))
-      </CODE_SNIPPET>
+(in-package #:client-code)
+(defconst +padding+ (varint:length64 +end-token+))</PRE></DIV>
       <p>
         An exception to the above rule would be to include a prefix
         for the names of variables that would otherwise be expected to clash
@@ -1429,13 +1708,17 @@ Robert Brown
         that controls the verbosity of <code>ASDF</code> only,
         rather than of the entire Lisp program.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Packages">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Packages" id="Packages">Packages</A></H3>
+<SPAN class="link_button" id="link-Packages__button" name="link-Packages__button"><A href="?showone=Packages#Packages">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Packages')" name="Packages__button" id="Packages__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Use packages appropriately.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Packages__body" id="Packages__body" style="display: none">
       <p>
         Lisp packages are used to demarcate namespaces.
         Usually, each system has its own namespace.
@@ -1542,16 +1825,21 @@ Robert Brown
           and so on.
         </li>
       </ul>
-    </BODY>
-  </STYLEPOINT>
-</CATEGORY>
+    </DIV></DIV>
+  </DIV>
+</DIV>
 
-<CATEGORY title="Language usage guidelines">
-  <STYLEPOINT title="Mostly Functional Style">
-    <SUMMARY>
+<DIV class="">
+<H2 name="Language_usage_guidelines" id="Language_usage_guidelines">Language usage guidelines</H2>
+  <DIV class="">
+<H3><A name="Mostly_Functional_Style" id="Mostly_Functional_Style">Mostly Functional Style</A></H3>
+<SPAN class="link_button" id="link-Mostly_Functional_Style__button" name="link-Mostly_Functional_Style__button"><A href="?showone=Mostly_Functional_Style#Mostly_Functional_Style">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Mostly_Functional_Style')" name="Mostly_Functional_Style__button" id="Mostly_Functional_Style__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should avoid side-effects when they are not necessary.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Mostly_Functional_Style__body" id="Mostly_Functional_Style__body" style="display: none">
       <p>
         Lisp is best used as a "mostly functional" language.
       </p>
@@ -1571,13 +1859,17 @@ Robert Brown
         to write concurrent code that is thread-safe.
         It also makes it easier to test the code.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Recursion">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Recursion" id="Recursion">Recursion</A></H3>
+<SPAN class="link_button" id="link-Recursion__button" name="link-Recursion__button"><A href="?showone=Recursion#Recursion">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Recursion')" name="Recursion__button" id="Recursion__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should favor iteration over recursion.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Recursion__body" id="Recursion__body" style="display: none">
       <p>
         Common Lisp systems are not required to implement
         function calls from tail positions without leaking stack space
@@ -1618,13 +1910,17 @@ Robert Brown
         with appropriate optimization settings.
         For fully portable code, you may have to use trampolines instead.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Special variables">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Special_variables" id="Special_variables">Special variables</A></H3>
+<SPAN class="link_button" id="link-Special_variables__button" name="link-Special_variables__button"><A href="?showone=Special_variables#Special_variables">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Special_variables')" name="Special_variables__button" id="Special_variables__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Use special variables sparingly.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Special_variables__body" id="Special_variables__body" style="display: none">
       <p>
         Using Lisp "special" (dynamically bound) variables
         as implicit arguments to functions should be used sparingly,
@@ -1688,13 +1984,17 @@ Robert Brown
         to automate the appropriate declaration of such variables.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Assignment">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Assignment" id="Assignment">Assignment</A></H3>
+<SPAN class="link_button" id="link-Assignment__button" name="link-Assignment__button"><A href="?showone=Assignment#Assignment">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Assignment')" name="Assignment__button" id="Assignment__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Be consistent in assignment forms.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Assignment__body" id="Assignment__body" style="display: none">
       <p>
         There are several styles for dealing with assignment and side-effects;
         whichever a given package is using,
@@ -1734,13 +2034,17 @@ Robert Brown
         which makes testing and maintenance easier,
         we invite you to consider how to do things with the fewest assignments required.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Assertions and Conditions">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Assertions_and_Conditions" id="Assertions_and_Conditions">Assertions and Conditions</A></H3>
+<SPAN class="link_button" id="link-Assertions_and_Conditions__button" name="link-Assertions_and_Conditions__button"><A href="?showone=Assertions_and_Conditions#Assertions_and_Conditions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Assertions_and_Conditions')" name="Assertions_and_Conditions__button" id="Assertions_and_Conditions__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You must make proper usage of assertions and conditions.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Assertions_and_Conditions__body" id="Assertions_and_Conditions__body" style="display: none">
       <ul>
         <li>
           <code>ASSERT</code> should be used ONLY to detect internal bugs.
@@ -1856,32 +2160,32 @@ Robert Brown
           the stack trace will halt at the point of the resignal,
           hiding the rest.
           And the rest is the part we really care about!
-          <BAD_CODE_SNIPPET>
-            ;; Bad
-            (handler-case
-              (catch 'ticket-at
-                (etd-process-blocks))
-              (error (c)
-                (reset-parser-values)
-                  (error c)))
-          </BAD_CODE_SNIPPET>
-          <CODE_SNIPPET>
-            ;; Better
-            (unwind-protect
-              (catch 'ticket-at
-                (etd-process-blocks))
-              (reset-parser-values))
-          </CODE_SNIPPET>
+          <DIV class=""><PRE class="badcode">;; Bad
+(handler-case
+  (catch 'ticket-at
+    (etd-process-blocks))
+  (error (c)
+    (reset-parser-values)
+      (error c)))</PRE></DIV>
+          <DIV class=""><PRE>;; Better
+(unwind-protect
+  (catch 'ticket-at
+    (etd-process-blocks))
+  (reset-parser-values))</PRE></DIV>
         </li>
       </ul>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Type Checking">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Type_Checking" id="Type_Checking">Type Checking</A></H3>
+<SPAN class="link_button" id="link-Type_Checking__button" name="link-Type_Checking__button"><A href="?showone=Type_Checking#Type_Checking">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Type_Checking')" name="Type_Checking__button" id="Type_Checking__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       If you know the type of something, you should make it explicit
       in order to enable compile-time and run-time sanity-checking.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Type_Checking__body" id="Type_Checking__body" style="display: none">
       
       <p>
         If your function is using a special variable as an implicit argument,
@@ -1923,13 +2227,17 @@ Robert Brown
         When you do, however, see our recommendations for
         <a href="#Unsafe_Operations">Unsafe Operations</a>.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="CLOS">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="CLOS" id="CLOS">CLOS</A></H3>
+<SPAN class="link_button" id="link-CLOS__button" name="link-CLOS__button"><A href="?showone=CLOS#CLOS">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('CLOS')" name="CLOS__button" id="CLOS__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Use CLOS appropriately.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="CLOS__body" id="CLOS__body" style="display: none">
       <p>
         When a generic function is intended to be called from other
         modules (other parts of the code), there should be an
@@ -2085,23 +2393,26 @@ Robert Brown
       <p>
         A typical <code>PRINT-OBJECT</code> method might look like this:
       </p>
-      <CODE_SNIPPET>
-        (defmethod print-object ((p person) stream)
-          (print-unreadable-object (p stream :type t :identity t)
-            (with-slots (first-name last-name) p
-              (safe-format stream "~a ~a" first-name last-name))))
-      </CODE_SNIPPET>
-    </BODY>
-  </STYLEPOINT>
-</CATEGORY>
+      <DIV class=""><PRE>(defmethod print-object ((p person) stream)
+  (print-unreadable-object (p stream :type t :identity t)
+    (with-slots (first-name last-name) p
+      (safe-format stream "~a ~a" first-name last-name))))</PRE></DIV>
+    </DIV></DIV>
+  </DIV>
+</DIV>
 
-<CATEGORY title="Meta-language guidelines">
-  <STYLEPOINT title="Macros">
-    <SUMMARY>
+<DIV class="">
+<H2 name="Meta-language_guidelines" id="Meta-language_guidelines">Meta-language guidelines</H2>
+  <DIV class="">
+<H3><A name="Macros" id="Macros">Macros</A></H3>
+<SPAN class="link_button" id="link-Macros__button" name="link-Macros__button"><A href="?showone=Macros#Macros">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Macros')" name="Macros__button" id="Macros__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Use macros when appropriate, which is often.
       Define macros when appropriate, which is seldom.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Macros__body" id="Macros__body" style="display: none">
       <p>
         Macros bring syntactic abstraction, which is a wonderful thing.
         It helps make your code clearer, by describing your intent
@@ -2299,14 +2610,18 @@ Robert Brown
         you can add them without necessarily having to change
         all the uses of the macro.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="EVAL-WHEN">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="EVAL-WHEN" id="EVAL-WHEN">EVAL-WHEN</A></H3>
+<SPAN class="link_button" id="link-EVAL-WHEN__button" name="link-EVAL-WHEN__button"><A href="?showone=EVAL-WHEN#EVAL-WHEN">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('EVAL-WHEN')" name="EVAL-WHEN__button" id="EVAL-WHEN__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       When using <code>EVAL-WHEN</code>, you should almost always use all of
       <code>(:compile-toplevel :load-toplevel :execute)</code>.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="EVAL-WHEN__body" id="EVAL-WHEN__body" style="display: none">
       <p>
         Lisp evaluation happens at several times,
         some of them interleaved.
@@ -2371,14 +2686,18 @@ Robert Brown
           the <code>:AROUND-COMPILE</code> hooks of <code>ASDF</code>.
         </li>
       </ul>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Read-time evaluation">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Read-time_evaluation" id="Read-time_evaluation">Read-time evaluation</A></H3>
+<SPAN class="link_button" id="link-Read-time_evaluation__button" name="link-Read-time_evaluation__button"><A href="?showone=Read-time_evaluation#Read-time_evaluation">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Read-time_evaluation')" name="Read-time_evaluation__button" id="Read-time_evaluation__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should use <code>#.</code> sparingly,
       and you must avoid read-time side-effects.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Read-time_evaluation__body" id="Read-time_evaluation__body" style="display: none">
       <p>
         The <code>#.</code> standard read-macro
         will read one object, evaluate the object, and
@@ -2416,13 +2735,17 @@ Robert Brown
         possibly in an <code>EVAL-WHEN</code>,
         to give the value a name explaining what it means.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="EVAL">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="EVAL" id="EVAL">EVAL</A></H3>
+<SPAN class="link_button" id="link-EVAL__button" name="link-EVAL__button"><A href="?showone=EVAL#EVAL">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('EVAL')" name="EVAL__button" id="EVAL__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You must not use <code>EVAL</code> at runtime.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="EVAL__body" id="EVAL__body" style="display: none">
       <p>
         Places where it is actually appropriate to use <code>EVAL</code>
         are so few and far between that you must consult with your reviewers;
@@ -2490,13 +2813,17 @@ Robert Brown
         <code>ASDF-FINALIZERS</code> ensures that the form is present,
         by throwing an error if you omit it.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="INTERN and UNINTERN">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="INTERN_and_UNINTERN" id="INTERN_and_UNINTERN">INTERN and UNINTERN</A></H3>
+<SPAN class="link_button" id="link-INTERN_and_UNINTERN__button" name="link-INTERN_and_UNINTERN__button"><A href="?showone=INTERN_and_UNINTERN#INTERN_and_UNINTERN">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('INTERN_and_UNINTERN')" name="INTERN_and_UNINTERN__button" id="INTERN_and_UNINTERN__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You must not use <code>INTERN</code> or <code>UNINTERN</code> at runtime.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="INTERN_and_UNINTERN__body" id="INTERN_and_UNINTERN__body" style="display: none">
       <p>
         You must not use <code>INTERN</code> at runtime.
         Not only does it cons,
@@ -2510,12 +2837,8 @@ Robert Brown
         just to compare it to a keyword;
         use <code>STRING=</code> or <code>STRING-EQUAL</code>.
       </p>
-      <BAD_CODE_SNIPPET>
-        (member (intern str :keyword) $keys) ; Bad
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        (member str $keys :test #'string-equal) ; Better
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">(member (intern str :keyword) $keys) ; Bad</PRE></DIV>
+      <DIV class=""><PRE>(member str $keys :test #'string-equal) ; Better</PRE></DIV>
       <p>
         You must not use <code>UNINTERN</code> at runtime.
         It can break code that relies on dynamic binding.
@@ -2533,16 +2856,21 @@ Robert Brown
         to create the symbols you need.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-</CATEGORY>
+    </DIV></DIV>
+  </DIV>
+</DIV>
 
-<CATEGORY title="Data Representation">
-  <STYLEPOINT title="NIL: empty-list, false and I Don't Know">
-    <SUMMARY>
+<DIV class="">
+<H2 name="Data_Representation" id="Data_Representation">Data Representation</H2>
+  <DIV class="">
+<H3><A name="NIL:_empty-list,_false_and_I_Don_t_Know" id="NIL:_empty-list,_false_and_I_Don_t_Know">NIL: empty-list, false and I Don't Know</A></H3>
+<SPAN class="link_button" id="link-NIL:_empty-list,_false_and_I_Don_t_Know__button" name="link-NIL:_empty-list,_false_and_I_Don_t_Know__button"><A href="?showone=NIL:_empty-list,_false_and_I_Don_t_Know#NIL:_empty-list,_false_and_I_Don_t_Know">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('NIL:_empty-list,_false_and_I_Don_t_Know')" name="NIL:_empty-list,_false_and_I_Don_t_Know__button" id="NIL:_empty-list,_false_and_I_Don_t_Know__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Appropriately use or avoid using <code>NIL</code>.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="NIL:_empty-list,_false_and_I_Don_t_Know__body" id="NIL:_empty-list,_false_and_I_Don_t_Know__body" style="display: none">
       <p>
         <code>NIL</code> can have several different interpretations:
       </p>
@@ -2598,14 +2926,18 @@ Robert Brown
         (and vice-versa)!
         The needs of the database may differ from the needs of the Lisp.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Do not abuse lists">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Do_not_abuse_lists" id="Do_not_abuse_lists">Do not abuse lists</A></H3>
+<SPAN class="link_button" id="link-Do_not_abuse_lists__button" name="link-Do_not_abuse_lists__button"><A href="?showone=Do_not_abuse_lists#Do_not_abuse_lists">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Do_not_abuse_lists')" name="Do_not_abuse_lists__button" id="Do_not_abuse_lists__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You must select proper data representation.
       You must not abuse the <code>LIST</code> data structure.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Do_not_abuse_lists__body" id="Do_not_abuse_lists__body" style="display: none">
       <p>
         Even though back in 1958, LISP was short for "LISt Processing",
         its successor Common Lisp has been a modern programming language
@@ -2659,13 +2991,17 @@ Robert Brown
         <a href="#Using_Libraries">Using Libraries</a> and
         <a href="#Open-Sourcing_Code">Open-Sourcing Code</a>.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Lists vs. structures vs. multiple values">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Lists_vs._structures_vs._multiple_values" id="Lists_vs._structures_vs._multiple_values">Lists vs. structures vs. multiple values</A></H3>
+<SPAN class="link_button" id="link-Lists_vs._structures_vs._multiple_values__button" name="link-Lists_vs._structures_vs._multiple_values__button"><A href="?showone=Lists_vs._structures_vs._multiple_values#Lists_vs._structures_vs._multiple_values">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lists_vs._structures_vs._multiple_values')" name="Lists_vs._structures_vs._multiple_values__button" id="Lists_vs._structures_vs._multiple_values__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should use the appropriate representation for product types.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Lists_vs._structures_vs._multiple_values__body" id="Lists_vs._structures_vs._multiple_values__body" style="display: none">
       <p>
         You should avoid using a list as anything
         besides a container of elements of like type.
@@ -2703,13 +3039,17 @@ Robert Brown
         You should signal a condition to denote an unusual outcome,
         rather than relying on a special return type.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Lists vs. Pairs">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Lists_vs._Pairs" id="Lists_vs._Pairs">Lists vs. Pairs</A></H3>
+<SPAN class="link_button" id="link-Lists_vs._Pairs__button" name="link-Lists_vs._Pairs__button"><A href="?showone=Lists_vs._Pairs#Lists_vs._Pairs">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lists_vs._Pairs')" name="Lists_vs._Pairs__button" id="Lists_vs._Pairs__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Use the appropriate functions when manipulating lists.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Lists_vs._Pairs__body" id="Lists_vs._Pairs__body" style="display: none">
       <p>
         Use <code>FIRST</code> to access the first element of a list,
         <code>SECOND</code> to access the second element, etc.
@@ -2737,13 +3077,17 @@ Robert Brown
         to use higher-level constructs such as
         <code>DESTRUCTURING-BIND</code> or <code>OPTIMA:MATCH</code>.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Lists vs. Arrays">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Lists_vs._Arrays" id="Lists_vs._Arrays">Lists vs. Arrays</A></H3>
+<SPAN class="link_button" id="link-Lists_vs._Arrays__button" name="link-Lists_vs._Arrays__button"><A href="?showone=Lists_vs._Arrays#Lists_vs._Arrays">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lists_vs._Arrays')" name="Lists_vs._Arrays__button" id="Lists_vs._Arrays__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should use arrays rather than lists where random access matters.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Lists_vs._Arrays__body" id="Lists_vs._Arrays__body" style="display: none">
       <p>
         <code>ELT</code> has <i>O(n)</i> behavior when used on lists.
         If you are to use random element access on an object,
@@ -2753,13 +3097,17 @@ Robert Brown
         The exception is for code outside the critical path
         where the list is known to be small anyway.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Lists vs. Sets">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Lists_vs._Sets" id="Lists_vs._Sets">Lists vs. Sets</A></H3>
+<SPAN class="link_button" id="link-Lists_vs._Sets__button" name="link-Lists_vs._Sets__button"><A href="?showone=Lists_vs._Sets#Lists_vs._Sets">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Lists_vs._Sets')" name="Lists_vs._Sets__button" id="Lists_vs._Sets__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should only use lists as sets for very small lists.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Lists_vs._Sets__body" id="Lists_vs._Sets__body" style="display: none">
       <p>
         Using lists as representations of sets is a bad idea
         unless you know the lists will be small,
@@ -2771,31 +3119,32 @@ Robert Brown
         If you still use lists as sets,
         you should not <code>UNION</code> lists just to search them.
       </p>
-      <BAD_CODE_SNIPPET>
-        (member foo (union list-1 list-2)) ; Bad
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        (or (member foo list-1) (member foo list-2)) ; Better
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">(member foo (union list-1 list-2)) ; Bad</PRE></DIV>
+      <DIV class=""><PRE>(or (member foo list-1) (member foo list-2)) ; Better</PRE></DIV>
       <p>
         Indeed, <code>UNION</code> not only conses unnecessarily,
         but it can be <i>O(n^2)</i> on some implementations,
         and is rather slow even when it's <i>O(n)</i>.
       </p>
-    </BODY>
-  </STYLEPOINT>
-</CATEGORY>
+    </DIV></DIV>
+  </DIV>
+</DIV>
 
-<CATEGORY title="Proper Forms">
+<DIV class="">
+<H2 name="Proper_Forms" id="Proper_Forms">Proper Forms</H2>
   <p>
     You must follow the proper usage regarding
     well-known functions, macros and special forms.
   </p>
-  <STYLEPOINT title="Defining Constants">
-    <SUMMARY>
+  <DIV class="">
+<H3><A name="Defining_Constants" id="Defining_Constants">Defining Constants</A></H3>
+<SPAN class="link_button" id="link-Defining_Constants__button" name="link-Defining_Constants__button"><A href="?showone=Defining_Constants#Defining_Constants">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Defining_Constants')" name="Defining_Constants__button" id="Defining_Constants__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You must use proper defining forms for constant values.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Defining_Constants__body" id="Defining_Constants__body" style="display: none">
       <p>
         The Lisp system we primarily use, SBCL, is very picky and
         signals a condition whenever a constant is redefined to a value not
@@ -2806,11 +3155,9 @@ Robert Brown
         Instead, consistently use whichever alternative
         is recommended for your project.
       </p>
-      <BAD_CODE_SNIPPET>
-        ;; Bad
-        (defconstant +google-url+ "https://www.google.com/")
-        (defconstant +valid-colors+ '(red green blue))
-      </BAD_CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">;; Bad
+(defconstant +google-url+ "https://www.google.com/")
+(defconstant +valid-colors+ '(red green blue))</PRE></DIV>
       
       
       
@@ -2823,11 +3170,9 @@ Robert Brown
         You may use the <code>:TEST</code> keyword argument
         to specify an equality predicate.
       </p>
-      <CODE_SNIPPET>
-        ;; Better, for Open-Source code:
-        (define-constant +google-url+ "https://www.google.com/" :test #'string=)
-        (define-constant +valid-colors+ '(red green blue))
-      </CODE_SNIPPET>
+      <DIV class=""><PRE>;; Better, for Open-Source code:
+(define-constant +google-url+ "https://www.google.com/" :test #'string=)
+(define-constant +valid-colors+ '(red green blue))</PRE></DIV>
       <p>
         Note that with optimizing implementations, such as SBCL or CMUCL,
         defining constants this way precludes any later redefinition
@@ -2850,16 +3195,20 @@ Robert Brown
         Also note that <code>LOAD-TIME-VALUE</code> may help you
         avoid the need for defined constants.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Defining Functions">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Defining_Functions" id="Defining_Functions">Defining Functions</A></H3>
+<SPAN class="link_button" id="link-Defining_Functions__button" name="link-Defining_Functions__button"><A href="?showone=Defining_Functions#Defining_Functions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Defining_Functions')" name="Defining_Functions__button" id="Defining_Functions__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should make proper use of
       <code>&amp;OPTIONAL</code> and
       <code>&amp;KEY</code> arguments.
       You should not use <code>&amp;AUX</code> arguments.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Defining_Functions__body" id="Defining_Functions__body" style="display: none">
       <p>
         You should avoid using <code>&amp;ALLOW-OTHER-KEYS</code>,
         since it blurs the contract of a function.
@@ -2924,13 +3273,17 @@ Robert Brown
         Use your judgment and consult your reviewers.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Conditional Expressions">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Conditional_Expressions" id="Conditional_Expressions">Conditional Expressions</A></H3>
+<SPAN class="link_button" id="link-Conditional_Expressions__button" name="link-Conditional_Expressions__button"><A href="?showone=Conditional_Expressions#Conditional_Expressions">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Conditional_Expressions')" name="Conditional_Expressions__button" id="Conditional_Expressions__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Use the appropriate conditional form.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Conditional_Expressions__body" id="Conditional_Expressions__body" style="display: none">
       <p>
         Use <code>WHEN</code> and <code>UNLESS</code>
         when there is only one alternative.
@@ -2950,8 +3303,8 @@ Robert Brown
         to explicitly return <code>NIL</code>
         if you have a specific reason to insist on the return value.
         You may similarly include a fall-through clause <code>(t nil)</code>
-        as the last in your <cond>COND</cond>,
-        or <code>(otherwise nil)</code> as the last in your <cond>CASE</cond>,
+        as the last in your COND,
+        or <code>(otherwise nil)</code> as the last in your CASE,
         to insist on the fact that the value returned by the conditional matters
         and that such a case is going to be used.
         You should omit the fall-through clause
@@ -2992,16 +3345,12 @@ Robert Brown
         You must not use gratuitous single quotes in <code>CASE</code> forms.
         This is a common error:
       </p>
-      <BAD_CODE_SNIPPET>
-        (case x ; Bad: silently returns NIL on mismatch
-          ('bar :bar) ; Bad: catches QUOTE
-          ('baz :baz)) ; Bad: also would catch QUOTE
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        (ecase x ; Better: will error on mismatch
-          ((bar) :bar) ; Better: won't match QUOTE
-          ((baz) :baz)) ; Better: same reason
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">(case x ; Bad: silently returns NIL on mismatch
+  ('bar :bar) ; Bad: catches QUOTE
+  ('baz :baz)) ; Bad: also would catch QUOTE</PRE></DIV>
+      <DIV class=""><PRE>(ecase x ; Better: will error on mismatch
+  ((bar) :bar) ; Better: won't match QUOTE
+  ((baz) :baz)) ; Better: same reason</PRE></DIV>
       <p>
         <code>'BAR</code> there is <code>(QUOTE BAR)</code>,
         meaning this leg of the case will be executed
@@ -3024,23 +3373,23 @@ Robert Brown
         to respective symbols <code>:BAR</code> and <code>:QUUX</code>,
         you should avoid the former way and do it the latter way:
       </p>
-      <BAD_CODE_SNIPPET>
-        (ecase x ; Bad: has no actual error case!
-          (nil :bar)) ; Bad: matches nothing
-          (t :quux)) ; Bad: matches anything
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        (ecase x ; Better: will actually catch non-booleans
-          ((nil) :bar)) ; Better: matches NIL
-          ((t) :quux)) ; Better: matches T
-      </CODE_SNIPPET>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Identity, Equality and Comparisons">
-    <SUMMARY>
+      <DIV class=""><PRE class="badcode">(ecase x ; Bad: has no actual error case!
+  (nil :bar)) ; Bad: matches nothing
+  (t :quux)) ; Bad: matches anything</PRE></DIV>
+      <DIV class=""><PRE>(ecase x ; Better: will actually catch non-booleans
+  ((nil) :bar)) ; Better: matches NIL
+  ((t) :quux)) ; Better: matches T</PRE></DIV>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Identity,_Equality_and_Comparisons" id="Identity,_Equality_and_Comparisons">Identity, Equality and Comparisons</A></H3>
+<SPAN class="link_button" id="link-Identity,_Equality_and_Comparisons__button" name="link-Identity,_Equality_and_Comparisons__button"><A href="?showone=Identity,_Equality_and_Comparisons#Identity,_Equality_and_Comparisons">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Identity,_Equality_and_Comparisons')" name="Identity,_Equality_and_Comparisons__button" id="Identity,_Equality_and_Comparisons__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should use the appropriate predicates when comparing objects.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Identity,_Equality_and_Comparisons__body" id="Identity,_Equality_and_Comparisons__body" style="display: none">
       <p>
         Lisp provides four general equality predicates:
         <code>EQ</code>, <code>EQL</code>, <code>EQUAL</code>,
@@ -3138,13 +3487,17 @@ Robert Brown
         <a href="#Open-Sourcing_Code">Open-Sourcing Code</a>.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Iteration">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Iteration" id="Iteration">Iteration</A></H3>
+<SPAN class="link_button" id="link-Iteration__button" name="link-Iteration__button"><A href="?showone=Iteration#Iteration">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Iteration')" name="Iteration__button" id="Iteration__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Use the appropriate form for iteration.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Iteration__body" id="Iteration__body" style="display: none">
       <p>
         You should use simpler forms such as
         <code>DOLIST</code> or <code>DOTIMES</code>
@@ -3173,13 +3526,17 @@ Robert Brown
         as <code>LOOP</code> keywords.
         You must be consistent with the convention used in your system.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="I/O">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="I/O" id="I/O">I/O</A></H3>
+<SPAN class="link_button" id="link-I/O__button" name="link-I/O__button"><A href="?showone=I/O#I/O">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('I/O')" name="I/O__button" id="I/O__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Use the appropriate I/O functions.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="I/O__body" id="I/O__body" style="display: none">
       <p>
         When writing a server,
         code must not send output to the standard streams such as
@@ -3228,7 +3585,8 @@ Robert Brown
         The parameters are easy to forget.
       </p>
       <dl>
-        <dt>No parameters, e.g. <code>"~[Siamese~;Manx~;Persian~] Cat"</code></dt>
+        <dt>No parameters, e.g. <code>"~[Siamese~;Manx~;Persian~] Cat"</code>
+</dt>
         <dd>
           Take one format argument, which should be an integer.
           Use it to choose a clause. Clause numbers are zero-based.
@@ -3238,19 +3596,25 @@ Robert Brown
           E.g. in <code>"~[Siamese~;Manx~;Persian~:;Alley~] Cat"</code>,
           an out-of-range arg prints <code>"Alley"</code>.
         </dd>
-        <dt><code>:</code> parameter, e.g. <code>"~:[Siamese~;Manx~]"</code></dt>
+        <dt>
+<code>:</code> parameter, e.g. <code>"~:[Siamese~;Manx~]"</code>
+</dt>
         <dd>
           Take one format argument.  If it's <code>NIL</code>,
           use the first clause, otherwise use the second clause.
         </dd>
-        <dt><code>@</code> parameter, e.g. <code>"~@[Siamese ~a~]"</code></dt>
+        <dt>
+<code>@</code> parameter, e.g. <code>"~@[Siamese ~a~]"</code>
+</dt>
         <dd>
           If the next format argument is true,
           use the choice, but do NOT take the argument.
           If it's false, take one format argument and print nothing.
           (Normally the clause uses the format argument.)
         </dd>
-        <dt><code>#</code> parameter, e.g. <code>"~#[ none~; ~s~; ~s and ~s~]"</code></dt>
+        <dt>
+<code>#</code> parameter, e.g. <code>"~#[ none~; ~s~; ~s and ~s~]"</code>
+</dt>
         <dd>
           Use the number of arguments to format
           as the number to choose a clause.
@@ -3259,16 +3623,21 @@ Robert Brown
           <code>"Items: ~#[ none~; ~S~; ~S and ~S~:;~@{~S~^~#[~; and ~:;, ~]~}~]."</code>
         </dd>
       </dl>
-    </BODY>
-  </STYLEPOINT>
-</CATEGORY>
+    </DIV></DIV>
+  </DIV>
+</DIV>
 
-<CATEGORY title="Optimization">
-  <STYLEPOINT title="Avoid Allocation">
-    <SUMMARY>
+<DIV class="">
+<H2 name="Optimization" id="Optimization">Optimization</H2>
+  <DIV class="">
+<H3><A name="Avoid_Allocation" id="Avoid_Allocation">Avoid Allocation</A></H3>
+<SPAN class="link_button" id="link-Avoid_Allocation__button" name="link-Avoid_Allocation__button"><A href="?showone=Avoid_Allocation#Avoid_Allocation">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Avoid_Allocation')" name="Avoid_Allocation__button" id="Avoid_Allocation__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should avoid unnecessary allocation of memory.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Avoid_Allocation__body" id="Avoid_Allocation__body" style="display: none">
       <p>
         In a language with automatic storage management (such as Lisp or Java),
         the colloquial phrase "memory leak" refers to situation
@@ -3293,15 +3662,19 @@ Robert Brown
         Garbage collection is not magic.
         Excessive allocation is usually a performance problem.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Unsafe Operations">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Unsafe_Operations" id="Unsafe_Operations">Unsafe Operations</A></H3>
+<SPAN class="link_button" id="link-Unsafe_Operations__button" name="link-Unsafe_Operations__button"><A href="?showone=Unsafe_Operations#Unsafe_Operations">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Unsafe_Operations')" name="Unsafe_Operations__button" id="Unsafe_Operations__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You must only use faster unsafe operations
       when there is a clear performance need
       and you can document why it's correct.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Unsafe_Operations__body" id="Unsafe_Operations__body" style="display: none">
       <p>
         Common Lisp implementations often provide backdoors
         to compute some operations faster in an unsafe way.
@@ -3366,15 +3739,19 @@ Robert Brown
         it defeats the purpose of declarations as a performance trick.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="DYNAMIC-EXTENT">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="DYNAMIC-EXTENT" id="DYNAMIC-EXTENT">DYNAMIC-EXTENT</A></H3>
+<SPAN class="link_button" id="link-DYNAMIC-EXTENT__button" name="link-DYNAMIC-EXTENT__button"><A href="?showone=DYNAMIC-EXTENT#DYNAMIC-EXTENT">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('DYNAMIC-EXTENT')" name="DYNAMIC-EXTENT__button" id="DYNAMIC-EXTENT__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should only use <code>DYNAMIC-EXTENT</code>
       where it matters for performance,
       and you can document why it is correct.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="DYNAMIC-EXTENT__body" id="DYNAMIC-EXTENT__body" style="display: none">
       <p>
         <code>DYNAMIC-EXTENT</code> declarations are
         a particular case of
@@ -3489,14 +3866,18 @@ Robert Brown
         (Ideally it would be easier to make such measurements
         than it actually is.)
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="REDUCE vs APPLY">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="REDUCE_vs_APPLY" id="REDUCE_vs_APPLY">REDUCE vs APPLY</A></H3>
+<SPAN class="link_button" id="link-REDUCE_vs_APPLY__button" name="link-REDUCE_vs_APPLY__button"><A href="?showone=REDUCE_vs_APPLY#REDUCE_vs_APPLY">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('REDUCE_vs_APPLY')" name="REDUCE_vs_APPLY__button" id="REDUCE_vs_APPLY__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should use <code>REDUCE</code>
       instead of <code>APPLY</code> where appropriate.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="REDUCE_vs_APPLY__body" id="REDUCE_vs_APPLY__body" style="display: none">
       <p>
         You should use <code>REDUCE</code>
         instead of <code>APPLY</code> and a consed-up list,
@@ -3506,14 +3887,10 @@ Robert Brown
         if it does what you want and <code>REDUCE</code> doesn't.
         For instance:
       </p>
-      <BAD_CODE_SNIPPET>
-        ;; Bad
-        (apply #'+ (mapcar #'acc frobs))
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        ;; Better
-        (reduce #'+ frobs :key #'acc :initial-value 0)
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">;; Bad
+(apply #'+ (mapcar #'acc frobs))</PRE></DIV>
+      <DIV class=""><PRE>;; Better
+(reduce #'+ frobs :key #'acc :initial-value 0)</PRE></DIV>
       <p>
         This is preferable because it does not do extra consing,
         and does not risk going beyond <code>CALL-ARGUMENTS-LIMIT</code>
@@ -3539,15 +3916,19 @@ Robert Brown
         See for instance <code>UIOP:REDUCE/STRCAT</code>.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Avoid NCONC">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Avoid_NCONC" id="Avoid_NCONC">Avoid NCONC</A></H3>
+<SPAN class="link_button" id="link-Avoid_NCONC__button" name="link-Avoid_NCONC__button"><A href="?showone=Avoid_NCONC#Avoid_NCONC">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Avoid_NCONC')" name="Avoid_NCONC__button" id="Avoid_NCONC__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should not use <code>NCONC</code>;
       you should use <code>APPEND</code> instead,
       or better data structures.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Avoid_NCONC__body" id="Avoid_NCONC__body" style="display: none">
       <p>
         You should almost never use <code>NCONC</code>.
         You should use <code>APPEND</code>
@@ -3599,16 +3980,21 @@ Robert Brown
         Even then, the use of such primitives must be rare,
         and accompanied by justifying documentation.
       </p>
-    </BODY>
-  </STYLEPOINT>
-</CATEGORY>
+    </DIV></DIV>
+  </DIV>
+</DIV>
 
-<CATEGORY title="Pitfalls">
-  <STYLEPOINT title="#'FUN vs. 'FUN">
-    <SUMMARY>
+<DIV class="">
+<H2 name="Pitfalls" id="Pitfalls">Pitfalls</H2>
+  <DIV class="">
+<H3><A name="__FUN_vs.__FUN" id="__FUN_vs.__FUN">#'FUN vs. 'FUN</A></H3>
+<SPAN class="link_button" id="link-__FUN_vs.__FUN__button" name="link-__FUN_vs.__FUN__button"><A href="?showone=__FUN_vs.__FUN#__FUN_vs.__FUN">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('__FUN_vs.__FUN')" name="__FUN_vs.__FUN__button" id="__FUN_vs.__FUN__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You should usually refer to a function as <code>#'FUN</code> rather than <code>'FUN</code>.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="__FUN_vs.__FUN__body" id="__FUN_vs.__FUN__body" style="display: none">
       <p>
         The former, which reads as <code>(FUNCTION FUN)</code>,
         refers to the function object, and is lexically scoped.
@@ -3664,13 +4050,17 @@ Robert Brown
         But you must not start using such a syntactic extension
         in an existing system without getting permission from other developers.
       </p>
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="Pathnames">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="Pathnames" id="Pathnames">Pathnames</A></H3>
+<SPAN class="link_button" id="link-Pathnames__button" name="link-Pathnames__button"><A href="?showone=Pathnames#Pathnames">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('Pathnames')" name="Pathnames__button" id="Pathnames__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       Common Lisp pathnames are tricky. Be aware of pitfalls. Use <code>UIOP</code>.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="Pathnames__body" id="Pathnames__body" style="display: none">
       <p>
         It is surprisingly hard to properly deal with pathnames in Common Lisp.
       </p>
@@ -3752,13 +4142,17 @@ Robert Brown
         from which to reset or <code>makunbound</code> relevant variables.
       </p>
       
-    </BODY>
-  </STYLEPOINT>
-  <STYLEPOINT title="SATISFIES">
-    <SUMMARY>
+    </DIV></DIV>
+  </DIV>
+  <DIV class="">
+<H3><A name="SATISFIES" id="SATISFIES">SATISFIES</A></H3>
+<SPAN class="link_button" id="link-SATISFIES__button" name="link-SATISFIES__button"><A href="?showone=SATISFIES#SATISFIES">
+          link
+        </A></SPAN><SPAN class="showhide_button" onclick="javascript:ShowHideByName('SATISFIES')" name="SATISFIES__button" id="SATISFIES__button">▶</SPAN>
+    <DIV style="display:inline;" class="">
       You must be careful when using a <code>SATISFIES</code> clause in a type specifier.
-    </SUMMARY>
-    <BODY>
+    </DIV>
+    <DIV class=""><DIV class="stylepoint_body" name="SATISFIES__body" id="SATISFIES__body" style="display: none">
       <p>
         Most Common Lisp implementations can't optimize
         based on a <code>SATISFIES</code> type,
@@ -3770,12 +4164,8 @@ Robert Brown
         without any <code>SATISFIES</code>
         and the second term is the <code>SATISFIES</code>.
       </p>
-      <BAD_CODE_SNIPPET>
-        (deftype prime-number () (satisfies prime-number-p)) ; Bad
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        (deftype prime-number () (and integer (satisfies prime-number-p)) ; Better
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">(deftype prime-number () (satisfies prime-number-p)) ; Bad</PRE></DIV>
+      <DIV class=""><PRE>(deftype prime-number () (and integer (satisfies prime-number-p)) ; Better</PRE></DIV>
       <p>
         However, <code>AND</code> in the <code>DEFTYPE</code> language
         isn't a left-to-right short-circuit operator
@@ -3797,22 +4187,18 @@ Robert Brown
         and MUST be defined within an <code>EVAL-WHEN</code>
         (as well as any variable it uses or function it calls):
       </p>
-      <BAD_CODE_SNIPPET>
-        (defun prime-number-p (n) ; Doubly bad!
-          (let ((m (abs n)))
-            (if (&lt;= m *prime-number-cutoff*)
-                (small-prime-number-p m)
-                (big-prime-number-p m))))
-      </BAD_CODE_SNIPPET>
-      <CODE_SNIPPET>
-        (eval-when (:compile-toplevel :load-toplevel :execute) ; Better
-          (defun prime-number-p (n)
-            (when (integerp n) ; Better
-              (let ((m (abs n)))
-                (if (&lt;= m *prime-number-cutoff*)
-                    (small-prime-number-p m)
-                    (big-prime-number-p m))))))
-      </CODE_SNIPPET>
+      <DIV class=""><PRE class="badcode">(defun prime-number-p (n) ; Doubly bad!
+  (let ((m (abs n)))
+    (if (&lt;= m *prime-number-cutoff*)
+        (small-prime-number-p m)
+        (big-prime-number-p m))))</PRE></DIV>
+      <DIV class=""><PRE>(eval-when (:compile-toplevel :load-toplevel :execute) ; Better
+  (defun prime-number-p (n)
+    (when (integerp n) ; Better
+      (let ((m (abs n)))
+        (if (&lt;= m *prime-number-cutoff*)
+            (small-prime-number-p m)
+            (big-prime-number-p m))))))</PRE></DIV>
       <p>
         In particular, the above means that the
         <a href="https://www.lispworks.com/documentation/HyperSpec/Body/t_satisf.htm">example</a>
@@ -3854,20 +4240,20 @@ Robert Brown
       <p>
         Common Lisp is hard to satisfy.
       </p>
-    </BODY>
-  </STYLEPOINT>
-</CATEGORY>
+    </DIV></DIV>
+  </DIV>
+</DIV>
 
-<HR/>
+<HR>
 
-<small>Credits:
+Credits:
    Adam Worrall, Dan Pierson, Matt Marjanovic, Matt Reklaitis,
    Paul Weiss, Scott McKay, Sundar Narasimhan,
    and several other people contributed.
    Special thanks to Steve Hain,
    and to the previous editors,
    in reverse chronological order Dan Weinreb and Jeremy Brown.
-</small>
+
 
 <p align="right">
 Revision 1.28
@@ -3884,4 +4270,5 @@ Robert Brown
 
 
 
-</GUIDE>
+</BODY>
+</HTML>
