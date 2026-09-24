@@ -665,7 +665,8 @@ if [ "filename" == f* ]; then
 fi
 ```
 
-For the gory details, see E14 in the [Bash FAQ](http://tiswww.case.edu/php/chet/bash/FAQ)
+For the gory details, see E14 in the
+[Bash FAQ](https://tiswww.case.edu/php/chet/bash/FAQ).
 
 <a id="s6.4-testing-strings"></a>
 
@@ -961,6 +962,7 @@ For preference, don't use `[[ … ]]` *at all* for numeric comparisons, use
 
 It is recommended to avoid using `(( … ))` as a standalone
 statement, and otherwise be wary of its expression evaluating to zero
+
 - particularly with `set -e` enabled. For example,
 `set -e; i=0; (( i++ ))` will cause the shell to exit.
 
@@ -1069,14 +1071,16 @@ fancy_ls() {
 
 ### Function Names
 
-Lower-case, with underscores to separate words. Separate libraries with `::`.
+Lower-case, with underscores to separate words. Standalone functions do not need
+to be namespaced, but libraries can create namespaces by prefixing all functions
+with the library or package name, using `::` as the package delimiter.
+
+Note that certain circumstances, such as auto-completions in an interactive
+shell, do not work well with colon-delimited names, so avoid namespacing in
+those contexts.
+
 Parentheses are required after the function name. The keyword `function` is
 optional, but must be used consistently throughout a project.
-
-If you're writing single functions, use lowercase and separate words with
-underscore. If you're writing a package, separate package names with `::`.
-However, functions intended for interactive use may choose to avoid colons as it
-can confuse bash auto-completion.
 
 Braces must be on the same line as the function name (as with other languages at
 Google) and no space between the function name and the parenthesis.
@@ -1093,9 +1097,8 @@ mypackage::my_func() {
 }
 ```
 
-The `function` keyword is extraneous when "()" is present
-after the function name, but enhances quick identification of
-functions.
+The `function` keyword is extraneous when "()" is present after the function
+name, but enhances quick identification of functions.
 
 <a id="s7.2-variable-names"></a>
 
