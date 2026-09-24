@@ -93,7 +93,7 @@ primarily optimizing for Google's internal needs.
 [ts]: https://google.github.io/styleguide/tsguide.html
 [angular]: https://google.github.io/styleguide/angularjs-google-style.html
 [cl]: https://google.github.io/styleguide/lispguide.html
-[vim]: https://google.github.io/styleguide/vimscriptguide.html
+[vim]: vimscriptguide.md
 [emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
 [xml]: https://google.github.io/styleguide/xmlstyle.html
 [dart]: https://www.dartlang.org/guides/language/effective-dart
