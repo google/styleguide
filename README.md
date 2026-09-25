@@ -12,8 +12,6 @@ guidelines we use for Google code. If you are modifying a project that
 originated at Google, you may be pointed to this page to see the style guides
 that apply to that project.
 
-
-*   [AngularJS Style Guide][angular]
 *   [Common Lisp Style Guide][cl]
 *   [C++ Style Guide][cpp]
 *   [C# Style Guide][csharp]
@@ -51,6 +49,7 @@ encourages you to share these documents. See
 
 The following Google style guide lives outside of this project:
 
+*  [Angular Style Guide][angular]
 *  [Effective Dart][dart]
 *  [Kotlin Style Guide][kotlin]
 
@@ -76,6 +75,7 @@ primarily optimizing for Google's internal needs.
 
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
+[angular]: https://angular.dev/style-guide
 [cpp]: https://google.github.io/styleguide/cppguide.html
 [csharp]: csharp-style.md
 [swift]: https://google.github.io/swift/
@@ -93,7 +93,6 @@ primarily optimizing for Google's internal needs.
 [js]: https://google.github.io/styleguide/jsguide.html
 [markdown]: docguide/style.md
 [ts]: https://google.github.io/styleguide/tsguide.html
-[angular]: https://google.github.io/styleguide/angularjs-google-style.html
 [cl]: lispguide.md
 [vim]: vimscriptguide.md
 [emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
