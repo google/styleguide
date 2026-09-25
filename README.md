@@ -18,6 +18,7 @@ that apply to that project.
 *   [C++ Style Guide][cpp]
 *   [C# Style Guide][csharp]
 *   [Go Style Guide][go]
+*   [Haskell Style Guide][haskell]
 *   [HTML/CSS Style Guide][htmlcss]
 *   [JavaScript Style Guide][js]
 *   [Java Style Guide][java]
@@ -81,6 +82,7 @@ primarily optimizing for Google's internal needs.
 [objc]: objcguide.md
 [gh-tracker]: https://github.com/google/styleguide/issues
 [go]: go/
+[haskell]: haskellguide.md
 [java]: https://google.github.io/styleguide/javaguide.html
 [json]: jsoncguide.md
 [kotlin]: https://developer.android.com/kotlin/style-guide
