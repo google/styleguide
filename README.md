@@ -94,7 +94,7 @@ primarily optimizing for Google's internal needs.
 [markdown]: docguide/style.md
 [ts]: https://google.github.io/styleguide/tsguide.html
 [angular]: https://google.github.io/styleguide/angularjs-google-style.html
-[cl]: https://google.github.io/styleguide/lispguide.html
+[cl]: lispguide.md
 [vim]: vimscriptguide.md
 [emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
 [xml]: https://google.github.io/styleguide/xmlstyle.html
