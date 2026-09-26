@@ -77,7 +77,7 @@ for an `@interface` declaration.
 
 #import <Foundation/Foundation.h>
 
-@class Bar;
+#import "path/to/Bar.h"
 
 /**
  * A sample class demonstrating good Objective-C style. All interfaces,
@@ -571,6 +571,54 @@ no longer recommended.
 
 ## Types and Declarations
 
+<a id="Forward_Declarations"></a>
+
+### Avoid Forward Declarations
+
+Avoid using forward declarations of types unless they are required to break a
+circular dependency between types in the same module.
+
+
+Forward declarations:
+
+*   Cause problems importing header files into Swift.
+
+*   Can hide issues when types are renamed.
+
+```objectivec
+// GOOD:
+
+#import "Path/To/Foo.h"
+
+void CallWithAFoo(Foo *);  // GOOD.
+...
+```
+
+```objectivec
+// GOOD:
+
+@class Foo;  // GOOD to break circular dependency
+
+@protocol FooDelegate
+- (void)handleACallFromAFoo:(Foo *)foo;
+@end
+
+@interface Foo : NSObject
+@property(weak) FooDelegate *delegate;
+@end
+...
+```
+
+
+```objectivec
+// AVOID:
+
+@class Foo;  // AVOID.
+
+void CallWithAFoo(Foo *foo);
+...
+```
+
 <a id="Method_Declarations"></a>
 
 ### Method Declarations
@@ -825,8 +873,8 @@ Document the thread usage assumptions the class, properties, or methods make, if
 any. If an instance of the class can be accessed by multiple threads, take extra
 care to document the rules and invariants surrounding multithreaded use.
 
-Any sentinel values for properties and ivars, such as `NULL` or `-1`, should be
-documented in comments.
+Any sentinel values for properties and ivars, such as `nullptr` or `-1`, should
+be documented in comments.
 
 Declaration comments explain how a method or function is used. Comments
 explaining how a method or function is implemented should be with the
@@ -1043,6 +1091,15 @@ Examples of acceptable macro use include assertion and debug logging macros
 that are conditionally compiled based on build settings—often, these are
 not compiled into release builds.
 
+### `nullptr` vs. `NULL`
+
+Prefer using [`nullptr`](https://en.cppreference.com/c/language/nullptr) over
+`NULL` when possible.
+
+`nullptr` is generally the preferred null pointer constant for any pointer type
+except Objective-C object pointers and Objective-C class pointers. When C23 is
+not supported, `NULL` should be used instead of `nullptr`.
+
 <a id="Nonstandard_Extensions"></a>
 
 ### Nonstandard Extensions
@@ -1254,16 +1311,20 @@ Import headers using their path relative to the project's source directory.
 ```objectivec
 // GOOD:
 
+// The related header.
 #import "ProjectX/BazViewController.h"
 
+// Operating system headers.
 #import <Foundation/Foundation.h>
 
+// Language library headers.
 #include <unistd.h>
 #include <vector>
 
+// Groups of headers for other dependencies.
 #include "base/basictypes.h"
 #include "base/integral_types.h"
-#import "base/mac/FOOComplexNumberSupport"
+#import "base/mac/FOOComplexNumberSupport.h"
 #include "util/math/mathutil.h"
 
 #import "ProjectX/BazModel.h"
@@ -1387,7 +1448,7 @@ UIScrollView *scrollView = self.scrollView;
 ```objc
 // AVOID:
 
-[self.scrollView.loadingAnchor constraintEqualToAnchor:self.view.loadingAnchor].active = YES;
+[self.scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
 [self.scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
 ```
 
@@ -1492,7 +1553,7 @@ matches these expectations.
 NOTE: [The `copy` property keyword only affects the synthesized setter and has
 no effect on
 getters](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProperties.html#//apple_ref/doc/uid/TP30001163-CH17-SW27).
-Since property keywords have no effect on direct ivar access custom accessors
+Since property keywords have no effect on direct ivar access, custom accessors
 must implement the same copy semantics.
 
 ```objectivec
@@ -1622,7 +1683,7 @@ This follows the recommendation to use error objects for error delivery in
 Cocoa](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html).
 
 We do compile with `-fobjc-exceptions` (mainly so we get `@synchronized`), but
-we don't `@throw`. Use of `@try`, `@catch`, and `@finally` are allowed when
+we don't `@throw`. Uses of `@try`, `@catch`, and `@finally` are allowed when
 required to properly use 3rd party code or libraries. If you do use them, please
 document exactly which methods you expect to throw.
 
@@ -1654,9 +1715,9 @@ Note that this applies to `nil` as a message target, not as a parameter value.
 Individual methods may or may not safely handle `nil` parameter values.
 
 Note too that this is distinct from checking C/C++ pointers and block pointers
-against `NULL`, which the runtime does not handle and will cause your
-application to crash. You still need to make sure you do not dereference a
-`NULL` pointer.
+against `nullptr`, which the runtime does not handle and will cause your
+application to crash. You still need to make sure you do not dereference
+`nullptr`.
 
 ### Nullability
 
@@ -1770,7 +1831,7 @@ conditional operator.
 }
 ```
 
-Don't directly compare `BOOL` variables directly with `YES`. Not only is
+Don't directly compare `BOOL` variables with `YES`. Not only is
 it harder to read for those well-versed in C, but the first point above
 demonstrates that return values may not always be what you expect.
 
@@ -1799,7 +1860,7 @@ of bitwise comparisons of `BOOL` values.
 ```objectivec
 // AVOID:
 
-if (oldBOOLValue != newBOOLValue) {  // AVOID.
+if (oldBoolValue != newBoolValue) {  // AVOID.
   // ... code that should only run when the value changes.
 }
 ```
@@ -2121,7 +2182,7 @@ operators.
 for (int i = 0; i < 5; ++i) {
 }
 
-while (test) {};
+while (test) {}
 ```
 
 Braces may be omitted when a loop body or conditional statement fits on a single
@@ -2291,7 +2352,7 @@ CFArrayRef array = CFArrayCreate(kCFAllocatorDefault, objects, numberOfObjects,
                                  &kCFTypeArrayCallBacks);
 
 NSString *string = NSLocalizedStringWithDefaultValue(@"FEET", @"DistanceTable",
-    resourceBundle,  @"%@ feet", @"Distance for multiple feet");
+    resourceBundle, @"%@ feet", @"Distance for multiple feet");
 
 UpdateTally(scores[x] * y + bases[x],  // Score heuristic.
             x, y, z);
@@ -2377,7 +2438,7 @@ Lines of code that are not expected to adhere to these style recommendations
 require `// NOLINT` at the end of the line or `// NOLINTNEXTLINE` at the end of
 the previous line. Sometimes it is required that parts of Objective-C code must
 ignore these style recommendations (for example code may be machine generated or
-code constructs are such that its not possible to style correctly).
+code constructs are such that it's not possible to style correctly).
 
 A `// NOLINT` comment on that line or `// NOLINTNEXTLINE` on the previous line
 can be used to indicate to the reader that code is intentionally ignoring style
