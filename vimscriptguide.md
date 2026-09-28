@@ -164,7 +164,7 @@ Group your functionality as a plugin, unified in one directory (or code
 repository) which shares your plugin's name (with a "vim-" prefix or ".vim"
 suffix if desired). It should be split into plugin/, autoload/, etc.
 subdirectories as necessary, and it should declare metadata in the
-addon-info.json format (see the [VAM documentation](http://goo.gl/CUXJZC) for
+addon-info.json format (see the [VAM documentation](https://goo.gl/CUXJZC) for
 details).
 
 
@@ -259,7 +259,7 @@ Similar to python.
     You need not go out of your way to remove it.
 
     Trailing whitespace is allowed in mappings which prep commands for user
-    input, such as `noremap <leader>gf :grep -f`.
+    input, such as `noremap <leader>gf :grep -f `.
 
 *   Restrict lines to 80 columns wide
 
