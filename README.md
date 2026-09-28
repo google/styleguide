@@ -96,7 +96,7 @@ primarily optimizing for Google's internal needs.
 [cl]: lispguide.md
 [vim]: vimscriptguide.md
 [emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
-[xml]: https://google.github.io/styleguide/xmlstyle.html
+[xml]: xmlguide.md
 [dart]: https://www.dartlang.org/guides/language/effective-dart
 [ccl]: https://creativecommons.org/licenses/by/3.0/
 [SCM]: https://en.wikipedia.org/wiki/Source_control_management
