@@ -1,6 +1,5 @@
 # Google Common Lisp Style Guide
 
-
 ## Introduction
 
 This guide is not a Common Lisp tutorial. Rather, it recommends formatting,
@@ -13,7 +12,6 @@ mistakes in this document, you may file bugs in the
 [GitHub issue tracker](https://github.com/google/styleguide/issues). Please put
 "[Lisp]" in the issue title since the repository contains Style Guides for
 several languages.
-
 
 ### References
 
@@ -132,10 +130,8 @@ standard function calls (e.g. defun, labels, or let). Add a
 'lisp-mode-hook that calls common-lisp-set-style to set the appropriate style
 automatically.
 
-
 You should not include copyright information in individual source code files. An
 exception is made for files meant to be disseminated as standalone.
-
 
 ### Vertical white space
 
@@ -654,7 +650,6 @@ organization. If a component of the package name is a compound noun use a hyphen
 (-) to separate the words. For example, `ace.container.hash-table`. As with
 other Lisp names, use lowercase, even for well-known abbreviations like "http".
 
-
 Package prefixes should fit the names of the symbols those packages export. For
 example, if you have an abstraction called `fifo`, and it is in a package of the
 first type you'd have functions named things like `fifo-add-to` and
@@ -765,7 +760,6 @@ different nicknames throughout their code, thus reducing readability and the
 ability to process the code with automatic tools that are agnostic to Lisp
 package naming schemes.
 
-
 -   Favor the one package per file design principle, instead of sharing a
     package across multiple files in a library.
 
@@ -780,7 +774,6 @@ package naming schemes.
         It is difficult to load and compile two such files with defined packages
         if they depend on each other in a circular fashion. This improves the
         software architecture and design.
-
 
 -   Do not shadow `common-lisp` symbols.
 
@@ -912,6 +905,52 @@ assignments.
 
 ### Assertions and Conditions
 
+Use `assert`, `check-type`, and `etypecase` to detect internal bugs only, and use them liberally.
+-   Prefer `etypecase` over `typecase`
+-   Use `error` to check input from a file.
+-   If a function signals an error, document it in its contract.
+-   Prefer `log`ging a warning to using `warn`.
+-   Never call `signal` directly, use `error` instead.
+-   Prefer using `handler-bind` to `restart`.
+-   Prefer using `restart` to `throw` and `catch`.
+-   Avoid generically handling conditions:
+    -   Errors not related to the current code should propagate through.
+    -   Avoid generically handling `serious-condition`.
+-   Never signal conditions within the clean-up of an `unwind-protect`.
+-   Never clean up by resignaling.
+-   Never return a condition or error value, signal it with ERROR instead.
+
+Use `assert` to detect internal bugs ONLY.
+Code should `assert` invariants whose failure indicates that the software is
+itself broken. Incorrect input should be handled properly at runtime, and must
+not cause an assertion violation. The audience for an `assert` failure is a
+developer. Do not use the data-form and argument-form in `assert` to specify a
+condition to signal. It's fine to use them to print out a message for debugging
+purposes (and since it's only for debugging, there's no issue of
+internationalization).
+
+`check-type`, `etypecase` are also forms of assertion. When one of these fails,
+that's a detected bug. Prefer `check-type` over `(declare (type ...))` for the
+inputs of functions.
+
+Invalid input, such as files that are read but do not conform to the expected
+format, should not be treated as assertion violations. Always check to make sure
+that input is valid, and take appropriate action if it is not, such as signaling
+an application specific error.
+
+Use `error` to signal problems with user data, requests, permissions, etc., or
+to report "unusual outcomes" to the caller.
+
+Always call `error` with an explicit condition type; it should never simply be
+called with a string in production code. This enables internationalization.
+
+Functions that report unusual outcomes by signaling a condition should say so
+explicitly in their contracts (their textual descriptions, in documentation and
+docstrings etc.). When a function signals a condition that is not specified by
+its contract, that's a bug. The contract should specify the condition class(es)
+clearly. The function may then signal any condition that is a type-of any of
+those conditions. That is, signaling instances of subclasses of the documented
+condition classes is fine.
 
 Code must not call `signal`. Use `error` instead.
 

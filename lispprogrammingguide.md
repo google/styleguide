@@ -1,6 +1,5 @@
 # Google Common Lisp Effective Programming
 
-
 ## Introduction
 
 This document is intended as a supplement to the
@@ -35,7 +34,6 @@ new Lisp programmers.
 -   Some libraries are distributed under licenses not compatible with the
     software you're writing, and must not be considered available for use. Be
     aware of these issues, or consult with people who are.
-
 
 ### Avoid Allocation
 
@@ -108,7 +106,6 @@ compilers may interpret those declarations as assertions if you switch to safer
 and slower optimize settings; this is good to locate a dynamic error in your
 code during development, but is not to be used for production code since it
 defeats the purpose of declarations as a performance trick.
-
 
 ### DYNAMIC-EXTENT
 
@@ -220,7 +217,6 @@ such cases, you MUST NOT use `REDUCE`, and you MUST NOT use `(APPLY 'STRCAT
 from a suitable library (that you may have to contribute to) that properly
 handles those cases without burdening users with implementation details. See for
 instance `UIOP:REDUCE/STRCAT`.
-
 
 ### NCONC and MAPCAN
 
@@ -335,7 +331,6 @@ complexities and rounding errors of floating-point arithmetic. Libraries such as
 ([source](https://github.com/Wukix/wu-decimal)) may help you; once again, if
 this library is not satisfactory, see above about
 [Using Libraries](#using-libraries).
-
 
 ### Case and Ecase
 
@@ -522,7 +517,6 @@ ways. You should use other pathname abstractions, such as
 `ASDF:SYSTEM-RELATIVE-PATHNAME` or the underlying `UIOP:SUBPATHNAME` and
 `UIOP:PARSE-UNIX-NAMESTRING`.
 
-
 Finally, be aware that paths may change between the time you build the Lisp
 image for your application, and the time you run the application from its image.
 You should be careful to reset your image to forget irrelevant build-time paths
@@ -530,7 +524,6 @@ and reinitialize any search path from current environment variables. `ASDF` for
 instance requires you to reset its paths with `UIOP:CLEAR-CONFIGURATION`. `UIOP`
 provides hooks to call functions before an image is dumped, from which to reset
 or `makunbound` relevant variables.
-
 
 ### SATISFIES
 
