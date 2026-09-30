@@ -445,12 +445,12 @@ An example query might be: `https://www.google.com/search?q=$TERM`
 
 For code quotations longer than a single line, use a fenced code block:
 
-<pre>
+````markdown
 ```python
 def Foo(self, bar):
   self.bar = bar
 ```
-</pre>
+````
 
 #### Declare the language
 
@@ -490,12 +490,12 @@ Because most command-line snippets are intended to be copied and pasted directly
 into a terminal, it's best practice to escape any newlines. Use a single
 backslash at the end of the line:
 
-<pre>
+````markdown
 ```shell
 $ bazel run :target -- --flag --foo=longlonglonglonglongvalue \
   --bar=anotherlonglonglonglonglonglonglonglonglonglongvalue
 ```
-</pre>
+````
 
 #### Nest codeblocks within lists
 

@@ -1,0 +1,198 @@
+/**
+ * The default GH pages theme "primer" does not support dark mode:
+ * https://github.com/pages-themes/primer/issues/64
+ *
+ * Import this snippet from the primer-dark project.
+ * https://github.com/0xNixxy/primer-dark/blob/d10b1ea26778827aa77c8b639429795239522606/assets/css/style.scss
+
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016-2017 GitHub, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+// Dark mode overrides
+@media (prefers-color-scheme: dark) {
+  // Base body
+  body {
+    background-color: #0d1117;
+    color: #e1e4e8;
+  }
+
+  // Links
+  a {
+    color: #58a6ff;
+  }
+
+  // Borders and rules
+  .border, .border-bottom, .border-top, .border-left, .border-right,
+  hr, .rule {
+    border-color: #30363d !important;
+  }
+
+  // Background utilities
+  .bg-gray-light, .bg-white, .bg-gray {
+    background-color: #1e1e1e !important;
+  }
+
+  // TABLES
+  table {
+    border-color: #30363d;
+  }
+
+  th, td {
+    border-color: #30363d;
+    background-color: #0d1117;
+  }
+
+  thead th {
+    background-color: #161b22;
+    border-bottom-color: #30363d;
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: #0d1117;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #161b22;
+  }
+
+  .table, .d-table {
+    color: #e1e4e8;
+  }
+
+  // CODE BLOCKS - Base16 Monokai Dark theme for Rouge
+  .highlight {
+    background-color: #272822 !important;
+
+    td { padding: 5px; }
+
+    pre { margin: 0; }
+
+    &, .w {
+      color: #f8f8f2;
+      background-color: #272822;
+    }
+
+    .err {
+      color: #272822;
+      background-color: #f92672;
+    }
+
+    .c, .ch, .cd, .cm, .cpf, .c1, .cs {
+      color: #75715e;
+    }
+
+    .cp {
+      color: #f4bf75;
+    }
+
+    .nt {
+      color: #f4bf75;
+    }
+
+    .o, .ow {
+      color: #f8f8f2;
+    }
+
+    .p, .pi {
+      color: #f8f8f2;
+    }
+
+    .gi {
+      color: #a6e22e;
+    }
+
+    .gd {
+      color: #f92672;
+    }
+
+    .gh {
+      color: #66d9ef;
+      background-color: #272822;
+      font-weight: bold;
+    }
+
+    .k, .kn, .kp, .kr, .kv {
+      color: #ae81ff;
+    }
+
+    .kc {
+      color: #fd971f;
+    }
+
+    .kt {
+      color: #fd971f;
+    }
+
+    .kd {
+      color: #fd971f;
+    }
+
+    .s, .sa, .sb, .sc, .dl, .sd, .s2, .sh, .sx, .s1 {
+      color: #a6e22e;
+    }
+
+    .sr {
+      color: #a1efe4;
+    }
+
+    .si {
+      color: #cc6633;
+    }
+
+    .se {
+      color: #cc6633;
+    }
+
+    .nn {
+      color: #f4bf75;
+    }
+
+    .nc {
+      color: #f4bf75;
+    }
+
+    .no {
+      color: #f4bf75;
+    }
+
+    .na {
+      color: #66d9ef;
+    }
+
+    .m, .mb, .mf, .mh, .mi, .il, .mo, .mx {
+      color: #a6e22e;
+    }
+
+    .ss {
+      color: #a6e22e;
+    }
+  }
+
+  // Inline code - adapt for Monokai Dark
+  :not(pre) > code {
+    background-color: rgba(39, 40, 34, 0.8) !important;
+    color: #f8f8f2 !important;
+    padding: 0.2em 0.4em;
+    border-radius: 6px;
+  }
+}
