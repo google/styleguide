@@ -2,7 +2,8 @@
 
 Revision 0.9
 
-## Introduction {#Introduction}
+<a id="Introduction"></a>
+## Introduction
 
 This style guide documents guidelines and recommendations for building JSON APIs
 at Google. In general, JSON APIs should follow the spec found at
@@ -11,13 +12,16 @@ specific cases so that JSON APIs from Google have a standard look and feel.
 These guidelines are applicable to JSON requests and responses in both RPC-based
 and REST-based APIs.
 
-## Definitions {#Definitions}
+<a id="Definitions"></a>
+## Definitions
 
 For the purposes of this style guide, we define the following terms:
 
 *   **property** - a name/value pair inside a JSON object.
 *   **property name** - the name (or key) portion of the property.
 *   **property value** - the value portion of the property.
+
+<!-- end list -->
 
 ```json
 {
@@ -30,14 +34,18 @@ JavaScript's `number` type encompasses all floating-point numbers, which is a
 broad designation. In this guide, `number` will refer to JavaScript's `number`
 type, while `integer` will refer to integers.
 
-## General Guidelines {#General_Guidelines}
+<a id="General_Guidelines"></a>
+## General Guidelines
 
-### Comments {#Comments}
+<a id="Comments"></a>
+### Comments
 
 No comments in JSON objects.
 
 Comments should not be included in JSON objects. Some of the examples in this
 style guide include comments. However this is only to clarify the examples.
+
+<div class='badcode'></div>
 
 ```json
 {
@@ -47,7 +55,8 @@ style guide include comments. However this is only to clarify the examples.
 }
 ```
 
-### Double Quotes {#Double_Quotes}
+<a id="Double_Quotes"></a>
+### Double Quotes
 
 Use double quotes.
 
@@ -56,7 +65,8 @@ must be surrounded by double quotes. Property values of type string must be
 surrounded by double quotes. Other value types (like boolean or number) should
 not be surrounded by double quotes.
 
-### Flattened data vs Structured Hierarchy {#Flattened_data_vs_Structured_Hierarchy}
+<a id="Flattened_data_vs_Structured_Hierarchy"></a>
+### Flattened data vs Structured Hierarchy
 
 Data should not be arbitrarily grouped for convenience.
 
@@ -99,9 +109,11 @@ Structured Address:
 }
 ```
 
-## Property Name Guidelines {#Property_Name_Guidelines}
+<a id="Property_Name_Guidelines"></a>
+## Property Name Guidelines
 
-### Property Name Format {#Property_Name_Format}
+<a id="Property_Name_Format"></a>
+### Property Name Format
 
 Choose meaningful property names.
 
@@ -127,7 +139,8 @@ property:
 }
 ```
 
-### Key Names in JSON Maps {#Key_Names_in_JSON_Maps}
+<a id="Key_Names_in_JSON_Maps"></a>
+### Key Names in JSON Maps
 
 JSON maps can use any Unicode character in key names.
 
@@ -162,7 +175,8 @@ using the square bracket notation familiar for maps (for example,
 }
 ```
 
-### Reserved Property Names {#Reserved_Property_Names}
+<a id="Reserved_Property_Names"></a>
+### Reserved Property Names
 
 Certain property names are reserved for consistent use across services.
 
@@ -170,7 +184,8 @@ Details about reserved property names, along with the full list, can be found
 later on in this guide. Services should avoid using these property names for
 anything other than their defined semantics.
 
-### Singular vs Plural Property Names {#Singular_vs_Plural_Property_Names}
+<a id="Singular_vs_Plural_Property_Names"></a>
+### Singular vs Plural Property Names
 
 Array types should have plural property names. All other property names should
 be singular.
@@ -200,7 +215,8 @@ could also be changed to `itemCount` to look singular.
 }
 ```
 
-### Naming Conflicts {#Naming_Conflicts}
+<a id="Naming_Conflicts"></a>
+### Naming Conflicts
 
 Avoid naming conflicts by choosing a new property name or versioning the API.
 
@@ -248,9 +264,11 @@ two things:
 }
 ```
 
-## Property Value Guidelines {#Property_Value_Guidelines}
+<a id="Property_Value_Guidelines"></a>
+## Property Value Guidelines
 
-### Property Value Format {#Property_Value_Format}
+<a id="Property_Value_Format"></a>
+### Property Value Format
 
 Property values must be booleans, numbers, Unicode strings, objects, arrays, or
 `null`.
@@ -262,6 +280,8 @@ APIs should support that spec for all values, and should choose the data type
 most appropriate for a particular property (numbers to represent numbers, etc.).
 
 Good:
+
+<div class='goodcode'></div>
 
 ```json
 {
@@ -276,6 +296,8 @@ Good:
 
 Bad:
 
+<div class='badcode'></div>
+
 ```json
 {
   "aVariableName": aVariableName,         // Bad - JavaScript identifier
@@ -283,7 +305,8 @@ Bad:
 }
 ```
 
-### Empty/Null Property Values {#Empty_Null_Property_Values}
+<a id="Empty_Null_Property_Values"></a>
+### Empty/Null Property Values
 
 Consider removing empty or `null` values.
 
@@ -305,7 +328,8 @@ existence.
 }
 ```
 
-### Enum Values {#Enum_Values}
+<a id="Enum_Values"></a>
+### Enum Values
 
 Enum values should be represented as strings.
 
@@ -333,7 +357,8 @@ JSON object:
 }
 ```
 
-## Property Value Data Types {#Property_Value_Data_Types}
+<a id="Property_Value_Data_Types"></a>
+## Property Value Data Types
 
 As mentioned above, property value types must be booleans, numbers, strings,
 objects, arrays, or `null`. However, it is useful to define a set of standard
@@ -341,12 +366,13 @@ data types when dealing with certain values. These data types will always be
 strings, but they will be formatted in a specific manner so that they can be
 easily parsed.
 
-### Date Property Values {#Date_Property_Values}
+<a id="Date_Property_Values"></a>
+### Date Property Values
 
 Dates should be formatted as recommended by RFC 3339.
 
-Dates should be strings formatted as recommended by
-[RFC 3339](https://www.ietf.org/rfc/rfc3339.txt).
+Dates should be strings formatted as recommended by [RFC
+3339](https://www.ietf.org/rfc/rfc3339.txt).
 
 ```json
 {
@@ -354,12 +380,13 @@ Dates should be strings formatted as recommended by
 }
 ```
 
-### Time Duration Property Values {#Time_Duration_Property_Values}
+<a id="Time_Duration_Property_Values"></a>
+### Time Duration Property Values
 
 Time durations should be formatted as recommended by ISO 8601.
 
-Time duration values should be strings formatted as recommended by
-[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations).
+Time duration values should be strings formatted as recommended by [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601#Durations).
 
 ```json
 {
@@ -369,13 +396,14 @@ Time duration values should be strings formatted as recommended by
 }
 ```
 
-### Latitude/Longitude Property Values {#Latitude_Longitude_Property_Values}
+<a id="Latitude_Longitude_Property_Values"></a>
+### Latitude/Longitude Property Values
 
 Latitudes/Longitudes should be formatted as recommended by ISO 6709.
 
-Latitude/Longitude should be strings formatted as recommended by
-[ISO 6709](https://en.wikipedia.org/wiki/ISO_6709). Furthermore, they should
-favor the ±DD.DDDD±DDD.DDDD degrees format.
+Latitude/Longitude should be strings formatted as recommended by [ISO
+6709](https://en.wikipedia.org/wiki/ISO_6709). Furthermore, they should favor
+the ±DD.DDDD±DDD.DDDD degrees format.
 
 ```json
 {
@@ -384,7 +412,8 @@ favor the ±DD.DDDD±DDD.DDDD degrees format.
 }
 ```
 
-## JSON Structure & Reserved Property Names {#JSON_Structure_and_Reserved_Property_Names}
+<a id="JSON_Structure_and_Reserved_Property_Names"></a>
+## JSON Structure & Reserved Property Names
 
 In order to maintain a consistent interface across APIs, JSON objects should
 follow the structure outlined below. This structure applies to both requests and
@@ -455,13 +484,15 @@ The JSON object has a few top-level properties, followed by either a `data`
 object or an `error` object, but not both. An explanation of each of these
 properties can be found below.
 
-## Top-Level Reserved Property Names {#Top-Level_Reserved_Property_Names}
+<a id="Top-Level_Reserved_Property_Names"></a>
+## Top-Level Reserved Property Names
 
 The top-level of the JSON object may contain the following properties.
 
-### apiVersion {#apiVersion}
+<a id="apiVersion"></a>
+### apiVersion
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: -
 
 Represents the desired version of the service API in a request, and the version
@@ -475,9 +506,10 @@ Example:
 { "apiVersion": "2.1" }
 ```
 
-### context {#context}
+<a id="context"></a>
+### context
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: -
 
 Client sets this value and server echoes data in the response. This is useful in
@@ -535,9 +567,10 @@ function handleResponse(response) {
 }
 ```
 
-### id {#id}
+<a id="id"></a>
+### id
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: -
 
 A server supplied identifier for the response (regardless of whether the
@@ -550,9 +583,10 @@ Example:
 { "id": "1" }
 ```
 
-### method {#method}
+<a id="method"></a>
+### method
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: -
 
 Represents the operation to perform, or that was performed, on the data. In the
@@ -573,9 +607,10 @@ operation to perform on the `params` property:
 }
 ```
 
-### params {#params}
+<a id="params"></a>
+### params
 
-Property Value Type: `object` \
+Property Value Type: `object`\
 Parent: -
 
 This object serves as a map of input parameters to send to an RPC request. It
@@ -595,9 +630,10 @@ Example:
 }
 ```
 
-### data {#data}
+<a id="data"></a>
+### data
 
-Property Value Type: `object` \
+Property Value Type: `object`\
 Parent: -
 
 Container for all the data from a response. This property itself has many
@@ -606,9 +642,10 @@ their own data to this object. A JSON response should contain either a `data`
 object or an `error` object, but not both. If both `data` and `error` are
 present, the `error` object takes precedence.
 
-### error {#error}
+<a id="error"></a>
+### error
 
-Property Value Type: `object` \
+Property Value Type: `object`\
 Parent: -
 
 Indicates that an error has occurred, with details about the error. The error
@@ -634,13 +671,15 @@ Example:
 }
 ```
 
-## Reserved Property Names in the data object {#Reserved_Property_Names_in_the_data_object}
+<a id="Reserved_Property_Names_in_the_data_object"></a>
+## Reserved Property Names in the data object
 
 The `data` property of the JSON object may contain the following properties.
 
-### data.kind {#data.kind}
+<a id="data.kind"></a>
+### data.kind
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `data`
 
 The `kind` property serves as a guide to what type of information this
@@ -657,9 +696,10 @@ Example:
 {"data": {"kind": "album"}}
 ```
 
-### data.fields {#data.fields}
+<a id="data.fields"></a>
+### data.fields
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `data`
 
 Represents the fields present in the response when doing a partial GET, or the
@@ -679,14 +719,15 @@ Example:
 }
 ```
 
-### data.etag {#data.etag}
+<a id="data.etag"></a>
+### data.etag
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `data`
 
 Represents the etag for the response. Details about ETags in the GData APIs can
 be found here:
-https://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning
+<https://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning>
 
 Example:
 
@@ -694,9 +735,10 @@ Example:
 {"data": {"etag": "W/\"C0QBRXcycSp7ImA9WxRVFUk.\""}}
 ```
 
-### data.id {#data.id}
+<a id="data.id"></a>
+### data.id
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `data`
 
 A globally unique string used to reference the object. The specific details of
@@ -708,15 +750,16 @@ Example:
 {"data": {"id": "12345"}}
 ```
 
-### data.lang {#data.lang}
+<a id="data.lang"></a>
+### data.lang
 
-Property Value Type: `string` (formatted as specified in BCP 47) \
+Property Value Type: `string` (formatted as specified in BCP 47)\
 Parent: `data` (or any child element)
 
 Indicates the language of the rest of the properties in this object. This
 property mimics HTML's `lang` property and XML's `xml:lang` properties. The
-value should be a language value as defined in
-[BCP 47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt). If a single JSON object
+value should be a language value as defined in [BCP
+47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt). If a single JSON object
 contains data in multiple languages, the service is responsible for developing
 and documenting an appropriate location for the `lang` property.
 
@@ -733,9 +776,10 @@ Example:
 }
 ```
 
-### data.updated {#data.updated}
+<a id="data.updated"></a>
+### data.updated
 
-Property Value Type: `string` (formatted as specified in RFC 3339) \
+Property Value Type: `string` (formatted as specified in RFC 3339)\
 Parent: `data`
 
 Indicates the last date/time ([RFC 3339](https://www.ietf.org/rfc/rfc3339.txt))
@@ -747,9 +791,10 @@ Example:
 {"data": {"updated": "2007-11-06T16:34:41.000Z"}}
 ```
 
-### data.deleted {#data.deleted}
+<a id="data.deleted"></a>
+### data.deleted
 
-Property Value Type: `boolean` \
+Property Value Type: `boolean`\
 Parent: `data` (or any child element)
 
 A marker element, that, when present, indicates the containing entry is deleted.
@@ -768,9 +813,10 @@ Example:
 }
 ```
 
-### data.items {#data.items}
+<a id="data.items"></a>
+### data.items
 
-Property Value Type: `array` \
+Property Value Type: `array`\
 Parent: `data`
 
 The property name `items` is reserved to represent an array of items (for
@@ -795,7 +841,8 @@ Example:
 }
 ```
 
-## Reserved Property Names for Paging {#Reserved_Property_Names_for_Paging}
+<a id="Reserved_Property_Names_for_Paging"></a>
+## Reserved Property Names for Paging
 
 The following properties are located in the `data` object, and help page through
 a list of items. Some of the language and concepts are borrowed from the
@@ -805,9 +852,9 @@ The paging properties below allow for various styles of paging, including:
 
 *   Previous/Next paging - Allows users to move forward and backward through a
     list, one page at a time. The `nextLink` and `previousLink` properties
-    (described in the
-    [Reserved Property Names for Links](#Reserved_Property_Names_for_Links)
-    section below) are used for this style of paging.
+    (described in the [Reserved Property Names for
+    Links](#Reserved_Property_Names_for_Links) section below) are used for this
+    style of paging.
 *   Index-based paging - Allows users to jump directly to a specific item
     position within a list of items. For example, to load 10 items starting at
     item 200, the developer may point the user to a URL with the query string
@@ -823,9 +870,10 @@ The paging properties below allow for various styles of paging, including:
 An example of how to use these properties to implement paging can be found at
 the end of this guide.
 
-### data.currentItemCount {#data.currentItemCount}
+<a id="data.currentItemCount"></a>
+### data.currentItemCount
 
-Property Value Type: `integer` \
+Property Value Type: `integer`\
 Parent: `data`
 
 The number of items in this result set. Should be equivalent to `items.length`,
@@ -848,9 +896,10 @@ Example:
 }
 ```
 
-### data.itemsPerPage {#data.itemsPerPage}
+<a id="data.itemsPerPage"></a>
+### data.itemsPerPage
 
-Property Value Type: `integer` \
+Property Value Type: `integer`\
 Parent: `data`
 
 The number of items in the result. This is not necessarily the size of the
@@ -868,9 +917,10 @@ Example:
 }
 ```
 
-### data.startIndex {#data.startIndex}
+<a id="data.startIndex"></a>
+### data.startIndex
 
-Property Value Type: `integer` \
+Property Value Type: `integer`\
 Parent: `data`
 
 The index of the first item in `data.items`. For consistency, `startIndex`
@@ -888,9 +938,10 @@ Example:
 }
 ```
 
-### data.totalItems {#data.totalItems}
+<a id="data.totalItems"></a>
+### data.totalItems
 
-Property Value Type: `integer` \
+Property Value Type: `integer`\
 Parent: `data`
 
 The total number of items available in this set. For example, if a user has 100
@@ -907,9 +958,10 @@ Example:
 }
 ```
 
-### data.pagingLinkTemplate {#data.pagingLinkTemplate}
+<a id="data.pagingLinkTemplate"></a>
+### data.pagingLinkTemplate
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `data`
 
 A URI template indicating how users can calculate subsequent paging links. The
@@ -926,9 +978,10 @@ Example:
 }
 ```
 
-### data.pageIndex {#data.pageIndex}
+<a id="data.pageIndex"></a>
+### data.pageIndex
 
-Property Value Type: `integer` \
+Property Value Type: `integer`\
 Parent: `data`
 
 The index of the current page of items. For consistency, `pageIndex` should be
@@ -946,9 +999,10 @@ Example:
 }
 ```
 
-### data.totalPages {#data.totalPages}
+<a id="data.totalPages"></a>
+### data.totalPages
 
-Property Value Type: `integer` \
+Property Value Type: `integer`\
 Parent: `data`
 
 The total number of pages in the result set. `totalPages` can also be calculated
@@ -965,7 +1019,8 @@ Example:
 }
 ```
 
-## Reserved Property Names for Links {#Reserved_Property_Names_for_Links}
+<a id="Reserved_Property_Names_for_Links"></a>
+## Reserved Property Names for Links
 
 The following properties are located in the `data` object, and represent
 references to other resources. There are two forms of link properties:
@@ -975,9 +1030,10 @@ references to other resources. There are two forms of link properties:
 2.  URI strings, which represent URIs to resources (and will always be suffixed
     with `Link`).
 
-### data.self / data.selfLink {#data.self}
+<a id="data.self"></a>
+### data.self / data.selfLink
 
-Property Value Type: `object` / `string` \
+Property Value Type: `object` / `string`\
 Parent: `data`
 
 The self link can be used to retrieve the item's data. For example, in a list of
@@ -995,9 +1051,10 @@ Example:
 }
 ```
 
-### data.edit / data.editLink {#data.edit}
+<a id="data.edit"></a>
+### data.edit / data.editLink
 
-Property Value Type: `object` / `string` \
+Property Value Type: `object` / `string`\
 Parent: `data`
 
 The edit link indicates where a user can send update or delete requests. This is
@@ -1015,9 +1072,10 @@ Example:
 }
 ```
 
-### data.next / data.nextLink {#data.next}
+<a id="data.next"></a>
+### data.next / data.nextLink
 
-Property Value Type: `object` / `string` \
+Property Value Type: `object` / `string`\
 Parent: `data`
 
 The next link indicates how more data can be retrieved. It points to the
@@ -1036,9 +1094,10 @@ Example:
 }
 ```
 
-### data.previous / data.previousLink {#data.previous}
+<a id="data.previous"></a>
+### data.previous / data.previousLink
 
-Property Value Type: `object` / `string` \
+Property Value Type: `object` / `string`\
 Parent: `data`
 
 The previous link indicates how more data can be retrieved. It points to the
@@ -1057,13 +1116,15 @@ Example:
 }
 ```
 
-## Reserved Property Names in the error object {#Reserved_Property_Names_in_the_error_object}
+<a id="Reserved_Property_Names_in_the_error_object"></a>
+## Reserved Property Names in the error object
 
 The `error` property of the JSON object may contain the following properties.
 
-### error.code {#error.code}
+<a id="error.code"></a>
+### error.code
 
-Property Value Type: `integer` \
+Property Value Type: `integer`\
 Parent: `error`
 
 Represents the code for this error. This property value will usually represent
@@ -1080,9 +1141,10 @@ Example:
 }
 ```
 
-### error.message {#error.message}
+<a id="error.message"></a>
+### error.message
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `error`
 
 A human readable message providing more details about the error. If there are
@@ -1098,9 +1160,10 @@ Example:
 }
 ```
 
-### error.errors {#error.errors}
+<a id="error.errors"></a>
+### error.errors
 
-Property Value Type: `array` \
+Property Value Type: `array`\
 Parent: `error`
 
 Container for any additional information regarding the error. If the service
@@ -1113,9 +1176,10 @@ Example:
 { "error": { "errors": [] } }
 ```
 
-### error.errors[].domain {#error.errors.domain}
+<a id="error.errors.domain"></a>
+### error.errors\[\].domain
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `error.errors`
 
 Unique identifier for the service raising this error. This helps distinguish
@@ -1132,9 +1196,10 @@ Example:
 }
 ```
 
-### error.errors[].reason {#error.errors.reason}
+<a id="error.errors.reason"></a>
+### error.errors\[\].reason
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `error.errors`
 
 Unique identifier for this error. Different from the `error.code` property in
@@ -1150,9 +1215,10 @@ Example:
 }
 ```
 
-### error.errors[].message {#error.errors.message}
+<a id="error.errors.message"></a>
+### error.errors\[\].message
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `error.errors`
 
 A human readable message providing more details about the error. If there is
@@ -1170,9 +1236,10 @@ Example:
 }
 ```
 
-### error.errors[].location {#error.errors.location}
+<a id="error.errors.location"></a>
+### error.errors\[\].location
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `error.errors`
 
 The location of the error (the interpretation of its value depends on
@@ -1188,9 +1255,10 @@ Example:
 }
 ```
 
-### error.errors[].locationType {#error.errors.locationType}
+<a id="error.errors.locationType"></a>
+### error.errors\[\].locationType
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `error.errors`
 
 Indicates how the `location` property should be interpreted.
@@ -1205,9 +1273,10 @@ Example:
 }
 ```
 
-### error.errors[].extendedHelp {#error.errors.extendedHelp}
+<a id="error.errors.extendedHelp"></a>
+### error.errors\[\].extendedHelp
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `error.errors`
 
 A URI for a help text that might shed some more light on the error.
@@ -1222,9 +1291,10 @@ Example:
 }
 ```
 
-### error.errors[].sendReport {#error.errors.sendReport}
+<a id="error.errors.sendReport"></a>
+### error.errors\[\].sendReport
 
-Property Value Type: `string` \
+Property Value Type: `string`\
 Parent: `error.errors`
 
 A URI for a report form used by the service to collect data about the error
@@ -1240,14 +1310,16 @@ Example:
 }
 ```
 
-## Property Ordering {#Property_Ordering}
+<a id="Property_Ordering"></a>
+## Property Ordering
 
 Properties can be in any order within the JSON object. However, in some cases
 the ordering of properties can help parsers quickly interpret data and lead to
 better performance. One example is a pull parser in a mobile environment, where
 performance and memory are critical, and unnecessary parsing should be avoided.
 
-### Kind Property {#Kind_Property}
+<a id="Kind_Property"></a>
+### Kind Property
 
 `kind` should be the first property.
 
@@ -1257,7 +1329,8 @@ object. Therefore it should be the first property in the JSON object. This only
 applies when objects have a `kind` property (usually found in the `data` and
 `items` properties).
 
-### Items Property {#Items_Property}
+<a id="Items_Property"></a>
+### Items Property
 
 `items` should be the last property in the `data` object.
 
@@ -1266,7 +1339,8 @@ individual item. In cases where there are a lot of items, this avoids
 unnecessarily parsing those items when the developer only needs fields from the
 data.
 
-### Property Ordering Example {#Property_Ordering_Example}
+<a id="Property_Ordering_Example"></a>
+### Property Ordering Example
 
 ```json
 // The "kind" property distinguishes between an "album" and a "photo".
@@ -1287,13 +1361,15 @@ data.
 }
 ```
 
-## Examples {#Examples}
+<a id="Examples"></a>
+## Examples
 
-### YouTube JSON API {#YouTube_JSON_API}
+<a id="YouTube_JSON_API"></a>
+### YouTube JSON API
 
 Here's an example of the YouTube JSON API's response object. You can learn more
 about YouTube's JSON API here:
-https://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html.
+<https://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html>.
 
 ```json
 {
@@ -1344,7 +1420,8 @@ https://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html.
 }
 ```
 
-### Paging Example {#Paging_Example}
+<a id="Paging_Example"></a>
+### Paging Example
 
 This example demonstrates how the Google search items could be represented as a
 JSON object, with special attention to the paging variables.
@@ -1409,9 +1486,11 @@ Here's how each of the colored boxes from the screenshot would be represented
     *   Index #3 = `3 * itemsPerPage = 20`
     *   Index #N = `N * itemsPerPage`
 
-## Appendix {#Appendix}
+<a id="Appendix"></a>
+## Appendix
 
-### Appendix A: Reserved JavaScript Words {#Appendix_A}
+<a id="Appendix_A"></a>
+### Appendix A: Reserved JavaScript Words
 
 A list of reserved JavaScript words that should be avoided in property names.
 
@@ -1419,8 +1498,10 @@ The words below are reserved by the JavaScript language and cannot be referred
 to using dot notation. The list represents best knowledge of keywords at this
 time; the list may change or vary based on your specific execution environment.
 
-From the
-[ECMAScript Language Specification 5th Edition](https://www.ecma-international.org/publications-and-standards/standards/ecma-262/):
+From the [ECMAScript Language Specification 5th
+Edition](https://www.ecma-international.org/publications-and-standards/standards/ecma-262/):
+
+<div class='badcode'></div>
 
 ```
 abstract
