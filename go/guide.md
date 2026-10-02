@@ -403,6 +403,8 @@ This format is enforced by a presubmit check in the Google codebase.
 
 Go source code uses `MixedCaps` or `mixedCaps` (camel case) rather than
 underscores (snake case) when writing multi-word names.
+Single-word names follow the same capitalization rules: unexported names begin
+with a lowercase letter, and exported names begin with an uppercase letter.
 
 This applies even when it breaks conventions in other languages. For example, a
 constant is `MaxLength` (not `MAX_LENGTH`) if exported and `maxLength` (not
