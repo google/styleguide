@@ -90,7 +90,7 @@ primarily optimizing for Google's internal needs.
 [py]: pyguide.md
 [r]: Rguide.md
 [sh]: shellguide.md
-[htmlcss]: https://google.github.io/styleguide/htmlcssguide.html
+[htmlcss]: htmlcssguide.md
 [js]: https://google.github.io/styleguide/jsguide.html
 [markdown]: docguide/style.md
 [ts]: https://google.github.io/styleguide/tsguide.html
