@@ -634,7 +634,7 @@ var="`command \`command1\``"
 <a id="s6.3-tests"></a>
 
 <a id="tests"></a>
-### Test, `[ … ]`, and `[[ … ]]` 
+### Test, `[ … ]`, and `[[ … ]]`
 
 `[[ … ]]` is preferred over `[ … ]`, `test` and `/usr/bin/[`.
 
