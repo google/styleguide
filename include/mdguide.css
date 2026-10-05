@@ -1,0 +1,39 @@
+/* Custom styling used in GH pages generated from markdown files. */
+
+:root {
+  --goodcode-bg-color: #f8fff8;
+  --badcode-bg-color: #fff8f8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --goodcode-bg-color: #273322;
+    --badcode-bg-color: #332822;
+  }
+}
+
+div.goodcode + div.highlighter-rouge pre.highlight {
+  background-color: var(--goodcode-bg-color) !important;
+  border: 1px green solid;
+  position: relative;
+}
+div.goodcode + div.highlighter-rouge pre.highlight::before {
+  color: green;
+  content: '✅';
+  position: absolute;
+  right: 3px;
+  top: 3px;
+}
+
+div.badcode + div.highlighter-rouge pre.highlight {
+  background-color: var(--badcode-bg-color) !important;
+  border: 1px red solid;
+  position: relative;
+}
+div.badcode + div.highlighter-rouge pre.highlight::before {
+  color: red;
+  content: '❌';
+  position: absolute;
+  right: 3px;
+  top: 3px;
+}
