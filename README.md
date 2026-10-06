@@ -91,7 +91,7 @@ primarily optimizing for Google's internal needs.
 [r]: Rguide.md
 [sh]: shellguide.md
 [htmlcss]: htmlcssguide.md
-[js]: https://google.github.io/styleguide/jsguide.html
+[js]: jsguide.md
 [markdown]: docguide/style.md
 [ts]: https://google.github.io/styleguide/tsguide.html
 [cl]: lispguide.md
