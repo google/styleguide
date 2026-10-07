@@ -117,6 +117,8 @@ In general, guard all commands and functions against user settings.
     *   Public user commands and functions should catch and echo known errors
         (via echomsg or `maktaba#error#Shout`) before they reach the user.
 
+        <div class='goodcode'></div>
+
         ```
         try
           call somelibrary#FuncThatCanFail()
@@ -221,6 +223,8 @@ All other language features are fair game.
 *   Each file in the `plugin/` or `instant/` directory should begin with the
     boilerplate
 
+    <div class='goodcode'></div>
+
     ```
     let [s:plugin, s:enter] = maktaba#plugin#Enter(expand('<sfile>:p'))
     if !s:enter
@@ -280,6 +284,8 @@ what Vim's all about.
 
 *   Check if configuration variables exist before setting them.
 
+    <div class='goodcode'></div>
+
     ```
     if !exists('g:myplugin_option')
       let g:myplugin_option = 1
@@ -316,10 +322,14 @@ Follow google-wide conventions.
         is inconsistently enforced by vimscript. To be safe, always omit
         whitespace around arguments to commands.
 
+        <div class='goodcode'></div>
+
         ```
         let s:variable = "concatenated " . "strings"
         command -range=% MyCommand
         ```
+
+        <div class='badcode'></div>
 
         ```
         let s:variable="concatenated "."strings"
@@ -334,6 +344,8 @@ Follow google-wide conventions.
 
 *   Indent continued lines by four spaces.
 
+    <div class='goodcode'></div>
+
     ```
     let l:something = SomeReallyLongFunctionName(
         \ 'arg1', 0, ['XXXXX'], {'somekey': 9999999999})
@@ -342,10 +354,14 @@ Follow google-wide conventions.
 *   Do not waste whitespace aligning common segments of similar commands. It is
     both difficult and expensive to maintain.
 
+    <div class='goodcode'></div>
+
     ```
     command -bang MyCommand call myplugin#foo()
     command MyCommand2 call myplugin#bar()
     ```
+
+    <div class='badcode'></div>
 
     ```
     command -bang MyCommand  call myplugin#foo()
@@ -356,10 +372,14 @@ Follow google-wide conventions.
 
 *   Prefer line continuations on semantic boundaries.
 
+    <div class='goodcode'></div>
+
     ```
     command SomeLongCommand
         \ call some#function()
     ```
+
+    <div class='badcode'></div>
 
     ```
     command SomeLongCommand call
@@ -372,6 +392,8 @@ Follow google-wide conventions.
 
     *   When continuing a multi-line command a pipe can be substituted for this
         space as necessary, as follows:
+
+        <div class='goodcode'></div>
 
         ```
         autocommand BufEnter <buffer>
@@ -389,6 +411,8 @@ Follow google-wide conventions.
 
 *   Place a space after the `"` before the comment text.
 
+    <div class='goodcode'></div>
+
     ```
     " I am a line comment.
     call call(s:my_function)
@@ -403,6 +427,8 @@ Follow google-wide conventions.
         above.
     *   When leaving blank lines in comments, include the quote in the blank
         line.
+
+        <div class='goodcode'></div>
 
         ```
         " I am one continuous
@@ -537,10 +563,14 @@ Vim plugins should provide any or all of the following: **Commands**,
 
     *   Name commands semantically at the expense of a common prefix.
 
+        <div class='badcode'></div>
+
         ```
         command WhitespaceFixTrailing
         command WhitespaceFixIndentation
         ```
+
+        <div class='goodcode'></div>
 
         ```
         command FixTrailingWhitespace
@@ -569,7 +599,8 @@ Vim plugins should provide any or all of the following: **Commands**,
         `instant/commands.vim` file in plugins using maktaba, or explicitly
         installed via an autoload function in non-maktaba plugins.
 
-#### Conventions {#commands-conventions}
+<a id="commands-conventions"></a>
+#### Conventions
 
 *   Pass `<bang>` to functions with `'<bang>' == '!'`.
 

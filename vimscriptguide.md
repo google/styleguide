@@ -249,6 +249,8 @@ Similar to python.
 
     This does not apply to arguments to commands.
 
+    <div class='goodcode'></div>
+
     ```
     let s:variable = 'concatenated ' . 'strings'
     command -range=% MyCommand
@@ -265,6 +267,8 @@ Similar to python.
 
 *   Indent continued lines by four spaces
 
+    <div class='goodcode'></div>
+
     ```
     let l:something = SomeReallyLongFunctionName(
         \ 'arg1', 0, ['XXXXX'], {'somekey': 9999999999})
@@ -272,10 +276,14 @@ Similar to python.
 
 *   Do not align arguments of commands
 
+    <div class='badcode'></div>
+
     ```
     command -bang MyCommand  call myplugin#foo()
     command       MyCommand2 call myplugin#bar()
     ```
+
+    <div class='goodcode'></div>
 
     ```
     command -bang MyCommand call myplugin#foo()
