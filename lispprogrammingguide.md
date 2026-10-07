@@ -193,10 +193,14 @@ semantics of the first operator argument otherwise guarantees the same
 semantics. Of course, you must use `APPLY` if it does what you want and `REDUCE`
 doesn't. For instance:
 
+<div class='badcode'></div>
+
 ```lisp
 ;; This copies the list
 (apply #'+ (mapcar #'acc frobs))
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; This does the same thing while avoiding the copy
@@ -346,11 +350,15 @@ will differ from `1.0`.
 You must not use gratuitous single quotes in `CASE` forms. This is a common
 error:
 
+<div class='badcode'></div>
+
 ```lisp
 (ecase x
   ('bar :bar) ; Bad: catches QUOTE
   ('baz :baz)) ; Bad: also would catch QUOTE
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 (ecase x
@@ -370,11 +378,15 @@ you mean "match the symbol NIL" rather than "match nothing".
 Therefore, if you want to map booleans `NIL` and `T` to respective symbols
 `:BAR` and `:QUUX`, you should avoid the former way and do it the latter way:
 
+<div class='badcode'></div>
+
 ```lisp
 (ecase x ; Bad: has no actual error case!
   (nil :bar)) ; Bad: matches nothing
   (t :quux)) ; Bad: matches anything
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 (ecase x ; Better: will actually catch non-booleans
@@ -392,6 +404,8 @@ You must not use `DEFCONSTANT` when defining variables that are not numbers,
 characters, or symbols (including booleans and keywords). Instead, consistently
 use whichever alternative is recommended for your project.
 
+<div class='badcode'></div>
+
 ```lisp
 ;; Two strings or lists with the same content might not be eql
 (defconstant +google-url+ "https://www.google.com/")
@@ -401,6 +415,8 @@ use whichever alternative is recommended for your project.
 Open-Source libraries may use `ALEXANDRIA:DEFINE-CONSTANT` for constants other
 than numbers, characters and symbols (including booleans and keywords). You may
 use the `:TEST` keyword argument to specify an equality predicate.
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; Better, for Open-Source code:
@@ -535,10 +551,14 @@ many of them offer simple optimizations based on a type of the form `(AND FOO
 structure of the object without any `SATISFIES` and the second term is the
 `SATISFIES`.
 
+<div class='badcode'></div>
+
 ```lisp
 ; Can't optimize
 (deftype prime-number () (satisfies prime-number-p))
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; Can optimize based on the known type
@@ -558,6 +578,8 @@ That is why any function specified in a `SATISFIES` clause MUST accept objects
 of any type as argument to the function, and MUST be defined within an
 `EVAL-WHEN` (as well as any variable it uses or function it calls):
 
+<div class='badcode'></div>
+
 ```lisp
 ;; Doesn't check if argument is an integer, and the function isn't defined at
 ;; compile time.
@@ -567,6 +589,8 @@ of any type as argument to the function, and MUST be defined within an
         (small-prime-number-p m)
         (big-prime-number-p m))))
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; Works when called at compile-time or passed a non-integer argument.

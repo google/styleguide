@@ -130,6 +130,87 @@ standard function calls (e.g. defun, labels, or let). Add a
 'lisp-mode-hook that calls common-lisp-set-style to set the appropriate style
 automatically.
 
+Use indentation to make complex function applications easier to read. When an
+application does not fit on one line or the function takes many arguments,
+consider inserting newlines between the arguments so that each one is on a
+separate line. However, do not insert newlines in a way that makes it hard to
+tell how many arguments the function takes or where an argument form starts and
+ends.
+
+<div class='badcode'></div>
+
+```lisp
+;; Ow, my eyes!
+(do-something first-argument second-argument (lambda (x)
+  (frob x)) fourth-argument last-argument)
+```
+
+<div class='goodcode'></div>
+
+```lisp
+;; This looks nicer.
+(do-something first-argument
+              second-argument
+              (lambda (x) (frob x))
+              fourth-argument
+              last-argument)
+```
+
+The convention is that the body of a binding form is indented two spaces after
+the form. Any binding data before the body is usually indented four spaces.
+Arguments to a function call are aligned with the first argument; if the first
+argument is on its own line, it is aligned with the function name.
+
+<div class='goodcode'></div>
+
+```lisp
+(multiple-value-bind (a b c d)
+    (function-returning-four-values x y)
+  (declare (ignore c))
+  (something-using a)
+  (also-using b d))
+```
+
+You must set your editor to avoid inserting tab characters in the files you
+edit. Tabs cause confusion when editors disagree on how many spaces they
+represent. In Emacs, do `(setq-default indent-tabs-mode nil)`.
+
+### File Header
+
+-   Begin each source file with a brief description of the contents of that
+    file.
+-   Follow that description with an `in-package` declaration.
+-   Avoid `(declaim (optimize ...))` declarations at the file level. Where
+    needed, include it after the `in-package` declaration.
+
+Every source file should begin with a brief description of the contents of that
+file.
+
+After that description, every file should start the code itself with an
+`(in-package #:package-name)` form.
+
+After that `in-package` form, every file should follow with any file-specific
+`(declaim (optimize ...))` declaration that is not covered by an `ASDF`
+`:around-compile` hook. Note that file-level `(declaim (optimize ...))`
+declarations should be avoided in favor of declarations with smaller scope when
+possible.
+
+<div class='goodcode'></div>
+
+```lisp
+;;;; Variable length encoding for integers and floating point numbers.
+
+(in-package #:varint)
+(declaim #.*optimize-default*)
+```
+
+You should not include authorship information at the top of a file: better
+information is available from version control, and such a mention will only
+cause confusion and grief. Indeed, whoever was the main author at the time such
+a mention was included might not be who eventually made the most significant
+contributions to the file, and even less who is responsible for the file at the
+moment.
+
 You should not include copyright information in individual source code files. An
 exception is made for files meant to be disseminated as standalone.
 
@@ -142,6 +223,8 @@ You should include one blank line between top-level forms, such as function
 definitions. Exceptionally, blank lines can be omitted between simple, closely
 related defining forms of the same kind, such as a group of related type
 declarations or constant definitions.
+
+<div class='goodcode'></div>
 
 ```lisp
 (defconstant +mix32+ #x12b9b0a1 "pi, an arbitrary number")
@@ -179,6 +262,8 @@ close parenthesis.
 You must not place right parentheses by themselves on a line. A set of
 consecutive trailing parentheses must appear on the same line.
 
+<div class='badcode'></div>
+
 ```lisp
 ;; These parentheses pull more attention, hurting readability. This also isn't
 ;; conventional Lisp style.
@@ -190,6 +275,8 @@ consecutive trailing parentheses must appear on the same line.
       )
     )
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; This is easier to read, and avoids a hanging-braces style that is not
@@ -207,6 +294,8 @@ You should not use spaces to vertically align forms in the middle of consecutive
 lines. An exception is made when the code possesses an important yet otherwise
 not visible symmetry that you want to emphasize.
 
+<div class='badcode'></div>
+
 ```lisp
 ;; The cost of maintaining this sort of formatting and the inconsistent
 ;; horizontal spacing outweighs the readability benefit of vertical alignment.
@@ -215,6 +304,8 @@ not visible symmetry that you want to emphasize.
        (sum    (+ (* low low) (* high high))))
   ...)
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; Consistent horizontal spacing is preferred.
@@ -226,12 +317,16 @@ not visible symmetry that you want to emphasize.
 
 You must align nested forms if they occur across more than one line.
 
+<div class='badcode'></div>
+
 ```lisp
 ;; Hard to visually grasp how deeply each form is nested.
 (defun munge (a b c)
 (* (+ a b)
 c))
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; Indentation helps the reader parse the nesting of forms.
@@ -280,6 +375,8 @@ syntax. In documentation strings, use uppercase for the names of Lisp symbols,
 such as function arguments. For example, "The value of LENGTH must be an
 integer."
 
+<div class='goodcode'></div>
+
 ```lisp
 (defun small-prime-number-p (n)
   "True if N, an integer, is a prime number."
@@ -297,6 +394,8 @@ When the name of a type is used, the symbol may be quoted by surrounding it with
 a back quote at the beginning and a single quote at the end. Emacs will
 highlight the type, and the highlighting serves as a cue to the reader that M-.
 will lead to the symbol's definition.
+
+<div class='goodcode'></div>
 
 ```lisp
 (defun bag-tag-expected-itinerary (bag-tag)
@@ -402,6 +501,8 @@ end of a line. You should use spaces to separate the comment from the code it
 refers to so the comment stands out. You should try to vertically align
 consecutive related end-of-line comments.
 
+<div class='goodcode'></div>
+
 ```lisp
 ;;; File-level comments or comments for large sections of code.
 
@@ -467,11 +568,15 @@ You must not use `"/"` or `"."` instead of `"-"` unless you have a
 well-documented overarching reason to, and permission from other hackers who
 review your proposal.
 
+<div class='badcode'></div>
+
 ```lisp
 ;; Bad
 (defvar *default-contextname* "main")  ; Words run together
 (defvar *maximum-widget-cnt* 200)      ; Abbreviation to save two characters
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; Better
@@ -493,6 +598,8 @@ outside your project, domain-specific abbreviations, centrally document these
 abbreviations. For symbols of limited scope, such as those bound within a
 function, abbreviate freely.
 
+<div class='badcode'></div>
+
 ```lisp
 (defvar *n*)               ; Meaningless.
 (defvar *nerr*)            ; Ambiguous abbreviation.
@@ -501,6 +608,8 @@ function, abbreviate freely.
 (defvar *pc-reader*)       ; Lots of things can be abbreviated "pc".
 (defvar *cstmr-id*)        ; Deletes internal letters.
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 (defvar *price-count-reader*)  ; No abbreviation.
@@ -556,6 +665,8 @@ overlap with local variables. It is possible to fake global lexical variables
 with a differently named global variable and a `define-symbol-macro`. You should
 not use this trick, unless you first publish a library that abstracts it away.
 
+<div class='goodcode'></div>
+
 ```lisp
 (defconstant +hash-results+ #xbd49d10d10cbee50)
 (defvar *maximum-search-depth* 100)
@@ -596,6 +707,8 @@ way makes it awkward to use from a client package accessing the symbol by
 qualifying it with a package prefix, where the package name then appears twice
 (once as a package prefix, another time as a prefix within the symbol name).
 
+<div class='badcode'></div>
+
 ```lisp
 (in-package #:varint)
 (defun varint-length64 () ... )
@@ -603,6 +716,8 @@ qualifying it with a package prefix, where the package name then appears twice
 (in-package #:client-code)
 (defconst +padding+ (varint:varint-length64 +end-token+))  ; varint is repeated
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 (in-package #:varint)
@@ -621,6 +736,8 @@ Symbols that correspond to standard, idiomatic Lisp expressions and would
 contain the package name or a part of it in a non-prefix position are still to
 be written with that package name or part. This includes the following idiomatic
 Lisp expressions as example:
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; Definition of the FOOBAR concept.
@@ -656,12 +773,16 @@ first type you'd have functions named things like `fifo-add-to` and
 `fifo-clear-all`. If you design a package name to be used as a prefix, you'd
 have names like `add-to` and `clear-all`, because the callers would be saying:
 
+<div class='goodcode'></div>
+
 ```lisp
 (fifo:add-to ...)
 (fifo:clear-all ...)
 ```
 
 The below shows a redundant and arguably "ugly" symbol naming schema.
+
+<div class='badcode'></div>
 
 ```lisp
 (fifo:fifo-clear-all ...)
@@ -670,11 +791,15 @@ The below shows a redundant and arguably "ugly" symbol naming schema.
 Prefer singular names for packages rather than plural. For example calls to the
 function `ace.core.string:prefixp` will look like the following:
 
+<div class='goodcode'></div>
+
 ```lisp
 (string:prefixp ...)
 ```
 
 The above reads better than:
+
+<div class='badcode'></div>
 
 ```lisp
 (strings:prefixp ...)
@@ -748,6 +873,8 @@ preferable.
 
 Package nicknames MUST NOT be used. Package nicknames tend to be a shorter
 version of the long package name, usually abbreviated as an acronym.
+
+<div class='badcode'></div>
 
 ```lisp
 (defpackage :regression-test
@@ -873,6 +1000,8 @@ Regarding multiple assignment in a single form, there are two schools: the first
 style groups as many assignments as possible into a single `setf` or `psetf`
 form thus minimizing the number of forms with side-effects:
 
+<div class='goodcode'></div>
+
 ```lisp
 (setf foo bar
       baz quux)
@@ -979,6 +1108,8 @@ Do not clean up by resignaling. If you do that, and the condition is not
 handled, the stack trace will halt at the point of the resignal, hiding the
 rest. And the rest is the part we really care about!
 
+<div class='badcode'></div>
+
 ```lisp
 (handler-case
   (catch 'ticket-at
@@ -987,6 +1118,8 @@ rest. And the rest is the part we really care about!
     (reset-parser-values)
       (error c)))  ; The origin of this error has been lost.
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 (unwind-protect
@@ -1112,6 +1245,8 @@ When you write a macro with a body, such as a `with-xxx` macro, even if there
 aren't any parameters, you should leave space for them anyway. For example, if
 you define `with-lights-on`, do not structure it like this:
 
+<div class='badcode'></div>
+
 ```lisp
 (defmacro with-lights-on (&body b)
   ...)
@@ -1122,6 +1257,8 @@ you define `with-lights-on`, do not structure it like this:
 ```
 
 Instead, add an empty arguments list before the body argument:
+
+<div class='goodcode'></div>
 
 ```lisp
 ;; Macro lambda list has empty parens before body argument
@@ -1135,6 +1272,8 @@ Instead, add an empty arguments list before the body argument:
 
 That way, you can later add optional or keyword parameters without having to
 change all the uses of the macro:
+
+<div class='goodcode'></div>
 
 ```lisp
 (defmacro with-lights-on ((&keyword install-new-bulbs-p) &body b)
@@ -1254,9 +1393,13 @@ unauthorized access to internals, clashes with other symbols.
 You must not `intern` a string just to compare it to a keyword; use `string=` or
 `string-equal`.
 
+<div class='badcode'></div>
+
 ```lisp
 (member (intern str :keyword) $keys)  ; intern has undesired side-effects
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
   (member str $keys :test #'string-equal)
@@ -1383,9 +1526,13 @@ will be small, because accessors are *O(n)* instead of *O(log n)*. For
 arbitrarily big sets, use balanced binary trees, for instance using
 `lisp-interface-library`.
 
+<div class='badcode'></div>
+
 ```lisp
 (member foo (union list-1 list-2))  ; Slow O(n) best-case and creates a new list
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 (or (member foo list-1) (member foo list-2))  ; O(n) average-case
@@ -1554,11 +1701,15 @@ may also use an `error` as a side-effect in the final clause of an `or`.
 You should use `ecase` and `etypecase` in preference to `case` and `typecase`.
 It is better to catch erroneous values early.
 
+<div class='badcode'></div>
+
 ```lisp
 (case x ; Bad: silently returns NIL on mismatch
   ((bar) :bar)
   ((baz) :baz))
 ```
+
+<div class='goodcode'></div>
 
 ```lisp
 (ecase x ; Better: will error on mismatch
