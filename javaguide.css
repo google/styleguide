@@ -449,6 +449,13 @@ pre.badcode {
   border-left: 1px inset #a03;
 }
 
+pre.good,
+pre.goodcode {
+  background-color: #e8fff6;
+  border-top: 1px inset #0a3;
+  border-left: 1px inset #0a3;
+}
+
 .tip {
   background-color: #fffbd9;
   padding: 6px 8px 6px 10px;

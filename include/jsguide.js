@@ -8,10 +8,13 @@ window.initStyleGuide = function(init) {
   }
   // Add the tocDiv at the top.
   var title = document.getElementsByTagName('h1')[0];
-  var toc = document.createElement('div');
-  toc.id = 'tocDiv';
-  toc.className = 'vertical_toc';
-  title.parentNode.insertBefore(toc, title.nextSibling);
+  var toc = document.querySelector('div#tocDiv');
+  if (toc === null) {
+    toc = document.createElement('div');
+    toc.id = 'tocDiv';
+    toc.className = 'vertical_toc';
+    title.parentNode.insertBefore(toc, title.nextSibling);
+  }
 
   // If a paragraph starts with (e.g.) "Note:" or "Tip:" then add
   // that "callout class" to its element.
@@ -42,7 +45,8 @@ window.initStyleGuide = function(init) {
   find('pre > code', function(code) {
     var pre = code.parentElement;
     // Internal HTML/CSS & TS style guides do not use prettyprint.
-    if (code.classList.contains('language-css') ||
+    if (code.classList.contains('language-cpp') ||
+        code.classList.contains('language-css') ||
         code.classList.contains('language-django') ||
         code.classList.contains('language-html') ||
         code.classList.contains('language-ts')) {
