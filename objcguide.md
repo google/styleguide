@@ -19,8 +19,6 @@
 > refresher, please read [Programming with
 > Objective-C](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html).
 
-
-
 ## Principles
 
 ### Optimize for the reader, not the writer
@@ -72,9 +70,9 @@ example that should give you a feel for the style, spacing, naming, and so on.
 Here is an example header file, demonstrating the correct commenting and spacing
 for an `@interface` declaration.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 #import <Foundation/Foundation.h>
 
 #import "path/to/Bar.h"
@@ -123,9 +121,9 @@ for an `@interface` declaration.
 An example source file, demonstrating the correct commenting and spacing for the
 `@implementation` of an interface.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 #import "Shared/Util/Foo.h"
 
 @implementation Foo {
@@ -177,9 +175,9 @@ initialisms). Don't worry about saving horizontal space as it is far more
 important to make your code immediately understandable by a new reader. For
 example:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 // Good names.
 int numberOfErrors = 0;
 int completedConnectionsCount = 0;
@@ -189,9 +187,9 @@ port = [network port];
 NSDate *gAppLaunchDate;
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 // Names to avoid.
 int w;
 int nerr;
@@ -220,7 +218,6 @@ terms also have an ostensibly neutral meaning. Similarly, use gender-neutral
 language unless you're referring to a specific person (and using their
 pronouns). For example, use "they"/"them"/"their" for people of unspecified
 gender (even when singular), and "it"/"its" for non-people.
-
 
 <a id="File_Names"></a>
 
@@ -259,9 +256,9 @@ WARNING: Apple reserves two-letter prefixes—see
 [Conventions in Programming with Objective-C](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Conventions/Conventions.html)—so
 prefixes with a minimum of three characters are considered best practice.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 /** An example error domain. */
 GTM_EXTERN NSString *GTMExampleErrorDomain;
 
@@ -306,9 +303,9 @@ Objective-C's global namespace.
 There should be a single space between the class name and the opening
 parenthesis of the category.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 // UIViewController+GTMCrashReporting.h
 
 /** A category that adds metadata to include in crash reports to UIViewController. */
@@ -326,9 +323,9 @@ parenthesis of the category.
 If a class is not shared with other projects, categories extending it may omit
 name prefixes and method name prefixes.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 /** This category extends a class that is not shared with other projects. */
 @interface XYZDataObject (Storage)
 - (NSString *)storageIdentifier;
@@ -343,9 +340,9 @@ Method and parameter names typically start as lowercase and then use mixed case.
 
 Proper capitalization should be respected, including at the beginning of names.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 + (NSURL *)URLWithString:(NSString *)URLString;
 ```
 
@@ -358,9 +355,9 @@ Use prepositions and conjunctions like "with", "from", and "to" in the second
 and later parameter names only where necessary to clarify the meaning or
 behavior of the method.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (void)addTarget:(id)target action:(SEL)action;                          // GOOD; no conjunction needed
 - (CGPoint)convertPoint:(CGPoint)point fromView:(UIView *)view;           // GOOD; conjunction clarifies parameter
 - (void)replaceCharactersInRange:(NSRange)aRange
@@ -370,9 +367,9 @@ behavior of the method.
 If the method returns an attribute of the receiver, name the method after the
 attribute.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 /** Returns this instance's sandwich. */
 - (Sandwich *)sandwich;      // GOOD.
 
@@ -382,9 +379,9 @@ attribute.
 - (UIBackgroundTaskIdentifier)beginBackgroundTask;
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 - (CGFloat)calculateHeight;  // AVOID.
 - (id)theDelegate;           // AVOID.
 ```
@@ -392,15 +389,15 @@ attribute.
 An accessor method should be named the same as the object it's getting, but it
 should not be prefixed with the word `get`. For example:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (id)delegate;     // GOOD.
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 - (id)getDelegate;  // AVOID.
 ```
 
@@ -409,9 +406,9 @@ beginning with `is`, but property names for those methods omit the `is`.
 
 Dot notation is used only with property names, not with method names.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @property(nonatomic, getter=isGlorious) BOOL glorious;
 // The method for the getter of the property above is:
 // - (BOOL)isGlorious;
@@ -420,22 +417,22 @@ BOOL isGood = object.glorious;      // GOOD.
 BOOL isGood = [object isGlorious];  // GOOD.
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 BOOL isGood = object.isGlorious;    // AVOID.
 ```
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 NSArray<Frog *> *frogs = [NSArray<Frog *> arrayWithObject:frog];
 NSEnumerator *enumerator = [frogs reverseObjectEnumerator];  // GOOD.
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 NSEnumerator *enumerator = frogs.reverseObjectEnumerator;    // AVOID.
 ```
 
@@ -454,9 +451,9 @@ Function names should start with a capital letter and have a capital letter for
 each new word (a.k.a. "[camel case](https://en.wikipedia.org/wiki/Camel_case)"
 or "Pascal case").
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 static void AddTableEntry(NSString *tableEntry);
 static BOOL DeleteFile(const char *filename);
 ```
@@ -464,9 +461,9 @@ static BOOL DeleteFile(const char *filename);
 Because Objective-C does not provide namespacing, non-static functions should
 have a [prefix](#prefixes) that minimizes the chance of a name collision.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 GTM_EXTERN NSTimeZone *GTMGetDefaultTimeZone(void);
 GTM_EXTERN NSString *GTMGetURLScheme(NSURL *URL);
 ```
@@ -493,9 +490,9 @@ variable (int or pointer).
 File scope or global variables (as opposed to constants) declared outside the
 scope of a method or function should be rare, and should have the prefix `g`.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 static int gGlobalCounter;
 ```
 
@@ -521,9 +518,9 @@ with #define) should use mixed case to delimit words.
 
 Global and file scope constants should have an appropriate [prefix](#prefixes).
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 /** The domain for GTL service errors. */
 GTL_EXTERN NSString *const GTLServiceErrorDomain;
 
@@ -543,9 +540,9 @@ typically like `ClassNameConstantName` or `ClassNameEnumName`.
 For interoperability with Swift code, enumerated values should have names that
 extend the typedef name:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 /** An enumeration of supported display tinges. */
 typedef NS_ENUM(int32_t, DisplayTinge) {
   DisplayTingeGreen = 1,
@@ -556,9 +553,9 @@ typedef NS_ENUM(int32_t, DisplayTinge) {
 A lowercase k can be used as a standalone prefix for constants of static storage
 duration declared within implementation files:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 static const int kFileCount = 12;
 static NSString *const kUserKey = @"kUserKey";
 ```
@@ -578,25 +575,23 @@ no longer recommended.
 Avoid using forward declarations of types unless they are required to break a
 circular dependency between types in the same module.
 
-
 Forward declarations:
 
 *   Cause problems importing header files into Swift.
-
 *   Can hide issues when types are renamed.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 #import "Path/To/Foo.h"
 
 void CallWithAFoo(Foo *);  // GOOD.
 ...
 ```
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @class Foo;  // GOOD to break circular dependency
 
 @protocol FooDelegate
@@ -609,10 +604,9 @@ void CallWithAFoo(Foo *);  // GOOD.
 ...
 ```
 
+<div class='badcode'></div>
 
 ```objectivec
-// AVOID:
-
 @class Foo;  // AVOID.
 
 void CallWithAFoo(Foo *foo);
@@ -635,9 +629,9 @@ should begin with any convenience constructors.
 Declare variables in the narrowest practical scopes, and close to their use.
 Initialize variables in their declarations.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 CLLocation *location = [self lastKnownLocation];
 for (int meters = 1; meters < 10; meters++) {
   reportFrogsWithinRadius(location, meters);
@@ -649,9 +643,9 @@ outside the scope of its use. This example declares meters separate from
 initialization, and needlessly sends the lastKnownLocation message each time
 through the loop:
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 int meters;                                         // AVOID.
 for (meters = 1; meters < 10; meters++) {
   CLLocation *location = [self lastKnownLocation];  // AVOID.
@@ -675,16 +669,16 @@ namespace in Objective-C++). Do not declare file scope variables or constants
 with static storage duration (or in anonymous namespaces in Objective-C++) in .h
 files.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 // file: Foo.m
 static const int FOORequestLimit = 5;
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 // file: Foo.h
 static const int FOORequestLimit = 5;  // AVOID.
 ```
@@ -699,16 +693,16 @@ Subtle errors crop up when doing math or counting down to zero using unsigned
 integers. Rely only on signed integers in math expressions except when matching
 NSUInteger in system interfaces.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 NSUInteger numberOfObjects = array.count;
 for (NSInteger counter = numberOfObjects - 1; counter >= 0; --counter)
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 for (NSUInteger counter = numberOfObjects - 1; counter >= 0; --counter)  // AVOID.
 ```
 
@@ -724,9 +718,9 @@ differ in 32- and 64-bit builds. Their use is appropriate when matching system
 interfaces but should be avoided when dealing with APIs that
 require exact sizing, e.g., proto APIs.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 int32_t scalar1 = proto.intValue;
 
 int64_t scalar2 = proto.longValue;
@@ -736,9 +730,9 @@ NSUInteger numberOfObjects = array.count;
 CGFloat offset = view.bounds.origin.x;
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 NSInteger scalar2 = proto.longValue;  // AVOID.
 ```
 
@@ -761,9 +755,9 @@ to continue using `float` numbers for legacy code consistency, until they
 eventually migrate to `double` values everywhere. Avoid a mixture of `float`
 and `double` values in the same code.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 // Good since CGFloat is double
 static const CGFloat kHorizontalMargin = 8.0;
 static const CGFloat kVerticalMargin = 12.0;
@@ -773,9 +767,9 @@ static const CGFloat kHorizontalMargin = 8.0f;
 static const CGFloat kVerticalMargin = 12.0f;
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 // Avoid a mixture of float and double constants
 static const CGFloat kHorizontalMargin = 8.0f;
 static const CGFloat kVerticalMargin = 12.0;
@@ -829,9 +823,9 @@ Comments should be used to document classes, properties, ivars, functions,
 categories, protocol declarations, and enums.
 
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 /**
  * A delegate for NSApplication to handle notifications about app
  * launch and shutdown. Owned by the main app controller.
@@ -891,9 +885,9 @@ be commented.
 
 Provide comments explaining tricky, subtle, or complicated sections of code.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 // Set the property to nil before invoking the completion handler to
 // avoid the risk of reentrancy leading to the callback being
 // invoked again.
@@ -909,13 +903,12 @@ End-of-line comments should be separated from the code by at least 2 spaces. If
 you have several comments on subsequent lines, it can often be more readable to
 line them up.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 [self doSomethingWithALongName];  // Two spaces before the comment.
 [self doSomethingShort];          // More spacing to align the comment.
 ```
-
 
 <a id="Disambiguating_Symbols"></a>
 
@@ -932,33 +925,33 @@ Demarcation helps provide clarity when a symbol is a common word that might make
 the sentence read like it was poorly constructed. A common example is the symbol
 `count`:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 // Sometimes `count` will be less than zero.
 ```
 
 or when quoting something which already contains quotes
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 // Remember to call `StringWithoutSpaces("foo bar baz")`
 ```
 
 Backticks or vertical bars are not needed when a symbol is self-apparent.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 // This class serves as a delegate to GTMDepthCharge.
 ```
 
 Doxygen formatting is also suitable for identifying symbols.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 /** @param maximum The highest value for @c count. */
 ```
 
@@ -988,9 +981,9 @@ even when building for automatic reference counting.
 
 Examples of strong and weak declarations:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @interface MyDelegate : NSObject
 
 @property(nonatomic) NSString *doohickey;
@@ -1043,9 +1036,9 @@ Macro names should use `SHOUTY_SNAKE_CASE`—all uppercase letters with
 underscores between words. Function-like macros may use C function naming
 practices. Do not define macros that appear to be C or Objective-C keywords.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 #define GTM_EXPERIMENTAL_BUILD ...      // GOOD
 
 // Assert unless X > Y
@@ -1055,9 +1048,9 @@ practices. Do not define macros that appear to be C or Objective-C keywords.
 #define GTMAssertGreaterThan(X, Y) ...  // GOOD, function style.
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 #define kIsExperimentalBuild ...        // AVOID
 
 #define unless(X) if(!(X))              // AVOID
@@ -1074,9 +1067,9 @@ Avoid macros that generate method implementations, or that generate declarations
 of variables that are later used outside of the macro. Macros shouldn't make
 code hard to understand by hiding where and how a variable is declared.
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 #define ARRAY_ADDER(CLASS) \
   -(void)add ## CLASS ## :(CLASS *)obj toArray:(NSMutableArray *)array
 
@@ -1117,15 +1110,15 @@ clarity for the reader. The `__typeof__` keyword is encouraged over other
 similar keywords (e.g., the `typeof` keyword) as it is supported in all language
 variants.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
   __weak __typeof__(self) weakSelf = self;
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
   __typeof__(data) copiedData = [data copy];  // AVOID.
   __weak typeof(self) weakSelf = self;        // AVOID.
 ```
@@ -1136,9 +1129,9 @@ Type deduction using the `__auto_type` keyword is allowed only for local
 variables of block and function pointer types. Avoid type deduction if a typedef
 already exists for the block or pointer type.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 __auto_type block = ^(NSString *arg1, int arg2) { ... };
 __auto_type functionPointer = &MyFunction;
 
@@ -1146,9 +1139,9 @@ typedef void(^SignInCallback)(Identity *, NSError *);
 SignInCallback signInCallback = ^(Identity *identity, NSError *error) { ... };
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 __auto_type button = [self createButtonForInfo:info];
 __auto_type viewController = [[MyCustomViewControllerClass alloc] initWith...];
 
@@ -1242,9 +1235,9 @@ Instance variables should typically be declared in implementation files or
 auto-synthesized by properties. When ivars are declared in a header file, they
 should be marked `@protected` or `@private`.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @interface MyClass : NSObject {
  @protected
   id _myInstanceVariable;
@@ -1308,9 +1301,9 @@ the includes should be ordered alphabetically.
 
 Import headers using their path relative to the project's source directory.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 // The related header.
 #import "ProjectX/BazViewController.h"
 
@@ -1344,16 +1337,16 @@ include the top-level root framework. The root framework is generally
 pre-compiled and can be loaded much more quickly. In addition, remember to use
 `@import` or `#import` rather than `#include` for Objective-C frameworks.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @import UIKit;     // GOOD.
 #import <Foundation/Foundation.h>     // GOOD.
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 #import <Foundation/NSArray.h>        // AVOID.
 #import <Foundation/NSString.h>
 ...
@@ -1376,9 +1369,9 @@ One case where this is less obvious is property accessors. These can be
 overridden just like any other selector. Whenever practical, directly assign to
 and release ivars in initializers and `-dealloc`, rather than rely on accessors.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (instancetype)init {
   self = [super init];
   if (self) {
@@ -1395,9 +1388,9 @@ Beware of factoring common initialization code into helper methods:
 -   When editing a helper method, it may not be obvious that the code is being
     run from an initializer.
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 - (instancetype)init {
   self = [super init];
   if (self) {
@@ -1408,17 +1401,17 @@ Beware of factoring common initialization code into helper methods:
 }
 ```
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (void)dealloc {
   [_notifier removeObserver:self];  // GOOD.
 }
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 - (void)dealloc {
   [self removeNotifications];  // AVOID.
 }
@@ -1436,18 +1429,18 @@ Code should avoid redundant property access. Prefer to assign a property value
 to a local variable when the property value is not expected to change and needs
 to be used multiple times.
 
-```objc
-// GOOD:
+<div class='goodcode'></div>
 
+```objc
 UIView *view = self.view;
 UIScrollView *scrollView = self.scrollView;
 [scrollView.leadingAnchor constraintEqualToAnchor:view.leadingAnchor].active = YES;
 [scrollView.trailingAnchor constraintEqualToAnchor:view.trailingAnchor].active = YES;
 ```
 
-```objc
-// AVOID:
+<div class='badcode'></div>
 
+```objc
 [self.scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
 [self.scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
 ```
@@ -1455,17 +1448,17 @@ UIScrollView *scrollView = self.scrollView;
 When repeatedly referencing chained property invocations, prefer to capture the
 repeated expression in a local variable:
 
-```objc
-// AVOID:
+<div class='badcode'></div>
 
+```objc
 foo.bar.baz.field1 = 10;
 foo.bar.baz.field2 = @"Hello";
 foo.bar.baz.field3 = 2.71828183;
 ```
 
-```objc
-// GOOD:
+<div class='goodcode'></div>
 
+```objc
 Baz *baz = foo.bar.baz;
 baz.field1 = 10;
 baz.field2 = @"Hello";
@@ -1476,7 +1469,6 @@ Redundantly accessing the same properties results in multiple message dispatches
 to fetch the same value, and under ARC requires retains and releases of any
 returned objects; the compiler cannot optimize away these extra operations,
 leading to slower execution and substantial increases in binary size.
-
 
 <a id="Mutables_Copies_Ownership"></a>
 
@@ -1493,9 +1485,9 @@ necessary and returning the mutable subclass is more efficient.
 [Callers are expected to treat return values as their declared type](https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW67),
 and thus the return value will be treated as an immutable going forward.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (NSArray *)listOfThings {
   NSMutableArray *generatedList = [NSMutableArray array];
   for (NSInteger i = 0; i < _someLimit; i++) {
@@ -1509,9 +1501,9 @@ and thus the return value will be treated as an immutable going forward.
 This rule also applies to classes where only a mutable variant exists so long as
 the ownership transfer is clear. Protos are a common example.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (SomeProtoMessage *)someMessageForValue:(BOOL)value {
   SomeProtoMessage *message = [SomeProtoMessage message];
   message.someValue = value;
@@ -1527,9 +1519,9 @@ to treat arguments as the declared type, and take
 ([referred to by Apple as "snapshots"](https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW68))
 if they intend to retain those arguments beyond the duration of the call.
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 NSMutableArray *updatedThings = [NSMutableArray array];
 [updatedThings addObject:newThing];
 [_otherManager updateWithCurrentThings:[updatedThings copy]];  // AVOID
@@ -1556,9 +1548,9 @@ getters](https://developer.apple.com/library/archive/documentation/Cocoa/Concept
 Since property keywords have no effect on direct ivar access, custom accessors
 must implement the same copy semantics.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @property(nonatomic, copy) NSString *name;
 @property(nonatomic, copy) NSSet<FilterThing *> *filters;
 
@@ -1581,9 +1573,9 @@ must implement the same copy semantics.
 Similarly, getters must return types that match the contract expectations of the
 immutable types they return.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 
 @implementation Foo {
   NSMutableArray<ContentThing *> *_currentContent;
@@ -1599,9 +1591,9 @@ All Objective-C protos are mutable and typically should be copied rather than
 retained
 [except in clear cases of ownership transfer](#Mutables_Copies_Ownership).
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (void)setFooMessage:(FooMessage *)fooMessage {
   // Copy proto to ensure no other retainer can mutate our value.
   _fooMessage = [fooMessage copy];
@@ -1616,9 +1608,9 @@ retained
 Asynchronous code should copy potentially mutable objects prior to dispatch.
 Objects captured by blocks are retained but not copied.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (void)doSomethingWithThings:(NSArray<Thing *> *)things {
   NSArray<Thing *> *thingsToWorkOn = [things copy];
   dispatch_async(_workQueue, ^{
@@ -1642,9 +1634,9 @@ Objective-C lightweight generics notation to type contained objects.
 Every `NSArray`, `NSDictionary`, or `NSSet` reference should be declared using
 lightweight generics for improved type safety and to explicitly document usage.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @property(nonatomic, copy) NSArray<Location *> *locations;
 @property(nonatomic, copy, readonly) NSSet<NSString *> *identifiers;
 
@@ -1654,9 +1646,9 @@ NSMutableArray<MyLocation *> *mutableLocations = [otherObject.locations mutableC
 If the fully-annotated types become complex, consider using a typedef to
 preserve readability.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 typedef NSSet<NSDictionary<NSString *, NSDate *> *> TimeZoneMappingSet;
 TimeZoneMappingSet *timeZoneMappings = [TimeZoneMappingSet setWithObjects:...];
 ```
@@ -1665,9 +1657,9 @@ Use the most descriptive common superclass or protocol available. In the most
 generic case when nothing else is known, declare the collection to be explicitly
 heterogeneous using id.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @property(nonatomic, copy) NSArray<id> *unknowns;
 ```
 
@@ -1697,17 +1689,17 @@ returns](http://www.sealiesoftware.com/blog/archive/2012/2/29/objc_explain_retur
 `nil` as a pointer, zero as an integer or floating-point value, structs
 initialized to `0`, and `_Complex` values equal to `{0, 0}`.
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 if (dataSource) {  // AVOID.
   [dataSource moveItemAtIndex:1 toIndex:0];
 }
 ```
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 [dataSource moveItemAtIndex:1 toIndex:0];  // GOOD.
 ```
 
@@ -1729,9 +1721,9 @@ keywords over the `__nullable` and `__nonnull` keywords. For Objective-C methods
 and properties prefer using the context-sensitive, non-underscored keywords,
 e.g., `nonnull` and `nullable`.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 /** A class representing an owned book. */
 @interface GTMBook : NSObject
 
@@ -1758,9 +1750,9 @@ e.g., `nonnull` and `nullable`.
 NSArray<GTMBook *> *_Nullable GTMLoadBooksFromFile(NSString *_Nonnull path);
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 NSArray<GTMBook *> *__nullable GTMLoadBooksFromTitle(NSString *__nonnull path);
 ```
 
@@ -1800,9 +1792,9 @@ Using logical operators (`&&`, `||` and `!`) with `BOOL` is also valid and will
 return values that can be safely converted to `BOOL` without the need for a
 conditional operator.
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 - (BOOL)isBold {
   return [self fontTraits] & NSFontBoldTrait;  // AVOID.
 }
@@ -1814,9 +1806,9 @@ conditional operator.
 }
 ```
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (BOOL)isBold {
   return ([self fontTraits] & NSFontBoldTrait) ? YES : NO;
 }
@@ -1835,18 +1827,18 @@ Don't directly compare `BOOL` variables with `YES`. Not only is
 it harder to read for those well-versed in C, but the first point above
 demonstrates that return values may not always be what you expect.
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 BOOL great = [foo isGreat];
 if (great == YES) {  // AVOID.
   // ...be great!
 }
 ```
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 BOOL great = [foo isGreat];
 if (great) {         // GOOD.
   // ...be great!
@@ -1857,17 +1849,17 @@ Don't directly compare `BOOL` values using comparison operators. `BOOL`
 values that are true may not be equal. Use logical operators in place
 of bitwise comparisons of `BOOL` values.
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 if (oldBoolValue != newBoolValue) {  // AVOID.
   // ... code that should only run when the value changes.
 }
 ```
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 if ((!oldBoolValue && newBoolValue) || (oldBoolValue && !newBoolValue)) {  // GOOD.
   // ... code that should only run when the value changes.
 }
@@ -1894,9 +1886,9 @@ operators to convert to `@YES` or `@NO`. Do not embed a conditional operator
 inside a boxed expression as this is equivalent to boxing general integral
 values even when the result of the operation is a BOOL.
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 [_boolArray addValue:@(YES)];  // AVOID boxing even in simple cases.
 NSNumber *isBold = @(self.fontTraits & NSFontBoldTrait);  // AVOID.
 NSNumber *hasContent = @([self stringValue].length);  // AVOID.
@@ -1904,9 +1896,9 @@ NSNumber *isValid = @([self stringValue]);  // AVOID.
 NSNumber *isStringNotNil = @([self stringValue] ? YES : NO);  // AVOID.
 ```
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 [_boolArray addValue:@YES];  // GOOD.
 NSNumber *isBold = self.fontTraits & NSFontBoldTrait ? @YES : @NO;  // GOOD.
 NSNumber *hasContent = [self stringValue].length ? @YES : @NO;  // GOOD.
@@ -1922,9 +1914,9 @@ NSNumber *isStringNotNil = [self stringValue] ? @YES : @NO;  // GOOD.
 Omit the empty set of braces on interfaces, class extensions, and
 implementations without any instance variable declarations.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @interface MyClass : NSObject
 // Does a lot of stuff.
 - (void)fooBarBam;
@@ -1939,9 +1931,9 @@ implementations without any instance variable declarations.
 @end
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 @interface MyClass : NSObject {
 }
 // Does a lot of stuff.
@@ -2001,9 +1993,9 @@ code in a method of a C++ class, use the C++ naming rules.
 For code in an Objective-C++ file outside of a class implementation, be
 consistent within the file.
 
-```objectivec++
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec++
 // file: cross_platform_header.h
 
 class CrossPlatformAPI {
@@ -2079,9 +2071,9 @@ there should be no spacing in the parameter list except between parameters.
 
 Methods should look like this:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (void)doSomethingWithString:(NSString *)theString {
   ...
 }
@@ -2100,9 +2092,9 @@ first. If a parameter declared after the `:` in a method declaration or
 definition would cause the line limit to be exceeded, wrap the content to the
 next line indented by at least four spaces.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 - (void)doSomethingWithFoo:(GTMFoo *)theFoo
                       rect:(NSRect)theRect
                   interval:(float)theInterval {
@@ -2135,9 +2127,9 @@ all parameters on the same line if they will fit. Wrap parameter lists which do
 not fit on a single line as you would wrap arguments in a [function
 call](#Function_Calls).
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 NSString *GTMVersionString(int majorVersion, int minorVersion) {
   ...
 }
@@ -2176,9 +2168,9 @@ conditions:
 Include a space after `if`, `while`, `for`, and `switch`, and around comparison
 operators.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 for (int i = 0; i < 5; ++i) {
 }
 
@@ -2188,9 +2180,9 @@ while (test) {}
 Braces may be omitted when a loop body or conditional statement fits on a single
 line.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 if (hasSillyName) LaughOutLoud();
 
 for (int i = 0; i < 10; i++) {
@@ -2198,9 +2190,9 @@ for (int i = 0; i < 10; i++) {
 }
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 if (hasSillyName)
   LaughOutLoud();               // AVOID.
 
@@ -2210,9 +2202,9 @@ for (int i = 0; i < 10; i++)
 
 If an `if` clause has an `else` clause, both clauses should use braces.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 if (hasBaz) {
   foo();
 } else {  // The else goes on the same line as the closing brace.
@@ -2220,9 +2212,9 @@ if (hasBaz) {
 }
 ```
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 if (hasBaz) foo();
 else bar();        // AVOID.
 
@@ -2234,9 +2226,9 @@ if (hasBaz) {
 Intentional fall-through to the next case should be documented with a comment
 unless the case has no intervening code before the next case.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 switch (i) {
   case 1:
     ...
@@ -2262,9 +2254,9 @@ switch (i) {
 Use a space around binary operators and assignments. Omit a space for a unary
 operator. Do not add spaces inside parentheses.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 x = 0;
 v = w * x + y / z;
 v = -y * (x + z);
@@ -2272,9 +2264,9 @@ v = -y * (x + z);
 
 Factors in an expression may omit spaces.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 v = w*x + y/z;
 ```
 
@@ -2287,17 +2279,17 @@ Method invocations should be formatted much like method declarations.
 When there's a choice of formatting styles, follow the convention already used
 in a given source file. Invocations should have all arguments on one line:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 [myObject doFooWith:arg1 name:arg2 error:arg3];
 ```
 
 or have one argument per line, with colons aligned:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 [myObject doFooWith:arg1
                name:arg2
               error:arg3];
@@ -2305,9 +2297,9 @@ or have one argument per line, with colons aligned:
 
 Don't use any of these styles:
 
-```objectivec
-// AVOID:
+<div class='badcode'></div>
 
+```objectivec
 [myObject doFooWith:arg1 name:arg2  // some lines with >1 arg
               error:arg3];
 
@@ -2323,9 +2315,9 @@ As with declarations and definitions, when the first keyword is shorter than the
 others, indent the later lines by at least four spaces, maintaining colon
 alignment:
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 [myObj short:arg1
           longKeyword:arg2
     evenLongerKeyword:arg3
@@ -2345,9 +2337,9 @@ where shorter lines are needed for clarity or documentation of the parameters.
 Continuation lines for function parameters may be indented to align with the
 opening parenthesis, or may have a four-space indent.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 CFArrayRef array = CFArrayCreate(kCFAllocatorDefault, objects, numberOfObjects,
                                  &kCFTypeArrayCallBacks);
 
@@ -2366,9 +2358,9 @@ TransformImage(image,
 Use local variables with descriptive names to shorten function calls and reduce
 nesting of calls.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 double scoreHeuristic = scores[x] * y + bases[x];
 UpdateTally(scoreHeuristic, x, y, z);
 ```
@@ -2384,9 +2376,9 @@ Objective-C exceptions, format them as follows. However, see [Avoid Throwing
 Exceptions](#Avoid_Throwing_Exceptions) for reasons why you should not be using
 exceptions.
 
-```objectivec
-// GOOD:
+<div class='goodcode'></div>
 
+```objectivec
 @try {
   foo();
 } @catch (NSException *ex) {
