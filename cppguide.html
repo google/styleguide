@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>Google C++ Style Guide</title>
-<link rel="stylesheet" href="include/styleguide.css">
+<link rel="stylesheet" href="javaguide.css">
 <script src="include/styleguide.js"></script>
 <link rel="shortcut icon" href="/styleguide/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="include/jsguide.js"></script>
 </head>
 <body onload="initStyleGuide();">
 <div id="content">
@@ -199,13 +200,13 @@ format of the symbol name should be
 source tree. For example, the file <code>foo/src/bar/baz.h</code> in project <code>foo</code> should
 have the following guard:</p>
 
-<pre class="language-cpp good">#ifndef FOO_BAR_BAZ_H_
+<pre><code class="language-cpp good">#ifndef FOO_BAR_BAZ_H_
 #define FOO_BAR_BAZ_H_
 
 ...
 
 #endif  // FOO_BAR_BAZ_H_
-</pre>
+</code></pre>
 
 <h3 id="Include_What_You_Use">Include What You Use</h3>
 
@@ -229,12 +230,12 @@ if it uses a symbol from it even if <code>foo.h</code> includes <code>bar.h</cod
 <p>A <q>forward declaration</q> is a declaration of an entity without an associated
 definition.</p>
 
-<pre class="language-cpp neutral">// In a C++ source file:
+<pre><code class="language-cpp neutral">// In a C++ source file:
 class B;
 void FuncInB();
 extern int variable_in_b;
 ABSL_DECLARE_FLAG(flag_in_b);
-</pre>
+</code></pre>
 
 <h5>Pros</h5>
 
@@ -263,7 +264,7 @@ or migrating to a new namespace.</li>
 <code>#include</code> is needed. Replacing an <code>#include</code> with a forward declaration can
 silently change the meaning of code:</p>
 
-<pre class="language-cpp neutral">// b.h:
+<pre><code class="language-cpp neutral">// b.h:
 struct B {};
 struct D : B {};
 
@@ -272,7 +273,7 @@ struct D : B {};
 void f(B*);
 void f(void*);
 void test(D* x) { f(x); }  // Calls f(B*)
-</pre>
+</code></pre>
 
 <p>If the <code>#include</code> was replaced with forward decls for <code>B</code> and <code>D</code>, <code>test()</code>
 would call <code>f(void*)</code>.</p></li>
@@ -365,7 +366,7 @@ Implementation details only below here</code>.</p>
 <code>inline</code> specifier or being implicitly specified inline by being a function
 template or defined in a class body when first declared.</p>
 
-<pre class="language-cpp good">template &lt;typename T&gt;
+<pre><code class="language-cpp good">template &lt;typename T&gt;
 class Foo {
  public:
   int bar() { return bar_; }
@@ -382,7 +383,7 @@ template &lt;typename T&gt;
 void Foo&lt;T&gt;::MethodWithHugeBody() {
   ...
 }
-</pre>
+</code></pre>
 
 <h3 id="Names_and_Order_of_Includes">Names and Order of Includes</h3>
 
@@ -398,8 +399,8 @@ directory) or <code>..</code> (the parent directory). For example,
 <code>google-awesome-project/src/base/logging.h</code> should
 be included as:</p>
 
-<pre class="language-cpp good">#include "base/logging.h"
-</pre>
+<pre><code class="language-cpp good">#include "base/logging.h"
+</code></pre>
 
 <p>Headers should only be included using an angle-bracketed path if the library
 requires you to do so. In particular, the following headers require angle
@@ -456,7 +457,7 @@ older code might not conform to this rule and should be fixed when convenient.</
 <code>google-awesome-project/src/foo/internal/fooserver.cc</code>  might look like
 this:</p>
 
-<pre class="language-cpp good">#include "foo/server/fooserver.h"
+<pre><code class="language-cpp good">#include "foo/server/fooserver.h"
 
 #include &lt;sys/types.h&gt;
 #include &lt;unistd.h&gt;
@@ -467,7 +468,7 @@ this:</p>
 #include "base/basictypes.h"
 #include "foo/server/bar.h"
 #include "third_party/absl/flags/flag.h"
-</pre>
+</code></pre>
 
 <p><strong>Exception:</strong></p>
 
@@ -475,12 +476,12 @@ this:</p>
 conditional includes after other includes. Of course, keep your system-specific
 code small and localized. Example:</p>
 
-<pre class="language-cpp good">#include "foo/public/fooserver.h"
+<pre><code class="language-cpp good">#include "foo/public/fooserver.h"
 
 #ifdef _WIN32
 #include &lt;windows.h&gt;
 #endif  // _WIN32
-</pre>
+</code></pre>
 
 <h2 id="Scoping">Scoping</h2>
 
@@ -510,12 +511,12 @@ continue to refer to <code>Foo</code> without the prefix.</p>
 <p>Inline namespaces automatically place their names in the enclosing scope.
 Consider the following snippet, for example:</p>
 
-<pre class="language-cpp neutral">namespace outer {
+<pre><code class="language-cpp neutral">namespace outer {
 inline namespace inner {
   void foo();
 }  // namespace inner
 }  // namespace outer
-</pre>
+</code></pre>
 
 <p>The expressions <code>outer::inner::foo()</code> and <code>outer::foo()</code> are interchangeable.
 Inline namespaces are primarily intended for ABI compatibility across versions.</p>
@@ -547,7 +548,7 @@ examples.</li>
 definitions/declarations and forward declarations of classes from other
 namespaces.</p>
 
-<pre class="language-cpp good">// In the .h file
+<pre><code class="language-cpp good">// In the .h file
 namespace mynamespace {
 
 // All declarations are within the namespace scope.
@@ -559,9 +560,9 @@ class MyClass {
 };
 
 }  // namespace mynamespace
-</pre>
+</code></pre>
 
-<pre class="language-cpp good">// In the .cc file
+<pre><code class="language-cpp good">// In the .cc file
 namespace mynamespace {
 
 // Definition of functions is within scope of the namespace.
@@ -570,12 +571,12 @@ void MyClass::Foo() {
 }
 
 }  // namespace mynamespace
-</pre>
+</code></pre>
 
 <p>More complex <code>.cc</code> files might have additional details, like flags or
 using-declarations.</p>
 
-<pre class="language-cpp good">#include "a.h"
+<pre><code class="language-cpp good">#include "a.h"
 
 ABSL_FLAG(bool, someflag, false, "a flag");
 
@@ -586,7 +587,7 @@ using ::foo::Bar;
 ...code for mynamespace...    // Code goes against the left margin.
 
 }  // namespace mynamespace
-</pre></li>
+</code></pre></li>
 <li><p>To place generated protocol message code in a namespace, use the <code>package</code>
 specifier in the <code>.proto</code> file. See
 
@@ -599,16 +600,16 @@ standard library, include the appropriate header file.</p></li>
 <li><p>You may not use a <em>using-directive</em> to make all names from a namespace
 available.</p>
 
-<pre class="language-cpp bad">// Forbidden -- This pollutes the namespace.
+<pre><code class="language-cpp bad">// Forbidden -- This pollutes the namespace.
 using namespace foo;
-</pre></li>
+</code></pre></li>
 <li><p>Do not use <em>Namespace aliases</em> at namespace scope in header files except in
 explicitly marked internal-only namespaces, because anything imported into a
 namespace in a header file becomes part of the public API exported by that
 file. Namespace aliases can be used when those conditions don't apply, but
 they must have <a href="#Naming_Aliases">appropriate names</a>.</p>
 
-<pre class="language-cpp good">// In a .h file, an alias must not be a separate API, or must be hidden in
+<pre><code class="language-cpp good">// In a .h file, an alias must not be a separate API, or must be hidden in
 // an implementation detail.
 namespace librarian {
 
@@ -623,18 +624,18 @@ inline void my_inline_function() {
 }
 
 }  // namespace librarian
-</pre>
+</code></pre>
 
-<pre class="language-cpp good">// Remove uninteresting parts of some commonly used names in .cc files.
+<pre><code class="language-cpp good">// Remove uninteresting parts of some commonly used names in .cc files.
 namespace sidetable = ::pipeline_diagnostics::sidetable;
-</pre></li>
+</code></pre></li>
 <li><p>Do not use inline namespaces.</p></li>
 <li><p>Use namespaces with <q>internal</q> in the name to document parts of an API that
 should not be mentioned by users of the API. </p>
 
-<pre class="language-cpp bad">// We shouldn't use this internal name in non-absl code.
+<pre><code class="language-cpp bad">// We shouldn't use this internal name in non-absl code.
 using ::absl::container_internal::ImplementationDetail;
-</pre>
+</code></pre>
 
 <p>Note that there is still a risk of collision between libraries within a
 nested <code>internal</code> namespace, so give each library within a namespace a
@@ -645,12 +646,12 @@ unique internal namespace by adding the library's filename. For example,
 
 are preferred in new code, but are not required.</p>
 
-<pre class="language-cpp good">namespace my_project::my_component {
+<pre><code class="language-cpp good">namespace my_project::my_component {
 
   ...
 
 }  // namespace my_project::my_component
-</pre></li>
+</code></pre></li>
 </ul>
 
 <h3 id="Internal_Linkage">Internal Linkage <a href="" id="Unnamed_Namespaces_and_Static_Variables"></a></h3>
@@ -675,10 +676,10 @@ need to be referenced elsewhere. Do not use internal linkage in <code>.h</code> 
 <p>Format unnamed namespaces like named namespaces. In the terminating comment,
 leave the namespace name empty:</p>
 
-<pre class="language-cpp good">namespace {
+<pre><code class="language-cpp good">namespace {
 ...
 }  // namespace
-</pre>
+</code></pre>
 
 <h3 id="Nonmember,_Static_Member,_and_Global_Functions">Nonmember, Static Member, and Global Functions</h3>
 
@@ -725,56 +726,56 @@ possible. This makes it easier for the reader to find the declaration and see
 what type the variable is and what it was initialized to. In particular,
 initialization should be used instead of declaration and assignment, e.g.,:</p>
 
-<pre class="language-cpp bad">int i;
+<pre><code class="language-cpp bad">int i;
 i = f();      // Bad -- initialization separate from declaration.
-</pre>
+</code></pre>
 
-<pre class="language-cpp good">int i = f();  // Good -- declaration has initialization.
-</pre>
+<pre><code class="language-cpp good">int i = f();  // Good -- declaration has initialization.
+</code></pre>
 
-<pre class="language-cpp bad">int jobs = NumJobs();
+<pre><code class="language-cpp bad">int jobs = NumJobs();
 // More code...
 f(jobs);      // Bad -- declaration separate from use.
-</pre>
+</code></pre>
 
-<pre class="language-cpp good">int jobs = NumJobs();
+<pre><code class="language-cpp good">int jobs = NumJobs();
 f(jobs);      // Good -- declaration immediately (or closely) followed by use.
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">std::vector&lt;int&gt; v;
+<pre><code class="language-cpp bad">std::vector&lt;int&gt; v;
 v.push_back(1);  // Prefer initializing using brace initialization.
 v.push_back(2);
-</pre>
+</code></pre>
 
-<pre class="language-cpp good">std::vector&lt;int&gt; v = {1, 2};  // Good -- v starts initialized.
-</pre>
+<pre><code class="language-cpp good">std::vector&lt;int&gt; v = {1, 2};  // Good -- v starts initialized.
+</code></pre>
 
 <p>Variables needed for <code>if</code>, <code>while</code> and <code>for</code> statements should normally be
 declared within those statements, so that such variables are confined to those
 scopes. For example:</p>
 
-<pre class="language-cpp good">while (const char* p = strchr(str, '/')) str = p + 1;
-</pre>
+<pre><code class="language-cpp good">while (const char* p = strchr(str, '/')) str = p + 1;
+</code></pre>
 
 <p>There is one caveat: if the variable is an object, its constructor is invoked
 every time it enters scope and is created, and its destructor is invoked every
 time it goes out of scope.</p>
 
-<pre class="language-cpp bad">// Inefficient implementation:
+<pre><code class="language-cpp bad">// Inefficient implementation:
 for (int i = 0; i &lt; 1000000; ++i) {
   Foo f;  // My ctor and dtor get called 1000000 times each.
   f.DoSomething(i);
 }
-</pre>
+</code></pre>
 
 <p>It may be more efficient to declare such a variable used in a loop outside that
 loop:</p>
 
-<pre class="language-cpp good">Foo f;  // My ctor and dtor get called once each.
+<pre><code class="language-cpp good">Foo f;  // My ctor and dtor get called once each.
 for (int i = 0; i &lt; 1000000; ++i) {
   f.DoSomething(i);
 }
-</pre>
+</code></pre>
 
 <h3 id="Static_and_Global_Variables">Static and Global Variables</h3>
 
@@ -847,7 +848,7 @@ Fundamental types (like pointers and <code>int</code>) are trivially destructibl
 arrays of trivially destructible types. Note that variables marked with
 <code>constexpr</code> are trivially destructible.</p>
 
-<pre class="language-cpp good">const int kNum = 10;  // Allowed
+<pre><code class="language-cpp good">const int kNum = 10;  // Allowed
 
 struct X { int n; };
 const X kX[] = {{1}, {2}, {3}};  // Allowed
@@ -858,9 +859,9 @@ void foo() {
 
 // Allowed: constexpr guarantees trivial destructor.
 constexpr std::array&lt;int, 3&gt; kArray = {1, 2, 3};
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">// bad: non-trivial destructor
+<pre><code class="language-cpp bad">// bad: non-trivial destructor
 const std::string kFoo = "foo";
 
 // Bad for the same reason, even though kBar is a reference (the
@@ -871,7 +872,7 @@ void bar() {
   // Bad: non-trivial destructor.
   static std::map&lt;int, int&gt; kData = {{1, 0}, {2, 0}, {3, 0}};
 }
-</pre>
+</code></pre>
 
 <p>Note that references are not objects, and thus they are not subject to the
 constraints on destructibility. The constraint on dynamic initialization still
@@ -884,11 +885,11 @@ applies, though. In particular, a function-local static reference of the form
 consider whether class constructors execute, but we must also consider the
 evaluation of the initializer:</p>
 
-<pre class="language-cpp neutral">int n = 5;    // Fine
+<pre><code class="language-cpp neutral">int n = 5;    // Fine
 int m = f();  // ? (Depends on f)
 Foo x;        // ? (Depends on Foo::Foo)
 Bar y = g();  // ? (Depends on g and on Bar::Bar)
-</pre>
+</code></pre>
 
 <p>All but the first statement expose us to indeterminate initialization ordering.</p>
 
@@ -897,12 +898,12 @@ language of the C++ standard. It means that the initializing expression is a
 constant expression, and if the object is initialized by a constructor call,
 then the constructor must be specified as <code>constexpr</code>, too:</p>
 
-<pre class="language-cpp good">struct Foo { constexpr Foo(int) {} };
+<pre><code class="language-cpp good">struct Foo { constexpr Foo(int) {} };
 
 int n = 5;  // Fine, 5 is a constant expression.
 Foo x(2);   // Fine, 2 is a constant expression and the chosen constructor is constexpr.
 Foo a[] = { Foo(1), Foo(2), Foo(3) };  // Fine
-</pre>
+</code></pre>
 
 <p>Constant initialization is always allowed. Constant initialization of static
 storage duration variables should be marked with <code>constexpr</code> or <code>constinit</code>. Any
@@ -911,7 +912,7 @@ presumed to have dynamic initialization, and reviewed very carefully.</p>
 
 <p>By contrast, the following initializations are problematic:</p>
 
-<pre class="language-cpp bad">// Some declarations used below.
+<pre><code class="language-cpp bad">// Some declarations used below.
 time_t time(time_t*);      // Not constexpr!
 int f();                   // Not constexpr!
 struct Bar { Bar() {} };
@@ -920,7 +921,7 @@ struct Bar { Bar() {} };
 time_t m = time(nullptr);  // Initializing expression not a constant expression.
 Foo y(f());                // Ditto
 Bar b;                     // Chosen constructor Bar::Bar() not constexpr.
-</pre>
+</code></pre>
 
 <p>Dynamic initialization of nonlocal variables is discouraged, and in general it
 is forbidden. However, we do permit it if no aspect of the program depends on
@@ -928,9 +929,9 @@ the sequencing of this initialization with respect to all other initializations.
 Under those restrictions, the ordering of the initialization does not make an
 observable difference. For example:</p>
 
-<pre class="language-cpp good">int p = getpid();  // Allowed, as long as no other static variable
+<pre><code class="language-cpp good">int p = getpid();  // Allowed, as long as no other static variable
                    // uses p in its own initialization.
-</pre>
+</code></pre>
 
 <p>Dynamic initialization of static local variables is allowed (and common).</p>
 
@@ -984,8 +985,8 @@ attribute. Prefer <code>thread_local</code> over other ways of defining thread-l
 
 <p>Variables can be declared with the <code>thread_local</code> specifier:</p>
 
-<pre class="language-cpp neutral">thread_local Foo foo = ...;
-</pre>
+<pre><code class="language-cpp neutral">thread_local Foo foo = ...;
+</code></pre>
 
 <p>Such a variable is actually a collection of objects, so that when different
 threads access it, they are actually accessing different objects. <code>thread_local</code>
@@ -1051,19 +1052,19 @@ annotated with
 <a href="https://en.cppreference.com/w/cpp/language/constinit"><code>constinit</code></a> (or
 <code>constexpr</code>, but that should be rare):</p>
 
-<pre class="language-cpp good">constinit thread_local Foo foo = ...;
-</pre>
+<pre><code class="language-cpp good">constinit thread_local Foo foo = ...;
+</code></pre>
 
 <p><code>thread_local</code> variables inside a function have no initialization concerns, but
 still risk use-after-free during thread exit. Note that you can use a
 function-scope <code>thread_local</code> to simulate a class- or namespace-scope
 <code>thread_local</code> by defining a function or static method that exposes it:</p>
 
-<pre class="language-cpp good">Foo&amp; MyThreadLocalFoo() {
+<pre><code class="language-cpp good">Foo&amp; MyThreadLocalFoo() {
   thread_local Foo result = ComplicatedInitialization();
   return result;
 }
-</pre>
+</code></pre>
 
 <p>Note that <code>thread_local</code> variables will be destroyed whenever a thread exits. If
 the destructor of any such variable refers to any other (potentially-destroyed)
@@ -1151,16 +1152,16 @@ to ensure that it can only be used when the destination type is explicit at the
 point of use, e.g., with a cast. This applies not only to implicit conversions,
 but to list initialization syntax:</p>
 
-<pre class="language-cpp neutral">class Foo {
+<pre><code class="language-cpp neutral">class Foo {
   explicit Foo(int x, double y);
   ...
 };
 
 void Func(Foo f);
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">Func({42, 3.14});  // Error
-</pre>
+<pre><code class="language-cpp bad">Func({42, 3.14});  // Error
+</code></pre>
 
 <p>This kind of code isn't technically an implicit conversion, but the language
 treats it as one as far as <code>explicit</code> is concerned.</p>
@@ -1303,7 +1304,7 @@ moves. Explicitly declaring or deleting all four copy/move operations is
 permitted, but not required. If you provide a copy or move assignment operator,
 you must also provide the corresponding constructor.</p>
 
-<pre class="language-cpp good">class Copyable {
+<pre><code class="language-cpp good">class Copyable {
  public:
   Copyable(const Copyable&amp; other) = default;
   Copyable&amp; operator=(const Copyable&amp; other) = default;
@@ -1336,7 +1337,7 @@ class NotCopyableOrMovable {
   NotCopyableOrMovable&amp; operator=(NotCopyableOrMovable&amp;&amp;)
       = delete;
 };
-</pre>
+</code></pre>
 
 <p>These declarations/deletions can be omitted only if they are obvious:</p>
 
@@ -1691,12 +1692,12 @@ another that takes <code>const char*</code>. However, in this case consider
 <code>std::string_view
 </code> instead.</p>
 
-<pre class="language-cpp neutral">class MyClass {
+<pre><code class="language-cpp neutral">class MyClass {
  public:
   void Analyze(const std::string&amp; text);
   void Analyze(const char* text, size_t textlen);
 };
-</pre>
+</code></pre>
 
 <h5>Pros</h5>
 
@@ -1784,15 +1785,15 @@ types) is impractical or much less readable.</p>
 <p>C++ allows two different forms of function declarations. In the older form, the
 return type appears before the function name. For example:</p>
 
-<pre class="language-cpp neutral">int Foo(int x);
-</pre>
+<pre><code class="language-cpp neutral">int Foo(int x);
+</code></pre>
 
 <p>The newer form uses the <code>auto</code> keyword before the function name and a trailing
 return type after the argument list. For example, the declaration above could
 equivalently be written:</p>
 
-<pre class="language-cpp neutral">auto Foo(int x) -&gt; int;
-</pre>
+<pre><code class="language-cpp neutral">auto Foo(int x) -&gt; int;
+</code></pre>
 
 <p>The trailing return type is in the function's scope. This doesn't make a
 difference for a simple case like <code>int</code> but it matters for more complicated
@@ -1811,15 +1812,15 @@ for readers.</p>
 function's parameter list has already appeared. This is particularly true when
 the return type depends on template parameters. For example:</p>
 
-<pre class="language-cpp neutral">template &lt;typename T, typename U&gt;
+<pre><code class="language-cpp neutral">template &lt;typename T, typename U&gt;
 auto Add(T t, U u) -&gt; decltype(t + u);
-</pre>
+</code></pre>
 
 <p>versus</p>
 
-<pre class="language-cpp neutral">template &lt;typename T, typename U&gt;
+<pre><code class="language-cpp neutral">template &lt;typename T, typename U&gt;
 decltype(declval&lt;T&amp;&gt;() + declval&lt;U&amp;&gt;()) Add(T t, U u);
-</pre>
+</code></pre>
 
 <h5>Cons</h5>
 
@@ -1940,9 +1941,9 @@ allocated it. If other code needs access to the object, consider passing it a
 copy, or passing a pointer or reference without transferring ownership. Prefer
 to use <code>std::unique_ptr</code> to make ownership transfer explicit. For example:</p>
 
-<pre class="language-cpp good">std::unique_ptr&lt;Foo&gt; FooFactory();
+<pre><code class="language-cpp good">std::unique_ptr&lt;Foo&gt; FooFactory();
 void FooConsumer(std::unique_ptr&lt;Foo&gt; ptr);
-</pre>
+</code></pre>
 
 <p>Do not design your code to use shared ownership without a very good reason. One
 such reason is to avoid expensive copy operations, but you should only do this
@@ -2211,14 +2212,14 @@ objects and their mocks.</p>
 
 <p>RTTI is useful when considering multiple abstract objects. Consider</p>
 
-<pre class="language-cpp neutral">bool Base::Equal(Base* other) = 0;
+<pre><code class="language-cpp neutral">bool Base::Equal(Base* other) = 0;
 bool Derived::Equal(Base* other) {
   Derived* that = dynamic_cast&lt;Derived*&gt;(other);
   if (that == nullptr)
     return false;
   ...
 }
-</pre>
+</code></pre>
 
 <h5>Cons</h5>
 
@@ -2257,13 +2258,13 @@ provides an even better alternative.</p>
 <p>Decision trees based on type are a strong indication that your code is on the
 wrong track.</p>
 
-<pre class="language-cpp bad">if (typeid(*data) == typeid(D1)) {
+<pre><code class="language-cpp bad">if (typeid(*data) == typeid(D1)) {
   ...
 } else if (typeid(*data) == typeid(D2)) {
   ...
 } else if (typeid(*data) == typeid(D3)) {
 ...
-</pre>
+</code></pre>
 
 <p>Code such as this usually breaks when additional subclasses are added to the
 class hierarchy. Moreover, when properties of a subclass change, it is difficult
@@ -2658,9 +2659,9 @@ rather than copying the in-memory representation around.
 <li><p>Use <a href="#Casting">braced-initialization</a> as needed to create 64-bit constants.
 For example:</p>
 
-<pre class="language-cpp good">int64_t my_value{0x123456789};
+<pre><code class="language-cpp good">int64_t my_value{0x123456789};
 uint64_t my_mask{uint64_t{3} &lt;&lt; 48};
-</pre></li>
+</code></pre></li>
 <li><p>Use portable <a href="#Floating-Point_Types">floating point types</a>; avoid <code>long
 double</code>.</p></li>
 <li><p>Use portable <a href="#Integer_Types">integer types</a>; avoid <code>short</code>, <code>long</code>, and
@@ -2685,7 +2686,7 @@ have a dramatically harder time updating the interface. As a consequence, we
 specifically disallow using macros in this way. For example, avoid patterns
 like:</p>
 
-<pre class="language-cpp bad">class WOMBAT_TYPE(Foo) {
+<pre><code class="language-cpp bad">class WOMBAT_TYPE(Foo) {
   // ...
 
  public:
@@ -2693,7 +2694,7 @@ like:</p>
 
   EXPAND_WOMBAT_COMPARISONS(Foo, ==, &lt;)
 };
-</pre>
+</code></pre>
 
 <p>Luckily, macros are not nearly as necessary in C++ as they are in C. Instead of
 using a macro to inline performance-critical code, use an inline function.
@@ -2751,18 +2752,18 @@ either now or later. You may use <code>sizeof(type)</code> for code unrelated to
 particular variable, such as code that manages an external or internal data
 format where a variable of an appropriate C++ type is not convenient.</p>
 
-<pre class="language-cpp good">MyStruct data;
+<pre><code class="language-cpp good">MyStruct data;
 memset(&amp;data, 0, sizeof(data));
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">memset(&amp;data, 0, sizeof(MyStruct));
-</pre>
+<pre><code class="language-cpp bad">memset(&amp;data, 0, sizeof(MyStruct));
+</code></pre>
 
-<pre class="language-cpp good">if (raw_size &lt; sizeof(int)) {
+<pre><code class="language-cpp good">if (raw_size &lt; sizeof(int)) {
   LOG(ERROR) &lt;&lt; "compressed record not big enough for count: " &lt;&lt; raw_size;
   return false;
 }
-</pre>
+</code></pre>
 
 <h3 id="Type_deduction">Type Deduction (including auto) <a href="" id="auto"></a></h3>
 
@@ -2780,29 +2781,29 @@ deduced by the compiler, rather than spelled out explicitly in the code:</p>
 <dd><p>A function template can be invoked without explicit template arguments. The
 compiler deduces those arguments from the types of the function arguments:</p>
 
-<pre class="language-cpp neutral">template &lt;typename T&gt;
+<pre><code class="language-cpp neutral">template &lt;typename T&gt;
 void f(T t);
 
 f(0);  // Invokes f&lt;int&gt;(0)
-</pre>
+</code></pre>
 
 <p>A lambda expression can also have template parameters, which are deduced in
 the same way:</p>
 
-<pre class="language-cpp neutral">// Sort `vec` in decreasing order
+<pre><code class="language-cpp neutral">// Sort `vec` in decreasing order
 std::sort(vec.begin(), vec.end(), []&lt;typename T&gt;(T lhs, T rhs) { return lhs &gt; rhs; });
-</pre></dd>
+</code></pre></dd>
 <dt><a href="https://en.cppreference.com/w/cpp/language/auto"><code>auto</code> variable declarations</a></dt>
 <dd><p>A variable declaration can use the <code>auto</code> keyword in place of the type. The
 compiler deduces the type from the variable's initializer, following the
 same rules as function template argument deduction with the same initializer
 (so long as you don't use curly braces instead of parentheses).</p>
 
-<pre class="language-cpp neutral">auto a = 42;  // a is an int
+<pre><code class="language-cpp neutral">auto a = 42;  // a is an int
 auto&amp; b = a;  // b is an int&amp;
 auto c = b;   // c is an int
 auto d{42};   // d is an int, not a std::initializer_list&lt;int&gt;
-</pre>
+</code></pre>
 
 <p><code>auto</code> can be qualified with <code>const</code>, and can be used as part of a pointer
 or reference type, and (since C++17) as a non-type template argument. A rare
@@ -2815,8 +2816,8 @@ initializer.</p></dd>
 type. The compiler deduces the return type from the <code>return</code> statements in
 the function body, following the same rules as for variable declarations:</p>
 
-<pre class="language-cpp neutral">auto f() { return 0; }  // The return type of f is int
-</pre>
+<pre><code class="language-cpp neutral">auto f() { return 0; }  // The return type of f is int
+</code></pre>
 
 <p><a href="#Lambda_expressions">Lambda expression</a> return types can be deduced in the
 same way, but this is triggered by omitting the return type, rather than by
@@ -2830,15 +2831,15 @@ or more of its parameter types. This causes it to be a function template
 instead of an ordinary function, with a separate template parameter for each
 <code>auto</code> function parameter:</p>
 
-<pre class="language-cpp neutral">// Sort `vec` in decreasing order
+<pre><code class="language-cpp neutral">// Sort `vec` in decreasing order
 std::sort(vec.begin(), vec.end(), [](auto lhs, auto rhs) { return lhs &gt; rhs; });
-</pre></dd>
+</code></pre></dd>
 <dt><a href="https://isocpp.org/wiki/faq/cpp14-language#lambda-captures">Lambda init captures</a></dt>
 <dd><p>Lambda captures can have explicit initializers, which can be used to declare
 wholly new variables rather than only capturing existing ones:</p>
 
-<pre class="language-cpp neutral">[x = 42, y = "foo"] { ... }  // x is an int, and y is a const char*
-</pre>
+<pre><code class="language-cpp neutral">[x = 42, y = "foo"] { ... }  // x is an int, and y is a const char*
+</code></pre>
 
 <p>This syntax doesn't allow the type to be specified; instead, it's deduced
 using the rules for <code>auto</code> variables.</p></dd>
@@ -2851,11 +2852,11 @@ names are called <q>structured bindings</q>, and the whole declaration is called
 a <q>structured binding declaration</q>. This syntax provides no way of
 specifying the type of either the enclosing object or the individual names:</p>
 
-<pre class="language-cpp neutral">auto [iter, success] = my_map.insert({key, value});
+<pre><code class="language-cpp neutral">auto [iter, success] = my_map.insert({key, value});
 if (!success) {
   iter-&gt;second = value;
 }
-</pre>
+</code></pre>
 
 <p>The <code>auto</code> can also be qualified with <code>const</code>, <code>&amp;</code>, and <code>&amp;&amp;</code>, but note that
 these qualifiers technically apply to the anonymous tuple/struct/array,
@@ -2885,9 +2886,9 @@ possibility of unintended copies or type conversions.</li>
 deduction would depend on information from distant parts of the code. In
 expressions like:</p>
 
-<pre class="language-cpp bad">auto foo = x.add_foo();
+<pre><code class="language-cpp bad">auto foo = x.add_foo();
 auto i = y.Find(key);
-</pre>
+</code></pre>
 
 <p>it may not be obvious what the resulting types are if the type of <code>y</code> isn't very
 well known, or if <code>y</code> was declared many lines earlier.</p>
@@ -2927,18 +2928,18 @@ argument deduction is clear and safe, or doesn't compile.</p>
 eliminating type information that is obvious or irrelevant, so that the reader
 can focus on the meaningful parts of the code:</p>
 
-<pre class="language-cpp neutral">std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt; widget =
+<pre><code class="language-cpp neutral">std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt; widget =
     std::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
 absl::flat_hash_map&lt;std::string,
                     std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt;&gt;::const_iterator
     it = my_map_.find(key);
 std::array&lt;int, 6&gt; numbers = {4, 8, 15, 16, 23, 42};
-</pre>
+</code></pre>
 
-<pre class="language-cpp good">auto widget = std::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
+<pre><code class="language-cpp good">auto widget = std::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
 auto it = my_map_.find(key);
 std::array numbers = {4, 8, 15, 16, 23, 42};
-</pre>
+</code></pre>
 
 <p>Types sometimes contain a mixture of useful information and boilerplate, such as
 <code>it</code> in the example above: it's obvious that the type is an iterator, and in
@@ -2947,11 +2948,11 @@ type of the values is probably useful. In such situations, it's often possible
 to define local variables with explicit types that convey the relevant
 information:</p>
 
-<pre class="language-cpp good">if (auto it = my_map_.find(key); it != my_map_.end()) {
+<pre><code class="language-cpp good">if (auto it = my_map_.find(key); it != my_map_.end()) {
   WidgetWithBellsAndWhistles&amp; widget = *it-&gt;second;
   // Do stuff with `widget`
 }
-</pre>
+</code></pre>
 
 <p>If the type is a template instance, and the parameters are boilerplate but the
 template itself is informative, you can use class template argument deduction to
@@ -2994,21 +2995,21 @@ the <code>std::sort</code> example above)</p>
 parameters instead, because they are more explicit about the fact that the
 function is a template:</p>
 
-<pre class="language-cpp bad">void F(auto arg) { ... }
-</pre>
+<pre><code class="language-cpp bad">void F(auto arg) { ... }
+</code></pre>
 
-<pre class="language-cpp good">template &lt;typename T&gt;
+<pre><code class="language-cpp good">template &lt;typename T&gt;
 void F(T arg) { ... }
-</pre>
+</code></pre>
 
 <p>In a lambda expression, if you need to refer to the type of a parameter, prefer
 to make that type a template parameter:</p>
 
-<pre class="language-cpp bad">[](auto x) { decltype(x) y; ... }
-</pre>
+<pre><code class="language-cpp bad">[](auto x) { decltype(x) y; ... }
+</code></pre>
 
-<pre class="language-cpp good">[]&lt;typename T&gt;(T x) { T y; ... }
-</pre>
+<pre><code class="language-cpp good">[]&lt;typename T&gt;(T x) { T y; ... }
+</code></pre>
 
 <h6>Lambda init captures</h6>
 
@@ -3040,8 +3041,8 @@ recommend using a comment to indicate the name of the underlying field, if it
 doesn't match the name of the binding, using the same syntax as for function
 parameter comments:</p>
 
-<pre class="language-cpp good">auto [/*field_name1=*/bound_name1, /*field_name2=*/bound_name2] = ...
-</pre>
+<pre><code class="language-cpp good">auto [/*field_name1=*/bound_name1, /*field_name2=*/bound_name2] = ...
+</code></pre>
 
 <p>As with function parameter comments, this can enable tools to detect if you get
 the order of the fields wrong.</p>
@@ -3058,8 +3059,8 @@ opted into supporting it.</p>
 names a template, and the template argument list is not provided (not even empty
 angle brackets):</p>
 
-<pre class="language-cpp neutral">std::array a = {1, 2, 3};  // `a` is a std::array&lt;int, 3&gt;
-</pre>
+<pre><code class="language-cpp neutral">std::array a = {1, 2, 3};  // `a` is a std::array&lt;int, 3&gt;
+</code></pre>
 
 <p>The compiler deduces the arguments from the initializer using the template's
 <q>deduction guides</q>, which can be explicit or implicit.</p>
@@ -3069,11 +3070,11 @@ types, except that there's no leading <code>auto</code>, and the function name i
 of the template. For example, the above example relies on this deduction guide
 for <code>std::array</code>:</p>
 
-<pre class="language-cpp neutral">namespace std {
+<pre><code class="language-cpp neutral">namespace std {
 template &lt;class T, class... U&gt;
 array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
 }
-</pre>
+</code></pre>
 
 <p>Constructors in a primary template (as opposed to a template specialization)
 also implicitly define deduction guides.</p>
@@ -3122,7 +3123,7 @@ available.</p>
 are a syntax that allows for initializing an aggregate (<q>plain old struct</q>) by
 naming its fields explicitly:</p>
 
-<pre class="language-cpp neutral">struct Point {
+<pre><code class="language-cpp neutral">struct Point {
   float x = 0.0;
   float y = 0.0;
   float z = 0.0;
@@ -3133,7 +3134,7 @@ Point p = {
   .y = 2.0,
   // z will be 0.0
 };
-</pre>
+</code></pre>
 
 <p>The explicitly listed fields will be initialized as specified, and others will
 be initialized in the same way they would be in a traditional aggregate
@@ -3172,54 +3173,54 @@ lambda will escape the current scope.</p>
 <p>Lambda expressions are a concise way of creating anonymous function objects.
 They're often useful when passing functions as arguments. For example:</p>
 
-<pre class="language-cpp neutral">std::sort(v.begin(), v.end(), [](int x, int y) {
+<pre><code class="language-cpp neutral">std::sort(v.begin(), v.end(), [](int x, int y) {
   return Weight(x) &lt; Weight(y);
 });
-</pre>
+</code></pre>
 
 <p>They further allow capturing variables from the enclosing scope either
 explicitly by name, or implicitly using a default capture. Explicit captures
 require each variable to be listed, as either a value or reference capture:</p>
 
-<pre class="language-cpp neutral">int weight = 3;
+<pre><code class="language-cpp neutral">int weight = 3;
 int sum = 0;
 // Captures `weight` by value and `sum` by reference.
 std::for_each(v.begin(), v.end(), [weight, &amp;sum](int x) {
   sum += weight * x;
 });
-</pre>
+</code></pre>
 
 <p>Default captures implicitly capture any variable referenced in the lambda body,
 including <code>this</code> if any members are used:</p>
 
-<pre class="language-cpp neutral">const std::vector&lt;int&gt; lookup_table = ...;
+<pre><code class="language-cpp neutral">const std::vector&lt;int&gt; lookup_table = ...;
 std::vector&lt;int&gt; indices = ...;
 // Captures `lookup_table` by reference, sorts `indices` by the value
 // of the associated element in `lookup_table`.
 std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
   return lookup_table[a] &lt; lookup_table[b];
 });
-</pre>
+</code></pre>
 
 <p>A variable capture can also have an explicit initializer, which can be used for
 capturing move-only variables by value, or for other situations not handled by
 ordinary reference or value captures:</p>
 
-<pre class="language-cpp neutral">std::unique_ptr&lt;Foo&gt; foo = ...;
+<pre><code class="language-cpp neutral">std::unique_ptr&lt;Foo&gt; foo = ...;
 [foo = std::move(foo)] () {
   ...
 }
-</pre>
+</code></pre>
 
 <p>Such captures (often called <q>init captures</q> or <q>generalized lambda captures</q>)
 need not actually <q>capture</q> anything from the enclosing scope, or even have a
 name from the enclosing scope; this syntax is a fully general way to define
 members of a lambda object:</p>
 
-<pre class="language-cpp neutral">[foo = std::vector&lt;int&gt;({1, 2, 3})] () {
+<pre><code class="language-cpp neutral">[foo = std::vector&lt;int&gt;({1, 2, 3})] () {
   ...
 }
-</pre>
+</code></pre>
 
 <p>The type of a capture with an initializer is deduced using the same rules as
 <code>auto</code>.</p>
@@ -3268,7 +3269,7 @@ anonymous functions can make code harder to understand.</li>
 <li><p>Prefer explicit captures if the lambda may escape the current scope. For
 example, instead of:</p>
 
-<pre class="language-cpp bad">{
+<pre><code class="language-cpp bad">{
   Foo foo;
   ...
   executor-&gt;Schedule([&amp;] { Frobnicate(foo); })
@@ -3279,11 +3280,11 @@ example, instead of:</p>
 // apparent on a cursory inspection. If the lambda is invoked after
 // the function returns, that would be bad, because both `foo`
 // and the enclosing object could have been destroyed.
-</pre>
+</code></pre>
 
 <p>prefer to write:</p>
 
-<pre class="language-cpp good">{
+<pre><code class="language-cpp good">{
   Foo foo;
   ...
   executor-&gt;Schedule([&amp;foo] { Frobnicate(foo); })
@@ -3292,7 +3293,7 @@ example, instead of:</p>
 // BETTER - The compile will fail if `Frobnicate` is a member
 // function, and it's clearer that `foo` is dangerously captured by
 // reference.
-</pre></li>
+</code></pre></li>
 <li><p>Use default capture by reference (<code>[&amp;]</code>) only when the lifetime of the
 lambda is obviously shorter than any potential captures.</p></li>
 <li><p>Use default capture by value (<code>[=]</code>) only as a means of binding a few
@@ -3446,11 +3447,11 @@ template equivalents in C++17. </p>
 that would be insignificant or obvious from reading the body of the code or the
 resulting error messages. For example, avoid the following:</p>
 
-<pre class="language-cpp bad">template &lt;typename T&gt;     // Bad - redundant with negligible benefit
+<pre><code class="language-cpp bad">template &lt;typename T&gt;     // Bad - redundant with negligible benefit
 concept Addable = std::copyable&lt;T&gt; &amp;&amp; requires(T a, T b) { a + b; };
 template &lt;Addable T&gt;
 T Add(T x, T y, T z) { return x + y + z; }
-</pre>
+</code></pre>
 
 <p>Instead, prefer to leave code as an ordinary template unless you can demonstrate
 that concepts or constraints result in significant improvement for that
@@ -3650,11 +3651,11 @@ documented.</p>
 
 <p>There are several ways to create names that are aliases of other entities:</p>
 
-<pre class="language-cpp neutral">using Bar = Foo;
+<pre><code class="language-cpp neutral">using Bar = Foo;
 typedef Foo Bar;  // But prefer `using` in C++ code.
 using ::other_namespace::Foo;
 using enum MyEnumType;  // Creates aliases for all enumerators in MyEnumType.
-</pre>
+</code></pre>
 
 <p>In new code, <code>using</code> is preferable to <code>typedef</code>, because it provides a more
 consistent syntax with the rest of C++ and works with templates.</p>
@@ -3710,7 +3711,7 @@ degree of freedom to change the alias.</p>
 <p>For example, these aliases document how they are intended to be used in client
 code:</p>
 
-<pre class="language-cpp good">namespace mynamespace {
+<pre><code class="language-cpp good">namespace mynamespace {
 // Used to store field measurements. DataPoint may change from Bar* to some internal type.
 // Client code should treat it as an opaque pointer.
 using DataPoint = ::foo::Bar*;
@@ -3718,26 +3719,26 @@ using DataPoint = ::foo::Bar*;
 // A set of measurements. Just an alias for user convenience.
 using TimeSeries = std::unordered_set&lt;DataPoint, std::hash&lt;DataPoint&gt;, DataPointComparator&gt;;
 }  // namespace mynamespace
-</pre>
+</code></pre>
 
 <p>These aliases don't document intended use, and half of them aren't meant for
 client use:</p>
 
-<pre class="language-cpp bad">namespace mynamespace {
+<pre><code class="language-cpp bad">namespace mynamespace {
 // Bad: none of these say how they should be used.
 using DataPoint = ::foo::Bar*;
 using ::std::unordered_set;  // Bad: just for local convenience
 using ::std::hash;           // Bad: just for local convenience
 typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&gt; TimeSeries;
 }  // namespace mynamespace
-</pre>
+</code></pre>
 
 <p>However, local convenience aliases are fine in function definitions, <code>private</code>
 sections of classes, explicitly-marked internal namespaces, and in <code>.cc</code> files:</p>
 
-<pre class="language-cpp good">// In a .cc file
+<pre><code class="language-cpp good">// In a .cc file
 using ::foo::Bar;
-</pre>
+</code></pre>
 
 <h3 id="Switch_Statements">Switch Statements</h3>
 
@@ -3746,7 +3747,7 @@ a <code>default</code> case (in the case of an enumerated value, the compiler wi
 if any values are not handled). If the default case should never execute, treat
 this as an error. For example:</p>
 
-<pre class="language-cpp good">switch (var) {
+<pre><code class="language-cpp good">switch (var) {
   case 0: {
     ...
     break;
@@ -3759,7 +3760,7 @@ this as an error. For example:</p>
     LOG(FATAL) &lt;&lt; "Invalid value in switch statement: " &lt;&lt; var;
   }
 }
-</pre>
+</code></pre>
 
 <p>Fall-through from one case label to another must be annotated using the
 <code>[[fallthrough]];</code> attribute. <code>[[fallthrough]];</code> should be placed at a point of
@@ -3767,7 +3768,7 @@ execution where a fall-through to the next case label occurs. A common exception
 is consecutive case labels without intervening code, in which case no annotation
 is needed.</p>
 
-<pre class="language-cpp good">switch (x) {
+<pre><code class="language-cpp good">switch (x) {
   case 41:  // No annotation needed here.
   case 43:
     if (dont_be_picky) {
@@ -3784,7 +3785,7 @@ is needed.</p>
     DoSomethingGeneric();
     break;
 }
-</pre>
+</code></pre>
 
 <h2 id="Inclusive_Language">Inclusive Language</h2>
 
@@ -3854,7 +3855,7 @@ often, but if you do, get
 additional design review to make sure the chosen names work well when
 used widely.</p>
 
-<pre class="language-cpp good">class MyClass {
+<pre><code class="language-cpp good">class MyClass {
  public:
   int CountFooErrors(const std::vector&lt;Foo&gt;&amp; foos) {
     int n = 0;  // Clear meaning given limited scope and context
@@ -3874,9 +3875,9 @@ used widely.</p>
  private:
   const int kMaxAllowedConnections = ...;  // Clear meaning within context
 };
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">class MyClass {
+<pre><code class="language-cpp bad">class MyClass {
  public:
   int CountFooErrors(const std::vector&lt;Foo&gt;&amp; foos) {
     int total_number_of_foo_errors = 0;  // Overly verbose given limited scope and context
@@ -3893,7 +3894,7 @@ used widely.</p>
  private:
   const int kNum = ...;  // Unclear meaning within broad scope
 };
-</pre>
+</code></pre>
 
 <h3 id="File_Names">File Names</h3>
 
@@ -3933,7 +3934,7 @@ template parameters — have the same naming convention. Type names should start
 with a capital letter and have a capital letter for each new word. No
 underscores. For example:</p>
 
-<pre class="language-cpp good">// classes and structs
+<pre><code class="language-cpp good">// classes and structs
 class UrlTable { ...
 class UrlTableTester { ...
 struct UrlTableProperties { ...
@@ -3947,7 +3948,7 @@ using PropertiesMap = hash_map&lt;UrlTableProperties*, std::string&gt;;
 // enums
 enum class UrlTableError { ...
 
-</pre>
+</code></pre>
 
 <h3 id="Concept_Names">Concept Names</h3>
 
@@ -3964,13 +3965,13 @@ classes (but not structs) additionally have trailing underscores. For instance:
 
 <p>For example:</p>
 
-<pre class="language-cpp good">std::string table_name;  // OK - snake_case.
+<pre><code class="language-cpp good">std::string table_name;  // OK - snake_case.
 
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">std::string tableName;   // Bad - mixed case.
+<pre><code class="language-cpp bad">std::string tableName;   // Bad - mixed case.
 
-</pre>
+</code></pre>
 
 <h4>Class Data Members</h4>
 
@@ -3979,7 +3980,7 @@ nonmember variables, but with a trailing underscore. The exception to this is
 static constant class members, which should follow the rules for
 <a href="#Constant_Names">naming constants</a>.</p>
 
-<pre class="language-cpp good">class TableInfo {
+<pre><code class="language-cpp good">class TableInfo {
  public:
   ...
   static const int kTableVersion = 3;  // OK - constant naming.
@@ -3989,7 +3990,7 @@ static constant class members, which should follow the rules for
   std::string table_name_;             // OK - underscore at end.
   static Pool&lt;TableInfo&gt;* absl_nullable pool_;       // OK.
 };
-</pre>
+</code></pre>
 
 <h4>Struct Data Members</h4>
 
@@ -3997,12 +3998,12 @@ static constant class members, which should follow the rules for
 nonmember variables. They do not have the trailing underscores that data members
 in classes have.</p>
 
-<pre class="language-cpp good">struct UrlTableProperties {
+<pre><code class="language-cpp good">struct UrlTableProperties {
   std::string name;
   int num_entries;
   static Pool&lt;UrlTableProperties&gt;* absl_nullable pool;
 };
-</pre>
+</code></pre>
 
 <p>See <a href="#Structs_vs._Classes">Structs vs. Classes</a> for a discussion of when to use
 a struct versus a class.</p>
@@ -4014,9 +4015,9 @@ duration of the program, are named with a leading <q>k</q> followed by mixed cas
 Underscores can be used as separators in the rare cases where capitalization
 cannot be used for separation. For example:</p>
 
-<pre class="language-cpp good">const int kDaysInAWeek = 7;
+<pre><code class="language-cpp good">const int kDaysInAWeek = 7;
 const int kAndroid8_0_0 = 24;  // Android 8.0.0
-</pre>
+</code></pre>
 
 <p>All such variables with
 <a href="http://en.cppreference.com/w/cpp/language/storage_duration#Storage_duration">static storage duration</a>
@@ -4024,32 +4025,32 @@ should be named this way, including static constant class data members and
 variables in templates where different instantiations of the template may have
 different values. For example:</p>
 
-<pre class="language-cpp good">template &lt;int kMaxAttempts&gt;
+<pre><code class="language-cpp good">template &lt;int kMaxAttempts&gt;
 class ExponentialBackoff final {
   static constexpr absl::string_view kLogTag = "exponential backoff";
   ...
 };
-</pre>
+</code></pre>
 
 <p>This convention is optional for variables of other storage classes, e.g.,
 automatic variables; otherwise the usual variable naming rules apply.</p>
 
 <p>For example:</p>
 
-<pre class="language-cpp good">void ComputeFoo(absl::string_view suffix) {
+<pre><code class="language-cpp good">void ComputeFoo(absl::string_view suffix) {
   // Either of these is acceptable.
   const absl::string_view kPrefix = "prefix";
   const absl::string_view prefix = "prefix";
   ...
 }
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">void ComputeFoo(absl::string_view suffix) {
+<pre><code class="language-cpp bad">void ComputeFoo(absl::string_view suffix) {
   // Bad - different invocations of ComputeFoo give kCombined different values.
   const std::string kCombined = absl::StrCat(kPrefix, suffix);
   ...
 }
-</pre>
+</code></pre>
 
 <h3 id="Function_Names">Function Names</h3>
 
@@ -4057,10 +4058,10 @@ automatic variables; otherwise the usual variable naming rules apply.</p>
 <a href="https://en.wiktionary.org/wiki/Pascal_case">PascalCase</a>: start with a capital
 letter and have a capital letter for each new word.</p>
 
-<pre class="language-cpp good">AddTableEntry()
+<pre><code class="language-cpp good">AddTableEntry()
 DeleteUrl()
 OpenFileOrDie()
-</pre>
+</code></pre>
 
 <p>The same naming rule applies to class- and namespace-scope constants that are
 exposed as part of an API and that are intended to look like functions, because
@@ -4091,19 +4092,19 @@ from collisions with names in other namespaces (see
 <a href="#Constant_Names">constants</a>, not like <a href="#Macro_Names">macros</a>. That is, use
 <code>kEnumName</code> not <code>ENUM_NAME</code>.</p>
 
-<pre class="language-cpp good">enum class UrlTableError {
+<pre><code class="language-cpp good">enum class UrlTableError {
   kOk = 0,
   kOutOfMemory,
   kMalformedInput,
 };
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">enum class AlternateUrlTableError {
+<pre><code class="language-cpp bad">enum class AlternateUrlTableError {
   OK = 0,
   OUT_OF_MEMORY = 1,
   MALFORMED_INPUT = 2,
 };
-</pre>
+</code></pre>
 
 <p>Until January 2009, the style was to name enum values like
 <a href="#Macro_Names">macros</a>. This caused problems with name collisions between enum
@@ -4127,9 +4128,9 @@ you do, they're like this:
 should <em>not</em> be used. However, if they are absolutely needed, then they should
 be named with all capitals and underscores, and with a project-specific prefix.</p>
 
-<pre class="language-cpp neutral">#define MYPROJECT_ROUND(x) ...
+<pre><code class="language-cpp neutral">#define MYPROJECT_ROUND(x) ...
 
-</pre>
+</code></pre>
 
 <h3 id="Naming_Aliases">Aliases</h3>
 
@@ -4207,7 +4208,7 @@ line.</p>
 <p>Every non-obvious class or struct declaration should have an accompanying
 comment that describes what it is for and how it should be used.</p>
 
-<pre class="language-cpp good">// Iterates over the contents of a GargantuanTable.
+<pre><code class="language-cpp good">// Iterates over the contents of a GargantuanTable.
 // Example:
 //    std::unique_ptr&lt;GargantuanTableIterator&gt; iter = table-&gt;NewIterator();
 //    for (iter-&gt;Seek("foo"); !iter-&gt;done(); iter-&gt;Next()) {
@@ -4216,7 +4217,7 @@ comment that describes what it is for and how it should be used.</p>
 class GargantuanTableIterator {
   ...
 };
-</pre>
+</code></pre>
 
 <h4 id="Class_Comments_Details">Class Comments</h4>
 
@@ -4270,7 +4271,7 @@ argument is in (e.g., is the state appended to or overwritten?).</li>
 
 <p>Here is an example:</p>
 
-<pre class="language-cpp good">// Returns an iterator for this table, positioned at the first entry
+<pre><code class="language-cpp good">// Returns an iterator for this table, positioned at the first entry
 // lexically greater than or equal to `start_word`. If there is no
 // such entry, returns a null pointer. The client must not use the
 // iterator after the underlying GargantuanTable has been destroyed.
@@ -4280,7 +4281,7 @@ argument is in (e.g., is the state appended to or overwritten?).</li>
 //    iter-&gt;Seek(start_word);
 //    return iter;
 std::unique_ptr&lt;Iterator&gt; GetIterator(absl::string_view start_word) const;
-</pre>
+</code></pre>
 
 <p>However, do not be unnecessarily verbose or state the completely obvious.</p>
 
@@ -4328,20 +4329,20 @@ the type and name, they must be commented. However, if the type and name suffice
 <p>In particular, add comments to describe the existence and meaning of sentinel
 values, such as nullptr or -1, when they are not obvious. For example:</p>
 
-<pre class="language-cpp good">private:
+<pre><code class="language-cpp good">private:
  // Used to bounds-check table accesses. -1 means
  // that we don't yet know how many entries the table has.
  int num_total_entries_;
-</pre>
+</code></pre>
 
 <h4>Global Variables</h4>
 
 <p>All global variables should have a comment describing what they are, what they
 are used for, and (if unclear) why they need to be global. For example:</p>
 
-<pre class="language-cpp good">// The total number of test cases that we run through in this regression test.
+<pre><code class="language-cpp good">// The total number of test cases that we run through in this regression test.
 const int kNumTestCases = 6;
-</pre>
+</code></pre>
 
 <h3 id="Implementation_Comments">Implementation Comments</h3>
 
@@ -4379,18 +4380,18 @@ site. </li>
 
 <p>Consider the following example:</p>
 
-<pre class="language-cpp bad">// What are these arguments?
+<pre><code class="language-cpp bad">// What are these arguments?
 const DecimalNumber product = CalculateProduct(values, 7, false, nullptr);
-</pre>
+</code></pre>
 
 <p>versus:</p>
 
-<pre class="language-cpp good">ProductOptions options;
+<pre><code class="language-cpp good">ProductOptions options;
 options.set_precision_decimals(7);
 options.set_use_cache(ProductOptions::kDontUseCache);
 const DecimalNumber product =
     CalculateProduct(values, options, /*completion_callback=*/nullptr);
-</pre>
+</code></pre>
 
 <h4 id="Implementation_Comment_Donts">Don'ts</h4>
 
@@ -4401,27 +4402,27 @@ does, or make the code self-describing.</p>
 
 <p>Compare this:</p>
 
-<pre class="language-cpp bad">// Find the element in the vector.  &lt;-- Bad: obvious!
+<pre><code class="language-cpp bad">// Find the element in the vector.  &lt;-- Bad: obvious!
 if (std::find(v.begin(), v.end(), element) != v.end()) {
   Process(element);
 }
-</pre>
+</code></pre>
 
 <p>To this:</p>
 
-<pre class="language-cpp good">// Process "element" unless it was already processed.
+<pre><code class="language-cpp good">// Process "element" unless it was already processed.
 if (std::find(v.begin(), v.end(), element) != v.end()) {
   Process(element);
 }
-</pre>
+</code></pre>
 
 <p>Self-describing code doesn't need a comment. The comment from the example above
 would be obvious:</p>
 
-<pre class="language-cpp good">if (!IsAlreadyProcessed(element)) {
+<pre><code class="language-cpp good">if (!IsAlreadyProcessed(element)) {
   Process(element);
 }
-</pre>
+</code></pre>
 
 <h3 id="Punctuation_Spelling_and_Grammar">Punctuation, Spelling, and Grammar <a href="" id="Punctuation,_Spelling_and_Grammar"></a></h3>
 
@@ -4451,11 +4452,11 @@ upon request. A <code>TODO</code> is not a commitment that the person referenced
 the problem. Thus when you create a <code>TODO</code> with a name, it is almost always your
 name that is given.</p>
 
-<pre class="language-cpp good">// TODO(bug 12345): remove the "Last visitors" feature.
+<pre><code class="language-cpp good">// TODO(bug 12345): remove the "Last visitors" feature.
 // TODO(example.com/my-design-doc): Manually fix up this code the next time it's touched.
 // TODO(kl@gmail.com): Use a "*" here for concatenation operator.
 // TODO(Zeke): change this to use relations.
-</pre>
+</code></pre>
 
 <p>If your <code>TODO</code> is of the form <q>At a future date do something</q> make sure that you
 either include a very specific date (<q>Fix by November 2005</q>) or a very specific
@@ -4572,31 +4573,31 @@ wrap arguments in a <a href="#Function_Calls">function call</a>.</p>
 
 <p>Functions look like this:</p>
 
-<pre class="language-cpp good">ReturnType ClassName::FunctionName(Type par_name1, Type par_name2) {
+<pre><code class="language-cpp good">ReturnType ClassName::FunctionName(Type par_name1, Type par_name2) {
   DoSomething();
   ...
 }
-</pre>
+</code></pre>
 
 <p>If you have too much text to fit on one line:</p>
 
-<pre class="language-cpp good">ReturnType ClassName::ReallyLongFunctionName(Type par_name1, Type par_name2,
+<pre><code class="language-cpp good">ReturnType ClassName::ReallyLongFunctionName(Type par_name1, Type par_name2,
                                              Type par_name3) {
   DoSomething();
   ...
 }
-</pre>
+</code></pre>
 
 <p>or if you cannot fit even the first parameter:</p>
 
-<pre class="language-cpp good">ReturnType LongClassName::ReallyReallyReallyLongFunctionName(
+<pre><code class="language-cpp good">ReturnType LongClassName::ReallyReallyReallyLongFunctionName(
     Type par_name1,  // 4 space indent
     Type par_name2,
     Type par_name3) {
   DoSomething();  // 2 space indent
   ...
 }
-</pre>
+</code></pre>
 
 <p>Some points to note:</p>
 
@@ -4624,17 +4625,17 @@ brace.</li>
 
 <p>Unused parameters that are obvious from context may omit the name:</p>
 
-<pre class="language-cpp good">class Foo {
+<pre><code class="language-cpp good">class Foo {
  public:
   Foo(const Foo&amp;) = delete;
   Foo&amp; operator=(const Foo&amp;) = delete;
 };
-</pre>
+</code></pre>
 
 <p>Unused parameters that might not be obvious should comment out the variable name
 in the function definition:</p>
 
-<pre class="language-cpp good">class Shape {
+<pre><code class="language-cpp good">class Shape {
  public:
   virtual void Rotate(double radians) = 0;
 };
@@ -4645,19 +4646,19 @@ class Circle : public Shape {
 };
 
 void Circle::Rotate(double /*radians*/) {}
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">// Bad - if someone wants to implement later, it's not clear what the
+<pre><code class="language-cpp bad">// Bad - if someone wants to implement later, it's not clear what the
 // variable means.
 void Circle::Rotate(double) {}
-</pre>
+</code></pre>
 
 <p>Attributes, and macros that expand to attributes, appear at the very beginning
 of the function declaration or definition, before the return type:</p>
 
-<pre class="language-cpp good">  ABSL_ATTRIBUTE_NOINLINE void ExpensiveFunction();
+<pre><code class="language-cpp good">  ABSL_ATTRIBUTE_NOINLINE void ExpensiveFunction();
   [[nodiscard]] bool IsOk();
-</pre>
+</code></pre>
 
 <h3 id="Formatting_Lambda_Expressions">Lambda Expressions</h3>
 
@@ -4667,19 +4668,19 @@ other comma-separated lists.</p>
 <p>For by-reference captures, do not leave a space between the ampersand (<code>&amp;</code>) and
 the variable name.</p>
 
-<pre class="language-cpp good">int x = 0;
+<pre><code class="language-cpp good">int x = 0;
 auto x_plus_n = [&amp;x](int n) -&gt; int { return x + n; }
-</pre>
+</code></pre>
 
 <p>Short lambdas may be written inline as function arguments.</p>
 
-<pre class="language-cpp good">absl::flat_hash_set&lt;int&gt; to_remove = {7, 8, 9};
+<pre><code class="language-cpp good">absl::flat_hash_set&lt;int&gt; to_remove = {7, 8, 9};
 std::vector&lt;int&gt; digits = {3, 9, 1, 8, 4, 7, 1};
 digits.erase(std::remove_if(digits.begin(), digits.end(), [&amp;to_remove](int i) {
                return to_remove.contains(i);
              }),
              digits.end());
-</pre>
+</code></pre>
 
 <h3 id="Floating_Literals">Floating-point Literals</h3>
 
@@ -4692,17 +4693,17 @@ floating-point variable with an integer literal (assuming the variable type can
 exactly represent that integer), but note that a number in exponential notation
 is never an integer literal.</p>
 
-<pre class="language-cpp bad">float f = 1.f;
+<pre><code class="language-cpp bad">float f = 1.f;
 long double ld = -.5L;
 double d = 1248e6;
-</pre>
+</code></pre>
 
-<pre class="language-cpp good">float f = 1.0f;
+<pre><code class="language-cpp good">float f = 1.0f;
 float f2 = 1.0;  // Also OK
 float f3 = 1;    // Also OK
 long double ld = -0.5L;
 double d = 1248.0e6;
-</pre>
+</code></pre>
 
 <h3 id="Function_Calls">Function Calls</h3>
 
@@ -4714,21 +4715,21 @@ appropriate.</p>
 
 <p>Function calls have the following format:</p>
 
-<pre class="language-cpp good">bool result = DoSomething(argument1, argument2, argument3);
-</pre>
+<pre><code class="language-cpp good">bool result = DoSomething(argument1, argument2, argument3);
+</code></pre>
 
 <p>If the arguments do not all fit on one line, they should be broken up onto
 multiple lines, with each subsequent line aligned with the first argument. Do
 not add spaces after the open paren or before the close paren:</p>
 
-<pre class="language-cpp good">bool result = DoSomething(averyveryveryverylongargument1,
+<pre><code class="language-cpp good">bool result = DoSomething(averyveryveryverylongargument1,
                           argument2, argument3);
-</pre>
+</code></pre>
 
 <p>Arguments may optionally all be placed on subsequent lines with a four space
 indent:</p>
 
-<pre class="language-cpp good">if (...) {
+<pre><code class="language-cpp good">if (...) {
   ...
   ...
   if (...) {
@@ -4737,7 +4738,7 @@ indent:</p>
         argument3, argument4);
     ...
   }
-</pre>
+</code></pre>
 
 <p>Put multiple arguments on a single line to reduce the number of lines necessary
 for calling a function unless there is a specific readability problem. Some find
@@ -4750,15 +4751,15 @@ addressed with the following techniques.</p>
 complexity or confusing nature of the expressions that make up some arguments,
 try creating variables that capture those arguments in a descriptive name:</p>
 
-<pre class="language-cpp good">int my_heuristic = scores[x] * y + bases[x];
+<pre><code class="language-cpp good">int my_heuristic = scores[x] * y + bases[x];
 bool result = DoSomething(my_heuristic, x, y, z);
-</pre>
+</code></pre>
 
 <p>Or put the confusing argument on its own line with an explanatory comment:</p>
 
-<pre class="language-cpp good">bool result = DoSomething(scores[x] * y + bases[x],  // Score heuristic.
+<pre><code class="language-cpp good">bool result = DoSomething(scores[x] * y + bases[x],  // Score heuristic.
                           x, y, z);
-</pre>
+</code></pre>
 
 <p>If there is still a case where one argument is significantly more readable on
 its own line, then put it on its own line. The decision should be specific to
@@ -4767,11 +4768,11 @@ the argument which is made more readable rather than a general policy.</p>
 <p>Sometimes arguments form a structure that is important for readability. In those
 cases, feel free to format the arguments according to that structure:</p>
 
-<pre class="language-cpp good">// Transform the widget by a 3x3 matrix.
+<pre><code class="language-cpp good">// Transform the widget by a 3x3 matrix.
 my_widget.Transform(x1, x2, x3,
                     y1, y2, y3,
                     z1, z2, z3);
-</pre>
+</code></pre>
 
 <h3 id="Braced_Initializer_List_Format">Braced Initializer List Format</h3>
 
@@ -4782,7 +4783,7 @@ in its place.</p>
 the <code>{}</code> were the parentheses of a function call with that name. If there is no
 name, assume a zero-length name.</p>
 
-<pre class="language-cpp good">// Examples of braced init list on a single line.
+<pre><code class="language-cpp good">// Examples of braced init list on a single line.
 return {foo, bar};
 functioncall({foo, bar});
 std::pair&lt;int, int&gt; p{foo, bar};
@@ -4807,7 +4808,7 @@ MyType m = {  // Here, you could also break before {.
     {short, interior, list},
     {interiorwrappinglist,
      interiorwrappinglist2}};
-</pre>
+</code></pre>
 
 <h3 id="Formatting_Looping_Branching">Looping and Branching Statements <a href="" id="Conditionals"></a></h3>
 
@@ -4836,7 +4837,7 @@ opening parenthesis or before the closing parenthesis.</li>
 opening brace, and one line break immediately before the closing brace.</li>
 </ul>
 
-<pre class="language-cpp good">if (condition) {                   // Good - no spaces inside parentheses, space before brace.
+<pre><code class="language-cpp good">if (condition) {                   // Good - no spaces inside parentheses, space before brace.
   DoOneThing();                    // Good - two-space indent.
   DoAnotherThing();
 } else if (int a = f(); a != 3) {  // Good - closing brace on new line, else on same line.
@@ -4859,9 +4860,9 @@ do {
 for (int i = 0; i &lt; 10; ++i) {
   RepeatAThing();
 }
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">if(condition) {}                   // Bad - space missing after `if`.
+<pre><code class="language-cpp bad">if(condition) {}                   // Bad - space missing after `if`.
 else if ( condition ) {}           // Bad - space between the parentheses and the condition.
 else if (condition){}              // Bad - space missing before `{`.
 else if(condition){}               // Bad - multiple spaces missing.
@@ -4884,7 +4885,7 @@ if (condition)
 if (condition1 &amp;&amp;
     condition2)
   DoSomething();
-</pre>
+</code></pre>
 
 <p>For historical reasons, we allow, but discourage, one exception to the above
 rules: the curly braces for the controlled statement or the line breaks inside
@@ -4893,7 +4894,7 @@ either a single line (in which case there is a space between the closing
 parenthesis and the controlled statement) or on two lines (in which case there
 is a line break after the closing parenthesis and there are no braces).</p>
 
-<pre class="language-cpp neutral">// OK - each case fits on one line.
+<pre><code class="language-cpp neutral">// OK - each case fits on one line.
 if (x == kFoo) { return new Foo(); }
 while (TrySomething()) {}
 
@@ -4903,19 +4904,19 @@ if (x == kFoo) return new Foo();
 // OK - condition fits on one line, body fits on another.
 if (x == kBar)
   Bar(arg1, arg2, arg3);
-</pre>
+</code></pre>
 
 <p>This exception does not apply to multi-keyword statements like <code>if ... else</code> or
 <code>do ... while</code>.</p>
 
-<pre class="language-cpp bad">// Bad - `if ... else` statement is missing braces.
+<pre><code class="language-cpp bad">// Bad - `if ... else` statement is missing braces.
 if (x) DoThis();
 else DoThat();
 
 // Bad - `do ... while` statement is missing braces.
 do DoThis();
 while (x);
-</pre>
+</code></pre>
 
 <p>Use this style only when the statement is brief, and consider that loops and
 branching statements with complex conditions or controlled statements may be
@@ -4926,7 +4927,7 @@ projects require curly braces always.</p>
 your preference. If you do include curly braces, they should be placed as shown
 below.</p>
 
-<pre class="language-cpp good">switch (var) {
+<pre><code class="language-cpp good">switch (var) {
   case 0: {  // 2 space indent
     Foo();   // 4 space indent
     break;
@@ -4935,13 +4936,13 @@ below.</p>
     Bar();
   }
 }
-</pre>
+</code></pre>
 
 <p>Empty loop bodies should use either an empty pair of braces or <code>continue</code> with
 no braces, rather than a single semicolon. Empty braces are still subject to the
 general line breaking rules, and also to the historic exception above.</p>
 
-<pre class="language-cpp good">while (condition) {  // Good - `{}` indicates no logic.
+<pre><code class="language-cpp good">while (condition) {  // Good - `{}` indicates no logic.
 }                    // A linebreak is usually required.
 
 while (condition) {}  // But OK if it fits on one line.
@@ -4952,11 +4953,11 @@ while (condition) {
 
 while (condition) continue;  // Good - `continue` indicates no logic.
 
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">while (condition);  // Bad - looks like part of `do-while` loop.
+<pre><code class="language-cpp bad">while (condition);  // Bad - looks like part of `do-while` loop.
 
-</pre>
+</code></pre>
 
 <h3 id="Pointer_and_Reference_Expressions">Pointer and Reference Expressions and Types</h3>
 
@@ -4965,11 +4966,11 @@ while (condition) continue;  // Good - `continue` indicates no logic.
 <p>The following are examples of correctly-formatted pointer and reference
 expressions:</p>
 
-<pre class="language-cpp good">x = *p;
+<pre><code class="language-cpp good">x = *p;
 p = &amp;x;
 x = r.y;
 x = r-&gt;y;
-</pre>
+</code></pre>
 
 <p>Note that:</p>
 
@@ -4983,27 +4984,27 @@ arguments, return types, template parameters, etc.), you must not place a space
 before the asterisk/ampersand. Use a space to separate the type from the
 declared name (if present).</p>
 
-<pre class="language-cpp good">// These are fine.
+<pre><code class="language-cpp good">// These are fine.
 char* c;
 const std::string&amp; str;
 int* GetPointer();
 std::vector&lt;char*&gt;  // Note no space between '*' and '&gt;'
-</pre>
+</code></pre>
 
 <p>It is allowed (if unusual) to declare multiple variables in the same
 declaration, but it is disallowed if any of those have pointer or reference
 decorations. Such declarations are easily misread.</p>
 
-<pre class="language-cpp neutral">// Fine if helpful for readability.
+<pre><code class="language-cpp neutral">// Fine if helpful for readability.
 int x, y;
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">int x, *y;  // Disallowed - no &amp; or * in multiple declaration
+<pre><code class="language-cpp bad">int x, *y;  // Disallowed - no &amp; or * in multiple declaration
 int *x, *y;  // Disallowed - no &amp; or * in multiple declaration
 int *x;  // Disallowed - &amp; or * must be left of the space
 char * c;  // Bad - spaces on both sides of *
 const std::string &amp; str;  // Bad - spaces on both sides of &amp;
-</pre>
+</code></pre>
 
 <h3 id="Boolean_Expressions">Boolean Expressions</h3>
 
@@ -5013,12 +5014,12 @@ lines.</p>
 
 <p>In this example, the logical AND operator is always at the end of the lines:</p>
 
-<pre class="language-cpp good">if (this_one_thing &gt; this_other_thing &amp;&amp;
+<pre><code class="language-cpp good">if (this_one_thing &gt; this_other_thing &amp;&amp;
     a_third_thing == a_fourth_thing &amp;&amp;
     yet_another &amp;&amp; last_one) {
   ...
 }
-</pre>
+</code></pre>
 
 <p>Note that when the code wraps in this example, both of the <code>&amp;&amp;</code> logical AND
 operators are at the end of the line. This is more common in Google code, though
@@ -5034,27 +5035,27 @@ Also note that you should always use the punctuation operators, such as <code>&a
 
 <p>Use parentheses in <code>return expr;</code> only where you would use them in <code>x = expr;</code>.</p>
 
-<pre class="language-cpp good">return result;                  // No parentheses in the simple case.
+<pre><code class="language-cpp good">return result;                  // No parentheses in the simple case.
 // Parentheses OK to make a complex expression more readable.
 return (some_long_condition &amp;&amp;
         another_condition);
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">return (value);                // You wouldn't write var = (value);
+<pre><code class="language-cpp bad">return (value);                // You wouldn't write var = (value);
 return(result);                // return is not a function!
-</pre>
+</code></pre>
 
 <h3 id="Variable_and_Array_Initialization">Variable and Array Initialization</h3>
 
 <p>You may choose between <code>=</code>, <code>()</code>, and <code>{}</code>; the following are all correct:</p>
 
-<pre class="language-cpp good">int x = 3;
+<pre><code class="language-cpp good">int x = 3;
 int x(3);
 int x{3};
 std::string name = "Some Name";
 std::string name("Some Name");
 std::string name{"Some Name"};
-</pre>
+</code></pre>
 
 <p>Be careful when using a braced initialization list <code>{...}</code> on a type with an
 <code>std::initializer_list</code> constructor. A nonempty <em>braced-init-list</em> prefers the
@@ -5062,18 +5063,18 @@ std::string name{"Some Name"};
 <code>{}</code> are special, and will call a default constructor if available. To force the
 non-<code>std::initializer_list</code> constructor, use parentheses instead of braces.</p>
 
-<pre class="language-cpp good">std::vector&lt;int&gt; v(100, 1);  // A vector containing 100 items: All 1s.
+<pre><code class="language-cpp good">std::vector&lt;int&gt; v(100, 1);  // A vector containing 100 items: All 1s.
 std::vector&lt;int&gt; v{100, 1};  // A vector containing 2 items: 100 and 1.
 
-</pre>
+</code></pre>
 
 <p>Also, the brace form prevents narrowing of integral types. This can prevent some
 types of programming errors.</p>
 
-<pre class="language-cpp good">int pi(3.14);  // OK -- pi == 3.
+<pre><code class="language-cpp good">int pi(3.14);  // OK -- pi == 3.
 int pi{3.14};  // Compile error: narrowing conversion.
 
-</pre>
+</code></pre>
 
 <h3 id="Preprocessor_Directives">Preprocessor Directives</h3>
 
@@ -5083,7 +5084,7 @@ beginning of the line.</p>
 <p>Even when preprocessor directives are within the body of indented code, the
 directives should start at the beginning of the line.</p>
 
-<pre class="language-cpp good">// Good - directives at beginning of line
+<pre><code class="language-cpp good">// Good - directives at beginning of line
   if (lopsided_score) {
 #if DISASTER_PENDING      // Correct -- Starts at beginning of line
     DropEverything();
@@ -5093,16 +5094,16 @@ directives should start at the beginning of the line.</p>
 #endif
     BackToNormal();
   }
-</pre>
+</code></pre>
 
-<pre class="language-cpp bad">// Bad - indented directives
+<pre><code class="language-cpp bad">// Bad - indented directives
   if (lopsided_score) {
     #if DISASTER_PENDING  // Wrong!  The "#if" should be at beginning of line
     DropEverything();
     #endif                // Wrong!  Do not indent "#endif"
     BackToNormal();
   }
-</pre>
+</code></pre>
 
 <h3 id="Class_Format">Class Format</h3>
 
@@ -5112,7 +5113,7 @@ directives should start at the beginning of the line.</p>
 <a href="#Class_Comments">Class Comments</a> for a discussion of what comments are needed)
 is:</p>
 
-<pre class="language-cpp good">class MyClass : public OtherClass {
+<pre><code class="language-cpp good">class MyClass : public OtherClass {
  public:      // Note the 1 space indent!
   MyClass();  // Regular 2 space indent.
   explicit MyClass(int var);
@@ -5132,7 +5133,7 @@ is:</p>
   int some_var_;
   int some_other_var_;
 };
-</pre>
+</code></pre>
 
 <p>Things to note:</p>
 
@@ -5157,7 +5158,7 @@ indented four spaces.</p>
 
 <p>The acceptable formats for initializer lists are:</p>
 
-<pre class="language-cpp good">// When everything fits on one line:
+<pre><code class="language-cpp good">// When everything fits on one line:
 MyClass::MyClass(int var) : some_var_(var) {
   DoSomething();
 }
@@ -5181,7 +5182,7 @@ MyClass::MyClass(int var)
 // line as the open curly, if it fits.
 MyClass::MyClass(int var)
     : some_var_(var) {}
-</pre>
+</code></pre>
 
 <h3 id="Namespace_Formatting">Namespace Formatting</h3>
 
@@ -5190,18 +5191,18 @@ MyClass::MyClass(int var)
 <p><a href="#Namespaces">Namespaces</a> do not add an extra level of indentation. For example,
 use:</p>
 
-<pre class="language-cpp good">namespace {
+<pre><code class="language-cpp good">namespace {
 
 void foo() {  // Correct.  No extra indentation within namespace.
   ...
 }
 
 }  // namespace
-</pre>
+</code></pre>
 
 <p>Do not indent within a namespace:</p>
 
-<pre class="language-cpp bad">namespace {
+<pre><code class="language-cpp bad">namespace {
 
   // Wrong!  Indented when it should not be.
   void foo() {
@@ -5209,7 +5210,7 @@ void foo() {  // Correct.  No extra indentation within namespace.
   }
 
 }  // namespace
-</pre>
+</code></pre>
 
 <h3 id="Horizontal_Whitespace">Horizontal Whitespace</h3>
 
@@ -5218,7 +5219,7 @@ at the end of a line.</p>
 
 <h4>General</h4>
 
-<pre class="language-cpp good">int i = 0;  // Two spaces before end-of-line comments.
+<pre><code class="language-cpp good">int i = 0;  // Two spaces before end-of-line comments.
 
 void f(bool b) {  // Open braces should always have a space before them.
   ...
@@ -5237,7 +5238,7 @@ class Foo : public Bar {
   void Reset() { baz_ = 0; }  // Spaces separating braces from implementation.
   ...
 
-</pre>
+</code></pre>
 
 <p>Adding trailing whitespace can cause extra work for others editing the same file
 when they merge, as can removing existing trailing whitespace. So, don't
@@ -5248,7 +5249,7 @@ file).</p>
 
 <h4>Loops and Conditionals</h4>
 
-<pre class="language-cpp good">if (b) {          // Space after the keyword in conditions and loops.
+<pre><code class="language-cpp good">if (b) {          // Space after the keyword in conditions and loops.
 } else {          // Spaces around else.
 }
 while (test) {}   // There is usually no space inside parentheses.
@@ -5273,11 +5274,11 @@ switch (i) {
     ...
   case 2: break;  // Use a space after a colon if there's code after it.
 
-</pre>
+</code></pre>
 
 <h4>Operators</h4>
 
-<pre class="language-cpp good">// Assignment operators always have spaces around them.
+<pre><code class="language-cpp good">// Assignment operators always have spaces around them.
 x = 0;
 
 // Other binary operators usually have spaces around them, but it's
@@ -5293,18 +5294,18 @@ x = -5;
 if (x &amp;&amp; !y)
   ...
 
-</pre>
+</code></pre>
 
 <h4>Templates and Casts</h4>
 
-<pre class="language-cpp good">// No spaces inside the angle brackets (&lt; and &gt;), before
+<pre><code class="language-cpp good">// No spaces inside the angle brackets (&lt; and &gt;), before
 // &lt;, or between &gt;( in a cast
 std::vector&lt;std::string&gt; x;
 y = static_cast&lt;char*&gt;(x);
 
 // No spaces between type and pointer.
 std::vector&lt;char*&gt; x;
-</pre>
+</code></pre>
 
 <h3 id="Vertical_Whitespace">Vertical Whitespace</h3>
 
