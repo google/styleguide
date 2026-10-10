@@ -1,0 +1,126 @@
+GitHub Copilot docs are here: https://docs.github.com/en/copilot
+
+The official GitHub Docs for Copilot include:
+- [GitHub Copilot on GitHub.com](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github)
+- [GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli)
+- [Setting up GitHub Copilot for yourself](https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/enable-copilot/set-up-for-self)
+
+If you want, I can also point you to:
+- the best docs for Copilot Chat,
+- Copilot agents/cloud agent,
+- setup and billing,
+- or a specific feature like custom instructions, CLI, or repository access.Ya — branch `gh-pages` di `google/styleguide` adalah branch laman web yang dipaparkan untuk repo ini, bukan source utama projek.
+
+Dari struktur root yang saya semak, ia mengandungi:
+- Dokumen utama dan indeks:
+  - `README.md`
+  - `404.html`
+  - `CODE_OF_CONDUCT.md`
+  - `LICENSE`
+- Panduan gaya untuk pelbagai bahasa:
+  - `pyguide.md`
+  - `cppguide.html`
+  - `javaguide.html`
+  - `jsguide.html`
+  - `tsguide.html`
+  - `shellguide.md`
+  - `objcguide.md`
+  - `xmlguide.md`
+  - `jsoncguide.md`
+  - `htmlcssguide.html`
+  - `haskellguide.md`
+  - `Rguide.md`
+- Folder layout website:
+  - `_includes`
+  - `_sass`
+  - `assets`
+  - `docguide`
+  - `include`
+  - `go`
+
+Jadi secara ringkas, `gh-pages` ialah “site publish” untuk dokumentasi gaya Google, bukan kod sumber repo yang biasa. Kebanyakan fail di sana ialah HTML/Markdown guide yang disajikan melalui website.
+
+Kalau anda mahu, saya boleh terus buka salah satu panduan tertentu seperti:
+- `pyguide.md`
+- `jsguide.html`
+- `cppguide.html`
+- `README.md` untuk penerangan branch ini
+
+Saya pun boleh bantu cari kandungan tertentu dalam branch `gh-pages`.Ya — URL itu ialah:
+https://github.com/google/styleguide/tree/gh-pages
+
+Dan maksudnya ialah branch `gh-pages` dalam repo `google/styleguide`. Branch ini bukan “source code utama” projek, tetapi “website / documentation site” untuk repo itu.
+
+Ringkasnya:
+- Ia dipaparkan sebagai laman web dokumentasi Google style guides.
+- Fail utama yang ada di root branch biasanya:
+  - `README.md`
+  - `LICENSE`
+  - `CODE_OF_CONDUCT.md`
+  - `cppguide.html`
+  - `javaguide.html`
+  - `jsguide.html`
+  - `pyguide.md`
+  - `shellguide.md`
+  - `objcguide.md`
+  - `xmlguide.md`
+  - `htmlcssguide.html`
+  - `tsguide.html`
+  - `jsoncguide.md`
+- Folder penting:
+  - `_includes`
+  - `_sass`
+  - `assets`
+  - `docguide`
+  - `include`
+  - `go`
+
+Jadi, kalau lihat branch `gh-pages`, anda sebenarnya melihat “site documentation” untuk Google styleguide, bukan source code biasa.
+
+Kalau anda mahu, saya boleh terus:
+- senaraikan semua fail di root `gh-pages` dengan kategori,
+- jelaskan apa beza `main` vs `gh-pages`,
+- atau buka salah satu fail seperti `pyguide.md` atau `jsguide.html`.Betul, URL itu ialah:
+
+https://github.com/google/styleguide/tree/gh-pages
+
+Maksudnya:
+- Repo: google/styleguide
+- Branch: gh-pages
+- Halaman ini memaparkan kandungan folder root branch gh-pages
+
+Fungsi branch ini:
+- Bukan source code utama repositori
+- Biasanya digunakan untuk laman web / dokumentasi yang dipublish
+- Dalam repo ini, ia mengandungi fail panduan gaya seperti:
+  - pyguide.md
+  - jsguide.html
+  - cppguide.html
+  - javaguide.html
+  - shellguide.md
+  - dsb.
+
+Jadi bila anda buka URL itu, anda sedang melihat “website documentation” repo Google styleguide, bukan branch coding utama.
+
+Jika anda mahu, saya boleh terus:
+- senaraikan fail paling penting dalam gh-pages,
+- terangkan beza main vs gh-pages,
+- atau buka satu fail tertentu seperti pyguide.md.URL ini merujuk kepada halaman branch `gh-pages` dalam repositori `google/styleguide`:
+
+https://github.com/google/styleguide/tree/gh-pages
+
+Jadi, secara lengkap:
+- Owner/repo: `google/styleguide`
+- Branch: `gh-pages`
+- Jenis halaman: folder root branch `gh-pages`
+- Fungsi: biasanya digunakan untuk laman web dokumentasi / published site
+
+Dalam repo ini, `gh-pages` mengandungi fail panduan gaya rasmi Google seperti:
+- `pyguide.md`
+- `jsguide.html`
+- `cppguide.html`
+- `javaguide.html`
+- `shellguide.md`
+- dan lain-lain
+
+Ini bukan branch utama projek; ia adalah branch khas yang digunakan untuk paparan dokumen/website repo.
