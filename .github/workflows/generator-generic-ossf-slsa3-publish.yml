@@ -1,0 +1,365 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow lets you generate SLSA provenance file for your project.
+# The generation satisfies level 3 for the provenance requirements - see https://slsa.dev/spec/v0.1/requirements
+# The project is an initiative of the OpenSSF (openssf.org) and is developed at
+# https://github.com/slsa-framework/slsa-github-generator.
+# The provenance file can be verified using https://github.com/slsa-framework/slsa-verifier.
+# For more information about SLSA and how it improves the supply-chain, visit slsa.dev.
+
+name: SLSA generic generator
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      digests: ${{ steps.hash.outputs.digests }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ========================================================
+      #
+      # Step 1: Build your artifacts.
+      #
+      # ========================================================
+      - name: Build artifacts
+        run: |
+            # These are some amazing artifacts.
+            echo "artifact1" > artifact1
+            echo "artifact2" > artifact2
+
+      # ========================================================
+      #
+      # Step 2: Add a step to generate the provenance subjects
+      #         as shown below. Update the sha256 sum arguments
+      #         to include all binaries that you generate
+      #         provenance for.
+      #
+      # ========================================================
+      - name: Generate subject for provenance
+        id: hash
+        run: |
+          set -euo pipefail
+
+          # List the artifacts the provenance will refer to.
+          files=$(ls artifact*)
+          # Generate the subjects (base64 encoded).
+          echo "hashes=$(sha256sum $files | base64 -w0)" >> "${GITHUB_OUTPUT}"
+
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read   # To read the workflow path.
+      id-token: write # To sign the provenance.
+      contents: write # To add assets to a release.
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0
+    with:
+      base64-subjects: "${{ needs.build.outputs.digests }}"
+      upload-assets: true # Optional: Upload to a new release
+# SLSA Generic Generator Workflow — Review & Explanation
+
+This is the **standard SLSA Level 3 provenance generator** template from the [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator). It's the recommended way to produce verifiable supply-chain provenance for arbitrary artifacts in GitHub Actions.
+
+## What it does
+
+| Job | Purpose |
+|---|---|
+| `build` | Checks out code, builds artifacts, and emits a **base64-encoded SHA-256 subject list** |
+| `provenance` | Calls the reusable SLSA generator workflow, signs the provenance with **Sigstore/Fulcio** (via OIDC), and uploads it as a release asset |
+
+The signing uses short-lived OIDC tokens (`id-token: write`) — no long-lived secrets required. The resulting `.intoto.jsonl` provenance file can be verified offline with [`slsa-verifier`](https://github.com/slsa-framework/slsa-verifier).
+
+## Flow
+
+```
+release created / manual dispatch
+        │
+        ▼
+┌──────────────────┐
+│ build            │  checkout → build → sha256sum → base64
+│ outputs.digests  │
+└────────┬─────────┘
+         │  base64-subjects
+         ▼
+┌──────────────────────────────┐
+│ slsa-github-generator@v1.4.0 │  ← reusable workflow
+│  signs provenance (Fulcio)   │
+│  uploads to release          │
+└──────────────────────────────┘
+```
+
+## Issues / Improvements worth making
+
+### 1. ⚠️ The generator version is stale
+`@v1.4.0` is from mid-2023. The current stable line is **v2.x** (which requires calling by full commit SHA for SLSA L3 self-verification). Update to:
+
+```yaml
+uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+```
+
+> ⚠️ Important: the SLSA generator's own docs require pinning to a **full 40-char commit SHA** (not a tag) when you want the build to be verifiable as SLSA L3 itself. Tags are fine for functionality but weaken the trust chain.
+
+### 2. Add minimal permissions to `build`
+The `build` job has no `permissions:` block, so it inherits repo defaults (often `write-all`). Add:
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      digests: ${{ steps.hash.outputs.digests }}
+```
+
+### 3. `upload-assets: true` assumes a release exists
+Because the trigger is `release: types: [created]` **or** `workflow_dispatch`, a manual run has no release to attach to. Either:
+- split triggers into two workflows, or
+- guard the upload: keep `upload-assets: true` only for the `release` trigger.
+
+### 4. Fragile artifact glob
+`files=$(ls artifact*)` will fail (or produce an empty `hashes=` line) if nothing matches. Prefer explicit paths or `find`:
+
+```bash
+files=$(find . -maxdepth 1 -name 'artifact*' -type f -print)
+[ -n "$files" ] || { echo "no artifacts found"; exit 1; }
+echo "hashes=$(sha256sum $files | base64 -w0)" >> "$GITHUB_OUTPUT"
+```
+
+### 5. Pin `actions/checkout`
+`actions/checkout@v4` should ideally be pinned to a SHA too for full SLSA L3 guarantees:
+
+```yaml
+- uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+```
+
+### 6. Newer generator also supports `provenance-name`
+You can customize the generated file name (default is `<artifact>-intoto.jsonl`):
+
+```yaml
+with:
+  base64-subjects: "${{ needs.build.outputs.digests }}"
+  upload-assets: true
+  provenance-name: "myapp.intoto.jsonl"
+```
+
+## Cleaned-up version
+
+```yaml
+name: SLSA generic generator
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+permissions: read-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      digests: ${{ steps.hash.outputs.digests }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Build artifacts
+        run: |
+          echo "artifact1" > artifact1
+          echo "artifact2" > artifact2
+
+      - name: Generate subject for provenance
+        id: hash
+        run: |
+          set -euo pipefail
+          files=$(find . -maxdepth 1 -name 'artifact*' -type f -print)
+          [ -n "$files" ] || { echo "no artifacts found"; exit 1; }
+          echo "hashes=$(sha256sum $files | base64 -w0)" >> "$GITHUB_OUTPUT"
+
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+    with:
+      base64-subjects: "${{ needs.build.outputs.digests }}"
+      upload-assets: true
+```
+
+## Verification afterwards
+
+Once a release is published you can verify with:
+
+```bash
+slsa-verifier verify-artifact artifact1 \
+  --provenance-path artifact1.intoto.jsonl \
+  --source-uri github.com/OWNER/REPO
+```
+
+---
+
+**TL;DR** — the file is the canonical OSSF/SLSA generic provenance workflow. It works as-is, but I'd:
+1. Bump to `v2.0.0` (or a full commit SHA) of the generator.
+2. Add explicit least-privilege `permissions`.
+3. Make the artifact glob robust.
+4. Handle the `workflow_dispatch` case where no release exists.
+
+Was there something specific you wanted — e.g., adapting it to a real project, debugging a failure, or migrating to v2?
+Here it is again — same review, condensed:
+
+## What this workflow is
+It’s the standard **SLSA Level 3 provenance generator** for GitHub Actions. It builds artifacts, hashes them, then calls the reusable `slsa-github-generator` workflow to sign provenance via OIDC/Sigstore and optionally upload it to a release.
+
+## How it works
+1. **`build` job**
+   - Checks out the repo.
+   - Builds artifacts (`artifact1`, `artifact2`).
+   - Generates base64-encoded SHA-256 digests as an output.
+2. **`provenance` job**
+   - Depends on `build`.
+   - Calls `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0`.
+   - Signs and uploads provenance.
+
+## Problems / improvements
+1. **Old generator version** — `v1.4.0` is stale; use `v2.0.0` or, ideally, a full commit SHA.
+2. **Missing least-privilege permissions** on `build` — add `permissions: contents: read`.
+3. **`upload-assets: true` breaks on `workflow_dispatch`** — there may be no release to upload to.
+4. **Fragile artifact glob** — `ls artifact*` fails if nothing matches; use `find` and validate.
+5. **Pin `actions/checkout`** to a SHA for stronger SLSA guarantees.
+6. **Optional** — set `provenance-name` to customize the output filename.
+
+## Cleaned-up version
+
+```yaml
+name: SLSA generic generator
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+permissions: read-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      digests: ${{ steps.hash.outputs.digests }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Build artifacts
+        run: |
+          echo "artifact1" > artifact1
+          echo "artifact2" > artifact2
+
+      - name: Generate subject for provenance
+        id: hash
+        run: |
+          set -euo pipefail
+          files=$(find . -maxdepth 1 -name 'artifact*' -type f -print)
+          [ -n "$files" ] || { echo "no artifacts found"; exit 1; }
+          echo "hashes=$(sha256sum $files | base64 -w0)" >> "$GITHUB_OUTPUT"
+
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+    with:
+      base64-subjects: "${{ needs.build.outputs.digests }}"
+      upload-assets: true
+```
+
+## Verify afterwards
+
+```bash
+slsa-verifier verify-artifact artifact1 \
+  --provenance-path artifact1.intoto.jsonl \
+  --source-uri github.com/OWNER/REPO
+```
+
+If you meant something else by “again” — e.g. rewrite it for a specific project, debug a failed run, or migrate to v2 — tell me and I’ll do that instead.
+Assuming “Yes” means **migrate the workflow to the SLSA generator v2 line**, here’s the updated version.
+
+```yaml
+name: SLSA generic generator
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+permissions: read-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      digests: ${{ steps.hash.outputs.digests }}
+    steps:
+      - uses: actions/checkout@v4   # pin to a full SHA for stricter SLSA guarantees
+
+      - name: Build artifacts
+        run: |
+          echo "artifact1" > artifact1
+          echo "artifact2" > artifact2
+
+      - name: Generate subject for provenance
+        id: hash
+        run: |
+          set -euo pipefail
+          files=$(find . -maxdepth 1 -type f -name 'artifact*' -print)
+          [ -n "$files" ] || { echo "No artifacts found"; exit 1; }
+          echo "hashes=$(sha256sum $files | base64 -w0)" >> "$GITHUB_OUTPUT"
+
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+    with:
+      base64-subjects: "${{ needs.build.outputs.digests }}"
+      upload-assets: ${{ github.event_name == 'release' }}
+```
+
+### What changed vs. the original
+
+| Change | Why |
+|---|---|
+| `@v1.4.0` → `@v2.0.0` | Current stable generator line; older versions are stale. |
+| Added `permissions` on `build` | Least privilege — it only needs to read the repo. |
+| Added top-level `permissions: read-all` | Safe default; the `provenance` job overrides as needed. |
+| `upload-assets` is now conditional | Prevents failure on manual `workflow_dispatch` when no release exists. |
+| Replaced `ls artifact*` with `find` + validation | Robust if no matching files exist. |
+| Left `actions/checkout@v4` as a tag | Works, but for full SLSA L3 self-verification, pin it to a commit SHA. |
+
+### Important note on pinning
+For the **generator itself** to be considered SLSA L3-trusted, the reusable workflow should be pinned to a **full 40-character commit SHA**, not a tag. Tags like `@v2.0.0` are convenient and functional, but they can be moved. If you need that level of assurance, replace:
+
+```yaml
+uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+```
+
+with the SHA from the v2.0.0 release.
+
+---
+
+If “Yes” meant something else — e.g. adapt this to a specific project, or debug an actual failing run — tell me the repo/build details and I’ll tailor it.
