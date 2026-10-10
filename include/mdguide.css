@@ -9,12 +9,28 @@
 :root {
   --goodcode-bg-color: #f8fff8;
   --badcode-bg-color: #fff8f8;
+  --callout-important-border-color: #ad0303;
+  --callout-important-fg-color: #ad0303;
+  --callout-important-bg-color: #ffefe1;
+  --callout-note-border-color: #1a6ebb;
+  --callout-note-fg-color: #1a6ebb;
+  --callout-note-bg-color: #e1f5fe;
+  --callout-tip-border-color: #267769;
+  --callout-tip-fg-color: #267769;
+  --callout-tip-bg-color: #e0f2f1;
+  --callout-warning-border-color: #a52714;
+  --callout-warning-fg-color: #a52714;
+  --callout-warning-bg-color: #fbe9e7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --goodcode-bg-color: #273322;
     --badcode-bg-color: #332822;
+    --callout-important-bg-color: #eeded0;
+    --callout-note-bg-color: #d0e4ed;
+    --callout-tip-bg-color: #cfe1e0;
+    --callout-warning-bg-color: #ead8d6;
   }
 }
 
@@ -77,4 +93,33 @@ div.markdown-body div.numbered ~ h3::before {
 div.markdown-body div.numbered ~ h4::before {
   content: counter(h2) '.' counter(h3) '.' counter(h4) ' ';
   counter-increment: h4;
+}
+
+/**
+ * Internal callouts akin to GitHub alerts.
+ * devtools/markdown/service/public/styles/markdown/callout.scss
+ */
+
+.callout-important {
+  background-color: var(--callout-important-bg-color) !important;
+  border-left-color: var(--callout-important-border-color) !important;
+  color: var(--callout-important-fg-color) !important;
+}
+
+.callout-note {
+  background-color: var(--callout-note-bg-color) !important;
+  border-left-color: var(--callout-note-border-color) !important;
+  color: var(--callout-note-fg-color) !important;
+}
+
+.callout-tip {
+  background-color: var(--callout-tip-bg-color) !important;
+  border-left-color: var(--callout-tip-border-color) !important;
+  color: var(--callout-tip-fg-color) !important;
+}
+
+.callout-warning {
+  background-color: var(--callout-warning-bg-color) !important;
+  border-left-color: var(--callout-warning-border-color) !important;
+  color: var(--callout-warning-fg-color) !important;
 }
