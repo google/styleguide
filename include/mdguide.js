@@ -56,3 +56,21 @@ export function styleAlerts(document) {
     container.classList.add(`callout-${callout}`);
   }
 }
+
+/**
+ * If a TOC exists, clean it up a bit to not take so much space.
+ * @param {!Document} document
+ */
+export function tidyToc(document) {
+  const toc = document.getElementById('markdown-toc');
+  if (!toc) {
+    return;
+  }
+
+  const zippy = document.createElement('details');
+  const summary = document.createElement('summary');
+  summary.textContent = 'Table of Contents';
+  zippy.appendChild(summary);
+  toc.replaceWith(zippy);
+  zippy.appendChild(toc);
+}
