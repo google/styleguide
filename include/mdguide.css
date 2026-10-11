@@ -123,3 +123,24 @@ div.markdown-body div.numbered ~ h4::before {
   border-left-color: var(--callout-warning-border-color) !important;
   color: var(--callout-warning-fg-color) !important;
 }
+
+/* Hide the TOC title entry. */
+#markdown-toc {
+  padding-left: 0;
+}
+#markdown-toc > li::marker {
+  content: '';
+}
+#markdown-toc > li > a {
+  display: none;
+}
+
+/* The TOC can be quite long, so shrink it a little. */
+#markdown-toc {
+  font-size: smaller;
+}
+
+/* Only show TOC entries 2 levels deep. */
+#markdown-toc > li > ul > li > ul > li > ul {
+  display: none;
+}

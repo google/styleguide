@@ -3,6 +3,9 @@
 Version 1.0 \
 Copyright Google 2008
 
+* TOC
+{:toc}
+
 ## Introduction
 
 This document provides a set of guidelines for general use when designing new
