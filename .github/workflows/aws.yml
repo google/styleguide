@@ -1,0 +1,561 @@
+# This workflow will build and push a new container image to Amazon ECR,
+# and then will deploy a new task definition to Amazon ECS, when there is a push to the "gh-pages" branch.
+#
+# To use this workflow, you will need to complete the following set-up steps:
+#
+# 1. Create an ECR repository to store your images.
+#    For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-2`.
+#    Replace the value of the `ECR_REPOSITORY` environment variable in the workflow below with your repository's name.
+#    Replace the value of the `AWS_REGION` environment variable in the workflow below with your repository's region.
+#
+# 2. Create an ECS task definition, an ECS cluster, and an ECS service.
+#    For example, follow the Getting Started guide on the ECS console:
+#      https://us-east-2.console.aws.amazon.com/ecs/home?region=us-east-2#/firstRun
+#    Replace the value of the `ECS_SERVICE` environment variable in the workflow below with the name you set for the Amazon ECS service.
+#    Replace the value of the `ECS_CLUSTER` environment variable in the workflow below with the name you set for the cluster.
+#
+# 3. Store your ECS task definition as a JSON file in your repository.
+#    The format should follow the output of `aws ecs register-task-definition --generate-cli-skeleton`.
+#    Replace the value of the `ECS_TASK_DEFINITION` environment variable in the workflow below with the path to the JSON file.
+#    Replace the value of the `CONTAINER_NAME` environment variable in the workflow below with the name of the container
+#    in the `containerDefinitions` section of the task definition.
+#
+# 4. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+#    See the documentation for each action used below for the recommended IAM policies for this IAM user,
+#    and best practices on handling the access key credentials.
+
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches: [ "gh-pages" ]
+
+env:
+  AWS_REGION: MY_AWS_REGION                   # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: MY_ECR_REPOSITORY           # set this to your Amazon ECR repository name
+  ECS_SERVICE: MY_ECS_SERVICE                 # set this to your Amazon ECS service name
+  ECS_CLUSTER: MY_ECS_CLUSTER                 # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: MY_ECS_TASK_DEFINITION # set this to the path to your Amazon ECS task definition
+                                               # file, e.g. .aws/task-definition.json
+  CONTAINER_NAME: MY_CONTAINER_NAME           # set this to the name of the container in the
+                                               # containerDefinitions section of your task definition
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build a docker container and
+        # push it to ECR so that it can
+        # be deployed to ECS.
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        container-name: ${{ env.CONTAINER_NAME }}
+        image: ${{ steps.build-image.outputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
+        Save this as `.github/workflows/aws.yml`. Replace every `MY_*` value and configure the GitHub secrets before using it.
+
+```yaml
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches: [ "gh-pages" ]
+
+env:
+  AWS_REGION: MY_AWS_REGION
+  ECR_REPOSITORY: MY_ECR_REPOSITORY
+  ECS_SERVICE: MY_ECS_SERVICE
+  ECS_CLUSTER: MY_ECS_CLUSTER
+  ECS_TASK_DEFINITION: MY_ECS_TASK_DEFINITION
+  CONTAINER_NAME: MY_CONTAINER_NAME
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+```
+
+Required setup:
+
+- Replace `MY_AWS_REGION`, `MY_ECR_REPOSITORY`, `MY_ECS_SERVICE`, `MY_ECS_CLUSTER`, `MY_ECS_TASK_DEFINITION`, and `MY_CONTAINER_NAME`.
+- Add GitHub secrets:
+  - `AWS_ACCESS_KEY_ID`
+  - `AWS_SECRET_ACCESS_KEY`
+- Make sure your repo has a `Dockerfile` at the root, or update the `docker build` context/path.
+- Ensure the ECS task definition JSON exists at the path you set in `ECS_TASK_DEFINITION`.
+- This triggers on pushes to the `gh-pages` branch. If you deploy from `main`, change:
+
+```yaml
+branches: [ "gh-pages" ]
+```
+
+to:
+
+```yaml
+branches: [ "main" ]
+```
+
+For better security, consider using GitHub OIDC with `aws-actions/configure-aws-credentials` instead of long-lived AWS access keys.
+Next, configure the AWS/GitHub side so the workflow can actually run.
+
+### 1. Replace the placeholders in `aws.yml`
+
+```yaml
+env:
+  AWS_REGION: us-east-2
+  ECR_REPOSITORY: my-ecr-repo
+  ECS_SERVICE: my-ecs-service
+  ECS_CLUSTER: my-ecs-cluster
+  ECS_TASK_DEFINITION: .aws/task-definition.json
+  CONTAINER_NAME: my-container
+```
+
+### 2. Create the ECR repository
+
+```bash
+aws ecr create-repository \
+  --repository-name my-ecr-repo \
+  --region us-east-2
+```
+
+### 3. Create an ECS cluster
+
+```bash
+aws ecs create-cluster \
+  --cluster-name my-ecs-cluster \
+  --region us-east-2
+```
+
+### 4. Add a task definition file
+
+Create `.aws/task-definition.json`:
+
+```json
+{
+  "family": "my-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "my-container",
+      "image": "PLACEHOLDER",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
+```
+
+The `name` must match `CONTAINER_NAME` in the workflow.
+
+### 5. Register the task definition
+
+```bash
+aws ecs register-task-definition \
+  --cli-input-json file://.aws/task-definition.json \
+  --region us-east-2
+```
+
+### 6. Create the ECS service
+
+Replace `subnet-xxxx` and `sg-xxxx` with your VPC values:
+
+```bash
+aws ecs create-service \
+  --cluster my-ecs-cluster \
+  --service-name my-ecs-service \
+  --task-definition my-task \
+  --desired-count 1 \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={subnets=[subnet-xxxx],securityGroups=[sg-xxxx],assignPublicIp=ENABLED}" \
+  --region us-east-2
+```
+
+### 7. Add GitHub secrets
+
+In your GitHub repo:
+
+`Settings → Secrets and variables → Actions → New repository secret`
+
+Add:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
+Recommended: use GitHub OIDC instead of long-lived AWS keys.
+
+### 8. Commit and push
+
+```bash
+git add .github/workflows/aws.yml .aws/task-definition.json
+git commit -m "Add ECS deployment workflow"
+git push origin gh-pages
+```
+
+Then check `Actions` tab in GitHub.
+
+Next I can generate either:
+1. A sample `Dockerfile`, or  
+2. The exact IAM policy for the AWS user, or  
+3. An OIDC version of the workflow.
+
+Here's all three.
+
+---
+
+## 1. Sample `Dockerfile`
+
+A minimal Node.js app image (swap the base image if you use Python, Go, etc.).
+
+```dockerfile
+# ---- Build stage ----
+FROM node:20-alpine AS build
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY . .
+
+# ---- Runtime stage ----
+FROM node:20-alpine AS runtime
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=80
+
+COPY --from=build /app ./
+
+EXPOSE 80
+CMD ["node", "server.js"]
+```
+
+Minimal `server.js` to match:
+
+```js
+const http = require("http");
+const port = process.env.PORT || 80;
+
+http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Hello from ECS\n");
+}).listen(port, () => console.log(`Listening on ${port}`));
+```
+
+Build test locally:
+
+```bash
+docker build -t my-app:local .
+docker run --rm -p 8080:80 my-app:local
+```
+
+---
+
+## 2. IAM policy for the GitHub Actions AWS user
+
+Create an IAM user (or role) and attach this policy. Replace `YOUR_ACCOUNT_ID`, `us-east-2`, and names as needed.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ECRAuth",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ECRPushPull",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "ecr:InitiateLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:CompleteLayerUpload",
+        "ecr:PutImage"
+      ],
+      "Resource": "arn:aws:ecr:us-east-2:YOUR_ACCOUNT_ID:repository/my-ecr-repo"
+    },
+    {
+      "Sid": "ECSRegisterAndDeploy",
+      "Effect": "Allow",
+      "Action": [
+        "ecs:RegisterTaskDefinition",
+        "ecs:DescribeTaskDefinition",
+        "ecs:UpdateService",
+        "ecs:DescribeServices"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "PassRoleToECS",
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": [
+        "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole",
+        "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskRole"
+      ]
+    }
+  ]
+}
+```
+
+Attach to the user:
+
+```bash
+aws iam create-user --user-name github-actions-ecs-deploy
+aws iam put-user-policy \
+  --user-name github-actions-ecs-deploy \
+  --policy-name GitHubActionsECSDeploy \
+  --policy-document file://github-actions-policy.json
+aws iam create-access-key --user-name github-actions-ecs-deploy
+```
+
+Put the returned key/secret into GitHub secrets `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+
+Also ensure `ecsTaskExecutionRole` exists (AWS managed policy `AmazonECSTaskExecutionRolePolicy` attached):
+
+```bash
+aws iam create-role \
+  --role-name ecsTaskExecutionRole \
+  --assume-role-policy-document '{
+    "Version":"2012-10-17",
+    "Statement":[{
+      "Effect":"Allow",
+      "Principal":{"Service":"ecs-tasks.amazonaws.com"},
+      "Action":"sts:AssumeRole"
+    }]
+  }'
+aws iam attach-role-policy \
+  --role-name ecsTaskExecutionRole \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+```
+
+---
+
+## 3. OIDC version of the workflow (recommended)
+
+No long-lived AWS keys. GitHub exchanges a short-lived OIDC token for AWS credentials.
+
+### 3a. Create the OIDC provider in AWS (once per account)
+
+```bash
+aws iam create-open-id-connect-provider \
+  --url https://token.actions.githubusercontent.com \
+  --client-id-list sts.amazonaws.com \
+  --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
+```
+
+### 3b. Create the deploy role with a trust policy
+
+Replace `YOUR_ACCOUNT_ID` and `OWNER/REPO`.
+
+`trust.json`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::YOUR_ACCOUNT_ID:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+        },
+        "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:OWNER/REPO:ref:refs/heads/gh-pages"
+        }
+      }
+    }
+  ]
+}
+```
+
+Create the role and attach the same ECS/ECR policy from step 2:
+
+```bash
+aws iam create-role \
+  --role-name github-actions-ecs-deploy-oidc \
+  --assume-role-policy-document file://trust.json
+
+aws iam put-role-policy \
+  --role-name github-actions-ecs-deploy-oidc \
+  --policy-name GitHubActionsECSDeploy \
+  --policy-document file://github-actions-policy.json
+```
+
+Note the role ARN: `arn:aws:iam::YOUR_ACCOUNT_ID:role/github-actions-ecs-deploy-oidc`.
+
+### 3c. Updated workflow with OIDC
+
+```yaml
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches: [ "gh-pages" ]
+
+env:
+  AWS_REGION: us-east-2
+  ECR_REPOSITORY: my-ecr-repo
+  ECS_SERVICE: my-ecs-service
+  ECS_CLUSTER: my-ecs-cluster
+  ECS_TASK_DEFINITION: .aws/task-definition.json
+  CONTAINER_NAME: my-container
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::YOUR_ACCOUNT_ID:role/github-actions-ecs-deploy-oidc
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+```
+
+Once OIDC works, delete the IAM user's access key from step 2 — no long-lived credentials in GitHub anymore.
+
+Want me to bundle this into a single `deploy.sh` that runs all the AWS setup commands end-to-end?
