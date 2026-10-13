@@ -28,6 +28,7 @@ that apply to that project.
 *   [Shell Style Guide][sh]
 *   [Swift Style Guide][swift]
 *   [TypeScript Style Guide][ts]
+*   [Verilog Style Guide][verilog]
 *   [Vim script Style Guide][vim]
 
 This project also contains [google-c-style.el][emacs], an Emacs settings file
@@ -94,6 +95,7 @@ primarily optimizing for Google's internal needs.
 [markdown]: docguide/style.md
 [ts]: https://google.github.io/styleguide/tsguide.html
 [cl]: lispguide.md
+[verilog]: verilogguide.md
 [vim]: vimscriptguide.md
 [emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
 [xml]: xmlguide.md
