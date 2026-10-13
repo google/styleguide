@@ -6,10 +6,11 @@ See README.md for details.
 
 # Shell Style Guide
 
-
 Authored, revised and maintained by many Googlers.
 
 ## Table of Contents
+
+<!-- mdformat off -->
 
 Section                                                                              | Contents
 ------------------------------------------------------------------------------------ | --------
@@ -18,15 +19,16 @@ Section                                                                         
 [Environment](#s3-environment)                                                       | [STDOUT vs STDERR](#s3.1-stdout-vs-stderr)
 [Comments](#s4-comments)                                                             | [File Header](#s4.1-file-header) - [Function Comments](#s4.2-function-comments) - [Implementation Comments](#s4.3-implementation-comments) - [TODO Comments](#s4.4-todo-comments)
 [Formatting](#s5-formatting)                                                         | [Indentation](#s5.1-indentation) - [Line Length and Long Strings](#s5.2-line-length-and-long-strings) - [Pipelines](#s5.3-pipelines) - [Control Flow](#s5.4-control-flow) - [Case statement](#s5.5-case-statement) - [Variable expansion](#s5.6-variable-expansion) - [Quoting](#s5.7-quoting)
-[Features and Bugs](#s6-features-and-bugs)                                           |    [ShellCheck](#s6.1-shellcheck) - [Command Substitution](#s6.2-command-substitution) - [Test, `[… ]`, and `[[… ]]`](#s6.3-tests) - [Testing Strings](#s6.4-testing-strings) - [Wildcard Expansion of Filenames](#s6.5-wildcard-expansion-of-filenames) - [Eval](#s6.6-eval) - [Arrays](#s6.7-arrays) - [Pipes to While](#s6.8-pipes-to-while) - [Arithmetic](#s6.9-arithmetic) - [Aliases](#s6.10-aliases)
+[Features and Bugs](#s6-features-and-bugs)                                           | [ShellCheck](#s6.1-shellcheck) - [Command Substitution](#s6.2-command-substitution) - [Test, `[… ]`, and `[[… ]]`](#s6.3-tests) - [Testing Strings](#s6.4-testing-strings) - [Wildcard Expansion of Filenames](#s6.5-wildcard-expansion-of-filenames) - [Eval](#s6.6-eval) - [Arrays](#s6.7-arrays) - [Pipes to While](#s6.8-pipes-to-while) - [Arithmetic](#s6.9-arithmetic) - [Aliases](#s6.10-aliases)
 [Naming Conventions](#s7-naming-conventions)                                         | [Function Names](#s7.1-function-names) - [Variable Names](#s7.2-variable-names) - [Constants and Environment Variable Names](#s7.3-constants-and-environment-variable-names) - [Source Filenames](#s7.4-source-filenames) - [Use Local Variables](#s7.5-use-local-variables) - [Function Location](#s7.6-function-location) - [main](#s7.7-main)
 [Calling Commands](#s8-calling-commands)                                             | [Checking Return Values](#s8.1-checking-return-values) - [Builtin Commands vs. External Commands](#s8.2-builtin-commands-vs-external-commands)
 [When in Doubt: Be Consistent](#s9-conclusion)                                       |
 
+<!-- mdformat on -->
+
 <a id="s1-background"></a>
 
 ## Background
-
 
 <a id="s1.1-which-shell-to-use"></a>
 
@@ -51,13 +53,12 @@ environments may require plain Bourne shell for certain scripts.
 
 ### When to use Shell
 
-Shell should only be used for small utilities or simple wrapper
-scripts.
+Shell should only be used for small utilities or simple wrapper scripts.
 
-While shell scripting isn't a development language, it is used for
-writing various utility scripts throughout Google. This style guide
-is more a recognition of its use rather than a suggestion that it be
-used for widespread deployment.
+While shell scripting isn't a development language, it is used for writing
+various utility scripts throughout Google. This style guide is more a
+recognition of its use rather than a suggestion that it be used for widespread
+deployment.
 
 Some guidelines:
 
@@ -70,7 +71,7 @@ Some guidelines:
     script early to avoid a more time-consuming rewrite at a later date.
 *   When assessing the complexity of your code (e.g. to decide whether to switch
     languages) consider whether the code is easily maintainable by people other
-    than its author. 
+    than its author.
 
 <a id="s2-shell-files-and-interpreter-invocation"></a>
 
@@ -82,10 +83,10 @@ Some guidelines:
 
 Executables should have a `.sh` extension or no extension.
 
--   If the executable will have a build rule that renames the source file
-    then prefer to use a `.sh` extension.
-    This enables you to use the recommended naming convention, with a source
-    file like `foo.sh` and a build rule named `foo`.
+-   If the executable will have a build rule that renames the source
+    file then prefer to use a `.sh` extension. This
+    enables you to use the recommended naming convention, with a source file
+    like `foo.sh` and a build rule named `foo`.
 -   If the executable will be added directly to the user's `PATH`, then prefer
     to use no extension. It is not necessary to know what language a program is
     written in when executing it and shell doesn't require an extension so we
@@ -102,12 +103,13 @@ Libraries must have a `.sh` extension and should not be executable.
 
 SUID and SGID are *forbidden* on shell scripts.
 
-There are too many security issues with shell that make it nearly
-impossible to secure sufficiently to allow SUID/SGID. While bash does
-make it difficult to run SUID, it's still possible on some platforms
-which is why we're being explicit about banning it.
+There are too many security issues with shell that make it nearly impossible to
+secure sufficiently to allow SUID/SGID. While bash does make it difficult to run
+SUID, it's still possible on some platforms which is why we're being explicit
+about banning it.
 
-Use `sudo` to provide elevated access if you need it.
+Use `sudo` to provide elevated access if you need
+it.
 
 <a id="s3-environment"></a>
 
@@ -121,8 +123,10 @@ All error messages should go to `STDERR`.
 
 This makes it easier to separate normal status from actual issues.
 
-A function to print out error messages along with other status
-information is recommended.
+A function to print out error messages along with other status information is
+recommended.
+
+<div class='goodcode'></div>
 
 ```shell
 err() {
@@ -145,12 +149,13 @@ fi
 
 Start each file with a description of its contents.
 
-Every file must have a top-level comment including a brief overview of
-its contents. A
-copyright notice
-and author information are optional.
+Every file must have a top-level comment including a brief overview of its
+contents. A copyright notice and author information
+are optional.
 
 Example:
+
+<div class='goodcode'></div>
 
 ```shell
 #!/bin/bash
@@ -166,9 +171,9 @@ Any function that is not both obvious and short must have a function header
 comment. Any function in a library must have a function header comment
 regardless of length or complexity.
 
-It should be possible for someone else to learn how to use your
-program or to use a function in your library by reading the comments
-(and self-help, if provided) without reading the code.
+It should be possible for someone else to learn how to use your program or to
+use a function in your library by reading the comments (and self-help, if
+provided) without reading the code.
 
 All function header comments should describe the intended API behaviour using:
 
@@ -180,6 +185,8 @@ All function header comments should describe the intended API behaviour using:
     command run.
 
 Example:
+
+<div class='goodcode'></div>
 
 ```shell
 #######################################
@@ -223,12 +230,11 @@ function del_thing() {
 
 ### Implementation Comments
 
-Comment tricky, non-obvious, interesting or important parts of your
-code.
+Comment tricky, non-obvious, interesting or important parts of your code.
 
-This follows general Google coding comment practice. Don't comment
-everything. If there's a complex algorithm or you're doing something
-out of the ordinary, put a short comment in.
+This follows general Google coding comment practice. Don't comment everything.
+If there's a complex algorithm or you're doing something out of the ordinary,
+put a short comment in.
 
 <a id="s4.4-todo-comments"></a>
 
@@ -239,7 +245,6 @@ good-enough but not perfect.
 
 This matches the convention in the [C++ Guide](https://google.github.io/styleguide/cppguide.html#TODO_Comments).
 
-
 `TODO`s should include the string `TODO` in all caps, followed by the name,
 e-mail address, or other identifier of the person with the best context about
 the problem referenced by the `TODO`. The main purpose is to have a consistent
@@ -249,6 +254,8 @@ when you create a `TODO`, it is almost always your name that is given.
 
 Examples:
 
+<div class='goodcode'></div>
+
 ```shell
 # TODO(mrmonkey): Handle the unlikely edge cases (bug ####)
 ```
@@ -257,8 +264,8 @@ Examples:
 
 ## Formatting
 
-While you should follow the style that's already there for files that
-you're modifying, the following are required for any new code.
+While you should follow the style that's already there for files that you're
+modifying, the following are required for any new code.
 
 <a id="s5.1-indentation"></a>
 
@@ -266,9 +273,9 @@ you're modifying, the following are required for any new code.
 
 Indent 2 spaces. No tabs.
 
-Use blank lines between blocks to improve readability. Indentation is
-two spaces. Whatever you do, don't use tabs. For existing files, stay
-faithful to the existing indentation.
+Use blank lines between blocks to improve readability. Indentation is two
+spaces. Whatever you do, don't use tabs. For existing files, stay faithful to
+the existing indentation.
 
 **Exception:** The only exception for using tabs is for the body of `<<-`
 tab-indented
@@ -289,6 +296,8 @@ Words that are longer than 80 chars and can't sensibly be split are ok, but
 where possible these items should be on a line of their own, or factored into a
 variable. Examples include file paths and URLs, particularly where
 string-matching them (such as `grep`) is valuable for maintenance.
+
+<div class='goodcode'></div>
 
 ```shell
 # DO use 'here document's
@@ -312,6 +321,8 @@ long_string_alt="i am an including an exceptionally ${long_file} in this long\
  string"
 ```
 
+<div class='badcode'></div>
+
 ```shell
 # Just because a line contains an exception doesn't mean the rest of the
 # line shouldn't be wrapped like usual.
@@ -331,6 +342,8 @@ If not, it should be split at one pipe segment per line with the pipe on the
 newline and a 2 space indent for the next section of the pipe. `\ ` should be
 consistently used to indicate line continuation. This applies to a chain of
 commands combined using `|` as well as to logical compounds using `||` and `&&`.
+
+<div class='goodcode'></div>
 
 ```shell
 # All fits on one line
@@ -369,6 +382,8 @@ their own line vertically aligned with the opening statement.
 
 Example:
 
+<div class='goodcode'></div>
+
 ```shell
 # If inside a function remember to declare the loop variable as
 # a local to avoid it leaking into the global environment:
@@ -386,6 +401,8 @@ done
 Although it is possible to
 [omit `in "$@"`](https://www.gnu.org/software/bash/manual/html_node/Looping-Constructs.html#index-for)
 in for loops we recommend consistently including it for clarity.
+
+<div class='goodcode'></div>
 
 ```shell
 for arg in "$@"; do
@@ -408,6 +425,8 @@ Multiline actions are indented another level. In general, there is no need to
 quote match expressions. Pattern expressions should not be preceded by an open
 parenthesis. Avoid the `;&` and `;;&` notations.
 
+<div class='goodcode'></div>
+
 ```shell
 case "${expression}" in
   a)
@@ -424,13 +443,14 @@ case "${expression}" in
 esac
 ```
 
-Simple commands may be put on the same line as the pattern <i>and</i>
-`;;` as long as the expression remains readable. This is
-often appropriate for single-letter option processing. When the
-actions don't fit on a single line, put the pattern on a line on its
-own, then the actions, then `;;` also on a line of its own.
-When on the same line as the actions, use a space after the close
+Simple commands may be put on the same line as the pattern <i>and</i> `;;` as
+long as the expression remains readable. This is often appropriate for
+single-letter option processing. When the actions don't fit on a single line,
+put the pattern on a line on its own, then the actions, then `;;` also on a line
+of its own. When on the same line as the actions, use a space after the close
 parenthesis of the pattern and another before the `;;`.
+
+<div class='goodcode'></div>
 
 ```shell
 verbose='false'
@@ -455,9 +475,9 @@ done
 In order of precedence: Stay consistent with what you find; quote your
 variables; prefer `"${var}"` over `"$var"`.
 
-These are strongly recommended guidelines but not mandatory
-regulation. Nonetheless, the fact that it's a recommendation and
-not mandatory doesn't mean it should be taken lightly or downplayed.
+These are strongly recommended guidelines but not mandatory regulation.
+Nonetheless, the fact that it's a recommendation and not mandatory doesn't mean
+it should be taken lightly or downplayed.
 
 They are listed in order of precedence.
 
@@ -467,6 +487,8 @@ They are listed in order of precedence.
     unless strictly necessary or avoiding deep confusion.
 
 Prefer brace-delimiting all other variables.
+
+<div class='goodcode'></div>
 
 ```shell
 # Section of *recommended* cases.
@@ -489,6 +511,8 @@ while read -r f; do
   echo "file=${f}"
 done < <(find /tmp)
 ```
+
+<div class='badcode'></div>
 
 ```shell
 # Section of *discouraged* cases
@@ -525,6 +549,8 @@ be used *as well*.
     [Test, `[ … ]`, and `[[ … ]]`](#tests) section below.
 *   Use `"$@"` unless you have a specific reason to use `$*`, such as simply
     appending the arguments to a string in a message or log.
+
+<div class='goodcode'></div>
 
 ```shell
 # 'Single' quotes indicate that no substitution is desired.
@@ -615,16 +641,19 @@ small.
 
 Use `$(command)` instead of backticks.
 
-Nested backticks require escaping the inner ones with `\ `.
-The `$(command)` format doesn't change when nested and is
-easier to read.
+Nested backticks require escaping the inner ones with `\ `. The `$(command)`
+format doesn't change when nested and is easier to read.
 
 Example:
+
+<div class='goodcode'></div>
 
 ```shell
 # This is preferred:
 var="$(command "$(command1)")"
 ```
+
+<div class='badcode'></div>
 
 ```shell
 # This is not:
@@ -642,6 +671,8 @@ var="`command \`command1\``"
 between `[[` and `]]`. In addition, `[[ … ]]` allows for pattern and regular
 expression matching, while `[ … ]` does not.
 
+<div class='goodcode'></div>
+
 ```shell
 # This ensures the string on the left is made up of characters in
 # the alnum character class followed by the string name.
@@ -655,6 +686,8 @@ if [[ "filename" == "f*" ]]; then
   echo "Match"
 fi
 ```
+
+<div class='badcode'></div>
 
 ```shell
 # This gives a "too many arguments" error as f* is expanded to the
@@ -674,9 +707,11 @@ For the gory details, see E14 in the
 
 Use quotes rather than filler characters where possible.
 
-Bash is smart enough to deal with an empty string in a test. So, given
-that the code is much easier to read, use tests for empty/non-empty
-strings or empty strings rather than filler characters.
+Bash is smart enough to deal with an empty string in a test. So, given that the
+code is much easier to read, use tests for empty/non-empty strings or empty
+strings rather than filler characters.
+
+<div class='goodcode'></div>
 
 ```shell
 # Do this:
@@ -696,6 +731,8 @@ if [[ "${my_var}" == "" ]]; then
 fi
 ```
 
+<div class='badcode'></div>
+
 ```shell
 # Not this:
 if [[ "${my_var}X" == "some_stringX" ]]; then
@@ -703,8 +740,9 @@ if [[ "${my_var}X" == "some_stringX" ]]; then
 fi
 ```
 
-To avoid confusion about what you're testing for, explicitly use
-`-z` or `-n`.
+To avoid confusion about what you're testing for, explicitly use `-z` or `-n`.
+
+<div class='goodcode'></div>
 
 ```shell
 # Use this
@@ -713,6 +751,8 @@ if [[ -n "${my_var}" ]]; then
 fi
 ```
 
+<div class='badcode'></div>
+
 ```shell
 # Instead of this
 if [[ "${my_var}" ]]; then
@@ -720,13 +760,13 @@ if [[ "${my_var}" ]]; then
 fi
 ```
 
-For clarity, use `==` for equality rather than
-`=` even though both work. The former encourages the use of
-`[[` and the latter can be confused with an assignment.
-However, be careful when using `<` and `>`
-in `[[ … ]]` which performs a lexicographical comparison.
-Use `(( … ))` or `-lt` and `-gt` for
+For clarity, use `==` for equality rather than `=` even though both work. The
+former encourages the use of `[[` and the latter can be confused with an
+assignment. However, be careful when using `<` and `>` in `[[ … ]]` which
+performs a lexicographical comparison. Use `(( … ))` or `-lt` and `-gt` for
 numerical comparison.
+
+<div class='goodcode'></div>
 
 ```shell
 # Use this
@@ -742,6 +782,8 @@ if [[ "${my_var}" -gt 3 ]]; then
   do_something
 fi
 ```
+
+<div class='badcode'></div>
 
 ```shell
 # Instead of this
@@ -762,8 +804,10 @@ fi
 
 Use an explicit path when doing wildcard expansion of filenames.
 
-As filenames can begin with a `-`, it's a lot safer to
-expand wildcards with `./*` instead of `*`.
+As filenames can begin with a `-`, it's a lot safer to expand wildcards with
+`./*` instead of `*`.
+
+<div class='badcode'></div>
 
 ```shell
 # Here's the contents of the directory:
@@ -774,6 +818,8 @@ psa@bilby$ rm -v *
 removed directory: `somedir'
 removed `somefile'
 ```
+
+<div class='goodcode'></div>
 
 ```shell
 # As opposed to:
@@ -790,10 +836,10 @@ removed `./somefile'
 
 `eval` should be avoided.
 
+Eval munges the input when used for assignment to variables and can set
+variables without making it possible to check what those variables were.
 
-Eval munges the input when used for assignment to variables and can
-set variables without making it possible to check what those variables
-were.
+<div class='badcode'></div>
 
 ```shell
 # What does this set?
@@ -809,17 +855,19 @@ variable="$(eval some_function)"
 ### Arrays
 
 Bash arrays should be used to store lists of elements, to avoid quoting
-complications. This particularly applies to argument lists. Arrays
-should not be used to facilitate more complex data structures (see
+complications. This particularly applies to argument lists. Arrays should not be
+used to facilitate more complex data structures (see
 [When to use Shell](#when-to-use-shell) above).
 
-Arrays store an ordered collection of strings, and can be safely
-expanded into individual elements for a command or loop.
+Arrays store an ordered collection of strings, and can be safely expanded into
+individual elements for a command or loop.
 
-Using a single string for multiple command arguments should be
-avoided, as it inevitably leads to authors using `eval`
-or trying to nest quotes inside the string, which does not give
-reliable or readable results and leads to needless complexity.
+Using a single string for multiple command arguments should be avoided, as it
+inevitably leads to authors using `eval` or trying to nest quotes inside the
+string, which does not give reliable or readable results and leads to needless
+complexity.
+
+<div class='goodcode'></div>
 
 ```shell
 # An array is assigned using parentheses, and can be appended to
@@ -830,12 +878,16 @@ flags+=(--greeting="Hello ${name}")
 mybinary "${flags[@]}"
 ```
 
+<div class='badcode'></div>
+
 ```shell
 # Don’t use strings for sequences.
 flags='--foo --bar=baz'
 flags+=' --greeting="Hello world"'  # This won’t work as intended.
 mybinary ${flags}
 ```
+
+<div class='badcode'></div>
 
 ```shell
 # Command expansions return single strings, not arrays. Avoid
@@ -874,12 +926,11 @@ Using arrays can risk a script’s complexity growing.
 
 #### Arrays Decision
 
-Arrays should be used to safely create and pass around lists. In
-particular, when building a set of command arguments, use arrays to
-avoid confusing quoting issues. Use quoted expansion –
-`"${array[@]}"` – to access arrays. However, if more
-advanced data manipulation is required, shell scripting should be
-avoided altogether; see [above](#when-to-use-shell).
+Arrays should be used to safely create and pass around lists. In particular,
+when building a set of command arguments, use arrays to avoid confusing quoting
+issues. Use quoted expansion – `"${array[@]}"` – to access arrays. However, if
+more advanced data manipulation is required, shell scripting should be avoided
+altogether; see [above](#when-to-use-shell).
 
 <a id="s6.8-pipes-to-while"></a>
 
@@ -891,6 +942,8 @@ pipeline do not propagate to the parent shell.
 
 The implicit subshell in a pipe to `while` can introduce subtle bugs that are
 hard to track down.
+
+<div class='badcode'></div>
 
 ```shell
 last_line='NULL'
@@ -907,6 +960,8 @@ echo "${last_line}"
 Using process substitution also creates a subshell. However, it allows
 redirecting from a subshell to a `while` without putting the `while` (or any
 other command) in a subshell.
+
+<div class='goodcode'></div>
 
 ```shell
 last_line='NULL'
@@ -925,6 +980,8 @@ loop over the array's contents. Notice that (for the same reason as above) you
 need to use a process substitution with `readarray` rather than a pipe, but with
 the advantage that the input generation for the loop is located before it,
 rather than after.
+
+<div class='goodcode'></div>
 
 ```shell
 last_line='NULL'
@@ -948,23 +1005,22 @@ echo "${last_line}"
 
 ### Arithmetic
 
-Always use `(( … ))` or `$(( … ))` rather than
-`let` or `$[ … ]` or `expr`.
+Always use `(( … ))` or `$(( … ))` rather than `let` or `$[ … ]` or `expr`.
 
-Never use the `$[ … ]` syntax, the `expr`
-command, or the `let` built-in.
+Never use the `$[ … ]` syntax, the `expr` command, or the `let` built-in.
 
-`<` and `>` don't perform numerical
-comparison inside `[[ … ]]` expressions (they perform
-lexicographical comparisons instead; see [Testing Strings](#testing-strings)).
-For preference, don't use `[[ … ]]` *at all* for numeric comparisons, use
-`(( … ))` instead.
+`<` and `>` don't perform numerical comparison inside `[[ … ]]` expressions
+(they perform lexicographical comparisons instead; see
+[Testing Strings](#testing-strings)). For preference, don't use `[[ … ]]` *at
+all* for numeric comparisons, use `(( … ))` instead.
 
-It is recommended to avoid using `(( … ))` as a standalone
-statement, and otherwise be wary of its expression evaluating to zero
+It is recommended to avoid using `(( … ))` as a standalone statement, and
+otherwise be wary of its expression evaluating to zero
 
-- particularly with `set -e` enabled. For example,
-`set -e; i=0; (( i++ ))` will cause the shell to exit.
+-   particularly with `set -e` enabled. For example, `set -e; i=0; (( i++ ))`
+    will cause the shell to exit.
+
+<div class='goodcode'></div>
 
 ```shell
 # Simple calculation used as text - note the use of $(( … )) within
@@ -979,6 +1035,8 @@ fi
 # Some calculation assigned to a variable.
 (( i = 10 * j + 400 ))
 ```
+
+<div class='badcode'></div>
 
 ```shell
 # This form is non-portable and deprecated
@@ -996,15 +1054,15 @@ i=$( expr 4 + 4 )
 i=$( expr 4 '*' 4 )
 ```
 
-Stylistic considerations aside, the shell's built-in arithmetic is
-many times faster than `expr`.
+Stylistic considerations aside, the shell's built-in arithmetic is many times
+faster than `expr`.
 
-When using variables, the `${var}` (and `$var`)
-forms are not required within `$(( … ))`. The shell knows
-to look up `var` for you, and omitting the
-`${…}` leads to cleaner code. This is slightly contrary to
-the previous rule about always using braces, so this is a
-recommendation only.
+When using variables, the `${var}` (and `$var`) forms are not required within
+`$(( … ))`. The shell knows to look up `var` for you, and omitting the `${…}`
+leads to cleaner code. This is slightly contrary to the previous rule about
+always using braces, so this is a recommendation only.
+
+<div class='goodcode'></div>
 
 ```shell
 # N.B.: Remember to declare your variables as integers when
@@ -1043,6 +1101,8 @@ notes:
 Aliases are cumbersome to work with because they require carefully quoting and
 escaping their contents, and mistakes can be hard to notice.
 
+<div class='badcode'></div>
+
 ```shell
 # this evaluates $RANDOM once when the alias is defined,
 # so the echo'ed string will be the same on each invocation
@@ -1051,6 +1111,8 @@ alias random_name="echo some_prefix_${RANDOM}"
 
 Functions provide a superset of alias' functionality and should always be
 preferred. .
+
+<div class='goodcode'></div>
 
 ```shell
 random_name() {
@@ -1085,6 +1147,8 @@ optional, but must be used consistently throughout a project.
 Braces must be on the same line as the function name (as with other languages at
 Google) and no space between the function name and the parenthesis.
 
+<div class='goodcode'></div>
+
 ```shell
 # Single function
 my_func() {
@@ -1106,8 +1170,10 @@ name, but enhances quick identification of functions.
 
 Same as for function names.
 
-Variables names for loops should be similarly named for any variable
-you're looping through.
+Variables names for loops should be similarly named for any variable you're
+looping through.
+
+<div class='goodcode'></div>
 
 ```shell
 for zone in "${zones[@]}"; do
@@ -1123,6 +1189,8 @@ done
 Constants and anything exported to the environment should be capitalized,
 separated with underscores, and declared at the top of the file.
 
+<div class='goodcode'></div>
+
 ```shell
 # Constant
 readonly PATH_TO_FILES='/some/path'
@@ -1134,6 +1202,8 @@ declare -xr ORACLE_SID='PROD'
 For the sake of clarity `readonly` or `export` is recommended vs. the equivalent
 `declare` commands. You can do one after the other, like:
 
+<div class='goodcode'></div>
+
 ```shell
 # Constant
 readonly PATH_TO_FILES='/some/path'
@@ -1142,6 +1212,8 @@ export PATH_TO_FILES
 
 It's OK to set a constant at runtime or in a conditional, but it should be made
 readonly immediately afterwards.
+
+<div class='goodcode'></div>
 
 ```shell
 ZIP_VERSION="$(dpkg --status zip | sed -n 's/^Version: //p')"
@@ -1160,9 +1232,8 @@ readonly ZIP_VERSION
 
 Lowercase, with underscores to separate words if desired.
 
-This is for consistency with other code styles in Google:
-`maketemplate` or `make_template` but not
-`make-template`.
+This is for consistency with other code styles in Google: `maketemplate` or
+`make_template` but not `make-template`.
 
 <a id="s7.5-use-local-variables"></a>
 <a id="s7.6-use-local-variables"></a>
@@ -1176,10 +1247,11 @@ using `local` when declaring them. This avoids polluting the global namespace
 and inadvertently setting variables that may have significance outside the
 function.
 
-Declaration and assignment must be separate statements when the
-assignment value is provided by a command substitution; as the
-`local` builtin does not propagate the exit code from the
-command substitution.
+Declaration and assignment must be separate statements when the assignment value
+is provided by a command substitution; as the `local` builtin does not propagate
+the exit code from the command substitution.
+
+<div class='goodcode'></div>
 
 ```shell
 my_func2() {
@@ -1193,6 +1265,8 @@ my_func2() {
   …
 }
 ```
+
+<div class='badcode'></div>
 
 ```shell
 my_func2() {
@@ -1214,17 +1288,17 @@ Put all functions together in the file just below constants. Don't hide
 executable code between functions. Doing so makes the code difficult to follow
 and results in nasty surprises when debugging.
 
-If you've got functions, put them all together near the top of the
-file. Only includes, `set` statements and setting constants
-may be done before declaring functions.
+If you've got functions, put them all together near the top of the file. Only
+includes, `set` statements and setting constants may be done before declaring
+functions.
 
 <a id="s7.7-main"></a>
 <a id="s7.8-main"></a>
 
 ### main
 
-A function called `main` is required for scripts long enough
-to contain at least one other function.
+A function called `main` is required for scripts long enough to contain at least
+one other function.
 
 In order to easily find the start of the program, put the main program in a
 function called `main` as the bottom-most function. This provides consistency
@@ -1232,12 +1306,14 @@ with the rest of the code base as well as allowing you to define more variables
 as `local` (which can't be done if the main code is not a function). The last
 non-comment line in the file should be a call to `main`:
 
+<div class='goodcode'></div>
+
 ```shell
 main "$@"
 ```
 
-Obviously, for short scripts where it's just a linear flow,
-`main` is overkill and so is not required.
+Obviously, for short scripts where it's just a linear flow, `main` is overkill
+and so is not required.
 
 <a id="s8-calling-commands"></a>
 
@@ -1249,10 +1325,12 @@ Obviously, for short scripts where it's just a linear flow,
 
 Always check return values and give informative return values.
 
-For unpiped commands, use `$?` or check directly via an
-`if` statement to keep it simple.
+For unpiped commands, use `$?` or check directly via an `if` statement to keep
+it simple.
 
 Example:
+
+<div class='goodcode'></div>
 
 ```shell
 if ! mv "${file_list[@]}" "${dest_dir}/"; then
@@ -1268,10 +1346,11 @@ if (( $? != 0 )); then
 fi
 ```
 
-Bash also has the `PIPESTATUS` variable that allows
-checking of the return code from all parts of a pipe. If it's only
-necessary to check success or failure of the whole pipe, then the
-following is acceptable:
+Bash also has the `PIPESTATUS` variable that allows checking of the return code
+from all parts of a pipe. If it's only necessary to check success or failure of
+the whole pipe, then the following is acceptable:
+
+<div class='goodcode'></div>
 
 ```shell
 tar -cf - ./* | ( cd "${dir}" && tar -xf - )
@@ -1280,12 +1359,13 @@ if (( PIPESTATUS[0] != 0 || PIPESTATUS[1] != 0 )); then
 fi
 ```
 
-However, as `PIPESTATUS` will be overwritten as soon as you
-do any other command, if you need to act differently on errors based
-on where it happened in the pipe, you'll need to assign
-`PIPESTATUS` to another variable immediately after running
-the command (don't forget that `[` is a command and will
-wipe out `PIPESTATUS`).
+However, as `PIPESTATUS` will be overwritten as soon as you do any other
+command, if you need to act differently on errors based on where it happened in
+the pipe, you'll need to assign `PIPESTATUS` to another variable immediately
+after running the command (don't forget that `[` is a command and will wipe out
+`PIPESTATUS`).
+
+<div class='goodcode'></div>
 
 ```shell
 tar -cf - ./* | ( cd "${DIR}" && tar -xf - )
@@ -1302,8 +1382,8 @@ fi
 
 ### Builtin Commands vs. External Commands
 
-Given the choice between invoking a shell builtin and invoking a
-separate process, choose the builtin.
+Given the choice between invoking a shell builtin and invoking a separate
+process, choose the builtin.
 
 We prefer the use of builtins such as the
 [*Parameter Expansion*](https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html)
@@ -1313,6 +1393,8 @@ functionality provided by `bash` as it's more efficient, robust, and portable
 
 Examples:
 
+<div class='goodcode'></div>
+
 ```shell
 # Prefer this:
 addition="$(( X + Y ))"
@@ -1321,6 +1403,8 @@ if [[ "${string}" =~ foo:(\d+) ]]; then
   extraction="${BASH_REMATCH[1]}"
 fi
 ```
+
+<div class='badcode'></div>
 
 ```shell
 # Instead of this:
