@@ -120,7 +120,8 @@ Choose meaningful property names.
 Property names must conform to the following guidelines:
 
 *   Property names should be meaningful names with defined semantics.
-*   Property names must be camel-cased, ASCII strings.
+*   Property names must be lower camel-cased (e.g. `propertyName`), ASCII
+    strings.
 *   The first character must be a letter, an underscore (`_`) or a dollar sign
     (`$`).
 *   Subsequent characters can be a letter, a digit, an underscore, or a dollar
