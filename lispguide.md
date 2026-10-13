@@ -312,7 +312,7 @@ not visible symmetry that you want to emphasize.
 (let* ((low 1)
        (high 2)
        (sum (+ (* low low) (* high high))))
-  ...))
+  ...)
 ```
 
 You must align nested forms if they occur across more than one line.
