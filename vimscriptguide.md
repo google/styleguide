@@ -65,7 +65,7 @@ Avoid using `:s[ubstitute]` as it moves the cursor and prints error messages.
 Prefer functions (such as `search()`) better suited to scripts.
 
 For many vim commands, functions exist that do the same thing with fewer side
-effects. See `:help functions()` for a list of built-in functions.
+effects. See `:help function-list` for a list of built-in functions.
 
 
 ### Fragile commands
