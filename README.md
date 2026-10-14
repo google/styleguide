@@ -77,7 +77,7 @@ primarily optimizing for Google's internal needs.
 
 [angular]: https://angular.dev/style-guide
 [cpp]: https://google.github.io/styleguide/cppguide.html
-[csharp]: csharp-style.md
+[csharp]: csharpguide.md
 [swift]: https://google.github.io/swift/
 [objc]: objcguide.md
 [gh-tracker]: https://github.com/google/styleguide/issues
