@@ -13,8 +13,10 @@ window.onload = function() {
   const missingPage = location.pathname.substr(12);
   const map = {
     'cppguide.xml': 'cppguide.html',
+    'eclipse-java-google-style.xml': 'https://github.com/google/google-java-format',
     'google-r-style.html': 'Rguide.html',
     'htmlcssguide.xml': 'htmlcssguide.html',
+    'intellij-java-google-style.xml': 'https://github.com/google/google-java-format',
     'javascriptguide.xml': 'jsguide.html',
     'javascriptguide.html': 'jsguide.html',
     'jsoncstyleguide.html': 'jsoncguide.html',
@@ -27,9 +29,12 @@ window.onload = function() {
     'vimscriptguide.xml': 'vimscriptguide.html',
     'xmlstyle.html': 'xmlguide.html',
   };
-  const newPage = map[missingPage];
+  let newPage = map[missingPage];
   if (newPage) {
-    navigation.navigate(`/styleguide/${newPage}`);
+    if (!newPage.startsWith('https')) {
+      newPage = `/styleguide/${newPage}`;
+    }
+    navigation.navigate(newPage);
   }
 };
 </script>
