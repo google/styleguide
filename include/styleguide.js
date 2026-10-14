@@ -1,3 +1,9 @@
+/**
+ * @license
+ * Copyright Google Inc.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 TocTypeEnum = {
   VERTICAL: 1,
   HORIZONTAL: 2
