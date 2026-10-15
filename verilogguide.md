@@ -223,7 +223,7 @@ Template:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // A quick description of the design element goes here. What its intent is,
 // and a general theory of operation.
 
@@ -346,7 +346,7 @@ If a whole semicolon-terminated statement fits on a single line, `begin` and
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Wrapped procedural block requires begin and end.
 always @(posedge clk) begin
   q <= d;
@@ -355,7 +355,7 @@ end
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // The exception case, where begin and end may be omitted as the entire
 // structure fits on a single line.
 always @(posedge clk) q <= d;
@@ -363,7 +363,7 @@ always @(posedge clk) q <= d;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Incorrect because a wrapped statement must have begin and end.
 always @(posedge clk)
   q <= d;
@@ -375,7 +375,7 @@ blocks).
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // The contents of the called macro are safely enclosed and controlled.
 if (expr) begin
   `MACRO(...);
@@ -389,7 +389,7 @@ end
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // A multi-statement macro would have only its first statement controlled:
 if (expr) `MACRO(...);
 
@@ -404,7 +404,7 @@ line.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // "end else begin" are on the same line.
 if (condition) begin
   foo = bar;
@@ -419,7 +419,7 @@ acceptable.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // begin/end may be omitted because each semicolon-terminated statement fits on
 // a single line (both styles are acceptable).
 if (condition) foo = bar;
@@ -428,7 +428,7 @@ else foo = bum;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Incorrect because "else" must be on the same line as "end".
 if (condition) begin
   foo = bar;
@@ -440,7 +440,7 @@ end
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // An exception is made for labeled blocks.
 if (condition) begin : a
   foo = bar;
@@ -457,7 +457,7 @@ the `begin` keyword on the same line as the case expression.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Consistent use of begin and end for each case item is good.
 unique case (state)
   kIdle: begin
@@ -478,7 +478,7 @@ endcase
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Case items that fit on a single line may omit begin and end.
 unique case (state)
   kIdle: state_next = kA;
@@ -493,7 +493,7 @@ endcase
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 unique case (state)
   kIdle:              // These lines are incorrect because we must not wrap
     state_next = kA;  // case items at a block boundary without using begin
@@ -534,7 +534,7 @@ Indent all members of struct, union, and enum declarations by two spaces.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 typedef struct packed {
   logic bar;
 } foo_t;
@@ -548,7 +548,7 @@ four spaces, like this:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign zulu = enabled && (
     alpha < bravo &&
     charlie < delta);
@@ -583,7 +583,7 @@ absence of other considerations, use the minimum number of lines.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign zulu = enabled && (alpha < bravo &&
                           charlie < delta);
 
@@ -615,7 +615,7 @@ the regular code.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 package foo_pkg;
 `ifdef FOO              // Good: branching directive left-aligned
   `include "foo.svh"    // normal indentation for non-branching directives
@@ -631,7 +631,7 @@ endpackage : foo_pkg
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 package foo_pkg;
   `ifdef FOO            // Bad: needs to be un-indented
   `include "foo.svh"
@@ -647,7 +647,7 @@ endpackage : foo_pkg
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 package foo_pkg;
   `ifdef FOO              // Bad: needs to be un-indented
     `include "foo.svh"    // Bad: extra indentation level
@@ -687,7 +687,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Normal indentation before if.  Include a space after if.
 if (foo) begin
 end
@@ -709,7 +709,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign a = ((addr & mask) == MyAddress) ? b[1] : ~b[0];
 parameter int Width = Msb - Lsb;
 function logic crc(input logic [7:0] data, mask = 8'hff);
@@ -717,7 +717,7 @@ function logic crc(input logic [7:0] data, mask = 8'hff);
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 assign a=((addr&mask)==MyAddress)?b[1]:~b[0];  // Bad: no space around operators
 parameter int Width=Msb - Lsb;  // Bad: no space around '='
 function automatic logic crc(input logic [7:0] data, mask=8'hff);  // Bad: no space around '='
@@ -728,7 +728,7 @@ is acceptable to use the compact notation for simple expressions. For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic [Width-1:0] foo;          // Declaration: compact is acceptable
 logic [Width - 1 : 0] foo;      // Declaration: spaced is fine also
 assign foo = bar[Width-1:0];    // Slice: compact is acceptable
@@ -740,13 +740,13 @@ operators.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign foo = bar[Factor1 - Factor0 - 1:0]; // Good: operators are space-delimited
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 assign foo = bar[Factor1-Factor0-1:0]; // Bad: complex expression without spaces
 ```
 
@@ -755,7 +755,7 @@ similar to an equivalent if-then-else line. For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign a = ((addr & mask) == MyAddress)
            ? matches_value
            : doesnt_match_value;
@@ -771,7 +771,7 @@ Additional whitespace is allowed for readability.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 bus = {addr, parity, data};
 a = myfunc(lorem, ipsum, dolor, sit, amet, consectetur, adipiscing, elit,
            rhoncus);
@@ -780,7 +780,7 @@ mymodule mymodule (.a(a), .b(b));
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 {parity,data} = bus;
 a = myfunc(a,b,c);
 mymodule mymodule (.a(a),.b(b));
@@ -803,7 +803,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic [7:0]  my_interface_data;
 logic [15:0] my_interface_address;
 logic        my_interface_enable;
@@ -824,7 +824,7 @@ arrays, and queues.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic [7:0][3:0] data[128][2];
 typedef logic [31:0] word_t;
 bit bit_array[512];
@@ -835,7 +835,7 @@ data_t some_q[$];
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // There must not be a space between dimensions.
 logic [7:0] [3:0] data[128] [2];
 // There must be a space around packed dimensions.
@@ -862,7 +862,7 @@ to one symbol, so it must not be added. Parameter lists must follow the
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 my_fifo #(.Width($bits(nibble_t)), .Depth(2)) my_fifo_nibble(.in, .out);
 
 class foo extends bar #(32, 8);  // unqualified base class
@@ -876,7 +876,7 @@ my_pkg::x_class#(8, 1) bar;  // package-qualified name
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 my_fifo#(.Width(4), .Depth(2)) my_fifo_2by4(.in, .out);  // instantiation
 
 class foo extends bar#(32, 8);  // unqualified base class
@@ -899,7 +899,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 begin : foo
   my_statement_label: assert(ptr > 0);
 end : foo
@@ -907,7 +907,7 @@ end : foo
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 end:bar              // Block label must have a space before and after the colon.
 endmodule: foobar    // Block label must have a space before the colon.
 
@@ -926,7 +926,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 unique case (my_state)
   kInit:   $display("Shall we begin");
   kError:  $display("/this is fine meme");
@@ -939,7 +939,7 @@ endcase
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 unique case (1'b1)
   (my_state == kError)  : interrupt = 1;  // Excess whitespace before colon
   default:begin end                       // Missing space after colon
@@ -956,7 +956,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module my_module (
     ...
 );
@@ -970,7 +970,7 @@ module my_module #(
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 module my_module( // There must be a space after the module name.
     ...
 );
@@ -992,14 +992,14 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 my_module #(...) my_module (...);
 my_module my_module (...);
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // The space after the instance name is missing.
 my_module #(...) my_module(...);
 my_module my_module(...);
@@ -1015,13 +1015,13 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 process_packet(pkt);
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 process_packet (pkt);  // There must not be a space before "("
 ```
 
@@ -1035,14 +1035,14 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `uvm_error(ID, "you fail")
 `ASSERT(name_A, a & b, clk, rst)
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 `uvm_error (ID, "you fail")  // There must not be a space before "("
 `ASSERT (name_A, a & b, clk, rst)
 ```
@@ -1060,7 +1060,7 @@ not split a token, but must not exceed the maximum line length.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `define REALLY_LONG_MACRO(arg1, arg2, arg3) \
     do_something(arg1);                     \
     do_something_else(arg2);                \
@@ -1084,7 +1084,7 @@ operation when immediately preceded by any other operator.</span>
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic [7:0] a;
 logic b;
 logic c;
@@ -1093,7 +1093,7 @@ assign c = b & (&a);  // Parentheses make the intent clear
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 logic [7:0] a;
 logic b;
 logic c;
@@ -1110,7 +1110,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign state_next = condition_b
     ? (condition_a
        ? a_and_b
@@ -1123,7 +1123,7 @@ meaning can be unclear and error-prone to humans:
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 assign state_next = condition_b
     ? condition_a
     ? a_and_b
@@ -1145,7 +1145,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // This is a multi-line comment that describes the basic functionality and key
 // features of the following module.
 module foo;
@@ -1159,7 +1159,7 @@ localparam bit Baz = 1;  // This comment describes the item to the left. If
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 /* Grepping this line looks commented.
    Grepping this line looks uncommented.
    That is confusing. */
@@ -1273,7 +1273,7 @@ unique, descriptive name.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 logic temp;  // Bad: temp is not a descriptive name
 
 always_comb begin
@@ -1305,7 +1305,7 @@ When naming boolean parameters, prefer positive enablement names ("Foo" or
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Good: binary parameters/localparams are named positively ("Enable"),
 // regardless of their default values.
 parameter bit EnableFoo = 0;
@@ -1314,7 +1314,7 @@ parameter bit EnableBar = 1;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Bad: Parameter names are named negatively. Both the names and the values
 // must instead be inverted.
 parameter bit DisableFoo = 1;
@@ -1370,7 +1370,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 input logic       smbus_clk,  // Clocks an "smbus" clock domain.
 input logic       smbus_rst,  // Synchronous reset, clocked by smbus_clk
 input logic       smbus_arst,  // Asynchronous reset, de-assert clocked by smbus_clk
@@ -1415,7 +1415,7 @@ Code example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module fifo_controller (
     input logic clk,
     input logic rst,
@@ -1462,7 +1462,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module foo_to_bar_cdc_fifo (
   // This module has two clocks, foo and bar:
   input  logic       foo_clk,
@@ -1514,7 +1514,7 @@ An example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module foo (
     input logic clk,
     input logic rst,
@@ -1541,7 +1541,7 @@ module foo (
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 module foo (
     input logic clk,
     input logic rst,
@@ -1580,7 +1580,7 @@ Example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Pipe stage 1:
 always @(posedge clk) begin
   p1_x <= in_x;
@@ -1679,7 +1679,7 @@ Example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 localparam int InterfaceWidth = 64;  // Bits
 localparam int InterfaceWidthBytes = (InterfaceWidth + 7) / 8;
 localparam int InterfaceWidth64bWords = (InterfaceWidth + 63) / 64;
@@ -1731,7 +1731,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 output logic [`DATA_WORD] data,
 output logic              data_valid,
 
@@ -1757,7 +1757,7 @@ Example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic [15:0] foo;  // the Q output of a register
 logic [15:0] foo_next;  // the D input of that same register
 logic        foo_le;  // the load-enable for the foo register
@@ -1792,7 +1792,7 @@ Example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 always @(posedge clk) begin
   data_valid_d <= data_valid;
   data_valid_d2 <= data_valid_d;
@@ -1825,7 +1825,7 @@ Example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // signed, 3 bit integer, 12 bit fractional
 logic signed [14:0] foo_s3p12;
 // unsigned, 4 bit integer, 9 bit fractional
@@ -1858,7 +1858,7 @@ Examples:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Semantic/unit qualifier before register/delay suffix
 logic foo_valid_d;
 logic [15:0] packet_len_bytes_next;
@@ -1879,7 +1879,7 @@ logic dma_req_n_d;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Bad: Register/delay suffix placed before semantic or fixed-point suffix
 logic in_d_valid;
 logic [15:0] packet_len_next_bytes;
@@ -1921,7 +1921,7 @@ name of a group of related macros, followed by a pair of underscores:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // The following is the BAR macro in the FOO namespace (optional)
 // of the DMA block.
 `define DMA_FOO__BAR(params) \
@@ -1949,7 +1949,7 @@ Example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `define _MAKE_THING(_x) \
     thing i_thing_##_x (.clk(clk), .i(i##_x) .o(o##_x));
 `_MAKE_THING(a)
@@ -1975,7 +1975,7 @@ string.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `define STRINGIFY(_x) `"_x`"
 ```
 
@@ -1983,7 +1983,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `define DISPLAY_VALUE(_x) $display("%s: %p", `STRINGIFY(_x), (_x))
 ```
 
@@ -1991,7 +1991,7 @@ Don't invent alternative implementations:
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // This doesn't work with all tools, use STRINGIFY instead:
 `define BAD_DISPLAY_VALUE(_x) $display("%s: %p", "_``_x``_", (_x))
 ```
@@ -2012,7 +2012,7 @@ indices. This alternative has the following properties:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `define BOUNDED_LOOKUP(__arr, __idx) \
     (($size(__arr) == 1'b1) ? __arr[$high(__arr)] \
     : (__idx[(($high(__arr) == 0) ? 1 : $clog2($high(__arr) + 1)) - 1 : 0] < $low(__arr) || \
@@ -2027,7 +2027,7 @@ The `X_OF_TYPE` macro presents a standard way to typecast `'X`.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `define X_OF_TYPE(__type) \
   (__type'({$bits(__type){1'bx}}))
 ```
@@ -2043,7 +2043,7 @@ this document.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Concurrent assertion to check that a property is not violated. The assertion
 // is disabled if reset is active. The sampling events are positive edges of the
 // clock.
@@ -2110,7 +2110,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `ifdef SIMULATION
 
 state_t prev_state = IDLE;
@@ -2135,7 +2135,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `ifdef ASSERT_ON
 
 int outstanding_credits = 0;
@@ -2174,7 +2174,7 @@ The legal names to identify supported simulators are:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `ifdef VCS
   $stack();
 `endif  // VCS
@@ -2254,7 +2254,7 @@ There are only a few cases where include directives are allowed:
 
     <div class='goodcode'></div>
 
-    ```systemverilog
+    ```verilog
     package foo_pkg;
       // Good: breaking large package into smaller files is okay.
       `include "foo_functions.svh"
@@ -2263,7 +2263,7 @@ There are only a few cases where include directives are allowed:
 
     <div class='badcode'></div>
 
-    ```systemverilog
+    ```verilog
     // Include 'foo_pkg' package because module 'foo_top' depends on it.
     // Bad: can lead to a repeated declaration of a package.
     `include "foo_pkg.sv"
@@ -2277,7 +2277,7 @@ There are only a few cases where include directives are allowed:
 
     <div class='goodcode'></div>
 
-    ```systemverilog
+    ```verilog
     module foo (
         `include "generated_signals.svh"  // Good: snippet, which cannot be wrapped
     );
@@ -2286,7 +2286,7 @@ There are only a few cases where include directives are allowed:
 
     <div class='badcode'></div>
 
-    ```systemverilog
+    ```verilog
     module foo ();
       `include "common_assertions.svh"  // Bad: wrap into a module instead
     endmodule
@@ -2303,7 +2303,7 @@ unit. They must not be used since the current style guide rule on the use of
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Bad: include guards are not needed.
 `ifndef PATH_TO_MY_CODE_VH_
 `define PATH_TO_MY_CODE_VH_
@@ -2323,7 +2323,7 @@ macro files.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `ifndef USING_SIMULATOR_A
 `ifndef USING_SIMULATOR_B
 `DIE("Unknown or unsupported simulator.")
@@ -2333,7 +2333,7 @@ macro files.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 `ifndef USING_SIMULATOR_A
 `ifndef USING_SIMULATOR_B
 Error: intentional syntax error makes this unparseable without preprocessing
@@ -2379,7 +2379,7 @@ Example of a module header without parameters:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module foo (
     input  logic clk,
     input  logic rst,
@@ -2393,7 +2393,7 @@ Example of a module header with a
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module foo #(
     parameter int Width = 8
 ) (
@@ -2408,7 +2408,7 @@ Example of a module header with an [import statement](#package-imports):
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module foo
   // Imports the package for use in the header definition.
   // This is a complete statement within the module, so we indent one level.
@@ -2428,7 +2428,7 @@ Do not use Verilog-95 style:
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 module foo (a, b, c, d);
   input  logic [2:0] a;
   output logic b;
@@ -2494,7 +2494,7 @@ Declare parameterized modules using a parameter port list, not with `defparam`.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module foo #(
     parameter int ParameterName = 1,
     parameter type type_parameter_name_t = logic
@@ -2532,7 +2532,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module cdc_fifo #(
     parameter int Width = 16,
     parameter int Depth = 4
@@ -2567,7 +2567,7 @@ Some examples of legal instance names:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // A single instance of my_decoder within a module:
 my_decoder my_decoder ( ... );
 
@@ -2596,7 +2596,7 @@ like this:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 my_module my_module(
     .clk(clk),
     .rst(rst),
@@ -2610,7 +2610,7 @@ If the port and the connecting signal have the same name, you can use the
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 my_module my_module(
     .clk,
     .rst,
@@ -2642,7 +2642,7 @@ Examples:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 my_module my_module (
     .thirty_two_bit_input({16'd0, sixteen_bit_word})
 );
@@ -2650,7 +2650,7 @@ my_module my_module (
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 my_module my_module (
     // Incorrectly implicitly extends from 16 bit to 32 bit
     .thirty_two_bit_input(sixteen_bit_word)
@@ -2670,7 +2670,7 @@ parameters using the named parameter style, as follows:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 my_module #(
     .Height(5),
     .Width(10)
@@ -2679,7 +2679,7 @@ my_module #(
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 my_module #(5, 10) my_module (...);
 ```
 
@@ -2710,7 +2710,7 @@ Example of a conditional generate construct:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 if (TypeIsPosedge) begin : gen_posedge_type
   always @(posedge clk) foo <= bar;
 end else begin : gen_negedge_type
@@ -2722,7 +2722,7 @@ Example of a loop generate construct:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 for (genvar bus = 0; bus < NumberOfBuses; bus++) begin : gen_my_buses
   my_bus #(.index(bus)) my_bus (.foo(foo), .bar(bar[bus]));
 end
@@ -2742,7 +2742,7 @@ tools, this guide prohibits such "bare" generate blocks. Note that the similar
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 module foo (
     input  logic bar,
     output logic foo
@@ -2783,7 +2783,7 @@ For example:
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 package foo_pkg;
   parameter int PageSizeBytes = 16 * bar_pkg::Kibi;
   ...
@@ -2810,7 +2810,7 @@ of conflicts.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module foo
   import bar_pkg::AddressWidth; // Good: allows usage of package object in ports list
 (
@@ -2824,7 +2824,7 @@ module foo
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 import foo_pkg::*;  // Bad: pollutes global namespace
 module foo
 (
@@ -2905,14 +2905,14 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic signed [31:0] x_velocity;  // say what you mean: a signed 32-bit integer.
 typedef logic [7:0] byte_t;
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 bit signed [63:0] stars_in_the_sky;  // 2-state logic doesn't belong in RTL
 int grains_of_sand;  // Or wait, did I mean integer?  Easy to confuse!
 ```
@@ -2923,7 +2923,7 @@ initialization. For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 wire [7:0] sum = a + b;  // Continuous assignment
 
 logic [7:0] acc = '0;  // Initialization
@@ -2954,7 +2954,7 @@ ASIC package IOs, or FPGA IO buffers) may use `UPPER_SNAKE_CASE`.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module chip_top (
     input logic RESET_N,
     output logic LINK_LED,
@@ -2977,7 +2977,7 @@ considered default values and are permitted.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module foo (
     // Input d must be assigned when this module is instantiated
     input logic d,
@@ -2988,7 +2988,7 @@ module foo (
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 module foo (
     // Bad: Do not assign a default value to an input port
     input logic d = '0,
@@ -3048,7 +3048,7 @@ magic numbers.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Declares a symbolically named constant for the value 0xD5
 localparam logic [DataWidthBits-1:0] StartFrameDelimiter = 8'hD5;
 ...
@@ -3060,7 +3060,7 @@ end
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Bad: What's the significance of this number?
 if (data == 8'hD5) begin
   next_state = kRxData;
@@ -3072,7 +3072,7 @@ name adds no value. These type of constants are not considered magic numbers.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Counter uses unnamed constant 1, but the meaning is obvious
 cycle_cnt <= cycle_cnt + 1;
 ```
@@ -3089,7 +3089,7 @@ overridden when the module is instantiated.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module foo #(
     parameter int NumEntries = 1,  // Tunable parameter
     localparam int IndexWidth = $clog2(NumEntries)  // Must not be overridden
@@ -3104,7 +3104,7 @@ endmodule
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 module foo #(
     localparam int Bar = 7,  // Bad: Bar is a constant so it goes close to usage
     parameter int NumEntries = 1,
@@ -3129,13 +3129,13 @@ When declaring vectors and arrays, the msb and lsb must be non-negative.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic [14:0] foo;
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 logic [13:-1] foo;
 ```
 
@@ -3154,7 +3154,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 typedef logic [7:0] u8_t;
 logic [31:0] u32_word;
 u8_t [1:0] u16_word;
@@ -3184,7 +3184,7 @@ initializing the unpacked array directly is acceptable with caution).
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Good: Assign unpacked array elements individually by index to avoid
 // reversed-ordering mistakes.
 logic [15:0] word_array[3];
@@ -3229,7 +3229,7 @@ lowercase alphanumeric characters and underscores and end with `_t`.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 typedef struct packed {
   logic  dir;
   int    value;
@@ -3240,7 +3240,7 @@ data_t packet;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 struct packed {  // Typedef is missing
   logic  dir;
   int    value;
@@ -3257,7 +3257,7 @@ type hierarchies by making the type-cast like behavior of unions explicit.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 typedef union packed {
   read_id_t   as_read_id;  // as_read_id prefix to refer to read_id_t type.
   write_id_t  as_write_id;
@@ -3268,7 +3268,7 @@ assign write_id = cmd.id.as_write_id;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 typedef union packed {
   read_id_t   read_id;  // as_* is missing
   write_id_t  write_id;
@@ -3300,7 +3300,7 @@ assignable.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 typedef enum logic {  // A 4-state storage type
   kWrite,
   kRead
@@ -3310,7 +3310,7 @@ access_t req_access, resp_access;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 enum {  // Typedef is missing, storage type is missing.
   Write,
   Read
@@ -3333,7 +3333,7 @@ recommended to ensure consistency.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Declare design-wide vector typedefs in a package.
 package my_pkg;
   typedef logic [AddrWidth-1:0] addr_t;
@@ -3350,7 +3350,7 @@ endmodule
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 module my_module (
   ...
 );
@@ -3368,7 +3368,7 @@ as a whole (see
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Good: Use local typedef to apply signedness to elements of a packed array.
 typedef logic signed [DataWidth - 1:0] data_t;
 data_t [NumChannels - 1:0] my_channel_data;
@@ -3376,7 +3376,7 @@ data_t [NumChannels - 1:0] my_channel_data;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Bad: Signedness applies to the entire packed array, not the elements.
 logic signed [NumChannels - 1:0][DataWidth - 1:0] my_channel_data;
 ```
@@ -3411,7 +3411,7 @@ the following example.</span>
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Description of the function's behavior, inputs, and outputs
 function automatic logic foo(logic x, logic y);
   // Local variables
@@ -3471,7 +3471,7 @@ declare the function as `void`.</span>
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // The return type of the function is explicitly defined as 'bit'
 function automatic bit foo(int a);
 // The function has no return value.
@@ -3480,7 +3480,7 @@ function automatic void foo(int a);
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // The function's data type is implicitly declared
 function automatic foo(int a);
 ```
@@ -3495,14 +3495,14 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Both arguments have explicitly declared 'int' as their storage type.
 task automatic foo(int a, int b);
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Bad: No storage type explicitly declared for 'b'.
 task automatic foo(int a, b);
 ```
@@ -3518,14 +3518,14 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 task automatic foo(int a, int b);  // Both arguments treated as inputs.
 function automatic bit foo(input int a, output int b, inout int c, ref int d);
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Potential bug: Although not labeled, "b" will be treated as "ref".
 task automatic foo(ref int a, int b);
 ```
@@ -3604,7 +3604,7 @@ implemented as follows:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic foo_le;
 logic [7:0] foo, foo_next;
 
@@ -3626,7 +3626,7 @@ Example:
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 if (cond1) begin
   abc <= 4'h1;
 end
@@ -3650,7 +3650,7 @@ Example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `ASSERT_KNOWN(state_is_known_A, state, clk, rst)
 always @(posedge clk) begin
   s1 <= s1_default;
@@ -3706,7 +3706,7 @@ to the raw number, to avoid timescale issues.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 q <= #10ns d;
 #(wait_in_ns * 1ns);
 #0;  // Special case.  No time units required
@@ -3714,7 +3714,7 @@ q <= #10ns d;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Missing time units.
 q <= #10 d;
 #wait_in_ns;
@@ -3787,7 +3787,7 @@ name, to make them more readable when viewing waveform traces.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Define the states
 typedef enum logic [1:0] {
   kIdle, kFrameStart, kAccStoreWrite, kBandEnd
@@ -3889,7 +3889,7 @@ Example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 $display("%b", 1'bx == 1'b1);  // produces 1'bx
 $display("%b", 1'bx != 1'b1);  // produces 1'bx
 $display("%b", 1'bx & 1'b1);   // produces 1'bx
@@ -3907,7 +3907,7 @@ Example:
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 always_comb begin
   if (value) result = 1'b0;  // value is 1'b1
   else result = 1'b1;        // value is 1'b0 or 1'bx
@@ -3922,7 +3922,7 @@ readability, an alternative is to use assertions to catch `X`.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 always_comb begin
   result = value ? 1'b1 : 1'b0;  // 1'bx produces 1'bx
 end
@@ -3930,7 +3930,7 @@ end
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `ASSERT_KNOWN(value_is_known_A, value, clk, rst)
 always_comb begin
   if (value) result = 1'b0;     // value is 1'b1
@@ -3943,7 +3943,7 @@ Another alternative is to have explicit `if` and `else if` clauses for `0` and
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 always_comb begin
   if (value) result = 1'b0;        // value is 1'b1
   else if (!value) result = 1'b1;  // value is 1'b0
@@ -3968,7 +3968,7 @@ array contents.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // An X in index gets silently squashed in simulation.
 assign buf[index] = foo;
 ```
@@ -3977,7 +3977,7 @@ Instead, assertions must be used to catch `X` in the array index.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `ASSERT_KNOWN(index_is_known_A, index, clk, rst)
 assign buf[index] = foo;
 ```
@@ -4034,7 +4034,7 @@ are known.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Bad: When valid is '0', wdata is considered don't-care
 assign wdata = valid ? data : 'x;
 assign we = valid;
@@ -4042,7 +4042,7 @@ assign we = valid;
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign wdata = data;
 assign we = valid;
 ```
@@ -4062,7 +4062,7 @@ MSBs.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // For values of index > 4, the output ‘foo’ is treated as don’t-care
 logic       foo;
 logic [2:0] index;
@@ -4076,7 +4076,7 @@ to power-of-two sizes. Also, add an assertion to catch out-of-range indices.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 localparam BufferSize = 5;
 
 logic       foo;
@@ -4102,7 +4102,7 @@ the general case.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign foo = `BOUNDED_LOOKUP(buffer, index)
 ```
 
@@ -4125,7 +4125,7 @@ Here is an example of a style-compliant case statement:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 always_comb begin
   unique case (select)
     2'b00:   foo = bar0;
@@ -4172,7 +4172,7 @@ Here is an example of a style-compliant `casez` statement:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 always_comb begin
   unique casez (select)
     3'b000: operand = accum0 >> 0;
@@ -4205,7 +4205,7 @@ squashed.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 typedef enum logic [1:0] {kMode0, kMode1, kMode2} mode_t;
 mode_t mode;
 
@@ -4221,7 +4221,7 @@ end
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 typedef enum logic [1:0] {kMode0, kMode1, kMode2} mode_t;
 mode_t mode;
 
@@ -4242,7 +4242,7 @@ case, using the default for x-propagation is the recommended style.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 typedef enum logic [1:0] {kMode0, kMode1, kMode2, kMode3} mode_t;
 mode_t mode;
 
@@ -4264,7 +4264,7 @@ assignment must be typecast. It is recommended that projects use a
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 typedef enum logic [1:0] {kFoo0, kFoo1, kFoo2, kFoo3} foo_t;
 foo_t foo1, foo2;
 
@@ -4286,7 +4286,7 @@ unspecified case-items.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `ASSERT_KNOWN(mode_is_known_A, mode, clk, rst)
 always_comb begin
   // Default behavior
@@ -4315,7 +4315,7 @@ timing is a concern.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // If c_grant[0] == 1 and c_grant[1] == 1, out is don't-care.
 always_comb begin
   unique case (1'b1)
@@ -4328,7 +4328,7 @@ end
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // If c_grant[0] == 1 and c_grant[1] == 1, out is explicitly 0.
 always_comb begin
   unique case (c_grant)
@@ -4382,7 +4382,7 @@ operations.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic signed [7:0]  a = 8'sh80;   // equals signed(-128)
 logic               incr = 1'b1;  // equals unsigned(1)
 logic signed [15:0] sum;
@@ -4394,7 +4394,7 @@ end
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 logic signed [7:0]  a = 8'sh80;   // equals signed(-128)
 logic               incr = 1'b1;  // equals unsigned(1)
 logic signed [15:0] sum;
@@ -4413,7 +4413,7 @@ operations.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic        [7:0] unsigned_foo = 8'h00;   // equals unsigned(0)
 logic signed [7:0] signed_bar   = 8'shFF;  // equals signed(-1)
 logic              bar_less_than_foo;
@@ -4430,7 +4430,7 @@ end
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 logic        [7:0] unsigned_foo = 8'h00;   // equals unsigned(0)
 logic signed [7:0] signed_bar   = 8'shFF;  // equals signed(-1)
 logic              bar_less_than_foo;
@@ -4459,7 +4459,7 @@ bit location is determined by the sign of the argument and will not flip.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic signed [7:0] foo = 8'sh80;  // equals signed(-128)
 logic signed [7:0] bar;
 always_comb begin
@@ -4469,7 +4469,7 @@ end
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 logic signed [7:0] foo = 8'sh80;  // equals signed(-128)
 logic signed [7:0] bar;
 always_comb begin
@@ -4514,7 +4514,7 @@ Examples:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 localparam int Width = 5;  // int doesn't need explicit width
 localparam bit FeatureFlag = 1;  // bit type doesn't need explicit width
 localparam logic [3:0] Bar = 4'd4;
@@ -4536,7 +4536,7 @@ assign foo7 = foo8 + 4;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 localparam logic [3:0] Bar = 4;
 
 logic [7:0] foo1, foo2, foo3, foo4;
@@ -4557,7 +4557,7 @@ Examples:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic [3:0] a, b;
 logic out;
 
@@ -4583,7 +4583,7 @@ end
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 logic [3:0] a, b;
 logic out;
 
@@ -4608,7 +4608,7 @@ of bitwise operators (for example, &, |, ~).</span>
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic a, b, c;
 ...
 // This aids readability as the logical operator makes clear `a` and `b`
@@ -4618,7 +4618,7 @@ assign c = a && b;
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic a, b, c;
 ...
 // `a` and `b` could be multi-bit vectors, it is not clear from the assignment.
@@ -4640,7 +4640,7 @@ Example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign abc_next = abc + 4'h1;
 ```
 
@@ -4654,7 +4654,7 @@ Examples:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic [7:0] a, b;
 logic [6:0] c;
 
@@ -4666,7 +4666,7 @@ assign a = b;          // Good: the parser would warn on width mismatch.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 logic [7:0] a, b;
 
 assign a[7:0] = 8'd7;  // Bad: redundant and can mask linter warnings.
@@ -4707,7 +4707,7 @@ For example, the following code is wrong:
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 module compose_bitmap (
     input logic en_a,
     input logic en_b,
@@ -4727,7 +4727,7 @@ explicit sizes to the sub-expressions:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 assign en_bitmap = {4'(en_a << 3), 4'(en_b << 3)};
 ```
 
@@ -4735,7 +4735,7 @@ Or by decomposing the expression into explicitly sized partial results:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 logic [3:0] en_a_bitmap;
 logic [3:0] en_b_bitmap;
 assign en_a_bitmap = en_a << 3;
@@ -4814,7 +4814,7 @@ easily lead to data propagation bugs.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 typedef struct packed {
   logic         rw;
   foo_address_t addr;
@@ -4828,7 +4828,7 @@ bar_interrupt_t bar_intr;  // Good: this has different flow control than foo.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 typedef struct packed {
   logic           rw;
   foo_address_t   addr;
@@ -4931,7 +4931,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 output logic [63:0] write_to_fifo_data,
 output logic        write_to_fifo_req,
 input  logic        write_to_fifo_ack
@@ -4964,7 +4964,7 @@ structural separation of logic that belongs to different clock domains.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 module module_foo_bar (
     ...
 );
@@ -4987,7 +4987,7 @@ endmodule
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 module module_foo_bar (
     ...
 );
@@ -5138,7 +5138,7 @@ The second category is also referred to as "designer tests".
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 constraint legal_pkt_size_in_bytes_c {
   pkt_size_in_bytes inside {[64:1500]};
 }
@@ -5146,7 +5146,7 @@ constraint legal_pkt_size_in_bytes_c {
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 constraint c_My_Constraint { // c_ at the beginning.  Not lower_snake_case.
   pkt_size_in_bytes inside {[64:1500]};
 }
@@ -5165,7 +5165,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 bit en_ingress;
 bit plusarg_found = $value$plusargs("en_ingress=%d", en_ingress);
 if (en_ingress) begin
@@ -5175,7 +5175,7 @@ end
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 bit en_ingress;
 if ($test$plusargs("en_ingress")) begin
   // Do stuff...
@@ -5193,7 +5193,7 @@ For example:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 int foo;
 int prefix_bar_suffix;
 // Any of the following plusarg run-time calls would be acceptable:
@@ -5207,7 +5207,7 @@ int prefix_bar_suffix;
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 string file_name;
 // Plusarg string name and variable names must match.  These are not acceptable:
 // +filename="foo.txt"
@@ -5238,7 +5238,7 @@ the user to manually decode raw values.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 $display("0x%0x", some_hex_value);
 $display("0b%0b", some_binary_value);
 $display("'h%0h", some_hex_value);
@@ -5248,7 +5248,7 @@ $display("%0d", some_decimal_value);
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 $display("%0x", some_hex_value);
 $display("%0b", some_binary_value);
 $display("0d%0d", some_decimal_value);
@@ -5267,7 +5267,7 @@ handled by `$display()`. Simulator implementation of this functionality varies.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 string str_type = "Hello %s";
 // Good: String type formatting using $sformatf()
 string str_type_sformat = $sformatf(str_type, "world!");
@@ -5279,14 +5279,14 @@ $display($sformatf(str_type, "world!"));
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // String literal formatting with $display() is allowed
 $display("Hello %s", "world!");
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 string str_type = "Hello %s";
 // Bad: String type formatting using $display()
 $display(str_type, "world!");
@@ -5300,14 +5300,14 @@ next line, use `{}` string concatenation operator instead.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 $display({"a really long ",
           "long long quoted string"});
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 $display("a really long \
 long long quoted string");  // Bad: continuation of a string literal
 ```
@@ -5322,7 +5322,7 @@ concise and less prone to subtle errors.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 foreach (data[byte_i]) begin
   data[byte_i] = 0;
 end
@@ -5335,7 +5335,7 @@ end
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Less readable and note the typo below, must be '<' not '<='.
 for (int byte_i = 0; byte_i <= data.size(); byte_i++) begin
   data[byte_i] = 0;
@@ -5356,14 +5356,14 @@ assertions result in unrandomized objects.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 ret = item.randomize() with {<constraints>};
 assert(ret);
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 assert(randomize(<some variables>) with {<constraints>});
 assert(item.randomize() with {<constraints>});
 assert(function_with_side_effects());
@@ -5377,7 +5377,7 @@ it was not intending to wait for.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 fork begin : isolation_fork
   fork
     begin
@@ -5402,7 +5402,7 @@ For example, **do not do the following**:
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 void'(randomize(<some variables>) with {<constraints>});
 void'(item.randomize() with {<constraints>});
 void'(uvm_config_db#(<object>)::get(<parameters>));
@@ -5414,7 +5414,7 @@ order to handle the potential error.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 if (!item.randomize() with {<constraints>}) begin
   <issue error>
 end
@@ -5435,7 +5435,7 @@ arrays:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 bit channel_enable[int];
 register_t registers[string];
 int object_count[index_type];
@@ -5443,7 +5443,7 @@ int object_count[index_type];
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 int object_count[*];  // Bad: wildcard indexed array
 ```
 
@@ -5480,7 +5480,7 @@ every simulator.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `ifdef VCS
   $stack();
 `endif
@@ -5532,7 +5532,7 @@ future-proofing. For user-defined base classes, it is mandatory.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 class my_test extends base_test;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
@@ -5543,7 +5543,7 @@ endclass
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 class my_test extends base_test;
   virtual function void build_phase(uvm_phase phase);
     // Missing super.build_phase(phase)
@@ -5577,13 +5577,13 @@ Although forbidden, it's recommended to setup your infrastructure to treat ``
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 `uvm_error(get_full_name(), $sformatf("Unsupported burst type : %s", burst_type.name()))
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 $display("Debug: Byte enable=%d", byte_en);
 uvm_report_info("ID", "Debug message", UVM_LOW)
 `uvm_warning(get_full_name(), "Incorrect condition, maybe")
@@ -5601,7 +5601,7 @@ contexts like `if` statements without `begin` / `end` blocks.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // Good: UVM macros must not be followed by a semicolon.
 `uvm_info("ID", "Message", UVM_LOW)
 `uvm_do(my_seq)
@@ -5609,7 +5609,7 @@ contexts like `if` statements without `begin` / `end` blocks.
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Bad: Do not append a trailing semicolon to UVM macro calls.
 `uvm_info("ID", "Message", UVM_LOW);
 `uvm_do(my_seq);
@@ -5641,14 +5641,14 @@ argument so that the component hierarchy is built properly.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 env_h = tb_block_env::type_id::create("env_h", this);
 ip_pkt = tx_seq_item::type_id::create("ip_pkt");
 ```
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Direct calls to new() bypass the UVM factory and prevent overrides.
 env_h = new("env_h", this);
 ip_pkt = new("ip_pkt");
@@ -5669,7 +5669,7 @@ UVM will match the variable names in the code.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 my_agent = my_agent_type::type_id::create("my_agent", this);
 
 // For arrays, include the index in the string name
@@ -5678,7 +5678,7 @@ my_agents[i] = my_agent_type::type_id::create($sformatf("my_agents[%0d]", i), th
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // String name does not match variable name
 my_agent = my_agent_type::type_id::create("different_name", this);
 
@@ -5703,7 +5703,7 @@ When defining a constructor for a UVM class:
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 // uvm_object derived class constructor
 function new (string name = "");
 
@@ -5713,7 +5713,7 @@ function new (string name, uvm_component parent);
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 // Bad: name default parameter must be ""
 function new (string name = "my_object");
 
@@ -5731,7 +5731,7 @@ line using `+UVM_TESTNAME=test_name` instead of hardcoding it in the code.
 
 <div class='goodcode'></div>
 
-```systemverilog
+```verilog
 initial begin
   run_test();
 end
@@ -5739,7 +5739,7 @@ end
 
 <div class='badcode'></div>
 
-```systemverilog
+```verilog
 initial begin
   run_test("my_test_name");
 end
