@@ -551,11 +551,15 @@ Vim plugins should provide any or all of the following: **Commands**,
 ### Commands
 
 
+<div>
+
 *   Define in `plugin/commands.vim`.
 *   CommandNamesLikeThis.
 *   Prefer semantic names to a unified prefix.
 *   Do not use `[!]`
 *   Extract logic into functions.
+
+</div>
 
 *   `CommandNamesLikeThis`
 
@@ -611,11 +615,15 @@ Vim plugins should provide any or all of the following: **Commands**,
 ### Autocommands
 
 
+<div>
+
 *   Define in `plugin/autocmds.vim`.
 *   Use augroups.
 *   `augroup_names_like_this`.
 *   Clear the augroup first.
 *   Extract logic into functions.
+
+</div>
 
 *   All autocommands should be defined in the `plugin/autocmds.vim` file.
 
@@ -645,11 +653,15 @@ Vim plugins should provide any or all of the following: **Commands**,
 ### Functions
 
 
+<div>
+
 *   FunctionNamesLikeThis.
 *   Autoload all functions.
 *   Prefix script-local functions with `s:`
 *   Use `[!]`.
 *   Use `[abort]`.
+
+</div>
 
 *   `FunctionNamesLikeThis`
 
@@ -695,9 +707,13 @@ Vim plugins should provide any or all of the following: **Commands**,
 ### Mappings
 
 
+<div>
+
 *   Provide opt-in key mappings in `plugin/mappings.vim`.
 *   `<Plug>` mappings can be defined in `plugin/plugs.vim` (unlike mappings.vim,
     plugs.vim is opt-out).
+
+</div>
 
 *   Define key mappings in `plugin/mappings.vim`, using
     `maktaba#plugin#MapPrefix` to get a prefix.
