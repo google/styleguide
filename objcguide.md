@@ -19,6 +19,9 @@
 > refresher, please read [Programming with
 > Objective-C](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html).
 
+* TOC
+{:toc}
+
 ## Principles
 
 ### Optimize for the reader, not the writer

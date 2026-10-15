@@ -8,7 +8,7 @@
  * @fileoverview Main entry point for HTML files to support CSP.
  */
 
-import {styleAlerts} from './mdguide.js';
+import {styleAlerts, tidyToc} from './mdguide.js';
 
 /**
  * Initialize the page.
@@ -16,6 +16,7 @@ import {styleAlerts} from './mdguide.js';
 function main() {
   const document = window.document;
   styleAlerts(document);
+  tidyToc(document);
 }
 
 // We're loaded as a module which defers execution until after the DOM is ready.
