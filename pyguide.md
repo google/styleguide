@@ -101,7 +101,6 @@ To help you format code correctly, we've created a [settings file for Vim](googl
 Many teams use the [Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
 auto-formatter to avoid arguing over formatting.
 
-
 <a id="s2-python-language-rules"></a>
 <a id="2-python-language-rules"></a>
 
@@ -125,8 +124,8 @@ Run `pylint` over your code using this [pylintrc](https://google.github.io/style
 `pylint`
 is a tool for finding bugs and style problems in Python source code. It finds
 problems that are typically caught by a compiler for less dynamic languages like
-C and C++. Because of the dynamic nature of Python, some
-warnings may be incorrect; however, spurious warnings should be fairly
+C and C++. Because of the dynamic nature of Python,
+some warnings may be incorrect; however, spurious warnings should be fairly
 infrequent.
 
 <a id="s2.1.2-pros"></a>
@@ -157,9 +156,10 @@ Make sure you run
 `pylint`
 on your code.
 
-
 Suppress warnings if they are inappropriate so that other issues are not hidden.
 To suppress warnings, you can set a line-level comment:
+
+<div class='goodcode'></div>
 
 ```python
 def do_PUT(self):  # WSGI name, so pylint: disable=invalid-name
@@ -195,6 +195,8 @@ Prefer `pylint: disable` to the deprecated older form `pylint: disable-msg`.
 Unused argument warnings can be suppressed by deleting the variables at the
 beginning of the function. Always include a comment explaining why you are
 deleting it. "Unused." is sufficient. For example:
+
+<div class='goodcode'></div>
 
 ```python
 def viking_cafe_order(spam: str, beans: str, eggs: str | None = None) -> str:
@@ -265,6 +267,8 @@ Module names can still collide. Some module names are inconveniently long.
 
 For example the module `sound.effects.echo` may be imported as follows:
 
+<div class='goodcode'></div>
+
 ```python
 from sound.effects import echo
 ...
@@ -321,6 +325,8 @@ All new code should import each module by its full package name.
 
 Imports should be as follows:
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
   # Reference absl.flags in code with the complete name (verbose).
@@ -329,6 +335,8 @@ Yes:
 
   _FOO = absl.flags.DEFINE_string(...)
 ```
+
+<div class='goodcode'></div>
 
 ```python
 Yes:
@@ -340,6 +348,8 @@ Yes:
 ```
 
 *(assume this file lives in `doctor/who/` where `jodie.py` also exists)*
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -353,7 +363,6 @@ The directory the main binary is located in should not be assumed to be in
 `sys.path` despite that happening in some environments. This being the case,
 code should assume that `import jodie` refers to a third-party or top-level
 package named `jodie`, not a local `jodie.py`.
-
 
 <a id="s2.4-exceptions"></a>
 <a id="24-exceptions"></a>
@@ -410,10 +419,11 @@ Exceptions must follow certain conditions:
     `assert` conditionals are
     [not guaranteed](https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement)
     to be evaluated. For [pytest](https://pytest.org) based tests, `assert` is
-    okay and expected to verify expectations. For
-    example:
+    okay and expected to verify expectations.
+    For example:
 
-    
+    <div class='goodcode'></div>
+
     ```python
     Yes:
       def connect_to_next_port(self, minimum: int) -> int:
@@ -443,6 +453,8 @@ Exceptions must follow certain conditions:
         return port
     ```
 
+    <div class='badcode'></div>
+
     ```python
     No:
       def connect_to_next_port(self, minimum: int) -> int:
@@ -461,7 +473,6 @@ Exceptions must follow certain conditions:
         # The type checking of the return statement relies on the assert.
         return port
     ```
-
 
 -   Libraries or packages may define their own exceptions. When doing so they
     must inherit from an existing exception class. Exception names should end in
@@ -650,6 +661,8 @@ Complicated comprehensions or generator expressions can be hard to read.
 Comprehensions are allowed, however multiple `for` clauses or filter expressions
 are not permitted. Optimize for readability, not conciseness.
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
   result = [mapping_expr for value in iterable if filter_expr]
@@ -682,6 +695,8 @@ Yes:
 
   unique_names = {user.name for user in users if user is not None}
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -744,12 +759,16 @@ dictionaries, and files. The built-in types define iterator methods, too. Prefer
 these methods to methods that return lists, except that you should not mutate a
 container while iterating over it.
 
+<div class='goodcode'></div>
+
 ```python
 Yes:  for key in adict: ...
       if obj in alist: ...
       for line in afile: ...
       for k, v in adict.items(): ...
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:   for key in adict.keys(): ...
@@ -901,6 +920,8 @@ Okay to use for simple cases. Each portion must fit on one line:
 true-expression, if-expression, else-expression. Use a complete if statement
 when things get more complicated.
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
     one_line = 'yes' if predicate(value) else 'no'
@@ -911,6 +932,8 @@ Yes:
         if predicate(value)
         else 'no, false, negative, nay')
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -975,6 +998,8 @@ Okay to use with the following caveat:
 Do not use mutable objects as default values in the function or method
 definition.
 
+<div class='goodcode'></div>
+
 ```python
 Yes: def foo(a, b=None):
          if b is None:
@@ -985,6 +1010,8 @@ Yes: def foo(a, b: Sequence | None = None):
 Yes: def foo(a, b: Sequence = ()):  # Empty tuple OK since tuples are immutable.
          ...
 ```
+
+<div class='badcode'></div>
 
 ```python
 from absl import flags
@@ -1127,6 +1154,8 @@ Use the "implicit" false if possible, e.g., `if foo:` rather than `if foo !=
     known to be an integer (and is not the result of `len()`) against the
     integer 0.
 
+    <div class='goodcode'></div>
+
     ```python
     Yes: if not users:
              print('no users')
@@ -1138,6 +1167,8 @@ Use the "implicit" false if possible, e.g., `if foo:` rather than `if foo !=
              if x is None:
                  x = []
     ```
+
+    <div class='badcode'></div>
 
     ```python
     No:  if len(users) == 0:
@@ -1179,6 +1210,8 @@ treated as a global variable.
 
 An example of the use of this feature is:
 
+<div class='goodcode'></div>
+
 ```python
 def get_adder(summand1: float) -> Callable[[float], float]:
     """Returns a function that adds numbers to a given number."""
@@ -1206,6 +1239,8 @@ experienced Lisp and Scheme (and Haskell and ML and ...) programmers.
 Can lead to confusing bugs, such as this example based on
 [PEP-0227](https://peps.python.org/pep-0227/):
 
+<div class='badcode'></div>
+
 ```python
 i = 4
 def foo(x: Iterable[int]):
@@ -1219,8 +1254,8 @@ def foo(x: Iterable[int]):
     bar()
 ```
 
-So `foo([1, 2, 3])` will print `1 2 3 3`,
-not `1 2 3 4`.
+So `foo([1, 2, 3])` will print `1 2 3
+3`, not `1 2 3 4`.
 
 <a id="s2.16.4-decision"></a>
 <a id="2164-decision"></a>
@@ -1252,6 +1287,8 @@ converting ordinary methods into dynamically computed attributes. However, the
 decorator syntax allows for user-defined decorators as well. Specifically, for
 some function `my_decorator`, this:
 
+<div class='goodcode'></div>
+
 ```python
 class C:
     @my_decorator
@@ -1260,6 +1297,8 @@ class C:
 ```
 
 is equivalent to:
+
+<div class='goodcode'></div>
 
 ```python
 class C:
@@ -1424,7 +1463,8 @@ upgrades.
 
 Such code may not work on very old interpreter versions prior to the
 introduction of the needed future statement. The need for this is more common in
-projects supporting an extremely wide variety of environments.
+projects supporting an extremely wide variety of
+environments.
 
 <a id="s2.20.4-decision"></a>
 <a id="2204-decision"></a>
@@ -1440,6 +1480,8 @@ longer need to run on a version where the features are hidden behind a
 `__future__` import, feel free to remove those lines.
 
 In code that may execute on versions as old as 3.5 rather than >= 3.7, import:
+
+<div class='goodcode'></div>
 
 ```python
 from __future__ import generator_stop
@@ -1472,7 +1514,6 @@ In most cases, when feasible, type annotations are in source files. For
 third-party or extension modules, annotations can be in
 [stub `.pyi` files](https://peps.python.org/pep-0484/#stub-files).
 
-
 <a id="s2.21.1-definition"></a>
 <a id="2211-definition"></a>
 
@@ -1482,11 +1523,15 @@ third-party or extension modules, annotations can be in
 Type annotations (or "type hints") are for function or method arguments and
 return values:
 
+<div class='goodcode'></div>
+
 ```python
 def func(a: int) -> list[int]:
 ```
 
 You can also declare the type of a variable using similar syntax:
+
+<div class='goodcode'></div>
 
 ```python
 a: SomeType = some_func()
@@ -1508,9 +1553,9 @@ your ability to use [Power Features](#power-features).
 <a id="typed-code-cons"></a>
 #### 2.21.3 Cons
 
-You will have to keep the type declarations up to date.
-You might see type errors that you think are
-valid code. Use of a
+You will have to keep the type declarations up to
+date. You might see type errors that you
+think are valid code. Use of a
 [type checker](https://github.com/google/pytype)
 may reduce your ability to use [Power Features](#power-features).
 
@@ -1523,12 +1568,11 @@ may reduce your ability to use [Power Features](#power-features).
 You are strongly encouraged to enable Python type analysis when updating code.
 When adding or modifying public APIs, include type annotations and enable
 checking via pytype in the build system. As static analysis is relatively new to
-Python, we acknowledge that undesired side-effects (such as
-wrongly
-inferred types) may prevent adoption by some projects. In those situations,
-authors are encouraged to add a comment with a TODO or link to a bug describing
-the issue(s) currently preventing type annotation adoption in the BUILD file or
-in the code itself as appropriate.
+Python, we acknowledge that undesired side-effects (such
+as wrongly inferred types) may prevent adoption by
+some projects. In those situations, authors are encouraged to add a comment with
+a TODO or link to a bug describing the issue(s) currently preventing type
+annotation adoption in the BUILD file or in the code itself as appropriate.
 
 <a id="s3-python-style-rules"></a>
 <a id="3-python-style-rules"></a>
@@ -1558,8 +1602,9 @@ Explicit exceptions to the 80 character limit:
 -   Long import statements.
 -   URLs, pathnames, or long flags in comments.
 -   Long string module-level constants not containing whitespace that would be
-    inconvenient to split across lines such as URLs or pathnames.
-    -   Pylint disable comments. (e.g.: `# pylint: disable=invalid-name`)
+    inconvenient to split across lines such as URLs or
+    pathnames.
+-   Pylint disable comments. (e.g.: `# pylint: disable=invalid-name`)
 
 Do not use a backslash for
 [explicit line continuation](https://docs.python.org/3/reference/lexical_analysis.html#explicit-line-joining).
@@ -1571,10 +1616,14 @@ If necessary, you can add an extra pair of parentheses around an expression.
 Note that this rule doesn't prohibit backslash-escaped newlines within strings
 (see [below](#strings)).
 
+<div class='goodcode'></div>
+
 ```python
 Yes: foo_bar(self, width, height, color='black', design=None, x='foo',
              emphasis=None, highlight=0)
 ```
+
+<div class='goodcode'></div>
 
 ```python
 
@@ -1591,6 +1640,8 @@ Yes: if (width == 0 and height == 0 and
      ):
        place_order(eggs, beans, spam, beans)
 ```
+
+<div class='badcode'></div>
 
 ```python
 
@@ -1609,6 +1660,8 @@ No:  if width == 0 and height == 0 and \
 When a literal string won't fit on a single line, use parentheses for implicit
 line joining.
 
+<div class='goodcode'></div>
+
 ```python
 x = ('This will build a very long long '
      'long long long long long long string')
@@ -1616,6 +1669,8 @@ x = ('This will build a very long long '
 
 Prefer to break lines at the highest possible syntactic level. If you must break
 a line twice, break it at the same syntactic level both times.
+
+<div class='goodcode'></div>
 
 ```python
 Yes: bridgekeeper.answer(
@@ -1632,6 +1687,8 @@ Yes: bridgekeeper.answer(
        use_tabs()
 ```
 
+<div class='badcode'></div>
+
 ```python
 No: bridgekeeper.answer(name="Arthur", quest=questlib.find(
         owner="Arthur", perilous=True))
@@ -1647,10 +1704,14 @@ No: bridgekeeper.answer(name="Arthur", quest=questlib.find(
 
 Within comments, put long URLs on their own line if necessary.
 
+<div class='goodcode'></div>
+
 ```python
 Yes:  # See details at
       # http://www.example.com/us/developer/documentation/api/content/v2.0/csv_file_name_extension_full_specification.html
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:  # See details at
@@ -1682,6 +1743,8 @@ It is fine, though not required, to use parentheses around tuples. Do not use
 them in return statements or conditional statements unless using parentheses for
 implied line continuation or to indicate a tuple.
 
+<div class='goodcode'></div>
+
 ```python
 Yes: if foo:
          bar()
@@ -1698,6 +1761,8 @@ Yes: if foo:
      return (spam, beans)
      for (x, y) in dict.items(): ...
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:  if (x):
@@ -1720,6 +1785,8 @@ vertically (see [line length examples](#s3.2-line-length)), or use a hanging
 4-space indent. Closing (round, square or curly) brackets can be placed at the
 end of the expression, or on separate lines, but then should be indented the
 same as the line with the corresponding opening bracket.
+
+<div class='goodcode'></div>
 
 ```python
 Yes:   # Aligned with opening delimiter.
@@ -1762,6 +1829,8 @@ Yes:   # Aligned with opening delimiter.
        }
 ```
 
+<div class='badcode'></div>
+
 ```python
 No:    # Stuff on first line forbidden.
        foo = long_function_name(var_one, var_two,
@@ -1797,10 +1866,12 @@ No:    # Stuff on first line forbidden.
 Trailing commas in sequences of items are recommended only when the closing
 container token `]`, `)`, or `}` does not appear on the same line as the final
 element, as well as for tuples with a single element. The presence of a trailing
-comma is also used as a hint to our Python code auto-formatter
-[Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
+comma is also used as a hint to our Python code
+auto-formatter [Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
 to direct it to auto-format the container of items to one item per line when the
 `,` after the final element is present.
+
+<div class='goodcode'></div>
 
 ```python
 Yes:   golomb3 = [0, 1, 3]
@@ -1811,6 +1882,8 @@ Yes:   golomb3 = [0, 1, 3]
            6,
        ]
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:    golomb4 = [
@@ -1845,9 +1918,13 @@ Follow standard typographic rules for the use of spaces around punctuation.
 
 No whitespace inside parentheses, brackets or braces.
 
+<div class='goodcode'></div>
+
 ```python
 Yes: spam(ham[1], {'eggs': 2}, [])
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:  spam( ham[ 1 ], { 'eggs': 2 }, [ ] )
@@ -1856,11 +1933,15 @@ No:  spam( ham[ 1 ], { 'eggs': 2 }, [ ] )
 No whitespace before a comma, semicolon, or colon. Do use whitespace after a
 comma, semicolon, or colon, except at the end of the line.
 
+<div class='goodcode'></div>
+
 ```python
 Yes: if x == 4:
          print(x, y)
      x, y = y, x
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:  if x == 4 :
@@ -1871,17 +1952,25 @@ No:  if x == 4 :
 No whitespace before the open paren/bracket that starts an argument list,
 indexing or slicing.
 
+<div class='goodcode'></div>
+
 ```python
 Yes: spam(1)
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:  spam (1)
 ```
 
+<div class='goodcode'></div>
+
 ```python
 Yes: dict['key'] = list[index]
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:  dict ['key'] = list [index]
@@ -1894,9 +1983,13 @@ Surround binary operators with a single space on either side for assignment
 Booleans (`and, or, not`). Use your better judgment for the insertion of spaces
 around arithmetic operators (`+`, `-`, `*`, `/`, `//`, `%`, `**`, `@`).
 
+<div class='goodcode'></div>
+
 ```python
 Yes: x == 1
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:  x<1
@@ -1907,10 +2000,14 @@ parameter value, with one exception:
 [when a type annotation is present](#typing-default-values), *do* use spaces
 around the `=` for the default parameter value.
 
+<div class='goodcode'></div>
+
 ```python
 Yes: def complex(real, imag=0.0): return Magic(r=real, i=imag)
 Yes: def complex(real, imag: float = 0.0): return Magic(r=real, i=imag)
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:  def complex(real, imag = 0.0): return Magic(r = real, i = imag)
@@ -1919,6 +2016,8 @@ No:  def complex(real, imag: float=0.0): return Magic(r = real, i = imag)
 
 Don't use spaces to vertically align tokens on consecutive lines, since it
 becomes a maintenance burden (applies to `:`, `#`, `=`, etc.):
+
+<div class='goodcode'></div>
 
 ```python
 Yes:
@@ -1931,6 +2030,8 @@ Yes:
   }
 ```
 
+<div class='badcode'></div>
+
 ```python
 No:
   foo       = 1000  # comment
@@ -1942,7 +2043,6 @@ No:
   }
 ```
 
-
 <a id="Python_Interpreter"></a>
 <a id="s3.7-shebang-line"></a>
 <a id="37-shebang-line"></a>
@@ -1950,10 +2050,10 @@ No:
 <a id="shebang-line"></a>
 ### 3.7 Shebang Line
 
-Most `.py` files do not need to start with a `#!` line. Start the main file of a
-program with
-`#!/usr/bin/env python3` (to support virtualenvs) or `#!/usr/bin/python3` per
-[PEP-394](https://peps.python.org/pep-0394/).
+Most `.py` files do not need to start with a `#!` line. Start the main file of
+a
+program with `#!/usr/bin/env python3` (to support virtualenvs) or
+`#!/usr/bin/python3` per [PEP-394](https://peps.python.org/pep-0394/).
 
 This line is used by the kernel to find the Python interpreter, but is ignored by Python when importing modules. It is only necessary on a file intended to be executed directly.
 
@@ -1998,6 +2098,9 @@ Every file should contain license boilerplate. Choose the appropriate boilerplat
 
 Files should start with a docstring describing the contents and usage of the
 module.
+
+<div class='goodcode'></div>
+
 ```python
 """A one-line summary of the module or program, terminated by a period.
 
@@ -2013,7 +2116,6 @@ Typical usage example:
 """
 ```
 
-
 <a id="s3.8.2.1-test-modules"></a>
 
 <a id="test-docs"></a>
@@ -2028,6 +2130,8 @@ Docstrings should be included when they provide additional information, for
 example, providing specifics on how the test should be run or explaining an
 unusual setup pattern or external dependency.
 
+<div class='goodcode'></div>
+
 ```python
 """This blaze test uses golden files.
 
@@ -2039,11 +2143,15 @@ directory.
 
 Docstrings that do not provide any new information should not be used.
 
+<div class='badcode'></div>
+
 ```python
 """Tests for foo.bar."""
 ```
 
 or
+
+<div class='badcode'></div>
 
 ```python
   def test_foo_is_barred(self):
@@ -2128,6 +2236,8 @@ aptly described using a one-line docstring.
     (because this would paradoxically make behavior under violation of the API
     part of the API).
 
+<div class='goodcode'></div>
+
 ```python
 def fetch_smalltable_rows(
     table_handle: smalltable.Table,
@@ -2165,6 +2275,8 @@ def fetch_smalltable_rows(
 ```
 
 Similarly, this variation on `Args:` with a line break is also allowed:
+
+<div class='goodcode'></div>
 
 ```python
 def fetch_smalltable_rows(
@@ -2208,6 +2320,8 @@ A decorated function's docstring must specify the function's behavior after the
 decorator has been applied to it, as that is the behavior its callers will
 observe.
 
+<div class='goodcode'></div>
+
 ```python
 @contextlib.contextmanager
 def read_from_remote_filesystem(url: str) -> Iterator[RemoteFile]:
@@ -2239,6 +2353,8 @@ contract, or details need to be provided (e.g., documenting additional side
 effects), in which case a docstring with at least those differences is required
 on the overriding method.
 
+<div class='goodcode'></div>
+
 ```python
 from typing import override
 
@@ -2252,6 +2368,8 @@ class Child(Parent):
   def do_something(self):
     pass
 ```
+
+<div class='badcode'></div>
 
 ```python
 # Child class, but without @override decorator, a docstring is required.
@@ -2278,6 +2396,8 @@ Classes should have a docstring below the class definition describing the class.
 Public attributes, excluding [properties](#properties), should be documented
 here in an `Attributes` section and follow the same formatting as a
 [function's `Args`](#doc-function-args) section.
+
+<div class='goodcode'></div>
 
 ```python
 class SampleClass:
@@ -2311,6 +2431,8 @@ should also describe what the exception represents, and not the context in which
 it might occur. The class docstring should not repeat unnecessary information,
 such as that the class is a class.
 
+<div class='goodcode'></div>
+
 ```python
 # Yes:
 class CheeseShopAddress:
@@ -2322,6 +2444,8 @@ class CheeseShopAddress:
 class OutOfCheeseError(Exception):
   """No more cheese is available."""
 ```
+
+<div class='badcode'></div>
 
 ```python
 # No:
@@ -2352,6 +2476,8 @@ you should comment it now. Complicated operations get a few lines of comments
 before the operations commence. Non-obvious ones get comments at the end of the
 line.
 
+<div class='goodcode'></div>
+
 ```python
 # We use a weighted dictionary search to find out where i is in
 # the array.  We extrapolate position based on the largest num
@@ -2367,6 +2493,8 @@ the text of the comment itself.
 
 On the other hand, never describe the code. Assume the person reading the code
 knows Python (though not what you're trying to do) better than you do.
+
+<div class='badcode'></div>
 
 ```python
 # BAD COMMENT: Now go through the b array and make sure whenever i occurs
@@ -2409,6 +2537,8 @@ the `%` operator, or the `format` method for formatting strings, even when the
 parameters are all strings. Use your best judgment to decide between string
 formatting options. A single join with `+` is okay but do not format with `+`.
 
+<div class='goodcode'></div>
+
 ```python
 Yes: x = f'name: {name}; score: {n}'
      x = '%s, %s!' % (imperative, expletive)
@@ -2418,6 +2548,8 @@ Yes: x = f'name: {name}; score: {n}'
      x = 'name: {}; score: {}'.format(name, n)
      x = a + b
 ```
+
+<div class='badcode'></div>
 
 ```python
 No: x = first + ', ' + second
@@ -2433,6 +2565,8 @@ add each substring to a list and `''.join` the list after the loop terminates,
 or write each substring to an `io.StringIO` buffer. These techniques
 consistently have amortized-linear run-time complexity.
 
+<div class='goodcode'></div>
+
 ```python
 Yes: items = ['<table>']
      for last_name, first_name in employee_list:
@@ -2440,6 +2574,8 @@ Yes: items = ['<table>']
      items.append('</table>')
      employee_table = ''.join(items)
 ```
+
+<div class='badcode'></div>
 
 ```python
 No: employee_table = '<table>'
@@ -2450,7 +2586,10 @@ No: employee_table = '<table>'
 
 Be consistent with your choice of string quote character within a file. Pick `'`
 or `"` and stick with it. It is okay to use the other quote character on a
-string to avoid the need to backslash-escape quote characters within the string.
+string to avoid the need to backslash-escape quote characters within the
+string.
+
+<div class='goodcode'></div>
 
 ```python
 Yes:
@@ -2458,6 +2597,8 @@ Yes:
   Gollum("I'm scared of lint errors.")
   Narrator('"Good!" thought a happy Python reviewer.')
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -2476,6 +2617,8 @@ concatenated single-line strings or a multi-line string with
 [`textwrap.dedent()`](https://docs.python.org/3/library/textwrap.html#textwrap.dedent)
 to remove the initial space on each line:
 
+<div class='badcode'></div>
+
 ```python
   No:
   long_string = """This is pretty ugly.
@@ -2483,11 +2626,15 @@ Don't do this.
 """
 ```
 
+<div class='goodcode'></div>
+
 ```python
   Yes:
   long_string = """This is fine if your use case can accept
       extraneous leading spaces."""
 ```
+
+<div class='goodcode'></div>
 
 ```python
   Yes:
@@ -2495,11 +2642,15 @@ Don't do this.
                  "extraneous leading spaces.")
 ```
 
+<div class='goodcode'></div>
+
 ```python
   Yes:
   long_string = ("And this too is fine if you cannot accept\n"
                  "extraneous leading spaces.")
 ```
+
+<div class='goodcode'></div>
 
 ```python
   Yes:
@@ -2529,12 +2680,16 @@ logging implementations collect the unexpanded pattern-string as a queryable
 field. It also prevents spending time rendering a message that no logger is
 configured to output.
 
+<div class='goodcode'></div>
+
 ```python
   Yes:
   import tensorflow as tf
   logger = tf.get_logger()
   logger.info('TensorFlow Version is: %s', tf.__version__)
 ```
+
+<div class='goodcode'></div>
 
 ```python
   Yes:
@@ -2547,6 +2702,8 @@ configured to output.
   if homedir is None or not os.access(homedir, os.W_OK):
     logging.error('Cannot write to home directory, $HOME=%r', homedir)
 ```
+
+<div class='badcode'></div>
 
 ```python
   No:
@@ -2577,6 +2734,8 @@ messages shown to the user) should follow three guidelines:
 
 3.  They should allow simple automated processing (e.g. grepping).
 
+<div class='goodcode'></div>
+
 ```python
   Yes:
   if not 0 <= p <= 1:
@@ -2588,6 +2747,8 @@ messages shown to the user) should follow three guidelines:
     logging.warning('Could not remove directory (reason: %r): %r',
                     error, workdir)
 ```
+
+<div class='badcode'></div>
 
 ```python
   No:
@@ -2662,6 +2823,8 @@ for Java).
 The preferred way to manage files and similar resources is using the
 [`with` statement](http://docs.python.org/reference/compound_stmts.html#the-with-statement):
 
+<div class='goodcode'></div>
+
 ```python
 with open("hello.txt") as hello_file:
     for line in hello_file:
@@ -2670,6 +2833,8 @@ with open("hello.txt") as hello_file:
 
 For file-like objects that do not support the `with` statement, use
 `contextlib.closing()`:
+
+<div class='goodcode'></div>
 
 ```python
 import contextlib
@@ -2691,30 +2856,33 @@ documentation must explain clearly how resource lifetime is managed.
 Use `TODO` comments for code that is temporary, a short-term solution, or
 good-enough but not perfect.
 
-A `TODO` comment begins with the word `TODO` in all caps, a following colon, and
-a link to a resource that contains the context, ideally a bug reference. A bug
+A `TODO` comment begins with the word `TODO` in all caps, and a parenthesized
+link to a resource that contains the context, ideally a bug reference. A bug
 reference is preferable because bugs are tracked and have follow-up comments.
-Follow this piece of context with an explanatory string introduced with a hyphen
-`-`. 
+Follow this piece of context with a colon and an explanatory
+string.
+
 The purpose is to have a consistent `TODO` format that can be searched to find
-out how to get more details. 
+out how to get more details.
+
+<div class='goodcode'></div>
+
+```python
+# TODO(crbug.com/192795): Investigate cpufreq optimizations.
+```
+
+Old style, formerly recommended, but discouraged for use in new code:
 
 ```python
 # TODO: crbug.com/192795 - Investigate cpufreq optimizations.
 ```
 
-Old style, formerly recommended, but discouraged for use in new code:
-
-
-```python
-# TODO(crbug.com/192795): Investigate cpufreq optimizations.
-# TODO(yourusername): Use a "\*" here for concatenation operator.
-```
-
 Avoid adding TODOs that refer to an individual or team as the context:
 
+<div class='badcode'></div>
+
 ```python
-# TODO: @yourusername - File an issue and use a '*' for repetition.
+# TODO(@yourusername): File an issue and use a '*' for repetition.
 ```
 
 If your `TODO` is of the form "At a future date do something" make sure that you
@@ -2733,6 +2901,8 @@ Imports should be on separate lines; there are
 
 E.g.:
 
+<div class='goodcode'></div>
+
 ```python
 Yes: from collections.abc import Mapping, Sequence
      import os
@@ -2740,16 +2910,19 @@ Yes: from collections.abc import Mapping, Sequence
      from typing import Any, NewType
 ```
 
+<div class='badcode'></div>
+
 ```python
 No:  import os, sys
 ```
-
 
 Imports are always put at the top of the file, just after any module comments
 and docstrings and before module globals and constants. Imports should be
 grouped from most generic to least generic:
 
 1.  Python future import statements. For example:
+
+    <div class='goodcode'></div>
 
     ```python
     from __future__ import annotations
@@ -2759,14 +2932,17 @@ grouped from most generic to least generic:
 
 2.  Python standard library imports. For example:
 
+    <div class='goodcode'></div>
+
     ```python
     import sys
     ```
 
-3.  [third-party](https://pypi.org/) module
-    or package imports. For example:
+3.  [third-party](https://pypi.org/)
+    module or package imports. For example:
 
-    
+    <div class='goodcode'></div>
+
     ```python
     import tensorflow as tf
     ```
@@ -2774,7 +2950,8 @@ grouped from most generic to least generic:
 4.  Code repository
     sub-package imports. For example:
 
-    
+    <div class='goodcode'></div>
+
     ```python
     from otherproject.ai import mind
     ```
@@ -2783,7 +2960,8 @@ grouped from most generic to least generic:
     top-level
     sub-package as this file. For example:
 
-    
+    <div class='goodcode'></div>
+
     ```python
     from myproject.backend.hgwells import time_machine
     ```
@@ -2793,10 +2971,11 @@ grouped from most generic to least generic:
     application-specific sub-package imports the same as other sub-package
     imports.
 
-    
 Within each grouping, imports should be sorted lexicographically, ignoring case,
 according to each module's full package path (the `path` in `from path import
 ...`). Code may optionally place a blank line between import sections.
+
+<div class='goodcode'></div>
 
 ```python
 import collections
@@ -2822,7 +3001,6 @@ from otherproject.ai import soul
 #from myproject.backend.state_machine import main_loop
 ```
 
-
 <a id="s3.14-statements"></a>
 <a id="314-statements"></a>
 
@@ -2836,11 +3014,15 @@ the entire statement fits on one line. In particular, you can never do so with
 `try`/`except` since the `try` and `except` can't both fit on the same line, and
 you can only do so with an `if` if there is no `else`.
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
 
   if foo: bar(foo)
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -2898,7 +3080,6 @@ change in complexity.
 `function_name`, `GLOBAL_CONSTANT_NAME`, `global_var_name`, `instance_var_name`,
 `function_parameter_name`, `local_var_name`, `query_proper_noun_for_thing`,
 `send_acronym_via_https`.
-
 
 Names should be descriptive. This includes functions, classes, variables,
 attributes, files and any other type of named entities.
@@ -2960,8 +3141,8 @@ Always use a `.py` filename extension. Never use dashes.
     (using name mangling); we discourage its use as it impacts readability and
     testability, and isn't *really* private. Prefer a single underscore.
 
--   Place related classes and top-level functions together in a
-    module.
+-   Place related classes and top-level functions together in
+    a module.
     Unlike Java, there is no need to limit yourself to one class per module.
 
 -   Use CapWords for class names, but lower\_with\_under.py for module names.
@@ -3087,7 +3268,6 @@ containing `exec "$0.py" "$@"`.
 
 </table>
 
-
 <a id="s3.17-main"></a>
 <a id="317-main"></a>
 
@@ -3120,6 +3300,8 @@ is imported.
 
 When using [absl](https://github.com/abseil/abseil-py), use `app.run`:
 
+<div class='goodcode'></div>
+
 ```python
 from absl import app
 ...
@@ -3133,6 +3315,8 @@ if __name__ == '__main__':
 ```
 
 Otherwise, use:
+
+<div class='goodcode'></div>
 
 ```python
 def main():
@@ -3190,6 +3374,8 @@ the function into smaller and more manageable pieces.
     [`Self`](https://docs.python.org/3/library/typing.html#typing.Self) can be
     used if it is necessary for proper type information, e.g.
 
+    <div class='goodcode'></div>
+
     ```python
     from typing import Self
 
@@ -3231,6 +3417,8 @@ After annotating, many function signatures will become "one parameter per line".
 To ensure the return type is also given its own line, a comma can be placed
 after the last parameter.
 
+<div class='goodcode'></div>
+
 ```python
 def my_method(
     self,
@@ -3245,6 +3433,8 @@ Always prefer breaking between variables, and not, for example, between variable
 names and type annotations. However, if everything fits on the same line, go for
 it.
 
+<div class='goodcode'></div>
+
 ```python
 def my_method(self, first_var: int) -> int:
   ...
@@ -3254,6 +3444,8 @@ If the combination of the function name, the last parameter, and the return type
 is too long, indent by 4 in a new line. When using line breaks, prefer putting
 each parameter and the return type on their own lines and aligning the closing
 parenthesis with the `def`:
+
+<div class='goodcode'></div>
 
 ```python
 Yes:
@@ -3265,6 +3457,8 @@ def my_method(
 ```
 
 Optionally, the return type may be put on the same line as the last parameter:
+
+<div class='goodcode'></div>
 
 ```python
 Okay:
@@ -3279,6 +3473,8 @@ def my_method(
 allows you to move the closing parenthesis to a new line and align with the
 opening one, but this is less readable.
 
+<div class='badcode'></div>
+
 ```python
 No:
 def my_method(self,
@@ -3289,6 +3485,8 @@ def my_method(self,
 
 As in the examples above, prefer not to break types. However, sometimes they are
 too long to be on a single line (try to keep sub-types unbroken).
+
+<div class='goodcode'></div>
 
 ```python
 def my_method(
@@ -3305,6 +3503,8 @@ If a single name and type is too long, consider using an
 [alias](#typing-aliases) for the type. The last resort is to break after the
 colon and indent by 4.
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
 def my_function(
@@ -3313,6 +3513,8 @@ def my_function(
 ) -> None:
   ...
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -3334,6 +3536,8 @@ defined -- for example, if you need the class name inside the declaration of
 that class, or if you use a class that is defined later in the code -- either
 use `from __future__ import annotations` or use a string for the class name.
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
 from __future__ import annotations
@@ -3344,6 +3548,8 @@ class MyClass:
 class OtherClass:
   ...
 ```
+
+<div class='goodcode'></div>
 
 ```python
 Yes:
@@ -3364,11 +3570,15 @@ As per [PEP-008](https://peps.python.org/pep-0008/#other-recommendations), use
 spaces around the `=` *only* for arguments that have both a type annotation and
 a default value.
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
 def func(a: int = 0) -> int:
   ...
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -3392,6 +3602,8 @@ Use explicit `X | None` instead of implicit. Earlier versions of type checkers
 allowed `a: str = None` to be interpreted as `a: str | None = None`, but that is
 no longer the preferred behavior.
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
 def modern_or_union(a: str | int | None, b: str | None = None) -> str:
@@ -3399,6 +3611,8 @@ def modern_or_union(a: str | int | None, b: str | None = None) -> str:
 def union_optional(a: Union[str, int, None], b: Optional[str] = None) -> str:
   ...
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -3425,6 +3639,8 @@ You can declare aliases of complex types.
 *   Do not use type aliases as a substitute for the `from module import symbol`
     idiom, which is [not allowed](#imports).
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
 from typing import TypeAlias
@@ -3432,6 +3648,8 @@ from typing import TypeAlias
 _LossAndGradient: TypeAlias = tuple[tf.Tensor, tf.Tensor]
 ComplexTFMap: TypeAlias = Mapping[str, _LossAndGradient]
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -3458,6 +3676,8 @@ ignore`.
 
 `pytype` has a disable option for specific errors (similar to lint):
 
+<div class='goodcode'></div>
+
 ```python
 # pytype: disable=attribute-error
 ```
@@ -3476,6 +3696,8 @@ ignore`.
     the variable name and value (the same as is done with function arguments
     that have a default value):
 
+    <div class='goodcode'></div>
+
     ```python
     a: Foo = SomeUndecoratedFunction()
     ```
@@ -3485,6 +3707,8 @@ ignore`.
 :   Though you may see them remaining in the codebase (they were necessary
     before Python 3.6), do not add any more uses of a `# type: <type name>`
     comment on the end of the line:
+
+    <div class='badcode'></div>
 
     ```python
     a = SomeUndecoratedFunction()  # type: Foo
@@ -3500,6 +3724,8 @@ ignore`.
 Typed lists can only contain objects of a single type. Typed tuples can either
 have a single repeated type or a set number of elements with different types.
 The latter is commonly used as the return type from a function.
+
+<div class='goodcode'></div>
 
 ```python
 a: list[int] = [1, 2, 3]
@@ -3521,6 +3747,8 @@ variable, such as `TypeVar` and `ParamSpec`, is a common way to use them.
 
 Example:
 
+<div class='goodcode'></div>
+
 ```python
 from collections.abc import Callable
 from typing import ParamSpec, TypeVar
@@ -3539,6 +3767,8 @@ def print_when_called(f: Callable[_P, _T]) -> Callable[_P, _T]:
 
 A `TypeVar` can be constrained:
 
+<div class='goodcode'></div>
+
 ```python
 AddableType = TypeVar("AddableType", int, float, str)
 def add(a: AddableType, b: AddableType) -> AddableType:
@@ -3547,6 +3777,8 @@ def add(a: AddableType, b: AddableType) -> AddableType:
 
 A common predefined type variable in the `typing` module is `AnyStr`. Use it for
 multiple annotations that can be `bytes` or `str` and must all be the same type.
+
+<div class='goodcode'></div>
 
 ```python
 from typing import AnyStr
@@ -3562,6 +3794,8 @@ following criteria:
 *   not externally visible
 *   not constrained
 
+<div class='goodcode'></div>
+
 ```python
 Yes:
   _T = TypeVar("_T")
@@ -3569,6 +3803,8 @@ Yes:
   AddableType = TypeVar("AddableType", int, float, str)
   AnyFunction = TypeVar("AnyFunction", bound=Callable)
 ```
+
+<div class='badcode'></div>
 
 ```python
 No:
@@ -3589,6 +3825,8 @@ No:
 
 Use `str` for string/text data. For code that deals with binary data, use
 `bytes`.
+
+<div class='goodcode'></div>
 
 ```python
 def deals_with_text_data(x: str) -> str:
@@ -3615,6 +3853,8 @@ matches typing practices used around the world. You are explicitly allowed to
 import multiple specific symbols on one line from the `typing` and
 `collections.abc` modules. For example:
 
+<div class='goodcode'></div>
+
 ```python
 from collections.abc import Mapping, Sequence
 from typing import Any, Generic, cast, TYPE_CHECKING
@@ -3624,6 +3864,8 @@ Given that this way of importing adds items to the local namespace, names in
 `typing` or `collections.abc` should be treated similarly to keywords, and not
 be defined in your Python code, typed or not. If there is a collision between a
 type and an existing name in a module, import it using `import x as y`.
+
+<div class='goodcode'></div>
 
 ```python
 from typing import Any as AnyType
@@ -3635,6 +3877,8 @@ concrete type (for example, a `tuple` of typed elements), prefer built-in types
 like `tuple` over the parametric type aliases from the `typing` module (e.g.,
 `typing.Tuple`).
 
+<div class='badcode'></div>
+
 ```python
 from typing import List, Tuple
 
@@ -3642,6 +3886,8 @@ def transform_coordinates(original: List[Tuple[float, float]]) ->
     List[Tuple[float, float]]:
   ...
 ```
+
+<div class='goodcode'></div>
 
 ```python
 from collections.abc import Sequence
@@ -3673,7 +3919,11 @@ TYPE_CHECKING:` block.
     not be imported at runtime.
 -   The block should be right after all the normal imports.
 -   There should be no empty lines in the typing imports list.
--   Sort this list as if it were a regular imports list.
+-   Sort this list as if it were a regular imports
+    list.
+
+<div class='goodcode'></div>
+
 ```python
 import typing
 if typing.TYPE_CHECKING:
@@ -3690,13 +3940,15 @@ def f(x: "sketch.Sketch"): ...
 
 Circular dependencies that are caused by typing are code smells. Such code is a
 good candidate for refactoring. Although technically it is possible to keep
-circular dependencies, various build systems will not let you do so
-because each module has to depend on the other.
+circular dependencies, various build systems will not let you
+do so because each module has to depend on the other.
 
 Replace modules that create circular dependency imports with `Any`. Set an
 [alias](#typing-aliases) with a meaningful name, and use the real type name from
 this module (any attribute of `Any` is `Any`). Alias definitions should be
 separated from the last import by one line.
+
+<div class='goodcode'></div>
 
 ```python
 from typing import Any
@@ -3720,11 +3972,15 @@ When annotating, prefer to specify type parameters for
 parameter list; otherwise, the generics' parameters will be assumed to be
 [`Any`](https://docs.python.org/3/library/typing.html#the-any-type).
 
+<div class='goodcode'></div>
+
 ```python
 # Yes:
 def get_names(employee_ids: Sequence[int]) -> Mapping[int, str]:
   ...
 ```
+
+<div class='badcode'></div>
 
 ```python
 # No:
@@ -3737,11 +3993,15 @@ If the best type parameter for a generic is `Any`, make it explicit, but
 remember that in many cases [`TypeVar`](#typing-type-var) might be more
 appropriate:
 
+<div class='badcode'></div>
+
 ```python
 # No:
 def get_names(employee_ids: Sequence[Any]) -> Mapping[Any, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
+
+<div class='goodcode'></div>
 
 ```python
 # Yes:
@@ -3749,7 +4009,6 @@ _T = TypeVar('_T')
 def get_names(employee_ids: Sequence[_T]) -> Mapping[_T, str]:
   """Returns a mapping from employee ID to employee name for given IDs."""
 ```
-
 
 <a id="4-parting-words"></a>
 
@@ -3775,4 +4034,3 @@ choices unspecified by the global style. Consistency should not generally be
 used as a justification to do things in an old style without considering the
 benefits of the new style, or the tendency of the codebase to converge on newer
 styles over time.
-
