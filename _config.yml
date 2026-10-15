@@ -1,3 +1,9 @@
 # Config settings for Jekyll site rendering.
 
 title: Google Style Guides
+
+# Needed to support <div> blocks used with <details> and zippies.
+# Our markdown files largely don't use raw HTML (by design), so it
+# shouldn't have negative impacts in general.
+kramdown:
+  parse_block_html: true
