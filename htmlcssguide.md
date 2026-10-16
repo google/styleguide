@@ -480,7 +480,8 @@ tags, not just a selection.)
 Omit `type` attributes for style sheets and scripts.
 
 Do not use `type` attributes for style sheets (unless not using CSS) and scripts
-(unless not using JavaScript).
+(unless not using JavaScript, or when loading a JavaScript module with
+`type="module"`).
 
 Specifying `type` attributes in these contexts is not necessary as HTML5 implies
 [`text/css`](https://html.spec.whatwg.org/multipage/obsolete.html#attr-style-type)
@@ -516,6 +517,17 @@ as defaults. This can be safely done even for older browsers.
 ```html
 <!-- Recommended -->
 <script src="https://www.google.com/js/gweb/analytics/autotrack.js"></script>
+```
+
+`type="module"` is not a default that can be omitted: it changes how the script
+is loaded and run, so keep it when loading a
+[module script](https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type).
+
+<div class='goodcode'></div>
+
+```html
+<!-- Recommended -->
+<script src="https://www.google.com/js/app.js" type="module"></script>
 ```
 
 <div class="numbered"></div>
