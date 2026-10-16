@@ -14,9 +14,6 @@ rules. For clarifications, justifications, and explanations about the finer
 points of vimscript, please refer to
 the [heavy guide](./vimscriptfull.md).
 
-* TOC
-{:toc}
-
 ## Portability
 
 It's hard to get vimscript right. Many commands depend upon the user's settings.

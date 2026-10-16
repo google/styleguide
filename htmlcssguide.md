@@ -675,7 +675,7 @@ within a project, ideally enforced by automated code formatting tools.
 <a id="HTML_Quotation_Marks"></a>
 #### HTML Quotation Marks
 
-When quoting attributes values, use double quotation marks.
+When quoting attribute values, use double quotation marks.
 
 Use double (`""`) rather than single quotation marks (`''`) around attribute
 values.
