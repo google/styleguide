@@ -13,6 +13,9 @@ mistakes in this document, you may file bugs in the
 "[Lisp]" in the issue title since the repository contains Style Guides for
 several languages.
 
+* TOC
+{:toc}
+
 ### References
 
 -   For a guide to effective Lisp programming at Google, see
