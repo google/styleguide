@@ -24,6 +24,9 @@ safely.
 Fair warning: Vimscript is a maddening abyss. When you gaze into it, it gazes
 also into you. Proceed with caution.
 
+* TOC
+{:toc}
+
 ## Portability
 
 Vim is highly configurable. Users can change many of the default settings,
