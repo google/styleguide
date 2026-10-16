@@ -8,6 +8,9 @@ style, but that are important to new Lisp Programmers. The three main topics
 covered include common optimization techniques, as well as common pitfalls for
 new Lisp programmers.
 
+* TOC
+{:toc}
+
 ## Optimization
 
 ### Using Libraries
