@@ -1207,7 +1207,7 @@ summarized in the following table:
 
 Construct                                                                                          | Style
 -------------------------------------------------------------------------------------------------- | -----
-[\`define macros](#defines)                                                                        | `ALL_CAPS`
+[`` `define `` macros](#defines)                                                                   | `ALL_CAPS`
 [Tunable parameters for parameterized modules, classes, and interfaces](#naming-module-parameters) | `UpperCamelCase`
 [Constants](#naming-constants)                                                                     | `UpperCamelCase`
 [Type `parameter`](#naming-module-parameters)                                                      | `lower_snake_case_t`
@@ -3561,8 +3561,6 @@ Unless absolutely necessary, use flip-flops or registers instead of latches.
 If you must use a latch, use `always_latch` over `always`, and use non-blocking
 assignments (`<=`). Never use blocking assignments (`=`).
 
-<a id="sequential-logic"></a>
-
 <a id="sequential-logic-registers"></a>
 ### Sequential Logic (Registers)
 
@@ -3677,7 +3675,8 @@ increment.
 [Reusable IP](#reusable-ip) must consistently implement all three varieties of
 reset (synchronous reset, asynchronous reset, and configuration-time
 initialization) so that the non-preferred reset schemes can be disabled at
-implementation time. See [Sequential Logic](#sequential-logic) for more details.
+implementation time. See [Sequential Logic](#sequential-logic-registers) for
+more details.
 
 <a id="delays"></a>
 ### Delay Modeling
