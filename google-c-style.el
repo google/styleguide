@@ -30,12 +30,17 @@
 ;; For some reason 1) c-backward-syntactic-ws is a macro and 2)  under Emacs 22
 ;; bytecode cannot call (unexpanded) macros at run time:
 (eval-when-compile (require 'cc-defs))
+(defvar c-basic-offset)
 
 ;; Wrapper function needed for Emacs 21 and XEmacs (Emacs 22 offers the more
 ;; elegant solution of composing a list of lineup functions or quantities with
 ;; operators such as "add")
 (defun google-c-lineup-expression-plus-4 (langelem)
   "Indents to the beginning of the current C expression plus 4 spaces.
+
+More precisely, the offset is twice `c-basic-offset', which is 4 spaces
+with the default Google style.  This keeps the continuation indent in
+proportion when `c-basic-offset' is changed (e.g. to 4 for Android).
 
 This implements title \"Function Declarations and Definitions\"
 of the Google C++ Style Guide for the case where the previous
@@ -62,7 +67,7 @@ Suitable for inclusion in `c-offsets-alist'."
      ;; the token after the initial colon.
      ((looking-at ":\\s *")
       (goto-char (match-end 0))))
-    (vector (+ 4 (current-column)))))
+    (vector (+ (* 2 c-basic-offset) (current-column)))))
 
 ;;;###autoload
 (defconst google-c-style
