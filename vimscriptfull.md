@@ -265,7 +265,6 @@ All other language features are fair game.
 
 ### Libraries vs. Functionality
 
-
 Separate library-providing plugins from command-providing plugins.
 
 Many plugins provide either user functionality (commands, autocommands, etc) or
@@ -273,9 +272,7 @@ an API (of autoloaded functions) but not both. This separation is encouraged, as
 it allows other plugins to pull in a library without also pulling in commands,
 setting changes, and other plugin functionality that affects the end user.
 
-
 ### Configuration
-
 
 Don't clobber user settings. Provide as much configurability as possible: that's
 what Vim's all about.
@@ -296,13 +293,11 @@ what Vim's all about.
     ```
 
 
-
 ## Style Guide
 
 Follow google-wide style conventions. Mimic google python style when in doubt.
 
 ### Documentation
-
 
 Use [vimdoc](https://github.com/google/vimdoc).
 
@@ -311,9 +306,7 @@ Write documentation in .vim files in conformance with the vimdoc standards and
 include fields like "description" and "author" in the addon-info.json file (see
 the [VAM documentation](https://goo.gl/CUXJZC)).
 
-
 ### Whitespace
-
 
 Follow google-wide conventions.
 
@@ -440,9 +433,7 @@ Follow google-wide conventions.
         ```
 
 
-
 ### Variables
-
 
 `plugin-names-like-this`, `FunctionNamesLikeThis`, `CommandNamesLikeThis`,
 `augroup_names_like_this`, `variable_names_like_this`. Prefix all variables with
@@ -492,9 +483,7 @@ their scope.
     *   This is useful for plugins that keep per-buffer or per-window state.
 
 
-
 ### Strings
-
 
 Prefer single quotes.
 
@@ -533,9 +522,7 @@ Prefer single quoted strings. Specifically, in order of precedence:
     *   Break ties in favor of single quotes.
 
 
-
 ### Settings
-
 
 Prefer long names. Set settings locally.
 
@@ -545,14 +532,12 @@ Prefer long names. Set settings locally.
     *   Use `setlocal` and `&l:` instead of `set` and `&`.
 
 
-
 ## Usage Guide
 
 Vim plugins should provide any or all of the following: **Commands**,
 **Autocommands**, **Functions**, **Statusline Flags**, and **Mappings**.
 
 ### Commands
-
 
 <div>
 
@@ -614,9 +599,7 @@ Vim plugins should provide any or all of the following: **Commands**,
     *   The function should receive a boolean parameter, not a string.
 
 
-
 ### Autocommands
-
 
 <div>
 
@@ -652,9 +635,7 @@ Vim plugins should provide any or all of the following: **Commands**,
     *   This allows your plugins to be re-enterable.
 
 
-
 ### Functions
-
 
 <div>
 
@@ -706,9 +687,7 @@ Vim plugins should provide any or all of the following: **Commands**,
         messages, but even those should throw their own errors when they choke.
 
 
-
 ### Mappings
-
 
 <div>
 
@@ -761,11 +740,9 @@ Vim plugins should provide any or all of the following: **Commands**,
         and colon.
 
 
-
 ## Conventions
 
 ### Dependency Checking
-
 
 Declare dependencies in addon-info.json and use `maktaba`.
 
@@ -777,9 +754,7 @@ Calling `maktaba#library#Require` from dependent code at runtime ensures that
 dependencies have been installed and that they don't include unsafe non-library
 files.
 
-
 ### Statusline Flags
-
 
 Use `<plugin-name>#status#Status()` or its finer-grained variants to provide
 statusline flags.
@@ -811,7 +786,6 @@ purpose of the plugin (powerline, etc.).
         `Info`.
     *   This is useful for users who want only the most relevant flag and do not
         have a colored statusline.
-
 
 
 ## Forbidden Commands
@@ -869,7 +843,6 @@ language pathologies that you wish you didn't have to know.
 
 ### Compatibility Mode
 
-
 If you don't support vi-compatibility mode, fail gracefully.
 
 When `compatible` is set, many vim features are not available. The vim feature
@@ -882,4 +855,3 @@ for details.
 
 Plugins that depend on maktaba generally don't need to worry about compatible
 mode since maktaba currently just disables it, printing a warning.
-
