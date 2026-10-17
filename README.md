@@ -92,7 +92,7 @@ Code samples are licensed under the Apache 2.0 License. See
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
 [angular]: https://angular.dev/style-guide
-[cpp]: https://google.github.io/styleguide/cppguide.html
+[cpp]: cppguide.md
 [csharp]: csharpguide.md
 [swift]: https://google.github.io/swift/
 [objc]: objcguide.md
