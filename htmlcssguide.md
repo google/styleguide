@@ -2,8 +2,10 @@
 
 # Google HTML/CSS Style Guide
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 <div class="numbered"></div>
 
@@ -1039,8 +1041,8 @@ color: #ebc;
 Avoid using `!important` declarations.
 
 These declarations break the natural cascade of CSS and make it difficult to
-reason about and compose styles. Use
-[selector specificity] to override properties instead.
+reason about and compose styles. Use [selector specificity] to override
+properties instead.
 
 [selector specificity]: https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity
 

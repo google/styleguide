@@ -6,8 +6,10 @@ See README.md for details.
 
 # Google Python Style Guide
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 <a id="s1-background"></a>
 <a id="1-background"></a>
@@ -19,10 +21,13 @@ See README.md for details.
 Python is the main dynamic language used at Google. This style guide is a list
 of *dos and don'ts* for Python programs.
 
-To help you format code correctly, we've created a [settings file for Vim](google_python_style.vim). For Emacs, the default settings should be fine.
+To help you format code correctly, we've created a
+[settings file for Vim](google_python_style.vim). For Emacs, the default
+settings should be fine.
 
-Many teams use the [Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
-auto-formatter to avoid arguing over formatting.
+Many teams use the [Black](https://github.com/psf/black) or
+[Pyink](https://github.com/google/pyink) auto-formatter to avoid arguing over
+formatting.
 
 <a id="s2-python-language-rules"></a>
 <a id="2-python-language-rules"></a>
@@ -38,7 +43,8 @@ auto-formatter to avoid arguing over formatting.
 
 ### 2.1 Lint
 
-Run `pylint` over your code using this [pylintrc](https://google.github.io/styleguide/pylintrc).
+Run `pylint` over your code using this
+[pylintrc](https://google.github.io/styleguide/pylintrc).
 
 <a id="s2.1.1-definition"></a>
 <a id="211-definition"></a>
@@ -47,12 +53,10 @@ Run `pylint` over your code using this [pylintrc](https://google.github.io/style
 
 #### 2.1.1 Definition
 
-`pylint`
-is a tool for finding bugs and style problems in Python source code. It finds
-problems that are typically caught by a compiler for less dynamic languages like
-C and C++. Because of the dynamic nature of Python,
-some warnings may be incorrect; however, spurious warnings should be fairly
-infrequent.
+`pylint` is a tool for finding bugs and style problems in Python source code. It
+finds problems that are typically caught by a compiler for less dynamic
+languages like C and C++. Because of the dynamic nature of Python, some warnings
+may be incorrect; however, spurious warnings should be fairly infrequent.
 
 <a id="s2.1.2-pros"></a>
 <a id="212-pros"></a>
@@ -70,9 +74,8 @@ Catches easy-to-miss errors like typos, using-vars-before-assignment, etc.
 
 #### 2.1.3 Cons
 
-`pylint`
-isn't perfect. To take advantage of it, sometimes we'll need to write around it,
-suppress its warnings or fix it.
+`pylint` isn't perfect. To take advantage of it, sometimes we'll need to write
+around it, suppress its warnings or fix it.
 
 <a id="s2.1.4-decision"></a>
 <a id="214-decision"></a>
@@ -81,9 +84,7 @@ suppress its warnings or fix it.
 
 #### 2.1.4 Decision
 
-Make sure you run
-`pylint`
-on your code.
+Make sure you run `pylint` on your code.
 
 Suppress warnings if they are inappropriate so that other issues are not hidden.
 To suppress warnings, you can set a line-level comment:
@@ -95,8 +96,7 @@ def do_PUT(self):  # WSGI name, so pylint: disable=invalid-name
   ...
 ```
 
-`pylint`
-warnings are each identified by symbolic name (`empty-docstring`)
+`pylint` warnings are each identified by symbolic name (`empty-docstring`)
 Google-specific warnings start with `g-`.
 
 If the reason for the suppression is not clear from the symbolic name, add an
@@ -105,9 +105,7 @@ explanation.
 Suppressing in this way has the advantage that we can easily search for
 suppressions and revisit them.
 
-You can get a list of
-`pylint`
-warnings by doing:
+You can get a list of `pylint` warnings by doing:
 
 ```shell
 pylint --list-msgs
@@ -363,8 +361,7 @@ Exceptions must follow certain conditions:
     `assert` conditionals are
     [not guaranteed](https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement)
     to be evaluated. For [pytest](https://pytest.org) based tests, `assert` is
-    okay and expected to verify expectations.
-    For example:
+    okay and expected to verify expectations. For example:
 
     <div class='goodcode'></div>
 
@@ -1252,8 +1249,7 @@ def foo(x: Iterable[int]):
     bar()
 ```
 
-So `foo([1, 2, 3])` will print `1 2 3
-3`, not `1 2 3 4`.
+So `foo([1, 2, 3])` will print `1 2 3 3`, not `1 2 3 4`.
 
 <a id="s2.16.4-decision"></a>
 <a id="2164-decision"></a>
@@ -1477,8 +1473,7 @@ upgrades.
 
 Such code may not work on very old interpreter versions prior to the
 introduction of the needed future statement. The need for this is more common in
-projects supporting an extremely wide variety of
-environments.
+projects supporting an extremely wide variety of environments.
 
 <a id="s2.20.4-decision"></a>
 <a id="2204-decision"></a>
@@ -1525,9 +1520,10 @@ Use other `from __future__` import statements as you see fit.
 
 You can annotate Python code with
 [type hints](https://docs.python.org/3/library/typing.html). Type-check the code
-at build time with a type checking tool like [pytype](https://github.com/google/pytype).
-In most cases, when feasible, type annotations are in source files. For
-third-party or extension modules, annotations can be in
+at build time with a type checking tool like
+[pytype](https://github.com/google/pytype). In most cases, when feasible, type
+annotations are in source files. For third-party or extension modules,
+annotations can be in
 [stub `.pyi` files](https://peps.python.org/pep-0484/#stub-files).
 
 <a id="s2.21.1-definition"></a>
@@ -1572,11 +1568,10 @@ your ability to use [Power Features](#power-features).
 
 #### 2.21.3 Cons
 
-You will have to keep the type declarations up to
-date. You might see type errors that you
-think are valid code. Use of a
-[type checker](https://github.com/google/pytype)
-may reduce your ability to use [Power Features](#power-features).
+You will have to keep the type declarations up to date. You might see type
+errors that you think are valid code. Use of a
+[type checker](https://github.com/google/pytype) may reduce your ability to use
+[Power Features](#power-features).
 
 <a id="s2.21.4-decision"></a>
 <a id="2214-decision"></a>
@@ -1588,11 +1583,11 @@ may reduce your ability to use [Power Features](#power-features).
 You are strongly encouraged to enable Python type analysis when updating code.
 When adding or modifying public APIs, include type annotations and enable
 checking via pytype in the build system. As static analysis is relatively new to
-Python, we acknowledge that undesired side-effects (such
-as wrongly inferred types) may prevent adoption by
-some projects. In those situations, authors are encouraged to add a comment with
-a TODO or link to a bug describing the issue(s) currently preventing type
-annotation adoption in the BUILD file or in the code itself as appropriate.
+Python, we acknowledge that undesired side-effects (such as wrongly inferred
+types) may prevent adoption by some projects. In those situations, authors are
+encouraged to add a comment with a TODO or link to a bug describing the issue(s)
+currently preventing type annotation adoption in the BUILD file or in the code
+itself as appropriate.
 
 <a id="s3-python-style-rules"></a>
 <a id="3-python-style-rules"></a>
@@ -1625,8 +1620,7 @@ Explicit exceptions to the 80 character limit:
 -   Long import statements.
 -   URLs, pathnames, or long flags in comments.
 -   Long string module-level constants not containing whitespace that would be
-    inconvenient to split across lines such as URLs or
-    pathnames.
+    inconvenient to split across lines such as URLs or pathnames.
 -   Pylint disable comments. (e.g.: `# pylint: disable=invalid-name`)
 
 Do not use a backslash for
@@ -1749,10 +1743,11 @@ above; see the [indentation](#s3.4-indentation) section for explanation.
 limit.
 
 In all other cases where a line exceeds 80 characters, and the
-[Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
-auto-formatter does not help bring the line below the limit, the line is allowed
-to exceed this maximum. Authors are encouraged to manually break the line up per
-the notes above when it is sensible.
+[Black](https://github.com/psf/black) or
+[Pyink](https://github.com/google/pyink) auto-formatter does not help bring the
+line below the limit, the line is allowed to exceed this maximum. Authors are
+encouraged to manually break the line up per the notes above when it is
+sensible.
 
 <a id="s3.3-parentheses"></a>
 <a id="33-parentheses"></a>
@@ -1892,10 +1887,11 @@ No:    # Stuff on first line forbidden.
 Trailing commas in sequences of items are recommended only when the closing
 container token `]`, `)`, or `}` does not appear on the same line as the final
 element, as well as for tuples with a single element. The presence of a trailing
-comma is also used as a hint to our Python code
-auto-formatter [Black](https://github.com/psf/black) or [Pyink](https://github.com/google/pyink)
-to direct it to auto-format the container of items to one item per line when the
-`,` after the final element is present.
+comma is also used as a hint to our Python code auto-formatter
+[Black](https://github.com/psf/black) or
+[Pyink](https://github.com/google/pyink) to direct it to auto-format the
+container of items to one item per line when the `,` after the final element is
+present.
 
 <div class='goodcode'></div>
 
@@ -2079,12 +2075,13 @@ No:
 
 ### 3.7 Shebang Line
 
-Most `.py` files do not need to start with a `#!` line. Start the main file of
-a
+Most `.py` files do not need to start with a `#!` line. Start the main file of a
 program with `#!/usr/bin/env python3` (to support virtualenvs) or
 `#!/usr/bin/python3` per [PEP-394](https://peps.python.org/pep-0394/).
 
-This line is used by the kernel to find the Python interpreter, but is ignored by Python when importing modules. It is only necessary on a file intended to be executed directly.
+This line is used by the kernel to find the Python interpreter, but is ignored
+by Python when importing modules. It is only necessary on a file intended to be
+executed directly.
 
 <a id="s3.8-comments-and-docstrings"></a>
 <a id="s3.8-comments"></a>
@@ -2108,9 +2105,8 @@ inline comments.
 Python uses *docstrings* to document code. A docstring is a string that is the
 first statement in a package, module, class or function. These strings can be
 extracted automatically through the `__doc__` member of the object and are used
-by `pydoc`.
-(Try running `pydoc` on your module to see how it looks.) Always use the
-three-double-quote `"""` format for docstrings (per
+by `pydoc`. (Try running `pydoc` on your module to see how it looks.) Always use
+the three-double-quote `"""` format for docstrings (per
 [PEP 257](https://peps.python.org/pep-0257/)). A docstring should be organized
 as a summary line (one physical line not exceeding 80 characters) terminated by
 a period, question mark, or exclamation point. When writing more (encouraged),
@@ -2126,7 +2122,9 @@ are more formatting guidelines for docstrings below.
 
 #### 3.8.2 Modules
 
-Every file should contain license boilerplate. Choose the appropriate boilerplate for the license used by the project (for example, Apache 2.0, BSD, LGPL, GPL).
+Every file should contain license boilerplate. Choose the appropriate
+boilerplate for the license used by the project (for example, Apache 2.0, BSD,
+LGPL, GPL).
 
 Files should start with a docstring describing the contents and usage of the
 module.
@@ -2508,10 +2506,10 @@ after the decorator has been applied.
 #### 3.8.5 Block and Inline Comments
 
 The final place to have comments is in tricky parts of the code. If you're going
-to have to explain it at the next [code review](http://en.wikipedia.org/wiki/Code_review),
-you should comment it now. Complicated operations get a few lines of comments
-before the operations commence. Non-obvious ones get comments at the end of the
-line.
+to have to explain it at the next
+[code review](http://en.wikipedia.org/wiki/Code_review), you should comment it
+now. Complicated operations get a few lines of comments before the operations
+commence. Non-obvious ones get comments at the end of the line.
 
 <div class='goodcode'></div>
 
@@ -2625,8 +2623,7 @@ No: employee_table = '<table>'
 
 Be consistent with your choice of string quote character within a file. Pick `'`
 or `"` and stick with it. It is okay to use the other quote character on a
-string to avoid the need to backslash-escape quote characters within the
-string.
+string to avoid the need to backslash-escape quote characters within the string.
 
 <div class='goodcode'></div>
 
@@ -2902,8 +2899,7 @@ good-enough but not perfect.
 A `TODO` comment begins with the word `TODO` in all caps, and a parenthesized
 link to a resource that contains the context, ideally a bug reference. A bug
 reference is preferable because bugs are tracked and have follow-up comments.
-Follow this piece of context with a colon and an explanatory
-string.
+Follow this piece of context with a colon and an explanatory string.
 
 The purpose is to have a consistent `TODO` format that can be searched to find
 out how to get more details.
@@ -2982,8 +2978,7 @@ grouped from most generic to least generic:
     import sys
     ```
 
-3.  [third-party](https://pypi.org/)
-    module or package imports. For example:
+3.  [third-party](https://pypi.org/) module or package imports. For example:
 
     <div class='goodcode'></div>
 
@@ -2991,8 +2986,7 @@ grouped from most generic to least generic:
     import tensorflow as tf
     ```
 
-4.  Code repository
-    sub-package imports. For example:
+4.  Code repository sub-package imports. For example:
 
     <div class='goodcode'></div>
 
@@ -3001,8 +2995,7 @@ grouped from most generic to least generic:
     ```
 
 5.  **Deprecated:** application-specific imports that are part of the same
-    top-level
-    sub-package as this file. For example:
+    top-level sub-package as this file. For example:
 
     <div class='goodcode'></div>
 
@@ -3190,9 +3183,8 @@ Always use a `.py` filename extension. Never use dashes.
     (using name mangling); we discourage its use as it impacts readability and
     testability, and isn't *really* private. Prefer a single underscore.
 
--   Place related classes and top-level functions together in
-    a module.
-    Unlike Java, there is no need to limit yourself to one class per module.
+-   Place related classes and top-level functions together in a module. Unlike
+    Java, there is no need to limit yourself to one class per module.
 
 -   Use CapWords for class names, but lower\_with\_under.py for module names.
     Although there are some old modules named CapWords.py, this is now
@@ -3402,12 +3394,11 @@ months may add new behavior. This could result in bugs that are hard to find.
 Keeping your functions short and simple makes it easier for other people to read
 and modify your code.
 
-You could find long and complicated functions when working with
-some
-code. Do not be intimidated by modifying existing code: if working with such a
-function proves to be difficult, you find that errors are hard to debug, or you
-want to use a piece of it in several different contexts, consider breaking up
-the function into smaller and more manageable pieces.
+You could find long and complicated functions when working with some code. Do
+not be intimidated by modifying existing code: if working with such a function
+proves to be difficult, you find that errors are hard to debug, or you want to
+use a piece of it in several different contexts, consider breaking up the
+function into smaller and more manageable pieces.
 
 <a id="s3.19-type-annotations"></a>
 <a id="319-type-annotations"></a>
@@ -3527,9 +3518,8 @@ def my_method(
   ...
 ```
 
-`pylint`
-allows you to move the closing parenthesis to a new line and align with the
-opening one, but this is less readable.
+`pylint` allows you to move the closing parenthesis to a new line and align with
+the opening one, but this is less readable.
 
 <div class='badcode'></div>
 
@@ -3988,8 +3978,7 @@ TYPE_CHECKING:` block.
     not be imported at runtime.
 -   The block should be right after all the normal imports.
 -   There should be no empty lines in the typing imports list.
--   Sort this list as if it were a regular imports
-    list.
+-   Sort this list as if it were a regular imports list.
 
 <div class='goodcode'></div>
 
@@ -4010,8 +3999,8 @@ def f(x: "sketch.Sketch"): ...
 
 Circular dependencies that are caused by typing are code smells. Such code is a
 good candidate for refactoring. Although technically it is possible to keep
-circular dependencies, various build systems will not let you
-do so because each module has to depend on the other.
+circular dependencies, various build systems will not let you do so because each
+module has to depend on the other.
 
 Replace modules that create circular dependency imports with `Any`. Set an
 [alias](#typing-aliases) with a meaningful name, and use the real type name from

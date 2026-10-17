@@ -13,8 +13,10 @@ mistakes in this document, you may file bugs in the
 "[Lisp]" in the issue title since the repository contains Style Guides for
 several languages.
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 ### References
 
@@ -1038,7 +1040,9 @@ assignments.
 
 ### Assertions and Conditions
 
-Use `assert`, `check-type`, and `etypecase` to detect internal bugs only, and use them liberally.
+Use `assert`, `check-type`, and `etypecase` to detect internal bugs only, and
+use them liberally.
+
 -   Prefer `etypecase` over `typecase`
 -   Use `error` to check input from a file.
 -   If a function signals an error, document it in its contract.
@@ -1053,14 +1057,13 @@ Use `assert`, `check-type`, and `etypecase` to detect internal bugs only, and us
 -   Never clean up by resignaling.
 -   Never return a condition or error value, signal it with ERROR instead.
 
-Use `assert` to detect internal bugs ONLY.
-Code should `assert` invariants whose failure indicates that the software is
-itself broken. Incorrect input should be handled properly at runtime, and must
-not cause an assertion violation. The audience for an `assert` failure is a
-developer. Do not use the data-form and argument-form in `assert` to specify a
-condition to signal. It's fine to use them to print out a message for debugging
-purposes (and since it's only for debugging, there's no issue of
-internationalization).
+Use `assert` to detect internal bugs ONLY. Code should `assert` invariants whose
+failure indicates that the software is itself broken. Incorrect input should be
+handled properly at runtime, and must not cause an assertion violation. The
+audience for an `assert` failure is a developer. Do not use the data-form and
+argument-form in `assert` to specify a condition to signal. It's fine to use
+them to print out a message for debugging purposes (and since it's only for
+debugging, there's no issue of internationalization).
 
 `check-type`, `etypecase` are also forms of assertion. When one of these fails,
 that's a detected bug. Prefer `check-type` over `(declare (type ...))` for the
@@ -1170,7 +1173,8 @@ Scott McKay puts it:
 
 Use appropriate declarations in internal low-level functions where these
 declarations are used for optimization. When you do, however, see our
-recommendations for [Unsafe Operations](lispprogrammingguide.md#unsafe-operations).
+recommendations for
+[Unsafe Operations](lispprogrammingguide.md#unsafe-operations).
 
 ## Meta-language guidelines
 
@@ -1734,8 +1738,9 @@ or control to leak to attackers.
 -   Use `:START` and `:END` arguments to `string=` or `string-equal` instead of
     using `subseq`.
 -   Use `zerop`, `plusp`, or `minusp` instead of comparing to `0` or `0.0`.
--   See also [Comparison Operators](lispprogrammingguide.md#comparison-operators) in
-    the programming guide for proper usage.
+-   See also
+    [Comparison Operators](lispprogrammingguide.md#comparison-operators) in the
+    programming guide for proper usage.
 
 When choosing between `eq` and `eql`, you should use `eql` unless you are
 writing performance-critical low-level code. `eql` reduces the opportunity for a

@@ -2,8 +2,10 @@
 
 Revision 1.01
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 <a id="Background"></a>
 
@@ -19,7 +21,8 @@ style are generally closely tied to the semantics of the code you wish to
 convey. As such, this guide tends to be somewhat less prescriptive than most, as
 there are just fewer arbitrary choices to make when coding Haskell.
 
-Open-source projects developed by Google should conform to the requirements in this guide.
+Open-source projects developed by Google should conform to the requirements in
+this guide.
 
 <a id="Structure"></a>
 
@@ -83,8 +86,7 @@ explicitly naming them in the export list would be counter-productive.
 ### Imports
 
 *   Imports may be split up into groups separated by a single newline.
-*   Recommended: Split imports into two groups: external and
-    internal modules.
+*   Recommended: Split imports into two groups: external and internal modules.
 *   Within each group, imports must be alphabetized by full module name.
 *   Imports can either be qualified or for specific elements. It is okay to have
     both.
@@ -141,13 +143,12 @@ GHC options and `LANGUAGE` pragmas go at the very top of the file.
 
 The `OPTIONS_GHC` directive should only be used for specific options that relate
 to the source file, such as `-fno-warn-orphans` for test code. General
-compilation options, like `-O2`, belong in
-the `.cabal` file.
+compilation options, like `-O2`, belong in the `.cabal` file.
 
 Features enabled by the `LANGUAGE` pragma should always be listed in each source
-file that needs them, and never turned on globally via flags in the
-the `.cabal` file. This is so future
-developers know what language extensions are in effect when reading the code.
+file that needs them, and never turned on globally via flags in the the `.cabal`
+file. This is so future developers know what language extensions are in effect
+when reading the code.
 
 `INLINE`, `INLINEABLE`, and similar pragmas should only be used when you've
 tested that they actually improve speed in cases that you care about. When used,

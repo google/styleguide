@@ -6,8 +6,10 @@
 
 # Google Verilog Style Guide
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 <a id="basics"></a>
 

@@ -2,8 +2,10 @@
 
 Revision 0.9
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 <a id="Introduction"></a>
 
@@ -131,8 +133,9 @@ Choose meaningful property names.
 Property names must conform to the following guidelines:
 
 *   Property names should be meaningful names with defined semantics.
-*   Property names must be [lower
-    camel-cased](https://en.wikipedia.org/wiki/Camel_case), ASCII strings.
+*   Property names must be
+    [lower camel-cased](https://en.wikipedia.org/wiki/Camel_case), ASCII
+    strings.
 *   The first character must be a letter, an underscore (`_`) or a dollar sign
     (`$`).
 *   Subsequent characters can be a letter, a digit, an underscore, or a dollar
@@ -393,8 +396,8 @@ easily parsed.
 
 Dates should be formatted as recommended by RFC 3339.
 
-Dates should be strings formatted as recommended by [RFC
-3339](https://www.ietf.org/rfc/rfc3339.txt).
+Dates should be strings formatted as recommended by
+[RFC 3339](https://www.ietf.org/rfc/rfc3339.txt).
 
 ```json
 {
@@ -408,8 +411,8 @@ Dates should be strings formatted as recommended by [RFC
 
 Time durations should be formatted as recommended by ISO 8601.
 
-Time duration values should be strings formatted as recommended by [ISO
-8601](https://en.wikipedia.org/wiki/ISO_8601#Durations).
+Time duration values should be strings formatted as recommended by
+[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations).
 
 ```json
 {
@@ -425,9 +428,9 @@ Time duration values should be strings formatted as recommended by [ISO
 
 Latitudes/Longitudes should be formatted as recommended by ISO 6709.
 
-Latitude/Longitude should be strings formatted as recommended by [ISO
-6709](https://en.wikipedia.org/wiki/ISO_6709). Furthermore, they should favor
-the ±DD.DDDD±DDD.DDDD degrees format.
+Latitude/Longitude should be strings formatted as recommended by
+[ISO 6709](https://en.wikipedia.org/wiki/ISO_6709). Furthermore, they should
+favor the ±DD.DDDD±DDD.DDDD degrees format.
 
 ```json
 {
@@ -519,7 +522,7 @@ The top-level of the JSON object may contain the following properties.
 
 ### apiVersion
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: -
 
 Represents the desired version of the service API in a request, and the version
@@ -537,7 +540,7 @@ Example:
 
 ### context
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: -
 
 Client sets this value and server echoes data in the response. This is useful in
@@ -599,7 +602,7 @@ function handleResponse(response) {
 
 ### id
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: -
 
 A server supplied identifier for the response (regardless of whether the
@@ -616,7 +619,7 @@ Example:
 
 ### method
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: -
 
 Represents the operation to perform, or that was performed, on the data. In the
@@ -641,7 +644,7 @@ operation to perform on the `params` property:
 
 ### params
 
-Property Value Type: `object`\
+Property Value Type: `object` \
 Parent: -
 
 This object serves as a map of input parameters to send to an RPC request. It
@@ -665,7 +668,7 @@ Example:
 
 ### data
 
-Property Value Type: `object`\
+Property Value Type: `object` \
 Parent: -
 
 Container for all the data from a response. This property itself has many
@@ -678,7 +681,7 @@ present, the `error` object takes precedence.
 
 ### error
 
-Property Value Type: `object`\
+Property Value Type: `object` \
 Parent: -
 
 Indicates that an error has occurred, with details about the error. The error
@@ -714,7 +717,7 @@ The `data` property of the JSON object may contain the following properties.
 
 ### data.kind
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `data`
 
 The `kind` property serves as a guide to what type of information this
@@ -735,7 +738,7 @@ Example:
 
 ### data.fields
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `data`
 
 Represents the fields present in the response when doing a partial GET, or the
@@ -759,7 +762,7 @@ Example:
 
 ### data.etag
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `data`
 
 Represents the etag for the response. Details about ETags in the GData APIs can
@@ -776,7 +779,7 @@ Example:
 
 ### data.id
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `data`
 
 A globally unique string used to reference the object. The specific details of
@@ -792,13 +795,13 @@ Example:
 
 ### data.lang
 
-Property Value Type: `string` (formatted as specified in BCP 47)\
+Property Value Type: `string` (formatted as specified in BCP 47) \
 Parent: `data` (or any child element)
 
 Indicates the language of the rest of the properties in this object. This
 property mimics HTML's `lang` property and XML's `xml:lang` properties. The
-value should be a language value as defined in [BCP
-47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt). If a single JSON object
+value should be a language value as defined in
+[BCP 47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt). If a single JSON object
 contains data in multiple languages, the service is responsible for developing
 and documenting an appropriate location for the `lang` property.
 
@@ -819,7 +822,7 @@ Example:
 
 ### data.updated
 
-Property Value Type: `string` (formatted as specified in RFC 3339)\
+Property Value Type: `string` (formatted as specified in RFC 3339) \
 Parent: `data`
 
 Indicates the last date/time ([RFC 3339](https://www.ietf.org/rfc/rfc3339.txt))
@@ -835,7 +838,7 @@ Example:
 
 ### data.deleted
 
-Property Value Type: `boolean`\
+Property Value Type: `boolean` \
 Parent: `data` (or any child element)
 
 A marker element, that, when present, indicates the containing entry is deleted.
@@ -858,7 +861,7 @@ Example:
 
 ### data.items
 
-Property Value Type: `array`\
+Property Value Type: `array` \
 Parent: `data`
 
 The property name `items` is reserved to represent an array of items (for
@@ -895,9 +898,9 @@ The paging properties below allow for various styles of paging, including:
 
 *   Previous/Next paging - Allows users to move forward and backward through a
     list, one page at a time. The `nextLink` and `previousLink` properties
-    (described in the [Reserved Property Names for
-    Links](#Reserved_Property_Names_for_Links) section below) are used for this
-    style of paging.
+    (described in the
+    [Reserved Property Names for Links](#Reserved_Property_Names_for_Links)
+    section below) are used for this style of paging.
 *   Index-based paging - Allows users to jump directly to a specific item
     position within a list of items. For example, to load 10 items starting at
     item 200, the developer may point the user to a URL with the query string
@@ -917,7 +920,7 @@ the end of this guide.
 
 ### data.currentItemCount
 
-Property Value Type: `integer`\
+Property Value Type: `integer` \
 Parent: `data`
 
 The number of items in this result set. Should be equivalent to `items.length`,
@@ -944,7 +947,7 @@ Example:
 
 ### data.itemsPerPage
 
-Property Value Type: `integer`\
+Property Value Type: `integer` \
 Parent: `data`
 
 The number of items in the result. This is not necessarily the size of the
@@ -966,7 +969,7 @@ Example:
 
 ### data.startIndex
 
-Property Value Type: `integer`\
+Property Value Type: `integer` \
 Parent: `data`
 
 The index of the first item in `data.items`. For consistency, `startIndex`
@@ -988,7 +991,7 @@ Example:
 
 ### data.totalItems
 
-Property Value Type: `integer`\
+Property Value Type: `integer` \
 Parent: `data`
 
 The total number of items available in this set. For example, if a user has 100
@@ -1009,7 +1012,7 @@ Example:
 
 ### data.pagingLinkTemplate
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `data`
 
 A URI template indicating how users can calculate subsequent paging links. The
@@ -1030,7 +1033,7 @@ Example:
 
 ### data.pageIndex
 
-Property Value Type: `integer`\
+Property Value Type: `integer` \
 Parent: `data`
 
 The index of the current page of items. For consistency, `pageIndex` should be
@@ -1052,7 +1055,7 @@ Example:
 
 ### data.totalPages
 
-Property Value Type: `integer`\
+Property Value Type: `integer` \
 Parent: `data`
 
 The total number of pages in the result set. `totalPages` can also be calculated
@@ -1085,7 +1088,7 @@ references to other resources. There are two forms of link properties:
 
 ### data.self / data.selfLink
 
-Property Value Type: `object` / `string`\
+Property Value Type: `object` / `string` \
 Parent: `data`
 
 The self link can be used to retrieve the item's data. For example, in a list of
@@ -1107,7 +1110,7 @@ Example:
 
 ### data.edit / data.editLink
 
-Property Value Type: `object` / `string`\
+Property Value Type: `object` / `string` \
 Parent: `data`
 
 The edit link indicates where a user can send update or delete requests. This is
@@ -1129,7 +1132,7 @@ Example:
 
 ### data.next / data.nextLink
 
-Property Value Type: `object` / `string`\
+Property Value Type: `object` / `string` \
 Parent: `data`
 
 The next link indicates how more data can be retrieved. It points to the
@@ -1152,7 +1155,7 @@ Example:
 
 ### data.previous / data.previousLink
 
-Property Value Type: `object` / `string`\
+Property Value Type: `object` / `string` \
 Parent: `data`
 
 The previous link indicates how more data can be retrieved. It points to the
@@ -1181,7 +1184,7 @@ The `error` property of the JSON object may contain the following properties.
 
 ### error.code
 
-Property Value Type: `integer`\
+Property Value Type: `integer` \
 Parent: `error`
 
 Represents the code for this error. This property value will usually represent
@@ -1202,7 +1205,7 @@ Example:
 
 ### error.message
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `error`
 
 A human readable message providing more details about the error. If there are
@@ -1222,7 +1225,7 @@ Example:
 
 ### error.errors
 
-Property Value Type: `array`\
+Property Value Type: `array` \
 Parent: `error`
 
 Container for any additional information regarding the error. If the service
@@ -1239,7 +1242,7 @@ Example:
 
 ### error.errors\[\].domain
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `error.errors`
 
 Unique identifier for the service raising this error. This helps distinguish
@@ -1260,7 +1263,7 @@ Example:
 
 ### error.errors\[\].reason
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `error.errors`
 
 Unique identifier for this error. Different from the `error.code` property in
@@ -1280,7 +1283,7 @@ Example:
 
 ### error.errors\[\].message
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `error.errors`
 
 A human readable message providing more details about the error. If there is
@@ -1302,7 +1305,7 @@ Example:
 
 ### error.errors\[\].location
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `error.errors`
 
 The location of the error (the interpretation of its value depends on
@@ -1322,7 +1325,7 @@ Example:
 
 ### error.errors\[\].locationType
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `error.errors`
 
 Indicates how the `location` property should be interpreted.
@@ -1341,7 +1344,7 @@ Example:
 
 ### error.errors\[\].extendedHelp
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `error.errors`
 
 A URI for a help text that might shed some more light on the error.
@@ -1360,7 +1363,7 @@ Example:
 
 ### error.errors\[\].sendReport
 
-Property Value Type: `string`\
+Property Value Type: `string` \
 Parent: `error.errors`
 
 A URI for a report form used by the service to collect data about the error
@@ -1573,8 +1576,8 @@ The words below are reserved by the JavaScript language and cannot be referred
 to using dot notation. The list represents best knowledge of keywords at this
 time; the list may change or vary based on your specific execution environment.
 
-From the [ECMAScript Language Specification 5th
-Edition](https://www.ecma-international.org/publications-and-standards/standards/ecma-262/):
+From the
+[ECMAScript Language Specification 5th Edition](https://www.ecma-international.org/publications-and-standards/standards/ecma-262/):
 
 <div class='badcode'></div>
 

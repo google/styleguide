@@ -1,8 +1,8 @@
 # Google Vimscript Style Guide
 
-* Nate Soares
-* Artemis Sparks
-* David Barnett
+*   Nate Soares
+*   Artemis Sparks
+*   David Barnett
 
 <!-- mdformat on -->
 
@@ -11,11 +11,12 @@
 This is a casual version of the vimscript style guide, because vimscript is a
 casual language. When submitting vim plugin code, you must adhere to these
 rules. For clarifications, justifications, and explanations about the finer
-points of vimscript, please refer to
-the [heavy guide](./vimscriptfull.md).
+points of vimscript, please refer to the [heavy guide](./vimscriptfull.md).
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 ## Portability
 
@@ -91,7 +92,6 @@ Loud scripts are annoying. Message the user only when:
 *   A long-running process has kicked off.
 *   An error has occurred.
 
-
 ### Type checking
 
 Use strict and explicit checks where possible.
@@ -135,7 +135,6 @@ maktaba removes boilerplate, including:
 *   Error handling
 *   Dependency checking
 
-
 ### Plugin layout
 
 Organize functionality into modular plugins
@@ -166,7 +165,8 @@ should be extracted into functions and autoloaded.
 
 ### Commands
 
-In the plugin/commands.vim or under the ftplugin/ directory, defined without `[!]`.
+In the plugin/commands.vim or under the ftplugin/ directory, defined without
+`[!]`.
 
 General commands go in `plugin/commands.vim`. Filetype-specific commands go in
 `ftplugin/`.
@@ -188,7 +188,8 @@ augroup. This makes your plugin re-entrable.
 
 ### Mappings
 
-Place them in `plugin/mappings.vim`, using `maktaba#plugin#MapPrefix` to get a prefix.
+Place them in `plugin/mappings.vim`, using `maktaba#plugin#MapPrefix` to get a
+prefix.
 
 All key mappings should be defined in `plugin/mappings.vim`.
 
@@ -257,7 +258,6 @@ Similar to python.
     command -bang MyCommand call myplugin#foo()
     command MyCommand2 call myplugin#bar()
     ```
-
 
 ### Naming
 

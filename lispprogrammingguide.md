@@ -8,8 +8,10 @@ style, but that are important to new Lisp Programmers. The three main topics
 covered include common optimization techniques, as well as common pitfalls for
 new Lisp programmers.
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 ## Optimization
 
@@ -296,8 +298,8 @@ none~; ~S~; ~S and ~S~:;~@{~#[~; and~] ~S~^ ,~}~]."`
 
 -   You should the appropriate predicates when comparing objects.
 -   Also see the notes for
-    [Comparison Operators](lispguide.md#comparison-operators) in the style
-    guide for style rules.
+    [Comparison Operators](lispguide.md#comparison-operators) in the style guide
+    for style rules.
 
 Lisp provides four general equality predicates: `EQ`, `EQL`, `EQUAL`, and
 `EQUALP`, which subtly vary in semantics. Additionally, Lisp provides the

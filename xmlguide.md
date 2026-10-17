@@ -3,15 +3,17 @@
 Version 1.0 \
 Copyright Google 2008
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 ## Introduction
 
 This document provides a set of guidelines for general use when designing new
-XML document formats (and to some extent XML documents as well; see [document
-instances](#s11)). Document formats usually include both formal parts (DTDs,
-schemas) and parts expressed in normative English prose.
+XML document formats (and to some extent XML documents as well; see
+[document instances](#s11)). Document formats usually include both formal parts
+(DTDs, schemas) and parts expressed in normative English prose.
 
 These guidelines apply to new designs, and are not intended to force retroactive
 changes in existing designs. These guidelines should be taken into account when
@@ -43,12 +45,11 @@ in the sense of [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 1.  Attempt to reuse existing XML formats whenever possible, especially those
     which allow extensions. Creating an entirely new format should be done only
-    with care and consideration; read [Tim Bray's
-    warnings](https://www.tbray.org/ongoing/When/200x/2006/01/08/No-New-XML-Languages)
-    first. Try to get wide review of your format, from
-    outside your organization as well, if
-    possible. \[*Rationale:* New document formats have a cost: they must be
-    reviewed, documented, and learned by users.\]
+    with care and consideration; read
+    [Tim Bray's warnings](https://www.tbray.org/ongoing/When/200x/2006/01/08/No-New-XML-Languages)
+    first. Try to get wide review of your format, from outside your organization
+    as well, if possible. \[*Rationale:* New document formats have a cost: they
+    must be reviewed, documented, and learned by users.\]
 
 2.  If you are reusing or extending an existing format, make *sensible* use of
     the prescribed elements and attributes, especially any that are required.
@@ -68,22 +69,22 @@ in the sense of [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 1.  Document formats SHOULD be expressed using a schema language. \[*Rationale:*
     Clarity and machine-checkability.\]
 
-2.  The schema language SHOULD be [RELAX NG](http://www.relaxng.org/) [compact
-    syntax](http://www.relaxng.org/compact-tutorial-20030326.html). Embedded
-    [Schematron](https://www.schematron.com/) rules MAY be added to the schema
-    for additional fine control. \[*Rationale:* RELAX NG is the most flexible
-    schema language, with very few arbitrary restrictions on designs. The
-    compact syntax is quite easy to read and learn, and can be converted
+2.  The schema language SHOULD be [RELAX NG](http://www.relaxng.org/)
+    [compact syntax](http://www.relaxng.org/compact-tutorial-20030326.html).
+    Embedded [Schematron](https://www.schematron.com/) rules MAY be added to the
+    schema for additional fine control. \[*Rationale:* RELAX NG is the most
+    flexible schema language, with very few arbitrary restrictions on designs.
+    The compact syntax is quite easy to read and learn, and can be converted
     one-to-one to and from the XML syntax when necessary. Schematron handles
     arbitrary cross-element and cross-attribute constraints nicely.\]
 
-3.  Schemas SHOULD use the ["Salami Slice"
-    style](https://www.xfront.com/GlobalVersusLocal.html#SecondDesign) (one rule
-    per element). Schemas MAY use the ["Russian Doll"
-    style](https://www.xfront.com/GlobalVersusLocal.html#FirstDesign) (schema
-    resembles document) if they are short and simple. The ["Venetian Blind"
-    style](https://www.xfront.com/GlobalVersusLocal.html#ThirdDesign) (one rule
-    per element type) is unsuited to RELAX NG and SHOULD NOT be used.
+3.  Schemas SHOULD use the
+    ["Salami Slice" style](https://www.xfront.com/GlobalVersusLocal.html#SecondDesign)
+    (one rule per element). Schemas MAY use the
+    ["Russian Doll" style](https://www.xfront.com/GlobalVersusLocal.html#FirstDesign)
+    (schema resembles document) if they are short and simple. The
+    ["Venetian Blind" style](https://www.xfront.com/GlobalVersusLocal.html#ThirdDesign)
+    (one rule per element type) is unsuited to RELAX NG and SHOULD NOT be used.
 
 4.  Regular expressions SHOULD be provided to assist in validating complex
     values.
@@ -107,13 +108,12 @@ in the sense of [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
     \[*Rationale:* Attribute names in a namespace must always have a prefix,
     which is annoying to type and hard to read.\]
 
-3.  Namespace names are HTTP URIs. Namespace
-    names SHOULD take the
-    form `https://example.com/whatever/year`, where *whatever* is a unique value
+3.  Namespace names are HTTP URIs. Namespace names SHOULD take the form
+    `https://example.com/whatever/year`, where *whatever* is a unique value
     based on the name of the service or document type, and *year* is the year
     the namespace was created. There may be additional URI-path parts before the
-    *year*. \[*Rationale:* Existing convention.
-    Providing the year allows for the possible recycling of code names.\]
+    *year*. \[*Rationale:* Existing convention. Providing the year allows for
+    the possible recycling of code names.\]
 
 4.  Namespaces MUST NOT be changed unless the semantics of particular elements
     or attributes has changed in drastically incompatible ways. \[*Rationale:*
@@ -205,11 +205,11 @@ values.
     not extensible. The additional flexibility of allowing numeric values is not
     abstracted away by any parser.\]
 
-3.  Dates should be represented using [RFC
-    3339](https://www.ietf.org/rfc/rfc3339.txt) format, a subset of both ISO
-    8601 format and XML Schema `xsd:dateTime` format. UTC times SHOULD be used
-    rather than local times. \[*Rationale:* There are far too many date formats
-    and time zones, although it is recognized that sometimes local time
+3.  Dates should be represented using
+    [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format, a subset of both
+    ISO 8601 format and XML Schema `xsd:dateTime` format. UTC times SHOULD be
+    used rather than local times. \[*Rationale:* There are far too many date
+    formats and time zones, although it is recognized that sometimes local time
     preserves important information.\]
 
 4.  Embedded syntax in character content and attribute values SHOULD NOT be
@@ -230,11 +230,11 @@ values.
 1.  Simple key-value pairs SHOULD be represented with an empty element whose
     name represents the key, with the `value` attribute containing the value.
     Elements that have a `value` attribute MAY also have a `unit` attribute to
-    specify the unit of a measured value. For physical measurements, the [SI
-    system](https://en.wikipedia.org/wiki/International_System_of_Units) SHOULD
-    be used. \[*Rationale:* Simplicity and design consistency. Keeping the value
-    in an attribute hides it from the user, since displaying just the value
-    without the key is not useful.\]
+    specify the unit of a measured value. For physical measurements, the
+    [SI system](https://en.wikipedia.org/wiki/International_System_of_Units)
+    SHOULD be used. \[*Rationale:* Simplicity and design consistency. Keeping
+    the value in an attribute hides it from the user, since displaying just the
+    value without the key is not useful.\]
 
 2.  If the number of possible keys is very large or unbounded, key-value pairs
     MAY be represented by a single generic element with `key`, `value`, and
@@ -295,8 +295,8 @@ hacks.
     \[*Rationale:* Clarity and consistency.\]
 
 4.  Well-known prefixes such as html: (for XHTML), dc: (for Dublin Core
-    metadata), and xs: (for XML Schema) should be used
-    for standard namespaces. \[*Rationale:* Human readability.\]
+    metadata), and xs: (for XML Schema) should be used for standard namespaces.
+    \[*Rationale:* Human readability.\]
 
 5.  Redundant whitespace in a tag SHOULD NOT be used. Use one space before each
     attribute in a start-tag; if the start tag is too long, the space MAY be
@@ -479,11 +479,11 @@ child elements are hard to follow and hard to use, though it often makes good
 sense to use both when the data clearly fall into two different groups such as
 simple/complex or metadata/data.
 
-> Newbies always ask:\
->     "Elements or attributes?\
-> Which will serve me best?"\
->     Those who know roar like lions;\
->     Wise hackers smile like tigers.\
+> Newbies always ask: \
+>     "Elements or attributes? \
+> Which will serve me best?" \
+>     Those who know roar like lions; \
+>     Wise hackers smile like tigers. \
 >             --a
 > [tanka](https://en.wikipedia.org/wiki/Waka_%28poetry%29#Forms_of_waka), or
 > extended haiku

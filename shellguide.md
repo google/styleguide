@@ -83,10 +83,10 @@ Some guidelines:
 
 Executables should have a `.sh` extension or no extension.
 
--   If the executable will have a build rule that renames the source
-    file then prefer to use a `.sh` extension. This
-    enables you to use the recommended naming convention, with a source file
-    like `foo.sh` and a build rule named `foo`.
+-   If the executable will have a build rule that renames the source file then
+    prefer to use a `.sh` extension. This enables you to use the recommended
+    naming convention, with a source file like `foo.sh` and a build rule named
+    `foo`.
 -   If the executable will be added directly to the user's `PATH`, then prefer
     to use no extension. It is not necessary to know what language a program is
     written in when executing it and shell doesn't require an extension so we
@@ -108,8 +108,7 @@ secure sufficiently to allow SUID/SGID. While bash does make it difficult to run
 SUID, it's still possible on some platforms which is why we're being explicit
 about banning it.
 
-Use `sudo` to provide elevated access if you need
-it.
+Use `sudo` to provide elevated access if you need it.
 
 <a id="s3-environment"></a>
 
@@ -150,8 +149,7 @@ fi
 Start each file with a description of its contents.
 
 Every file must have a top-level comment including a brief overview of its
-contents. A copyright notice and author information
-are optional.
+contents. A copyright notice and author information are optional.
 
 Example:
 
@@ -243,7 +241,8 @@ put a short comment in.
 Use TODO comments for code that is temporary, a short-term solution, or
 good-enough but not perfect.
 
-This matches the convention in the [C++ Guide](https://google.github.io/styleguide/cppguide.html#TODO_Comments).
+This matches the convention in the
+[C++ Guide](https://google.github.io/styleguide/cppguide.html#TODO_Comments).
 
 `TODO`s should include the string `TODO` in all caps, followed by the name,
 e-mail address, or other identifier of the person with the best context about

@@ -15,8 +15,10 @@ Google uses the [styler](https://github.com/r-lib/styler) package on every
 checked in file to ensure code consistency and help reviewers focus on more
 important issues.
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 ## Syntax
 

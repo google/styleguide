@@ -4,8 +4,10 @@ This style guide is for C# code developed internally at Google, and is the
 default style for C# code at Google. It makes stylistic choices that conform to
 other languages at Google, such as Google C++ style and Google Java style.
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 ## Formatting guidelines
 

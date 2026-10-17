@@ -5,22 +5,24 @@
 > is one of the primary development languages for applications on Apple
 > platforms.
 >
-> Apple has already written a very good, and widely accepted, [Cocoa Coding
-> Guidelines](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html)
+> Apple has already written a very good, and widely accepted,
+> [Cocoa Coding Guidelines](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html)
 > for Objective-C. Please read it in addition to this guide.
 >
 > The purpose of this document is to describe the Objective-C (and
 > Objective-C++) coding guidelines and practices. These guidelines have evolved
-> and been proven over time on other projects and teams.
-> Open-source projects developed by Google conform to the requirements in this guide.
+> and been proven over time on other projects and teams. Open-source projects
+> developed by Google conform to the requirements in this guide.
 >
 > Note that this guide is not an Objective-C tutorial. We assume that the reader
 > is familiar with the language. If you are new to Objective-C or need a
-> refresher, please read [Programming with
-> Objective-C](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html).
+> refresher, please read
+> [Programming with Objective-C](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html).
 
+<!-- mdformat off -->
 * TOC
 {:toc}
+<!-- mdformat on -->
 
 ## Principles
 
@@ -170,8 +172,7 @@ An example source file, demonstrating the correct commenting and spacing for the
 ## Naming
 
 Names should be as descriptive as possible, within reason. Follow standard
-[Objective-C naming
-rules](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html).
+[Objective-C naming rules](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html).
 
 Avoid non-standard abbreviations (including non-standard acronyms and
 initialisms). Don't worry about saving horizontal space as it is far more
@@ -439,8 +440,8 @@ NSEnumerator *enumerator = [frogs reverseObjectEnumerator];  // GOOD.
 NSEnumerator *enumerator = frogs.reverseObjectEnumerator;    // AVOID.
 ```
 
-See [Apple's Guide to Naming
-Methods](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingMethods.html#//apple_ref/doc/uid/20001282-BCIGIJJF)
+See
+[Apple's Guide to Naming Methods](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingMethods.html#//apple_ref/doc/uid/20001282-BCIGIJJF)
 for more details on Objective-C naming.
 
 These guidelines are for Objective-C methods only. C++ method names continue to
@@ -620,10 +621,10 @@ void CallWithAFoo(Foo *foo);
 
 ### Method Declarations
 
-As shown in the [example](#Example), the recommended order
-for declarations in an `@interface` declaration are: properties, class methods,
-initializers, and then finally instance methods. The class methods section
-should begin with any convenience constructors.
+As shown in the [example](#Example), the recommended order for declarations in
+an `@interface` declaration are: properties, class methods, initializers, and
+then finally instance methods. The class methods section should begin with any
+convenience constructors.
 
 <a id="Local_Variables"></a>
 
@@ -661,8 +662,8 @@ objects are automatically initialized to `nil`, so explicit initialization to
 `nil` is not required for those common cases. However, automatic initialization
 does *not* occur for many Objective-C pointer types, including object pointers
 declared with the `__unsafe_unretained` ownership qualifier and CoreFoundation
-object pointer types. When in doubt, prefer to initialize all Objective-C
-local variables.
+object pointer types. When in doubt, prefer to initialize all Objective-C local
+variables.
 
 ### Static Variables
 
@@ -718,8 +719,8 @@ NS_ENUM will be more appropriate.
 
 Be aware that types long, NSInteger, NSUInteger and CGFloat have sizes that
 differ in 32- and 64-bit builds. Their use is appropriate when matching system
-interfaces but should be avoided when dealing with APIs that
-require exact sizing, e.g., proto APIs.
+interfaces but should be avoided when dealing with APIs that require exact
+sizing, e.g., proto APIs.
 
 <div class='goodcode'></div>
 
@@ -755,8 +756,8 @@ warnings.
 Since all Google iOS projects are now targeting only 64-bit runtime, `CGFloat`
 constants may omit the suffix (use `double` values). However, teams may choose
 to continue using `float` numbers for legacy code consistency, until they
-eventually migrate to `double` values everywhere. Avoid a mixture of `float`
-and `double` values in the same code.
+eventually migrate to `double` values everywhere. Avoid a mixture of `float` and
+`double` values in the same code.
 
 <div class='goodcode'></div>
 
@@ -806,14 +807,14 @@ will need to understand your code. Be generous—the next one may be you!
 A file may optionally start with a description of its contents.
 
 Every file may contain the following items, in order
-  * License boilerplate if necessary. Choose the appropriate boilerplate for the
+
+*   License boilerplate if necessary. Choose the appropriate boilerplate for the
     license used by the project.
-  * A basic description of the contents of the file if necessary.
+*   A basic description of the contents of the file if necessary.
 
 If you make significant changes to a file with an author line, consider deleting
 the author line since revision history already provides a more detailed and
 accurate record of authorship.
-
 
 <a id="Declaration_Comments"></a>
 
@@ -824,7 +825,6 @@ comment describing its purpose and how it fits into the larger picture.
 
 Comments should be used to document classes, properties, ivars, functions,
 categories, protocol declarations, and enums.
-
 
 <div class='goodcode'></div>
 
@@ -848,10 +848,9 @@ categories, protocol declarations, and enums.
 ```
 
 [Doxygen](https://doxygen.nl)-style comments are encouraged for interfaces as
-they are parsed by Xcode
-to display formatted documentation. There is a wide variety of
-[Doxygen commands](https://www.doxygen.nl/manual/commands.html);
-use them consistently within a project.
+they are parsed by Xcode to display formatted documentation. There is a wide
+variety of [Doxygen commands](https://www.doxygen.nl/manual/commands.html); use
+them consistently within a project.
 
 If you have already described an interface in detail in the comments at the top
 of your file, feel free to simply state, "See comment at top of file for a
@@ -877,10 +876,10 @@ Declaration comments explain how a method or function is used. Comments
 explaining how a method or function is implemented should be with the
 implementation rather than with the declaration.
 
-Declaration comments may be omitted on test case classes and test methods
-if comments would communicate no additional information beyond the method's
-name. Utility methods in tests or test-specific classes (such as helpers) should
-be commented.
+Declaration comments may be omitted on test case classes and test methods if
+comments would communicate no additional information beyond the method's name.
+Utility methods in tests or test-specific classes (such as helpers) should be
+commented.
 
 <a id="Implementation_Comments"></a>
 
@@ -918,8 +917,8 @@ line them up.
 ### Disambiguating Symbols
 
 Where needed to avoid ambiguity, use backticks or vertical bars to quote
-variable names and symbols in comments in preference to using quotation marks
-or naming the symbols inline.
+variable names and symbols in comments in preference to using quotation marks or
+naming the symbols inline.
 
 In Doxygen-style comments, prefer demarcating symbols with a monospace text
 command, such as [`@c`](https://www.doxygen.nl/manual/commands.html#cmdc).
@@ -1062,9 +1061,9 @@ practices. Do not define macros that appear to be C or Objective-C keywords.
 Avoid macros that expand to unbalanced C or Objective-C constructs. Avoid macros
 that introduce scope, or may obscure the capturing of values in blocks.
 
-Avoid macros that generate class, property, or method definitions in
-headers to be used as public API. These only make the code hard to
-understand, and the language already has better ways of doing this.
+Avoid macros that generate class, property, or method definitions in headers to
+be used as public API. These only make the code hard to understand, and the
+language already has better ways of doing this.
 
 Avoid macros that generate method implementations, or that generate declarations
 of variables that are later used outside of the macro. Macros shouldn't make
@@ -1083,9 +1082,9 @@ ARRAY_ADDER(NSString) {
 }
 ```
 
-Examples of acceptable macro use include assertion and debug logging macros
-that are conditionally compiled based on build settings—often, these are
-not compiled into release builds.
+Examples of acceptable macro use include assertion and debug logging macros that
+are conditionally compiled based on build settings—often, these are not compiled
+into release builds.
 
 ### `nullptr` vs. `NULL`
 
@@ -1225,8 +1224,8 @@ Convenience class factory methods for creating instances may precede the
 Don't initialize instance variables to `0` or `nil` in the `init` method; doing
 so is redundant.
 
-All instance variables for a newly allocated object are [initialized
-to](https://developer.apple.com/library/mac/documentation/General/Conceptual/CocoaEncyclopedia/ObjectAllocation/ObjectAllocation.html)
+All instance variables for a newly allocated object are
+[initialized to](https://developer.apple.com/library/mac/documentation/General/Conceptual/CocoaEncyclopedia/ObjectAllocation/ObjectAllocation.html)
 `0` (except for isa), so don't clutter up the init method by re-initializing
 variables to `0` or `nil`.
 
@@ -1281,8 +1280,8 @@ prevent subclasses from unintentionally overriding them.
 
 `#import` Objective-C and Objective-C++ headers, and `#include` C/C++ headers.
 
-C/C++ headers include other C/C++ headers using `#include`. Using `#import`
-on C/C++ headers prevents future inclusions using `#include` and could result in
+C/C++ headers include other C/C++ headers using `#include`. Using `#import` on
+C/C++ headers prevents future inclusions using `#include` and could result in
 unintended compilation behavior.
 
 C/C++ headers should provide their own `#define` guard.
@@ -1295,9 +1294,9 @@ The standard order for header inclusion is the related header, operating system
 headers, language library headers, and finally groups of headers for other
 dependencies.
 
-The related header precedes others to ensure it has no hidden dependencies.
-For implementation files the related header is the header file.
-For test files the related header is the header containing the tested interface.
+The related header precedes others to ensure it has no hidden dependencies. For
+implementation files the related header is the header file. For test files the
+related header is the header containing the tested interface.
 
 Separate each non-empty group of includes with one blank line. Within each group
 the includes should be ordered alphabetically.
@@ -1477,8 +1476,8 @@ leading to slower execution and substantial increases in binary size.
 
 ### Mutables, Copies and Ownership
 
-For [Foundation and other hierarchies containing both immutable and mutable
-subclasses](https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html)
+For
+[Foundation and other hierarchies containing both immutable and mutable subclasses](https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html)
 a mutable subclass may be substituted for an immutable so long as the
 immutable's contract is honored.
 
@@ -1545,9 +1544,8 @@ initializers and setters
 Synthesized accessors should use the `copy` keyword to ensure the generated code
 matches these expectations.
 
-NOTE: [The `copy` property keyword only affects the synthesized setter and has
-no effect on
-getters](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProperties.html#//apple_ref/doc/uid/TP30001163-CH17-SW27).
+NOTE:
+[The `copy` property keyword only affects the synthesized setter and has no effect on getters](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProperties.html#//apple_ref/doc/uid/TP30001163-CH17-SW27).
 Since property keywords have no effect on direct ivar access, custom accessors
 must implement the same copy semantics.
 
@@ -1674,8 +1672,7 @@ Don't `@throw` Objective-C exceptions, but you should be prepared to catch them
 from third-party or OS calls.
 
 This follows the recommendation to use error objects for error delivery in
-[Apple's Introduction to Exception Programming Topics for
-Cocoa](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html).
+[Apple's Introduction to Exception Programming Topics for Cocoa](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html).
 
 We do compile with `-fobjc-exceptions` (mainly so we get `@synchronized`), but
 we don't `@throw`. Uses of `@try`, `@catch`, and `@finally` are allowed when
@@ -1687,8 +1684,8 @@ document exactly which methods you expect to throw.
 ### `nil` Checks
 
 Avoid `nil` pointer checks that exist only to prevent sending messages to `nil`.
-Sending a message to `nil` [reliably
-returns](http://www.sealiesoftware.com/blog/archive/2012/2/29/objc_explain_return_value_of_message_to_nil.html)
+Sending a message to `nil`
+[reliably returns](http://www.sealiesoftware.com/blog/archive/2012/2/29/objc_explain_return_value_of_message_to_nil.html)
 `nil` as a pointer, zero as an integer or floating-point value, structs
 initialized to `0`, and `_Complex` values equal to `{0, 0}`.
 
@@ -1761,22 +1758,23 @@ NSArray<GTMBook *> *__nullable GTMLoadBooksFromTitle(NSString *__nonnull path);
 
 Do not assume that a pointer is not null based on a nonnull qualifier, because
 the compiler only checks a subset of such cases, and does not guarantee that the
-pointer is not null. Avoid intentionally violating nullability semantics
-of function, method, and property declarations.
+pointer is not null. Avoid intentionally violating nullability semantics of
+function, method, and property declarations.
 
 <a id="BOOL_Pitfalls"></a>
 
 ### BOOL Pitfalls
 
 <a id="BOOL_Expressions_Conversions"></a>
+
 #### BOOL Expressions and Conversions
 
 Be careful when converting general integral values to `BOOL`. Avoid comparing
 directly with `YES` or comparing multiple `BOOL` values with comparison
 operators.
 
-`BOOL` on some Apple platforms (notably Intel macOS, watchOS, and 32-bit iOS)
-is defined as a signed `char`, so it may have values other than `YES` (`1`) and
+`BOOL` on some Apple platforms (notably Intel macOS, watchOS, and 32-bit iOS) is
+defined as a signed `char`, so it may have values other than `YES` (`1`) and
 `NO` (`0`). Do not cast or convert general integral values directly to `BOOL`.
 
 Common mistakes include casting or converting an array's size, a pointer value,
@@ -1826,9 +1824,9 @@ conditional operator.
 }
 ```
 
-Don't directly compare `BOOL` variables with `YES`. Not only is
-it harder to read for those well-versed in C, but the first point above
-demonstrates that return values may not always be what you expect.
+Don't directly compare `BOOL` variables with `YES`. Not only is it harder to
+read for those well-versed in C, but the first point above demonstrates that
+return values may not always be what you expect.
 
 <div class='badcode'></div>
 
@@ -1848,9 +1846,9 @@ if (great) {         // GOOD.
 }
 ```
 
-Don't directly compare `BOOL` values using comparison operators. `BOOL`
-values that are true may not be equal. Use logical operators in place
-of bitwise comparisons of `BOOL` values.
+Don't directly compare `BOOL` values using comparison operators. `BOOL` values
+that are true may not be equal. Use logical operators in place of bitwise
+comparisons of `BOOL` values.
 
 <div class='badcode'></div>
 
@@ -1875,14 +1873,17 @@ if (!oldBoolValue != !newBoolValue) {
 
 #### BOOL Literals
 
-The [BOOL NSNumber literals](https://clang.llvm.org/docs/ObjectiveCLiterals.html#nsnumber-literals)
+The
+[BOOL NSNumber literals](https://clang.llvm.org/docs/ObjectiveCLiterals.html#nsnumber-literals)
 are `@YES` and `@NO` which are equivalent to `[NSNumber numberWithBool:...]`.
 
-Avoid using [boxed expressions](https://clang.llvm.org/docs/ObjectiveCLiterals.html#boxed-expressions)
-to create BOOL values, including simple expressions like `@(YES)`.
-Boxed expressions suffer from [the same pitfalls as other BOOL expressions]
-(#BOOL_Expressions_Conversions) as boxing general integral values can
-produce true or false `NSNumbers` that are not equal to `@YES` and `@NO`.
+Avoid using
+[boxed expressions](https://clang.llvm.org/docs/ObjectiveCLiterals.html#boxed-expressions)
+to create BOOL values, including simple expressions like `@(YES)`. Boxed
+expressions suffer from
+[the same pitfalls as other BOOL expressions](#BOOL_Expressions_Conversions) as
+boxing general integral values can produce true or false `NSNumbers` that are
+not equal to `@YES` and `@NO`.
 
 When converting a general integral value to a BOOL literal, use conditional
 operators to convert to `@YES` or `@NO`. Do not embed a conditional operator
@@ -2127,8 +2128,8 @@ next line indented by at least four spaces.
 
 Prefer putting the return type on the same line as the function name and append
 all parameters on the same line if they will fit. Wrap parameter lists which do
-not fit on a single line as you would wrap arguments in a [function
-call](#Function_Calls).
+not fit on a single line as you would wrap arguments in a
+[function call](#Function_Calls).
 
 <div class='goodcode'></div>
 
@@ -2375,9 +2376,9 @@ UpdateTally(scoreHeuristic, x, y, z);
 Format exceptions with `@catch` and `@finally` labels on the same line as the
 preceding `}`. Add a space between the `@` label and the opening brace (`{`), as
 well as between the `@catch` and the caught object declaration. If you must use
-Objective-C exceptions, format them as follows. However, see [Avoid Throwing
-Exceptions](#Avoid_Throwing_Exceptions) for reasons why you should not be using
-exceptions.
+Objective-C exceptions, format them as follows. However, see
+[Avoid Throwing Exceptions](#Avoid_Throwing_Exceptions) for reasons why you
+should not be using exceptions.
 
 <div class='goodcode'></div>
 
