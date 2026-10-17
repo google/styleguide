@@ -6,6 +6,7 @@ Revision 0.9
 {:toc}
 
 <a id="Introduction"></a>
+
 ## Introduction
 
 This style guide documents guidelines and recommendations for building JSON APIs
@@ -16,6 +17,7 @@ These guidelines are applicable to JSON requests and responses in both RPC-based
 and REST-based APIs.
 
 <a id="Definitions"></a>
+
 ## Definitions
 
 For the purposes of this style guide, we define the following terms:
@@ -38,9 +40,11 @@ broad designation. In this guide, `number` will refer to JavaScript's `number`
 type, while `integer` will refer to integers.
 
 <a id="General_Guidelines"></a>
+
 ## General Guidelines
 
 <a id="Comments"></a>
+
 ### Comments
 
 No comments in JSON objects.
@@ -59,6 +63,7 @@ style guide include comments. However this is only to clarify the examples.
 ```
 
 <a id="Double_Quotes"></a>
+
 ### Double Quotes
 
 Use double quotes.
@@ -69,6 +74,7 @@ surrounded by double quotes. Other value types (like boolean or number) should
 not be surrounded by double quotes.
 
 <a id="Flattened_data_vs_Structured_Hierarchy"></a>
+
 ### Flattened data vs Structured Hierarchy
 
 Data should not be arbitrarily grouped for convenience.
@@ -113,9 +119,11 @@ Structured Address:
 ```
 
 <a id="Property_Name_Guidelines"></a>
+
 ## Property Name Guidelines
 
 <a id="Property_Name_Format"></a>
+
 ### Property Name Format
 
 Choose meaningful property names.
@@ -144,6 +152,7 @@ property:
 ```
 
 <a id="Key_Names_in_JSON_Maps"></a>
+
 ### Key Names in JSON Maps
 
 JSON maps can use any Unicode character in key names.
@@ -180,6 +189,7 @@ using the square bracket notation familiar for maps (for example,
 ```
 
 <a id="Reserved_Property_Names"></a>
+
 ### Reserved Property Names
 
 Certain property names are reserved for consistent use across services.
@@ -189,6 +199,7 @@ later on in this guide. Services should avoid using these property names for
 anything other than their defined semantics.
 
 <a id="Singular_vs_Plural_Property_Names"></a>
+
 ### Singular vs Plural Property Names
 
 Array types should have plural property names. All other property names should
@@ -220,6 +231,7 @@ could also be changed to `itemCount` to look singular.
 ```
 
 <a id="Naming_Conflicts"></a>
+
 ### Naming Conflicts
 
 Avoid naming conflicts by choosing a new property name or versioning the API.
@@ -269,9 +281,11 @@ two things:
 ```
 
 <a id="Property_Value_Guidelines"></a>
+
 ## Property Value Guidelines
 
 <a id="Property_Value_Format"></a>
+
 ### Property Value Format
 
 Property values must be booleans, numbers, Unicode strings, objects, arrays, or
@@ -310,6 +324,7 @@ Bad:
 ```
 
 <a id="Empty_Null_Property_Values"></a>
+
 ### Empty/Null Property Values
 
 Consider removing empty or `null` values.
@@ -333,6 +348,7 @@ existence.
 ```
 
 <a id="Enum_Values"></a>
+
 ### Enum Values
 
 Enum values should be represented as strings.
@@ -362,6 +378,7 @@ JSON object:
 ```
 
 <a id="Property_Value_Data_Types"></a>
+
 ## Property Value Data Types
 
 As mentioned above, property value types must be booleans, numbers, strings,
@@ -371,6 +388,7 @@ strings, but they will be formatted in a specific manner so that they can be
 easily parsed.
 
 <a id="Date_Property_Values"></a>
+
 ### Date Property Values
 
 Dates should be formatted as recommended by RFC 3339.
@@ -385,6 +403,7 @@ Dates should be strings formatted as recommended by [RFC
 ```
 
 <a id="Time_Duration_Property_Values"></a>
+
 ### Time Duration Property Values
 
 Time durations should be formatted as recommended by ISO 8601.
@@ -401,6 +420,7 @@ Time duration values should be strings formatted as recommended by [ISO
 ```
 
 <a id="Latitude_Longitude_Property_Values"></a>
+
 ### Latitude/Longitude Property Values
 
 Latitudes/Longitudes should be formatted as recommended by ISO 6709.
@@ -417,6 +437,7 @@ the ±DD.DDDD±DDD.DDDD degrees format.
 ```
 
 <a id="JSON_Structure_and_Reserved_Property_Names"></a>
+
 ## JSON Structure & Reserved Property Names
 
 In order to maintain a consistent interface across APIs, JSON objects should
@@ -489,11 +510,13 @@ object or an `error` object, but not both. An explanation of each of these
 properties can be found below.
 
 <a id="Top-Level_Reserved_Property_Names"></a>
+
 ## Top-Level Reserved Property Names
 
 The top-level of the JSON object may contain the following properties.
 
 <a id="apiVersion"></a>
+
 ### apiVersion
 
 Property Value Type: `string`\
@@ -511,6 +534,7 @@ Example:
 ```
 
 <a id="context"></a>
+
 ### context
 
 Property Value Type: `string`\
@@ -572,6 +596,7 @@ function handleResponse(response) {
 ```
 
 <a id="id"></a>
+
 ### id
 
 Property Value Type: `string`\
@@ -588,6 +613,7 @@ Example:
 ```
 
 <a id="method"></a>
+
 ### method
 
 Property Value Type: `string`\
@@ -612,6 +638,7 @@ operation to perform on the `params` property:
 ```
 
 <a id="params"></a>
+
 ### params
 
 Property Value Type: `object`\
@@ -635,6 +662,7 @@ Example:
 ```
 
 <a id="data"></a>
+
 ### data
 
 Property Value Type: `object`\
@@ -647,6 +675,7 @@ object or an `error` object, but not both. If both `data` and `error` are
 present, the `error` object takes precedence.
 
 <a id="error"></a>
+
 ### error
 
 Property Value Type: `object`\
@@ -676,11 +705,13 @@ Example:
 ```
 
 <a id="Reserved_Property_Names_in_the_data_object"></a>
+
 ## Reserved Property Names in the data object
 
 The `data` property of the JSON object may contain the following properties.
 
 <a id="data.kind"></a>
+
 ### data.kind
 
 Property Value Type: `string`\
@@ -701,6 +732,7 @@ Example:
 ```
 
 <a id="data.fields"></a>
+
 ### data.fields
 
 Property Value Type: `string`\
@@ -724,6 +756,7 @@ Example:
 ```
 
 <a id="data.etag"></a>
+
 ### data.etag
 
 Property Value Type: `string`\
@@ -740,6 +773,7 @@ Example:
 ```
 
 <a id="data.id"></a>
+
 ### data.id
 
 Property Value Type: `string`\
@@ -755,6 +789,7 @@ Example:
 ```
 
 <a id="data.lang"></a>
+
 ### data.lang
 
 Property Value Type: `string` (formatted as specified in BCP 47)\
@@ -781,6 +816,7 @@ Example:
 ```
 
 <a id="data.updated"></a>
+
 ### data.updated
 
 Property Value Type: `string` (formatted as specified in RFC 3339)\
@@ -796,6 +832,7 @@ Example:
 ```
 
 <a id="data.deleted"></a>
+
 ### data.deleted
 
 Property Value Type: `boolean`\
@@ -818,6 +855,7 @@ Example:
 ```
 
 <a id="data.items"></a>
+
 ### data.items
 
 Property Value Type: `array`\
@@ -846,6 +884,7 @@ Example:
 ```
 
 <a id="Reserved_Property_Names_for_Paging"></a>
+
 ## Reserved Property Names for Paging
 
 The following properties are located in the `data` object, and help page through
@@ -875,6 +914,7 @@ An example of how to use these properties to implement paging can be found at
 the end of this guide.
 
 <a id="data.currentItemCount"></a>
+
 ### data.currentItemCount
 
 Property Value Type: `integer`\
@@ -901,6 +941,7 @@ Example:
 ```
 
 <a id="data.itemsPerPage"></a>
+
 ### data.itemsPerPage
 
 Property Value Type: `integer`\
@@ -922,6 +963,7 @@ Example:
 ```
 
 <a id="data.startIndex"></a>
+
 ### data.startIndex
 
 Property Value Type: `integer`\
@@ -943,6 +985,7 @@ Example:
 ```
 
 <a id="data.totalItems"></a>
+
 ### data.totalItems
 
 Property Value Type: `integer`\
@@ -963,6 +1006,7 @@ Example:
 ```
 
 <a id="data.pagingLinkTemplate"></a>
+
 ### data.pagingLinkTemplate
 
 Property Value Type: `string`\
@@ -983,6 +1027,7 @@ Example:
 ```
 
 <a id="data.pageIndex"></a>
+
 ### data.pageIndex
 
 Property Value Type: `integer`\
@@ -1004,6 +1049,7 @@ Example:
 ```
 
 <a id="data.totalPages"></a>
+
 ### data.totalPages
 
 Property Value Type: `integer`\
@@ -1024,6 +1070,7 @@ Example:
 ```
 
 <a id="Reserved_Property_Names_for_Links"></a>
+
 ## Reserved Property Names for Links
 
 The following properties are located in the `data` object, and represent
@@ -1035,6 +1082,7 @@ references to other resources. There are two forms of link properties:
     with `Link`).
 
 <a id="data.self"></a>
+
 ### data.self / data.selfLink
 
 Property Value Type: `object` / `string`\
@@ -1056,6 +1104,7 @@ Example:
 ```
 
 <a id="data.edit"></a>
+
 ### data.edit / data.editLink
 
 Property Value Type: `object` / `string`\
@@ -1077,6 +1126,7 @@ Example:
 ```
 
 <a id="data.next"></a>
+
 ### data.next / data.nextLink
 
 Property Value Type: `object` / `string`\
@@ -1099,6 +1149,7 @@ Example:
 ```
 
 <a id="data.previous"></a>
+
 ### data.previous / data.previousLink
 
 Property Value Type: `object` / `string`\
@@ -1121,11 +1172,13 @@ Example:
 ```
 
 <a id="Reserved_Property_Names_in_the_error_object"></a>
+
 ## Reserved Property Names in the error object
 
 The `error` property of the JSON object may contain the following properties.
 
 <a id="error.code"></a>
+
 ### error.code
 
 Property Value Type: `integer`\
@@ -1146,6 +1199,7 @@ Example:
 ```
 
 <a id="error.message"></a>
+
 ### error.message
 
 Property Value Type: `string`\
@@ -1165,6 +1219,7 @@ Example:
 ```
 
 <a id="error.errors"></a>
+
 ### error.errors
 
 Property Value Type: `array`\
@@ -1181,6 +1236,7 @@ Example:
 ```
 
 <a id="error.errors.domain"></a>
+
 ### error.errors\[\].domain
 
 Property Value Type: `string`\
@@ -1201,6 +1257,7 @@ Example:
 ```
 
 <a id="error.errors.reason"></a>
+
 ### error.errors\[\].reason
 
 Property Value Type: `string`\
@@ -1220,6 +1277,7 @@ Example:
 ```
 
 <a id="error.errors.message"></a>
+
 ### error.errors\[\].message
 
 Property Value Type: `string`\
@@ -1241,6 +1299,7 @@ Example:
 ```
 
 <a id="error.errors.location"></a>
+
 ### error.errors\[\].location
 
 Property Value Type: `string`\
@@ -1260,6 +1319,7 @@ Example:
 ```
 
 <a id="error.errors.locationType"></a>
+
 ### error.errors\[\].locationType
 
 Property Value Type: `string`\
@@ -1278,6 +1338,7 @@ Example:
 ```
 
 <a id="error.errors.extendedHelp"></a>
+
 ### error.errors\[\].extendedHelp
 
 Property Value Type: `string`\
@@ -1296,6 +1357,7 @@ Example:
 ```
 
 <a id="error.errors.sendReport"></a>
+
 ### error.errors\[\].sendReport
 
 Property Value Type: `string`\
@@ -1315,6 +1377,7 @@ Example:
 ```
 
 <a id="Property_Ordering"></a>
+
 ## Property Ordering
 
 Properties can be in any order within the JSON object. However, in some cases
@@ -1323,6 +1386,7 @@ better performance. One example is a pull parser in a mobile environment, where
 performance and memory are critical, and unnecessary parsing should be avoided.
 
 <a id="Kind_Property"></a>
+
 ### Kind Property
 
 `kind` should be the first property.
@@ -1334,6 +1398,7 @@ applies when objects have a `kind` property (usually found in the `data` and
 `items` properties).
 
 <a id="Items_Property"></a>
+
 ### Items Property
 
 `items` should be the last property in the `data` object.
@@ -1344,6 +1409,7 @@ unnecessarily parsing those items when the developer only needs fields from the
 data.
 
 <a id="Property_Ordering_Example"></a>
+
 ### Property Ordering Example
 
 ```json
@@ -1366,9 +1432,11 @@ data.
 ```
 
 <a id="Examples"></a>
+
 ## Examples
 
 <a id="YouTube_JSON_API"></a>
+
 ### YouTube JSON API
 
 Here's an example of the YouTube JSON API's response object. You can learn more
@@ -1425,6 +1493,7 @@ about YouTube's JSON API here:
 ```
 
 <a id="Paging_Example"></a>
+
 ### Paging Example
 
 This example demonstrates how the Google search items could be represented as a
@@ -1491,9 +1560,11 @@ Here's how each of the colored boxes from the screenshot would be represented
     *   Index #N = `N * itemsPerPage`
 
 <a id="Appendix"></a>
+
 ## Appendix
 
 <a id="Appendix_A"></a>
+
 ### Appendix A: Reserved JavaScript Words
 
 A list of reserved JavaScript words that should be avoided in property names.

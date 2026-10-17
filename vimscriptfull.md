@@ -592,6 +592,7 @@ Vim plugins should provide any or all of the following: **Commands**,
         installed via an autoload function in non-maktaba plugins.
 
 <a id="commands-conventions"></a>
+
 #### Conventions
 
 *   Pass `<bang>` to functions with `'<bang>' == '!'`.

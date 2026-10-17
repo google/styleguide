@@ -8,6 +8,7 @@
 <div class="numbered"></div>
 
 <a id="Background"></a>
+
 ## Background
 
 This document defines formatting and style rules for HTML and CSS. It aims at
@@ -19,16 +20,19 @@ code quality is maintained.
 <div class="numbered"></div>
 
 <a id="General"></a>
+
 ## General
 
 <div class="numbered"></div>
 
 <a id="General_Style_Rules"></a>
+
 ### General Style Rules
 
 <div class="numbered"></div>
 
 <a id="Protocol"></a>
+
 #### Protocol
 
 Use HTTPS for embedded resources where possible.
@@ -73,11 +77,13 @@ scripts, unless the respective files are not available over HTTPS.
 <div class="numbered"></div>
 
 <a id="General_Formatting_Rules"></a>
+
 ### General Formatting Rules
 
 <div class="numbered"></div>
 
 <a id="Indentation"></a>
+
 #### Indentation
 
 Indent by 2 spaces at a time.
@@ -104,6 +110,7 @@ Don’t use tabs or mix tabs and spaces for indentation.
 <div class="numbered"></div>
 
 <a id="Capitalization"></a>
+
 #### Capitalization
 
 Use only lowercase.
@@ -143,6 +150,7 @@ color: #e5e5e5;
 <div class="numbered"></div>
 
 <a id="Trailing_Whitespace"></a>
+
 #### Trailing Whitespace
 
 Remove trailing white spaces.
@@ -166,11 +174,13 @@ Trailing white spaces are unnecessary and can complicate diffs.
 <div class="numbered"></div>
 
 <a id="General_Meta_Rules"></a>
+
 ### General Meta Rules
 
 <div class="numbered"></div>
 
 <a id="Encoding"></a>
+
 #### Encoding
 
 Use UTF-8 (no BOM).
@@ -188,6 +198,7 @@ UTF-8.
 <div class="numbered"></div>
 
 <a id="Comments"></a>
+
 #### Comments
 
 Explain code as needed, where possible.
@@ -202,6 +213,7 @@ depends on the project’s complexity.)
 <div class="numbered"></div>
 
 <a id="Action_Items"></a>
+
 #### Action Items
 
 Mark todos and action items with `TODO`.
@@ -231,16 +243,19 @@ Append action items after a colon as in `TODO: action item`.
 <div class="numbered"></div>
 
 <a id="HTML"></a>
+
 ## HTML
 
 <div class="numbered"></div>
 
 <a id="HTML_Style_Rules"></a>
+
 ### HTML Style Rules
 
 <div class="numbered"></div>
 
 <a id="Document_Type"></a>
+
 #### Document Type
 
 Use `<!doctype html>`.
@@ -258,6 +273,7 @@ incompatibilities especially when reusing code that expects no-quirks mode.
 <div class="numbered"></div>
 
 <a id="HTML_Validity"></a>
+
 #### HTML Validity
 
 Use valid HTML where possible.
@@ -293,6 +309,7 @@ HTML usage.
 <div class="numbered"></div>
 
 <a id="Semantics"></a>
+
 #### Semantics
 
 Use HTML according to its purpose.
@@ -321,6 +338,7 @@ code efficiency reasons.
 <div class="numbered"></div>
 
 <a id="Multimedia_Fallback"></a>
+
 #### Multimedia Fallback
 
 Provide alternative contents for multimedia.
@@ -354,6 +372,7 @@ no alternative text, as in `alt=""`.)
 <div class="numbered"></div>
 
 <a id="Separation_of_Concerns"></a>
+
 #### Separation of Concerns
 
 Separate structure from presentation from behavior.
@@ -406,6 +425,7 @@ templates than it is to update style sheets and scripts.
 <div class="numbered"></div>
 
 <a id="Entity_References"></a>
+
 #### Entity References
 
 Do not use entity references.
@@ -434,6 +454,7 @@ The currency symbol for the Euro is “€”.
 <div class="numbered"></div>
 
 <a id="Optional_Tags"></a>
+
 #### Optional Tags
 
 Omit optional tags (optional).
@@ -475,6 +496,7 @@ tags, not just a selection.)
 <div class="numbered"></div>
 
 <a id="type_Attributes"></a>
+
 #### `type` Attributes
 
 Omit `type` attributes for style sheets and scripts.
@@ -521,6 +543,7 @@ as defaults. This can be safely done even for older browsers.
 <div class="numbered"></div>
 
 <a id="id_Attributes"></a>
+
 #### `id` Attributes
 
 Avoid unnecessary `id` attributes.
@@ -558,11 +581,13 @@ global JavaScript variables.
 <div class="numbered"></div>
 
 <a id="HTML_Formatting_Rules"></a>
+
 ### HTML Formatting Rules
 
 <div class="numbered"></div>
 
 <a id="General_Formatting"></a>
+
 #### General Formatting
 
 Use a new line for every block, list, or table element, and indent every such
@@ -614,6 +639,7 @@ instead of an error.)
 <div class="numbered"></div>
 
 <a id="HTML_Line-Wrapping"></a>
+
 #### HTML Line-Wrapping
 
 Break long lines (optional).
@@ -673,6 +699,7 @@ within a project, ideally enforced by automated code formatting tools.
 <div class="numbered"></div>
 
 <a id="HTML_Quotation_Marks"></a>
+
 #### HTML Quotation Marks
 
 When quoting attribute values, use double quotation marks.
@@ -697,16 +724,19 @@ values.
 <div class="numbered"></div>
 
 <a id="CSS"></a>
+
 ## CSS
 
 <div class="numbered"></div>
 
 <a id="CSS_Style_Rules"></a>
+
 ### CSS Style Rules
 
 <div class="numbered"></div>
 
 <a id="CSS_Validity"></a>
+
 #### CSS Validity
 
 Use valid CSS where possible.
@@ -724,6 +754,7 @@ proper CSS usage.
 <div class="numbered"></div>
 
 <a id="ID_and_Class_Naming"></a>
+
 #### Class Naming
 
 Use meaningful or generic class names.
@@ -767,6 +798,7 @@ document or template changes.
 <div class="numbered"></div>
 
 <a id="ID_and_Class_Name_Style"></a>
+
 #### Class Name Style
 
 Use class names that are as short as possible but as long as necessary.
@@ -795,6 +827,7 @@ and code efficiency.
 <div class="numbered"></div>
 
 <a id="ID_and_Class_Name_Delimiters"></a>
+
 #### Class Name Delimiters
 
 Separate words in class names by a hyphen.
@@ -824,6 +857,7 @@ and scannability.
 <div class="numbered"></div>
 
 <a id="Prefixes"></a>
+
 #### Prefixes
 
 Prefix selectors with an application-specific prefix (optional).
@@ -845,6 +879,7 @@ easier, for example in search and replace operations.
 <div class="numbered"></div>
 
 <a id="Type_Selectors"></a>
+
 #### Type Selectors
 
 Avoid qualifying class names with type selectors.
@@ -874,6 +909,7 @@ div.error {}
 <div class="numbered"></div>
 
 <a id="ID_Selectors"></a>
+
 #### ID Selectors
 
 Avoid ID selectors.
@@ -899,6 +935,7 @@ different engineers. Class selectors should be preferred in all situations.
 <div class="numbered"></div>
 
 <a id="Shorthand_Properties"></a>
+
 #### Shorthand Properties
 
 Use shorthand properties where possible.
@@ -936,6 +973,7 @@ padding: 0 1em 2em;
 <div class="numbered"></div>
 
 <a id="0_and_Units"></a>
+
 #### 0 and Units
 
 Omit unit specification after “0” values, unless required.
@@ -954,6 +992,7 @@ padding: 0;
 <div class="numbered"></div>
 
 <a id="Leading_0s"></a>
+
 #### Leading 0s
 
 Always include leading “0”s in values.
@@ -969,6 +1008,7 @@ font-size: 0.8em;
 <div class="numbered"></div>
 
 <a id="Hexadecimal_Notation"></a>
+
 #### Hexadecimal Notation
 
 Use 3 character hexadecimal notation where possible.
@@ -993,6 +1033,7 @@ color: #ebc;
 <div class="numbered"></div>
 
 <a id="Important_Declarations"></a>
+
 #### Important Declarations
 
 Avoid using `!important` declarations.
@@ -1024,6 +1065,7 @@ reason about and compose styles. Use
 <div class="numbered"></div>
 
 <a id="Hacks"></a>
+
 #### Hacks
 
 Avoid user agent detection as well as CSS “hacks”—try a different approach
@@ -1041,11 +1083,13 @@ frequently.
 <div class="numbered"></div>
 
 <a id="CSS_Formatting_Rules"></a>
+
 ### CSS Formatting Rules
 
 <div class="numbered"></div>
 
 <a id="Declaration_Order"></a>
+
 #### Declaration Order
 
 Alphabetize declarations (optional).
@@ -1075,6 +1119,7 @@ text-indent: 2em;
 <div class="numbered"></div>
 
 <a id="Block_Content_Indentation"></a>
+
 #### Block Content Indentation
 
 Indent all block content.
@@ -1099,6 +1144,7 @@ improve understanding.
 <div class="numbered"></div>
 
 <a id="Declaration_Stops"></a>
+
 #### Declaration Stops
 
 Use a semicolon after every declaration.
@@ -1129,6 +1175,7 @@ reasons.
 <div class="numbered"></div>
 
 <a id="Property_Name_Stops"></a>
+
 #### Property Name Stops
 
 Use a space after a property name’s colon.
@@ -1157,6 +1204,7 @@ h3 {
 <div class="numbered"></div>
 
 <a id="Declaration_Block_Separation"></a>
+
 #### Declaration Block Separation
 
 Use a space between the last selector and the declaration block.
@@ -1195,6 +1243,7 @@ rule.
 <div class="numbered"></div>
 
 <a id="Selector_and_Declaration_Separation"></a>
+
 #### Selector and Declaration Separation
 
 Separate selectors and declarations by new lines.
@@ -1225,6 +1274,7 @@ h3 {
 <div class="numbered"></div>
 
 <a id="Rule_Separation"></a>
+
 #### Rule Separation
 
 Separate rules by new lines.
@@ -1247,6 +1297,7 @@ body {
 <div class="numbered"></div>
 
 <a id="CSS_Quotation_Marks"></a>
+
 #### CSS Quotation Marks
 
 Use single (`''`) rather than double (`""`) quotation marks for attribute
@@ -1282,11 +1333,13 @@ html {
 <div class="numbered"></div>
 
 <a id="CSS_Meta_Rules"></a>
+
 ### CSS Meta Rules
 
 <div class="numbered"></div>
 
 <a id="Section_Comments"></a>
+
 #### Section Comments
 
 Group sections by a section comment (optional).
@@ -1311,6 +1364,7 @@ sections with new lines.
 ```
 
 <a id="Parting_Words"></a>
+
 ## Parting Words
 
 *Be consistent.*
