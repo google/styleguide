@@ -44,10 +44,6 @@ style rules, it also contains advice on designing your own vs. adapting an
 existing format, on XML instance document formatting, and on elements vs.
 attributes.
 
-The style guides in this project are licensed under the CC-By 3.0 License, which
-encourages you to share these documents. See
-[https://creativecommons.org/licenses/by/3.0/][ccl] for more details.
-
 The following Google style guide lives outside of this project:
 
 *  [Angular Style Guide][angular]
@@ -73,6 +69,15 @@ People can file [issues using the GitHub tracker][gh-tracker]. Issues that raise
 questions, justify changes on technical merits, or point out obvious mistakes
 may get some engagement and could in theory lead to changes, but we are
 primarily optimizing for Google's internal needs.
+
+## Licensing
+
+The style guides in this project are licensed under the CC-By 3.0 License, which
+encourages you to share these documents. See
+<https://creativecommons.org/licenses/by/3.0/> for more details.
+
+Code samples are licensed under the Apache 2.0 License. See
+<https://www.apache.org/licenses/LICENSE-2.0> for more details.
 
 <a rel="license" href="https://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a>
 
@@ -100,6 +105,5 @@ primarily optimizing for Google's internal needs.
 [emacs]: https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el
 [xml]: xmlguide.md
 [dart]: https://www.dartlang.org/guides/language/effective-dart
-[ccl]: https://creativecommons.org/licenses/by/3.0/
 [SCM]: https://en.wikipedia.org/wiki/Source_control_management
 [VCS]: https://en.wikipedia.org/wiki/Version_control_system
