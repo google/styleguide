@@ -73,6 +73,11 @@ Some guidelines:
     languages) consider whether the code is easily maintainable by people other
     than its author.
 
+If you want to migrate an existing program from shell to a proper language but
+you're unsure how, checkout the
+[Deshell Playbook](https://github.com/google/deshell/blob/main/playbook.md). It
+will guide you through a robust approach for smoothly replacing production code.
+
 <a id="s2-shell-files-and-interpreter-invocation"></a>
 
 ## Shell Files and Interpreter Invocation
