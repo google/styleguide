@@ -3,14 +3,10 @@
 "Say what you mean, simply and directly." -
 [Brian Kernighan](https://en.wikipedia.org/wiki/The_Elements_of_Programming_Style)
 
-Contents:
-
-1.  [Minimum Viable Documentation](#minimum-viable-documentation)
-1.  [Update Docs with Code](#update-docs-with-code)
-1.  [Delete Dead Documentation](#delete-dead-documentation)
-1.  [Prefer the Good Over the Perfect](#prefer-the-good-over-the-perfect)
-1.  [Documentation is the Story of Your Code](#documentation-is-the-story-of-your-code)
-1.  [Duplication is Evil](#duplication-is-evil)
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
 
 ## Minimum Viable Documentation
 

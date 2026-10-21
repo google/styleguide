@@ -7,12 +7,10 @@ useful.*
 
 \- [Laozi](https://ctext.org/dictionary.pl?if=en&id=11602)
 
-Contents:
-
-1.  [Radical simplicity](#radical-simplicity)
-1.  [Readable source text](#readable-source-text)
-1.  [Minimum viable documentation](#minimum-viable-documentation)
-1.  [Better is better than best](#better-is-better-than-best)
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
 
 ## Radical simplicity
 

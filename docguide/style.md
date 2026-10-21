@@ -11,43 +11,10 @@ We seek to balance three goals:
 2.  *The Markdown corpus is maintainable over time and across teams.*
 3.  *The syntax is simple and easy to remember.*
 
-Contents:
-
-1.  [Minimum viable documentation](#minimum-viable-documentation)
-1.  [Better is better than best](#better-is-better-than-best)
-1.  [Capitalization](#capitalization)
-1.  [Document layout](#document-layout)
-1.  [Table of contents](#table-of-contents)
-1.  [Character line limit](#character-line-limit)
-1.  [Trailing whitespace](#trailing-whitespace)
-1.  [Headings](#headings)
-    1.  [ATX-style headings](#atx-style-headings)
-    1.  [Use unique, complete names for headings](#use-unique-complete-names-for-headings)
-    1.  [Add spacing to headings](#add-spacing-to-headings)
-    1.  [Use a single H1 heading](#use-a-single-h1-heading)
-    1.  [Capitalization of titles and headers](#capitalization-of-titles-and-headers)
-1.  [Lists](#lists)
-    1.  [Use lazy numbering for long lists](#use-lazy-numbering-for-long-lists)
-    1.  [Nested list spacing](#nested-list-spacing)
-1.  [Code](#code)
-    1.  [Inline](#inline)
-    1.  [Use code span for escaping](#use-code-span-for-escaping)
-    1.  [Codeblocks](#codeblocks)
-        1.  [Declare the language](#declare-the-language)
-        1.  [Escape newlines](#escape-newlines)
-        1.  [Use fenced code blocks instead of indented code blocks](#use-fenced-code-blocks-instead-of-indented-code-blocks)
-        1.  [Nest codeblocks within lists](#nest-codeblocks-within-lists)
-1.  [Links](#links)
-    1.  [Use explicit paths for links within Markdown](#use-explicit-paths-for-links-within-markdown)
-    1.  [Avoid relative paths unless within the same directory](#avoid-relative-paths-unless-within-the-same-directory)
-    1.  [Use informative Markdown link titles](#use-informative-markdown-link-titles)
-    1.  [Reference links](#reference-links)
-        1.  [Use reference links for long links](#use-reference-links-for-long-links)
-        1.  [Use reference links to reduce duplication](#use-reference-links-to-reduce-duplication)
-        1.  [Define reference links after their first use](#define-reference-links-after-their-first-use)
-1.  [Images](#images)
-1.  [Tables](#tables)
-1.  [Strongly prefer Markdown to HTML](#strongly-prefer-markdown-to-html)
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
 
 ## Minimum viable documentation
 

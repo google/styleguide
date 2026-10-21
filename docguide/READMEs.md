@@ -2,10 +2,10 @@
 
 About README.md files.
 
-1.  [Overview](#overview)
-1.  [Readable README files](#readable-readme-files)
-1.  [Where to put your README](#where-to-put-your-readme)
-1.  [What to put in your README](#what-to-put-in-your-readme)
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
 
 ## Overview
 
