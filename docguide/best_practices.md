@@ -126,16 +126,15 @@ to detailed prose:
     misused).
 
 7.  **Other external docs**: Some teams maintain documentation in other
-    locations, separate from the code, such as Google Sites, Drive, or wiki.
-    If you do maintain documentation in
-    other locations, you should clearly point to those locations from your
-    project directory (for example, by adding an obvious link to the location
-    from your project's `README.md`).
+    locations, separate from the code, such as Google Sites, Drive, or wiki. If
+    you do maintain documentation in other locations, you should clearly point
+    to those locations from your project directory (for example, by adding an
+    obvious link to the location from your project's `README.md`).
 
 ## Duplication is Evil
 
 Do not write your own guide to a common Google technology or process. Link to it
 instead. If the guide doesn't exist or it's badly out of date, submit your
-updates to the appropriate directory or create a package-level
-README.md. **Take ownership and don't be shy**: Other teams will usually welcome
-your contributions.
+updates to the appropriate directory or create a package-level README.md. **Take
+ownership and don't be shy**: Other teams will usually welcome your
+contributions.

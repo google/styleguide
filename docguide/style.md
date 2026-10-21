@@ -1,9 +1,9 @@
 # Markdown style guide
 
-Much of what makes Markdown refreshing is the ability to write plain text and get
-great formatted output as a result. To keep the slate clean for the next author,
-your Markdown should be simple and consistent with the whole corpus wherever
-possible.
+Much of what makes Markdown refreshing is the ability to write plain text and
+get great formatted output as a result. To keep the slate clean for the next
+author, your Markdown should be simple and consistent with the whole corpus
+wherever possible.
 
 We seek to balance three goals:
 
@@ -129,17 +129,18 @@ Content.
     the same or nearly the same as the filename. The first level-one heading is
     used as the page `<title>`.
 
-1.  `author`: *Optional*. If you'd like to claim ownership of the document or
-    if you are very proud of it, add yourself under the title. However,
-    revision history generally suffices.
+1.  `author`: *Optional*. If you'd like to claim ownership of the document or if
+    you are very proud of it, add yourself under the title. However, revision
+    history generally suffices.
 
 1.  `Short introduction.` 1–3 sentences providing a high-level overview of the
-    topic. Imagine yourself as a complete newbie who landed on your "Extending Foo" doc
-    and doesn't know the most basic information you take for granted. "What is
-    Foo? Why would I extend it?"
+    topic. Imagine yourself as a complete newbie who landed on your "Extending
+    Foo" doc and doesn't know the most basic information you take for granted.
+    "What is Foo? Why would I extend it?"
 
-1.  `[TOC]`: if you use hosting that supports table of contents, such as Gitiles,
-    put `[TOC]` after the short introduction. See [`[TOC]` documentation][TOC-docs].
+1.  `[TOC]`: if you use hosting that supports table of contents, such as
+    Gitiles, put `[TOC]` after the short introduction. See
+    [`[TOC]` documentation][TOC-docs].
 
 1.  `## Topic`: The rest of your headings should start from level 2.
 
@@ -152,13 +153,13 @@ Content.
 
 ### Use a `[TOC]` directive
 
-Use a [`[TOC]` directive][TOC-docs] unless all
-of your content is above the fold[^above] on a laptop.
+Use a [`[TOC]` directive][TOC-docs] unless all of your content is above the
+fold[^above] on a laptop.
 
 [^above]: Content is "above the fold" if it is visible when the page is first
     displayed. Content is "below the fold" if it is hidden until the user
-    scrolls down the page on a computer or literally unfolds a document
-    such as a newspaper.
+    scrolls down the page on a computer or literally unfolds a document such as
+    a newspaper.
 
 ### Place the `[TOC]` directive after the introduction
 
@@ -186,9 +187,9 @@ This is my introduction **after** the TOC where it should not be.
 ```
 
 For users who read your documentation visually, it doesn't matter where your
-`[TOC]` directive is placed, as Markdown always displays the TOC toward the top and
-to the right of the page. However, `[TOC]` placement matters a lot when screen
-readers or keyboard controls are involved.
+`[TOC]` directive is placed, as Markdown always displays the TOC toward the top
+and to the right of the page. However, `[TOC]` placement matters a lot when
+screen readers or keyboard controls are involved.
 
 That's because `[TOC]` inserts the HTML for the table of contents into the DOM
 wherever you've included the directive in your Markdown file. If, for example,
@@ -205,8 +206,8 @@ Why? Because it's what most of us do for code.
     these tools will work. For example, Code Search doesn't soft wrap.
 
 *   **Quality**. The more engineers use their well-worn coding habits when
-    creating and editing Markdown content, the better the quality. Markdown takes
-    advantage of the excellent review culture we already have.
+    creating and editing Markdown content, the better the quality. Markdown
+    takes advantage of the excellent review culture we already have.
 
 ### Exceptions
 
@@ -502,7 +503,7 @@ $ bazel run :target -- --flag --foo=longlonglonglonglongvalue \
 If you need a code block within a list, make sure to indent it so as to not
 break the list:
 
-```markdown
+````markdown
 *   Bullet.
 
     ```c++
@@ -510,7 +511,7 @@ break the list:
     ```
 
 *   Next bullet.
-```
+````
 
 You can also create a nested code block with 4 spaces. Simply indent 4
 additional spaces from the list indentation:
@@ -599,7 +600,7 @@ definition, like this:
 See the [Markdown style guide][style], which has suggestions for making docs more
 readable.
 
-﻿[style]: http://Markdown/corp/Markdown/docs/reference/style.md
+[style]: http://Markdown/corp/Markdown/docs/reference/style.md
 ```
 
 #### Use reference links for long links
@@ -618,7 +619,7 @@ DO NOT DO THIS.
 The [style guide][style_guide] says not to use reference links unless you have
 to.
 
-﻿[style_guide]: https://google.com/Markdown-style
+[style_guide]: https://google.com/Markdown-style
 ```
 
 Just inline it instead:
@@ -633,7 +634,7 @@ a reference link:
 ```markdown
 The [style guide] says not to use reference links unless you have to.
 
-﻿[style guide]: https://docs.google.com/document/d/13HQBxfhCwx8lVRuN2Wf6poqvAfVeEXmFVcawP5I6B3c/edit
+[style guide]: https://docs.google.com/document/d/13HQBxfhCwx8lVRuN2Wf6poqvAfVeEXmFVcawP5I6B3c/edit
 ```
 
 Use reference links more often in tables. It is particularly important to keep
@@ -659,8 +660,8 @@ Site     | Description
 [site 1] | This is example site 1.
 [site 2] | This is example site 2.
 
-﻿[site 1]: http://google.com/excessively/long/path/example_site_1
-﻿[site 2]: http://google.com/excessively/long/path/example_site_2
+[site 1]: http://google.com/excessively/long/path/example_site_1
+[site 2]: http://google.com/excessively/long/path/example_site_2
 ```
 
 #### Use reference links to reduce duplication
@@ -704,8 +705,8 @@ Some more text with the same [link][link_def].
 
 Some more text using a [different_link][different_link_def].
 
-﻿[link_def]: http://reallyreallyreallylonglink.com
-﻿[different_link_def]: http://differentreallyreallylonglink.com
+[link_def]: http://reallyreallyreallylonglink.com
+[different_link_def]: http://differentreallyreallylonglink.com
 ```
 
 Instead, put it just before the header following its first use:
@@ -717,7 +718,7 @@ Some text with a [link][link_def].
 
 Some more text with the same [link][link_def].
 
-﻿[link_def]: http://reallyreallyreallylonglink.com
+[link_def]: http://reallyreallyreallylonglink.com
 
 ## Header 2
 
@@ -727,12 +728,13 @@ Some more text with the same [link][link_def].
 
 Some more text using a [different_link][different_link_def].
 
-﻿[different_link_def]: http://differentreallyreallylonglink.com
+[different_link_def]: http://differentreallyreallylonglink.com
 ```
 
 ## Images
 
-See [image syntax](https://gerrit.googlesource.com/gitiles/+/HEAD/Documentation/markdown.md#Images).
+See
+[image syntax](https://gerrit.googlesource.com/gitiles/+/HEAD/Documentation/markdown.md#Images).
 
 Use images sparingly, and prefer simple screenshots. This guide is designed
 around the idea that plain text gets users down to the business of communication
@@ -822,9 +824,9 @@ Swallow          | Coconuts       | [Fast when unladen][airspeed]
 Bicycle          | Miss Gulch     | [Weatherproof][tornado_proofing]
 X-34 landspeeder | Whiny farmboys | [Cheap][tosche_station] since the XP-38 came out
 
-﻿[airspeed]: http://google3/airspeed.h
-﻿[tornado_proofing]: http://google3/kansas/
-﻿[tosche_station]: http://google3/power_converter.h
+[airspeed]: http://google3/airspeed.h
+[tornado_proofing]: http://google3/kansas/
+[tosche_station]: http://google3/power_converter.h
 ```
 
 Note that [reference links](#reference-links) are used to keep the table cells
