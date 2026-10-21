@@ -1,21 +1,16 @@
 # READMEs
 
-About README.md files.
-
-<!-- mdformat off -->
-* TOC
-{:toc}
-<!-- mdformat on -->
-
-## Overview
-
 A README is a short summary of the contents of a directory. The contents of the
 file are displayed in GitHub and Gitiles when you view the contents of the
 containing directory. README files provide critical information for people
 browsing your code, especially first-time users.
 
-This document covers how to create README files that are readable with GitHub
-and Gitiles.
+This document covers how to create README files that are readable with markdown.
+
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
 
 ## Readable README files
 
@@ -56,5 +51,5 @@ information:
 1.  Status of whether this package or library is deprecated, or not for general
     release, etc.
 1.  How to use the package or library. Examples include sample code, copyable
-    `bazel run` or `bazel test` commands, etc.
-1.  Links to relevant documentation.
+    `bazel` commands, etc.
+1.  Links to relevant documentation .
