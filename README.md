@@ -110,7 +110,7 @@ Code samples are licensed under the Apache 2.0 License. See
 [htmlcss]: htmlcssguide.md
 [js]: jsguide.md
 [markdown]: docguide/style.md
-[ts]: https://google.github.io/styleguide/tsguide.html
+[ts]: tsguide.md
 [cl]: lispguide.md
 [verilog]: verilogguide.md
 [vim]: vimscriptguide.md
