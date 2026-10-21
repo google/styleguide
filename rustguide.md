@@ -6,6 +6,13 @@
 <!-- mdformat on -->
 
 <style>
+.google3 {
+  background-color: #34A853;
+  color: white;
+  border-radius: 5px;
+  padding: 2px 6px;
+}
+
 .android {
   background-color: #a4c639;
   color: white;
@@ -27,13 +34,12 @@
   padding: 2px 6px;
 }
 
-:is(h1, h2, h3, h4, h5, h6) :is(.android, .chrome, .fuchsia) {
+:is(h1, h2, h3, h4, h5, h6) :is(.google3, .android, .chrome, .fuchsia) {
   font-size: large;
   border-radius: 5px;
   padding: 4px 8px;
   vertical-align: 10%;
 }
-
 </style>
 
 This document is a *style guide* for the usage of the Rust programming language
@@ -964,8 +970,6 @@ tempting the use case may seem.
 ### Don't use `async` / `.await` <span class="chrome">[chrome]</span>
 
 Don't use `async` / `.await` in Chromium.
-
-</section>
 
 <a id="std-thread"></a>
 
