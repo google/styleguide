@@ -25,6 +25,7 @@ that apply to that project.
 *   [Objective-C Style Guide][objc]
 *   [Python Style Guide][py]
 *   [R Style Guide][r]
+*   [Rust Style Guide][rust]
 *   [Shell Style Guide][sh]
 *   [Swift Style Guide][swift]
 *   [TypeScript Style Guide][ts]
@@ -102,6 +103,7 @@ Code samples are licensed under the Apache 2.0 License. See
 [kotlin]: https://developer.android.com/kotlin/style-guide
 [py]: pyguide.md
 [r]: Rguide.md
+[rust]: rustguide.md
 [sh]: shellguide.md
 [htmlcss]: htmlcssguide.md
 [js]: jsguide.md
