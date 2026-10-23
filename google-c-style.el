@@ -14,9 +14,9 @@
 
 ;;; Commentary:
 
-;; Provides the google C/C++ coding style. You may wish to add
+;; Provides the google C/C++ coding style.  You may wish to add
 ;; `google-set-c-style' to your `c-mode-common-hook' after requiring this
-;; file. For example:
+;; file.  For example:
 ;;
 ;;    (add-hook 'c-mode-common-hook 'google-set-c-style)
 ;;
@@ -35,7 +35,7 @@
 ;; elegant solution of composing a list of lineup functions or quantities with
 ;; operators such as "add")
 (defun google-c-lineup-expression-plus-4 (langelem)
-  "Indents to the beginning of the current C expression plus 4 spaces.
+  "Indent to the beginning of the current C expression plus 4 spaces.
 
 This implements title \"Function Declarations and Definitions\"
 of the Google C++ Style Guide for the case where the previous
@@ -47,7 +47,8 @@ regardless of the number of nested parentheses, but excluding
 non-expression material such as \"if(\" and \"for(\" control
 structures.
 
-Suitable for inclusion in `c-offsets-alist'."
+Suitable for inclusion in `c-offsets-alist'.
+See `c-offsets-alist' for a definition of LANGELEM."
   (save-excursion
     (back-to-indentation)
     ;; Go to beginning of *previous* line:
@@ -132,8 +133,8 @@ Suitable for inclusion in `c-offsets-alist'."
 
 ;;;###autoload
 (defun google-set-c-style ()
-  "Set the current buffer's c-style to Google C/C++ Programming
-  Style. Meant to be added to `c-mode-common-hook'."
+  "Set the current buffer's c-style to Google C/C++ Programming Style.
+Meant to be added to `c-mode-common-hook'."
   (interactive)
   (make-local-variable 'c-tab-always-indent)
   (setq c-tab-always-indent t)
@@ -141,8 +142,8 @@ Suitable for inclusion in `c-offsets-alist'."
 
 ;;;###autoload
 (defun google-make-newline-indent ()
-  "Sets up preferred newline behavior. Not set by default. Meant
-  to be added to `c-mode-common-hook'."
+  "Set up preferred newline behavior.
+Not set by default.  Meant to be added to `c-mode-common-hook'."
   (interactive)
   (define-key c-mode-base-map "\C-m" 'newline-and-indent)
   (define-key c-mode-base-map [ret] 'newline-and-indent))
