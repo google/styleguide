@@ -192,10 +192,10 @@ Module names can still collide. Some module names are inconveniently long.
     -   `y` conflicts with a common parameter name that is part of the public
         API (e.g., `features`).
     -   `y` is an inconveniently long name.
-    -   `y` is too generic in the context of your code (e.g., `from
-        storage.file_system import options as fs_options`).
-*   Use `import y as z` only when `z` is a standard abbreviation (e.g., `import
-    numpy as np`).
+    -   `y` is too generic in the context of your code (e.g.,
+        `from storage.file_system import options as fs_options`).
+*   Use `import y as z` only when `z` is a standard abbreviation (e.g.,
+    `import numpy as np`).
 
 For example the module `sound.effects.echo` may be imported as follows:
 
@@ -863,8 +863,8 @@ Okay for simple cases.
 #### 2.11.1 Definition
 
 Conditional expressions (sometimes called a “ternary operator”) are mechanisms
-that provide a shorter syntax for if statements. For example: `x = 1 if cond
-else 2`.
+that provide a shorter syntax for if statements. For example:
+`x = 1 if cond else 2`.
 
 <a id="s2.11.2-pros"></a>
 <a id="2112-pros"></a>
@@ -1095,8 +1095,8 @@ Use the "implicit" false if at all possible (with a few caveats).
 #### 2.14.1 Definition
 
 Python evaluates certain values as `False` when in a boolean context. A quick
-"rule of thumb" is that all "empty" values are considered false, so `0, None,
-[], {}, ''` all evaluate as false in a boolean context.
+"rule of thumb" is that all "empty" values are considered false, so
+`0, None, [], {}, ''` all evaluate as false in a boolean context.
 
 <a id="s2.14.2-pros"></a>
 <a id="2142-pros"></a>
@@ -1124,8 +1124,8 @@ May look strange to C/C++ developers.
 
 #### 2.14.4 Decision
 
-Use the "implicit" false if possible, e.g., `if foo:` rather than `if foo !=
-[]:`. There are a few caveats that you should keep in mind though:
+Use the "implicit" false if possible, e.g., `if foo:` rather than
+`if foo != []:`. There are a few caveats that you should keep in mind though:
 
 -   Always use `if foo is None:` (or `is not None`) to check for a `None` value.
     E.g., when testing whether a variable or argument that defaults to `None`
@@ -1447,9 +1447,9 @@ import to enable them on a per-file basis within earlier runtimes.
 
 #### 2.20.1 Definition
 
-Being able to turn on some of the more modern features via `from __future__
-import` statements allows early use of features from expected future Python
-versions.
+Being able to turn on some of the more modern features via
+`from __future__ import` statements allows early use of features from expected
+future Python versions.
 
 <a id="s2.20.2-pros"></a>
 <a id="2202-pros"></a>
@@ -2246,9 +2246,10 @@ aptly described using a one-line docstring.
 :   Describe the semantics of the return value, including any type information
     that the type annotation does not provide. If the function only returns
     None, this section is not required. It may also be omitted if the docstring
-    starts with "Return", "Returns", "Yield", or "Yields" (e.g. `"""Returns row
-    from Bigtable as a tuple of strings."""`) *and* the opening sentence is
-    sufficient to describe the return value. Do not imitate older 'NumPy style'
+    starts with "Return", "Returns", "Yield", or "Yields" (e.g.
+    `"""Returns row from Bigtable as a tuple of strings."""`) *and* the opening
+    sentence is sufficient to describe the return value. Do not imitate older
+    'NumPy style'
     ([example](https://numpy.org/doc/1.24/reference/generated/numpy.linalg.qr.html)),
     which frequently documented a tuple return value as if it were multiple
     return values with individual names (never mentioning the tuple). Instead,
@@ -3009,8 +3010,9 @@ grouped from most generic to least generic:
     imports.
 
 Within each grouping, imports should be sorted lexicographically, ignoring case,
-according to each module's full package path (the `path` in `from path import
-...`). Code may optionally place a blank line between import sections.
+according to each module's full package path (the `path` in
+`from path import ...`). Code may optionally place a blank line between import
+sections.
 
 <div class='goodcode'></div>
 
@@ -3189,8 +3191,8 @@ Always use a `.py` filename extension. Never use dashes.
 -   Use CapWords for class names, but lower\_with\_under.py for module names.
     Although there are some old modules named CapWords.py, this is now
     discouraged because it's confusing when the module happens to be named after
-    a class. ("wait -- did I write `import StringIO` or `from StringIO import
-    StringIO`?")
+    a class. ("wait -- did I write `import StringIO` or
+    `from StringIO import StringIO`?")
 
     -   Note that [PEP 8 says][PEP-8-acronyms]: "When using acronyms in
         CapWords, capitalize all the letters of the acronym. Thus
@@ -3724,8 +3726,8 @@ _ShortName: TypeAlias = other_module.SignificantlyInconvenientlyLongName
 
 #### 3.19.7 Ignoring Types
 
-You can disable type checking on a line with the special comment `# type:
-ignore`.
+You can disable type checking on a line with the special comment
+`# type: ignore`.
 
 `pytype` has a disable option for specific errors (similar to lint):
 
@@ -3967,8 +3969,8 @@ needed for type checking must be avoided at runtime. This pattern is
 discouraged; alternatives such as refactoring the code to allow top-level
 imports should be preferred.
 
-Imports that are needed only for type annotations can be placed within an `if
-TYPE_CHECKING:` block.
+Imports that are needed only for type annotations can be placed within an
+`if TYPE_CHECKING:` block.
 
 -   Conditionally imported types need to be referenced as strings, to be forward
     compatible with Python 3.6 where the annotation expressions are actually

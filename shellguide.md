@@ -999,12 +999,12 @@ done
 echo "${last_line}"
 ```
 
-> Note: Be cautious using a for-loop to iterate over output, as in `for var in
-> $(...)`, as the output is split by whitespace, not by line. Sometimes you will
-> know this is safe because the output can't contain any unexpected whitespace,
-> but where this isn't obvious or doesn't improve readability (such as a long
-> command inside `$(...)`), a `while read` loop or `readarray` is often safer
-> and clearer.
+> Note: Be cautious using a for-loop to iterate over output, as in
+> `for var in $(...)`, as the output is split by whitespace, not by line.
+> Sometimes you will know this is safe because the output can't contain any
+> unexpected whitespace, but where this isn't obvious or doesn't improve
+> readability (such as a long command inside `$(...)`), a `while read` loop or
+> `readarray` is often safer and clearer.
 
 <a id="s6.9-arithmetic"></a>
 

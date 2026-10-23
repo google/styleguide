@@ -196,8 +196,8 @@ compile with both `-Wall` and `-Werror`, ensuring warnings are not ignored.
 
 In the rare cases when it's necessary to declare an instance in a module which
 contains neither the corresponding class declaration nor the corresponding type
-declaration, warnings about orphans can be suppressed by adding `{-# OPTIONS_GHC
--fno-warn-orphans #-}` line at the top of the relevant file.
+declaration, warnings about orphans can be suppressed by adding
+`{-# OPTIONS_GHC -fno-warn-orphans #-}` line at the top of the relevant file.
 
 <a id="Style"></a>
 

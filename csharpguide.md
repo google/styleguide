@@ -434,18 +434,18 @@ removing items from containers while iterating. There are a couple of options:
     that are noisy, obvious, or unimportant.
 *   Encouraged:
 
-    *   When the type is obvious - e.g. `var apple = new Apple();`, or `var
-        request = Factory.Create<HttpRequest>();`
+    *   When the type is obvious - e.g. `var apple = new Apple();`, or
+        `var request = Factory.Create<HttpRequest>();`
     *   For transient variables that are only passed directly to other methods -
         e.g. `var item = GetItem(); ProcessItem(item);`
 
 *   Discouraged:
 
     *   When working with basic types - e.g. `var success = true;`
-    *   When working with compiler-resolved built-in numeric types - e.g. `var
-        number = 12 * ReturnsFloat();`
-    *   When users would clearly benefit from knowing the type - e.g. `var
-        listOfItems = GetList();`
+    *   When working with compiler-resolved built-in numeric types - e.g.
+        `var number = 12 * ReturnsFloat();`
+    *   When users would clearly benefit from knowing the type - e.g.
+        `var listOfItems = GetList();`
 
 ### Attributes
 

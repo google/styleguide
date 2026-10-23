@@ -1059,8 +1059,8 @@ Property Value Type: `integer` \
 Parent: `data`
 
 The total number of pages in the result set. `totalPages` can also be calculated
-from the item-based paging properties above: `totalPages = ceiling(totalItems /
-itemsPerPage)`.
+from the item-based paging properties above:
+`totalPages = ceiling(totalItems / itemsPerPage)`.
 
 Example:
 

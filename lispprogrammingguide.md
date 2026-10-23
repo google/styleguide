@@ -218,14 +218,14 @@ which could blow away the stack on long lists (we want to avoid gratuitous
 non-portability in our code).
 
 However, you must be careful not to use `REDUCE` in ways that needlessly
-increase the complexity class of the computation. For instance, `(REDUCE 'STRCAT
-...)` is *O(n\^2)* when an appropriate implementation is only *O(n)*. Moreover,
-`(REDUCE 'APPEND ...)` is also *O(n\^2)* unless you specify `:FROM-END T`. In
-such cases, you MUST NOT use `REDUCE`, and you MUST NOT use `(APPLY 'STRCAT
-...)` or `(APPLY 'APPEND ...)` either. Instead you MUST use proper abstractions
-from a suitable library (that you may have to contribute to) that properly
-handles those cases without burdening users with implementation details. See for
-instance `UIOP:REDUCE/STRCAT`.
+increase the complexity class of the computation. For instance,
+`(REDUCE 'STRCAT ...)` is *O(n\^2)* when an appropriate implementation is only
+*O(n)*. Moreover, `(REDUCE 'APPEND ...)` is also *O(n\^2)* unless you specify
+`:FROM-END T`. In such cases, you MUST NOT use `REDUCE`, and you MUST NOT use
+`(APPLY 'STRCAT ...)` or `(APPLY 'APPEND ...)` either. Instead you MUST use
+proper abstractions from a suitable library (that you may have to contribute to)
+that properly handles those cases without burdening users with implementation
+details. See for instance `UIOP:REDUCE/STRCAT`.
 
 ### NCONC and MAPCAN
 
@@ -291,8 +291,8 @@ the clause uses the format argument.)
 
 `#` parameter, e.g. `"~#[ none~; ~s~; ~s and ~s~]"` \
 Use the number of arguments to format as the number to choose a clause. The same
-as no parameters in all other ways. Here's the full hairy example: `"Items:~#[
-none~; ~S~; ~S and ~S~:;~@{~#[~; and~] ~S~^ ,~}~]."`
+as no parameters in all other ways. Here's the full hairy example:
+`"Items:~#[ none~; ~S~; ~S and ~S~:;~@{~#[~; and~] ~S~^ ,~}~]."`
 
 ### Comparison Operators
 
@@ -551,9 +551,9 @@ or `makunbound` relevant variables.
 -   You must be careful when using a `SATISFIES` clause in a type specifier.
 
 Most Common Lisp implementations can't optimize based on a `SATISFIES` type, but
-many of them offer simple optimizations based on a type of the form `(AND FOO
-(SATISFIES BAR-P))` where the first term of the `AND` clause describes the
-structure of the object without any `SATISFIES` and the second term is the
+many of them offer simple optimizations based on a type of the form
+`(AND FOO (SATISFIES BAR-P))` where the first term of the `AND` clause describes
+the structure of the object without any `SATISFIES` and the second term is the
 `SATISFIES`.
 
 <div class='badcode'></div>

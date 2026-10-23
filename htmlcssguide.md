@@ -190,9 +190,9 @@ Use UTF-8 (no BOM).
 Make sure your editor uses UTF-8 as character encoding, without a byte order
 mark.
 
-Specify the encoding in HTML templates and documents via `<meta
-charset="utf-8">`. Do not specify the encoding of style sheets as these assume
-UTF-8.
+Specify the encoding in HTML templates and documents via
+`<meta charset="utf-8">`. Do not specify the encoding of style sheets as these
+assume UTF-8.
 
 (More on encodings and when and how to specify them can be found in
 [Handling character encodings in HTML and CSS](https://www.w3.org/International/tutorials/tutorial-char-enc/).)

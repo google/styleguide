@@ -1104,8 +1104,8 @@ are rare. The problem is that handling all conditions can mask program bugs. If
 you need to handle "all conditions", you MUST handle only `error`, *not* `t` and
 not `serious-condition`.
 
-`(error (make-condition 'foo-error ...))` is equivalent to `(error 'foo-error
-...)` — code must use the shorter form.
+`(error (make-condition 'foo-error ...))` is equivalent to
+`(error 'foo-error ...)` — code must use the shorter form.
 
 Do not signal conditions from inside the cleanup form of `unwind-protect` or
 otherwise exit non-locally from cleanup handlers outside of the handler e.g.
@@ -1633,8 +1633,8 @@ For maximum portability of a library, it is good form that `defmethod`
 definitions should `(declare (ignorable ...))` all the required arguments that
 they are not using. Indeed, some implementations will issue a warning if you
 `(declare (ignore ...))` those arguments, whereas other implementations will
-issue a warning if you fail to `(declare (ignore ...))` them. `(declare
-(ignorable ...))` works on all implementations.
+issue a warning if you fail to `(declare (ignore ...))` them.
+`(declare (ignorable ...))` works on all implementations.
 
 You should avoid excessive nesting of binding forms inside a function. If your
 function ends up with massive nesting, you should probably break it up into
@@ -1751,9 +1751,10 @@ and use of it for optimization should be treated just like any such
 [unsafe operations](lispprogrammingguide.md#unsafe-operations).
 
 Also, you should use `:start` and `:end` arguments to `string=` or
-`string-equal` instead of using `subseq`; e.g. `(string-equal (subseq s1 2 6)
-s2)` should instead be `(string-equal s1 s2 :start1 2 :end1 6)` This is
-preferable because it is clearer and does not cons.
+`string-equal` instead of using `subseq`; e.g.
+`(string-equal (subseq s1 2 6) s2)` should instead be
+`(string-equal s1 s2 :start1 2 :end1 6)` This is preferable because it is
+clearer and does not cons.
 
 You should use `zerop`, `plusp`, or `minusp`, instead of comparing a value to
 `0` or `0.0`.

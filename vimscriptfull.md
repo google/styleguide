@@ -607,8 +607,8 @@ Vim plugins should provide any or all of the following: **Commands**,
 
 *   All autocommands should be defined in the `plugin/autocmds.vim` file.
 
-    *   This allows users to disable your autocommands with `Glaive myplugin
-        !plugin[autocmds]`.
+    *   This allows users to disable your autocommands with
+        `Glaive myplugin !plugin[autocmds]`.
 
 *   Declare all autocommands in an `augroup` block.
 
@@ -706,9 +706,10 @@ Vim plugins should provide any or all of the following: **Commands**,
     `plugin/plugs.vim` (separate from standard key mappings).
 
     *   `<Plug>` is a sequence which can not be typed.
-    *   You can do something like `noremap <Plug>namespace#MappingName
-        some_key_sequence` and then users can do `noremap <leader>x
-        <Plug>namespace#MappingName` to take advantage of your pseudo-mapping.
+    *   You can do something like
+        `noremap <Plug>namespace#MappingName some_key_sequence` and then users
+        can do `noremap <leader>x <Plug>namespace#MappingName` to take advantage
+        of your pseudo-mapping.
     *   Pseudo-mappings should **not** be in `plugin/mappings.vim` or they will
         be disabled by default.
     *   Such pseudo-mappings should be named `<Plug>` followed by your plugin

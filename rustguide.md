@@ -194,9 +194,9 @@ contain one or more `.rs` files.
 
 Additional considerations:
 
-*   The root module is allowed to `re-export` public APIs from `leaf
-    submodules`, making submodules an implementation detail of the crate (as
-    users don't need to know about these submodules).
+*   The root module is allowed to `re-export` public APIs from
+    `leaf submodules`, making submodules an implementation detail of the crate
+    (as users don't need to know about these submodules).
 
 *   This rule about small crates applies equally to crates with and without
     submodules. First, evaluate whether the APIs need to be in the same crate,
@@ -415,8 +415,9 @@ consistency and a minor edge on reading code without xrefs.
 ### Type names should be imported and used unqualified
 
 By default, types and traits should be referenced in code without using their
-module path, e.g., code should use `Regex`, not `regex::Regex`, with a `use
-regex::Regex` at the top of the file or potentially in the relevant function.
+module path, e.g., code should use `Regex`, not `regex::Regex`, with a
+`use regex::Regex` at the top of the file or potentially in the relevant
+function.
 
 Exceptions:
 
@@ -767,8 +768,8 @@ proactively, while application code should add trait impls as needed.
 ### Implement known standard library traits instead of custom methods
 
 If a method matches the purpose and behavior of a standard library trait,
-implement that trait. For example, instead of writing `fn from_str(&str) ->
-Self` on `Foo`, you should `impl FromStr for Foo`.
+implement that trait. For example, instead of writing
+`fn from_str(&str) -> Self` on `Foo`, you should `impl FromStr for Foo`.
 
 It is acceptable to have both the method and the trait impl for discoverability
 reasons.
@@ -951,8 +952,8 @@ a function should implement `Default`.
 
 Rationale
 
-This enables convenient use of struct update syntax (`Struct { a: 0,
-..Default::default()}` ).
+This enables convenient use of struct update syntax
+(`Struct { a: 0, ..Default::default()}` ).
 
 <a id="concurrency"></a>
 
@@ -1356,10 +1357,10 @@ If an enum is part of a public API used by other teams, mark it
 Exceptions:
 
 *   The enum will never change. For example:
-    *   Enums describing an existing ontology (e.g., `enum Color { Red, Green,
-        Blue }`).
-    *   Enums with two states that could be Booleans (e.g., `enum Visibility {
-        Visible, Hidden }`)
+    *   Enums describing an existing ontology (e.g.,
+        `enum Color { Red, Green, Blue }`).
+    *   Enums with two states that could be Booleans (e.g.,
+        `enum Visibility { Visible, Hidden }`)
 *   The enum *may* change in the future, but you are committed to fixing
     resulting breakages via an LSC.
 
@@ -1368,9 +1369,9 @@ For context, see Clippy lint
 
 Rationale
 
-Marking an enum `#[non_exhaustive]` forces users to include a wildcard arm (`_
-=> ...`) in `match` statements. This ensures code continues to compile when new
-variants are added to the enum later.
+Marking an enum `#[non_exhaustive]` forces users to include a wildcard arm
+(`_ => ...`) in `match` statements. This ensures code continues to compile when
+new variants are added to the enum later.
 
 This rule is primarily important for enums used across team boundaries, because
 the scope of the breakage could be significant. Enums used only a small number
@@ -1557,8 +1558,8 @@ fn process_shape(shape: Shape) {
 
 Exceptions:
 
-*   You only care about specific variants *and* `match` is cleaner than `if
-    let`.
+*   You only care about specific variants *and* `match` is cleaner than
+    `if let`.
 
 This is covered by the built-in lint `non_exhaustive_omitted_patterns` which you
 can enable on your code.
