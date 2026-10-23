@@ -360,11 +360,11 @@ extensively throughout the file.
 <div class='goodcode'></div>
 
 ```rust
-fn foo(x: u8) {
+fn foo(s: &str) -> Result<u8, std::num::ParseIntError> {
     // Import the trait within a function, not at the module scope.
     use std::str::FromStr;
 
-    let string: String = x.parse();
+    u8::from_str(s)
 }
 ```
 
@@ -940,7 +940,7 @@ or between two extension traits.
 ### Pair important `From` impls with explicit constructor methods
 
 If a type has an important `From` impl that is expected to be one of the primary
-ways of constructing it, add an inherent `::new()`, `::new_from_foo()`¸ or
+ways of constructing it, add an inherent `::new()`, `::new_from_foo()`, or
 `::from_foo()` method.
 
 <a id="options-should-implement-default"></a>
@@ -1111,7 +1111,7 @@ Exceptions:
 
 ## When and how to write documentation
 
-Add documentation comments to public APIs, potentially using the `missing_doc`
+Add documentation comments to public APIs, potentially using the `missing_docs`
 lint to help with this.
 
 Best practices for documentation comments:
@@ -1280,7 +1280,7 @@ impl Stuff {
 
    /// Calls `f` with a mutable borrow of the "bar" property.
    /// Returns the return value of `f`.
-   fn with_mut_bar<R>(&self, f: impl FnOnce(&mut i32) -> R) -> R { ... }
+   fn with_mut_bar<R>(&self, f: impl FnOnce(&mut Bar) -> R) -> R { ... }
 
    /// Sets "foo" property to `foo` and returns the old value.
    fn replace_foo(&mut self, foo: Foo) -> Foo  { ... }
@@ -1540,7 +1540,7 @@ fn process_shape(shape: Shape) {
 ```rust
 fn process_shape(shape: Shape) {
   if let Shape::Circle = shape {
-    println!("It's a circle"),
+    println!("It's a circle");
   }
 }
 ```
@@ -1560,9 +1560,6 @@ Exceptions:
 
 *   You only care about specific variants *and* `match` is cleaner than
     `if let`.
-
-This is covered by the built-in lint `non_exhaustive_omitted_patterns` which you
-can enable on your code.
 
 <a id="assertion-context"></a>
 
@@ -1605,7 +1602,7 @@ Examples
 <div class='goodcode'></div>
 
 ```rust
-assert!(refund > 0, "Refund must be positive, got {refund:?});
+assert!(refund > 0, "Refund must be positive, got {refund:?}");
 ```
 
 **Flagging misuse of an API**
@@ -1629,7 +1626,7 @@ impl Database {
 <div class='badcode'></div>
 
 ```rust
-assert(!values.is_sorted(), "values should always be sorted");
+assert!(values.is_sorted(), "values should always be sorted");
 ```
 
 <a id="combinator-chains"></a>
