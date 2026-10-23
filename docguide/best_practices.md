@@ -95,9 +95,9 @@ to detailed prose:
         overview of what the class / file does and often gives a few short
         examples of how you might use the class / file.
 
-        Examples are particularly relevant when there's several distinct ways to
-        use the class (some advanced, some simple). Always list the simplest use
-        case first.
+        Examples are particularly relevant when there are several distinct ways
+        to use the class (some advanced, some simple). Always list the simplest
+        use case first.
 
 4.  **README.md**: A good README.md orients the new user to the directory and
     points to more detailed explanation and user guides:
