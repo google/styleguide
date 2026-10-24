@@ -80,6 +80,10 @@ div.markdown-body div.numbered ~ h3 {
   counter-reset: h4;
 }
 
+div.markdown-body div.numbered ~ h4 {
+  counter-reset: h5;
+}
+
 div.markdown-body div.numbered ~ h2::before {
   content: counter(h2) ' ';
   counter-increment: h2;
@@ -93,6 +97,11 @@ div.markdown-body div.numbered ~ h3::before {
 div.markdown-body div.numbered ~ h4::before {
   content: counter(h2) '.' counter(h3) '.' counter(h4) ' ';
   counter-increment: h4;
+}
+
+div.markdown-body div.numbered ~ h5::before {
+  content: counter(h2) '.' counter(h3) '.' counter(h4) '.' counter(h5) ' ';
+  counter-increment: h5;
 }
 
 /**

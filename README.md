@@ -99,7 +99,7 @@ Code samples are licensed under the Apache 2.0 License. See
 [gh-tracker]: https://github.com/google/styleguide/issues
 [go]: go/
 [haskell]: haskellguide.md
-[java]: https://google.github.io/styleguide/javaguide.html
+[java]: javaguide.md
 [json]: jsoncguide.md
 [kotlin]: https://developer.android.com/kotlin/style-guide
 [py]: pyguide.md
