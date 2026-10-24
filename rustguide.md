@@ -1252,7 +1252,7 @@ Exceptions:
 
 Writing and naming getters and setters should follow these guidelines:
 
-*   `foo()` for a getter that returns a `T` by value.
+*   `foo()` for a getter that returns `&T`, or `T` by value if `T: Copy`.
 *   `foo_mut()` for a getter that returns a `&mut T`.
 *   `take_foo()` for a getter that "clears" the value (by setting it to `None`
     or some other default state) and returns the old value.
