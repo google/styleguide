@@ -1520,10 +1520,9 @@ Use other `from __future__` import statements as you see fit.
 
 You can annotate Python code with
 [type hints](https://docs.python.org/3/library/typing.html). Type-check the code
-at build time with a type checking tool like
-[pytype](https://github.com/google/pytype). In most cases, when feasible, type
-annotations are in source files. For third-party or extension modules,
-annotations can be in
+at build time with a type checking tool like [pyrefly](https://pyrefly.org/). In
+most cases, when feasible, type annotations are in source files. For third-party
+or extension modules, annotations can be in
 [stub `.pyi` files](https://peps.python.org/pep-0484/#stub-files).
 
 <a id="s2.21.1-definition"></a>
@@ -1569,9 +1568,8 @@ your ability to use [Power Features](#power-features).
 #### 2.21.3 Cons
 
 You will have to keep the type declarations up to date. You might see type
-errors that you think are valid code. Use of a
-[type checker](https://github.com/google/pytype) may reduce your ability to use
-[Power Features](#power-features).
+errors that you think are valid code. Use of a type checker may reduce your
+ability to use [Power Features](#power-features).
 
 <a id="s2.21.4-decision"></a>
 <a id="2214-decision"></a>
@@ -1582,7 +1580,7 @@ errors that you think are valid code. Use of a
 
 You are strongly encouraged to enable Python type analysis when updating code.
 When adding or modifying public APIs, include type annotations and enable
-checking via pytype in the build system. As static analysis is relatively new to
+type-checking in the build system. As static analysis is relatively new to
 Python, we acknowledge that undesired side-effects (such as wrongly inferred
 types) may prevent adoption by some projects. In those situations, authors are
 encouraged to add a comment with a TODO or link to a bug describing the issue(s)
@@ -3729,12 +3727,12 @@ _ShortName: TypeAlias = other_module.SignificantlyInconvenientlyLongName
 You can disable type checking on a line with the special comment
 `# type: ignore`.
 
-`pytype` has a disable option for specific errors (similar to lint):
+`pyrefly` has a disable option for specific errors (similar to lint):
 
 <div class='goodcode'></div>
 
 ```python
-# pytype: disable=attribute-error
+# pyrefly: ignore[attribute-error]
 ```
 
 <a id="s3.19.8-typing-variables"></a>
