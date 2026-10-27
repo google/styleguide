@@ -1410,6 +1410,11 @@ doSomething(
 }
 ```
 
+The
+[rectangle rule](https://github.com/google/google-java-format/wiki/The-Rectangle-Rule)
+asks that each part of a wrapped expression fit in its own bounding rectangle,
+which contains all of that part's text and none of any other part's.
+
 <a id="formatting-grouping-parentheses"></a>
 
 ### 4.7 Grouping parentheses: recommended
