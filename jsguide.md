@@ -2839,8 +2839,9 @@ been banned in strict mode since ES5.
 #### 5.11.2 Dynamic code evaluation
 
 Do not use `eval` or the `Function(...string)` constructor (except for code
-loaders). These features are potentially dangerous and simply do not work in CSP
-environments.
+loaders). These features are potentially dangerous and simply do not work in
+environments with a
+[Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP).
 
 <a id="disallowed-features-automatic-semicolon-insertion"></a>
 
