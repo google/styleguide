@@ -31,6 +31,7 @@ that apply to that project.
 *   [Rust Style Guide][rust]
 *   [Shell Style Guide][sh]
 *   [Swift Style Guide][swift]
+*   [TCL/TK Style Guide][tcltk]
 *   [TypeScript Style Guide][ts]
 *   [Verilog Style Guide][verilog]
 *   [Vim script Style Guide][vim]
@@ -105,6 +106,7 @@ Code samples are licensed under the Apache 2.0 License. See
 [r]: Rguide.md
 [rust]: rustguide.md
 [sh]: shellguide.md
+[tcltk]: https://wiki.tcl-lang.org/page/Dodekalogue
 [htmlcss]: htmlcssguide.md
 [js]: jsguide.md
 [markdown]: docguide/style.md
