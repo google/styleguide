@@ -12,15 +12,18 @@ guidelines we use for Google code. If you are modifying a project that
 originated at Google, you may be pointed to this page to see the style guides
 that apply to that project.
 
+*   [Angular Style Guide][angular]
 *   [Common Lisp Style Guide][cl]
 *   [C++ Style Guide][cpp]
 *   [C# Style Guide][csharp]
+*   [Effective Dart][dart]
 *   [Go Style Guide][go]
 *   [Haskell Style Guide][haskell]
 *   [HTML/CSS Style Guide][htmlcss]
 *   [JavaScript Style Guide][js]
 *   [Java Style Guide][java]
 *   [JSON Style Guide][json]
+*   [Kotlin Style Guide][kotlin]
 *   [Markdown Style Guide][markdown]
 *   [Objective-C Style Guide][objc]
 *   [Python Style Guide][py]
@@ -32,12 +35,6 @@ that apply to that project.
 *   [Verilog Style Guide][verilog]
 *   [Vim script Style Guide][vim]
 *   [XML Document Format Style Guide][xml]
-
-The following Google style guide lives outside of this project:
-
-*  [Angular Style Guide][angular]
-*  [Effective Dart][dart]
-*  [Kotlin Style Guide][kotlin]
 
 Since projects are largely maintained in a [VCS], writing good commit messages
 is important to long term project health. Please refer to [How to Write a Git
@@ -68,6 +65,12 @@ projects. Changes to the style guides are made to the internal style guides
 first and eventually copied into the versions found here. **External
 contributions are not accepted.** Pull requests are regularly closed without
 comment.
+
+While many of these guides are hosted directly in this project, others might be
+hosted in other projects. Sometimes those projects are also maintained by
+Google, sometimes they are wider community projects that Google contributes to
+like anyone else. Before reporting issues against a particular language/guide,
+please check where the guide is hosted.
 
 People can file [issues using the GitHub tracker][gh-tracker]. Issues that raise
 questions, justify changes on technical merits, or point out obvious mistakes
