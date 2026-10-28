@@ -31,12 +31,7 @@ that apply to that project.
 *   [TypeScript Style Guide][ts]
 *   [Verilog Style Guide][verilog]
 *   [Vim script Style Guide][vim]
-
-If your project requires that you create a new XML document format, the
-[XML Document Format Style Guide][xml] may be helpful. In addition to actual
-style rules, it also contains advice on designing your own vs. adapting an
-existing format, on XML instance document formatting, and on elements vs.
-attributes.
+*   [XML Document Format Style Guide][xml]
 
 The following Google style guide lives outside of this project:
 
