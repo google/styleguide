@@ -36,22 +36,24 @@ that apply to that project.
 *   [Vim script Style Guide][vim]
 *   [XML Document Format Style Guide][xml]
 
+## Source Code Management
+
 Since projects are largely maintained in a [VCS], writing good commit messages
-is important to long term project health. Please refer to [How to Write a Git
-Commit Message](https://cbea.ms/git-commit/) as an excellent resource. While it
-explicitly refers to the Git [SCM], its principles apply to any system, and many
-Git conventions are trivial to translate to others.
+is important to long term project health. Please refer to
+[How to Write a Git Commit Message](https://cbea.ms/git-commit/) as an excellent
+resource. While it explicitly refers to the Git [SCM], its principles apply to
+any system, and many Git conventions are trivial to translate to others.
 
 ## Editors & Tools
 
 Google engineers use a wide variety of editors & IDEs.
 
 *   Eclipse & IntelliJ
-    *    C++: [eclipse-cpp-google-style.xml](./eclipse-cpp-google-style.xml)
-    *    Java: <https://github.com/google/google-java-format>
+    *   C++: [eclipse-cpp-google-style.xml](./eclipse-cpp-google-style.xml)
+    *   Java: <https://github.com/google/google-java-format>
 *   Emacs: [google-c-style.el][emacs]
 *   Vim: <https://github.com/google/vim-codefmt>
-    *    Python: [google_python_style.vim](./google_python_style.vim)
+    *   Python: [google_python_style.vim](./google_python_style.vim)
 
 We used to host the cpplint tool, but we stopped making internal updates public.
 An open source community has forked the project, so users are encouraged to use
