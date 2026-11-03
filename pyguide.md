@@ -2906,13 +2906,13 @@ out how to get more details.
 <div class='goodcode'></div>
 
 ```python
-# TODO(crbug.com/192795): Investigate cpufreq optimizations.
+# TODO(example.com/12345): Investigate cpufreq optimizations.
 ```
 
 Old style, formerly recommended, but discouraged for use in new code:
 
 ```python
-# TODO: crbug.com/192795 - Investigate cpufreq optimizations.
+# TODO: example.com/12345 - Investigate cpufreq optimizations.
 ```
 
 Avoid adding TODOs that refer to an individual or team as the context:
@@ -2920,7 +2920,7 @@ Avoid adding TODOs that refer to an individual or team as the context:
 <div class='badcode'></div>
 
 ```python
-# TODO(@yourusername): File an issue and use a '*' for repetition.
+# TODO(username): File an issue and use a '*' for repetition.
 ```
 
 If your `TODO` is of the form "At a future date do something" make sure that you
