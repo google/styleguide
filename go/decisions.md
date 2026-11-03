@@ -1338,8 +1338,6 @@ current package.
     very common to do so. For example, a struct with a large number of fields
     should almost always be initialized with field names.
 
-    <!-- TODO: Maybe a better example here that doesn't have many fields. -->
-
     <div class='goodcode'></div>
 
     ```go
