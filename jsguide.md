@@ -1667,9 +1667,9 @@ Disallowed:
 function badDestructuring([a, b] = [4, 2]) { … };
 ```
 
-> Tip: For (un)packing multiple values into a function’s parameter or return,
-> prefer object destructuring to array destructuring when possible, as it allows
-> naming the individual elements and specifying a different type for each.
+For (un)packing multiple values into a function’s parameter or return, prefer
+object destructuring to array destructuring when possible, as it allows naming
+the individual elements and specifying a different type for each.
 
 <div class='goodcode'></div>
 
