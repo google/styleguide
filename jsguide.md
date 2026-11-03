@@ -1671,6 +1671,26 @@ function badDestructuring([a, b] = [4, 2]) { … };
 > prefer object destructuring to array destructuring when possible, as it allows
 > naming the individual elements and specifying a different type for each.
 
+<div class='goodcode'></div>
+
+```js
+/** @return {{name: string, age: number}} */
+function getUser() {
+  return {name: 'Alice', age: 30};
+}
+const {name, age} = getUser();
+```
+
+<div class='badcode'></div>
+
+```js
+/** @return {!Array<string|number>} */
+function getUser() {
+  return ['Alice', 30];
+}
+const [name, age] = getUser();
+```
+
 <a id="features-arrays-spread-operator"></a>
 
 #### 5.2.5 Spread operator
