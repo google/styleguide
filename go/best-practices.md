@@ -55,15 +55,17 @@ the name will be read. Consider the following recommendations to avoid excess
 *   For functions, do not
     [repeat the name of the package](decisions#repetitive-with-package).
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     package yamlconfig
 
     func ParseYAMLConfig(input string) (*Config, error)
     ```
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     package yamlconfig
 
     func Parse(input string) (*Config, error)
@@ -71,45 +73,52 @@ the name will be read. Consider the following recommendations to avoid excess
 
 *   For methods, do not repeat the name of the method receiver.
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     func (c *Config) WriteConfigTo(w io.Writer) (int64, error)
     ```
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     func (c *Config) WriteTo(w io.Writer) (int64, error)
     ```
 
 *   Do not repeat the names of variables passed as parameters.
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     func OverrideFirstWithSecond(dest, source *Config) error
     ```
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     func Override(dest, source *Config) error
     ```
 
 *   Do not repeat the names and types of the return values.
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     func TransformToJSON(input *Config) *jsonconfig.Config
     ```
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     func Transform(input *Config) *jsonconfig.Config
     ```
 
 When it is necessary to disambiguate functions of a similar name, it is
 acceptable to include extra information.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func (c *Config) WriteTextTo(w io.Writer) (int64, error)
 func (c *Config) WriteBinaryTo(w io.Writer) (int64, error)
 ```
@@ -123,31 +132,35 @@ methods:
 
 *   Functions that return something are given noun-like names.
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     func (c *Config) JobName(key string) (value string, ok bool)
     ```
 
     A corollary of this is that function and method names should
     [avoid the prefix `Get`](decisions#getters).
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     func (c *Config) GetJobName(key string) (value string, ok bool)
     ```
 
 *   Functions that do something are given verb-like names.
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     func (c *Config) WriteDetail(w io.Writer) (int64, error)
     ```
 
 *   Identical functions that differ only by the types involved include the name
     of the type at the end of the name.
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     func ParseInt(input string) (int, error)
     func ParseInt64(input string) (int64, error)
     func AppendInt(buf []byte, value int) []byte
@@ -157,8 +170,9 @@ methods:
     If there is a clear "primary" version, the type can be omitted from the name
     for that version:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     func (c *Config) Marshal() ([]byte, error)
     func (c *Config) MarshalText() (string, error)
     ```
@@ -218,8 +232,9 @@ One approach is to introduce a new Go package based on the production one for
 testing. A safe choice is to append the word `test` to the original package name
 ("creditcard" + "test"):
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 package creditcardtest
 ```
 
@@ -236,8 +251,9 @@ special treatment in tests, so no double is required. If you anticipate only
 test doubles for one type (like `Service`), you can take a concise approach to
 naming the doubles:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 import (
     "path/to/creditcard"
     "path/to/money"
@@ -256,8 +272,9 @@ imply what `creditcardtest.Stub` is.
 Finally, if the package is built with Bazel, make sure the new `go_library` rule
 for the package is marked as `testonly`:
 
+<div class='goodcode'></div>
+
 ```build
-# Good:
 go_library(
     name = "creditcardtest",
     srcs = ["creditcardtest.go"],
@@ -285,8 +302,9 @@ fails), we recommend naming the stubs according to the behavior they emulate.
 Here we rename `Stub` to `AlwaysCharges` and introduce a new stub called
 `AlwaysDeclines`:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // AlwaysCharges stubs creditcard.Service and simulates success.
 type AlwaysCharges struct{}
 
@@ -331,8 +349,9 @@ func (s *StoredValue) Credit(c *Card, amount money.Money) error { /* omitted */ 
 
 In this case, more explicit test double naming is sensible:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 type StubService struct{}
 
 func (StubService) Charge(*creditcard.Card, money.Money) error { return nil }
@@ -379,8 +398,9 @@ func (p *Processor) Process(c *creditcard.Card, amount money.Money) error {
 In the tests, a test double called a "spy" for `CreditCard` is juxtaposed
 against production types, so prefixing the name may improve clarity.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 package payment
 
 import "path/to/creditcardtest"
@@ -406,8 +426,9 @@ func TestProcessor(t *testing.T) {
 
 This is clearer than when the name is not prefixed.
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 package payment
 
 import "path/to/creditcardtest"
@@ -442,8 +463,9 @@ They are not official concepts in the Go language spec.
 Like many programming languages, Go has mutable variables: assigning to a
 variable changes its value.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func abs(i int) int {
     if i < 0 {
         i *= -1
@@ -456,8 +478,9 @@ When using [short variable declarations] with the `:=` operator, in some cases a
 new variable is not created. We can call this *stomping*. It's OK to do this
 when the original value is no longer needed.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // innerHandler is a helper for some request handler, which itself issues
 // requests to other backends.
 func (s *Server) innerHandler(ctx context.Context, req *pb.MyRequest) *pb.MyResponse {
@@ -480,8 +503,9 @@ introduces a new variable. We can call this *shadowing* the original variable.
 Code after the end of the block refers to the original. Here is a buggy attempt
 to shorten the deadline conditionally:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 func (s *Server) innerHandler(ctx context.Context, req *pb.MyRequest) *pb.MyResponse {
     // Attempt to conditionally cap the deadline.
     if *shortenDeadlines {
@@ -500,8 +524,9 @@ func (s *Server) innerHandler(ctx context.Context, req *pb.MyRequest) *pb.MyResp
 
 A correct version of the code might be:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func (s *Server) innerHandler(ctx context.Context, req *pb.MyRequest) *pb.MyResponse {
     if *shortenDeadlines {
         var cancel func()
@@ -527,8 +552,9 @@ package, avoid names that are likely to require
 [import renaming](decisions#import-renaming) or cause shadowing of otherwise
 good variable names at the client side.
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 func LongFunction() {
     url := "https://example.com/"
     // Oops, now we can't use net/url in code below.
@@ -553,8 +579,9 @@ harder to read, and if used too broadly they are liable to cause needless
 
 Instead, consider what the callsite will look like.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 db := spannertest.NewDatabaseFromFile(...)
 
 _, err := f.Seek(0, io.SeekStart)
@@ -566,8 +593,9 @@ You can tell roughly what each of these do even without knowing the imports list
 (`cloud.google.com/go/spanner/spannertest`, `io`, and `crypto/elliptic`). With
 less focused names, these might read:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 db := test.NewDatabaseFromFile(...)
 
 _, err := f.Seek(0, common.SeekStart)
@@ -699,8 +727,9 @@ on the rule that generated the package:
 
 Often a single word describing the package is used:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 import (
     foopb "path/to/package/foo_service_go_proto"
     foogrpc "path/to/package/foo_service_go_grpc"
@@ -712,8 +741,9 @@ Follow the style guidance for
 Prefer whole words. Short names are good, but avoid ambiguity. When in doubt,
 use the proto package name up to _go with a pb suffix:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 import (
     pushqueueservicepb "path/to/package/push_queue_service_go_proto"
 )
@@ -815,8 +845,9 @@ func process(animal Animal) error {
 The caller can simply compare the returned error value of the function with one
 of the known error values:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func handlePet(...) {
     switch err := process(an); err {
     case ErrDuplicate:
@@ -833,8 +864,9 @@ The above uses sentinel values, where the error must be equal (in the sense of
 `==`) to the expected value. That is perfectly adequate in many cases. If
 `process` returns wrapped errors (discussed below), you can use [`errors.Is`].
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func handlePet(...) {
     switch err := process(an); {
     case errors.Is(err, ErrDuplicate):
@@ -849,8 +881,9 @@ Do not attempt to distinguish errors based on their string form. (See
 [Go Tip #13: Designing Errors for Checking](https://google.github.io/styleguide/go/index.html#gotip)
 for more.)
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 func handlePet(...) {
     err := process(an)
     if regexp.MatchString(`duplicate`, err.Error()) {...}
@@ -885,23 +918,25 @@ When adding information to errors, avoid redundant information that the
 underlying error already provides. The `os` package, for instance, already
 includes path information in its errors.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 if err := os.Open("settings.txt"); err != nil {
-  return fmt.Errorf("launch codes unavailable: %v", err)
+  return fmt.Errorf("load launch code settings: %v", err)
 }
 
 // Output:
 //
-// launch codes unavailable: open settings.txt: no such file or directory
+// load launch code settings: open settings.txt: no such file or directory
 ```
 
-Here, "launch codes unavailable" adds specific meaning to the `os.Open` error
+Here, "load launch code settings" adds specific meaning to the `os.Open` error
 that's relevant to the current function's context, without duplicating the
 underlying file path information.
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 if err := os.Open("settings.txt"); err != nil {
   return fmt.Errorf("could not open settings.txt: %v", err)
 }
@@ -915,9 +950,55 @@ Don't add an annotation if its sole purpose is to indicate a failure without
 adding new information. The presence of an error sufficiently conveys the
 failure to the caller.
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 return fmt.Errorf("failed: %v", err) // just return err instead
+```
+
+When wrapping, the message should encode the action that failed, with contextual
+information, without stop words. Stop words such as "failed to", "couldn't", or
+"unable to" add no useful information and lead to repetitive error chains (e.g.
+`failed to X: failed to Y: failed to Z: error`).
+
+<div class='badcode'></div>
+
+```go
+func (s *server) setupTLS(certPath string) error {
+  data, err := os.ReadFile(certPath)
+  if err != nil {
+    return fmt.Errorf("failed to setup TLS: %v", err)
+  }
+  if err := s.validateCert(data); err != nil {
+    return fmt.Errorf("failed to setup TLS: %v", err)
+  }
+  if err := s.applyCert(data); err != nil {
+    return fmt.Errorf("failed to setup TLS: %v", err)
+  }
+  return nil
+}
+```
+
+A single function might do multiple actions, so make it clear which one failed:
+
+<div class='goodcode'></div>
+
+```go
+func (s *server) setupTLS(certPath string) error {
+  data, err := os.ReadFile(certPath)
+  if err != nil {
+    // Note: os.ReadFile already includes the file path in its error
+    // (e.g., "open cert.pem: no such file"), so we don't repeat it here.
+    return fmt.Errorf("load certificate: %v", err)
+  }
+  if err := s.validateCert(data); err != nil {
+    return fmt.Errorf("verify signature from %s: %v", certPath, err)
+  }
+  if err := s.applyCert(data); err != nil {
+    return fmt.Errorf("apply certificate from %s: %v", certPath, err)
+  }
+  return nil
+}
 ```
 
 The
@@ -950,12 +1031,13 @@ observers are humans or code.
         and storage, where we translate domain-specific errors into a canonical
         error space.
 
+        <div class='goodcode'></div>
+
         ```go
-        // Good:
         func (*FortuneTeller) SuggestFortune(context.Context, *pb.SuggestionRequest) (*pb.SuggestionResponse, error) {
           // ...
           if err != nil {
-            return nil, fmt.Errorf("couldn't find fortune database: %v", err)
+            return nil, fmt.Errorf("find fortune database: %v", err)
           }
         }
         ```
@@ -963,8 +1045,9 @@ observers are humans or code.
         We could also explicitly annotate RPC code `Internal` to the example
         above.
 
+        <div class='goodcode'></div>
+
         ```go
-        // Good:
         import (
           "google.golang.org/grpc/codes"
           "google.golang.org/grpc/status"
@@ -994,19 +1077,20 @@ observers are humans or code.
         caller to check if the underlying error is a specific sentinel error or
         type.
 
+        <div class='goodcode'></div>
+
         ```go
-        // Good:
         func (s *Server) internalFunction(ctx context.Context) error {
           // ...
           if err != nil {
-            return fmt.Errorf("couldn't find remote file: %w", err)
+            return fmt.Errorf("find remote file: %w", err)
           }
         }
         ```
 
-        This allows a higher-level function to do `errors.Is(err,
-        fs.ErrNotExist)` if the underlying error was `fs.ErrNotExist`, even
-        though it's wrapped.
+        This allows a higher-level function to do
+        `errors.Is(err, fs.ErrNotExist)` if the underlying error was
+        `fs.ErrNotExist`, even though it's wrapped.
 
         At points where your system interacts with external systems like RPC,
         IPC, or storage, it's often better to translate domain-specific errors
@@ -1065,8 +1149,9 @@ oldest error.
 Placement of the `%w` verb does, however, affect whether the error chain is
 printed newest to oldest, oldest to newest, or neither:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 err1 := fmt.Errorf("err1")
 err2 := fmt.Errorf("err2: %w", err1)
 err3 := fmt.Errorf("err3: %w", err2)
@@ -1074,8 +1159,9 @@ fmt.Println(err3) // err3: err2: err1
 // err3 is a newest-to-oldest error chain, that prints newest-to-oldest.
 ```
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 err1 := fmt.Errorf("err1")
 err2 := fmt.Errorf("%w: err2", err1)
 err3 := fmt.Errorf("%w: err3", err2)
@@ -1083,8 +1169,9 @@ fmt.Println(err3) // err1: err2: err3
 // err3 is a newest-to-oldest error chain, that prints oldest-to-newest.
 ```
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 err1 := fmt.Errorf("err1")
 err2 := fmt.Errorf("err2-1 %w err2-2", err1)
 err3 := fmt.Errorf("err3-1 %w err3-2", err2)
@@ -1113,8 +1200,9 @@ package-level errors.
 In these cases, placing the `%w` verb at the beginning of the error string can
 improve readability by immediately identifying the category of the error.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 package parser
 
 var ErrParse = fmt.Errorf("parse error")
@@ -1127,14 +1215,15 @@ func parseHeader() error {
   return fmt.Errorf("%w: invalid character in header: %v", ErrParseInvalidHeader, err)
 }
 
-err := fmt.Errorf("%w: couldn't find fortune database: %v", ErrInternal, err)
+err := fmt.Errorf("%w: find fortune database: %v", ErrInternal, err)
 ```
 
 Placing the status at the beginning ensures that the most relevant categorical
 information is most prominent.
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 package parser
 
 var ErrParse = fmt.Errorf("parse error")
@@ -1148,7 +1237,7 @@ func parseHeader() error {
 }
 
 var ErrInternal = status.Error(codes.Internal, "internal")
-err2 := fmt.Errorf("couldn't find fortune database: %v: %w", err, ErrInternal)
+err2 := fmt.Errorf("find fortune database: %v: %w", err, ErrInternal)
 ```
 
 When you place it at the end, it makes it harder to identify the error category
@@ -1223,8 +1312,9 @@ call expensive functions even when `log.V` is turned off. `log.V` offers two
 APIs. The more convenient one carries the risk of this accidental expense. When
 in doubt, use the slightly more verbose style.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 for _, sql := range queries {
   log.V(1).Infof("Handling %v", sql)
   if log.V(2) {
@@ -1234,8 +1324,9 @@ for _, sql := range queries {
 }
 ```
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 // sql.Explain called even when this log is not printed.
 log.V(2).Infof("Handling %v", sql.Explain())
 ```
@@ -1315,8 +1406,9 @@ This is typically accomplished with a top-level deferred function that uses
 API boundary. It requires the code that panics and recovers to distinguish
 between panics that the code raises itself and those that it doesn't:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 type syntaxError struct {
   msg string
 }
@@ -1351,8 +1443,9 @@ func Parse(in string) (_ *Node, err error) {
 Panic is also used when the compiler cannot identify unreachable code, for
 example when using a function like `log.Fatal` that will not return:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func answer(i int) string {
     switch i {
     case 42:
@@ -1414,8 +1507,9 @@ are interesting.
 In the following snippet, the highlighted commentary adds little useful
 information to the reader:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 // Sprintf formats according to a format specifier and returns the resulting
 // string.
 //
@@ -1427,8 +1521,9 @@ However, this snippet demonstrates a code scenario similar to the previous where
 the commentary instead states something non-obvious or materially helpful to the
 reader:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // Sprintf formats according to a format specifier and returns the resulting
 // string.
 //
@@ -1464,8 +1559,9 @@ it is `ctx.Err()`.
 
 This fact does not need to be restated:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 // Run executes the worker's run loop.
 //
 // The method will process work until the context is cancelled and accordingly
@@ -1475,8 +1571,9 @@ func (Worker) Run(ctx context.Context) error
 
 Because that is implied, the following is better:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // Run executes the worker's run loop.
 func (Worker) Run(ctx context.Context) error
 ```
@@ -1487,8 +1584,9 @@ documented if any of the following are true.
 *   The function returns an error other than `ctx.Err()` when the context is
     cancelled:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     // Run executes the worker's run loop.
     //
     // If the context is cancelled, Run returns a nil error.
@@ -1497,8 +1595,9 @@ documented if any of the following are true.
 
 *   The function has other mechanisms that may interrupt it or affect lifetime:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     // Run executes the worker's run loop.
     //
     // Run processes work until the context is cancelled or Stop is called.
@@ -1514,8 +1613,9 @@ documented if any of the following are true.
 *   The function has special expectations about context lifetime, lineage, or
     attached values:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     // NewReceiver starts receiving messages sent to the specified queue.
     // The context should not have a deadline.
     func NewReceiver(ctx context.Context) *Receiver
@@ -1562,8 +1662,9 @@ Documentation is strongly encouraged if any of the following are true.
 
 *   It is unclear whether the operation is read-only or mutating:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     package lrucache
 
     // Lookup returns the data associated with the key from the cache.
@@ -1577,8 +1678,9 @@ Documentation is strongly encouraged if any of the following are true.
 
 *   Synchronization is provided by the API:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     package fortune_go_proto
 
     // NewFortuneTellerClient returns an *rpc.Client for the FortuneTeller service.
@@ -1594,8 +1696,9 @@ Documentation is strongly encouraged if any of the following are true.
 *   The API consumes user-implemented types of interfaces, and the interface's
     consumer has particular concurrency requirements:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     package health
 
     // A Watcher reports the health of some entity (usually a backend service).
@@ -1624,8 +1727,9 @@ won't use the API correctly, leading to resource leaks and other possible bugs.
 
 Call out cleanups that are up to the caller:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // NewTicker returns a new Ticker containing a channel that will send the
 // current time on the channel after each tick.
 //
@@ -1637,8 +1741,9 @@ func (*Ticker) Stop()
 
 If it is potentially unclear how to clean up the resources, explain how:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // Get issues a GET to the specified URL.
 //
 // When err is nil, resp always contains a non-nil resp.Body.
@@ -1667,8 +1772,9 @@ Document significant error sentinel values or error types that your functions
 return to callers so that callers can anticipate what types of conditions they
 can handle in their code.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 package os
 
 // Read reads up to len(b) bytes from the File and stores them in b. It returns
@@ -1681,8 +1787,9 @@ func (*File) Read(b []byte) (n int, err error) {
 When a function returns a specific error type, correctly note whether the error
 is a pointer receiver or not:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 package os
 
 type PathError struct {
@@ -1710,8 +1817,9 @@ Document overall error conventions in the
 [package's documentation](decisions#package-comments) when the behavior is
 applicable to most errors found in the package:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // Package os provides a platform-independent interface to operating system
 // functionality.
 //
@@ -1751,8 +1859,9 @@ during the code review process. This helps to validate that the
 
 *   A blank line is required to separate paragraphs:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     // LoadConfig reads a configuration out of the named file.
     //
     // See some/shortlink for config file format details.
@@ -1761,8 +1870,9 @@ during the code review process. This helps to validate that the
 *   Test files can contain [runnable examples] that appear attached to the
     corresponding documentation in godoc:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     func ExampleConfig_WriteTo() {
       cfg := &Config{
         Name: "example",
@@ -1779,8 +1889,9 @@ during the code review process. This helps to validate that the
 
 *   Indenting lines by an additional two spaces formats them verbatim:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     // Update runs the function in an atomic transaction.
     //
     // This is typically used with an anonymous TransactionFunc:
@@ -1796,8 +1907,9 @@ during the code review process. This helps to validate that the
     This verbatim formatting can be leveraged for formatting that is not native
     to godoc, such as lists and tables:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     // LoadConfig reads a configuration out of the named file.
     //
     // LoadConfig treats the following keys in special ways:
@@ -1809,8 +1921,9 @@ during the code review process. This helps to validate that the
     except parentheses and commas, and is followed by another paragraph, is
     formatted as a header:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     // The following line is formatted as a heading.
     //
     // Using headings
@@ -1830,15 +1943,17 @@ Sometimes a line of code looks like something common, but actually isn't. One of
 the best examples of this is an `err == nil` check (since `err != nil` is much
 more common). The following two conditional checks are hard to distinguish:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 if err := doSomething(); err != nil {
     // ...
 }
 ```
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 if err := doSomething(); err == nil {
     // ...
 }
@@ -1846,8 +1961,9 @@ if err := doSomething(); err == nil {
 
 You can instead "boost" the signal of the conditional by adding a comment:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 if err := doSomething(); err == nil { // if NO error
     // ...
 }
@@ -1866,13 +1982,15 @@ The comment draws attention to the difference in the conditional.
 For consistency, prefer `:=` over `var` when initializing a new variable with a
 non-zero value.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 i := 42
 ```
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 var i = 42
 ```
 
@@ -1882,8 +2000,9 @@ var i = 42
 
 The following declarations use the [zero value]:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 var (
     coords Point
     magic  [4]byte
@@ -1897,8 +2016,9 @@ You should declare values using the zero value when you want to convey an empty
 value that **is ready for later use**. Using composite literals with explicit
 initialization can be clunky:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 var (
     coords = Point{X: 0, Y: 0}
     magic  = [4]byte{0, 0, 0, 0}
@@ -1909,8 +2029,9 @@ var (
 A common application of zero value declaration is when using a variable as the
 output when unmarshalling:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 var coords Point
 if err := json.Unmarshal(data, &coords); err != nil {
 ```
@@ -1918,8 +2039,9 @@ if err := json.Unmarshal(data, &coords); err != nil {
 It is also okay to use the zero value in the following form when you need a
 variable of a pointer type:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 msg := new(pb.Bar) // or "&pb.Bar{}"
 if err := proto.Unmarshal(data, msg); err != nil {
 ```
@@ -1929,8 +2051,9 @@ in your struct, you can make it a value type to take advantage of zero value
 initialization. It does mean that the containing type must now be passed via a
 pointer and not a value. Methods on the type must take pointer receivers.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 type Counter struct {
     // This field does not have to be "*sync.Mutex". However,
     // users must now pass *Counter objects between themselves, not Counter.
@@ -1948,8 +2071,9 @@ composite is returned by the function, or if all accesses to it end up needing
 to take an address anyway, prefer declaring the variable as a pointer type at
 the outset. Similarly, protobuf messages should be declared as pointer types.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func NewCounter(name string) *Counter {
     c := new(Counter) // "&Counter{}" is also fine.
     registerCounter(name, c)
@@ -1962,8 +2086,9 @@ var msg = new(pb.Bar) // or "&pb.Bar{}".
 This is because `*pb.Something` satisfies [`proto.Message`] while `pb.Something`
 does not.
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 func NewCounter(name string) *Counter {
     var c Counter
     registerCounter(name, &c)
@@ -1987,8 +2112,9 @@ var msg = pb.Bar{}
 
 The following are [composite literal] declarations:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 var (
     coords   = Point{X: x, Y: y}
     magic    = [4]byte{'I', 'W', 'A', 'D'}
@@ -2007,8 +2133,9 @@ When you need a pointer to a zero value, you have two options: empty composite
 literals and `new`. Both are fine, but the `new` keyword can serve to remind the
 reader that if a non-zero value were needed, a composite literal wouldn't work:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 var (
   buf = new(bytes.Buffer) // non-empty Buffers are initialized with constructors.
   msg = new(pb.Message) // non-empty proto messages are initialized with builders or by setting fields one by one.
@@ -2024,8 +2151,9 @@ var (
 The following are declarations that take advantage of size hints in order to
 preallocate capacity:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 var (
     // Preferred buffer size for target filesystem: st_blksize.
     buf = make([]byte, 131072)
@@ -2059,8 +2187,9 @@ fleet or even harm performance. When in doubt, see
 
 Specify [channel direction] where possible.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // sum computes the sum of all of the values. It reads from the channel until
 // the channel is closed.
 func sum(values <-chan int) int {
@@ -2070,8 +2199,9 @@ func sum(values <-chan int) int {
 
 This prevents casual programming errors that are possible without specification:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 func sum(values chan int) (out int) {
     for v := range values {
         out += v
@@ -2144,8 +2274,9 @@ Using an option structure has a number of benefits:
 
 Here is an example of a function that could be improved:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 func EnableReplication(ctx context.Context, config *replicator.Config, primaryRegions, readonlyRegions []string, replicateExisting, overwritePolicies bool, replicationInterval time.Duration, copyWorkers int, healthWatcher health.Watcher) {
     // ...
 }
@@ -2153,8 +2284,9 @@ func EnableReplication(ctx context.Context, config *replicator.Config, primaryRe
 
 The function above could be rewritten with an option structure as follows:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 type ReplicationOptions struct {
     Config              *replicator.Config
     PrimaryRegions      []string
@@ -2173,8 +2305,9 @@ func EnableReplication(ctx context.Context, opts ReplicationOptions) {
 
 The function can then be called in a different package:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func foo(ctx context.Context) {
     // Complex call:
     storage.EnableReplication(ctx, storage.ReplicationOptions{
@@ -2220,8 +2353,8 @@ Using variadic options can provide a number of benefits:
 *   Options take no space at a call-site when no configuration is needed.
 *   Options are still values, so callers can share them, write helpers, and
     accumulate them.
-*   Options can accept multiple parameters (e.g. `cartesian.Translate(dx, dy
-    int) TransformOption`).
+*   Options can accept multiple parameters (e.g.
+    `cartesian.Translate(dx, dy int) TransformOption`).
 *   The option functions can return a named type to group options together in
     godoc.
 *   Packages can allow (or prevent) third-party packages to define (or from
@@ -2233,8 +2366,9 @@ outweigh the overhead.
 
 Here is an example of a function that could be improved:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 func EnableReplication(ctx context.Context, config *placer.Config, primaryCells, readonlyCells []string, replicateExisting, overwritePolicies bool, replicationInterval time.Duration, copyWorkers int, healthWatcher health.Watcher) {
   ...
 }
@@ -2242,8 +2376,9 @@ func EnableReplication(ctx context.Context, config *placer.Config, primaryCells,
 
 The example above could be rewritten with variadic options as follows:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 type replicationOptions struct {
     readonlyCells       []string
     replicateExisting   bool
@@ -2305,8 +2440,9 @@ func EnableReplication(ctx context.Context, config *placer.Config, primaryCells 
 
 The function can then be called in a different package:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func foo(ctx context.Context) {
     // Complex call:
     storage.EnableReplication(ctx, config, []string{"po", "is", "ea"},
@@ -2471,8 +2607,9 @@ comparison was made, since the caller can supply that. If your common testing
 code provides a `cmp.Transformer` for your data type, that can often be the
 simplest design. For other validations, consider returning an `error` value.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // polygonCmp returns a cmp.Option that equates s2 geometry objects up to
 // some small floating-point error.
 func polygonCmp() cmp.Option {
@@ -2675,8 +2812,9 @@ attempt to use it to bypass the [guidance on assertions](decisions#assert).
 
 The final product should be in a form similar to this for end users:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 package deepblue_test
 
 import (
@@ -2767,8 +2905,9 @@ failure often signifies that the test cannot continue, since a setup
 precondition failed. When this happens, prefer calling one of the `Fatal`
 functions in the helper:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func mustAddGameAssets(t *testing.T, dir string) {
     t.Helper()
     if err := os.WriteFile(path.Join(dir, "pak0.pak"), pak0, 0644); err != nil {
@@ -2783,8 +2922,9 @@ func mustAddGameAssets(t *testing.T, dir string) {
 This keeps the calling side cleaner than if the helper were to return the error
 to the test itself:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 func addGameAssets(t *testing.T, dir string) error {
     t.Helper()
     if err := os.WriteFile(path.Join(d, "pak0.pak"), pak0, 0644); err != nil {
@@ -2903,8 +3043,9 @@ they must not call these functions from inside these goroutines.
 goroutines, and therefore it is all right for them to use `t.Fatal`. If in
 doubt, call `t.Error` and return instead.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func TestRevEngine(t *testing.T) {
     engine, err := Start()
     if err != nil {
@@ -2958,8 +3099,9 @@ vertical space (e.g. more than 20-30 lines), when there are adjacent fields with
 the same type, and also when you wish to omit fields which have the zero value.
 For example:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func TestStrJoin(t *testing.T) {
     tests := []struct {
         slice     []string
@@ -3009,8 +3151,9 @@ func mustLoadDataset(t *testing.T) []byte {
 
 Call `mustLoadDataset` explicitly in test functions that need it:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func TestParseData(t *testing.T) {
     data := mustLoadDataset(t)
     parsed, err := ParseData(data)
@@ -3045,8 +3188,9 @@ func TestRegression682831(t *testing.T) {
 The test function `TestRegression682831` does not use the data set and therefore
 does not call `mustLoadDataset`, which could be slow and failure-prone:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 var dataset []byte
 
 func TestParseData(t *testing.T) {
@@ -3096,8 +3240,9 @@ sufficient for your needs.
 [*amortizing common test setup*]: #t-setup-amortization
 [test helper]: #t-common-setup-scope
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 var db *sql.DB
 
 func TestInsert(t *testing.T) { /* omitted */ }
@@ -3158,8 +3303,9 @@ following are true about the common setup:
 *   It only applies to some tests.
 *   It does not require teardown.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 var dataset struct {
     once sync.Once
     data []byte
@@ -3184,8 +3330,9 @@ func mustLoadDataset(t *testing.T) []byte {
 When `mustLoadDataset` is used in multiple test functions, its cost is
 amortized:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 func TestParseData(t *testing.T) {
     data := mustLoadDataset(t)
 
@@ -3234,8 +3381,9 @@ guidance outlines when each method is preferred.
 Prefer using "+" when concatenating few strings. This method is syntactically
 the simplest and requires no import.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 key := "projectid: " + p
 ```
 
@@ -3246,13 +3394,15 @@ key := "projectid: " + p
 Prefer using `fmt.Sprintf` when building a complex string with formatting. Using
 many "+" operators may obscure the end result.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 str := fmt.Sprintf("%s [%s:%d]-> %s", src, qos, mtu, dst)
 ```
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 bad := src.String() + " [" + qos.String() + ":" + strconv.Itoa(mtu) + "]-> " + dst.String()
 ```
 
@@ -3274,8 +3424,9 @@ Prefer using `strings.Builder` when building a string bit-by-bit.
 `strings.Builder` takes amortized linear time, whereas "+" and `fmt.Sprintf`
 take quadratic time when called sequentially to form a larger string.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 b := new(strings.Builder)
 for i, d := range digitsOfPi {
     fmt.Fprintf(b, "the %d digit of pi is: %d\n", i, d)
@@ -3293,15 +3444,17 @@ str := b.String()
 Prefer to use backticks (\`) when constructing constant, multi-line string
 literals.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 usage := `Usage:
 
 custom_tool [args]`
 ```
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 usage := "" +
   "Usage:\n" +
   "\n" +
@@ -3332,8 +3485,9 @@ use instance values.
 critical for infrastructure providers who offer libraries, integrations, and
 services to other teams.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // Package sidecar manages subprocesses that provide features for applications.
 package sidecar
 
@@ -3347,8 +3501,9 @@ func (r *Registry) Register(name string, p *Plugin) error { ... }
 Your users will instantiate the data they need (a `*sidecar.Registry`) and then
 pass it as an explicit dependency:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 package main
 
 func main() {
@@ -3377,8 +3532,9 @@ See also:
 APIs that do not support explicit dependency passing become fragile as the
 number of clients increases:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 package sidecar
 
 var registry = make(map[string]*Plugin)
@@ -3389,8 +3545,9 @@ func Register(name string, p *Plugin) error { /* registers plugin in registry */
 Consider what happens in the case of tests exercising code that transitively
 relies on a sidecar for cloud logging.
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 package app
 
 import (
@@ -3498,8 +3655,9 @@ Several of the most common problematic API forms are enumerated below:
 
 *   Top-level variables irrespective of whether they are exported.
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     package logger
 
     // Sinks manages the default output sources for this package's logging API.  This
@@ -3515,11 +3673,12 @@ Several of the most common problematic API forms are enumerated below:
     problematic, rather the locator being defined as global.
 
 *   Registries for
-    [callbacks](https://en.wikipedia.org/wiki/Callback_\(computer_programming\))
+    [callbacks](https://en.wikipedia.org/wiki/Callback_(computer_programming))
     and similar behaviors.
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     package health
 
     var unhealthyFuncs []func
@@ -3533,8 +3692,9 @@ Several of the most common problematic API forms are enumerated below:
     layers, and other system resources. These often pose additional problems
     with service reliability.
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     package useradmin
 
     var client pb.UserAdminServiceClientInterface
@@ -3642,8 +3802,9 @@ cases:
     shared with other teams using the API from the top should offer an API to
     accommodate this:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     package cloudlogger
 
     func New() *Logger { ... }
@@ -3707,6 +3868,11 @@ The most common mistake is creating an interface before a
 
     Export an interface for a test double when you have a
     [material need](guide#least-mechanism) to support substitution.
+
+4.  When testing with the real implementation is impractical, it's acceptable to
+    provide test-specific configurations or test doubles. These testing
+    facilities should be isolated within a dedicated package (e.g., like
+    [spannertest]).
 
 When it does make sense to create an interface:
 
@@ -3825,8 +3991,9 @@ choice:
     If you try to cast this back to a `ThrottledReader` to `Refill` the internal
     bucket, you are breaking the contract.
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     type ThrottledReader struct {
         source     io.Reader
         limit      int  // bytes per second
@@ -3876,8 +4043,9 @@ choice:
     Consider this code that selects which encoder to use based the requested
     format:
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     func NewWriter(format string) io.Writer {
         switch format {
         case "json":
@@ -3895,8 +4063,9 @@ choice:
     `client.Do(req)` or `client.WithAuth("token").Do(req)`, you can swap
     implementations without breaking the calling code.
 
+    <div class='goodcode'></div>
+
     ```go
-    // Good:
     type Client interface {
         WithAuth(token string) Client
         Do(req *Request) error
@@ -3916,8 +4085,9 @@ choice:
 
     For example:
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     package app
 
     import "myproject/plugin"
@@ -3931,8 +4101,9 @@ choice:
     }
     ```
 
+    <div class='badcode'></div>
+
     ```go
-    // Bad:
     package plugin
 
     import "myproject/app"  // ERROR: Import cycle!
@@ -3989,4 +4160,5 @@ choice:
 [GoTip #49: Accept Interfaces, Return Concrete Types]: https://google.github.io/styleguide/go/index.html#gotip
 [testing RPC]: https://codelabs.developers.google.com/grpc/getting-started-grpc-go#3
 [test double]: https://abseil.io/resources/swe-book/html/ch13.html
+[spannertest]: https://pkg.go.dev/cloud.google.com/go/spanner/spannertest
 [public API]: https://abseil.io/resources/swe-book/html/ch12.html#test_via_public_apis

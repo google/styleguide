@@ -239,8 +239,9 @@ for maintaining a high signal-to-noise ratio. For example, the following code
 block is very common in [error handling], and the reader can quickly understand
 the purpose of this block.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 if err := doSomething(); err != nil {
     // ...
 }
@@ -250,8 +251,9 @@ If code looks very similar to this but is subtly different, a reader may not
 notice the change. In cases like this, it is worth intentionally ["boosting"]
 the signal of the error check by adding a comment to call attention to it.
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 if err := doSomething(); err == nil { // if NO error
     // ...
 }
@@ -294,16 +296,18 @@ Maintainable code also avoids hiding important details in places that are easy
 to overlook. For example, in each of the following lines of code, the presence
 or lack of a single character is critical to understand the line:
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 // The use of = instead of := can change this line completely.
 if user, err = db.UserByID(userID); err != nil {
     // ...
 }
 ```
 
+<div class='badcode'></div>
+
 ```go
-// Bad:
 // The ! in the middle of this line is very easy to miss.
 leap := (year%4 == 0) && (!(year%100 == 0) || (year%400 == 0))
 ```
@@ -312,8 +316,9 @@ Neither of these are incorrect, but both could be written in a more explicit
 fashion, or could have an accompanying comment that calls attention to the
 important behavior:
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 u, err := db.UserByID(userID)
 if err != nil {
     return fmt.Errorf("invalid origin user: %s", err)
@@ -321,8 +326,9 @@ if err != nil {
 user = u
 ```
 
+<div class='goodcode'></div>
+
 ```go
-// Good:
 // Gregorian leap years aren't just year%4 == 0.
 // See https://en.wikipedia.org/wiki/Leap_year#Algorithm.
 var (

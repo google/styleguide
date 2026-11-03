@@ -1,17 +1,15 @@
 # Google Vimscript Guide
 
-* Nate Soares
-* Artemis Sparks
-* David Barnett
+*   Nate Soares
+*   Artemis Sparks
+*   David Barnett
 
 <!-- mdformat on -->
 
 ## Background
 
 This is the in-depth vimscript guide. If you're just a casual user looking to
-write a plugin, the
-[abbreviated style guide](./vimscriptguide.md)
-is for you.
+write a plugin, the [abbreviated style guide](./vimscriptguide.md) is for you.
 
 This rather rotund guide dives into justifications and clarifications. It
 provides an idealized set of rules that are rather too draconian to push on
@@ -23,6 +21,11 @@ safely.
 
 Fair warning: Vimscript is a maddening abyss. When you gaze into it, it gazes
 also into you. Proceed with caution.
+
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
 
 ## Portability
 
@@ -206,8 +209,7 @@ All other language features are fair game.
 
 *   `plugin-names-like-this`
 
-    *   Plugin names should be descriptive and
-        concise.
+    *   Plugin names should be descriptive and concise.
 
 *   Each plugin must consist of one directory (or code repository), sharing a
     name with the plugin (with a "vim-" prefix or ".vim" suffix if desired).
@@ -262,7 +264,6 @@ All other language features are fair game.
 
 ### Libraries vs. Functionality
 
-
 Separate library-providing plugins from command-providing plugins.
 
 Many plugins provide either user functionality (commands, autocommands, etc) or
@@ -270,9 +271,7 @@ an API (of autoloaded functions) but not both. This separation is encouraged, as
 it allows other plugins to pull in a library without also pulling in commands,
 setting changes, and other plugin functionality that affects the end user.
 
-
 ### Configuration
-
 
 Don't clobber user settings. Provide as much configurability as possible: that's
 what Vim's all about.
@@ -292,14 +291,11 @@ what Vim's all about.
     endif
     ```
 
-
-
 ## Style Guide
 
 Follow google-wide style conventions. Mimic google python style when in doubt.
 
 ### Documentation
-
 
 Use [vimdoc](https://github.com/google/vimdoc).
 
@@ -308,9 +304,7 @@ Write documentation in .vim files in conformance with the vimdoc standards and
 include fields like "description" and "author" in the addon-info.json file (see
 the [VAM documentation](https://goo.gl/CUXJZC)).
 
-
 ### Whitespace
-
 
 Follow google-wide conventions.
 
@@ -436,10 +430,7 @@ Follow google-wide conventions.
         " comment block
         ```
 
-
-
 ### Variables
-
 
 `plugin-names-like-this`, `FunctionNamesLikeThis`, `CommandNamesLikeThis`,
 `augroup_names_like_this`, `variable_names_like_this`. Prefix all variables with
@@ -488,10 +479,7 @@ their scope.
 
     *   This is useful for plugins that keep per-buffer or per-window state.
 
-
-
 ### Strings
-
 
 Prefer single quotes.
 
@@ -529,10 +517,7 @@ Prefer single quoted strings. Specifically, in order of precedence:
 
     *   Break ties in favor of single quotes.
 
-
-
 ### Settings
-
 
 Prefer long names. Set settings locally.
 
@@ -541,8 +526,6 @@ Prefer long names. Set settings locally.
 
     *   Use `setlocal` and `&l:` instead of `set` and `&`.
 
-
-
 ## Usage Guide
 
 Vim plugins should provide any or all of the following: **Commands**,
@@ -550,12 +533,15 @@ Vim plugins should provide any or all of the following: **Commands**,
 
 ### Commands
 
+<div>
 
 *   Define in `plugin/commands.vim`.
 *   CommandNamesLikeThis.
 *   Prefer semantic names to a unified prefix.
 *   Do not use `[!]`
 *   Extract logic into functions.
+
+</div>
 
 *   `CommandNamesLikeThis`
 
@@ -600,16 +586,16 @@ Vim plugins should provide any or all of the following: **Commands**,
         installed via an autoload function in non-maktaba plugins.
 
 <a id="commands-conventions"></a>
+
 #### Conventions
 
 *   Pass `<bang>` to functions with `'<bang>' == '!'`.
 
     *   The function should receive a boolean parameter, not a string.
 
-
-
 ### Autocommands
 
+<div>
 
 *   Define in `plugin/autocmds.vim`.
 *   Use augroups.
@@ -617,10 +603,12 @@ Vim plugins should provide any or all of the following: **Commands**,
 *   Clear the augroup first.
 *   Extract logic into functions.
 
+</div>
+
 *   All autocommands should be defined in the `plugin/autocmds.vim` file.
 
-    *   This allows users to disable your autocommands with `Glaive myplugin
-        !plugin[autocmds]`.
+    *   This allows users to disable your autocommands with
+        `Glaive myplugin !plugin[autocmds]`.
 
 *   Declare all autocommands in an `augroup` block.
 
@@ -640,16 +628,17 @@ Vim plugins should provide any or all of the following: **Commands**,
 
     *   This allows your plugins to be re-enterable.
 
-
-
 ### Functions
 
+<div>
 
 *   FunctionNamesLikeThis.
 *   Autoload all functions.
 *   Prefix script-local functions with `s:`
 *   Use `[!]`.
 *   Use `[abort]`.
+
+</div>
 
 *   `FunctionNamesLikeThis`
 
@@ -690,14 +679,15 @@ Vim plugins should provide any or all of the following: **Commands**,
     *   Top-level functions expecting errors may catch them and print error
         messages, but even those should throw their own errors when they choke.
 
-
-
 ### Mappings
 
+<div>
 
 *   Provide opt-in key mappings in `plugin/mappings.vim`.
 *   `<Plug>` mappings can be defined in `plugin/plugs.vim` (unlike mappings.vim,
     plugs.vim is opt-out).
+
+</div>
 
 *   Define key mappings in `plugin/mappings.vim`, using
     `maktaba#plugin#MapPrefix` to get a prefix.
@@ -716,9 +706,10 @@ Vim plugins should provide any or all of the following: **Commands**,
     `plugin/plugs.vim` (separate from standard key mappings).
 
     *   `<Plug>` is a sequence which can not be typed.
-    *   You can do something like `noremap <Plug>namespace#MappingName
-        some_key_sequence` and then users can do `noremap <leader>x
-        <Plug>namespace#MappingName` to take advantage of your pseudo-mapping.
+    *   You can do something like
+        `noremap <Plug>namespace#MappingName some_key_sequence` and then users
+        can do `noremap <leader>x <Plug>namespace#MappingName` to take advantage
+        of your pseudo-mapping.
     *   Pseudo-mappings should **not** be in `plugin/mappings.vim` or they will
         be disabled by default.
     *   Such pseudo-mappings should be named `<Plug>` followed by your plugin
@@ -741,12 +732,9 @@ Vim plugins should provide any or all of the following: **Commands**,
     *   Using `s:` will often fail as the mapping attempts to type a literal s
         and colon.
 
-
-
 ## Conventions
 
 ### Dependency Checking
-
 
 Declare dependencies in addon-info.json and use `maktaba`.
 
@@ -758,9 +746,7 @@ Calling `maktaba#library#Require` from dependent code at runtime ensures that
 dependencies have been installed and that they don't include unsafe non-library
 files.
 
-
 ### Statusline Flags
-
 
 Use `<plugin-name>#status#Status()` or its finer-grained variants to provide
 statusline flags.
@@ -792,8 +778,6 @@ purpose of the plugin (powerline, etc.).
         `Info`.
     *   This is useful for users who want only the most relevant flag and do not
         have a colored statusline.
-
-
 
 ## Forbidden Commands
 
@@ -850,7 +834,6 @@ language pathologies that you wish you didn't have to know.
 
 ### Compatibility Mode
 
-
 If you don't support vi-compatibility mode, fail gracefully.
 
 When `compatible` is set, many vim features are not available. The vim feature
@@ -863,4 +846,3 @@ for details.
 
 Plugins that depend on maktaba generally don't need to worry about compatible
 mode since maktaba currently just disables it, printing a warning.
-

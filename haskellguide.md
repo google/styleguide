@@ -2,7 +2,13 @@
 
 Revision 1.01
 
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
+
 <a id="Background"></a>
+
 ## Background
 
 Haskell is a mature, general purpose, purely functional language. It is noted
@@ -15,12 +21,15 @@ style are generally closely tied to the semantics of the code you wish to
 convey. As such, this guide tends to be somewhat less prescriptive than most, as
 there are just fewer arbitrary choices to make when coding Haskell.
 
-Open-source projects developed by Google should conform to the requirements in this guide.
+Open-source projects developed by Google should conform to the requirements in
+this guide.
 
 <a id="Structure"></a>
+
 ## Structure
 
 <a id="Haddock"></a>
+
 ### Haddock
 
 The module and all exported top-level elements should have Haddock.
@@ -52,6 +61,7 @@ necessary to add links for all API names. Add a link if:
     repeating a link).
 
 <a id="Exports"></a>
+
 ### Exports
 
 *   All modules should have an explicit export list.
@@ -72,11 +82,11 @@ bulk of the exported definitions are generated with Template Haskell, since
 explicitly naming them in the export list would be counter-productive.
 
 <a id="Imports"></a>
+
 ### Imports
 
 *   Imports may be split up into groups separated by a single newline.
-*   Recommended: Split imports into two groups: external and
-    internal modules.
+*   Recommended: Split imports into two groups: external and internal modules.
 *   Within each group, imports must be alphabetized by full module name.
 *   Imports can either be qualified or for specific elements. It is okay to have
     both.
@@ -122,6 +132,7 @@ import AnInternalProject.Data.WhoopTree      -- okay to import all, but discoura
 ```
 
 <a id="Pragmas"></a>
+
 ### Pragmas
 
 GHC options and `LANGUAGE` pragmas go at the very top of the file.
@@ -132,13 +143,12 @@ GHC options and `LANGUAGE` pragmas go at the very top of the file.
 
 The `OPTIONS_GHC` directive should only be used for specific options that relate
 to the source file, such as `-fno-warn-orphans` for test code. General
-compilation options, like `-O2`, belong in
-the `.cabal` file.
+compilation options, like `-O2`, belong in the `.cabal` file.
 
 Features enabled by the `LANGUAGE` pragma should always be listed in each source
-file that needs them, and never turned on globally via flags in the
-the `.cabal` file. This is so future
-developers know what language extensions are in effect when reading the code.
+file that needs them, and never turned on globally via flags in the the `.cabal`
+file. This is so future developers know what language extensions are in effect
+when reading the code.
 
 `INLINE`, `INLINEABLE`, and similar pragmas should only be used when you've
 tested that they actually improve speed in cases that you care about. When used,
@@ -173,6 +183,7 @@ Other GHC extensions should be avoided, as they may or may not be stable,
 increase the burden on readers to know them, and may force clients to use them.
 
 <a id="Warnings"></a>
+
 ### Warnings
 
 Code should compile cleanly with no warnings from GHC.
@@ -185,13 +196,15 @@ compile with both `-Wall` and `-Werror`, ensuring warnings are not ignored.
 
 In the rare cases when it's necessary to declare an instance in a module which
 contains neither the corresponding class declaration nor the corresponding type
-declaration, warnings about orphans can be suppressed by adding `{-# OPTIONS_GHC
--fno-warn-orphans #-}` line at the top of the relevant file.
+declaration, warnings about orphans can be suppressed by adding
+`{-# OPTIONS_GHC -fno-warn-orphans #-}` line at the top of the relevant file.
 
 <a id="Style"></a>
+
 ## Style
 
 <a id="Layout"></a>
+
 ### Layout
 
 Use layout, rather than braces and semicolons.
@@ -200,6 +213,7 @@ Except for one-liners, use layout rather than braces and semicolons. It makes
 for clearer code.
 
 <a id="Type_Declarations"></a>
+
 ### Type Declarations
 
 All top level functions should have type declarations.
@@ -211,6 +225,7 @@ documentation.
 Where reasonable, use the most polymorphic possible type.
 
 <a id="Comments"></a>
+
 ### Comments
 
 Use `--` for all comments except pragmas, or where the comment must be in the
@@ -229,6 +244,7 @@ should be used to explain any non-obvious reasoning for why something was done a
 particular way, or is particularly tricky.
 
 <a id="if_then_else"></a>
+
 ### if…then…else
 
 Consider using guards and pattern matches over `if`…`then`…`else`.
@@ -259,12 +275,14 @@ nth i (_:xs)        = nth (i-1) xs
 ```
 
 <a id="Idioms"></a>
+
 ## Idioms
 
 Functional programming has given rise to a large number of new programming
 idioms. The following idioms are encouraged:
 
 <a id="Partial_Functions"></a>
+
 ### Partial Functions
 
 [Partial functions](https://www.haskell.org/haskellwiki/Partial_functions) are
@@ -310,6 +328,7 @@ insert s pt = case filter (not . null . greatestCommonPrefix s) $ ptSubs pt of
 ```
 
 <a id="Point_Free"></a>
+
 ### Point-Free
 
 [Point-free style](http://www.haskell.org/haskellwiki/Haskell/Pointfree) is fine
@@ -333,12 +352,14 @@ f x y = g $ h x y   -- depending on the functions, this may or may not be better
 ```
 
 <a id="Combinators"></a>
+
 ### Combinators
 
 Libraries designed to be combinators produce very powerful tools for other
 developers. Examples to learn from are Parsec and PrettyPrint.
 
 <a id="QuickCheck"></a>
+
 ### QuickCheck
 
 Tests should be written with QuickCheck whenever possible. This form of testing
@@ -351,9 +372,11 @@ warning about orphan instances.) Such instances should be sure to weight cases
 equally, or if they don't, explain why.
 
 <a id="Naming"></a>
+
 ## Naming
 
 <a id="General_Rules"></a>
+
 ### General Rules
 
 Use mixed-case identifiers, without underscores.
@@ -405,6 +428,7 @@ map f (a:as) = f a : map f as
 ```
 
 <a id="Short_Variables"></a>
+
 ### Short Variables
 
 Short and single letter variable names are fine.
@@ -434,6 +458,7 @@ nextAfter _ _ = Nothing
 ```
 
 <a id="Module_Names"></a>
+
 ### Modules
 
 Use singular when naming modules.
@@ -442,6 +467,7 @@ Use `Data.Map` and `Data.ByteString.Internal` instead of `Data.Maps` and
 `Data.ByteString.Internals`.
 
 <a id="Abbreviations"></a>
+
 ### Abbreviations
 
 Abbreviations in names should be mixed-case.
@@ -472,9 +498,11 @@ GREoIPsec  -- acceptable because specific precedent for this form exists
 ```
 
 <a id="Formatting"></a>
+
 ## Formatting
 
 <a id="Vertical_Spacing"></a>
+
 ### Vertical Spacing
 
 Vertical white space is to be used sparingly, ensuring that more context can be
@@ -522,6 +550,7 @@ rleDecode = concatMap (uncurry replicate)
 ```
 
 <a id="Horizontal_Spacing"></a>
+
 ### Horizontal Spacing
 
 *   80 columns wide
@@ -558,6 +587,7 @@ data HttpException
 ```
 
 <a id="Indentation"></a>
+
 ### Indentation
 
 *   Indents on 4 space intervals
@@ -587,6 +617,7 @@ arbitrary = arbitrary >>= \b -> if b
 ```
 
 <a id="Comment_Formatting"></a>
+
 ### Comments
 
 *   Use `--` comments
@@ -608,6 +639,7 @@ data CommandSummary = CommandSummary
 ```
 
 <a id="Where"></a>
+
 ### where
 
 To separate the local declarations from the main expression, use a *hanging
@@ -638,6 +670,7 @@ updateFlowTable u tbl = case u of
 ```
 
 <a id="Deriving"></a>
+
 ### deriving
 
 The `deriving` clause can trail the declaration, or go on a line of its own.
@@ -663,6 +696,7 @@ data Employee = Employee
 ```
 
 <a id="case_of"></a>
+
 ### case…of
 
 The `of` token appears on the same line as the `case` token. Indent the cases.
@@ -678,6 +712,7 @@ foobar = case something of
 ```
 
 <a id="let_in"></a>
+
 ### let…in
 
 The `in` token appears on the line after the line with the `let` token, lined up
@@ -700,6 +735,7 @@ formatItem x = let (a,b) = x `divMod` 1000 in show a ++ '/' : show b
 ```
 
 <a id="if_then_else_2"></a>
+
 ### if…then…else
 
 Indent the `then` and `else`.
@@ -752,6 +788,7 @@ adjective n = if odd n then "odd" else "even"
 ```
 
 <a id="List_Formatting"></a>
+
 ### List Formatting
 
 Use "leading comma" list format for multiple line spanning lists.
@@ -810,6 +847,7 @@ module CPU
 ```
 
 <a id="Operators_Punctuation"></a>
+
 ### Operators & Punctuation
 
 Use one space around all operators. Use one space after commas and semicolons.
@@ -852,6 +890,7 @@ go n m (a:as) | m == a = go (n+1) m as
 ```
 
 <a id="Parting_Words"></a>
+
 ## Parting Words
 
 Use common sense and *BE CONSISTENT*.

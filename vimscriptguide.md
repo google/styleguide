@@ -1,8 +1,8 @@
 # Google Vimscript Style Guide
 
-* Nate Soares
-* Artemis Sparks
-* David Barnett
+*   Nate Soares
+*   Artemis Sparks
+*   David Barnett
 
 <!-- mdformat on -->
 
@@ -11,8 +11,12 @@
 This is a casual version of the vimscript style guide, because vimscript is a
 casual language. When submitting vim plugin code, you must adhere to these
 rules. For clarifications, justifications, and explanations about the finer
-points of vimscript, please refer to
-the [heavy guide](./vimscriptfull.md).
+points of vimscript, please refer to the [heavy guide](./vimscriptfull.md).
+
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
 
 ## Portability
 
@@ -20,7 +24,6 @@ It's hard to get vimscript right. Many commands depend upon the user's settings.
 By following these guidelines, you can hope to make your scripts portable.
 
 ### Strings
-
 
 Prefer single quoted strings
 
@@ -30,9 +33,7 @@ don't want them (they break regexes).
 Use double quoted strings when you need an escape sequence (such as `"\n"`) or
 if you know it doesn't matter and you need to embed single quotes.
 
-
 ### Matching Strings
-
 
 Use the `=~#` or `=~?` operator families over the `=~` family.
 
@@ -42,9 +43,7 @@ operators. Use the `=~#` and `=~?` operator families explicitly when comparing
 strings unless you explicitly need to honor the user's case sensitivity
 settings.
 
-
 ### Regular Expressions
-
 
 Prefix all regexes with `\m\C`.
 
@@ -55,9 +54,7 @@ set, prepend all regexes with `\m\C`.
 You are welcome to use other magic levels (`\v`) and case sensitivities (`\c`)
 so long as they are intentional and explicit.
 
-
 ### Dangerous commands
-
 
 Avoid commands with unintended side effects.
 
@@ -67,9 +64,7 @@ Prefer functions (such as `search()`) better suited to scripts.
 For many vim commands, functions exist that do the same thing with fewer side
 effects. See `:help function-list` for a list of built-in functions.
 
-
 ### Fragile commands
-
 
 Avoid commands that rely on user settings.
 
@@ -80,19 +75,15 @@ Avoid `:s[ubstitute]`, as its behavior depends upon a number of local settings.
 
 The same applies to other commands not listed here.
 
-
 ### Catching Exceptions
-
 
 Match error codes, not error text.
 
 Error text may be locale dependant.
 
-
 ## General Guidelines
 
 ### Messaging
-
 
 Message the user infrequently.
 
@@ -101,10 +92,7 @@ Loud scripts are annoying. Message the user only when:
 *   A long-running process has kicked off.
 *   An error has occurred.
 
-
-
 ### Type checking
-
 
 Use strict and explicit checks where possible.
 
@@ -122,18 +110,14 @@ errors.
 Use `:unlet` for variables that may change types, particularly those assigned
 inside loops.
 
-
 ### Python
-
 
 Use sparingly.
 
 Use python only when it provides critical functionality, for example when
 writing threaded code.
 
-
 ### Other Languages
-
 
 Use vimscript instead.
 
@@ -141,9 +125,7 @@ Avoid using other scripting languages such as ruby and lua. We can not guarantee
 that the end user's vim has been compiled with support for non-vimscript
 languages.
 
-
 ### Boilerplate
-
 
 Use [maktaba](https://github.com/google/maktaba).
 
@@ -153,10 +135,7 @@ maktaba removes boilerplate, including:
 *   Error handling
 *   Dependency checking
 
-
-
 ### Plugin layout
-
 
 Organize functionality into modular plugins
 
@@ -167,9 +146,7 @@ subdirectories as necessary, and it should declare metadata in the
 addon-info.json format (see the [VAM documentation](https://goo.gl/CUXJZC) for
 details).
 
-
 ### Functions
-
 
 In the autoload/ directory, defined with `[!]` and `[abort]`.
 
@@ -186,11 +163,10 @@ should be extracted into functions and autoloaded.
 
 `[abort]` forces the function to halt when it encounters an error.
 
-
 ### Commands
 
-
-In the plugin/commands.vim or under the ftplugin/ directory, defined without `[!]`.
+In the plugin/commands.vim or under the ftplugin/ directory, defined without
+`[!]`.
 
 General commands go in `plugin/commands.vim`. Filetype-specific commands go in
 `ftplugin/`.
@@ -198,9 +174,7 @@ General commands go in `plugin/commands.vim`. Filetype-specific commands go in
 Excluding `[!]` prevents your plugin from silently clobbering existing commands.
 Command conflicts should be resolved by the user.
 
-
 ### Autocommands
-
 
 Place them in `plugin/autocmds.vim`, within augroups.
 
@@ -212,26 +186,22 @@ prefixed with the plugin name.
 Clear the augroup with `autocmd!` before defining new autocommands in the
 augroup. This makes your plugin re-entrable.
 
-
 ### Mappings
 
-
-Place them in `plugin/mappings.vim`, using `maktaba#plugin#MapPrefix` to get a prefix.
+Place them in `plugin/mappings.vim`, using `maktaba#plugin#MapPrefix` to get a
+prefix.
 
 All key mappings should be defined in `plugin/mappings.vim`.
 
 Partial mappings (see `:help using-<Plug>`.) should be defined in
 `plugin/plugs.vim`.
 
-
 ### Settings
-
 
 Change settings locally
 
 Use `:setlocal` and `&l:` instead of `:set` and `&` unless you have explicit
 reason to do otherwise.
-
 
 ## Style
 
@@ -239,7 +209,6 @@ Follow google style conventions. When in doubt, treat vimscript style like
 python style.
 
 ### Whitespace
-
 
 Similar to python.
 
@@ -290,10 +259,7 @@ Similar to python.
     command MyCommand2 call myplugin#bar()
     ```
 
-
-
 ### Naming
-
 
 In general, use `plugin-names-like-this`, `FunctionNamesLikeThis`,
 `CommandNamesLikeThis`, `augroup_names_like_this`, `variable_names_like_this`.
@@ -336,4 +302,3 @@ window-local semantics.
 `l:` and `v:` should be used for consistency, future proofing, and to avoid
 subtle bugs. They are not strictly required. Add them in new code but don't go
 out of your way to add them elsewhere.
-

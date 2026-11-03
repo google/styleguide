@@ -163,11 +163,11 @@ reviews.
 
 **Relevant Testing-on-the-Toilet articles**
 
-*   [TotT: Identifier Naming][tott-431]
-*   [TotT: Testing State vs. Testing Interactions][tott-281]
-*   [TotT: Effective Testing][tott-324]
-*   [TotT: Risk-driven Testing][tott-329]
-*   [TotT: Change-detector Tests Considered Harmful][tott-350]
+*   [TotT : Identifier Naming][tott-431]
+*   [TotT : Testing State vs. Testing Interactions][tott-281]
+*   [TotT : Effective Testing][tott-324]
+*   [TotT : Risk-driven Testing][tott-329]
+*   [TotT : Change-detector Tests Considered Harmful][tott-350]
 
 [tott-431]: https://testing.googleblog.com/2017/10/code-health-identifiernamingpostforworl.html
 [tott-281]: https://testing.googleblog.com/2013/03/testing-on-toilet-testing-state-vs.html

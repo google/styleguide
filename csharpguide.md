@@ -4,6 +4,11 @@ This style guide is for C# code developed internally at Google, and is the
 default style for C# code at Google. It makes stylistic choices that conform to
 other languages at Google, such as Google C++ style and Google Java style.
 
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
+
 ## Formatting guidelines
 
 ### Naming rules
@@ -202,17 +207,20 @@ namespace MyNamespace {                             // Namespaces are PascalCase
 ### Constants
 
 *   Variables and fields that can be made `const` should always be made `const`.
-*   If `const` isn’t possible, `readonly` can be a suitable alternative.
+*   If `const` isn't possible, `readonly` can be a suitable alternative.
 *   Prefer named constants to magic numbers.
 
-### IEnumerable vs IList vs IReadOnlyList
+### Containers: IEnumerable vs IList vs IReadOnlyList
 
-*   For inputs use the most restrictive collection type possible, for example
-    `IReadOnlyCollection` / `IReadOnlyList` / `IEnumerable` as inputs to methods
-    when the inputs should be immutable.
-*   For outputs, if passing ownership of the returned container to the owner,
-    prefer `IList` over `IEnumerable`. If not transferring ownership, prefer the
-    most restrictive option.
+*   Declare (input) parameters using a type that grants the fewest capabilities
+    required by the implementation (eg. `IReadOnlyCollection`).
+    *   Use `IEnumerable` only if the implementation can iterate over the
+        collection at most once. This indicates that it is safe for the caller
+        to supply a generator.
+*   For outputs, if passing ownership of the returned container to the caller,
+    use the interface type that conveys the maximum capabilities to the caller
+    without revealing the concrete type. Prefer `IList` over `List`. If not
+    transferring ownership, prefer the most restrictive, as for inputs.
 
 ### Generators vs containers
 
@@ -235,13 +243,22 @@ namespace MyNamespace {                             // Namespaces are PascalCase
 
 For example:
 
+<div class='goodcode'></div>
+
 ```c#
 int SomeProperty => _someProperty
 ```
 
+<div class='goodcode'></div>
+
+```c#
+void SomeMethod() => throw new NotImplementedException();
+```
+
 *   Judiciously use expression body syntax in lambdas and properties.
-*   Don’t use on method definitions. This will be reviewed when C# 7 is live,
-    which uses this syntax heavily.
+*   For method definitions, prefer using expression body syntax only for
+    single-statement methods - e.g. forwarding to delegates or throwing
+    exceptions.
 *   As with methods and other scoped blocks of code, align the closing with the
     first character of the line that includes the opening brace. See sample code
     for examples.
@@ -284,8 +301,8 @@ int SomeProperty => _someProperty
     general feature that would be appropriate to add to the source of the
     original class.
     *   Note - if we have the source to the class being extended, and the
-        maintainer of the original class does not want to add the function,
-        prefer not using an extension method.
+        maintainer of the original class does not want to add the method, prefer
+        not using an extension method.
 *   Only put extension methods into core libraries that are available
     everywhere - extensions that are only available in some code will become a
     readability issue.
@@ -294,7 +311,7 @@ int SomeProperty => _someProperty
 
 ### ref and out
 
-*   Use `out` for returns that are not also inputs.
+*   Use `out` for additional returns that are not also inputs.
 *   Place `out` parameters after all other parameters in the method definition.
 *   `ref` should be used rarely, when mutating an input is necessary.
 *   Do not use `ref` as an optimisation for passing structs.
@@ -359,6 +376,8 @@ int SomeProperty => _someProperty
 
 For example:
 
+<div class='goodcode'></div>
+
 ```c#
 var x = new SomeClass {
   Property1 = value1,
@@ -415,18 +434,18 @@ removing items from containers while iterating. There are a couple of options:
     that are noisy, obvious, or unimportant.
 *   Encouraged:
 
-    *   When the type is obvious - e.g. `var apple = new Apple();`, or `var
-        request = Factory.Create<HttpRequest>();`
+    *   When the type is obvious - e.g. `var apple = new Apple();`, or
+        `var request = Factory.Create<HttpRequest>();`
     *   For transient variables that are only passed directly to other methods -
         e.g. `var item = GetItem(); ProcessItem(item);`
 
 *   Discouraged:
 
     *   When working with basic types - e.g. `var success = true;`
-    *   When working with compiler-resolved built-in numeric types - e.g. `var
-        number = 12 * ReturnsFloat();`
-    *   When users would clearly benefit from knowing the type - e.g. `var
-        listOfItems = GetList();`
+    *   When working with compiler-resolved built-in numeric types - e.g.
+        `var number = 12 * ReturnsFloat();`
+    *   When users would clearly benefit from knowing the type - e.g.
+        `var listOfItems = GetList();`
 
 ### Attributes
 
@@ -438,41 +457,118 @@ removing items from containers while iterating. There are a couple of options:
 
 ### Argument Naming
 
-Derived from the Google C++ style guide.
+Derived from the
+[Google C++ style guide](https://google.github.io/styleguide/cppguide.html#Function_Argument_Comments).
 
-When the meaning of a function argument is nonobvious, consider one of the
+When the meaning of a method argument is nonobvious, consider one of the
 following remedies:
 
 *   If the argument is a literal constant, and the same constant is used in
-    multiple function calls in a way that tacitly assumes they're the same, use
-    a named constant to make that constraint explicit, and to guarantee that it
+    multiple method calls in a way that tacitly assumes they're the same, use a
+    named constant to make that constraint explicit, and to guarantee that it
     holds.
-*   Consider changing the function signature to replace a `bool` argument with
-    an `enum` argument. This will make the argument values self-describing.
+*   Consider changing the method signature to replace a `bool` argument with an
+    `enum` argument. This will make the argument values self-describing.
 *   Replace large or complex nested expressions with named variables.
 *   Consider using
     [Named Arguments](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/named-and-optional-arguments)
     to clarify argument meanings at the call site.
-*   For functions that have several configuration options, consider defining a
+*   For methods that have several configuration options, consider defining a
     single class or struct to hold all the options and pass an instance of that.
     This approach has several advantages. Options are referenced by name at the
-    call site, which clarifies their meaning. It also reduces function argument
-    count, which makes function calls easier to read and write. As an added
+    call site, which clarifies their meaning. It also reduces method argument
+    count, which makes method calls easier to read and write. As an added
     benefit, call sites don't need to be changed when another option is added.
 
 Consider the following example:
 
+<div class='badcode'></div>
+
 ```c#
-// Bad - what are these arguments?
+// What are these arguments?
 DecimalNumber product = CalculateProduct(values, 7, false, null);
 ```
 
 versus:
 
+<div class='goodcode'></div>
+
 ```c#
-// Good
-ProductOptions options = new ProductOptions();
+var options = new ProductOptions();
 options.PrecisionDecimals = 7;
 options.UseCache = CacheUsage.DontUseCache;
 DecimalNumber product = CalculateProduct(values, options, completionDelegate: null);
 ```
+
+### Comments
+
+(Derived from the [Google C++ style guide].)
+
+Comments are absolutely vital to keeping our code readable. The following rules
+describe what you should comment and where. But remember: while comments are
+very important, the best code is self-documenting. Giving sensible names to
+types and variables is much better than using obscure names that you must then
+explain through comments.
+
+When writing your comments, write for your audience: the next person who will
+need to understand your code. Be generous — the next one may be you!
+
+#### Class Comments
+
+Every non-obvious class should have an accompanying comment that describes what
+it is for and how it should be used.
+
+The class comment should provide the reader with enough information to know how
+and when to use the class, as well as any additional considerations necessary to
+correctly use the class.
+
+#### Method Comments
+
+Almost every method should have comments immediately preceding it that describe
+what the method does and how to use it. These comments may be omitted only if
+the method is simple and obvious (e.g., simple accessors). Method comments
+should be written with an implied subject of *This method* and should start with
+the verb phrase; for example, "Opens the file", rather than "Open the file".
+
+Types of things to mention in comments:
+
+*   What the inputs and outputs are. If method argument names are provided in
+    `backticks`, then code-indexing tools may be able to present the
+    documentation better.
+
+*   Whether the object remembers arguments beyond the duration of the method
+    call.
+
+*   Whether any of the arguments can be null.
+
+*   If there are any performance implications of how a method is used.
+
+However, do not be unnecessarily verbose or state the completely obvious.
+
+When documenting method overrides, focus on the specifics of the override
+itself, rather than repeating the comment from the overridden method. In many of
+these cases, the override needs no additional documentation and thus no comment
+is required.
+
+When commenting constructors, remember that the person reading your code knows
+what constructors are for, so comments that just say something like "creates
+this object" are not useful.
+
+#### Class Members
+
+The purpose of each class data member must be clear. If there are any invariants
+(special values, relationships between members, lifetime requirements) not
+clearly expressed by the type and name, they must be commented. However, if the
+type and name suffice, no comment is needed.
+
+#### Variable Comments
+
+In general the actual name of the variable should be descriptive enough to give
+a good idea of what the variable is used for. In certain cases, more comments
+are required.
+
+#### Explanatory Comments
+
+Tricky or complicated code blocks should have comments before them.
+
+[Google C++ style guide]: https://google.github.io/styleguide/cppguide.html#Comments

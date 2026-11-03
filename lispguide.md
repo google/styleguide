@@ -13,6 +13,11 @@ mistakes in this document, you may file bugs in the
 "[Lisp]" in the issue title since the repository contains Style Guides for
 several languages.
 
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
+
 ### References
 
 -   For a guide to effective Lisp programming at Google, see
@@ -752,6 +757,7 @@ Lisp expressions as example:
 ```
 
 <a id="package-names"></a>
+
 ### Package names
 
 -   Design package names to be usable as prefixes for symbols.
@@ -1034,7 +1040,9 @@ assignments.
 
 ### Assertions and Conditions
 
-Use `assert`, `check-type`, and `etypecase` to detect internal bugs only, and use them liberally.
+Use `assert`, `check-type`, and `etypecase` to detect internal bugs only, and
+use them liberally.
+
 -   Prefer `etypecase` over `typecase`
 -   Use `error` to check input from a file.
 -   If a function signals an error, document it in its contract.
@@ -1049,14 +1057,13 @@ Use `assert`, `check-type`, and `etypecase` to detect internal bugs only, and us
 -   Never clean up by resignaling.
 -   Never return a condition or error value, signal it with ERROR instead.
 
-Use `assert` to detect internal bugs ONLY.
-Code should `assert` invariants whose failure indicates that the software is
-itself broken. Incorrect input should be handled properly at runtime, and must
-not cause an assertion violation. The audience for an `assert` failure is a
-developer. Do not use the data-form and argument-form in `assert` to specify a
-condition to signal. It's fine to use them to print out a message for debugging
-purposes (and since it's only for debugging, there's no issue of
-internationalization).
+Use `assert` to detect internal bugs ONLY. Code should `assert` invariants whose
+failure indicates that the software is itself broken. Incorrect input should be
+handled properly at runtime, and must not cause an assertion violation. The
+audience for an `assert` failure is a developer. Do not use the data-form and
+argument-form in `assert` to specify a condition to signal. It's fine to use
+them to print out a message for debugging purposes (and since it's only for
+debugging, there's no issue of internationalization).
 
 `check-type`, `etypecase` are also forms of assertion. When one of these fails,
 that's a detected bug. Prefer `check-type` over `(declare (type ...))` for the
@@ -1097,8 +1104,8 @@ are rare. The problem is that handling all conditions can mask program bugs. If
 you need to handle "all conditions", you MUST handle only `error`, *not* `t` and
 not `serious-condition`.
 
-`(error (make-condition 'foo-error ...))` is equivalent to `(error 'foo-error
-...)` — code must use the shorter form.
+`(error (make-condition 'foo-error ...))` is equivalent to
+`(error 'foo-error ...)` — code must use the shorter form.
 
 Do not signal conditions from inside the cleanup form of `unwind-protect` or
 otherwise exit non-locally from cleanup handlers outside of the handler e.g.
@@ -1166,7 +1173,8 @@ Scott McKay puts it:
 
 Use appropriate declarations in internal low-level functions where these
 declarations are used for optimization. When you do, however, see our
-recommendations for [Unsafe Operations](lispprogrammingguide.md#unsafe-operations).
+recommendations for
+[Unsafe Operations](lispprogrammingguide.md#unsafe-operations).
 
 ## Meta-language guidelines
 
@@ -1625,8 +1633,8 @@ For maximum portability of a library, it is good form that `defmethod`
 definitions should `(declare (ignorable ...))` all the required arguments that
 they are not using. Indeed, some implementations will issue a warning if you
 `(declare (ignore ...))` those arguments, whereas other implementations will
-issue a warning if you fail to `(declare (ignore ...))` them. `(declare
-(ignorable ...))` works on all implementations.
+issue a warning if you fail to `(declare (ignore ...))` them.
+`(declare (ignorable ...))` works on all implementations.
 
 You should avoid excessive nesting of binding forms inside a function. If your
 function ends up with massive nesting, you should probably break it up into
@@ -1730,8 +1738,9 @@ or control to leak to attackers.
 -   Use `:START` and `:END` arguments to `string=` or `string-equal` instead of
     using `subseq`.
 -   Use `zerop`, `plusp`, or `minusp` instead of comparing to `0` or `0.0`.
--   See also [Comparison Operators](lispprogrammingguide.md#comparison-operators) in
-    the programming guide for proper usage.
+-   See also
+    [Comparison Operators](lispprogrammingguide.md#comparison-operators) in the
+    programming guide for proper usage.
 
 When choosing between `eq` and `eql`, you should use `eql` unless you are
 writing performance-critical low-level code. `eql` reduces the opportunity for a
@@ -1742,9 +1751,10 @@ and use of it for optimization should be treated just like any such
 [unsafe operations](lispprogrammingguide.md#unsafe-operations).
 
 Also, you should use `:start` and `:end` arguments to `string=` or
-`string-equal` instead of using `subseq`; e.g. `(string-equal (subseq s1 2 6)
-s2)` should instead be `(string-equal s1 s2 :start1 2 :end1 6)` This is
-preferable because it is clearer and does not cons.
+`string-equal` instead of using `subseq`; e.g.
+`(string-equal (subseq s1 2 6) s2)` should instead be
+`(string-equal s1 s2 :start1 2 :end1 6)` This is preferable because it is
+clearer and does not cons.
 
 You should use `zerop`, `plusp`, or `minusp`, instead of comparing a value to
 `0` or `0.0`.

@@ -73,6 +73,11 @@ Some guidelines:
     languages) consider whether the code is easily maintainable by people other
     than its author.
 
+If you want to migrate an existing program from shell to a proper language but
+you're unsure how, checkout the
+[Deshell Playbook](https://github.com/google/deshell/blob/main/playbook.md). It
+will guide you through a robust approach for smoothly replacing production code.
+
 <a id="s2-shell-files-and-interpreter-invocation"></a>
 
 ## Shell Files and Interpreter Invocation
@@ -83,10 +88,10 @@ Some guidelines:
 
 Executables should have a `.sh` extension or no extension.
 
--   If the executable will have a build rule that renames the source
-    file then prefer to use a `.sh` extension. This
-    enables you to use the recommended naming convention, with a source file
-    like `foo.sh` and a build rule named `foo`.
+-   If the executable will have a build rule that renames the source file then
+    prefer to use a `.sh` extension. This enables you to use the recommended
+    naming convention, with a source file like `foo.sh` and a build rule named
+    `foo`.
 -   If the executable will be added directly to the user's `PATH`, then prefer
     to use no extension. It is not necessary to know what language a program is
     written in when executing it and shell doesn't require an extension so we
@@ -108,8 +113,7 @@ secure sufficiently to allow SUID/SGID. While bash does make it difficult to run
 SUID, it's still possible on some platforms which is why we're being explicit
 about banning it.
 
-Use `sudo` to provide elevated access if you need
-it.
+Use `sudo` to provide elevated access if you need it.
 
 <a id="s3-environment"></a>
 
@@ -150,8 +154,7 @@ fi
 Start each file with a description of its contents.
 
 Every file must have a top-level comment including a brief overview of its
-contents. A copyright notice and author information
-are optional.
+contents. A copyright notice and author information are optional.
 
 Example:
 
@@ -243,7 +246,8 @@ put a short comment in.
 Use TODO comments for code that is temporary, a short-term solution, or
 good-enough but not perfect.
 
-This matches the convention in the [C++ Guide](https://google.github.io/styleguide/cppguide.html#TODO_Comments).
+This matches the convention in the
+[C++ Guide](https://google.github.io/styleguide/cppguide.html#TODO_Comments).
 
 `TODO`s should include the string `TODO` in all caps, followed by the name,
 e-mail address, or other identifier of the person with the best context about
@@ -257,7 +261,7 @@ Examples:
 <div class='goodcode'></div>
 
 ```shell
-# TODO(mrmonkey): Handle the unlikely edge cases (bug ####)
+# TODO(username): Handle the unlikely edge cases (bug ####)
 ```
 
 <a id="s5-formatting"></a>
@@ -663,6 +667,7 @@ var="`command \`command1\``"
 <a id="s6.3-tests"></a>
 
 <a id="tests"></a>
+
 ### Test, `[ … ]`, and `[[ … ]]`
 
 `[[ … ]]` is preferred over `[ … ]`, `test` and `/usr/bin/[`.
@@ -994,12 +999,12 @@ done
 echo "${last_line}"
 ```
 
-> Note: Be cautious using a for-loop to iterate over output, as in `for var in
-> $(...)`, as the output is split by whitespace, not by line. Sometimes you will
-> know this is safe because the output can't contain any unexpected whitespace,
-> but where this isn't obvious or doesn't improve readability (such as a long
-> command inside `$(...)`), a `while read` loop or `readarray` is often safer
-> and clearer.
+> Note: Be cautious using a for-loop to iterate over output, as in
+> `for var in $(...)`, as the output is split by whitespace, not by line.
+> Sometimes you will know this is safe because the output can't contain any
+> unexpected whitespace, but where this isn't obvious or doesn't improve
+> readability (such as a long command inside `$(...)`), a `while read` loop or
+> `readarray` is often safer and clearer.
 
 <a id="s6.9-arithmetic"></a>
 

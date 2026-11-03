@@ -3,14 +3,10 @@
 "Say what you mean, simply and directly." -
 [Brian Kernighan](https://en.wikipedia.org/wiki/The_Elements_of_Programming_Style)
 
-Contents:
-
-1.  [Minimum Viable Documentation](#minimum-viable-documentation)
-1.  [Update Docs with Code](#update-docs-with-code)
-1.  [Delete Dead Documentation](#delete-dead-documentation)
-1.  [Prefer the Good Over the Perfect](#prefer-the-good-over-the-perfect)
-1.  [Documentation is the Story of Your Code](#documentation-is-the-story-of-your-code)
-1.  [Duplication is Evil](#duplication-is-evil)
+<!-- mdformat off -->
+* TOC
+{:toc}
+<!-- mdformat on -->
 
 ## Minimum Viable Documentation
 
@@ -99,9 +95,9 @@ to detailed prose:
         overview of what the class / file does and often gives a few short
         examples of how you might use the class / file.
 
-        Examples are particularly relevant when there's several distinct ways to
-        use the class (some advanced, some simple). Always list the simplest use
-        case first.
+        Examples are particularly relevant when there are several distinct ways
+        to use the class (some advanced, some simple). Always list the simplest
+        use case first.
 
 4.  **README.md**: A good README.md orients the new user to the directory and
     points to more detailed explanation and user guides:
@@ -126,16 +122,15 @@ to detailed prose:
     misused).
 
 7.  **Other external docs**: Some teams maintain documentation in other
-    locations, separate from the code, such as Google Sites, Drive, or wiki.
-    If you do maintain documentation in
-    other locations, you should clearly point to those locations from your
-    project directory (for example, by adding an obvious link to the location
-    from your project's `README.md`).
+    locations, separate from the code, such as Google Sites, Drive, or wiki. If
+    you do maintain documentation in other locations, you should clearly point
+    to those locations from your project directory (for example, by adding an
+    obvious link to the location from your project's `README.md`).
 
 ## Duplication is Evil
 
 Do not write your own guide to a common Google technology or process. Link to it
 instead. If the guide doesn't exist or it's badly out of date, submit your
-updates to the appropriate directory or create a package-level
-README.md. **Take ownership and don't be shy**: Other teams will usually welcome
-your contributions.
+updates to the appropriate directory or create a package-level README.md. **Take
+ownership and don't be shy**: Other teams will usually welcome your
+contributions.
