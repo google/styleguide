@@ -279,8 +279,6 @@ what Vim's all about.
 *   Use maktaba flags for plugin configuration. Users can configure them using
     the `:Glaive` command.
 
-    <!-- TODO(dbarnett): Add links and/or more detail for flags. -->
-
 *   Check if configuration variables exist before setting them.
 
     <div class='goodcode'></div>

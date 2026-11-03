@@ -3166,6 +3166,20 @@ variable holds a constructor.
 Template parameter names should be concise, single-word or single-letter
 identifiers, and must be all-caps, such as `TYPE` or `THIS`.
 
+<div class='goodcode'></div>
+
+```js
+/** @template T */
+/** @template KEY, VALUE */
+```
+
+<div class='badcode'></div>
+
+```js
+/** @template ElementType */
+/** @template KEY_TYPE */
+```
+
 <a id="naming-module-local-names"></a>
 
 #### 6.2.10 Module-local names
@@ -4343,6 +4357,13 @@ function sillyFunction() {
 For global declarations where the `const` keyword would be used, if it were
 available, annotate the `var` declaration with `@const` instead (this is
 optional for local variables).
+
+<div class='goodcode'></div>
+
+```js
+/** @const */
+var MAX_RETRIES = 3;
+```
 
 <a id="appendices-legacy-exceptions-function"></a>
 
