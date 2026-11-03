@@ -3146,6 +3146,20 @@ variable holds a constructor.
 Template parameter names should be concise, single-word or single-letter
 identifiers, and must be all-caps, such as `TYPE` or `THIS`.
 
+<div class='goodcode'></div>
+
+```js
+/** @template T */
+/** @template KEY, VALUE */
+```
+
+<div class='badcode'></div>
+
+```js
+/** @template ElementType */
+/** @template KEY_TYPE */
+```
+
 <a id="naming-module-local-names"></a>
 
 #### 6.2.10 Module-local names
