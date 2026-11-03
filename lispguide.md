@@ -453,13 +453,13 @@ problem, its nature, and any notes on how it may be addressed.
 Ideally a TODO comment should reference a bug number:
 
 ```lisp
-;; TODO(b/1234567): use circular lists for fizzbuzz
+;; TODO(b/12345): use circular lists for fizzbuzz
 ```
 
 However, it may also be a username or email address:
 
 ```lisp
-;; TODO(zippy@foo.com): Refactor to provide a better API.
+;; TODO(user@example.com): Refactor to provide a better API.
 ```
 
 The main purpose is to provide a way to find out more information by looking up
@@ -470,7 +470,7 @@ Be specific when indicating times or software releases in a TODO comment and use
 automated processing of such dates easier:
 
 ```lisp
-;;--- TODO(brown): Remove this code after release 1.7 or before 2012-11-30.
+;;--- TODO(username): Remove this code after release 1.7 or before 2012-11-30.
 ```
 
 You should design your DSL to be easy to read and understand by people familiar
