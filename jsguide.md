@@ -4338,6 +4338,13 @@ For global declarations where the `const` keyword would be used, if it were
 available, annotate the `var` declaration with `@const` instead (this is
 optional for local variables).
 
+<div class='goodcode'></div>
+
+```js
+/** @const */
+var MAX_RETRIES = 3;
+```
+
 <a id="appendices-legacy-exceptions-function"></a>
 
 #### 9.4.3 Do not use block scoped functions declarations
