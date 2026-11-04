@@ -2690,6 +2690,16 @@ const longString = 'This is a very long string that far exceeds the 80 ' +
     'the concatenated strings are cleaner.';
 ```
 
+The same applies to template literals:
+
+<div class='goodcode'></div>
+
+```js
+const longString = `Hello ${name}, this is a very long string that far ` +
+    `exceeds the 80 column limit, so it is split into concatenated ` +
+    `template literals.`;
+```
+
 <a id="features-number-literals"></a>
 
 ### 5.7 Number literals
