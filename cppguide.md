@@ -4855,8 +4855,8 @@ name that is given.
 ```cpp
 // TODO(bug 12345): remove the "Last visitors" feature.
 // TODO(example.com/my-design-doc): Manually fix up this code the next time it's touched.
-// TODO(kl@gmail.com): Use a "*" here for concatenation operator.
-// TODO(Zeke): change this to use relations.
+// TODO(user@example.com): Use a "*" here for concatenation operator.
+// TODO(username): change this to use relations.
 ```
 
 If your `TODO` is of the form "At a future date do something" make sure that you
