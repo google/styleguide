@@ -1571,10 +1571,11 @@ cases since otherwise the compiler will infer the template parameter as unknown.
 function process(ids) {
   // Inferred as !Set<string> from the argument, so no annotation is needed.
   const uniqueIds = new Set(ids);
-  // Empty collections need an annotation.
-  const /** !Map<string, number> */ wordCounts = new Map();
-  const /** !Set<string> */ seenIds = new Set();
 }
+
+// Empty collections need an annotation.
+const /** !Map<string, number> */ wordCounts = new Map();
+const /** !Set<string> */ seenIds = new Set();
 ```
 
 <div class='badcode'></div>
