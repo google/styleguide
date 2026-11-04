@@ -899,7 +899,7 @@ package com.example.frozzler;
 ```java
 /// This is a module.
 @Deprecated
-@SuppressWarnings("CheckReturnValue") // TODO(b/123): Fix existing CRV violations.
+@SuppressWarnings("CheckReturnValue") // TODO(b/12345): Fix existing CRV violations.
 module com.example.frozzler { ... }
 ```
 
@@ -997,7 +997,7 @@ out how to get more details.
 <div class='goodcode'></div>
 
 ```java
-// TODO: crbug.com/12345678 - Remove this after the 2047q4 compatibility window expires.
+// TODO: example.com/12345678 - Remove this after the 2047q4 compatibility window expires.
 ```
 
 Avoid adding TODOs that refer to an individual or team as the context:
@@ -1005,7 +1005,7 @@ Avoid adding TODOs that refer to an individual or team as the context:
 <div class='badcode'></div>
 
 ```java
-// TODO: @yourusername - File an issue and use a '*' for repetition.
+// TODO: username - File an issue and use a '*' for repetition.
 ```
 
 If your `TODO` is of the form "At a future date do something" make sure that you
