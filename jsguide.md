@@ -1557,13 +1557,33 @@ the first JsDoc and the inline annotations will be lost.
 const /** !Array<number> */ data = [];
 ```
 
-> Tip: There are many cases where the compiler can infer a templatized type but
-> not its parameters. This is particularly the case when the initializing
-> literal or constructor call does not include any values of the template
-> parameter type (e.g., empty arrays, objects, `Map`s, or `Set`s), or if the
-> variable is modified in a closure. Local variable type annotations are
-> particularly helpful in these cases since otherwise the compiler will infer
-> the template parameter as unknown.
+There are many cases where the compiler can infer a templatized type but not
+its parameters. This is particularly the case when the initializing literal or
+constructor call does not include any values of the template parameter type
+(e.g., empty arrays, objects, `Map`s, or `Set`s), or if the variable is modified
+in a closure. Local variable type annotations are particularly helpful in these
+cases since otherwise the compiler will infer the template parameter as unknown.
+
+<div class='goodcode'></div>
+
+```js
+/** @param {!Array<string>} ids */
+function process(ids) {
+  // Inferred as !Set<string> from the argument, so no annotation is needed.
+  const uniqueIds = new Set(ids);
+}
+
+// Empty collections need an annotation.
+const /** !Map<string, number> */ wordCounts = new Map();
+const /** !Set<string> */ seenIds = new Set();
+```
+
+<div class='badcode'></div>
+
+```js
+// The key and value types of the Map are inferred as unknown.
+const wordCounts = new Map();
+```
 
 <a id="features-array-literals"></a>
 
