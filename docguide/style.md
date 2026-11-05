@@ -36,17 +36,16 @@ general, the author should always be able to invoke the "Better/Best Rule."
 
 Fast iteration is your friend. To get long-term improvement, **authors must stay
 productive** when making short-term improvements. Set lower standards for each
-[change list (CL)](https://en.wikipedia.org/wiki/Version_control#Change_list),
-so that **more such CLs** can happen.
+change, so that **more such changes** can happen.
 
-As a reviewer of a documentation CL:
+As a reviewer of a documentation change:
 
 1.  When reasonable, LGTM immediately and trust that comments will be fixed
     appropriately.
 2.  Prefer to suggest an alternative rather than leaving a vague comment.
-3.  For substantial changes, start your own follow-up CL instead. Especially try
-    to avoid comments of the form "You should *also*...".
-4.  On rare occasions, hold up submission if the CL actually makes the docs
+3.  For substantial changes, start your own follow-up change instead.
+    Especially try to avoid comments of the form "You should *also*...".
+4.  On rare occasions, hold up submission if the change actually makes the docs
     worse. It's okay to ask the author to revert.
 
 As an author:
