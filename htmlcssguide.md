@@ -218,28 +218,22 @@ depends on the project’s complexity.)
 
 #### Action Items
 
-Mark todos and action items with `TODO`.
+Use `TODO` comments for code that is temporary, a short-term solution, or
+good-enough but not perfect.
 
-Highlight todos by using the keyword `TODO` only, not other common formats like
-`@@`.
+A `TODO` comment begins with the word `TODO` in all caps, and a parenthesized
+link to a resource that contains the context, ideally a bug reference. A bug
+reference is preferable because bugs are tracked and have follow-up comments.
+Follow this piece of context with a colon and an explanatory string.
 
-Append action items after a colon as in `TODO: action item`.
+The purpose is to have a consistent `TODO` format that can be searched to find
+out how to get more details.
 
 <div class='goodcode'></div>
 
 ```django
-{# TODO: Revisit centering. #}
+{# TODO(b/12345): Revisit centering. #}
 <center>Test</center>
-```
-
-<div class='goodcode'></div>
-
-```html
-<!-- TODO: Remove optional tags. -->
-<ul>
-  <li>Apples</li>
-  <li>Oranges</li>
-</ul>
 ```
 
 <div class="numbered"></div>

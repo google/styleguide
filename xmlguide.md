@@ -487,5 +487,3 @@ simple/complex or metadata/data.
 >             --a
 > [tanka](https://en.wikipedia.org/wiki/Waka_%28poetry%29#Forms_of_waka), or
 > extended haiku
-
-\[TODO: if a registry of schemas is set up, add a link to it\]
