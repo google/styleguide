@@ -1179,7 +1179,7 @@ For example:
 
 ```rust
 /// Finds the first `FooItem` with the given `name`, or `None` if not present.
-// TODO: crbug.com/12345 - `name` should be &str, not String.
+// TODO: example.com/12345 - `name` should be &str, not String.
 pub fn get_named(items: &[FooItem], name: String) -> Option<&FooItem> {...}
 ```
 
