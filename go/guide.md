@@ -417,7 +417,13 @@ constant is `MaxLength` (not `MAX_LENGTH`) if exported and `maxLength` (not
 Local variables are considered [unexported] for the purpose of choosing the
 initial capitalization.
 
-<!--#include file="/go/g3doc/style/includes/special-name-exception.md"-->
+> **Note:** The following are exempt from this rule:
+>
+> *   Generated Protocol Buffer API
+> *   Standard library interface to the operating system, e.g.
+>     https://pkg.go.dev/syscall#pkg-constants
+>
+> **Human-written code is held to a higher standard.**
 
 [unexported]: https://go.dev/ref/spec#Exported_identifiers
 

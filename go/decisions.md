@@ -129,7 +129,13 @@ package are referenced in the file. If a given import is renamed in multiple
 files, particularly in the same or nearby packages, the same local name should
 be used wherever possible for consistency.
 
-<!--#include file="/go/g3doc/style/includes/special-name-exception.md"-->
+> **Note:** The following are exempt from this rule:
+>
+> *   Generated Protocol Buffer API
+> *   Standard library interface to the operating system, e.g.
+>     https://pkg.go.dev/syscall#pkg-constants
+>
+> **Human-written code is held to a higher standard.**
 
 See also: [Go blog post about package names](https://go.dev/blog/package-names).
 
@@ -205,7 +211,13 @@ const (
 )
 ```
 
-<!--#include file="/go/g3doc/style/includes/special-name-exception.md"-->
+> **Note:** The following are exempt from this rule:
+>
+> *   Generated Protocol Buffer API
+> *   Standard library interface to the operating system, e.g.
+>     https://pkg.go.dev/syscall#pkg-constants
+>
+> **Human-written code is held to a higher standard.**
 
 <a id="initialisms"></a>
 
@@ -247,7 +259,13 @@ DB            | Exported   | `DB`     | `Db`
 DB            | Unexported | `db`     | `dB`
 Txn           | Exported   | `Txn`    | `TXN`
 
-<!--#include file="/go/g3doc/style/includes/special-name-exception.md"-->
+> **Note:** The following are exempt from this rule:
+>
+> *   Generated Protocol Buffer API
+> *   Standard library interface to the operating system, e.g.
+>     https://pkg.go.dev/syscall#pkg-constants
+>
+> **Human-written code is held to a higher standard.**
 
 <a id="getters"></a>
 
@@ -264,7 +282,13 @@ call, a different word like `Compute` or `Fetch` can be used in place of `Get`,
 to make it clear to a reader that the function call may take time and could
 block or fail.
 
-<!--#include file="/go/g3doc/style/includes/special-name-exception.md"-->
+> **Note:** The following are exempt from this rule:
+>
+> *   Generated Protocol Buffer API
+> *   Standard library interface to the operating system, e.g.
+>     https://pkg.go.dev/syscall#pkg-constants
+>
+> **Human-written code is held to a higher standard.**
 
 <a id="variable-names"></a>
 
