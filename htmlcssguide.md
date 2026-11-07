@@ -489,6 +489,20 @@ tags, not just a selection.)
 <p>Qed.
 ```
 
+A start tag that carries attributes cannot be omitted. In particular, keep the
+`<html>` start tag to declare the document’s language with the
+[`lang`](https://html.spec.whatwg.org/multipage/dom.html#attr-lang) attribute:
+
+<div class='goodcode'></div>
+
+```html
+<!-- Recommended -->
+<!doctype html>
+<html lang="en">
+<title>Saving money, saving bytes</title>
+<p>Qed.
+```
+
 <div class="numbered"></div>
 
 <a id="type_Attributes"></a>
