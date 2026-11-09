@@ -1,5 +1,12 @@
 # Google C++ Style Guide
 
+<style>
+h5 > a.anchorjs-link,
+h6 > a.anchorjs-link {
+  display: none;
+}
+</style>
+
 <!-- mdformat off -->
 * TOC
 {:toc}
@@ -12,13 +19,6 @@
 
      NB: Must come after the [TOC].
      {% raw %} -->
-
-<style>
-h5 > a.anchorjs-link,
-h6 > a.anchorjs-link {
-  display: none;
-}
-</style>
 
 <a id="Background"></a>
 
