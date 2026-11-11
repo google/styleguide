@@ -3730,6 +3730,47 @@ class Teapot {
 
 <div class="numbered"></div>
 
+<a id="overridden-and-implemented-members"></a>
+
+#### Overridden and implemented members
+
+Properties and methods that override, implement, or narrow a base class or
+interface member, or appear in a contextually typed object literal, must match
+the existing declaration's name and casing to compile. Casing rules therefore
+apply only at a member's original declaration, which *must* follow them unless
+an external contract requires otherwise. Consider fixing the original
+declaration's name if possible.
+
+<div class='badcode'></div>
+
+```ts
+interface ServerResponse {
+  // Disallowed: property names must use lowerCamelCase (or CONSTANT_CASE).
+  // The correct name here would be `errorCode`.
+  error_code: number;
+}
+```
+
+<div class='goodcode'></div>
+
+```ts
+// When the existing name is required to match an external contract, suppress
+// the lint warning on the original declaration and include a rationale:
+declare interface ServerResponse {
+  // Required to match external contract.
+  // tslint:disable-next-line:enforce-name-casing
+  error_code: number;
+}
+
+// Extending, implementing, or contextually matching the existing declaration
+// is allowed to follow its naming convention without another suppression:
+interface ErrorResponse extends ServerResponse {
+  error_code: 400 | 500;
+}
+```
+
+<div class="numbered"></div>
+
 <a id="type-system"></a>
 
 ## Type system
