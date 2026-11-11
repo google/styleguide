@@ -2175,7 +2175,7 @@ defined on the prototype of the constructor.
 
 Defining constructor prototype hierarchies correctly is harder than it first
 appears! For that reason, it is best to use `goog.inherits` from
-[the Closure Library](http://code.google.com/closure/library/).
+[the Closure Library](https://github.com/google/closure-library).
 
 <a id="features-classes-prototypes"></a>
 
