@@ -267,7 +267,7 @@ prefixes with a minimum of three characters are considered best practice.
 GTM_EXTERN NSString *GTMExampleErrorDomain;
 
 /** Gets the default time zone. */
-GTM_EXTERN NSTimeZone *GTMGetDefaultTimeZone(void);
+GTM_EXTERN NSTimeZone *GTMGetDefaultTimeZone();
 
 /** An example delegate. */
 @protocol GTMExampleDelegate <NSObject>
@@ -468,7 +468,7 @@ have a [prefix](#prefixes) that minimizes the chance of a name collision.
 <div class='goodcode'></div>
 
 ```objectivec
-GTM_EXTERN NSTimeZone *GTMGetDefaultTimeZone(void);
+GTM_EXTERN NSTimeZone *GTMGetDefaultTimeZone();
 GTM_EXTERN NSString *GTMGetURLScheme(NSURL *URL);
 ```
 
