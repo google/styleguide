@@ -1671,10 +1671,10 @@ this interferes with property renaming.
 
 Computed properties may only be used in classes when the property is a symbol.
 Dict-style properties (that is, quoted or computed non-symbol keys) are not
-allowed (see
-[rationale for not mixing key types](#features-objects-mixing-keys)). A
-`[Symbol.iterator]` method should be defined for any classes that are logically
-iterable. Beyond this, `Symbol` should be used sparingly.
+allowed (see [rationale for not mixing key
+types](jsguide.md#features-objects-mixing-keys)). A `[Symbol.iterator]` method
+should be defined for any classes that are logically iterable. Beyond this,
+`Symbol` should be used sparingly.
 
 Tip: be careful of using any other built-in symbols (e.g.
 `Symbol.isConcatSpreadable`) as they are not polyfilled by the compiler and will
