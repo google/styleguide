@@ -936,7 +936,7 @@ X-34 landspeeder | Whiny farmboys | [Cheap][tosche_station] since the XP-38 came
 [tosche_station]: http://google3/power_converter.h
 ```
 
-Note that [reference links](#reference-links) are used to keep the table cells
+Note that [reference links](#reference_links) are used to keep the table cells
 manageable.
 
 <a id="html"></a>
