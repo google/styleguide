@@ -79,7 +79,7 @@ The same applies to other commands not listed here.
 
 Match error codes, not error text.
 
-Error text may be locale dependant.
+Error text may be locale dependent.
 
 ## General Guidelines
 

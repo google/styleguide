@@ -67,7 +67,7 @@ guidelines:
     *   This also applies to `!~ == != > >= < <= is` and `isnot`.
     *   This only applies for strings. `==` and `>=` are fine for numbers, but
         `==#` and `>=#` must be used for comparing values that may be strings.
-    *   The behavior of `=~` and friends is dependant upon the `ignorecase`
+    *   The behavior of `=~` and friends is dependent upon the `ignorecase`
         setting.
     *   You may break this rule when you explicitly want to obey the user's
         `ignorecase` setting. Be prepared to justify your reasoning.
@@ -98,7 +98,7 @@ guidelines:
 
 *   When using `catch`, match the error code rather than the error text.
 
-    *   The error text may be locale-dependant.
+    *   The error text may be locale-dependent.
     *   See `:help error-messages`.
 
 In general, guard all commands and functions against user settings.
@@ -141,7 +141,7 @@ In general, guard all commands and functions against user settings.
 *   Messaging: **As little as possible.**
 
     *   Loud scripts are annoying.
-    *   Message the user when an error has occured.
+    *   Message the user when an error has occurred.
     *   Message the user when an operation which takes a long time has begun
         work.
     *   Avoid messaging otherwise.

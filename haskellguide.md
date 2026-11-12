@@ -146,7 +146,7 @@ to the source file, such as `-fno-warn-orphans` for test code. General
 compilation options, like `-O2`, belong in the `.cabal` file.
 
 Features enabled by the `LANGUAGE` pragma should always be listed in each source
-file that needs them, and never turned on globally via flags in the the `.cabal`
+file that needs them, and never turned on globally via flags in the `.cabal`
 file. This is so future developers know what language extensions are in effect
 when reading the code.
 
