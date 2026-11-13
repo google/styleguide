@@ -1380,8 +1380,8 @@ single line. Note that this only applies when there are no block tags such as
 #### 7.1.2 Paragraphs
 
 With Traditional Javadoc, one blank line—that is, a line containing only the
-aligned leading asterisk (`*`)—appears between paragraphs, and before the group
-of block tags if present. Each paragraph except the first has `<p>` immediately
+aligned leading asterisk (`*`), with no trailing whitespace—appears between
+paragraphs, and before the group of block tags if present. Each paragraph except the first has `<p>` immediately
 before the first word, with no space after it. HTML tags for other block-level
 elements, such as `<ul>` or `<table>`, are *not* preceded with `<p>`.
 
