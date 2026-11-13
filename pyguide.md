@@ -2230,6 +2230,10 @@ spaces (be consistent within a file). These sections can be omitted in cases
 where the function's name and signature are informative enough that it can be
 aptly described using a one-line docstring.
 
+When present, the sections should appear in this order: *Args:*, then *Returns:*
+(or *Yields:*), then *Raises:*. An *Examples:* section, if used, comes first,
+before *Args:*.
+
 <a id="doc-function-args"></a>
 [*Args:*](#doc-function-args)
 :   List each parameter by name. A description should follow the name, and be
