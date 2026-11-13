@@ -146,7 +146,7 @@ to the source file, such as `-fno-warn-orphans` for test code. General
 compilation options, like `-O2`, belong in the `.cabal` file.
 
 Features enabled by the `LANGUAGE` pragma should always be listed in each source
-file that needs them, and never turned on globally via flags in the the `.cabal`
+file that needs them, and never turned on globally via flags in the `.cabal`
 file. This is so future developers know what language extensions are in effect
 when reading the code.
 
@@ -598,7 +598,7 @@ space intervals.
 
 Parts of an expression that are continued on another line, are indented one
 indent from the indent of the preceding line, not from the construct that they
-are continuting. (Though see the preceding section about using alignment to make
+are continuing. (Though see the preceding section about using alignment to make
 structure clear, and use your judgement.)
 
 <div class='goodcode'></div>
