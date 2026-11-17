@@ -125,7 +125,6 @@ Suitable for inclusion in `c-offsets-alist'."
                         (label . /)
                         (case-label . +)
                         (statement-case-open . +)
-                        (statement-case-intro . +) ; case w/o {
                         (access-label . /)
                         (innamespace . 0))))
   "Google C/C++ Programming Style.")
