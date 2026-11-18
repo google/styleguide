@@ -2259,6 +2259,9 @@ aptly described using a one-line docstring.
     those are not part of the API). If the function uses `yield` (is a
     generator), the `Yields:` section should document the object returned by
     `next()`, instead of the generator object itself that the call evaluates to.
+    For example, a generator that yields a list of words for each line of input
+    should be described as "Yields: A list of the words in a line.", not as "a
+    sequence of lists" or "a generator of lists".
 
 <a id="doc-function-raises"></a>
 [*Raises:*](#doc-function-raises)
