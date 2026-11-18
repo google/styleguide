@@ -98,7 +98,7 @@ guidelines:
 
 *   When using `catch`, match the error code rather than the error text.
 
-    *   The error text may be locale-dependant.
+    *   The error text may be locale-dependent.
     *   See `:help error-messages`.
 
 In general, guard all commands and functions against user settings.
