@@ -24,12 +24,12 @@ See also
 
 ## Update Docs with Code
 
-**Change your documentation in the same CL as the code change**. This keeps your
+**Change your documentation in the same change as the code**. This keeps your
 docs fresh, and is also a good place to explain to your reviewer what you're
 doing.
 
 A good reviewer can at least insist that docstrings, header files, README.md
-files, and any other docs get updated alongside the CL.
+files, and any other docs get updated alongside the change.
 
 ## Delete Dead Documentation
 
