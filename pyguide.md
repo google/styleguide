@@ -1815,7 +1815,7 @@ Yes:   # Aligned with opening delimiter.
        meal = (spam,
                beans)
 
-       # Aligned with opening delimiter in a dictionary.
+       # Aligned with opening delimiter (the `:`) in a dictionary.
        foo = {
            'long_dictionary_key': value1 +
                                   value2,
